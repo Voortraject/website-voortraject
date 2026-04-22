@@ -24,12 +24,6 @@ export const Problems = () => (
         <h2 className="h2-section text-foreground">
           Het voortraject waar uitvoerders op vastlopen
         </h2>
-        <p className="mt-6 body-lg text-muted-foreground">
-          Veel uitvoerders willen groeien, maar verliezen tijd aan bewonersvragen,
-          regelinguitleg, offerte-opmaak en opvolging. Wij nemen dat stuk uit handen
-          en zorgen voor rust, structuur en een professioneler traject. Van het
-          eerste bewonerscontact tot het akkoord.
-        </p>
       </div>
 
       <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 lg:divide-x lg:divide-border">

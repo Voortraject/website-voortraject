@@ -33,9 +33,6 @@ export const Why = () => (
             <h2 className="h2-section text-foreground">
               Waarom uitvoerders voor ons kiezen
             </h2>
-            <p className="mt-6 body-lg text-muted-foreground max-w-md">
-              Vijf redenen waarom uitvoerders kiezen voor structurele samenwerking.
-            </p>
           </div>
         </div>
         <ol className="lg:col-span-3 space-y-10">

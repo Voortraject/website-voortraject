@@ -2,23 +2,19 @@ import { Button } from "../Button";
 import { SectionLabel } from "../SectionLabel";
 
 export const ClosingCta = () => (
-  <section className="bg-background py-[96px] border-t border-border">
-    <div className="container-content">
+  <section className="bg-background section-pad border-t border-border">
+    <div className="container-content text-center flex flex-col items-center">
       <SectionLabel number="05" label="CONTACT" />
-      <div className="mt-12 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
-        <h2 className="h2-section text-foreground">
-          Zoek je extra capaciteit in het voortraject?
-        </h2>
-        <div className="flex flex-col gap-4 md:items-end">
-          <div className="flex flex-col gap-4 w-full md:w-auto md:min-w-[280px]">
-            <Button href="/contact" variant="primary" className="w-full">
-              Bespreek samenwerking
-            </Button>
-            <Button href="/contact" variant="secondary" className="w-full">
-              Plan een kennismaking
-            </Button>
-          </div>
-        </div>
+      <h2 className="mt-12 h2-section text-foreground max-w-[900px]">
+        Zoek je extra capaciteit in het voortraject?
+      </h2>
+      <div className="mt-12 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+        <Button href="/contact" variant="primary" className="w-full sm:w-auto sm:min-w-[260px]">
+          Bespreek samenwerking
+        </Button>
+        <Button href="/contact" variant="secondary" className="w-full sm:w-auto sm:min-w-[260px]">
+          Plan een kennismaking
+        </Button>
       </div>
     </div>
   </section>

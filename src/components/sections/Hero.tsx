@@ -60,10 +60,10 @@ export const Hero = () => {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-5 gap-12 lg:gap-16 items-center">
-          <div className="lg:col-span-3 text-left">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-[5%]">
+          <div className="lg:basis-[55%] lg:shrink-0 min-w-0 text-left">
             <div key={audience} className="animate-fade-up">
-              <h1 id="hero-title" className="h1-hero text-foreground">
+              <h1 id="hero-title" className="h1-hero text-foreground break-words">
                 {c.h1}
               </h1>
               <p className="mt-8 body-lg text-muted-foreground max-w-[640px]">
@@ -80,7 +80,7 @@ export const Hero = () => {
             </div>
           </div>
 
-          <div className="lg:col-span-2 hidden md:block">
+          <div className="lg:basis-[40%] lg:shrink-0 min-w-0 hidden md:block">
             <img
               src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=1200&auto=format&fit=crop"
               alt="Nederlandse rijtjeswoning met daglicht, rustige straat"
