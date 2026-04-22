@@ -1,5 +1,3 @@
-import { SectionLabel } from "../SectionLabel";
-
 const points = [
   {
     title: "Minder druk op de ondernemer",
@@ -26,11 +24,10 @@ const points = [
 export const Why = () => (
   <section className="bg-background section-pad border-t border-border">
     <div className="container-content">
-      <SectionLabel number="03" label="VOORDELEN" />
-      <div className="mt-16 grid lg:grid-cols-5 gap-12 lg:gap-20">
+      <div className="grid lg:grid-cols-5 gap-12 lg:gap-20">
         <div className="lg:col-span-2">
           <div className="lg:sticky lg:top-32">
-            <h2 className="h2-section text-foreground">
+            <h2 className="h2-section">
               Waarom uitvoerders voor ons kiezen
             </h2>
           </div>

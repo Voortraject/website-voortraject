@@ -6,7 +6,6 @@ import {
   ArrowRightCircle,
   type LucideIcon,
 } from "lucide-react";
-import { SectionLabel } from "../SectionLabel";
 
 const items: { icon: LucideIcon; title: string }[] = [
   { icon: MessageCircle, title: "Bewonerscontact en communicatie" },
@@ -19,14 +18,13 @@ const items: { icon: LucideIcon; title: string }[] = [
 export const Problems = () => (
   <section className="bg-background section-pad border-t border-border">
     <div className="container-content">
-      <SectionLabel number="01" label="INLEIDING" />
-      <div className="mt-16 max-w-[720px]">
-        <h2 className="h2-section text-foreground">
+      <div className="max-w-[900px]">
+        <h2 className="h2-section">
           Het voortraject waar uitvoerders op vastlopen
         </h2>
       </div>
 
-      <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 lg:divide-x lg:divide-border">
+      <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 lg:divide-x lg:divide-border">
         {items.map(({ icon: Icon, title }) => (
           <div
             key={title}

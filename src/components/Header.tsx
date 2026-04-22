@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { NavLink } from "./NavLink";
 import { Button } from "./Button";
+import { AudienceToggle } from "./AudienceToggle";
 
 const links = [
   { href: "/maatregelen", label: "Maatregelen" },
@@ -29,21 +30,26 @@ export const Header = () => {
   return (
     <header
       className={
-        "sticky top-0 z-50 transition-all duration-200 " +
+        "sticky top-0 z-50 transition-all duration-200 border-b " +
         (scrolled
-          ? "bg-white/85 backdrop-blur-md border-b border-border"
-          : "bg-white border-b border-transparent")
+          ? "bg-white/85 backdrop-blur-md border-border"
+          : "bg-white border-border")
       }
     >
-      <div className="container-content flex items-center justify-between h-[72px]">
+      <div className="container-content flex items-center justify-between h-[72px] gap-6">
         <a
           href="/"
-          className="font-display font-semibold text-primary text-[20px] tracking-tight"
+          className="font-display font-semibold text-primary text-[20px] tracking-tight shrink-0"
         >
           Voortraject
         </a>
 
-        <nav className="hidden lg:flex items-center gap-9" aria-label="Hoofdnavigatie">
+        {/* Centered toggle */}
+        <div className="hidden lg:flex flex-1 justify-center">
+          <AudienceToggle />
+        </div>
+
+        <nav className="hidden lg:flex items-center gap-7 shrink-0" aria-label="Hoofdnavigatie">
           {links.map((l) => (
             <NavLink key={l.href} href={l.href}>{l.label}</NavLink>
           ))}
@@ -80,6 +86,9 @@ export const Header = () => {
             </button>
           </div>
           <nav className="container-content flex flex-col gap-2 pt-10" aria-label="Mobiele navigatie">
+            <div className="pb-6 flex justify-center">
+              <AudienceToggle />
+            </div>
             {links.map((l) => (
               <a
                 key={l.href}
