@@ -2,9 +2,8 @@ const navCols = [
   {
     label: "Navigatie",
     items: [
-      { href: "#voor-uitvoerders", label: "Voor uitvoerders" },
-      { href: "#voor-bewoners", label: "Voor bewoners" },
       { href: "/maatregelen", label: "Maatregelen" },
+      { href: "/over-ons", label: "Over ons" },
       { href: "/contact", label: "Contact" },
     ],
   },
