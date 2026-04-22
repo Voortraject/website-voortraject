@@ -1,37 +1,25 @@
-import { SectionLabel } from "../SectionLabel";
-
 export const Technology = () => (
-  <section className="bg-primary py-[96px] md:py-[160px] relative overflow-hidden" aria-labelledby="tech-title">
-    <div className="container-content relative">
+  <section className="bg-background section-pad border-t border-border" aria-labelledby="tech-title">
+    <div className="container-content text-center">
       <p
         className="font-sans font-medium uppercase text-accent text-[13px]"
         style={{ letterSpacing: "0.1em" }}
       >
         04 / TECHNOLOGIE
       </p>
-      <div className="mt-16 max-w-[960px]">
-        <h2
-          id="tech-title"
-          className="font-display font-semibold text-white text-[40px] md:text-[64px] leading-[1.1] tracking-[-0.03em]"
-        >
-          Menselijke begeleiding, ondersteund door slimme automatisering
-        </h2>
-        <p className="mt-8 body-lg text-white/80 max-w-[640px]">
-          Wij combineren persoonlijke begeleiding met slimme systemen voor intake,
-          offerte-opbouw, communicatie en dossiercontrole. Daardoor werken we sneller,
-          leveren we consistenter en kunnen we opschalen, zonder dat de bewoner het
-          gevoel krijgt dat hij met een systeem praat.
-        </p>
-      </div>
-
-      <span
-        aria-hidden="true"
-        className="hidden md:block absolute right-12 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-accent"
-      />
-      <span
-        aria-hidden="true"
-        className="hidden md:block absolute right-12 top-1/2 translate-y-8 h-px w-16 bg-accent/60"
-      />
+      <h2
+        id="tech-title"
+        className="mt-12 mx-auto font-display font-bold text-primary text-[56px] md:text-[96px] max-w-[1200px]"
+        style={{ letterSpacing: "-0.04em", lineHeight: 1.0 }}
+      >
+        Menselijke begeleiding, ondersteund door{" "}
+        <span className="text-accent">slimme</span> automatisering
+      </h2>
+      <p className="mt-10 mx-auto body-lg text-muted-foreground max-w-[640px]">
+        Wij combineren persoonlijke begeleiding met slimme systemen voor intake,
+        offerte-opbouw, communicatie en dossiercontrole. Daardoor werken we sneller,
+        leveren we consistenter en kunnen we opschalen.
+      </p>
     </div>
   </section>
 );

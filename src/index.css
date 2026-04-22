@@ -107,7 +107,7 @@
   }
 
   .section-pad {
-    @apply py-[72px] md:py-[120px];
+    @apply py-[80px] md:py-[140px];
   }
 
   .h1-hero {
