@@ -60,8 +60,8 @@ export const Hero = () => {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-100 gap-8 lg:gap-[5%] items-center" style={{ gridTemplateColumns: undefined }}>
-          <div className="lg:[grid-column:span_55] text-left" style={{ minWidth: 0 }}>
+        <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-[5%]">
+          <div className="lg:basis-[55%] lg:shrink-0 min-w-0 text-left">
             <div key={audience} className="animate-fade-up">
               <h1 id="hero-title" className="h1-hero text-foreground break-words">
                 {c.h1}
@@ -80,7 +80,7 @@ export const Hero = () => {
             </div>
           </div>
 
-          <div className="lg:[grid-column:span_40] hidden md:block" style={{ minWidth: 0 }}>
+          <div className="lg:basis-[40%] lg:shrink-0 min-w-0 hidden md:block">
             <img
               src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=1200&auto=format&fit=crop"
               alt="Nederlandse rijtjeswoning met daglicht, rustige straat"
