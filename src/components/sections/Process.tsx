@@ -1,5 +1,3 @@
-import { SectionHeader } from "../SectionHeader";
-
 const steps = [
   {
     n: "01",
@@ -24,29 +22,28 @@ const steps = [
 ];
 
 export const Process = () => (
-  <section className="bg-white section-pad">
+  <section className="bg-background section-pad border-t border-border">
     <div className="container-content">
-      <SectionHeader title="Van eerste contact tot akkoord" />
+      <div className="max-w-[720px]">
+        <h2 className="h2-section text-foreground">Van eerste contact tot akkoord</h2>
+      </div>
 
-      <div className="mt-16 relative">
-        {/* connecting line desktop */}
+      <div className="mt-20 relative">
         <div
           aria-hidden="true"
-          className="hidden lg:block absolute top-6 left-[12.5%] right-[12.5%] h-px bg-border"
+          className="hidden lg:block absolute top-[44px] left-0 right-0 h-px bg-accent"
         />
 
-        <ol className="grid grid-cols-1 lg:grid-cols-4 gap-10 lg:gap-8">
+        <ol className="grid grid-cols-1 lg:grid-cols-4 gap-12 lg:gap-10">
           {steps.map((s) => (
-            <li key={s.n} className="relative flex flex-col items-start lg:items-center lg:text-center">
+            <li key={s.n} className="relative flex flex-col items-start text-left">
               <span
                 aria-hidden="true"
-                className="heading-serif text-5xl text-accent leading-none bg-white lg:px-3"
+                className="font-display font-light text-[72px] leading-none text-accent bg-background pr-6 lg:pr-4 -mt-2"
               >
                 {s.n}
               </span>
-              <h3 className="mt-5 text-xl font-semibold leading-snug text-foreground">
-                {s.title}
-              </h3>
+              <h3 className="h3-block mt-6 text-foreground">{s.title}</h3>
               <p className="mt-3 text-[16px] leading-relaxed text-muted-foreground max-w-xs">
                 {s.body}
               </p>

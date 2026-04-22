@@ -31,8 +31,8 @@ export const Footer = () => (
     <div className="container-content py-16 md:py-20">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
         <div>
-          <p className="font-semibold text-[17px] tracking-tight">
-            Partner Duurzame Innovatie
+          <p className="font-display font-semibold text-[20px] tracking-tight">
+            Voortraject
           </p>
           <p className="mt-4 text-sm leading-relaxed text-white/80 max-w-xs">
             Commerciële en operationele ontzorgingspartner voor uitvoerders in
@@ -42,7 +42,7 @@ export const Footer = () => (
 
         {navCols.map((col) => (
           <div key={col.label}>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/60">
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-white/60">
               {col.label}
             </p>
             <ul className="mt-5 space-y-3">
@@ -63,7 +63,7 @@ export const Footer = () => (
 
       <div className="mt-16 pt-8 border-t border-white/10">
         <p className="text-xs text-white/60">
-          © 2026 Partner Duurzame Innovatie. Alle rechten voorbehouden.
+          © 2026 Voortraject. Alle rechten voorbehouden.
         </p>
       </div>
     </div>

@@ -6,8 +6,6 @@ import {
   ArrowRightCircle,
   type LucideIcon,
 } from "lucide-react";
-import { SectionHeader } from "../SectionHeader";
-import { Card } from "../Card";
 
 const items: { icon: LucideIcon; title: string }[] = [
   { icon: MessageCircle, title: "Bewonerscontact en communicatie" },
@@ -18,21 +16,31 @@ const items: { icon: LucideIcon; title: string }[] = [
 ];
 
 export const Problems = () => (
-  <section className="bg-white section-pad">
+  <section className="bg-background section-pad border-t border-border">
     <div className="container-content">
-      <SectionHeader
-        title="Het voortraject waar uitvoerders op vastlopen"
-        intro="Veel uitvoerders willen groeien, maar verliezen tijd aan bewonersvragen, regelinguitleg, offerte-opmaak en opvolging. Wij nemen dat stuk uit handen en zorgen voor rust, structuur en een professioneler traject — van het eerste bewonerscontact tot het akkoord."
-      />
+      <div className="max-w-[720px]">
+        <h2 className="h2-section text-foreground">
+          Het voortraject waar uitvoerders op vastlopen
+        </h2>
+        <p className="mt-6 body-lg text-muted-foreground">
+          Veel uitvoerders willen groeien, maar verliezen tijd aan bewonersvragen,
+          regelinguitleg, offerte-opmaak en opvolging. Wij nemen dat stuk uit handen
+          en zorgen voor rust, structuur en een professioneler traject. Van het
+          eerste bewonerscontact tot het akkoord.
+        </p>
+      </div>
 
-      <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+      <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 lg:divide-x lg:divide-border">
         {items.map(({ icon: Icon, title }) => (
-          <Card key={title} className="p-7 flex flex-col items-start">
-            <Icon size={32} className="text-primary" strokeWidth={1.6} aria-hidden="true" />
-            <h3 className="mt-6 text-[18px] font-semibold leading-snug text-foreground">
+          <div
+            key={title}
+            className="flex flex-col items-start py-6 lg:py-2 lg:px-8 first:lg:pl-0 last:lg:pr-0"
+          >
+            <Icon size={28} className="text-primary" strokeWidth={1.6} aria-hidden="true" />
+            <h3 className="mt-6 font-display font-semibold text-[18px] tracking-[-0.02em] leading-snug text-foreground">
               {title}
             </h3>
-          </Card>
+          </div>
         ))}
       </div>
     </div>

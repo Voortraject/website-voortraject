@@ -1,5 +1,3 @@
-import { SectionHeader } from "../SectionHeader";
-
 const cols = [
   {
     id: "voor-uitvoerders",
@@ -22,22 +20,20 @@ const cols = [
 export const Audiences = () => (
   <section className="bg-secondary section-pad">
     <div className="container-content">
-      <SectionHeader title="Twee ingangen, één aanpak" />
+      <div className="max-w-[720px]">
+        <h2 className="h2-section text-foreground">Twee ingangen, één aanpak</h2>
+      </div>
 
-      <div className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+      <div className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-12">
         {cols.map((c) => (
           <article
             key={c.id}
             id={c.id}
-            className="bg-white rounded-lg border border-border p-10 md:p-12 flex flex-col"
+            className="bg-white rounded-xl shadow-card p-10 md:p-12 flex flex-col"
           >
-            <span className="eyebrow">{c.eyebrow}</span>
-            <h3 className="mt-5 text-2xl md:text-[28px] font-semibold leading-snug tracking-tight text-foreground">
-              {c.title}
-            </h3>
-            <p className="mt-5 text-[17px] leading-relaxed text-muted-foreground">
-              {c.body}
-            </p>
+            <span className="label-eyebrow">{c.eyebrow}</span>
+            <h3 className="h3-block mt-5 text-foreground">{c.title}</h3>
+            <p className="mt-5 body-lg text-muted-foreground">{c.body}</p>
             <a
               href={c.href}
               className="mt-8 inline-flex items-center gap-1.5 text-[15px] font-medium text-primary hover:underline underline-offset-4"

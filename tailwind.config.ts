@@ -13,7 +13,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+        display: ['"Inter Tight"', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -62,9 +62,10 @@ export default {
         },
       },
       borderRadius: {
-        lg: "1rem",                                  /* 16px cards */
-        md: "var(--radius)",                         /* 12px buttons */
-        sm: "calc(var(--radius) - 4px)",
+        xl: "1.25rem",                              /* 20px cards */
+        lg: "1rem",                                 /* 16px */
+        md: "var(--radius)",                        /* 8px buttons */
+        sm: "calc(var(--radius) - 2px)",
       },
       boxShadow: {
         subtle: "0 1px 3px rgba(0,0,0,0.05)",

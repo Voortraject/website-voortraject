@@ -1,5 +1,3 @@
-import { Check } from "lucide-react";
-
 const points = [
   {
     title: "Minder druk op de ondernemer",
@@ -24,27 +22,36 @@ const points = [
 ];
 
 export const Why = () => (
-  <section className="bg-background section-pad">
+  <section className="bg-background section-pad border-t border-border">
     <div className="container-content">
-      <div className="grid lg:grid-cols-12 gap-12">
-        <div className="lg:col-span-5">
-          <h2 className="font-sans font-semibold text-3xl md:text-[40px] leading-tight tracking-tight text-center lg:text-left">
-            Waarom uitvoerders voor ons kiezen
-          </h2>
+      <div className="grid lg:grid-cols-5 gap-12 lg:gap-20">
+        <div className="lg:col-span-2">
+          <div className="lg:sticky lg:top-32">
+            <h2 className="h2-section text-foreground">
+              Waarom uitvoerders voor ons kiezen
+            </h2>
+            <p className="mt-6 body-lg text-muted-foreground max-w-md">
+              Vijf redenen waarom uitvoerders kiezen voor structurele samenwerking.
+            </p>
+          </div>
         </div>
-        <ul className="lg:col-span-7 space-y-7">
-          {points.map((p) => (
-            <li key={p.title} className="flex gap-4">
-              <span className="mt-1 shrink-0 inline-flex items-center justify-center h-6 w-6 rounded-full bg-accent/15">
-                <Check size={14} className="text-accent" strokeWidth={3} aria-hidden="true" />
+        <ol className="lg:col-span-3 space-y-10">
+          {points.map((p, i) => (
+            <li key={p.title} className="grid grid-cols-[auto_1fr] gap-6">
+              <span className="font-display font-light text-[40px] leading-none text-accent tabular-nums">
+                {String(i + 1).padStart(2, "0")}
               </span>
-              <p className="text-[17px] leading-relaxed">
-                <span className="font-semibold text-foreground">{p.title}</span>
-                <span className="text-muted-foreground"> — {p.body}</span>
-              </p>
+              <div>
+                <h3 className="font-display font-semibold text-[20px] tracking-[-0.02em] text-foreground">
+                  {p.title}
+                </h3>
+                <p className="mt-2 text-[17px] leading-relaxed text-muted-foreground">
+                  {p.body}
+                </p>
+              </div>
             </li>
           ))}
-        </ul>
+        </ol>
       </div>
     </div>
   </section>
