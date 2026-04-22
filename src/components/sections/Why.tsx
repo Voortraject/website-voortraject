@@ -32,23 +32,28 @@ export const Why = () => (
             </h2>
           </div>
         </div>
-        <ol className="lg:col-span-3 space-y-10">
-          {points.map((p, i) => (
-            <li key={p.title} className="grid grid-cols-[auto_1fr] gap-6">
-              <span className="font-display font-light text-[40px] leading-none text-accent tabular-nums">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <div>
-                <h3 className="font-display font-semibold text-[20px] tracking-[-0.02em] text-foreground">
+        <div className="lg:col-span-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-10">
+            {points.map((p, i) => (
+              <div
+                key={p.title}
+                className={i === points.length - 1 ? "sm:col-span-2" : ""}
+              >
+                <div
+                  className="font-display font-light text-[48px] leading-none tabular-nums text-accent"
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <h3 className="mt-2 font-display font-semibold text-[18px] tracking-[-0.02em] text-primary">
                   {p.title}
                 </h3>
-                <p className="mt-2 text-[17px] leading-relaxed text-muted-foreground">
+                <p className="mt-2 text-[15px] leading-[1.5] text-muted-foreground">
                   {p.body}
                 </p>
               </div>
-            </li>
-          ))}
-        </ol>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   </section>

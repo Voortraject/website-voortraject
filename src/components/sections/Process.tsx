@@ -13,15 +13,43 @@ const handover = {
   body: "De uitvoerder plant in en voert het werk uit, met een compleet dossier als vertrekpunt.",
 };
 
-const StepRow = ({ n, title, body, muted }: { n: string; title: string; body: string; muted?: boolean }) => (
-  <li className="grid grid-cols-[auto_1fr] gap-8">
-    <span
-      className="font-display font-light text-[40px] leading-none tabular-nums"
-      style={{ color: muted ? "#8B8680" : "hsl(var(--accent))" }}
-    >
-      {n}
-    </span>
-    <div>
+const CIRCLE = 56;
+
+const StepRow = ({
+  n,
+  title,
+  body,
+  muted,
+  isFirst,
+  isLast,
+}: {
+  n: string;
+  title: string;
+  body: string;
+  muted?: boolean;
+  isFirst?: boolean;
+  isLast?: boolean;
+}) => (
+  <li className="relative grid grid-cols-[56px_1fr] gap-6 items-start">
+    {/* Circle with number sits on top of the vertical line */}
+    <div className="relative" style={{ width: CIRCLE, height: CIRCLE }}>
+      <div
+        className="relative z-10 flex items-center justify-center rounded-full bg-background"
+        style={{
+          width: CIRCLE,
+          height: CIRCLE,
+          border: `2px solid ${muted ? "#E5E2DB" : "hsl(var(--accent))"}`,
+        }}
+      >
+        <span
+          className="font-display font-semibold text-[20px] tabular-nums"
+          style={{ color: muted ? "#8B8680" : "hsl(var(--accent))" }}
+        >
+          {n}
+        </span>
+      </div>
+    </div>
+    <div className="pt-3">
       <h3
         className="font-display font-semibold text-[20px] tracking-[-0.02em]"
         style={{ color: muted ? "hsl(var(--muted-foreground))" : "hsl(var(--primary))" }}
@@ -59,32 +87,56 @@ export const Process = () => (
           </div>
         </div>
 
-        {/* Right column: step list */}
-        <div>
-          <ol className="space-y-10">
-            {ourSteps.map((s) => (
-              <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
+        {/* Right column: step list with connecting line */}
+        <div className="relative">
+          {/* Vertical connecting line — oker through steps 1-4 */}
+          <div
+            aria-hidden="true"
+            className="absolute left-[27px] w-[2px] bg-accent"
+            style={{ top: CIRCLE / 2, bottom: 0 }}
+          />
+
+          <ol className="relative space-y-12">
+            {ourSteps.map((s, i) => (
+              <StepRow
+                key={s.n}
+                n={s.n}
+                title={s.title}
+                body={s.body}
+                isFirst={i === 0}
+                isLast={i === ourSteps.length - 1}
+              />
             ))}
           </ol>
 
-          {/* Wij stoppen hier divider */}
-          <div className="mt-10">
-            <p
-              className="font-sans font-medium uppercase text-[11px]"
-              style={{ letterSpacing: "0.1em", color: "hsl(var(--accent))" }}
-            >
-              WIJ STOPPEN HIER
-            </p>
-            <div
-              className="mt-2"
-              style={{ width: "64px", height: "1px", background: "hsl(var(--accent))" }}
-              aria-hidden="true"
-            />
+          {/* WIJ STOPPEN HIER divider */}
+          <div className="relative py-8 pl-[80px]">
+            <div className="flex items-center gap-4">
+              <p
+                className="font-sans font-semibold uppercase text-[12px] whitespace-nowrap"
+                style={{ letterSpacing: "0.15em", color: "hsl(var(--accent))" }}
+              >
+                WIJ STOPPEN HIER
+              </p>
+              <div
+                className="flex-1"
+                style={{ height: "2px", background: "hsl(var(--accent))" }}
+                aria-hidden="true"
+              />
+            </div>
           </div>
 
-          <ol className="mt-6 space-y-10">
-            <StepRow n={handover.n} title={handover.title} body={handover.body} muted />
-          </ol>
+          {/* Step 5 with grey connecting line above */}
+          <div className="relative">
+            <div
+              aria-hidden="true"
+              className="absolute left-[27px] w-[2px]"
+              style={{ top: 0, height: CIRCLE / 2, background: "#E5E2DB" }}
+            />
+            <ol>
+              <StepRow n={handover.n} title={handover.title} body={handover.body} muted />
+            </ol>
+          </div>
         </div>
       </div>
     </div>
