@@ -107,7 +107,7 @@
   }
 
   .section-pad {
-    @apply py-[80px] md:py-[140px];
+    @apply py-[72px] md:py-[120px];
   }
 
   .h1-hero {
@@ -124,12 +124,13 @@
   .h2-section {
     font-family: 'Inter Tight', 'Inter', sans-serif;
     font-weight: 600;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    font-size: 36px;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    font-size: 32px;
+    color: hsl(var(--primary));
   }
   @media (min-width: 768px) {
-    .h2-section { font-size: 56px; }
+    .h2-section { font-size: 48px; }
   }
 
   .h3-block {
