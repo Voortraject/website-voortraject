@@ -12,6 +12,7 @@ const links = [
 
 export const Header = () => {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -20,20 +21,40 @@ export const Header = () => {
     };
   }, [open]);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 bg-background/85 backdrop-blur-md border-b border-border">
+    <header
+      className={
+        "sticky top-0 z-50 transition-all duration-200 " +
+        (scrolled
+          ? "bg-white/85 backdrop-blur-md border-b border-border"
+          : "bg-white border-b border-transparent")
+      }
+    >
       <div className="container-content flex items-center justify-between h-[72px]">
-        <a href="/" className="font-sans font-semibold text-primary text-[17px] tracking-tight">
-          Partner Duurzame Innovatie
+        <a
+          href="/"
+          className="font-display font-semibold text-primary text-[20px] tracking-tight"
+        >
+          Voortraject
         </a>
 
         <nav className="hidden lg:flex items-center gap-9" aria-label="Hoofdnavigatie">
           {links.map((l) => (
             <NavLink key={l.href} href={l.href}>{l.label}</NavLink>
           ))}
-          <Button href="/contact" variant="primary" className="px-6 py-2.5 text-[15px]">
+          <a
+            href="/contact"
+            className="inline-flex items-center justify-center rounded-full bg-accent text-accent-foreground hover:bg-accent-hover transition-all duration-150 ease-out hover:scale-[1.02] px-5 py-2.5 text-[15px] font-medium"
+          >
             Contact
-          </Button>
+          </a>
         </nav>
 
         <button
@@ -46,12 +67,11 @@ export const Header = () => {
         </button>
       </div>
 
-      {/* Mobile fullscreen overlay */}
       {open && (
         <div className="fixed inset-0 z-50 bg-background lg:hidden flex flex-col animate-fade-up">
           <div className="container-content flex items-center justify-between h-[72px] border-b border-border">
-            <span className="font-sans font-semibold text-primary text-[17px]">
-              Partner Duurzame Innovatie
+            <span className="font-display font-semibold text-primary text-[20px]">
+              Voortraject
             </span>
             <button
               className="p-2 -mr-2 text-primary"
@@ -67,7 +87,7 @@ export const Header = () => {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="py-4 text-2xl heading-serif text-foreground border-b border-border"
+                className="py-4 text-2xl font-display font-semibold tracking-tight text-foreground border-b border-border"
               >
                 {l.label}
               </a>
