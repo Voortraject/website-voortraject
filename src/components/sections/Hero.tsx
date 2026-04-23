@@ -12,7 +12,7 @@ const content: Record<Audience, {
   uitvoerders: {
     h1: (
       <>
-        Extra <span style={{ color: "hsl(var(--accent))" }}>slagkracht</span> voor groeiende verduurzamingsbedrijven
+        Extra <span style={{ color: "hsl(var(--accent))" }}>slagkracht</span> voor verduurzamingsbedrijven
       </>
     ),
     intro: "Wij ondersteunen uitvoerders met",
@@ -96,7 +96,7 @@ export const Hero = () => {
   return (
     <section className="bg-background pt-16 pb-24 md:pt-24 md:pb-32" aria-labelledby="hero-title">
       <div className="container-content">
-        <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-[5%]">
+        <div className="flex flex-col lg:flex-row lg:items-start gap-8 lg:gap-[5%]">
           <div className="lg:basis-[58%] lg:shrink-0 min-w-0 text-left">
             <div key={audience} className="animate-fade-up">
               <h1

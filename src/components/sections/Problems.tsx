@@ -44,8 +44,8 @@ export const Problems = () => {
       className="bg-background section-pad border-t border-border"
     >
       <div className="container-content">
-        <div className="max-w-[900px]">
-          <h2 className="h2-section">
+        <div className="max-w-full">
+          <h2 className="h2-section md:!text-[40px] lg:whitespace-nowrap">
             Het voortraject waar uitvoerders op{" "}
             <span style={{ color: "hsl(var(--accent))" }}>vastlopen</span>
           </h2>
@@ -77,7 +77,7 @@ export const Problems = () => {
                   aria-hidden="true"
                 />
               </div>
-              <h3 className="mt-6 font-display font-semibold text-[18px] tracking-[-0.02em] leading-snug text-foreground transition-all duration-200 group-hover:[text-decoration:underline] group-hover:[text-decoration-color:hsl(var(--accent))] group-hover:[text-decoration-thickness:2px] group-hover:[text-underline-offset:4px]">
+              <h3 className="mt-6 font-display font-semibold text-[18px] tracking-[-0.02em] leading-snug text-foreground">
                 {title}
               </h3>
             </div>
