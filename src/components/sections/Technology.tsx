@@ -88,13 +88,13 @@ const Dashboard = () => {
   return (
     <div
       ref={ref}
-      className="w-full max-w-[480px] rounded-[16px]"
+      className="w-full max-w-[560px] rounded-[16px]"
       style={{
         backgroundColor: "#FFFFFF",
         border: "1px solid #E5E2DB",
         boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
-        padding: 28,
-        minHeight: 420,
+        padding: 32,
+        minHeight: 460,
       }}
     >
       {/* Header (always visible) */}
