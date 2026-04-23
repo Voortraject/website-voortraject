@@ -11,7 +11,6 @@ const links = [
 
 export const Header = () => {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -20,21 +19,15 @@ export const Header = () => {
     };
   }, [open]);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
     <header
-      className={
-        "sticky top-0 z-50 transition-all duration-200 border-b " +
-        (scrolled
-          ? "bg-white/85 backdrop-blur-md border-border"
-          : "bg-white border-border")
-      }
+      className="sticky top-0 z-50"
+      style={{
+        backgroundColor: "rgba(255, 255, 255, 0.6)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        borderBottom: "1px solid rgba(229, 226, 219, 0.5)",
+      }}
     >
       <div className="container-content flex items-center justify-between h-[72px] gap-6">
         <a

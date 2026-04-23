@@ -1,141 +1,165 @@
-import { useEffect, useRef, useState } from "react";
+import { Check } from "lucide-react";
 
-const lines = [
-  "> Intake ontvangen",
-  "> Bewoner geverifieerd",
-  "> Subsidies gecheckt",
-  "> Offerte gegenereerd",
-  "> Akkoord ontvangen",
-  "> Dossier klaar voor overdracht",
+type StepStatus = "done" | "active" | "pending";
+
+const steps: {
+  status: StepStatus;
+  title: string;
+  sub: string;
+  time: string;
+}[] = [
+  { status: "done", title: "Intake voltooid", sub: "Bewoner · Groningen", time: "2 min geleden" },
+  { status: "done", title: "Subsidies gecontroleerd", sub: "ISDE + SPUK gematched", time: "Net nu" },
+  { status: "active", title: "Offerte wordt opgesteld", sub: "Automatische opmaak", time: "Bezig..." },
+  { status: "pending", title: "Akkoord van bewoner", sub: "Klaar voor verzending", time: "—" },
 ];
 
-const TYPE_MS = 40;
-const AFTER_LINE_PAUSE = 400;
-const CHECK_FADE_MS = 200;
-const FULL_HOLD_MS = 2000;
-const CLEAR_MS = 300;
-
-type LineState = { text: string; typed: boolean };
-
-const Terminal = () => {
-  const [states, setStates] = useState<LineState[]>(
-    lines.map(() => ({ text: "", typed: false }))
-  );
-  const [activeLine, setActiveLine] = useState(0);
-  const [clearing, setClearing] = useState(false);
-  const cycleRef = useRef(0);
-
-  useEffect(() => {
-    let cancelled = false;
-    let timeouts: ReturnType<typeof setTimeout>[] = [];
-
-    const wait = (ms: number) =>
-      new Promise<void>((resolve) => {
-        const t = setTimeout(resolve, ms);
-        timeouts.push(t);
-      });
-
-    const run = async () => {
-      while (!cancelled) {
-        // reset
-        setClearing(false);
-        setStates(lines.map(() => ({ text: "", typed: false })));
-        await wait(50);
-
-        for (let i = 0; i < lines.length; i++) {
-          if (cancelled) return;
-          setActiveLine(i);
-          const full = lines[i];
-          for (let c = 1; c <= full.length; c++) {
-            if (cancelled) return;
-            setStates((s) => {
-              const next = [...s];
-              next[i] = { ...next[i], text: full.slice(0, c) };
-              return next;
-            });
-            await wait(TYPE_MS);
-          }
-          setStates((s) => {
-            const next = [...s];
-            next[i] = { text: full, typed: true };
-            return next;
-          });
-          await wait(CHECK_FADE_MS);
-          await wait(AFTER_LINE_PAUSE);
-        }
-        setActiveLine(-1);
-        await wait(FULL_HOLD_MS);
-        setClearing(true);
-        await wait(CLEAR_MS);
-        cycleRef.current++;
-      }
-    };
-
-    run();
-    return () => {
-      cancelled = true;
-      timeouts.forEach(clearTimeout);
-    };
-  }, []);
-
+const Indicator = ({ status }: { status: StepStatus }) => {
+  if (status === "done") {
+    return (
+      <div
+        className="flex items-center justify-center rounded-full shrink-0"
+        style={{ width: 16, height: 16, backgroundColor: "#E8B547" }}
+      >
+        <Check size={10} strokeWidth={3} color="#FFFFFF" />
+      </div>
+    );
+  }
+  if (status === "active") {
+    return (
+      <div className="relative shrink-0" style={{ width: 16, height: 16 }}>
+        <span
+          className="absolute inset-0 rounded-full animate-ping"
+          style={{ backgroundColor: "#E8B547", opacity: 0.5 }}
+        />
+        <span
+          className="absolute inset-0 rounded-full"
+          style={{ backgroundColor: "#E8B547" }}
+        />
+      </div>
+    );
+  }
   return (
     <div
-      className="rounded-[12px] p-6 w-full max-w-[480px]"
+      className="rounded-full shrink-0"
       style={{
-        backgroundColor: "#152C4E",
-        boxShadow: "0 8px 32px rgba(21,44,78,0.15)",
-        fontFamily: "'JetBrains Mono', Menlo, Monaco, Courier, monospace",
+        width: 16,
+        height: 16,
+        border: "1.5px solid #E5E2DB",
+        backgroundColor: "transparent",
       }}
-    >
-      <div className="flex items-center gap-2 mb-3">
-        <span className="block rounded-full" style={{ width: 10, height: 10, backgroundColor: "#E8B547" }} />
-        <span className="block rounded-full" style={{ width: 10, height: 10, backgroundColor: "#F0E4D0" }} />
-        <span className="block rounded-full" style={{ width: 10, height: 10, backgroundColor: "#8B8680" }} />
-      </div>
-      <div
-        style={{
-          fontSize: 14,
-          lineHeight: 1.8,
-          opacity: clearing ? 0 : 1,
-          transition: `opacity ${CLEAR_MS}ms ease`,
-        }}
-      >
-        {states.map((ls, i) => {
-          const prefix = ls.text.startsWith(">") ? ">" : "";
-          const rest = ls.text.slice(prefix.length);
-          const isActive = i === activeLine && !ls.typed;
-          return (
-            <div key={i} className="flex items-center justify-between gap-3 min-h-[25px]">
-              <span className="whitespace-pre">
-                <span style={{ color: "#E8B547" }}>{prefix}</span>
-                <span style={{ color: "rgba(255,255,255,0.9)" }}>{rest}</span>
-                {isActive && (
-                  <span className="animate-blink" style={{ color: "rgba(255,255,255,0.9)" }}>
-                    ▊
-                  </span>
-                )}
-              </span>
-              <span
-                style={{
-                  color: "#9BBF9D",
-                  opacity: ls.typed ? 1 : 0,
-                  transition: `opacity ${CHECK_FADE_MS}ms ease`,
-                }}
-              >
-                ✓
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+    />
   );
 };
+
+const Dashboard = () => (
+  <div
+    className="w-full max-w-[480px] rounded-[16px]"
+    style={{
+      backgroundColor: "#FFFFFF",
+      border: "1px solid #E5E2DB",
+      boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
+      padding: 28,
+    }}
+  >
+    <div className="flex items-center justify-between">
+      <span
+        className="font-sans font-medium uppercase"
+        style={{ fontSize: 11, letterSpacing: "0.1em", color: "#6B6B6B" }}
+      >
+        LIVE PROCES
+      </span>
+      <span className="relative inline-block" style={{ width: 8, height: 8 }}>
+        <span
+          className="absolute inset-0 rounded-full animate-ping"
+          style={{ backgroundColor: "#E8B547", opacity: 0.6 }}
+        />
+        <span
+          className="absolute inset-0 rounded-full"
+          style={{ backgroundColor: "#E8B547" }}
+        />
+      </span>
+    </div>
+    <div className="mt-4" style={{ height: 1, backgroundColor: "#E5E2DB" }} />
+
+    <div className="relative mt-6">
+      {/* Connecting line */}
+      <div
+        aria-hidden="true"
+        className="absolute"
+        style={{
+          left: 7,
+          top: 8,
+          bottom: 8,
+          width: 2,
+          background:
+            "linear-gradient(to bottom, #E8B547 0%, #E8B547 66%, #E5E2DB 66%, #E5E2DB 100%)",
+        }}
+      />
+      <ul className="relative space-y-5">
+        {steps.map((s, i) => {
+          const isActive = s.status === "active";
+          const isPending = s.status === "pending";
+          return (
+            <li
+              key={i}
+              className="relative flex items-start gap-3"
+              style={
+                isActive
+                  ? {
+                      backgroundColor: "#FDF6E3",
+                      padding: "8px",
+                      borderRadius: 6,
+                      marginLeft: -8,
+                      marginRight: -8,
+                    }
+                  : undefined
+              }
+            >
+              <div className="pt-0.5">
+                <Indicator status={s.status} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div
+                  className="font-sans font-semibold"
+                  style={{
+                    fontSize: 14,
+                    color: "#152C4E",
+                    opacity: isPending ? 0.5 : 1,
+                  }}
+                >
+                  {s.title}
+                </div>
+                <div
+                  className="font-sans"
+                  style={{
+                    fontSize: 12,
+                    color: "#6B6B6B",
+                    opacity: isPending ? 0.5 : 1,
+                    marginTop: 2,
+                  }}
+                >
+                  {s.sub}
+                </div>
+              </div>
+              <div
+                className="font-sans shrink-0"
+                style={{ fontSize: 11, color: "#8B8680" }}
+              >
+                {s.time}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </div>
+);
 
 export const Technology = () => (
   <section className="bg-background section-pad border-t border-border" aria-labelledby="tech-title">
     <div className="container-content">
-      <div className="grid grid-cols-1 md:grid-cols-[55fr_45fr] gap-10 lg:gap-16 items-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-center">
         <div>
           <h2 id="tech-title" className="h2-section">
             Menselijke begeleiding, ondersteund door slimme automatisering
@@ -147,7 +171,7 @@ export const Technology = () => (
           </p>
         </div>
         <div className="flex justify-center md:justify-end">
-          <Terminal />
+          <Dashboard />
         </div>
       </div>
     </div>

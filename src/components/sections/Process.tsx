@@ -21,15 +21,11 @@ const StepRow = ({
   title,
   body,
   muted,
-  visible,
-  delay = 0,
 }: {
   n: string;
   title: string;
   body: string;
   muted?: boolean;
-  visible: boolean;
-  delay?: number;
 }) => (
   <li className="relative grid grid-cols-[56px_1fr] gap-6 items-start">
     <div className="relative" style={{ width: CIRCLE, height: CIRCLE }}>
@@ -39,9 +35,6 @@ const StepRow = ({
           width: CIRCLE,
           height: CIRCLE,
           border: `2px solid ${muted ? "#E5E2DB" : "hsl(var(--accent))"}`,
-          opacity: visible ? 1 : 0,
-          transform: visible ? "scale(1)" : "scale(0.8)",
-          transition: `opacity 400ms ease-out ${delay}ms, transform 400ms ease-out ${delay}ms`,
         }}
       >
         <span
@@ -86,111 +79,104 @@ const Brace = () => (
 );
 
 export const Process = () => {
-  const ref = useRef<HTMLElement>(null);
-  const [visible, setVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const lineWrapRef = useRef<HTMLDivElement>(null);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            setVisible(true);
-            obs.disconnect();
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
+    const onScroll = () => {
+      const el = sectionRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // start when section top hits ~80% of viewport, end when bottom hits ~20%
+      const start = vh * 0.8;
+      const end = vh * 0.2;
+      const total = (rect.height) + (start - end);
+      const traveled = start - rect.top;
+      const p = Math.max(0, Math.min(1, traveled / total));
+      setProgress(p);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
-  // Timing
-  const circleDelays = [0, 150, 300, 450];
-  const lastCircleDone = 450 + 400; // 850
-  const braceDelay = lastCircleDone + 200; // 1050
-  const step5Delay = braceDelay + 400 + 400; // ~1850
-
   return (
-    <section ref={ref} className="bg-background section-pad border-t border-border">
+    <section ref={sectionRef} className="bg-background section-pad border-t border-border">
       <div className="container-content">
+        <div className="mb-12">
+          <h2 className="h2-section lg:!text-[44px] lg:whitespace-nowrap">Van eerste contact tot akkoord</h2>
+          <p className="mt-6 body-lg text-muted-foreground max-w-[640px]">
+            Wij nemen het volledige voortraject over. Jullie focussen op de uitvoering.
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
           <div>
-            <h2 className="h2-section">Van eerste contact tot akkoord</h2>
-            <p className="mt-6 body-lg text-muted-foreground max-w-[480px]">
-              Wij nemen het volledige voortraject over. Jullie focussen op de uitvoering.
-            </p>
-            <div className="mt-8">
-              <img
-                src={processPhoto}
-                alt="Twee collega's overleggen aan een bureau, een met headset"
-                loading="lazy"
-                className="w-full rounded-2xl object-cover"
-                style={{
-                  height: "520px",
-                  boxShadow: "0 4px 20px rgba(21,44,78,0.08)",
-                }}
-              />
-            </div>
+            <img
+              src={processPhoto}
+              alt="Twee collega's overleggen aan een bureau, een met headset"
+              loading="lazy"
+              className="w-full rounded-2xl object-cover"
+              style={{
+                height: "520px",
+                boxShadow: "0 4px 20px rgba(21,44,78,0.08)",
+              }}
+            />
           </div>
 
-          <div className="relative">
-            <div className="relative pr-[120px]">
-              {/* Vertical line, grows from top to bottom */}
+          <div className="relative" ref={lineWrapRef}>
+            <div className="relative pr-[140px]">
+              {/* Background grey track for the full line */}
               <div
                 aria-hidden="true"
-                className="absolute left-[27px] w-[2px] bg-accent origin-top"
+                className="absolute left-[27px] w-[2px]"
                 style={{
                   top: CIRCLE / 2,
                   bottom: CIRCLE / 2,
-                  transform: visible ? "scaleY(1)" : "scaleY(0)",
-                  transition: `transform ${lastCircleDone}ms ease-out`,
+                  background: "#E5E2DB",
+                }}
+              />
+              {/* Foreground progressive line, with gradient ocre→grey near step 5 */}
+              <div
+                aria-hidden="true"
+                className="absolute left-[27px] w-[2px] origin-top"
+                style={{
+                  top: CIRCLE / 2,
+                  bottom: CIRCLE / 2,
+                  background:
+                    "linear-gradient(to bottom, #E8B547 0%, #E8B547 72%, #E5E2DB 72%, #E5E2DB 100%)",
+                  transform: `scaleY(${progress})`,
+                  transition: "transform 80ms linear",
                 }}
               />
 
               <ol className="relative space-y-12">
-                {ourSteps.map((s, i) => (
-                  <StepRow
-                    key={s.n}
-                    n={s.n}
-                    title={s.title}
-                    body={s.body}
-                    visible={visible}
-                    delay={circleDelays[i]}
-                  />
+                {ourSteps.map((s) => (
+                  <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
                 ))}
               </ol>
 
-              {/* Brace + horizontal label */}
-              <div
-                className="absolute right-0 top-0 bottom-0 flex items-center gap-4"
-                style={{
-                  opacity: visible ? 1 : 0,
-                  transition: `opacity 400ms ease-out ${braceDelay}ms`,
-                }}
-              >
+              {/* Brace + horizontal label, static */}
+              <div className="absolute right-0 top-0 bottom-0 flex items-center gap-4">
                 <div className="h-full py-2">
                   <Brace />
                 </div>
                 <p
                   className="font-sans font-semibold text-[13px] leading-[1.3]"
-                  style={{ color: "hsl(var(--accent))", maxWidth: "100px" }}
+                  style={{ color: "hsl(var(--accent))", maxWidth: "110px" }}
                 >
                   Deze stappen<br />nemen wij over
                 </p>
               </div>
             </div>
 
-            <div
-              className="mt-12"
-              style={{
-                opacity: visible ? 1 : 0,
-                transform: visible ? "translateY(0)" : "translateY(16px)",
-                transition: `opacity 500ms ease-out ${step5Delay}ms, transform 500ms ease-out ${step5Delay}ms`,
-              }}
-            >
+            <div className="mt-12">
               <p
                 className="font-sans font-semibold uppercase text-[13px] mb-4 pl-[80px]"
                 style={{ letterSpacing: "0.1em", color: "#8B8680" }}
@@ -198,7 +184,7 @@ export const Process = () => {
                 De uitvoerder neemt het over
               </p>
               <ol>
-                <StepRow n={handover.n} title={handover.title} body={handover.body} muted visible={visible} delay={step5Delay} />
+                <StepRow n={handover.n} title={handover.title} body={handover.body} muted />
               </ol>
             </div>
           </div>
