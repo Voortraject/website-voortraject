@@ -89,12 +89,12 @@ export const Process = () => {
       if (!el) return;
       const rect = el.getBoundingClientRect();
       const vh = window.innerHeight;
-      // start when section top hits ~80% of viewport, end when bottom hits ~20%
-      const start = vh * 0.8;
-      const end = vh * 0.2;
-      const total = (rect.height) + (start - end);
-      const traveled = start - rect.top;
-      const p = Math.max(0, Math.min(1, traveled / total));
+      // Trigger: from when section top passes top of viewport, to when section bottom (~step 5) reaches mid viewport
+      const startY = 0; // section top at viewport top
+      const endY = vh * 0.5 - rect.height; // when bottom of section at mid viewport, rect.top equals this
+      const traveled = startY - rect.top;
+      const total = startY - endY;
+      const p = total > 0 ? Math.max(0, Math.min(1, traveled / total)) : 0;
       setProgress(p);
     };
     onScroll();
@@ -107,7 +107,7 @@ export const Process = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="bg-background section-pad border-t border-border">
+    <section ref={sectionRef} className="section-pad" style={{ backgroundColor: "#FBFAF7" }}>
       <div className="container-content">
         <div className="mb-12">
           <h2 className="h2-section lg:!text-[44px] lg:whitespace-nowrap">Van eerste contact tot akkoord</h2>
@@ -135,7 +135,7 @@ export const Process = () => {
               {/* Background grey track for the full line */}
               <div
                 aria-hidden="true"
-                className="absolute left-[27px] w-[2px]"
+                className="absolute left-[26px] w-[4px] rounded-[2px]"
                 style={{
                   top: CIRCLE / 2,
                   bottom: CIRCLE / 2,
@@ -145,7 +145,7 @@ export const Process = () => {
               {/* Foreground progressive line, with gradient ocre→grey near step 5 */}
               <div
                 aria-hidden="true"
-                className="absolute left-[27px] w-[2px] origin-top"
+                className="absolute left-[26px] w-[4px] origin-top rounded-[2px]"
                 style={{
                   top: CIRCLE / 2,
                   bottom: CIRCLE / 2,
@@ -168,8 +168,8 @@ export const Process = () => {
                   <Brace />
                 </div>
                 <p
-                  className="font-sans font-semibold text-[13px] leading-[1.3]"
-                  style={{ color: "hsl(var(--accent))", maxWidth: "110px" }}
+                  className="font-sans text-[14px] leading-[1.3]"
+                  style={{ color: "hsl(var(--accent))", maxWidth: "110px", fontWeight: 700 }}
                 >
                   Deze stappen<br />nemen wij over
                 </p>
@@ -177,12 +177,15 @@ export const Process = () => {
             </div>
 
             <div className="mt-12">
-              <p
-                className="font-sans font-semibold uppercase text-[13px] mb-4 pl-[80px]"
-                style={{ letterSpacing: "0.1em", color: "#8B8680" }}
-              >
-                De uitvoerder neemt het over
-              </p>
+              <div className="pl-[80px] mb-8">
+                <div style={{ width: 40, height: 2, backgroundColor: "#8B8680", marginBottom: 12 }} />
+                <p
+                  className="font-sans uppercase text-[14px]"
+                  style={{ letterSpacing: "0.1em", color: "#2B2B2B", fontWeight: 700 }}
+                >
+                  De uitvoerder neemt het over
+                </p>
+              </div>
               <ol>
                 <StepRow n={handover.n} title={handover.title} body={handover.body} muted />
               </ol>
