@@ -112,22 +112,19 @@ export const Process = () => {
   return (
     <section ref={sectionRef} className="section-pad" style={{ backgroundColor: "#FBFAF7" }}>
       <div className="container-content">
-        <div className="mb-12">
-          <h2 className="h2-section lg:!text-[44px] lg:whitespace-nowrap">Van eerste contact tot akkoord</h2>
-          <p className="mt-6 body-lg text-muted-foreground max-w-[640px]">
-            Wij nemen het volledige voortraject over. Jullie focussen op de uitvoering.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
           <div>
+            <h2 className="h2-section lg:!text-[44px] lg:whitespace-nowrap">Van eerste contact tot akkoord</h2>
+            <p className="mt-6 body-lg text-muted-foreground max-w-[640px]">
+              Wij nemen het volledige voortraject over. Jullie focussen op de uitvoering.
+            </p>
             <img
               src={processPhoto}
               alt="Twee collega's overleggen aan een bureau, een met headset"
               loading="lazy"
-              className="w-full rounded-2xl object-cover"
+              className="w-full rounded-2xl object-cover mt-10"
               style={{
-                height: "520px",
+                height: "440px",
                 boxShadow: "0 4px 20px rgba(21,44,78,0.08)",
               }}
             />
