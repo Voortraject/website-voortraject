@@ -39,9 +39,12 @@ export const Header = () => {
         </a>
 
         <nav className="hidden lg:flex items-center gap-8 shrink-0 ml-auto" aria-label="Hoofdnavigatie">
-          {links.map((l) => (
-            <NavLink key={l.href} href={l.href}>{l.label}</NavLink>
-          ))}
+          {links.map((l) => {
+            const active = typeof window !== "undefined" && window.location.pathname === l.href;
+            return (
+              <NavLink key={l.href} href={l.href} active={active}>{l.label}</NavLink>
+            );
+          })}
           <a
             href="/contact"
             className="inline-flex items-center justify-center rounded-full bg-accent text-accent-foreground hover:bg-accent-hover transition-all duration-150 ease-out hover:scale-[1.02] px-5 py-2.5 text-[15px] font-medium"
