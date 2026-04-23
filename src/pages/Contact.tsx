@@ -216,11 +216,52 @@ const Contact = () => {
                           </select>
                         </div>
                         <div className={fieldWrap}>
-                          <label className={labelClass}>Waar loopt het nu vast?{required}</label>
+                          <label className={labelClass}>Waar loopt het nu vast?</label>
+                          <div
+                            className="grid grid-cols-1 sm:grid-cols-2"
+                            style={{ gap: 10, marginTop: 4 }}
+                          >
+                            {[
+                              "Subsidies & regelingen",
+                              "Offertetraject",
+                              "Dossier & administratie",
+                              "Capaciteit / personeel",
+                              "Klantcommunicatie",
+                              "Anders",
+                            ].map((opt) => (
+                              <label
+                                key={opt}
+                                className="flex items-center font-sans"
+                                style={{
+                                  gap: 10,
+                                  padding: "10px 12px",
+                                  border: "1px solid #D4D2CC",
+                                  borderRadius: 8,
+                                  backgroundColor: "#FBFAF7",
+                                  fontSize: 14,
+                                  color: "#2B2B2B",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <input
+                                  type="checkbox"
+                                  name="vastlopers"
+                                  value={opt}
+                                  style={{ accentColor: "#E8B547" }}
+                                />
+                                {opt}
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                        <div className={fieldWrap}>
+                          <label className={labelClass}>
+                            Vragen of opmerkingen{optional}
+                          </label>
                           <textarea
-                            required
                             className={inputClass}
-                            style={{ minHeight: 120, resize: "vertical" }}
+                            placeholder="Stel hier je vraag of voeg toe wat je wil meegeven."
+                            style={{ minHeight: 100, resize: "vertical" }}
                           />
                         </div>
                       </>
