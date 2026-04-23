@@ -1,4 +1,5 @@
 import { useState, FormEvent } from "react";
+import { ChevronDown } from "lucide-react";
 import { CheckCircle, Mail, Phone, MapPin, Globe } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
