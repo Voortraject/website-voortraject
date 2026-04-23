@@ -28,7 +28,7 @@ const problems: { icon: LucideIcon; title: string; body: string }[] = [
 
 const services = [
   { title: "Bewonersbegeleiding", body: "Persoonlijk contact en communicatie met bewoners, van eerste vraag tot akkoord." },
-  { title: "Regeling- en subsidieuitleg", body: "We maken ISDE, SPUK en andere regelingen begrijpelijk en zorgen dat het klopt." },
+  { title: "Regeling- en subsidieuitleg", body: "We maken landelijke subsidies en gemeentelijke regelingen begrijpelijk en zorgen dat alle voorwaarden kloppen." },
   { title: "Offertevoorbereiding", body: "Gestructureerde offertes, klaar om te versturen zonder nalooptijd." },
   { title: "Opdrachtbevestiging en akkoord", body: "Wij halen het akkoord op en zorgen dat alle handtekeningen binnen zijn." },
   { title: "Dossieropbouw", body: "Compleet en gecontroleerd dossier, klaar voor overdracht aan jullie team." },
