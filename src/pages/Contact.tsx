@@ -43,6 +43,7 @@ const contactRows = [
 const Contact = () => {
   const [mode, setMode] = useState<Mode>("uitvoerder");
   const [submitted, setSubmitted] = useState(false);
+  const [vastlopersOpen, setVastlopersOpen] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
