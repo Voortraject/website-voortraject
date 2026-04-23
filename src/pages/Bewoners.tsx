@@ -44,7 +44,7 @@ const Bewoners = () => {
       <main className="flex-1">
         {/* HERO */}
         <section
-          className="pt-8 md:pt-12 pb-[72px] md:pb-[120px]"
+          className="pt-8 md:pt-12 pb-[56px] md:pb-[80px]"
           style={{ backgroundColor: "#FBFAF7" }}
           aria-labelledby="bew-hero-title"
         >
@@ -101,7 +101,7 @@ const Bewoners = () => {
         </section>
 
         {/* TYPISCHE VRAGEN */}
-        <section className="py-[72px] md:py-[120px]" style={{ backgroundColor: "#F5F2EC" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
             <h2 className="h2-section" style={{ color: "#152C4E" }}>
               De <span style={{ color: "hsl(var(--accent))" }}>vragen</span> waar wij mee beginnen
@@ -112,50 +112,54 @@ const Bewoners = () => {
             >
               Verduurzamen roept veel op. Deze vragen herkennen we van bijna elke bewoner.
             </p>
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
-              {questions.map((q, i) => {
-                const isBottomRow = i >= 3;
-                const colSpan = isBottomRow ? "lg:col-span-3" : "lg:col-span-2";
-                return (
-                  <article
-                    key={q}
-                    className={`bg-white transition-all duration-200 ease-out hover:-translate-y-0.5 ${colSpan}`}
-                    style={{
-                      borderRadius: 16,
-                      padding: 40,
-                      border: "1px solid #E5E2DB",
-                      boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.boxShadow = "0 8px 32px rgba(21,44,78,0.10)";
-                      e.currentTarget.style.borderColor = "#E8B547";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.boxShadow = "0 4px 24px rgba(21,44,78,0.04)";
-                      e.currentTarget.style.borderColor = "#E5E2DB";
-                    }}
-                  >
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {questions.map((q) => (
+                <article
+                  key={q}
+                  className="bg-white transition-all duration-200 ease-out hover:-translate-y-0.5"
+                  style={{
+                    borderRadius: 16,
+                    padding: 20,
+                    border: "1px solid #E5E2DB",
+                    boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = "0 8px 32px rgba(21,44,78,0.10)";
+                    e.currentTarget.style.borderColor = "#E8B547";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = "0 4px 24px rgba(21,44,78,0.04)";
+                    e.currentTarget.style.borderColor = "#E5E2DB";
+                  }}
+                >
+                  <div className="flex items-center md:p-1" style={{ gap: 20 }}>
                     <div
-                      className="flex items-center justify-center rounded-full"
-                      style={{ width: 56, height: 56, backgroundColor: "#F0E4D0" }}
+                      className="flex items-center justify-center rounded-full shrink-0"
+                      style={{ width: 48, height: 48, backgroundColor: "#F0E4D0" }}
                     >
-                      <HelpCircle size={24} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
+                      <HelpCircle size={22} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
                     </div>
                     <h3
-                      className="font-display font-semibold mt-6"
-                      style={{ fontSize: 22, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3 }}
+                      className="font-display font-semibold"
+                      style={{
+                        fontSize: 20,
+                        color: "#152C4E",
+                        letterSpacing: "-0.01em",
+                        lineHeight: 1.3,
+                        margin: 0,
+                      }}
                     >
                       {q}
                     </h3>
-                  </article>
-                );
-              })}
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </section>
 
         {/* WAT WIJ VOOR JE DOEN */}
-        <section className="py-[72px] md:py-[120px]" style={{ backgroundColor: "#FBFAF7" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
           <div className="container-content">
             <h2 className="h2-section" style={{ color: "#152C4E" }}>
               Wat <span style={{ color: "hsl(var(--accent))" }}>wij</span> voor je doen
@@ -213,11 +217,9 @@ const Bewoners = () => {
 
         {/* SLUIT-CTA */}
         <section
-          className="text-primary-foreground"
+          className="text-primary-foreground py-[56px] md:py-[80px]"
           style={{
             backgroundColor: "#152C4E",
-            paddingTop: 96,
-            paddingBottom: 96,
           }}
         >
           <div className="container-content text-center flex flex-col items-center">
