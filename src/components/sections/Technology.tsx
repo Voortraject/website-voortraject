@@ -175,8 +175,7 @@ const Dashboard = () => {
 
 export const Technology = () => (
   <section
-    className="py-14 md:py-20"
-    style={{ backgroundColor: "#FBFAF7" }}
+    style={{ backgroundColor: "#FBFAF7", paddingTop: 64, paddingBottom: 64 }}
     aria-labelledby="tech-title"
   >
     <div className="container-content">

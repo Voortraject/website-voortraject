@@ -80,23 +80,20 @@ const Brace = () => (
 
 export const Process = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const lineWrapRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const onScroll = () => {
-      const el = sectionRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
+      const title = titleRef.current;
+      if (!title) return;
+      const titleRect = title.getBoundingClientRect();
       const vh = window.innerHeight;
-      // Start: very early — when section is just 5% into view (top still slightly below viewport top)
-      // End: when circle 3 (middle of flowchart) reaches middle of viewport.
-      // Circle 3 sits roughly at ~50% of the section height (3rd of 5 steps + handover).
-      const circle3Offset = rect.height * 0.5;
-      const startTop = vh * 0.05; // section just entering
-      const endTop = vh / 2 - circle3Offset;
-      const traveled = startTop - rect.top;
-      const total = startTop - endTop;
+      // Once the title reaches the top of the viewport, line starts.
+      // After scrolling half a viewport further, it's complete.
+      const traveled = -titleRect.top; // positive once title passes top
+      const total = vh * 0.5;
       const p = total > 0 ? Math.max(0, Math.min(1, traveled / total)) : 0;
       setProgress(p);
     };
@@ -114,7 +111,7 @@ export const Process = () => {
       <div className="container-content">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
           <div>
-            <h2 className="h2-section lg:!text-[44px] lg:whitespace-nowrap">Van eerste contact tot akkoord</h2>
+            <h2 ref={titleRef} className="h2-section lg:!text-[44px] lg:whitespace-nowrap">Van eerste contact tot akkoord</h2>
             <p className="mt-6 body-lg text-muted-foreground max-w-[640px]">
               Wij nemen het volledige voortraject over. Jullie focussen op de uitvoering.
             </p>
