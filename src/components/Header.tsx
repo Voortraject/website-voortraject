@@ -4,7 +4,7 @@ import { NavLink } from "./NavLink";
 import { Button } from "./Button";
 
 const links = [
-  { href: "/", label: "Voor uitvoerders" },
+  { href: "/uitvoerders", label: "Voor uitvoerders" },
   { href: "/bewoners", label: "Voor bewoners" },
   { href: "/maatregelen", label: "Maatregelen" },
   { href: "/over-ons", label: "Over ons" },
