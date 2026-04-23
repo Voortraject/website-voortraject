@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../Button";
 import { useAudience, Audience } from "@/contexts/AudienceContext";
 import heroHouses from "@/assets/hero-houses.jpg";
@@ -31,42 +31,60 @@ const content: Record<Audience, {
   },
 };
 
-const RotatingWord = ({ words }: { words: string[] }) => {
-  const [index, setIndex] = useState(0);
-  const [visible, setVisible] = useState(true);
+const TYPE_MS = 80;
+const ERASE_MS = 50;
+const HOLD_MS = 1500;
+const EMPTY_MS = 200;
+
+const TypewriterWord = ({ words }: { words: string[] }) => {
+  const [wordIndex, setWordIndex] = useState(0);
+  const [text, setText] = useState("");
+  const phaseRef = useRef<"typing" | "holding" | "erasing" | "empty">("typing");
   const longest = words.reduce((a, b) => (a.length >= b.length ? a : b), "");
 
   useEffect(() => {
-    const visibleMs = 2500;
-    const fadeMs = 200;
-    const tFadeOut = setTimeout(() => setVisible(false), visibleMs);
-    const tSwap = setTimeout(() => {
-      setIndex((i) => (i + 1) % words.length);
-      setVisible(true);
-    }, visibleMs + fadeMs);
-    return () => {
-      clearTimeout(tFadeOut);
-      clearTimeout(tSwap);
-    };
-  }, [index, words]);
+    let timer: ReturnType<typeof setTimeout>;
+    const word = words[wordIndex];
+    const phase = phaseRef.current;
+
+    if (phase === "typing") {
+      if (text.length < word.length) {
+        timer = setTimeout(() => setText(word.slice(0, text.length + 1)), TYPE_MS);
+      } else {
+        phaseRef.current = "holding";
+        timer = setTimeout(() => {
+          phaseRef.current = "erasing";
+          setText((t) => t.slice(0, -1));
+        }, HOLD_MS);
+      }
+    } else if (phase === "erasing") {
+      if (text.length > 0) {
+        timer = setTimeout(() => setText((t) => t.slice(0, -1)), ERASE_MS);
+      } else {
+        phaseRef.current = "empty";
+        timer = setTimeout(() => {
+          phaseRef.current = "typing";
+          setWordIndex((i) => (i + 1) % words.length);
+        }, EMPTY_MS);
+      }
+    }
+    return () => clearTimeout(timer);
+  }, [text, wordIndex, words]);
+
+  const isActive = phaseRef.current === "typing" || phaseRef.current === "erasing";
 
   return (
     <span
       className="inline-block font-semibold align-baseline"
-      style={{
-        color: "hsl(var(--accent))",
-        minWidth: `${longest.length}ch`,
-      }}
+      style={{ color: "hsl(var(--accent))", minWidth: `${longest.length}ch` }}
     >
+      <span>{text}</span>
       <span
-        style={{
-          opacity: visible ? 1 : 0,
-          transition: "opacity 200ms ease",
-        }}
+        className={isActive ? "" : "animate-blink"}
+        style={{ color: "hsl(var(--accent))" }}
       >
-        {words[index]}
+        _
       </span>
-      <span className="animate-blink" style={{ color: "hsl(var(--accent))" }}>_</span>
     </span>
   );
 };
@@ -79,7 +97,7 @@ export const Hero = () => {
     <section className="bg-background pt-16 pb-24 md:pt-24 md:pb-32" aria-labelledby="hero-title">
       <div className="container-content">
         <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-[5%]">
-          <div className="lg:basis-[60%] lg:shrink-0 min-w-0 text-left">
+          <div className="lg:basis-[58%] lg:shrink-0 min-w-0 text-left">
             <div key={audience} className="animate-fade-up">
               <h1
                 id="hero-title"
@@ -90,7 +108,7 @@ export const Hero = () => {
               </h1>
               <p className="mt-8 text-[17px] md:text-[20px] leading-[1.5] text-muted-foreground max-w-[640px]">
                 {c.intro}{" "}
-                <RotatingWord words={c.rotating} />
+                <TypewriterWord words={c.rotating} />
               </p>
               <div className="mt-10">
                 <Button href={c.primary.href} variant="primary">
@@ -100,7 +118,7 @@ export const Hero = () => {
             </div>
           </div>
 
-          <div className="lg:basis-[35%] lg:shrink-0 min-w-0 hidden md:block">
+          <div className="lg:basis-[37%] lg:shrink-0 min-w-0 hidden md:block">
             <img
               src={heroHouses}
               alt="Nederlandse rijtjeshuizen met zonnepanelen op het dak"
