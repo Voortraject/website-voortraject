@@ -115,10 +115,13 @@
     font-weight: 700;
     letter-spacing: -0.03em;
     line-height: 1.05;
-    font-size: 48px;
+    font-size: 36px;
   }
   @media (min-width: 768px) {
-    .h1-hero { font-size: 80px; }
+    .h1-hero { font-size: 48px; }
+  }
+  @media (min-width: 1024px) {
+    .h1-hero { font-size: 64px; }
   }
 
   .h2-section {

@@ -30,7 +30,8 @@ export const Why = () => (
         <div className="lg:col-span-2">
           <div className="lg:sticky lg:top-32">
             <h2 className="h2-section">
-              Waarom uitvoerders voor ons kiezen
+              Waarom uitvoerders voor ons{" "}
+              <span style={{ color: "hsl(var(--accent))" }}>kiezen</span>
             </h2>
           </div>
         </div>
