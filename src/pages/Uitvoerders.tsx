@@ -1,7 +1,7 @@
 import { HelpCircle, Clock, Users, TrendingUp, type LucideIcon } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import heroHouses from "@/assets/hero-houses.jpg";
+import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
 
 const problems: { icon: LucideIcon; title: string; body: string }[] = [
   {
@@ -134,14 +134,15 @@ const Uitvoerders = () => {
               </div>
               <div>
                 <img
-                  src={heroHouses}
-                  alt="Nederlandse rijtjeshuizen met zonnepanelen op het dak"
+                  src={heroUitvoerders}
+                  alt="Uitvoerder en adviseur bespreken plannen bij zonnepanelen"
                   loading="lazy"
                   className="w-full object-cover"
                   style={{
                     height: "clamp(280px, 38vw, 480px)",
                     borderRadius: 16,
                     boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
+                    objectPosition: "center",
                   }}
                 />
               </div>
