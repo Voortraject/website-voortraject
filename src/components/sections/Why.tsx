@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+import whyPhoto from "@/assets/why-photo.jpg";
 
 const points = [
   {
@@ -26,8 +27,8 @@ const points = [
 export const Why = () => (
   <section className="bg-background section-pad border-t border-border">
     <div className="container-content">
-      <div className="grid lg:grid-cols-5 gap-12 lg:gap-20">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-[30fr_35fr_35fr] gap-10 lg:gap-12">
+        <div>
           <div className="lg:sticky lg:top-32">
             <h2 className="h2-section">
               Waarom uitvoerders voor ons{" "}
@@ -35,7 +36,18 @@ export const Why = () => (
             </h2>
           </div>
         </div>
-        <div className="lg:col-span-3">
+
+        <div className="hidden md:block">
+          <img
+            src={whyPhoto}
+            alt="Adviseur in gesprek met bewoners aan tafel"
+            loading="lazy"
+            className="w-full h-full object-cover rounded-2xl"
+            style={{ minHeight: "100%", maxHeight: "100%" }}
+          />
+        </div>
+
+        <div>
           <ul className="space-y-8">
             {points.map((p) => (
               <li key={p.title} className="flex items-start gap-5">
