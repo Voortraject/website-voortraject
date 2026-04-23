@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Home, Wind, Sun, Thermometer, Battery, ChevronDown } from "lucide-react";
+import { Home, Wind, Sun, Thermometer, Battery, ChevronDown, Shield, Zap } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 const principles = [
-  { num: "01", title: "Beperk", body: "Zorg dat je woning zo min mogelijk energie verspilt. Isolatie en ventilatie zijn de basis." },
-  { num: "02", title: "Wek op", body: "Wek een deel van je eigen energie op, zodat je minder afhankelijk bent van het net." },
-  { num: "03", title: "Gebruik slim", body: "Verwarm efficiënt en gebruik je opgewekte energie op het juiste moment." },
+  { num: "01", title: "Beperk", body: "Zorg dat je woning zo min mogelijk energie verspilt. Isolatie en ventilatie zijn de basis.", icon: Shield },
+  { num: "02", title: "Wek op", body: "Wek een deel van je eigen energie op, zodat je minder afhankelijk bent van het net.", icon: Sun },
+  { num: "03", title: "Gebruik slim", body: "Verwarm efficiënt en gebruik je opgewekte energie op het juiste moment.", icon: Zap },
 ];
 
 const measures = [
@@ -69,14 +69,13 @@ const Maatregelen = () => {
                 className="font-display"
                 style={{
                   fontWeight: 700,
-                  fontSize: "clamp(32px, 5vw, 56px)",
+                  fontSize: "clamp(32px, 4.6vw, 52px)",
                   color: "#2B2B2B",
                   letterSpacing: "-0.03em",
                   lineHeight: 1.1,
                 }}
               >
-                Van aardgas af: de{" "}
-                <span style={{ color: "#E8B547" }}>logische</span> route naar een toekomstbestendige woning
+                De <span style={{ color: "#E8B547" }}>logische</span> route naar een toekomstbestendige woning
               </h1>
               <p
                 className="mx-auto"
@@ -88,7 +87,7 @@ const Maatregelen = () => {
                   maxWidth: 720,
                 }}
               >
-                Verduurzamen doe je in stappen. Eerst beperken wat je verbruikt, daarna slimmer opwekken en verwarmen. Op deze pagina leggen we uit hoe die stappen samenhangen.
+                Van aardgas af en naar een comfortabel, energiezuinig huis. Dat doe je in stappen: eerst beperken wat je verbruikt, daarna slimmer opwekken en verwarmen.
               </p>
             </div>
           </div>
@@ -121,44 +120,53 @@ const Maatregelen = () => {
               className="grid grid-cols-1 md:grid-cols-3 gap-8"
               style={{ marginTop: 80 }}
             >
-              {principles.map((p) => (
-                <div
-                  key={p.num}
-                  className="bg-white text-center"
-                  style={{
-                    borderRadius: 16,
-                    padding: "48px 32px",
-                    border: "1px solid #E5E2DB",
-                  }}
-                >
+              {principles.map((p) => {
+                const Icon = p.icon;
+                return (
                   <div
-                    className="font-display"
+                    key={p.num}
+                    className="bg-white text-center flex flex-col items-center"
                     style={{
-                      fontSize: 64,
-                      fontWeight: 300,
-                      color: "#E8B547",
-                      lineHeight: 1,
-                      letterSpacing: "-0.02em",
-                      marginBottom: 16,
+                      borderRadius: 16,
+                      padding: "48px 32px",
+                      border: "1px solid #E5E2DB",
                     }}
                   >
-                    {p.num}
+                    <div
+                      className="flex items-center justify-center rounded-full"
+                      style={{ width: 64, height: 64, backgroundColor: "#F0E4D0", marginBottom: 24 }}
+                    >
+                      <Icon size={28} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
+                    </div>
+                    <div
+                      className="font-display"
+                      style={{
+                        fontSize: 64,
+                        fontWeight: 300,
+                        color: "#E8B547",
+                        lineHeight: 1,
+                        letterSpacing: "-0.02em",
+                        marginBottom: 16,
+                      }}
+                    >
+                      {p.num}
+                    </div>
+                    <h3
+                      className="font-display"
+                      style={{
+                        fontWeight: 600,
+                        fontSize: 24,
+                        color: "#152C4E",
+                        letterSpacing: "-0.01em",
+                        marginBottom: 16,
+                      }}
+                    >
+                      {p.title}
+                    </h3>
+                    <p style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>{p.body}</p>
                   </div>
-                  <h3
-                    className="font-display"
-                    style={{
-                      fontWeight: 600,
-                      fontSize: 24,
-                      color: "#152C4E",
-                      letterSpacing: "-0.01em",
-                      marginBottom: 16,
-                    }}
-                  >
-                    {p.title}
-                  </h3>
-                  <p style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>{p.body}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
@@ -175,7 +183,12 @@ const Maatregelen = () => {
             >
               Niet elke maatregel is voor elke woning even logisch. Hieronder wat er bij elke stap hoort.
             </p>
-            <div style={{ marginTop: 64 }}>
+            <p
+              style={{ marginTop: 24, fontSize: 17, color: "#2B2B2B", lineHeight: 1.7, maxWidth: 720 }}
+            >
+              Veel bewoners beginnen bij de meest zichtbare stap: zonnepanelen of een warmtepomp. Toch werkt elke maatregel beter als de stappen daarvoor al gezet zijn. Zonnepanelen op een tochtig huis verlagen je rekening, maar een warmtepomp in een slecht geïsoleerd huis haalt nooit zijn rendement. Door de stappen in de juiste volgorde te doen, haal je het meeste uit elke investering.
+            </p>
+            <div className="mx-auto" style={{ marginTop: 64, maxWidth: 900 }}>
               {measures.map((m) => {
                 const Icon = m.icon;
                 const isOpen = !!open[m.num];
@@ -191,12 +204,17 @@ const Maatregelen = () => {
                       marginBottom: 24,
                     }}
                   >
-                    <div className="flex flex-col md:flex-row gap-6">
+                    <div className="flex items-center" style={{ gap: 20 }}>
                       <div
-                        className="font-display shrink-0"
+                        className="flex items-center justify-center rounded-full shrink-0"
+                        style={{ width: 48, height: 48, backgroundColor: "#F0E4D0" }}
+                      >
+                        <Icon size={22} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
+                      </div>
+                      <div
+                        className="font-display"
                         style={{
-                          width: 100,
-                          fontSize: 48,
+                          fontSize: 40,
                           fontWeight: 300,
                           color: "#E8B547",
                           lineHeight: 1,
@@ -205,133 +223,97 @@ const Maatregelen = () => {
                       >
                         {m.num}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div
-                          className="flex items-center justify-center rounded-full"
-                          style={{ width: 56, height: 56, backgroundColor: "#F0E4D0" }}
-                        >
-                          <Icon size={24} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
-                        </div>
-                        <h3
-                          className="font-display"
-                          style={{
-                            fontWeight: 600,
-                            fontSize: 28,
-                            color: "#152C4E",
-                            letterSpacing: "-0.01em",
-                            marginTop: 20,
-                            lineHeight: 1.2,
-                          }}
-                        >
-                          {m.title}
-                        </h3>
-                        <div
-                          style={{
-                            marginTop: 24,
-                            fontSize: 13,
-                            textTransform: "uppercase",
-                            letterSpacing: "0.1em",
-                            fontWeight: 600,
-                            color: "#8B8680",
-                          }}
-                        >
-                          Wat valt eronder
-                        </div>
-                        <ul style={{ marginTop: 12, listStyle: "disc", paddingLeft: 20 }}>
-                          {m.bullets.map((b) => (
-                            <li
-                              key={b}
-                              style={{ fontSize: 15, color: "#2B2B2B", lineHeight: 1.8 }}
-                            >
-                              {b}
-                            </li>
-                          ))}
-                        </ul>
+                      <h3
+                        className="font-display"
+                        style={{
+                          fontWeight: 600,
+                          fontSize: 28,
+                          color: "#152C4E",
+                          letterSpacing: "-0.01em",
+                          lineHeight: 1.2,
+                        }}
+                      >
+                        {m.title}
+                      </h3>
+                    </div>
 
-                        <div style={{ marginTop: 32, borderTop: "1px solid #E5E2DB" }}>
-                          <button
-                            onClick={() => setOpen((s) => ({ ...s, [m.num]: !s[m.num] }))}
-                            aria-expanded={isOpen}
-                            className="group w-full flex items-center justify-between transition-colors"
+                    <div
+                      style={{
+                        marginTop: 24,
+                        fontSize: 13,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.1em",
+                        fontWeight: 600,
+                        color: "#8B8680",
+                      }}
+                    >
+                      Wat valt eronder
+                    </div>
+                    <ul style={{ marginTop: 12, listStyle: "disc", paddingLeft: 20 }}>
+                      {m.bullets.map((b) => (
+                        <li
+                          key={b}
+                          style={{ fontSize: 15, color: "#2B2B2B", lineHeight: 1.8 }}
+                        >
+                          {b}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div style={{ marginTop: 32, borderTop: "1px solid #E5E2DB" }}>
+                      <button
+                        onClick={() => setOpen((s) => ({ ...s, [m.num]: !s[m.num] }))}
+                        aria-expanded={isOpen}
+                        className="group w-full flex items-center justify-between transition-colors"
+                        style={{
+                          padding: "16px 0",
+                          cursor: "pointer",
+                          color: "#152C4E",
+                          background: "transparent",
+                          border: "none",
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = "#E8B547")}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = "#152C4E")}
+                      >
+                        <span
+                          className="font-sans"
+                          style={{ fontWeight: 600, fontSize: 14 }}
+                        >
+                          Waarom dit?
+                        </span>
+                        <ChevronDown
+                          size={16}
+                          style={{
+                            transition: "transform 200ms",
+                            transform: isOpen ? "rotate(180deg)" : "rotate(0)",
+                          }}
+                        />
+                      </button>
+                      <div
+                        style={{
+                          display: "grid",
+                          gridTemplateRows: isOpen ? "1fr" : "0fr",
+                          transition: "grid-template-rows 200ms ease",
+                        }}
+                      >
+                        <div style={{ overflow: "hidden" }}>
+                          <p
                             style={{
-                              padding: "16px 0",
-                              cursor: "pointer",
-                              color: "#152C4E",
-                              background: "transparent",
-                              border: "none",
-                            }}
-                            onMouseEnter={(e) => (e.currentTarget.style.color = "#E8B547")}
-                            onMouseLeave={(e) => (e.currentTarget.style.color = "#152C4E")}
-                          >
-                            <span
-                              className="font-sans"
-                              style={{ fontWeight: 600, fontSize: 14 }}
-                            >
-                              Waarom dit?
-                            </span>
-                            <ChevronDown
-                              size={16}
-                              style={{
-                                transition: "transform 200ms",
-                                transform: isOpen ? "rotate(180deg)" : "rotate(0)",
-                              }}
-                            />
-                          </button>
-                          <div
-                            style={{
-                              display: "grid",
-                              gridTemplateRows: isOpen ? "1fr" : "0fr",
-                              transition: "grid-template-rows 200ms ease",
+                              fontSize: 15,
+                              color: "#6B6B6B",
+                              lineHeight: 1.7,
+                              paddingTop: 16,
+                              paddingBottom: 8,
                             }}
                           >
-                            <div style={{ overflow: "hidden" }}>
-                              <p
-                                style={{
-                                  fontSize: 15,
-                                  color: "#6B6B6B",
-                                  lineHeight: 1.7,
-                                  paddingTop: 16,
-                                  paddingBottom: 8,
-                                }}
-                              >
-                                {m.why}
-                              </p>
-                            </div>
-                          </div>
+                            {m.why}
+                          </p>
                         </div>
                       </div>
                     </div>
                   </article>
                 );
               })}
-            </div>
-          </div>
-        </section>
-
-        {/* LOGISCHE VOLGORDE VERKLAARD */}
-        <section className="py-[72px] md:py-[120px]" style={{ backgroundColor: "#F5F2EC" }}>
-          <div className="container-content">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16">
-              <div>
-                <h2
-                  className="font-display"
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "clamp(28px, 4vw, 40px)",
-                    letterSpacing: "-0.02em",
-                    color: "#152C4E",
-                    lineHeight: 1.2,
-                    maxWidth: 480,
-                  }}
-                >
-                  Waarom de volgorde ertoe doet
-                </h2>
-              </div>
-              <div>
-                <p style={{ fontSize: 17, color: "#2B2B2B", lineHeight: 1.7, maxWidth: 560 }}>
-                  Veel bewoners beginnen bij de meest zichtbare stap: zonnepanelen of een warmtepomp. Toch werkt elke maatregel beter als de stappen daarvoor al gezet zijn. Zonnepanelen op een tochtig huis verlagen je rekening, maar een warmtepomp in een slecht geïsoleerd huis haalt nooit zijn rendement. Door de stappen in de juiste volgorde te doen, haal je het meeste uit elke investering.
-                </p>
-              </div>
             </div>
           </div>
         </section>
