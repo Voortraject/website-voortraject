@@ -71,7 +71,7 @@ export const Hero = () => {
             <div className="animate-fade-up">
               <h1
                 id="hero-title"
-                className="h1-hero text-foreground text-left text-5xl"
+                className="h1-hero text-foreground text-left text-6xl"
                 style={{
                   wordBreak: "keep-all",
                   hyphens: "none",
@@ -81,7 +81,7 @@ export const Hero = () => {
               >
                 Extra <span style={{ color: "hsl(var(--accent))" }}>slagkracht</span> voor verduurzamingsbedrijven
               </h1>
-              <p className="mt-8 text-[17px] md:text-[20px] leading-[1.5] text-muted-foreground max-w-[640px]">
+              <p className="mt-8 text-[17px] leading-[1.5] text-muted-foreground max-w-[640px] md:text-lg">
                 Wij ondersteunen uitvoerders met{" "}
                 <TypewriterWord words={rotating} />
               </p>
