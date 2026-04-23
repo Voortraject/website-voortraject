@@ -53,7 +53,7 @@ const Bewoners = () => {
               <div>
                 <h1
                   id="bew-hero-title"
-                  className="h1-hero"
+                  className="h1-hero text-5xl"
                   style={{ color: "#2B2B2B", wordBreak: "keep-all", overflowWrap: "normal" }}
                 >
                   <span style={{ color: "hsl(var(--accent))" }}>Helder</span>{" "}
