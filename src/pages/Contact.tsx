@@ -1,5 +1,5 @@
 import { useState, FormEvent } from "react";
-import { CheckCircle, Mail, Phone, MapPin, Globe, FileText } from "lucide-react";
+import { CheckCircle, Mail, Phone, MapPin, Globe } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
@@ -8,7 +8,7 @@ type Mode = "uitvoerder" | "bewoner";
 const inputClass =
   "w-full rounded-lg border border-[#D4D2CC] bg-[#FBFAF7] px-4 py-3 text-[15px] text-[#2B2B2B] outline-none transition focus:border-[#E8B547] focus:shadow-[0_0_0_3px_rgba(232,181,71,0.15)]";
 const labelClass = "block mb-2 text-[14px] font-semibold text-[#2B2B2B]";
-const fieldWrap = "mb-5";
+const fieldWrap = "mb-4";
 const required = <span className="text-[#E8B547] ml-1">*</span>;
 const optional = <span className="text-[#8B8680] font-normal ml-1">(optioneel)</span>;
 
@@ -32,12 +32,11 @@ const contactIntros: Record<Mode, string> = {
   bewoner: "Liever even bellen voor een eerste vraag? Dat kan natuurlijk ook.",
 };
 
-const contactCards = [
-  { icon: Mail, label: "E-mail", value: "info@placeholder.nl", href: "mailto:info@placeholder.nl" },
-  { icon: Phone, label: "Telefoon", value: "+31 (0)00 000 0000", href: "tel:+31000000000" },
-  { icon: MapPin, label: "Locatie", value: "Groningen" },
-  { icon: Globe, label: "Werkgebied", value: "Noord-Nederland" },
-  { icon: FileText, label: "KvK", value: "00000000" },
+const contactRows = [
+  { icon: Mail, value: "info@placeholder.nl", href: "mailto:info@placeholder.nl" },
+  { icon: Phone, value: "+31 (0)00 000 0000", href: "tel:+31000000000" },
+  { icon: MapPin, value: "Groningen" },
+  { icon: Globe, value: "Noord-Nederland" },
 ];
 
 const Contact = () => {
@@ -55,19 +54,16 @@ const Contact = () => {
 
       {/* Hero */}
       <section style={{ backgroundColor: "#FBFAF7" }}>
-        <div
-          className="mx-auto"
-          style={{ maxWidth: 1400, paddingLeft: 48, paddingRight: 48 }}
-        >
+        <div className="mx-auto px-6 md:px-12" style={{ maxWidth: 1200 }}>
           <div
-            className="mx-auto text-center"
-            style={{ maxWidth: 900, paddingTop: 80, paddingBottom: 64 }}
+            className="mx-auto text-center py-8 md:py-12"
+            style={{ maxWidth: 900 }}
           >
             <h1
               className="font-display"
               style={{
                 fontWeight: 700,
-                fontSize: "clamp(32px, 5vw, 56px)",
+                fontSize: "clamp(28px, 4vw, 44px)",
                 letterSpacing: "-0.03em",
                 lineHeight: 1.1,
                 color: "#2B2B2B",
@@ -78,11 +74,11 @@ const Contact = () => {
             <p
               className="mx-auto font-sans"
               style={{
-                marginTop: 24,
-                maxWidth: 640,
-                fontSize: 18,
+                marginTop: 16,
+                maxWidth: 560,
+                fontSize: 16,
                 color: "#6B6B6B",
-                lineHeight: 1.6,
+                lineHeight: 1.5,
               }}
             >
               Vertel ons waar je op zoek naar bent. We nemen binnen één werkdag contact op.
@@ -92,7 +88,7 @@ const Contact = () => {
             <div
               className="inline-flex"
               style={{
-                marginTop: 40,
+                marginTop: 24,
                 backgroundColor: "#E5E2DB",
                 padding: 4,
                 borderRadius: 999,
@@ -133,273 +129,246 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Form */}
-      <section style={{ backgroundColor: "#F5F2EC", paddingTop: 96, paddingBottom: 96 }}>
-        <div className="mx-auto" style={{ maxWidth: 1400, paddingLeft: 48, paddingRight: 48 }}>
-          <div
-            className="mx-auto"
-            style={{
-              maxWidth: 720,
-              backgroundColor: "#FFFFFF",
-              borderRadius: 16,
-              border: "1px solid #E5E2DB",
-              boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
-              padding: 48,
-            }}
-          >
-            {submitted ? (
-              <div className="text-center">
+      {/* Main two-column section */}
+      <section
+        style={{ backgroundColor: "#F5F2EC" }}
+        className="py-12 md:py-16"
+      >
+        <div className="mx-auto px-6 md:px-12" style={{ maxWidth: 1200 }}>
+          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-12 items-start">
+            {/* Left column — Form */}
+            <div
+              style={{
+                backgroundColor: "#FFFFFF",
+                borderRadius: 16,
+                border: "1px solid #E5E2DB",
+                boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
+              }}
+              className="p-7 md:p-10"
+            >
+              {submitted ? (
+                <div className="text-center">
+                  <h3
+                    className="font-display"
+                    style={{ fontSize: 22, fontWeight: 600, color: "#152C4E", marginBottom: 12 }}
+                  >
+                    Bedankt voor je bericht!
+                  </h3>
+                  <p className="font-sans" style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>
+                    We nemen binnen één werkdag contact op.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <h3
+                    className="font-display"
+                    style={{ fontSize: 22, fontWeight: 600, color: "#152C4E", marginBottom: 8 }}
+                  >
+                    {mode === "uitvoerder"
+                      ? "Vertel ons over jullie bedrijf"
+                      : "Vertel ons over jouw situatie"}
+                  </h3>
+                  <p
+                    className="font-sans"
+                    style={{ fontSize: 14, color: "#6B6B6B", marginBottom: 24, lineHeight: 1.6 }}
+                  >
+                    {mode === "uitvoerder"
+                      ? "Hoe meer we vooraf weten, hoe scherper we het gesprek kunnen voeren."
+                      : "Hoe meer we vooraf weten, hoe beter we je kunnen helpen."}
+                  </p>
+
+                  <form onSubmit={handleSubmit}>
+                    {mode === "uitvoerder" ? (
+                      <>
+                        <div className={fieldWrap}>
+                          <label className={labelClass}>Bedrijfsnaam{required}</label>
+                          <input type="text" required className={inputClass} />
+                        </div>
+                        <div className={fieldWrap}>
+                          <label className={labelClass}>Naam contactpersoon{required}</label>
+                          <input type="text" required className={inputClass} />
+                        </div>
+                        <div className={fieldWrap}>
+                          <label className={labelClass}>E-mailadres{required}</label>
+                          <input type="email" required className={inputClass} />
+                        </div>
+                        <div className={fieldWrap}>
+                          <label className={labelClass}>Telefoonnummer{required}</label>
+                          <input type="tel" required className={inputClass} />
+                        </div>
+                        <div className={fieldWrap}>
+                          <label className={labelClass}>KvK-nummer{optional}</label>
+                          <input type="text" className={inputClass} />
+                        </div>
+                        <div className={fieldWrap}>
+                          <label className={labelClass}>
+                            Hoeveel opdrachten per maand ongeveer?{optional}
+                          </label>
+                          <select className={inputClass} defaultValue="">
+                            <option value="" disabled>
+                              Maak een keuze
+                            </option>
+                            <option>0-5</option>
+                            <option>5-15</option>
+                            <option>15-50</option>
+                            <option>50+</option>
+                            <option>Weet ik nog niet</option>
+                          </select>
+                        </div>
+                        <div className={fieldWrap}>
+                          <label className={labelClass}>Waar loopt het nu vast?{required}</label>
+                          <textarea
+                            required
+                            className={inputClass}
+                            style={{ minHeight: 120, resize: "vertical" }}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className={fieldWrap}>
+                          <label className={labelClass}>Naam{required}</label>
+                          <input type="text" required className={inputClass} />
+                        </div>
+                        <div className={fieldWrap}>
+                          <label className={labelClass}>E-mailadres{required}</label>
+                          <input type="email" required className={inputClass} />
+                        </div>
+                        <div className={fieldWrap}>
+                          <label className={labelClass}>Telefoonnummer{required}</label>
+                          <input type="tel" required className={inputClass} />
+                        </div>
+                        <div className={fieldWrap}>
+                          <label className={labelClass}>Adres of plaatsnaam{required}</label>
+                          <input type="text" required className={inputClass} />
+                        </div>
+                        <div className={fieldWrap}>
+                          <label className={labelClass}>Waar ben je naar op zoek?{required}</label>
+                          <textarea
+                            required
+                            className={inputClass}
+                            style={{ minHeight: 120, resize: "vertical" }}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    <button
+                      type="submit"
+                      className="w-full font-sans transition-colors"
+                      style={{
+                        marginTop: 12,
+                        backgroundColor: "#E8B547",
+                        color: "#2B2B2B",
+                        padding: "14px 32px",
+                        borderRadius: 8,
+                        fontSize: 15,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
+                    >
+                      Verstuur bericht
+                    </button>
+                  </form>
+                </>
+              )}
+            </div>
+
+            {/* Right column — Expectations + Contact details */}
+            <div className="flex flex-col" style={{ gap: 32 }}>
+              {/* Expectations */}
+              <div>
                 <h3
                   className="font-display"
-                  style={{ fontSize: 24, fontWeight: 600, color: "#152C4E", marginBottom: 12 }}
+                  style={{
+                    fontSize: 22,
+                    fontWeight: 600,
+                    color: "#152C4E",
+                    marginBottom: 24,
+                  }}
                 >
-                  Bedankt voor je bericht!
+                  Wat kun je verwachten?
                 </h3>
-                <p className="font-sans" style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>
-                  We nemen binnen één werkdag contact op.
-                </p>
+                <ul>
+                  {expectations[mode].map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-start"
+                      style={{ gap: 12, paddingTop: 14, paddingBottom: 14 }}
+                    >
+                      <CheckCircle size={20} color="#E8B547" className="shrink-0 mt-0.5" />
+                      <span
+                        className="font-sans"
+                        style={{ fontSize: 15, color: "#2B2B2B", lineHeight: 1.5 }}
+                      >
+                        {item}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            ) : (
-              <>
+
+              {/* Contact details card */}
+              <div
+                style={{
+                  backgroundColor: "#FFFFFF",
+                  borderRadius: 12,
+                  border: "1px solid #E5E2DB",
+                  padding: 28,
+                }}
+              >
                 <h3
                   className="font-display"
-                  style={{ fontSize: 24, fontWeight: 600, color: "#152C4E", marginBottom: 8 }}
+                  style={{ fontSize: 18, fontWeight: 600, color: "#152C4E", marginBottom: 8 }}
                 >
-                  {mode === "uitvoerder"
-                    ? "Vertel ons over jullie bedrijf"
-                    : "Vertel ons over jouw situatie"}
+                  Liever direct contact?
                 </h3>
                 <p
                   className="font-sans"
-                  style={{ fontSize: 15, color: "#6B6B6B", marginBottom: 32, lineHeight: 1.6 }}
+                  style={{ fontSize: 14, color: "#6B6B6B", lineHeight: 1.5, marginBottom: 24 }}
                 >
-                  {mode === "uitvoerder"
-                    ? "Hoe meer we vooraf weten, hoe scherper we het gesprek kunnen voeren."
-                    : "Hoe meer we vooraf weten, hoe beter we je kunnen helpen."}
+                  {contactIntros[mode]}
                 </p>
 
-                <form onSubmit={handleSubmit}>
-                  {mode === "uitvoerder" ? (
-                    <>
-                      <div className={fieldWrap}>
-                        <label className={labelClass}>Bedrijfsnaam{required}</label>
-                        <input type="text" required className={inputClass} />
-                      </div>
-                      <div className={fieldWrap}>
-                        <label className={labelClass}>Naam contactpersoon{required}</label>
-                        <input type="text" required className={inputClass} />
-                      </div>
-                      <div className={fieldWrap}>
-                        <label className={labelClass}>E-mailadres{required}</label>
-                        <input type="email" required className={inputClass} />
-                      </div>
-                      <div className={fieldWrap}>
-                        <label className={labelClass}>Telefoonnummer{required}</label>
-                        <input type="tel" required className={inputClass} />
-                      </div>
-                      <div className={fieldWrap}>
-                        <label className={labelClass}>KvK-nummer{optional}</label>
-                        <input type="text" className={inputClass} />
-                      </div>
-                      <div className={fieldWrap}>
-                        <label className={labelClass}>
-                          Hoeveel opdrachten per maand ongeveer?{optional}
-                        </label>
-                        <select className={inputClass} defaultValue="">
-                          <option value="" disabled>
-                            Maak een keuze
-                          </option>
-                          <option>0-5</option>
-                          <option>5-15</option>
-                          <option>15-50</option>
-                          <option>50+</option>
-                          <option>Weet ik nog niet</option>
-                        </select>
-                      </div>
-                      <div className={fieldWrap}>
-                        <label className={labelClass}>Waar loopt het nu vast?{required}</label>
-                        <textarea
-                          required
-                          className={inputClass}
-                          style={{ minHeight: 120, resize: "vertical" }}
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className={fieldWrap}>
-                        <label className={labelClass}>Naam{required}</label>
-                        <input type="text" required className={inputClass} />
-                      </div>
-                      <div className={fieldWrap}>
-                        <label className={labelClass}>E-mailadres{required}</label>
-                        <input type="email" required className={inputClass} />
-                      </div>
-                      <div className={fieldWrap}>
-                        <label className={labelClass}>Telefoonnummer{required}</label>
-                        <input type="tel" required className={inputClass} />
-                      </div>
-                      <div className={fieldWrap}>
-                        <label className={labelClass}>Adres of plaatsnaam{required}</label>
-                        <input type="text" required className={inputClass} />
-                      </div>
-                      <div className={fieldWrap}>
-                        <label className={labelClass}>Waar ben je naar op zoek?{required}</label>
-                        <textarea
-                          required
-                          className={inputClass}
-                          style={{ minHeight: 120, resize: "vertical" }}
-                        />
-                      </div>
-                    </>
-                  )}
-
-                  <button
-                    type="submit"
-                    className="w-full font-sans transition-colors"
-                    style={{
-                      marginTop: 12,
-                      backgroundColor: "#E8B547",
-                      color: "#2B2B2B",
-                      padding: "14px 32px",
-                      borderRadius: 8,
-                      fontSize: 15,
-                      fontWeight: 600,
-                      cursor: "pointer",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
-                  >
-                    Verstuur bericht
-                  </button>
-                </form>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Expectations */}
-      <section style={{ backgroundColor: "#FBFAF7", paddingTop: 96, paddingBottom: 96 }}>
-        <div className="mx-auto" style={{ maxWidth: 1400, paddingLeft: 48, paddingRight: 48 }}>
-          <div className="mx-auto" style={{ maxWidth: 900 }}>
-            <h2
-              className="font-display text-center"
-              style={{
-                fontWeight: 600,
-                fontSize: "clamp(28px, 4vw, 40px)",
-                letterSpacing: "-0.02em",
-                color: "#152C4E",
-                lineHeight: 1.2,
-                marginBottom: 48,
-              }}
-            >
-              Wat kun je verwachten?
-            </h2>
-            <ul className="mx-auto" style={{ maxWidth: 640 }}>
-              {expectations[mode].map((item) => (
-                <li
-                  key={item}
-                  className="flex items-start"
-                  style={{ gap: 16, paddingTop: 20, paddingBottom: 20 }}
-                >
-                  <CheckCircle size={24} color="#E8B547" className="shrink-0 mt-0.5" />
-                  <span
-                    className="font-sans"
-                    style={{ fontSize: 17, color: "#2B2B2B", lineHeight: 1.6 }}
-                  >
-                    {item}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact details */}
-      <section style={{ backgroundColor: "#F5F2EC", paddingTop: 96, paddingBottom: 96 }}>
-        <div className="mx-auto" style={{ maxWidth: 1400, paddingLeft: 48, paddingRight: 48 }}>
-          <div className="mx-auto" style={{ maxWidth: 900 }}>
-            <h2
-              className="font-display text-center"
-              style={{
-                fontWeight: 600,
-                fontSize: "clamp(28px, 4vw, 40px)",
-                letterSpacing: "-0.02em",
-                color: "#152C4E",
-                lineHeight: 1.2,
-                marginBottom: 24,
-              }}
-            >
-              Liever direct contact?
-            </h2>
-            <p
-              className="mx-auto text-center font-sans"
-              style={{
-                maxWidth: 640,
-                fontSize: 17,
-                color: "#6B6B6B",
-                lineHeight: 1.6,
-                marginBottom: 48,
-              }}
-            >
-              {contactIntros[mode]}
-            </p>
-
-            <div
-              className="mx-auto grid grid-cols-1 md:grid-cols-2"
-              style={{ maxWidth: 720, gap: 24 }}
-            >
-              {contactCards.map((c) => {
-                const Icon = c.icon;
-                return (
-                  <div
-                    key={c.label}
-                    className="flex items-start"
-                    style={{
-                      backgroundColor: "#FFFFFF",
-                      borderRadius: 12,
-                      border: "1px solid #E5E2DB",
-                      padding: 24,
-                      gap: 16,
-                    }}
-                  >
-                    <Icon size={24} color="#152C4E" className="shrink-0 mt-1" />
-                    <div>
-                      <p
-                        className="font-sans"
+                <ul>
+                  {contactRows.map((row, idx) => {
+                    const Icon = row.icon;
+                    const isLast = idx === contactRows.length - 1;
+                    return (
+                      <li
+                        key={row.value}
+                        className="flex items-center"
                         style={{
-                          fontSize: 13,
-                          textTransform: "uppercase",
-                          letterSpacing: "0.1em",
-                          fontWeight: 600,
-                          color: "#8B8680",
-                          marginBottom: 4,
+                          gap: 12,
+                          paddingTop: 10,
+                          paddingBottom: 10,
+                          borderBottom: isLast ? "none" : "1px solid #E5E2DB",
                         }}
                       >
-                        {c.label}
-                      </p>
-                      {c.href ? (
-                        <a
-                          href={c.href}
-                          className="font-sans hover:text-[#E8B547] transition-colors"
-                          style={{ fontSize: 15, fontWeight: 500, color: "#2B2B2B" }}
-                        >
-                          {c.value}
-                        </a>
-                      ) : (
-                        <span
-                          className="font-sans"
-                          style={{ fontSize: 15, fontWeight: 500, color: "#2B2B2B" }}
-                        >
-                          {c.value}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+                        <Icon size={18} color="#152C4E" className="shrink-0" />
+                        {row.href ? (
+                          <a
+                            href={row.href}
+                            className="font-sans hover:text-[#E8B547] transition-colors"
+                            style={{ fontSize: 15, fontWeight: 500, color: "#2B2B2B" }}
+                          >
+                            {row.value}
+                          </a>
+                        ) : (
+                          <span
+                            className="font-sans"
+                            style={{ fontSize: 15, fontWeight: 500, color: "#2B2B2B" }}
+                          >
+                            {row.value}
+                          </span>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             </div>
           </div>
         </div>
