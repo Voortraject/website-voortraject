@@ -155,12 +155,12 @@ const Maatregelen = () => {
                     </div>
                     {idx < principles.length - 1 && (
                       <div
-                        className="flex items-center justify-center"
+                        className="flex items-center justify-center self-center"
                         style={{ padding: "24px 16px" }}
                         aria-hidden="true"
                       >
-                        <ArrowRight size={32} color="#E8B547" strokeWidth={2} className="hidden md:block" />
-                        <ArrowDown size={32} color="#E8B547" strokeWidth={2} className="md:hidden" />
+                        <ArrowRight size={28} color="#E8B547" strokeWidth={2.5} className="hidden md:block" />
+                        <ArrowDown size={28} color="#E8B547" strokeWidth={2.5} className="md:hidden" />
                       </div>
                     )}
                   </div>
@@ -177,13 +177,12 @@ const Maatregelen = () => {
               De vijf <span style={{ color: "#E8B547" }}>maatregelen</span> die ertoe doen
             </h2>
             <p
-              className="mt-6 font-sans"
-              style={{ fontSize: 18, color: "#6B6B6B", lineHeight: 1.6, maxWidth: 720 }}
+              style={{ fontFamily: "Inter, sans-serif", marginTop: 24, fontSize: "1rem", fontWeight: 400, color: "#6B6B6B", lineHeight: 1.7, maxWidth: 720 }}
             >
               Niet elke maatregel is voor elke woning even logisch. Hieronder wat er bij elke stap hoort.
             </p>
             <p
-              style={{ marginTop: 24, fontSize: 17, color: "#2B2B2B", lineHeight: 1.7, maxWidth: 720 }}
+              style={{ fontFamily: "Inter, sans-serif", marginTop: 24, fontSize: "1rem", fontWeight: 400, color: "#6B6B6B", lineHeight: 1.7, maxWidth: 720 }}
             >
               Veel bewoners beginnen bij de meest zichtbare stap: zonnepanelen of een warmtepomp. Toch werkt elke maatregel beter als de stappen daarvoor al gezet zijn. Door de stappen in de juiste volgorde te doen, haal je het meeste uit elke investering.
             </p>
