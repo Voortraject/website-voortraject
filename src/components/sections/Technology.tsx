@@ -88,13 +88,13 @@ const Dashboard = () => {
   return (
     <div
       ref={ref}
-      className="w-full max-w-[560px] rounded-[16px]"
+      className="w-full max-w-[420px] rounded-[16px]"
       style={{
         backgroundColor: "#FFFFFF",
         border: "1px solid #E5E2DB",
         boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
-        padding: 32,
-        minHeight: 460,
+        padding: 24,
+        minHeight: 420,
       }}
     >
       {/* Header (always visible) */}
@@ -179,15 +179,14 @@ export const Technology = () => (
     aria-labelledby="tech-title"
   >
     <div className="container-content">
-      <div className="grid grid-cols-1 md:grid-cols-[45fr_55fr] gap-10 md:gap-24 items-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
         <div>
           <h2 id="tech-title" className="h2-section">
             Menselijke begeleiding, ondersteund door slimme automatisering
           </h2>
           <p className="mt-8 body-lg text-muted-foreground max-w-[640px]">
-            Wij combineren persoonlijke begeleiding met slimme systemen voor intake,
-            offerte-opbouw, communicatie en dossiercontrole. Daardoor werken we sneller,
-            leveren we consistenter en kunnen we opschalen.
+            Wij combineren persoonlijke begeleiding met slimme systemen. Daardoor werken
+            we sneller, leveren we consistenter en kunnen we opschalen.
           </p>
         </div>
         <div className="flex justify-center md:justify-end">
