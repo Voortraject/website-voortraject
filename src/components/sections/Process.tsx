@@ -91,9 +91,9 @@ export const Process = () => {
       const rect = section.getBoundingClientRect();
       // Trigger earlier: progress is based on how far the section's top has passed
       // the 55% line of the viewport (instead of the very top).
-      const triggerOffset = window.innerHeight * 0.45;
+      const triggerOffset = window.innerHeight * 0.55;
       const visibleFromTrigger = Math.max(0, triggerOffset - rect.top);
-      const p = Math.min(1, visibleFromTrigger / (rect.height * 0.4));
+      const p = Math.min(1, visibleFromTrigger / Math.max(1, rect.height - window.innerHeight * 0.3));
       setProgress(p);
     };
     onScroll();
@@ -145,8 +145,7 @@ export const Process = () => {
                 style={{
                   top: CIRCLE / 2,
                   bottom: CIRCLE / 2,
-                  background:
-                    "linear-gradient(to bottom, #E8B547 0%, #E8B547 72%, #E5E2DB 72%, #E5E2DB 100%)",
+                  background: "#E8B547",
                   transform: `scaleY(${progress})`,
                   transition: "transform 80ms linear",
                 }}

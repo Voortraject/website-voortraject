@@ -98,11 +98,11 @@ const Uitvoerders = () => {
         >
           <div className="container-content">
             <div className="grid grid-cols-1 lg:grid-cols-[58fr_42fr] gap-10 lg:gap-12 items-center">
-              <div>
+              <div style={{ textAlign: "left" }}>
                 <h1
                   id="uitv-hero-title"
                   className="h1-hero"
-                  style={{ color: "#2B2B2B", wordBreak: "keep-all", overflowWrap: "normal" }}
+                  style={{ color: "#2B2B2B", wordBreak: "keep-all", overflowWrap: "normal", textAlign: "left" }}
                 >
                   Wij nemen het{" "}
                   <span style={{ color: "hsl(var(--accent))" }}>voortraject</span>{" "}
@@ -110,12 +110,12 @@ const Uitvoerders = () => {
                 </h1>
                 <p
                   className="mt-8 text-[16px] md:text-[18px]"
-                  style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 560 }}
+                  style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 560, textAlign: "left" }}
                 >
                   Van bewonerscontact en regelinguitleg tot offertevoorbereiding en akkoord.
                   Jullie focus blijft op de uitvoering.
                 </p>
-                <div className="mt-10">
+                <div className="mt-10" style={{ textAlign: "left" }}>
                   <a
                     href="/contact"
                     className={ctaButton}
@@ -124,6 +124,7 @@ const Uitvoerders = () => {
                       color: "#2B2B2B",
                       padding: "14px 32px",
                       borderRadius: 8,
+                      margin: 0,
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
@@ -181,18 +182,28 @@ const Uitvoerders = () => {
                   }}
                 >
                   <div
-                    className="flex items-center justify-center rounded-full"
-                    style={{ width: 56, height: 56, backgroundColor: "#F0E4D0" }}
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 12,
+                      marginBottom: 16,
+                    }}
                   >
-                    <Icon size={24} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
+                    <div
+                      className="flex items-center justify-center rounded-full"
+                      style={{ width: 56, height: 56, backgroundColor: "#F0E4D0", flexShrink: 0 }}
+                    >
+                      <Icon size={24} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
+                    </div>
+                    <h3
+                      className="font-display"
+                      style={{ fontSize: "1.05rem", fontWeight: 600, color: "#152C4E", margin: 0, lineHeight: 1.3 }}
+                    >
+                      {title}
+                    </h3>
                   </div>
-                  <h3
-                    className="font-display font-semibold mt-6"
-                    style={{ fontSize: 20, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3 }}
-                  >
-                    {title}
-                  </h3>
-                  <p className="mt-3" style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>
+                  <p style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>
                     {body}
                   </p>
                 </article>
@@ -334,8 +345,10 @@ const Uitvoerders = () => {
                   <div style={{ marginTop: "auto", paddingTop: 24 }}>
                     <a
                       href="/contact"
-                      className="font-sans font-semibold hover:underline"
-                      style={{ fontSize: 14, color: "#152C4E" }}
+                      className="font-sans"
+                      style={{ fontSize: 14, color: "#E8B547", fontWeight: 600, textDecoration: "none" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "#D9A538")}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = "#E8B547")}
                     >
                       Vraag meer informatie →
                     </a>
