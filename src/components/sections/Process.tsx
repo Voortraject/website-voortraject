@@ -86,15 +86,11 @@ export const Process = () => {
 
   useEffect(() => {
     const onScroll = () => {
-      const title = titleRef.current;
-      if (!title) return;
-      const titleRect = title.getBoundingClientRect();
-      const vh = window.innerHeight;
-      // Once the title reaches the top of the viewport, line starts.
-      // After scrolling half a viewport further, it's complete.
-      const traveled = -titleRect.top; // positive once title passes top
-      const total = vh * 0.5;
-      const p = total > 0 ? Math.max(0, Math.min(1, traveled / total)) : 0;
+      const section = sectionRef.current;
+      if (!section) return;
+      const rect = section.getBoundingClientRect();
+      const visibleFromTop = Math.max(0, -rect.top);
+      const p = Math.min(1, visibleFromTop / (rect.height * 0.4));
       setProgress(p);
     };
     onScroll();
@@ -107,7 +103,7 @@ export const Process = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="section-pad" style={{ backgroundColor: "#FBFAF7" }}>
+    <section ref={sectionRef} id="flowchart-section" className="section-pad" style={{ backgroundColor: "#FBFAF7" }}>
       <div className="container-content">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
           <div>
@@ -173,16 +169,20 @@ export const Process = () => {
               </div>
             </div>
 
-            <div className="mt-12">
-              <div className="pl-[80px] mb-8">
-                <div style={{ width: 40, height: 2, backgroundColor: "#8B8680", marginBottom: 12 }} />
-                <p
-                  className="font-sans uppercase text-[14px]"
-                  style={{ letterSpacing: "0.1em", color: "#2B2B2B", fontWeight: 700 }}
-                >
-                  De uitvoerder neemt het over
-                </p>
-              </div>
+            <div>
+              <p
+                className="font-sans uppercase pl-[80px]"
+                style={{
+                  letterSpacing: "0.1em",
+                  color: "#2B2B2B",
+                  fontWeight: 700,
+                  fontSize: 13,
+                  marginTop: 32,
+                  marginBottom: 24,
+                }}
+              >
+                De uitvoerder neemt het over
+              </p>
               <ol>
                 <StepRow n={handover.n} title={handover.title} body={handover.body} muted />
               </ol>
