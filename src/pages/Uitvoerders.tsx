@@ -269,7 +269,7 @@ const Uitvoerders = () => {
               className="mt-6 text-[18px]"
               style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 720 }}
             >
-              Vier pakketten, van los papierwerk tot volledige ontzorging. Neem contact op voor de details.
+              Vier pakketten, van los papierwerk tot volledige ontzorging.
             </p>
             <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
               {packages.map((p) => (
