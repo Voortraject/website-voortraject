@@ -1,4 +1,5 @@
 import { useState, FormEvent } from "react";
+import { ChevronDown } from "lucide-react";
 import { CheckCircle, Mail, Phone, MapPin, Globe } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -42,6 +43,7 @@ const contactRows = [
 const Contact = () => {
   const [mode, setMode] = useState<Mode>("uitvoerder");
   const [submitted, setSubmitted] = useState(false);
+  const [vastlopersOpen, setVastlopersOpen] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -197,62 +199,69 @@ const Contact = () => {
                           <input type="tel" required className={inputClass} />
                         </div>
                         <div className={fieldWrap}>
-                          <label className={labelClass}>KvK-nummer{optional}</label>
-                          <input type="text" className={inputClass} />
-                        </div>
-                        <div className={fieldWrap}>
-                          <label className={labelClass}>
-                            Hoeveel opdrachten per maand ongeveer?{optional}
-                          </label>
-                          <select className={inputClass} defaultValue="">
-                            <option value="" disabled>
-                              Maak een keuze
-                            </option>
-                            <option>0-5</option>
-                            <option>5-15</option>
-                            <option>15-50</option>
-                            <option>50+</option>
-                            <option>Weet ik nog niet</option>
-                          </select>
-                        </div>
-                        <div className={fieldWrap}>
-                          <label className={labelClass}>Waar loopt het nu vast?</label>
-                          <div
-                            className="grid grid-cols-1 sm:grid-cols-2"
-                            style={{ gap: 10, marginTop: 4 }}
+                          <button
+                            type="button"
+                            onClick={() => setVastlopersOpen((v) => !v)}
+                            className="w-full flex items-center justify-between font-sans"
+                            style={{
+                              border: "1px solid #E5E2DB",
+                              borderRadius: 8,
+                              padding: "12px 16px",
+                              backgroundColor: "#FFFFFF",
+                              fontSize: 14,
+                              fontWeight: 600,
+                              color: "#2B2B2B",
+                              cursor: "pointer",
+                            }}
+                            aria-expanded={vastlopersOpen}
                           >
-                            {[
-                              "Subsidies & regelingen",
-                              "Offertetraject",
-                              "Dossier & administratie",
-                              "Capaciteit / personeel",
-                              "Klantcommunicatie",
-                              "Anders",
-                            ].map((opt) => (
-                              <label
-                                key={opt}
-                                className="flex items-center font-sans"
-                                style={{
-                                  gap: 10,
-                                  padding: "10px 12px",
-                                  border: "1px solid #D4D2CC",
-                                  borderRadius: 8,
-                                  backgroundColor: "#FBFAF7",
-                                  fontSize: 14,
-                                  color: "#2B2B2B",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                <input
-                                  type="checkbox"
-                                  name="vastlopers"
-                                  value={opt}
-                                  style={{ accentColor: "#E8B547" }}
-                                />
-                                {opt}
-                              </label>
-                            ))}
-                          </div>
+                            <span>Waar loopt het nu vast?</span>
+                            <ChevronDown
+                              size={18}
+                              style={{
+                                transition: "transform 0.2s",
+                                transform: vastlopersOpen ? "rotate(180deg)" : "rotate(0deg)",
+                              }}
+                            />
+                          </button>
+                          {vastlopersOpen && (
+                            <div
+                              className="grid grid-cols-1 sm:grid-cols-2"
+                              style={{ gap: 10, marginTop: 10 }}
+                            >
+                              {[
+                                "Subsidies & regelingen",
+                                "Offertetraject",
+                                "Dossier & administratie",
+                                "Capaciteit / personeel",
+                                "Klantcommunicatie",
+                                "Anders",
+                              ].map((opt) => (
+                                <label
+                                  key={opt}
+                                  className="flex items-center font-sans"
+                                  style={{
+                                    gap: 10,
+                                    padding: "10px 12px",
+                                    border: "1px solid #D4D2CC",
+                                    borderRadius: 8,
+                                    backgroundColor: "#FBFAF7",
+                                    fontSize: 14,
+                                    color: "#2B2B2B",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    name="vastlopers"
+                                    value={opt}
+                                    style={{ accentColor: "#E8B547" }}
+                                  />
+                                  {opt}
+                                </label>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         <div className={fieldWrap}>
                           <label className={labelClass}>
