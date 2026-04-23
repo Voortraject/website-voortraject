@@ -89,11 +89,15 @@ export const Process = () => {
       if (!el) return;
       const rect = el.getBoundingClientRect();
       const vh = window.innerHeight;
-      // Trigger: from when section top passes top of viewport, to when section bottom (~step 5) reaches mid viewport
-      const startY = 0; // section top at viewport top
-      const endY = vh * 0.5 - rect.height; // when bottom of section at mid viewport, rect.top equals this
-      const traveled = startY - rect.top;
-      const total = startY - endY;
+      // Start: when section top (which contains the H2) passes top of viewport => rect.top === 0
+      // End: when circle 4 reaches middle of viewport.
+      // Approximate circle 4 position: ~78% down the section (4 of 5 steps within the right column).
+      const circle4Offset = rect.height * 0.78;
+      // We want rect.top + circle4Offset === vh / 2  => rect.top === vh/2 - circle4Offset
+      const startTop = 0;
+      const endTop = vh / 2 - circle4Offset;
+      const traveled = startTop - rect.top;
+      const total = startTop - endTop;
       const p = total > 0 ? Math.max(0, Math.min(1, traveled / total)) : 0;
       setProgress(p);
     };
