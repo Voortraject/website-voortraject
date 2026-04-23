@@ -89,13 +89,12 @@ export const Process = () => {
       if (!el) return;
       const rect = el.getBoundingClientRect();
       const vh = window.innerHeight;
-      // Start: when section top (which contains the H2) passes top of viewport => rect.top === 0
-      // End: when circle 4 reaches middle of viewport.
-      // Approximate circle 4 position: ~78% down the section (4 of 5 steps within the right column).
-      const circle4Offset = rect.height * 0.78;
-      // We want rect.top + circle4Offset === vh / 2  => rect.top === vh/2 - circle4Offset
-      const startTop = 0;
-      const endTop = vh / 2 - circle4Offset;
+      // Start: very early — when section is just 5% into view (top still slightly below viewport top)
+      // End: when circle 3 (middle of flowchart) reaches middle of viewport.
+      // Circle 3 sits roughly at ~50% of the section height (3rd of 5 steps + handover).
+      const circle3Offset = rect.height * 0.5;
+      const startTop = vh * 0.05; // section just entering
+      const endTop = vh / 2 - circle3Offset;
       const traveled = startTop - rect.top;
       const total = startTop - endTop;
       const p = total > 0 ? Math.max(0, Math.min(1, traveled / total)) : 0;
