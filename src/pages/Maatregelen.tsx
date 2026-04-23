@@ -177,7 +177,7 @@ const Maatregelen = () => {
               De vijf <span style={{ color: "#E8B547" }}>maatregelen</span> die ertoe doen
             </h2>
             <p
-              className="mt-6"
+              className="mt-6 font-sans"
               style={{ fontSize: 18, color: "#6B6B6B", lineHeight: 1.6, maxWidth: 720 }}
             >
               Niet elke maatregel is voor elke woning even logisch. Hieronder wat er bij elke stap hoort.
