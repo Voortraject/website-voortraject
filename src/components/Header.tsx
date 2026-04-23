@@ -75,9 +75,6 @@ export const Header = () => {
             </button>
           </div>
           <nav className="container-content flex flex-col gap-2 pt-10" aria-label="Mobiele navigatie">
-            <div className="pb-6 flex justify-center">
-              <AudienceToggle />
-            </div>
             {links.map((l) => (
               <a
                 key={l.href}
