@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { NavLink } from "./NavLink";
 import { Button } from "./Button";
-import { AudienceToggle } from "./AudienceToggle";
 
 const links = [
+  { href: "/", label: "Voor uitvoerders" },
+  { href: "/bewoners", label: "Voor bewoners" },
   { href: "/maatregelen", label: "Maatregelen" },
   { href: "/over-ons", label: "Over ons" },
 ];
@@ -37,12 +38,7 @@ export const Header = () => {
           Voortraject
         </a>
 
-        {/* Centered toggle */}
-        <div className="hidden lg:flex flex-1 justify-center">
-          <AudienceToggle />
-        </div>
-
-        <nav className="hidden lg:flex items-center gap-7 shrink-0" aria-label="Hoofdnavigatie">
+        <nav className="hidden lg:flex items-center gap-8 shrink-0 ml-auto" aria-label="Hoofdnavigatie">
           {links.map((l) => (
             <NavLink key={l.href} href={l.href}>{l.label}</NavLink>
           ))}
@@ -79,9 +75,6 @@ export const Header = () => {
             </button>
           </div>
           <nav className="container-content flex flex-col gap-2 pt-10" aria-label="Mobiele navigatie">
-            <div className="pb-6 flex justify-center">
-              <AudienceToggle />
-            </div>
             {links.map((l) => (
               <a
                 key={l.href}

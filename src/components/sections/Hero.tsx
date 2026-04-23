@@ -1,35 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../Button";
-import { useAudience, Audience } from "@/contexts/AudienceContext";
 import heroHouses from "@/assets/hero-houses.jpg";
 
-const content: Record<Audience, {
-  h1: React.ReactNode;
-  intro: string;
-  rotating: string[];
-  primary: { label: string; href: string };
-}> = {
-  uitvoerders: {
-    h1: (
-      <>
-        Extra <span style={{ color: "hsl(var(--accent))" }}>slagkracht</span> voor verduurzamingsbedrijven
-      </>
-    ),
-    intro: "Wij ondersteunen uitvoerders met",
-    rotating: ["bewonersbegeleiding", "regelinguitleg", "offertevoorbereiding", "akkoordtrajecten"],
-    primary: { label: "Plan een kennismaking", href: "/contact" },
-  },
-  bewoners: {
-    h1: (
-      <>
-        Helder advies voor een toekomstbestendige woning
-      </>
-    ),
-    intro: "Wij helpen bewoners met",
-    rotating: ["overzicht", "regelinguitleg", "maatregelkeuze", "uitvoerderkeuze"],
-    primary: { label: "Plan een vrijblijvend gesprek", href: "/contact" },
-  },
-};
+const rotating = ["bewonersbegeleiding", "regelinguitleg", "offertevoorbereiding", "akkoordtrajecten"];
 
 const TYPE_MS = 80;
 const ERASE_MS = 50;
@@ -90,29 +63,26 @@ const TypewriterWord = ({ words }: { words: string[] }) => {
 };
 
 export const Hero = () => {
-  const { audience } = useAudience();
-  const c = content[audience];
-
   return (
     <section className="bg-background pt-10 pb-[72px] md:pt-16 md:pb-[120px]" aria-labelledby="hero-title">
       <div className="container-content">
         <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-[5%]">
           <div className="lg:basis-[58%] lg:shrink-0 min-w-0 text-left">
-            <div key={audience} className="animate-fade-up">
+            <div className="animate-fade-up">
               <h1
                 id="hero-title"
                 className="h1-hero text-foreground"
                 style={{ wordBreak: "keep-all", hyphens: "none", overflowWrap: "normal" }}
               >
-                {c.h1}
+                Extra <span style={{ color: "hsl(var(--accent))" }}>slagkracht</span> voor verduurzamingsbedrijven
               </h1>
               <p className="mt-8 text-[17px] md:text-[20px] leading-[1.5] text-muted-foreground max-w-[640px]">
-                {c.intro}{" "}
-                <TypewriterWord words={c.rotating} />
+                Wij ondersteunen uitvoerders met{" "}
+                <TypewriterWord words={rotating} />
               </p>
               <div className="mt-10">
-                <Button href={c.primary.href} variant="primary">
-                  {c.primary.label}
+                <Button href="/contact" variant="primary">
+                  Plan een kennismaking
                 </Button>
               </div>
             </div>
