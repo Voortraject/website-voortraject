@@ -174,9 +174,13 @@ const Dashboard = () => {
 };
 
 export const Technology = () => (
-  <section className="section-pad" style={{ backgroundColor: "#FBFAF7" }} aria-labelledby="tech-title">
+  <section
+    className="py-14 md:py-20"
+    style={{ backgroundColor: "#FBFAF7" }}
+    aria-labelledby="tech-title"
+  >
     <div className="container-content">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-center">
+      <div className="grid grid-cols-1 md:grid-cols-[45fr_55fr] gap-10 md:gap-24 items-center">
         <div>
           <h2 id="tech-title" className="h2-section">
             Menselijke begeleiding, ondersteund door slimme automatisering
