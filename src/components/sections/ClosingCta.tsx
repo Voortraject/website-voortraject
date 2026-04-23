@@ -1,5 +1,5 @@
 export const ClosingCta = () => (
-  <section className="py-24" style={{ backgroundColor: "#152C4E" }}>
+  <section className="py-[40px] text-primary-foreground bg-primary" style={{ backgroundColor: "#152C4E" }}>
     <div className="container-content text-center flex flex-col items-center">
       <h2
         className="font-display"
