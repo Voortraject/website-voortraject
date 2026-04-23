@@ -71,15 +71,12 @@ export const Hero = () => {
             <div className="animate-fade-up">
               <h1
                 id="hero-title"
-                className="h1-hero text-foreground"
+                className="h1-hero text-foreground text-left text-5xl"
                 style={{
                   wordBreak: "keep-all",
                   hyphens: "none",
                   overflowWrap: "normal",
                   maxWidth: 900,
-                  margin: "0 auto",
-                  textAlign: "center",
-                  fontSize: "clamp(2.4rem, 5vw, 3.6rem)",
                 }}
               >
                 Extra <span style={{ color: "hsl(var(--accent))" }}>slagkracht</span> voor verduurzamingsbedrijven
