@@ -1,3 +1,5 @@
+import { Check } from "lucide-react";
+
 const points = [
   {
     title: "Minder druk op de ondernemer",
@@ -33,26 +35,26 @@ export const Why = () => (
           </div>
         </div>
         <div className="lg:col-span-3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-10">
-            {points.map((p, i) => (
-              <div
-                key={p.title}
-                className={i === points.length - 1 ? "sm:col-span-2" : ""}
-              >
-                <div
-                  className="font-display font-light text-[48px] leading-none tabular-nums text-accent"
-                >
-                  {String(i + 1).padStart(2, "0")}
+          <ul className="space-y-8">
+            {points.map((p) => (
+              <li key={p.title} className="flex items-start gap-5">
+                <Check
+                  size={24}
+                  strokeWidth={2.5}
+                  className="text-accent shrink-0 mt-1"
+                  aria-hidden="true"
+                />
+                <div>
+                  <h3 className="font-display font-semibold text-[18px] tracking-[-0.02em] text-primary">
+                    {p.title}
+                  </h3>
+                  <p className="mt-2 text-[15px] leading-[1.5] text-muted-foreground">
+                    {p.body}
+                  </p>
                 </div>
-                <h3 className="mt-2 font-display font-semibold text-[18px] tracking-[-0.02em] text-primary">
-                  {p.title}
-                </h3>
-                <p className="mt-2 text-[15px] leading-[1.5] text-muted-foreground">
-                  {p.body}
-                </p>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </div>
     </div>

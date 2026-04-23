@@ -5,7 +5,6 @@ import { Problems } from "@/components/sections/Problems";
 import { Process } from "@/components/sections/Process";
 import { Why } from "@/components/sections/Why";
 import { Technology } from "@/components/sections/Technology";
-import { ClosingCta } from "@/components/sections/ClosingCta";
 
 const Index = () => {
   return (
@@ -17,7 +16,6 @@ const Index = () => {
         <Process />
         <Why />
         <Technology />
-        <ClosingCta />
       </main>
       <Footer />
     </div>
