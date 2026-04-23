@@ -50,25 +50,28 @@ export const Technology = () => (
               boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
             }}
           >
-            <div
-              className="flex items-center justify-center rounded-full"
-              style={{ width: 56, height: 56, backgroundColor: "#F0E4D0" }}
-            >
-              <Icon size={24} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
+            <div className="flex flex-row items-center" style={{ gap: 12 }}>
+              <div
+                className="flex items-center justify-center rounded-full shrink-0"
+                style={{ width: 48, height: 48, backgroundColor: "#F0E4D0" }}
+              >
+                <Icon size={22} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
+              </div>
+              <h3
+                className="font-display"
+                style={{
+                  fontSize: "1.05rem",
+                  fontWeight: 600,
+                  color: "#152C4E",
+                  letterSpacing: "-0.01em",
+                  lineHeight: 1.3,
+                  margin: 0,
+                }}
+              >
+                {title}
+              </h3>
             </div>
-            <h3
-              className="font-display font-semibold"
-              style={{
-                fontSize: 20,
-                color: "#152C4E",
-                letterSpacing: "-0.01em",
-                lineHeight: 1.3,
-                marginTop: 20,
-              }}
-            >
-              {title}
-            </h3>
-            <p style={{ marginTop: 12, fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>
+            <p style={{ marginTop: 16, fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>
               {body}
             </p>
           </article>

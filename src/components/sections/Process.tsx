@@ -34,7 +34,7 @@ const StepRow = ({
         style={{
           width: CIRCLE,
           height: CIRCLE,
-          border: `2px solid ${muted ? "#E5E2DB" : "hsl(var(--accent))"}`,
+          border: `2px solid ${muted ? "#D4D2CC" : "hsl(var(--accent))"}`,
         }}
       >
         <span
@@ -89,8 +89,11 @@ export const Process = () => {
       const section = sectionRef.current;
       if (!section) return;
       const rect = section.getBoundingClientRect();
-      const visibleFromTop = Math.max(0, -rect.top);
-      const p = Math.min(1, visibleFromTop / (rect.height * 0.4));
+      // Trigger earlier: progress is based on how far the section's top has passed
+      // the 55% line of the viewport (instead of the very top).
+      const triggerOffset = window.innerHeight * 0.45;
+      const visibleFromTrigger = Math.max(0, triggerOffset - rect.top);
+      const p = Math.min(1, visibleFromTrigger / (rect.height * 0.4));
       setProgress(p);
     };
     onScroll();
@@ -170,14 +173,18 @@ export const Process = () => {
             </div>
 
             <div>
+              <div
+                aria-hidden="true"
+                style={{ borderTop: "1.5px solid #E5E2DB", margin: "24px 0", marginTop: 32 }}
+              />
               <p
-                className="font-sans uppercase pl-[80px]"
+                className="font-sans pl-[80px]"
                 style={{
                   letterSpacing: "0.1em",
-                  color: "#2B2B2B",
+                  color: "#8B8680",
                   fontWeight: 700,
-                  fontSize: 13,
-                  marginTop: 32,
+                  fontSize: "0.7rem",
+                  textTransform: "uppercase",
                   marginBottom: 24,
                 }}
               >

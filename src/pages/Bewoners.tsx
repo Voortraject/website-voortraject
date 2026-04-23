@@ -9,6 +9,7 @@ const questions = [
   "Welke subsidies zijn relevant?",
   "Wat past bij mijn woning?",
   "Hoe kom ik van plan naar uitvoering?",
+  "Wat als ik huurder ben?",
 ];
 
 const services = [
