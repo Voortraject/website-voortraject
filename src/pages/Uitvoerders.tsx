@@ -92,7 +92,7 @@ const Uitvoerders = () => {
       <main className="flex-1">
         {/* HERO */}
         <section
-          className="pt-8 md:pt-12 pb-[72px] md:pb-[120px]"
+          className="pt-8 md:pt-12 pb-[56px] md:pb-[80px]"
           style={{ backgroundColor: "#FBFAF7" }}
           aria-labelledby="uitv-hero-title"
         >
@@ -151,7 +151,7 @@ const Uitvoerders = () => {
         </section>
 
         {/* PROBLEMEN */}
-        <section className="py-[72px] md:py-[120px]" style={{ backgroundColor: "#F5F2EC" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
             <h2 className="h2-section" style={{ color: "#152C4E" }}>
               Herkenbare <span style={{ color: "hsl(var(--accent))" }}>problemen</span> voor uitvoerders
@@ -202,7 +202,7 @@ const Uitvoerders = () => {
         </section>
 
         {/* WAT WIJ DOEN */}
-        <section className="py-[72px] md:py-[120px]" style={{ backgroundColor: "#FBFAF7" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
           <div className="container-content">
             <h2 className="h2-section" style={{ color: "#152C4E" }}>
               Wat <span style={{ color: "hsl(var(--accent))" }}>wij</span> voor jullie doen
@@ -260,7 +260,7 @@ const Uitvoerders = () => {
         </section>
 
         {/* PAKKETTEN */}
-        <section className="py-[72px] md:py-[120px]" style={{ backgroundColor: "#F5F2EC" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
             <h2 className="h2-section" style={{ color: "#152C4E" }}>
               <span style={{ color: "hsl(var(--accent))" }}>Kies</span> wat past bij jullie
@@ -348,11 +348,9 @@ const Uitvoerders = () => {
 
         {/* SLUIT-CTA */}
         <section
-          className="text-primary-foreground"
+          className="text-primary-foreground py-[56px] md:py-[80px]"
           style={{
             backgroundColor: "#152C4E",
-            paddingTop: 96,
-            paddingBottom: 96,
           }}
         >
           <div className="container-content text-center flex flex-col items-center">

@@ -58,7 +58,7 @@ const Maatregelen = () => {
       <main className="flex-1">
         {/* HERO */}
         <section
-          className="pb-[72px] md:pb-[120px]"
+          className="pb-[56px] md:pb-[80px]"
           style={{ backgroundColor: "#FBFAF7", paddingTop: "clamp(48px, 8vw, 80px)" }}
           aria-labelledby="m-hero-title"
         >
@@ -94,7 +94,7 @@ const Maatregelen = () => {
         </section>
 
         {/* PRINCIPE */}
-        <section className="py-[72px] md:py-[120px]" style={{ backgroundColor: "#F5F2EC" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
             <div className="mx-auto text-center" style={{ maxWidth: 900 }}>
               <h2
@@ -171,7 +171,7 @@ const Maatregelen = () => {
         </section>
 
         {/* VIJF MAATREGELEN */}
-        <section className="py-[72px] md:py-[120px]" style={{ backgroundColor: "#FBFAF7" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
           <div className="container-content">
             <h2 className="h2-section" style={{ color: "#152C4E" }}>
               De vijf <span style={{ color: "#E8B547" }}>maatregelen</span> die ertoe doen
@@ -319,8 +319,8 @@ const Maatregelen = () => {
 
         {/* SLUIT-CTA */}
         <section
-          className="text-primary-foreground"
-          style={{ backgroundColor: "#152C4E", paddingTop: 96, paddingBottom: 96 }}
+          className="text-primary-foreground py-[56px] md:py-[80px]"
+          style={{ backgroundColor: "#152C4E" }}
         >
           <div className="container-content text-center flex flex-col items-center">
             <h2
