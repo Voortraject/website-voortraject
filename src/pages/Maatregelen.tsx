@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Home, Wind, Sun, Thermometer, Battery, ChevronDown, Shield, Zap } from "lucide-react";
+import { Home, Wind, Sun, Thermometer, Battery, ChevronDown, Shield, Zap, ArrowRight, ArrowDown } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
@@ -117,53 +117,52 @@ const Maatregelen = () => {
               </p>
             </div>
             <div
-              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+              className="flex flex-col md:flex-row md:items-stretch gap-0"
               style={{ marginTop: 80 }}
             >
-              {principles.map((p) => {
+              {principles.map((p, idx) => {
                 const Icon = p.icon;
                 return (
-                  <div
-                    key={p.num}
-                    className="bg-white text-center flex flex-col items-center"
-                    style={{
-                      borderRadius: 16,
-                      padding: "48px 32px",
-                      border: "1px solid #E5E2DB",
-                    }}
-                  >
+                  <div key={p.num} className="contents md:contents">
                     <div
-                      className="flex items-center justify-center rounded-full"
-                      style={{ width: 64, height: 64, backgroundColor: "#F0E4D0", marginBottom: 24 }}
-                    >
-                      <Icon size={28} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
-                    </div>
-                    <div
-                      className="font-display"
+                      className="bg-white text-center flex flex-col items-center flex-1"
                       style={{
-                        fontSize: 64,
-                        fontWeight: 300,
-                        color: "#E8B547",
-                        lineHeight: 1,
-                        letterSpacing: "-0.02em",
-                        marginBottom: 16,
+                        borderRadius: 16,
+                        padding: "48px 32px",
+                        border: "1px solid #E5E2DB",
                       }}
                     >
-                      {p.num}
+                      <div
+                        className="flex items-center justify-center rounded-full"
+                        style={{ width: 64, height: 64, backgroundColor: "#F0E4D0" }}
+                      >
+                        <Icon size={28} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
+                      </div>
+                      <h3
+                        className="font-display"
+                        style={{
+                          fontWeight: 600,
+                          fontSize: 24,
+                          color: "#152C4E",
+                          letterSpacing: "-0.01em",
+                          marginTop: 24,
+                          marginBottom: 16,
+                        }}
+                      >
+                        {p.title}
+                      </h3>
+                      <p style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>{p.body}</p>
                     </div>
-                    <h3
-                      className="font-display"
-                      style={{
-                        fontWeight: 600,
-                        fontSize: 24,
-                        color: "#152C4E",
-                        letterSpacing: "-0.01em",
-                        marginBottom: 16,
-                      }}
-                    >
-                      {p.title}
-                    </h3>
-                    <p style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>{p.body}</p>
+                    {idx < principles.length - 1 && (
+                      <div
+                        className="flex items-center justify-center"
+                        style={{ padding: "24px 16px" }}
+                        aria-hidden="true"
+                      >
+                        <ArrowRight size={32} color="#E8B547" strokeWidth={2} className="hidden md:block" />
+                        <ArrowDown size={32} color="#E8B547" strokeWidth={2} className="md:hidden" />
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -186,7 +185,7 @@ const Maatregelen = () => {
             <p
               style={{ marginTop: 24, fontSize: 17, color: "#2B2B2B", lineHeight: 1.7, maxWidth: 720 }}
             >
-              Veel bewoners beginnen bij de meest zichtbare stap: zonnepanelen of een warmtepomp. Toch werkt elke maatregel beter als de stappen daarvoor al gezet zijn. Zonnepanelen op een tochtig huis verlagen je rekening, maar een warmtepomp in een slecht geïsoleerd huis haalt nooit zijn rendement. Door de stappen in de juiste volgorde te doen, haal je het meeste uit elke investering.
+              Veel bewoners beginnen bij de meest zichtbare stap: zonnepanelen of een warmtepomp. Toch werkt elke maatregel beter als de stappen daarvoor al gezet zijn. Door de stappen in de juiste volgorde te doen, haal je het meeste uit elke investering.
             </p>
             <div className="mx-auto" style={{ marginTop: 64, maxWidth: 900 }}>
               {measures.map((m) => {
