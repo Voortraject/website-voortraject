@@ -89,13 +89,12 @@ export const Process = () => {
       if (!el) return;
       const rect = el.getBoundingClientRect();
       const vh = window.innerHeight;
-      // Start: when section top (which contains the H2) passes top of viewport => rect.top === 0
-      // End: when circle 4 reaches middle of viewport.
-      // Approximate circle 4 position: ~78% down the section (4 of 5 steps within the right column).
-      const circle4Offset = rect.height * 0.78;
-      // We want rect.top + circle4Offset === vh / 2  => rect.top === vh/2 - circle4Offset
-      const startTop = 0;
-      const endTop = vh / 2 - circle4Offset;
+      // Start: very early — when section is just 5% into view (top still slightly below viewport top)
+      // End: when circle 3 (middle of flowchart) reaches middle of viewport.
+      // Circle 3 sits roughly at ~50% of the section height (3rd of 5 steps + handover).
+      const circle3Offset = rect.height * 0.5;
+      const startTop = vh * 0.05; // section just entering
+      const endTop = vh / 2 - circle3Offset;
       const traveled = startTop - rect.top;
       const total = startTop - endTop;
       const p = total > 0 ? Math.max(0, Math.min(1, traveled / total)) : 0;
@@ -113,22 +112,19 @@ export const Process = () => {
   return (
     <section ref={sectionRef} className="section-pad" style={{ backgroundColor: "#FBFAF7" }}>
       <div className="container-content">
-        <div className="mb-12">
-          <h2 className="h2-section lg:!text-[44px] lg:whitespace-nowrap">Van eerste contact tot akkoord</h2>
-          <p className="mt-6 body-lg text-muted-foreground max-w-[640px]">
-            Wij nemen het volledige voortraject over. Jullie focussen op de uitvoering.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
           <div>
+            <h2 className="h2-section lg:!text-[44px] lg:whitespace-nowrap">Van eerste contact tot akkoord</h2>
+            <p className="mt-6 body-lg text-muted-foreground max-w-[640px]">
+              Wij nemen het volledige voortraject over. Jullie focussen op de uitvoering.
+            </p>
             <img
               src={processPhoto}
               alt="Twee collega's overleggen aan een bureau, een met headset"
               loading="lazy"
-              className="w-full rounded-2xl object-cover"
+              className="w-full rounded-2xl object-cover mt-10"
               style={{
-                height: "520px",
+                height: "440px",
                 boxShadow: "0 4px 20px rgba(21,44,78,0.08)",
               }}
             />
