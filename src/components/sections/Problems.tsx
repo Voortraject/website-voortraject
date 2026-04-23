@@ -41,7 +41,8 @@ export const Problems = () => {
   return (
     <section
       ref={sectionRef}
-      className="bg-background section-pad border-t border-border"
+      className="section-pad"
+      style={{ backgroundColor: "#F5F2EC" }}
     >
       <div className="container-content">
         <div className="max-w-full">

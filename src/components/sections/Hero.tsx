@@ -94,7 +94,7 @@ export const Hero = () => {
   const c = content[audience];
 
   return (
-    <section className="bg-background pt-16 pb-24 md:pt-24 md:pb-32" aria-labelledby="hero-title">
+    <section className="bg-background pt-8 pb-[72px] md:pt-12 md:pb-[120px]" aria-labelledby="hero-title">
       <div className="container-content">
         <div className="flex flex-col lg:flex-row lg:items-start gap-8 lg:gap-[5%]">
           <div className="lg:basis-[58%] lg:shrink-0 min-w-0 text-left">
