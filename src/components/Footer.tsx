@@ -27,7 +27,7 @@ const navCols = [
 
 export const Footer = () => (
   <footer className="bg-primary text-white">
-    <div className="container-content py-16 md:py-20">
+    <div className="container-content md:py-20 py-[40px]">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
         <div>
           <p className="font-display font-semibold text-[20px] tracking-tight">
