@@ -34,7 +34,7 @@ const StepRow = ({
         style={{
           width: CIRCLE,
           height: CIRCLE,
-          border: `2px solid ${muted ? "#E5E2DB" : "hsl(var(--accent))"}`,
+          border: `2px solid ${muted ? "#D4D2CC" : "hsl(var(--accent))"}`,
         }}
       >
         <span
