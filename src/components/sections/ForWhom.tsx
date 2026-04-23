@@ -3,11 +3,13 @@ const cards = [
     label: "VOOR UITVOERDERS",
     title: "Groeien zonder extra personeel",
     body: "Wij helpen kleine en middelgrote uitvoerders om sneller en professioneler te werken in verduurzamingstrajecten.",
+    href: "/uitvoerders",
   },
   {
     label: "VOOR BEWONERS",
     title: "Helder advies en begeleiding",
     body: "Wij bieden helder advies over isolatie, installaties en regelingen, met begeleiding richting een betrouwbare uitvoerder.",
+    href: "/bewoners",
   },
 ];
 
@@ -53,6 +55,31 @@ export const ForWhom = () => (
             >
               {c.body}
             </p>
+            <a
+              href={c.href}
+              className="inline-flex items-center font-sans font-semibold group/link"
+              style={{
+                marginTop: 24,
+                fontSize: 15,
+                color: "#E8B547",
+                textDecoration: "none",
+                transition: "color 200ms",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#D9A538")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#E8B547")}
+            >
+              Meer weten{" "}
+              <span
+                style={{
+                  display: "inline-block",
+                  marginLeft: 6,
+                  transition: "transform 200ms",
+                }}
+                className="group-hover/link:translate-x-1"
+              >
+                →
+              </span>
+            </a>
           </article>
         ))}
       </div>
