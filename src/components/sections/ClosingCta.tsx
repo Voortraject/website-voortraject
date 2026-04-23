@@ -9,7 +9,8 @@ export const ClosingCta = () => (
           color: "#FFFFFF",
           letterSpacing: "-0.02em",
           lineHeight: 1.2,
-          maxWidth: 720,
+          maxWidth: "100%",
+          whiteSpace: "nowrap",
           marginBottom: 40,
         }}
       >
