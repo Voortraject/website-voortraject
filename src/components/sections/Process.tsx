@@ -20,18 +20,13 @@ const StepRow = ({
   title,
   body,
   muted,
-  isFirst,
-  isLast,
 }: {
   n: string;
   title: string;
   body: string;
   muted?: boolean;
-  isFirst?: boolean;
-  isLast?: boolean;
 }) => (
   <li className="relative grid grid-cols-[56px_1fr] gap-6 items-start">
-    {/* Circle with number sits on top of the vertical line */}
     <div className="relative" style={{ width: CIRCLE, height: CIRCLE }}>
       <div
         className="relative z-10 flex items-center justify-center rounded-full bg-background"
@@ -63,6 +58,26 @@ const StepRow = ({
   </li>
 );
 
+/** SVG curly brace `}` to the right of steps 1–4 */
+const Brace = () => (
+  <svg
+    width="20"
+    height="100%"
+    viewBox="0 0 20 100"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+    className="block"
+  >
+    <path
+      d="M 2 0 Q 12 0 12 12 L 12 44 Q 12 50 18 50 Q 12 50 12 56 L 12 88 Q 12 100 2 100"
+      fill="none"
+      stroke="hsl(var(--accent))"
+      strokeWidth="2"
+      vectorEffect="non-scaling-stroke"
+    />
+  </svg>
+);
+
 export const Process = () => (
   <section className="bg-background section-pad border-t border-border">
     <div className="container-content">
@@ -87,52 +102,45 @@ export const Process = () => (
           </div>
         </div>
 
-        {/* Right column: step list with connecting line */}
+        {/* Right column: grouped steps with brace */}
         <div className="relative">
-          {/* Vertical connecting line — oker through steps 1-4 */}
-          <div
-            aria-hidden="true"
-            className="absolute left-[27px] w-[2px] bg-accent"
-            style={{ top: CIRCLE / 2, bottom: 0 }}
-          />
+          {/* Group: steps 1-4 with brace on the right */}
+          <div className="relative pr-[88px]">
+            {/* Vertical connecting line through circles 1-4 */}
+            <div
+              aria-hidden="true"
+              className="absolute left-[27px] w-[2px] bg-accent"
+              style={{ top: CIRCLE / 2, bottom: CIRCLE / 2 }}
+            />
 
-          <ol className="relative space-y-12">
-            {ourSteps.map((s, i) => (
-              <StepRow
-                key={s.n}
-                n={s.n}
-                title={s.title}
-                body={s.body}
-                isFirst={i === 0}
-                isLast={i === ourSteps.length - 1}
-              />
-            ))}
-          </ol>
+            <ol className="relative space-y-12">
+              {ourSteps.map((s) => (
+                <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
+              ))}
+            </ol>
 
-          {/* WIJ STOPPEN HIER divider */}
-          <div className="relative py-8 pl-[80px]">
-            <div className="flex items-center gap-4">
+            {/* Brace + label on the right edge of the group */}
+            <div className="absolute right-0 top-0 bottom-0 flex items-center gap-3">
+              <div className="h-full py-2">
+                <Brace />
+              </div>
               <p
-                className="font-sans font-semibold uppercase text-[12px] whitespace-nowrap"
-                style={{ letterSpacing: "0.15em", color: "hsl(var(--accent))" }}
+                className="font-sans font-semibold text-[14px] leading-tight"
+                style={{ color: "hsl(var(--accent))", maxWidth: "80px" }}
               >
-                WIJ STOPPEN HIER
+                Deze stappen nemen wij over
               </p>
-              <div
-                className="flex-1"
-                style={{ height: "2px", background: "hsl(var(--accent))" }}
-                aria-hidden="true"
-              />
             </div>
           </div>
 
-          {/* Step 5 with grey connecting line above */}
-          <div className="relative">
-            <div
-              aria-hidden="true"
-              className="absolute left-[27px] w-[2px]"
-              style={{ top: 0, height: CIRCLE / 2, background: "#E5E2DB" }}
-            />
+          {/* Step 5 — separate, with handover label */}
+          <div className="mt-12">
+            <p
+              className="font-sans font-semibold uppercase text-[13px] mb-4 pl-[80px]"
+              style={{ letterSpacing: "0.1em", color: "#8B8680" }}
+            >
+              De uitvoerder neemt het over
+            </p>
             <ol>
               <StepRow n={handover.n} title={handover.title} body={handover.body} muted />
             </ol>
