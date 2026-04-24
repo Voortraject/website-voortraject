@@ -77,7 +77,7 @@ const Contact = () => {
               className="mx-auto font-sans"
               style={{
                 marginTop: 16,
-                maxWidth: 560,
+                maxWidth: 760,
                 fontSize: 16,
                 color: "#6B6B6B",
                 lineHeight: 1.5,
