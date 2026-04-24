@@ -5,6 +5,7 @@ const navCols = [
       { href: "/uitvoerders", label: "Voor uitvoerders" },
       { href: "/bewoners", label: "Voor bewoners" },
       { href: "/maatregelen", label: "Maatregelen" },
+      { href: "/over-ons", label: "Over ons" },
       { href: "/contact", label: "Contact" },
     ],
   },
@@ -35,8 +36,7 @@ export const Footer = () => (
             Voortraject
           </p>
           <p className="mt-4 text-sm leading-relaxed text-white/80 max-w-xs">
-            Commerciële en operationele ontzorgingspartner voor uitvoerders in
-            de verduurzamingssector.
+            Voortraject voor verduurzamingsbedrijven
           </p>
         </div>
 
