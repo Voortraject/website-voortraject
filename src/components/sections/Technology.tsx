@@ -25,7 +25,7 @@ export const Technology = () => (
     className="md:!py-24"
   >
     <div className="container-content">
-      <div className="text-center mx-auto" style={{ maxWidth: 720 }}>
+      <div className="text-center mx-auto" style={{ maxWidth: 960 }}>
         <h2 id="tech-title" className="h2-section" style={{ marginBottom: 16 }}>
           Menselijke begeleiding, ondersteund door slimme{" "}
           <span style={{ color: "#E8B547" }}>automatisering</span>
