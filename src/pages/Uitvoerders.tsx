@@ -1,24 +1,24 @@
-import { Check, Minus } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
 
 const withoutItems = [
-  "Bewonersvragen over subsidies en regelingen blijven bij jullie liggen",
-  "Offertes worden 's avonds of tussen bouwprojecten door opgesteld",
-  "Opvolging van offertes schiet erbij in, akkoorden blijven uit",
-  "Dossiers zijn verspreid over mails, notities en losse documenten",
-  "Groeien betekent kantoorpersoneel aannemen",
-  "Administratieve rompslomp houdt jullie weg van de uitvoering",
+  "Subsidievragen blijven bij jullie",
+  "'s Avonds offertes schrijven",
+  "Offertes blijven liggen",
+  "Dossiers verspreid over mails en notities",
+  "Groeien vraagt extra kantoorpersoneel",
+  "Administratie weg van de bouwplaats",
 ];
 
 const withItems = [
-  "Wij nemen het bewonerscontact over, van eerste vraag tot akkoord",
-  "Offertes worden door ons opgesteld, gecontroleerd en nagebeld",
-  "Elk traject wordt opgevolgd tot getekend akkoord",
-  "Een compleet dossier per traject, klaar voor overdracht aan uitvoering",
-  "Meer projecten aannemen zonder extra intern personeel",
-  "Jullie focus ligt waar die hoort: op de uitvoering",
+  "Wij doen het bewonerscontact",
+  "Wij stellen offertes op",
+  "Opvolging tot getekend akkoord",
+  "Eén compleet dossier per traject",
+  "Groeien zonder extra personeel",
+  "Focus terug op uitvoering",
 ];
 
 const packages = [
@@ -140,16 +140,19 @@ const Uitvoerders = () => {
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
             <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E", maxWidth: 900 }}>
-              <span style={{ whiteSpace: "nowrap" }}>Zonder Voortraject</span>
-              {" / "}
-              <span style={{ whiteSpace: "nowrap" }}>
-                Met <span style={{ color: "hsl(var(--accent))" }}>Voortraject</span>
-              </span>
+              Voor en na
             </h2>
 
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+            <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch">
               {/* Zonder */}
-              <div>
+              <div
+                style={{
+                  backgroundColor: "#EFECE4",
+                  border: "1px solid #E5E2DB",
+                  borderRadius: 16,
+                  padding: 40,
+                }}
+              >
                 <h3
                   className="font-display font-semibold"
                   style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 24 }}
@@ -161,9 +164,9 @@ const Uitvoerders = () => {
                     <li key={item} className="flex items-start gap-3">
                       <span
                         className="flex items-center justify-center rounded-full flex-shrink-0"
-                        style={{ width: 24, height: 24, backgroundColor: "#E5E2DB", marginTop: 2 }}
+                        style={{ width: 24, height: 24, backgroundColor: "#FBE5E5", marginTop: 2 }}
                       >
-                        <Minus size={14} color="#8A8377" strokeWidth={2.5} aria-hidden="true" />
+                        <X size={14} color="#C0392B" strokeWidth={3} aria-hidden="true" />
                       </span>
                       <span style={{ fontSize: 16, color: "#2B2B2B", lineHeight: 1.6 }}>{item}</span>
                     </li>
@@ -172,7 +175,14 @@ const Uitvoerders = () => {
               </div>
 
               {/* Met */}
-              <div>
+              <div
+                style={{
+                  backgroundColor: "#FFFFFF",
+                  border: "2px solid #E8B547",
+                  borderRadius: 16,
+                  padding: 40,
+                }}
+              >
                 <h3
                   className="font-display font-semibold"
                   style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 24 }}
@@ -196,11 +206,6 @@ const Uitvoerders = () => {
             </div>
 
             <div className="mt-16 text-center flex flex-col items-center">
-              <p
-                style={{ fontSize: 18, color: "#6B6B6B", lineHeight: 1.6, maxWidth: 640, marginBottom: 32 }}
-              >
-                Van eerste bewonerscontact tot getekend akkoord. Wij nemen het volledige voortraject uit handen.
-              </p>
               <a
                 href="/contact?tab=uitvoerders"
                 className={ctaButton}
