@@ -24,16 +24,14 @@ export const Header = () => {
     <header
       className="sticky top-0 z-50"
       style={{
-        backgroundColor: "rgba(255, 255, 255, 0.6)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        borderBottom: "1px solid rgba(229, 226, 219, 0.5)",
+        backgroundColor: "#152C4E",
+        borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
       }}
     >
       <div className="container-content flex items-center justify-between h-[72px] gap-6">
         <a
           href="/"
-          className="font-display font-semibold text-primary text-[20px] tracking-tight shrink-0"
+          className="font-display font-semibold text-white text-[20px] tracking-tight shrink-0 hover:text-accent transition-colors"
         >
           Voortraject
         </a>
@@ -42,7 +40,14 @@ export const Header = () => {
           {links.map((l) => {
             const active = typeof window !== "undefined" && window.location.pathname === l.href;
             return (
-              <NavLink key={l.href} href={l.href} active={active}>{l.label}</NavLink>
+              <a
+                key={l.href}
+                href={l.href}
+                className={`text-[15px] font-medium transition-colors ${active ? "text-accent" : "text-white/85 hover:text-accent"}`}
+                style={active ? { borderBottom: "2px solid hsl(var(--accent))", paddingBottom: 2 } : undefined}
+              >
+                {l.label}
+              </a>
             );
           })}
           {(() => {
@@ -59,7 +64,7 @@ export const Header = () => {
         </nav>
 
         <button
-          className="lg:hidden p-2 -mr-2 text-primary"
+          className="lg:hidden p-2 -mr-2 text-white"
           aria-label="Menu openen"
           aria-expanded={open}
           onClick={() => setOpen(true)}
