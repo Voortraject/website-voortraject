@@ -1,39 +1,24 @@
-import { HelpCircle, Clock, Users, TrendingUp, type LucideIcon } from "lucide-react";
+import { Check, Minus } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
 
-const problems: { icon: LucideIcon; title: string; body: string }[] = [
-  {
-    icon: HelpCircle,
-    title: "Subsidies blijven onduidelijk",
-    body: "Klanten begrijpen de regelingen niet en stellen telkens dezelfde vragen. Dat kost jullie uren die je liever anders besteedt.",
-  },
-  {
-    icon: Clock,
-    title: "Offertes kosten te veel tijd",
-    body: "Elke offerte opstellen, controleren en doorrekenen vraagt aandacht die je niet hebt als er werk op de planning staat.",
-  },
-  {
-    icon: Users,
-    title: "Jullie team wordt geleefd",
-    body: "Bewonersvragen, opvolging, administratie. Het houdt niet op en trekt mensen weg van waar ze goed in zijn.",
-  },
-  {
-    icon: TrendingUp,
-    title: "Groei stokt zonder extra mensen",
-    body: "Meer trajecten aannemen lukt niet zonder iemand aan te nemen. En personeel werven is duur, traag en onzeker.",
-  },
+const withoutItems = [
+  "Bewonersvragen over subsidies en regelingen blijven bij jullie liggen",
+  "Offertes worden 's avonds of tussen bouwprojecten door opgesteld",
+  "Opvolging van offertes schiet erbij in, akkoorden blijven uit",
+  "Dossiers zijn verspreid over mails, notities en losse documenten",
+  "Groeien betekent kantoorpersoneel aannemen",
+  "Administratieve rompslomp houdt jullie weg van de uitvoering",
 ];
 
-const services = [
-  { title: "Bewonersbegeleiding", body: "Persoonlijk contact en communicatie met bewoners, van eerste vraag tot akkoord." },
-  { title: "Regeling- en subsidieuitleg", body: "We maken landelijke subsidies en gemeentelijke regelingen begrijpelijk en zorgen dat alle voorwaarden kloppen." },
-  { title: "Offertevoorbereiding", body: "Gestructureerde offertes, klaar om te versturen zonder nalooptijd." },
-  { title: "Opdrachtbevestiging en akkoord", body: "Wij halen het akkoord op en zorgen dat alle handtekeningen binnen zijn." },
-  { title: "Dossieropbouw", body: "Compleet en gecontroleerd dossier, klaar voor overdracht aan jullie team." },
-  { title: "Overdracht aan uitvoering", body: "Schone overdracht met alle informatie die jullie nodig hebben om direct te starten." },
-  { title: "Nazorg en vervolgmaatregelen", body: "Optioneel: opvolging na uitvoering en begeleiding naar vervolgtrajecten." },
+const withItems = [
+  "Wij nemen het bewonerscontact over, van eerste vraag tot akkoord",
+  "Offertes worden door ons opgesteld, gecontroleerd en nagebeld",
+  "Elk traject wordt opgevolgd tot getekend akkoord",
+  "Een compleet dossier per traject, klaar voor overdracht aan uitvoering",
+  "Meer projecten aannemen zonder extra intern personeel",
+  "Jullie focus ligt waar die hoort: op de uitvoering",
 ];
 
 const packages = [
@@ -151,122 +136,86 @@ const Uitvoerders = () => {
           </div>
         </section>
 
-        {/* PROBLEMEN */}
+        {/* VOORTRAJECT VERGELIJKING */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
-            <h2 className="h2-section" style={{ color: "#152C4E" }}>
-              Herkenbare <span style={{ color: "hsl(var(--accent))" }}>problemen</span> voor uitvoerders
+            <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E", maxWidth: 900 }}>
+              <span style={{ whiteSpace: "nowrap" }}>Zonder Voortraject</span>
+              {" / "}
+              <span style={{ whiteSpace: "nowrap" }}>
+                Met <span style={{ color: "hsl(var(--accent))" }}>Voortraject</span>
+              </span>
             </h2>
-            <p
-              className="mt-6 text-[18px]"
-              style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 720 }}
-            >
-              Veel uitvoerders herkennen deze pijnpunten. Wij halen ze weg.
-            </p>
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {problems.map(({ icon: Icon, title, body }) => (
-                <article
-                  key={title}
-                  className="bg-white transition-all duration-200 ease-out hover:-translate-y-0.5"
-                  style={{
-                    borderRadius: 16,
-                    padding: 40,
-                    border: "1px solid #E5E2DB",
-                    boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = "0 8px 32px rgba(21,44,78,0.10)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = "0 4px 24px rgba(21,44,78,0.04)";
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 12,
-                      marginBottom: 16,
-                    }}
-                  >
-                    <div
-                      className="flex items-center justify-center rounded-full"
-                      style={{ width: 56, height: 56, backgroundColor: "#F0E4D0", flexShrink: 0 }}
-                    >
-                      <Icon size={24} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
-                    </div>
-                    <h3
-                      className="font-display"
-                      style={{ fontSize: "1.05rem", fontWeight: 600, color: "#152C4E", margin: 0, lineHeight: 1.3 }}
-                    >
-                      {title}
-                    </h3>
-                  </div>
-                  <p style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>
-                    {body}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
 
-        {/* WAT WIJ DOEN */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
-          <div className="container-content">
-            <h2 className="h2-section" style={{ color: "#152C4E" }}>
-              Wat <span style={{ color: "hsl(var(--accent))" }}>wij</span> voor jullie doen
-            </h2>
-            <p
-              className="mt-6 text-[18px]"
-              style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 720 }}
-            >
-              Jullie bepalen zelf waar wij instappen. Wij nemen over wat jullie bezighoudt,
-              zodat jullie kunnen bouwen.
-            </p>
-            <ul className="mt-16">
-              {services.map((s, i) => (
-                <li
-                  key={s.title}
-                  className="flex items-start gap-6"
-                  style={{
-                    paddingTop: 32,
-                    paddingBottom: 32,
-                    borderBottom: i === services.length - 1 ? "none" : "1px solid #E5E2DB",
-                  }}
+            <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+              {/* Zonder */}
+              <div>
+                <h3
+                  className="font-display font-semibold"
+                  style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 24 }}
                 >
-                  <span
-                    className="font-display"
-                    style={{
-                      fontSize: 40,
-                      fontWeight: 300,
-                      color: "#E8B547",
-                      width: 80,
-                      flexShrink: 0,
-                      lineHeight: 1,
-                      letterSpacing: "-0.02em",
-                    }}
-                  >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <div>
-                    <h3
-                      className="font-display font-semibold"
-                      style={{ fontSize: 20, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3 }}
-                    >
-                      {s.title}
-                    </h3>
-                    <p
-                      className="mt-2"
-                      style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6, maxWidth: 640 }}
-                    >
-                      {s.body}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                  Zonder Voortraject
+                </h3>
+                <ul className="space-y-5">
+                  {withoutItems.map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span
+                        className="flex items-center justify-center rounded-full flex-shrink-0"
+                        style={{ width: 24, height: 24, backgroundColor: "#E5E2DB", marginTop: 2 }}
+                      >
+                        <Minus size={14} color="#8A8377" strokeWidth={2.5} aria-hidden="true" />
+                      </span>
+                      <span style={{ fontSize: 16, color: "#2B2B2B", lineHeight: 1.6 }}>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Met */}
+              <div>
+                <h3
+                  className="font-display font-semibold"
+                  style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 24 }}
+                >
+                  Met Voortraject
+                </h3>
+                <ul className="space-y-5">
+                  {withItems.map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span
+                        className="flex items-center justify-center rounded-full flex-shrink-0"
+                        style={{ width: 24, height: 24, backgroundColor: "#F0E4D0", marginTop: 2 }}
+                      >
+                        <Check size={14} color="#E8B547" strokeWidth={3} aria-hidden="true" />
+                      </span>
+                      <span style={{ fontSize: 16, color: "#2B2B2B", lineHeight: 1.6 }}>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-16 text-center flex flex-col items-center">
+              <p
+                style={{ fontSize: 18, color: "#6B6B6B", lineHeight: 1.6, maxWidth: 640, marginBottom: 32 }}
+              >
+                Van eerste bewonerscontact tot getekend akkoord. Wij nemen het volledige voortraject uit handen.
+              </p>
+              <a
+                href="/contact?tab=uitvoerders"
+                className={ctaButton}
+                style={{
+                  backgroundColor: "#E8B547",
+                  color: "#2B2B2B",
+                  padding: "14px 32px",
+                  borderRadius: 8,
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
+              >
+                Plan een kennismaking
+              </a>
+            </div>
           </div>
         </section>
 
