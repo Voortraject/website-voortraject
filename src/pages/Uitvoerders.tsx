@@ -254,7 +254,7 @@ const Uitvoerders = () => {
         </section>
 
         {/* PAKKETTEN */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
             <h2 className="h2-section" style={{ color: "#152C4E" }}>
               <span style={{ color: "hsl(var(--accent))" }}>Kies</span> wat past bij jullie
@@ -269,8 +269,9 @@ const Uitvoerders = () => {
               {packages.map((p) => (
                 <article
                   key={p.title}
-                  className="relative bg-white flex flex-col transition-all duration-200 ease-out"
+                  className="relative flex flex-col transition-all duration-200 ease-out"
                   style={{
+                    backgroundColor: "#F5F2EC",
                     borderRadius: 16,
                     padding: 40,
                     border: p.featured ? "2px solid #E8B547" : "1px solid #E5E2DB",
