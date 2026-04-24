@@ -106,7 +106,7 @@ export const Process = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} id="flowchart-section" className="section-pad" style={{ backgroundColor: "#FBFAF7" }}>
+    <section ref={sectionRef} id="flowchart-section" className="section-pad" style={{ backgroundColor: "#FFFFFF" }}>
       <div className="container-content">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
           <div>

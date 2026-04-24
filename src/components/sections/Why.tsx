@@ -3,24 +3,24 @@ import whyPhoto from "@/assets/why-photo.jpg";
 
 const points = [
   {
-    title: "Minder druk op de ondernemer",
-    body: "Jullie focus blijft op de uitvoering.",
+    title: "Ervaring in de sector",
+    body: "Opgericht door professionals met jarenlange ervaring in verduurzaming.",
   },
   {
-    title: "Bewoners beter begeleid",
-    body: "Duidelijke uitleg en persoonlijk contact vergroten het vertrouwen.",
+    title: "Geen vaste kosten",
+    body: "Geen vaste kosten, geen abonnement. Wij rekenen per getekend akkoord.",
   },
   {
-    title: "Offertes sneller en duidelijker",
-    body: "Gestructureerde voorbereiding bespaart tijd en voorkomt misverstanden.",
+    title: "Eén partij, het hele voortraject",
+    body: "Van bewonerscontact tot getekend akkoord. Jullie hoeven niet met meerdere partijen te schakelen.",
   },
   {
-    title: "Hogere kans op akkoord",
-    body: "Een goed voortraject leidt vaker tot een getekende opdracht.",
+    title: "Volledig digitaal dossier",
+    body: "Geen losse mails en notities. Eén compleet dossier dat klaar is voor uitvoering.",
   },
   {
-    title: "Schaalbaar zonder direct extra personeel",
-    body: "Jullie kunnen meer trajecten aannemen zonder intern te hoeven uitbreiden.",
+    title: "Thuis in Noord-Nederland",
+    body: "Korte lijnen en persoonlijk contact. Wij kennen de regio en de mensen die er werken.",
   },
 ];
 
