@@ -3,37 +3,22 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
 
-const problems: { icon: LucideIcon; title: string; body: string }[] = [
-  {
-    icon: HelpCircle,
-    title: "Subsidies blijven onduidelijk",
-    body: "Klanten begrijpen de regelingen niet en stellen telkens dezelfde vragen. Dat kost jullie uren die je liever anders besteedt.",
-  },
-  {
-    icon: Clock,
-    title: "Offertes kosten te veel tijd",
-    body: "Elke offerte opstellen, controleren en doorrekenen vraagt aandacht die je niet hebt als er werk op de planning staat.",
-  },
-  {
-    icon: Users,
-    title: "Jullie team wordt geleefd",
-    body: "Bewonersvragen, opvolging, administratie. Het houdt niet op en trekt mensen weg van waar ze goed in zijn.",
-  },
-  {
-    icon: TrendingUp,
-    title: "Groei stokt zonder extra mensen",
-    body: "Meer trajecten aannemen lukt niet zonder iemand aan te nemen. En personeel werven is duur, traag en onzeker.",
-  },
+const withoutItems = [
+  "Bewonersvragen over subsidies en regelingen blijven bij jullie liggen",
+  "Offertes worden 's avonds of tussen bouwprojecten door opgesteld",
+  "Opvolging van offertes schiet erbij in, akkoorden blijven uit",
+  "Dossiers zijn verspreid over mails, notities en losse documenten",
+  "Groeien betekent kantoorpersoneel aannemen",
+  "Administratieve rompslomp houdt jullie weg van de uitvoering",
 ];
 
-const services = [
-  { title: "Bewonersbegeleiding", body: "Persoonlijk contact en communicatie met bewoners, van eerste vraag tot akkoord." },
-  { title: "Regeling- en subsidieuitleg", body: "We maken landelijke subsidies en gemeentelijke regelingen begrijpelijk en zorgen dat alle voorwaarden kloppen." },
-  { title: "Offertevoorbereiding", body: "Gestructureerde offertes, klaar om te versturen zonder nalooptijd." },
-  { title: "Opdrachtbevestiging en akkoord", body: "Wij halen het akkoord op en zorgen dat alle handtekeningen binnen zijn." },
-  { title: "Dossieropbouw", body: "Compleet en gecontroleerd dossier, klaar voor overdracht aan jullie team." },
-  { title: "Overdracht aan uitvoering", body: "Schone overdracht met alle informatie die jullie nodig hebben om direct te starten." },
-  { title: "Nazorg en vervolgmaatregelen", body: "Optioneel: opvolging na uitvoering en begeleiding naar vervolgtrajecten." },
+const withItems = [
+  "Wij nemen het bewonerscontact over, van eerste vraag tot akkoord",
+  "Offertes worden door ons opgesteld, gecontroleerd en nagebeld",
+  "Elk traject wordt opgevolgd tot getekend akkoord",
+  "Een compleet dossier per traject, klaar voor overdracht aan uitvoering",
+  "Meer projecten aannemen zonder extra intern personeel",
+  "Jullie focus ligt waar die hoort: op de uitvoering",
 ];
 
 const packages = [
