@@ -110,7 +110,7 @@ export const Process = () => {
       <div className="container-content">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
           <div>
-            <h2 ref={titleRef} className="h2-section lg:!text-[44px] lg:whitespace-nowrap">Van eerste contact tot akkoord</h2>
+            <h2 ref={titleRef} className="h2-section lg:!text-[44px] lg:whitespace-nowrap">Van eerste contact tot <span style={{ color: "hsl(var(--accent))" }}>akkoord</span></h2>
             <p className="mt-6 body-lg text-muted-foreground max-w-[640px]">
               Wij nemen het volledige voortraject over. Jullie focussen op de uitvoering.
             </p>
