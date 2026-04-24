@@ -2,8 +2,9 @@ const navCols = [
   {
     label: "Navigatie",
     items: [
+      { href: "/uitvoerders", label: "Voor uitvoerders" },
+      { href: "/bewoners", label: "Voor bewoners" },
       { href: "/maatregelen", label: "Maatregelen" },
-      { href: "/over-ons", label: "Over ons" },
       { href: "/contact", label: "Contact" },
     ],
   },
@@ -18,8 +19,8 @@ const navCols = [
   {
     label: "Juridisch",
     items: [
-      { href: "/privacy", label: "Privacyverklaring" },
-      { href: "/voorwaarden", label: "Algemene voorwaarden" },
+      { href: "#", label: "Privacyverklaring" },
+      { href: "#", label: "Algemene voorwaarden" },
       { href: "#", label: "KvK: 00000000" },
     ],
   },
