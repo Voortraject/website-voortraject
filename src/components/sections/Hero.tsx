@@ -79,7 +79,7 @@ export const Hero = () => {
                   maxWidth: 900,
                 }}
               >
-                Extra <span style={{ color: "hsl(var(--accent))" }}>slagkracht</span> voor verduurzamingsbedrijven
+                Focus op <span style={{ color: "hsl(var(--accent))" }}>uitvoering</span>. Wij regelen de rest.
               </h1>
               <p className="mt-8 text-[17px] leading-[1.5] text-muted-foreground max-w-[640px] md:text-lg">
                 Wij ondersteunen uitvoerders met{" "}
