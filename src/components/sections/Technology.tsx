@@ -20,7 +20,7 @@ const cards: { icon: LucideIcon; title: string; body: string }[] = [
 
 export const Technology = () => (
   <section
-    style={{ backgroundColor: "#FBFAF7", paddingTop: 64, paddingBottom: 64 }}
+    style={{ backgroundColor: "#FFFFFF", paddingTop: 64, paddingBottom: 64 }}
     aria-labelledby="tech-title"
     className="md:!py-24"
   >
