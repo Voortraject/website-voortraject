@@ -6,10 +6,10 @@ import tim from "@/assets/team-tim.png";
 import wouter from "@/assets/team-wouter.png";
 
 const team = [
-  { name: "Christian", role: "Mede-oprichter & Bewonersbegeleiding en commercie", img: christian },
-  { name: "Michael", role: "Mede-oprichter & Verduurzamingsspecialist", img: michael },
-  { name: "Tim", role: "", img: tim },
-  { name: "Wouter", role: "", img: wouter },
+  { name: "Christian", role: "Mede-oprichter", specialty: "Bewonersbegeleiding en commercie", img: christian },
+  { name: "Michael", role: "Mede-oprichter", specialty: "Verduurzamingsspecialist", img: michael },
+  { name: "Tim", role: "", specialty: "", img: tim },
+  { name: "Wouter", role: "", specialty: "", img: wouter },
 ];
 
 const accent = { color: "hsl(var(--accent))" };
@@ -19,34 +19,8 @@ const OverOns = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <main className="flex-1">
-        {/* Hero */}
-        <section className="py-24 md:py-32 bg-white">
-          <div className="container-content text-center">
-            <h1 className="font-display font-semibold text-primary tracking-tight"
-              style={{ fontSize: "clamp(40px, 6vw, 64px)", lineHeight: 1.1, letterSpacing: "-0.02em" }}>
-              Over <span style={accent}>ons</span>
-            </h1>
-            <p className="mt-6 text-lg md:text-xl text-muted-foreground">
-              De mensen achter Voortraject.
-            </p>
-          </div>
-        </section>
-
-        {/* Oprichtingsverhaal */}
-        <section className="section-pad" style={{ backgroundColor: "#F5F2EC" }}>
-          <div className="container-content">
-            <h2 className="h2-section text-center mb-8">
-              Hoe Voortraject is <span style={accent}>ontstaan</span>
-            </h2>
-            <p className="mx-auto text-center text-[17px] md:text-lg leading-relaxed text-foreground/80"
-              style={{ maxWidth: "75%" }}>
-              Voortraject is ontstaan uit de frustratie dat verduurzamingsbedrijven te veel tijd kwijt zijn aan alles behalve het bouwen zelf. Wij zagen uitvoerders 's avonds offertes schrijven, subsidievragen telkens opnieuw beantwoorden en dossiers bij elkaar harken uit losse mails. Dat kon beter. Daarom namen wij het voortraject ter hand, zodat uitvoerders kunnen focussen op waar ze goed in zijn.
-            </p>
-          </div>
-        </section>
-
         {/* Team */}
-        <section className="section-pad bg-white">
+        <section className="section-pad" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
             <h2 className="h2-section text-center mb-12">
               Ons <span style={accent}>team</span>
@@ -60,18 +34,27 @@ const OverOns = () => {
                     border: "1px solid #E5E2DB",
                     boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 10px 32px rgba(21,44,78,0.12)")}
+                  onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 12px 36px rgba(21,44,78,0.14)")}
                   onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 4px 24px rgba(21,44,78,0.06)")}
                 >
                   <div className="aspect-square w-full overflow-hidden" style={{ backgroundColor: "#FAFAFA" }}>
                     <img src={p.img} alt={p.name} loading="lazy" className="w-full h-full object-cover" />
                   </div>
-                  <div className="p-5 flex-1 flex flex-col">
-                    <h3 className="font-display font-semibold text-primary text-[18px] tracking-[-0.01em]">
+                  <div className="p-6 flex-1 flex flex-col">
+                    <h3 className="font-display font-bold text-primary text-[20px] tracking-[-0.01em] leading-tight">
                       {p.name}
                     </h3>
-                    <p className="mt-1 text-sm text-muted-foreground min-h-[2.5rem]">
+                    <p
+                      className="text-primary text-[15px] leading-tight"
+                      style={{ fontWeight: 500, marginTop: 6 }}
+                    >
                       {p.role || "\u00A0"}
+                    </p>
+                    <p
+                      className="text-muted-foreground text-[14px] leading-tight"
+                      style={{ marginTop: 4 }}
+                    >
+                      {p.specialty || "\u00A0"}
                     </p>
                   </div>
                 </article>
@@ -80,21 +63,18 @@ const OverOns = () => {
           </div>
         </section>
 
-        {/* Missie/visie */}
-        <section className="section-pad" style={{ backgroundColor: "#F5F2EC" }}>
+        {/* Oprichtingsverhaal */}
+        <section className="py-20 md:py-24 bg-white">
           <div className="container-content">
             <h2 className="h2-section text-center mb-8">
-              Waar wij voor <span style={accent}>staan</span>
+              Hoe Voortraject is <span style={accent}>ontstaan</span>
             </h2>
-            <div className="mx-auto text-center space-y-5 text-[17px] md:text-lg leading-relaxed text-foreground/80"
-              style={{ maxWidth: "75%" }}>
-              <p>
-                Nederland heeft meer verduurzamingsbedrijven nodig die kunnen opschalen. Niet omdat ze harder werken, maar omdat het voortraject werkt.
-              </p>
-              <p>
-                Wij zorgen dat bewoners begrepen worden, dat uitvoerders kunnen bouwen, en dat de transitie niet stokt op administratie.
-              </p>
-            </div>
+            <p
+              className="mx-auto text-center text-[17px] md:text-lg leading-relaxed text-foreground/80"
+              style={{ maxWidth: "70%" }}
+            >
+              Voortraject is ontstaan uit de frustratie dat verduurzamingsbedrijven te veel tijd kwijt zijn aan alles behalve het bouwen zelf. Wij zagen uitvoerders vastlopen op papierwerk, subsidievragen en dossiervoering. Daarom namen wij het voortraject ter hand.
+            </p>
           </div>
         </section>
 
