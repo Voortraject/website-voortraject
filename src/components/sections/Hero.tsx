@@ -81,7 +81,7 @@ export const Hero = () => {
               >
                 Focus op <span style={{ color: "hsl(var(--accent))" }}>uitvoering</span>.<br />Wij regelen de rest.
               </h1>
-              <p className="mt-8 text-[17px] leading-[1.5] text-muted-foreground max-w-[640px] md:text-lg">
+              <p className="mt-8 text-[20px] leading-[1.5] text-muted-foreground max-w-[760px] md:text-[22px] lg:text-[24px]">
                 Wij ondersteunen uitvoerders met{" "}
                 <TypewriterWord words={rotating} />
               </p>
