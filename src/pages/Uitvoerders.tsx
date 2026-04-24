@@ -1,4 +1,4 @@
-import { Check, Minus, type LucideIcon } from "lucide-react";
+import { Check, Minus } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
