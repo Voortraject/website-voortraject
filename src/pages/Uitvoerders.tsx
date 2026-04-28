@@ -191,15 +191,15 @@ const Uitvoerders = () => {
               {/* Zonder */}
               <div
                 style={{
-                  backgroundColor: "#EFECE4",
-                  border: "1px solid #E5E2DB",
+                  backgroundColor: "#FFFFFF",
                   borderRadius: 16,
                   padding: 40,
+                  boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
                 }}
               >
                 <h3
                   className="font-display font-semibold"
-                  style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 24 }}
+                  style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid #E5E2DB" }}
                 >
                   Zonder Voortraject
                 </h3>
@@ -212,7 +212,7 @@ const Uitvoerders = () => {
                       >
                         <X size={14} color="#C0392B" strokeWidth={3} aria-hidden="true" />
                       </span>
-                      <span style={{ fontSize: 16, color: "#2B2B2B", lineHeight: 1.6 }}>{item}</span>
+                      <span style={{ fontSize: 16, color: "#152C4E", lineHeight: 1.6 }}>{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -225,11 +225,12 @@ const Uitvoerders = () => {
                   border: "2px solid #E8B547",
                   borderRadius: 16,
                   padding: 40,
+                  boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
                 }}
               >
                 <h3
                   className="font-display font-semibold"
-                  style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 24 }}
+                  style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid #F0E4D0" }}
                 >
                   Met Voortraject
                 </h3>
@@ -242,11 +243,28 @@ const Uitvoerders = () => {
                       >
                         <Check size={14} color="#E8B547" strokeWidth={3} aria-hidden="true" />
                       </span>
-                      <span style={{ fontSize: 16, color: "#2B2B2B", lineHeight: 1.6 }}>{item}</span>
+                      <span style={{ fontSize: 16, color: "#152C4E", lineHeight: 1.6 }}>{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
+            </div>
+
+            <div className="mt-16 text-center flex flex-col items-center">
+              <a
+                href="/contact"
+                className={ctaButton}
+                style={{
+                  backgroundColor: "#E8B547",
+                  color: "#2B2B2B",
+                  padding: "14px 32px",
+                  borderRadius: 8,
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
+              >
+                Plan een kennismaking
+              </a>
             </div>
           </div>
         </section>
