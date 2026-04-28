@@ -19,12 +19,12 @@ const cards: { icon: LucideIcon; title: string; body: string }[] = [
   {
     icon: ClipboardCheck,
     title: "Grip op wat na uitvoering blijft hangen",
-    body: "Wij houden overzicht op ontbrekende stukken en acties, zodat jullie niet opnieuw het dossier in hoeven omdat er iets is blijven liggen.",
+    body: "Wij houden overzicht op ontbrekende stukken en openstaande acties, zodat jullie niet opnieuw het dossier in hoeven door gezeur of losse eindjes.",
   },
   {
     icon: CheckCircle,
     title: "Dossiercontrole voor overdracht",
-    body: "We controleren of alles compleet is, zodat er geen losse eindjes of ontbrekende stukken tussen blijven zitten.",
+    body: "We controleren of alles compleet is voor de overdracht, zodat er geen onduidelijke afspraken of ontbrekende stukken tussen blijven zitten.",
   },
 ];
 
