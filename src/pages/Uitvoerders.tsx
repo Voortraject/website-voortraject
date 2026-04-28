@@ -24,6 +24,7 @@ import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
 
 type Package = {
   title: string;
+  subtitle: string;
   bullets: string[];
   result: string;
   badge: string | null;
@@ -33,6 +34,7 @@ type Package = {
 const packages: Package[] = [
   {
     title: "Offerte & dossier",
+    subtitle: "Voor uitvoerders die tijd verliezen op papierwerk en dossiervorming.",
     bullets: [
       "Offertevoorbereiding en opmaak",
       "Dossieropbouw en controle",
@@ -43,6 +45,7 @@ const packages: Package[] = [
   },
   {
     title: "Akkoord & begeleiding",
+    subtitle: "Voor uitvoerders die bewonersvragen en opvolging tot akkoord willen loslaten.",
     bullets: [
       "Alles uit Offerte & dossier",
       "Begeleiding rond akkoordtraject",
@@ -54,6 +57,7 @@ const packages: Package[] = [
   },
   {
     title: "Totaal Ontzorging",
+    subtitle: "Voor uitvoerders die het volledige voortraject buiten de deur willen zetten.",
     bullets: [
       "Alles uit Akkoord & begeleiding",
       "Intake en eerste bewonerscontact",
@@ -67,6 +71,7 @@ const packages: Package[] = [
   },
   {
     title: "AI-workflow ondersteuning",
+    subtitle: "Voor uitvoerders die het voortraject intern willen houden, maar veel efficiënter willen werken.",
     bullets: [
       "Slimme intake en dossieropbouw",
       "Snelle offertevoorbereiding",
@@ -78,6 +83,7 @@ const packages: Package[] = [
   },
   {
     title: "Nazorg Traject",
+    subtitle: "Voor de uitvoerder die grip wil op de afronding en een vlekkeloze reputatie.",
     bullets: [
       "Facturatie per uitvoering",
       "Vervolgplanning voor woning",
@@ -359,11 +365,24 @@ const Uitvoerders = () => {
                         letterSpacing: "-0.02em",
                         lineHeight: 1.25,
                         paddingRight: p.badge ? 110 : 0,
-                        minHeight: 50,
                       }}
                     >
                       {p.title}
                     </h3>
+                    <p
+                      style={{
+                        marginTop: 8,
+                        fontSize: 13,
+                        color: "#6B6B6B",
+                        lineHeight: 1.4,
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                      title={p.subtitle}
+                    >
+                      {p.subtitle}
+                    </p>
                     <hr style={{ margin: "20px 0", border: "none", borderTop: "1px solid #E5E2DB" }} />
                     <ul className="space-y-3">
                       {p.bullets.map((b) => (
