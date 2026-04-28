@@ -51,7 +51,7 @@ const StepRow = ({
       >
         {title}
       </h3>
-      <p className="mt-2 text-[16px] leading-relaxed text-muted-foreground max-w-[360px]">
+      <p className="mt-1.5 text-[16px] leading-relaxed text-muted-foreground max-w-[360px]">
         {body}
       </p>
     </div>
@@ -60,7 +60,7 @@ const StepRow = ({
 
 export const Process = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const lineWrapRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -95,28 +95,39 @@ export const Process = () => {
           </p>
         </div>
 
-        {/* Voortraject row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
-          <div>
+          {/* Left column: two stacked images */}
+          <div className="flex flex-col gap-6 lg:sticky lg:top-24 self-start">
             <img
               src={processPhoto}
               alt="Twee collega's overleggen aan een bureau, een met headset"
               loading="lazy"
               className="w-full rounded-2xl object-cover"
               style={{
-                height: "440px",
+                height: "360px",
+                boxShadow: "0 4px 20px rgba(21,44,78,0.08)",
+              }}
+            />
+            <img
+              src={processPhotoAftercare}
+              alt="Bewoner met tablet aan de keukentafel"
+              loading="lazy"
+              className="w-full rounded-2xl object-cover"
+              style={{
+                height: "360px",
                 boxShadow: "0 4px 20px rgba(21,44,78,0.08)",
               }}
             />
           </div>
 
-          <div className="relative" ref={lineWrapRef}>
-            {/* Background grey track spanning full timeline */}
+          {/* Right column: continuous timeline */}
+          <div className="relative" ref={timelineRef}>
+            {/* Background grey track */}
             <div
               aria-hidden="true"
               className="absolute left-[26px] w-[4px] rounded-[2px]"
               style={{
-                top: CIRCLE / 2,
+                top: CIRCLE / 2 + 28,
                 bottom: CIRCLE / 2,
                 background: "#E5E2DB",
               }}
@@ -126,7 +137,7 @@ export const Process = () => {
               aria-hidden="true"
               className="absolute left-[26px] w-[4px] origin-top rounded-[2px]"
               style={{
-                top: CIRCLE / 2,
+                top: CIRCLE / 2 + 28,
                 bottom: CIRCLE / 2,
                 background: "#E8B547",
                 transform: `scaleY(${progress})`,
@@ -143,27 +154,20 @@ export const Process = () => {
                 fontWeight: 700,
                 fontSize: "0.7rem",
                 textTransform: "uppercase",
-                marginBottom: 24,
+                marginBottom: 16,
               }}
             >
               Voortraject
             </p>
 
-            <ol className="relative space-y-12">
+            <ol className="relative space-y-6">
               {voortrajectSteps.map((s) => (
                 <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
               ))}
             </ol>
 
-            {/* Asterisk marker between step 4 and 5 */}
-            <div className="relative pl-[80px] my-10">
-              <div
-                aria-hidden="true"
-                style={{
-                  borderTop: "1.5px dashed #D4D2CC",
-                  marginBottom: 16,
-                }}
-              />
+            {/* Inline asterisk marker (line continues behind) */}
+            <div className="relative pl-[80px] py-4">
               <p
                 className="font-sans italic"
                 style={{
@@ -173,57 +177,9 @@ export const Process = () => {
                 }}
               >
                 <span style={{ color: "hsl(var(--accent))", fontWeight: 700 }}>*</span>{" "}
-                Hier vindt de uitvoering door jullie team plaats
+                Hier vindt de uitvoering plaats
               </p>
-              <div
-                aria-hidden="true"
-                style={{
-                  borderTop: "1.5px dashed #D4D2CC",
-                  marginTop: 16,
-                }}
-              />
             </div>
-          </div>
-        </div>
-
-        {/* Nazorg row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start mt-16">
-          <div>
-            <img
-              src={processPhotoAftercare}
-              alt="Bewoner met tablet aan de keukentafel"
-              loading="lazy"
-              className="w-full rounded-2xl object-cover"
-              style={{
-                height: "440px",
-                boxShadow: "0 4px 20px rgba(21,44,78,0.08)",
-              }}
-            />
-          </div>
-
-          <div className="relative">
-            {/* Background grey track */}
-            <div
-              aria-hidden="true"
-              className="absolute left-[26px] w-[4px] rounded-[2px]"
-              style={{
-                top: CIRCLE / 2,
-                bottom: CIRCLE / 2,
-                background: "#E5E2DB",
-              }}
-            />
-            {/* Foreground progressive yellow line */}
-            <div
-              aria-hidden="true"
-              className="absolute left-[26px] w-[4px] origin-top rounded-[2px]"
-              style={{
-                top: CIRCLE / 2,
-                bottom: CIRCLE / 2,
-                background: "#E8B547",
-                transform: `scaleY(${progress})`,
-                transition: "transform 80ms linear",
-              }}
-            />
 
             {/* Nazorg label */}
             <p
@@ -234,13 +190,13 @@ export const Process = () => {
                 fontWeight: 700,
                 fontSize: "0.7rem",
                 textTransform: "uppercase",
-                marginBottom: 24,
+                marginBottom: 16,
               }}
             >
               Nazorg Traject
             </p>
 
-            <ol className="relative space-y-12">
+            <ol className="relative space-y-6">
               {nazorgSteps.map((s) => (
                 <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
               ))}
