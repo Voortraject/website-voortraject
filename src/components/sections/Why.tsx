@@ -1,27 +1,11 @@
-import { Check } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import whyPhoto from "@/assets/why-photo.jpg";
 
 const points = [
-  {
-    title: "Ervaring in de sector",
-    body: "Opgericht door professionals met jarenlange ervaring in verduurzaming.",
-  },
-  {
-    title: "Geen vaste kosten",
-    body: "Geen vaste kosten, geen abonnement. Wij rekenen per getekend akkoord.",
-  },
-  {
-    title: "Eén partij, het hele voortraject",
-    body: "Van bewonerscontact tot getekend akkoord. Jullie hoeven niet met meerdere partijen te schakelen.",
-  },
-  {
-    title: "Volledig digitaal dossier",
-    body: "Geen losse mails en notities. Eén compleet dossier dat klaar is voor uitvoering.",
-  },
-  {
-    title: "Thuis in Noord-Nederland",
-    body: "Korte lijnen en persoonlijk contact. Wij kennen de regio en de mensen die er werken.",
-  },
+  "Bewoners blijven bellen voor uitleg",
+  "Offertes worden steeds vooruitgeschoven",
+  "Dossiers raken versnipperd over mails en appjes",
+  "Na uitvoering blijven acties en stukken openstaan",
 ];
 
 export const Why = () => (
@@ -29,8 +13,8 @@ export const Why = () => (
     <div className="container-content">
       <div className="text-center mb-16">
         <h2 className="h2-section">
-          Waarom uitvoerders voor ons{" "}
-          <span style={{ color: "hsl(var(--accent))" }}>kiezen</span>
+          Wat blijft er bij jullie liggen als niemand dit{" "}
+          <span style={{ color: "hsl(var(--accent))" }}>oppakt?</span>
         </h2>
       </div>
 
@@ -46,26 +30,24 @@ export const Why = () => (
         </div>
 
         <div>
-          <ul className="space-y-8">
+          <ul className="space-y-6">
             {points.map((p) => (
-              <li key={p.title} className="flex items-start gap-5">
-                <Check
+              <li key={p} className="flex items-start gap-5">
+                <AlertCircle
                   size={24}
                   strokeWidth={2.5}
                   className="text-accent shrink-0 mt-1"
                   aria-hidden="true"
                 />
-                <div>
-                  <h3 className="font-display font-semibold text-[18px] tracking-[-0.02em] text-primary">
-                    {p.title}
-                  </h3>
-                  <p className="mt-2 text-[15px] leading-[1.5] text-muted-foreground">
-                    {p.body}
-                  </p>
-                </div>
+                <p className="font-display font-semibold text-[18px] tracking-[-0.02em] text-primary leading-snug">
+                  {p}
+                </p>
               </li>
             ))}
           </ul>
+          <p className="mt-10 text-[16px] leading-[1.6] text-muted-foreground italic">
+            Tijd, aandacht en overzicht lekken weg zonder dat iemand het direct ziet.
+          </p>
         </div>
       </div>
     </div>

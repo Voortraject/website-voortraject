@@ -1,20 +1,30 @@
-import { Inbox, FileText, CheckCircle, type LucideIcon } from "lucide-react";
+import { Inbox, FileText, Bell, ClipboardCheck, CheckCircle, type LucideIcon } from "lucide-react";
 
 const cards: { icon: LucideIcon; title: string; body: string }[] = [
   {
     icon: Inbox,
     title: "Automatische intake",
-    body: "Bewonersvragen komen binnen via formulier, e-mail of telefoon. Onze systemen leggen direct een dossier aan en sturen de juiste follow-up.",
+    body: "Nieuwe aanvragen en bewonersvragen worden direct vastgelegd, zodat minder verloren gaat in losse mails of notities.",
   },
   {
     icon: FileText,
-    title: "Slimme offertes",
-    body: "Offertes worden opgesteld met alle relevante informatie: maatregelen, subsidies, doorlooptijden. Klaar om te versturen zonder nalooptijd.",
+    title: "Slimme offertevoorbereiding",
+    body: "Trajectinput wordt sneller samengebracht, zodat offertes minder tijd kosten en niet blijven liggen tussen plan en akkoord.",
+  },
+  {
+    icon: Bell,
+    title: "Opvolging zonder gejaag",
+    body: "Openstaande acties blijven in beeld, zodat jullie minder achter bewoners of akkoordmomenten aan hoeven.",
+  },
+  {
+    icon: ClipboardCheck,
+    title: "Grip op wat na uitvoering blijft hangen",
+    body: "Wij houden overzicht op ontbrekende stukken en acties, zodat jullie niet opnieuw het dossier in hoeven omdat er iets is blijven liggen.",
   },
   {
     icon: CheckCircle,
-    title: "Dossiercontrole",
-    body: "Elke overdracht naar jullie uitvoering is gecheckt op volledigheid. Geen ontbrekende handtekeningen of onduidelijke afspraken.",
+    title: "Dossiercontrole voor overdracht",
+    body: "We controleren of alles compleet is, zodat er geen losse eindjes of ontbrekende stukken tussen blijven zitten.",
   },
 ];
 
@@ -28,17 +38,19 @@ export const Technology = () => (
       <div className="text-center mx-auto" style={{ maxWidth: 960 }}>
         <h2 id="tech-title" className="h2-section" style={{ marginBottom: 16 }}>
           Menselijke begeleiding, ondersteund door slimme{" "}
-          <span style={{ color: "#E8B547" }}>automatisering</span>
+          <span style={{ color: "#E8B547" }}>systemen</span>
         </h2>
         <p
           className="mx-auto"
           style={{ fontSize: 17, color: "#6B6B6B", lineHeight: 1.6, marginBottom: 48 }}
         >
-          Wij combineren persoonlijke begeleiding met slimme systemen. Daardoor werken
-          we sneller, leveren we consistenter en kunnen we opschalen.
+          Onze systemen zijn er niet om mooie software te laten zien, maar om te voorkomen
+          dat er tijd verloren gaat aan alles wat blijft liggen. Van intake en
+          offertevoorbereiding tot opvolging, dossiercontrole en openstaande acties na
+          uitvoering.
         </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
         {cards.map(({ icon: Icon, title, body }) => (
           <article
             key={title}
