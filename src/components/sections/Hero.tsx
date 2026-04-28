@@ -79,17 +79,17 @@ export const Hero = () => {
                   maxWidth: 900,
                 }}
               >
-                Focus op <span style={{ color: "hsl(var(--accent))" }}>uitvoering</span>.<br />Wij regelen de rest.
+                Wij vangen het <span style={{ color: "hsl(var(--accent))" }}>voortraject</span> op, zodat jullie kunnen bouwen
               </h1>
               <p className="mt-8 text-[20px] leading-[1.5] text-muted-foreground max-w-[760px] md:text-[22px] lg:text-[24px]">
-                Wij ondersteunen uitvoerders en bewoners van offertevoorbereiding tot aan de nazorg. Minder kantoorlast voor de vakman, sneller duidelijkheid voor de bewoner.
+                Waar veel tijd op lekt, zit vaak niet op de bouwplaats, maar in alles eromheen: bewonersvragen, planuitleg, offerte-opbouw, opvolging en dossiers die strak moeten blijven lopen. Wij pakken juist dat stuk op, zodat jullie minder kantoorlast hebben en meer focus op uitvoering houden.
               </p>
               <div className="mt-10 flex flex-wrap items-center gap-4">
                 <Button href="/contact" variant="primary">
                   Plan een kennismaking
                 </Button>
                 <Button href="/uitvoerders#pakketten" variant="secondary">
-                  Bekijk onze pakketten
+                  Bekijk pakketten
                 </Button>
               </div>
             </div>

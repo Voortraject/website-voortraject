@@ -57,14 +57,14 @@ const Bewoners = () => {
                   className="h1-hero text-5xl"
                   style={{ color: "#2B2B2B", wordBreak: "keep-all", overflowWrap: "normal" }}
                 >
-                  <span style={{ color: "hsl(var(--accent))" }}>Helder</span>{" "}
-                  verduurzamingsadvies voor isolatie en installaties
+                  <span style={{ color: "hsl(var(--accent))" }}>Onafhankelijk</span>{" "}
+                  verduurzamingsadvies zonder wachtrijen
                 </h1>
                 <p
                   className="mt-8 text-[16px] md:text-[18px]"
                   style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 560 }}
                 >
-                  Wij helpen bewoners met overzicht, duidelijke keuzes en begeleiding richting een passende uitvoering.
+                  Tegenstrijdige adviezen, lange wachttijden en onduidelijkheid over wat slim is: wij kijken onafhankelijk met je mee en bieden begeleiding richting passende uitvoering.
                 </p>
                 <div className="mt-10">
                   <a
@@ -79,7 +79,7 @@ const Bewoners = () => {
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
                   >
-                    Plan een vrijblijvend gesprek
+                    Plan een gratis gesprek
                   </a>
                 </div>
               </div>
