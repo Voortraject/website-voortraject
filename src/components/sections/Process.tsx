@@ -190,8 +190,7 @@ export const Process = () => {
               }}
             />
             <div className="relative flex lg:justify-start justify-center lg:pl-[calc(50%+32px+80px)]">
-              <span
-                className="font-display italic px-6 bg-white"
+              <span className="font-display italic bg-white px-0"
                 style={{
                   color: "hsl(var(--muted-foreground))",
                   fontSize: "0.95rem",
