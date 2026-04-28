@@ -118,7 +118,7 @@ const Uitvoerders = () => {
         {/* HERO */}
         <section
           className="pt-8 md:pt-12 pb-[56px] md:pb-[80px]"
-          style={{ backgroundColor: "#FBFAF7" }}
+          style={{ backgroundColor: "#FFFFFF" }}
           aria-labelledby="uitv-hero-title"
         >
           <div className="container-content">
@@ -182,7 +182,7 @@ const Uitvoerders = () => {
         </section>
 
         {/* VOORTRAJECT VERGELIJKING */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F9F9F7" }}>
           <div className="container-content">
             <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E", maxWidth: 900 }}>
               Voor en <span style={{ color: "hsl(var(--accent))" }}>na</span>
