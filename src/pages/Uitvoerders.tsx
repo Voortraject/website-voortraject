@@ -1,4 +1,22 @@
-import { Check, Inbox, FileText, Bell } from "lucide-react";
+import { Check, Inbox, FileText, Bell, X } from "lucide-react";
+
+const withoutItems = [
+  "Bewoners blijven bellen en appen met vragen over planning, maatregelen en verwachtingen.",
+  "Isolatieplannen en losse maatregelen moeten steeds opnieuw worden uitgelegd.",
+  "Offertes kosten tijd en blijven liggen tussen de uitvoering door.",
+  "Dossiers raken versnipperd over mails, notities en losse terugbelmomenten.",
+  "Na uitvoering blijven facturen, stukken en openstaande acties hangen.",
+  "Groei betekent vaak meer kantoorwerk en meer kans dat iets blijft liggen.",
+];
+
+const withItems = [
+  "Wij vangen bewonersvragen en uitleg aan de voorkant op.",
+  "Wij helpen plannen, maatregelen en keuzes helder doorlopen.",
+  "Wij bereiden offertes en dossiers overzichtelijk voor.",
+  "Wij houden opvolging en akkoordmomenten scherp in beeld.",
+  "Wij helpen ook na uitvoering overzicht houden op wat nog openstaat (het natraject).",
+  "Jullie houden de volledige focus op planning, uitvoering en groei.",
+];
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
@@ -157,6 +175,77 @@ const Uitvoerders = () => {
                     objectPosition: "center",
                   }}
                 />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* VOORTRAJECT VERGELIJKING */}
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
+          <div className="container-content">
+            <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E", maxWidth: 900 }}>
+              Voor en <span style={{ color: "hsl(var(--accent))" }}>na</span>
+            </h2>
+
+            <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch">
+              {/* Zonder */}
+              <div
+                style={{
+                  backgroundColor: "#EFECE4",
+                  border: "1px solid #E5E2DB",
+                  borderRadius: 16,
+                  padding: 40,
+                }}
+              >
+                <h3
+                  className="font-display font-semibold"
+                  style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 24 }}
+                >
+                  Zonder Voortraject
+                </h3>
+                <ul className="space-y-5">
+                  {withoutItems.map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span
+                        className="flex items-center justify-center rounded-full flex-shrink-0"
+                        style={{ width: 24, height: 24, backgroundColor: "#FBE5E5", marginTop: 2 }}
+                      >
+                        <X size={14} color="#C0392B" strokeWidth={3} aria-hidden="true" />
+                      </span>
+                      <span style={{ fontSize: 16, color: "#2B2B2B", lineHeight: 1.6 }}>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Met */}
+              <div
+                style={{
+                  backgroundColor: "#FFFFFF",
+                  border: "2px solid #E8B547",
+                  borderRadius: 16,
+                  padding: 40,
+                }}
+              >
+                <h3
+                  className="font-display font-semibold"
+                  style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 24 }}
+                >
+                  Met Voortraject
+                </h3>
+                <ul className="space-y-5">
+                  {withItems.map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span
+                        className="flex items-center justify-center rounded-full flex-shrink-0"
+                        style={{ width: 24, height: 24, backgroundColor: "#F0E4D0", marginTop: 2 }}
+                      >
+                        <Check size={14} color="#E8B547" strokeWidth={3} aria-hidden="true" />
+                      </span>
+                      <span style={{ fontSize: 16, color: "#2B2B2B", lineHeight: 1.6 }}>{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
