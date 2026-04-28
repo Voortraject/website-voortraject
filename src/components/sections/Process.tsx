@@ -11,8 +11,14 @@ const ourSteps = [
 const handover = {
   n: "05",
   title: "Uitvoering en oplevering",
-  body: "De uitvoerder plant in en voert het werk uit, met een compleet dossier als vertrekpunt.",
+  body: "De vakmensen gaan aan de slag in de woning.",
 };
+
+const aftercareSteps = [
+  { n: "06", title: "Facturatie per uitvoering", body: "Directe en foutloze afhandeling van de administratie na de klus." },
+  { n: "07", title: "Vervolgplanning", body: "Vooruitkijken naar de volgende stappen in het verduurzamingsplan." },
+  { n: "08", title: "Begeleiding tot 5-star review", body: "Wij zorgen dat de bewoner 100% tevreden is en begeleiden het proces tot een perfecte beoordeling." },
+];
 
 const CIRCLE = 56;
 
