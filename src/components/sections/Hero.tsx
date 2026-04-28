@@ -71,12 +71,12 @@ export const Hero = () => {
             <div className="animate-fade-up">
               <h1
                 id="hero-title"
-                className="h1-hero text-foreground text-left text-7xl"
+                className="h1-hero text-foreground text-left text-5xl md:text-6xl lg:text-7xl"
                 style={{
                   wordBreak: "keep-all",
                   hyphens: "none",
                   overflowWrap: "normal",
-                  maxWidth: 900,
+                  maxWidth: "none",
                 }}
               >
                 Wij vangen het <span style={{ color: "hsl(var(--accent))" }}>voortraject</span> op,<br />zodat jullie kunnen bouwen
