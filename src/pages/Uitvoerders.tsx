@@ -5,80 +5,68 @@ import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
 
 type Package = {
   title: string;
-  sub: string;
   bullets: string[];
   result: string;
   badge: string | null;
   featured?: boolean;
-  highlight?: boolean;
 };
 
 const packages: Package[] = [
   {
     title: "Offerte & dossier",
-    sub: "Voor uitvoerders die tijd verliezen op papierwerk en dossiervorming.",
     bullets: [
       "Offertevoorbereiding en opmaak",
       "Dossieropbouw en controle",
-      "Overdracht van compleet dossier",
+      "Overdracht compleet dossier",
     ],
-    result:
-      "Minder handmatig uitzoekwerk, minder losse documenten, sneller van aanvraag naar bruikbaar dossier.",
+    result: "Snellere doorloop van aanvraag naar bruikbaar dossier.",
     badge: null,
   },
   {
     title: "Akkoord & begeleiding",
-    sub: "Voor uitvoerders die bewonersvragen en opvolging tot akkoord willen loslaten.",
     bullets: [
       "Alles uit Offerte & dossier",
-      "Bewonersbegeleiding rond het akkoordtraject",
-      "Uitleg van plannen en regelingen",
+      "Begeleiding rond akkoordtraject",
+      "Uitleg plannen en regelingen",
       "Opvolging tot getekend akkoord",
     ],
-    result:
-      "Minder tijd kwijt aan terugbellen, minder offertes die blijven liggen, meer grip op doorlooptijd.",
+    result: "Minder tijd kwijt aan terugbellen en uitleggen.",
     badge: null,
   },
   {
-    title: "Full ontzorging",
-    sub: "Voor uitvoerders die het volledige voortraject buiten de deur willen zetten.",
+    title: "Totaal Ontzorging & Nazorg",
     bullets: [
       "Alles uit Akkoord & begeleiding",
       "Intake en eerste bewonerscontact",
-      "Volledige bewonerscommunicatie",
-      "Overzicht op vervolgstappen",
+      "Bewonerscommunicatie tot overdracht",
+      "Overzicht op natraject en nazorg",
+      "Begeleiding tot 5-star review",
     ],
-    result:
-      "Vrijwel geen druk meer aan de voorkant, meer focus op uitvoering, opschalen zonder extra kantoorlast.",
+    result: "Volledige focus op uitvoering en groei.",
     badge: "Meest gekozen",
     featured: true,
   },
   {
     title: "AI-workflow ondersteuning",
-    sub: "Voor uitvoerders die het voortraject intern willen houden, maar efficiënter willen werken.",
     bullets: [
       "Slimme intake en dossieropbouw",
       "Snelle offertevoorbereiding",
-      "Opvolging van openstaande acties",
+      "Opvolging openstaande acties",
       "Grip op wat na uitvoering blijft hangen",
     ],
-    result:
-      "Minder dossiers die stilvallen, minder handmatig werk, meer overzicht zonder extra kantoorcapaciteit.",
+    result: "Meer overzicht zonder extra kantoorcapaciteit.",
     badge: null,
   },
   {
     title: "Nazorg Traject",
-    sub: "Voor uitvoerders die grip willen houden op de afronding en klanttevredenheid.",
     bullets: [
       "Facturatie per uitvoering",
-      "Vervolgplanning voor volgende woning-stappen",
-      "Actieve begeleiding naar een 5-star review",
-      "Eén aanspreekpunt blijft betrokken",
+      "Vervolgplanning voor woning",
+      "Begeleiding naar 5-star review",
+      "Eén vast aanspreekpunt",
     ],
-    result:
-      "Snellere cashflow, meer vervolgopdrachten, een perfecte reputatie zonder extra werk.",
-    badge: "Uniek",
-    highlight: true,
+    result: "Snellere cashflow en een perfecte reputatie.",
+    badge: null,
   },
 ];
 
@@ -96,7 +84,7 @@ const whyCards = [
   {
     icon: Bell,
     title: "Opvolging zonder gejaag",
-    body: "Grip op openstaande acties en losse eindjes, ook na de uitvoering.",
+    body: "Grip op openstaande acties en losse eindjes, ook na uitvoering.",
   },
 ];
 
@@ -119,8 +107,15 @@ const Uitvoerders = () => {
               <div style={{ textAlign: "left" }}>
                 <h1
                   id="uitv-hero-title"
-                  className="h1-hero"
-                  style={{ color: "#2B2B2B", wordBreak: "keep-all", overflowWrap: "normal", textAlign: "left" }}
+                  className="font-display font-semibold"
+                  style={{
+                    color: "#2B2B2B",
+                    fontSize: "clamp(32px, 3.6vw, 48px)",
+                    lineHeight: 1.15,
+                    letterSpacing: "-0.02em",
+                    maxWidth: 720,
+                    textAlign: "left",
+                  }}
                 >
                   Wij vangen het{" "}
                   <span style={{ color: "hsl(var(--accent))" }}>voortraject</span>{" "}
@@ -130,7 +125,7 @@ const Uitvoerders = () => {
                   className="mt-8 text-[16px] md:text-[18px]"
                   style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 620, textAlign: "left" }}
                 >
-                  Waar veel tijd op lekt, zit vaak niet op de bouwplaats, maar in alles eromheen: bewonersvragen, planuitleg, offerte-opbouw, opvolging en dossiers die strak moeten blijven lopen. Wij pakken juist dat stuk op, zodat jullie minder kantoorlast hebben en meer focus op uitvoering houden.
+                  Waar veel tijd op lekt, zit vaak niet op de bouwplaats, maar in alles eromheen: bewonersvragen, planuitleg, offerte-opbouw, opvolging en dossiers die strak moeten blijven lopen.
                 </p>
                 <div className="mt-10" style={{ textAlign: "left" }}>
                   <a
@@ -177,14 +172,14 @@ const Uitvoerders = () => {
               className="mt-6 text-[18px] text-center mx-auto"
               style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 720 }}
             >
-              Vijf pakketten, van losse offerte- en dossieropbouw tot volledige ontzorging en unieke nazorg.
+              Vijf pakketten, van losse offerte- en dossieropbouw tot volledige ontzorging.
             </p>
 
             <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 items-stretch">
               {packages.map((p, i) => {
-                const accent = p.featured ? "#E8B547" : p.highlight ? "#152C4E" : "#E5E2DB";
-                const borderWidth = p.featured || p.highlight ? "2px" : "1px";
                 const colStart = i === 3 ? "lg:col-start-2" : "";
+                const borderColor = p.featured ? "#E8B547" : "#E5E2DB";
+                const borderWidth = p.featured ? "2px" : "1px";
 
                 return (
                   <article
@@ -193,8 +188,8 @@ const Uitvoerders = () => {
                     style={{
                       backgroundColor: "#F5F2EC",
                       borderRadius: 16,
-                      padding: 36,
-                      border: `${borderWidth} solid ${accent}`,
+                      padding: 32,
+                      border: `${borderWidth} solid ${borderColor}`,
                       boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
                     }}
                     onMouseEnter={(e) => {
@@ -208,10 +203,10 @@ const Uitvoerders = () => {
                       <span
                         className="absolute font-sans font-semibold"
                         style={{
-                          top: 20,
-                          right: 20,
-                          backgroundColor: p.highlight ? "#152C4E" : "#E8B547",
-                          color: p.highlight ? "#FFFFFF" : "#2B2B2B",
+                          top: 16,
+                          right: 16,
+                          backgroundColor: "#E8B547",
+                          color: "#2B2B2B",
                           padding: "6px 12px",
                           borderRadius: 999,
                           fontSize: 12,
@@ -223,37 +218,40 @@ const Uitvoerders = () => {
                     <h3
                       className="font-display font-semibold"
                       style={{
-                        fontSize: 22,
+                        fontSize: 20,
                         color: "#152C4E",
                         letterSpacing: "-0.02em",
-                        lineHeight: 1.2,
-                        paddingRight: p.badge ? 90 : 0,
+                        lineHeight: 1.25,
+                        paddingRight: p.badge ? 110 : 0,
+                        minHeight: 50,
                       }}
                     >
                       {p.title}
                     </h3>
-                    <p
-                      className="mt-3 italic"
-                      style={{ fontSize: 14, color: "#6B6B6B", lineHeight: 1.5 }}
-                    >
-                      {p.sub}
-                    </p>
-                    <hr style={{ margin: "24px 0", border: "none", borderTop: "1px solid #E5E2DB" }} />
+                    <hr style={{ margin: "20px 0", border: "none", borderTop: "1px solid #E5E2DB" }} />
                     <ul className="space-y-3">
                       {p.bullets.map((b) => (
-                        <li key={b} className="flex items-start gap-3">
+                        <li key={b} className="flex items-center gap-3">
                           <span
                             className="flex items-center justify-center rounded-full flex-shrink-0"
                             style={{
-                              width: 22,
-                              height: 22,
+                              width: 20,
+                              height: 20,
                               backgroundColor: "#F0E4D0",
-                              marginTop: 2,
                             }}
                           >
-                            <Check size={13} color="#E8B547" strokeWidth={3} aria-hidden="true" />
+                            <Check size={12} color="#E8B547" strokeWidth={3} aria-hidden="true" />
                           </span>
-                          <span style={{ fontSize: 15, color: "#2B2B2B", lineHeight: 1.6 }}>
+                          <span
+                            style={{
+                              fontSize: 14,
+                              color: "#2B2B2B",
+                              lineHeight: 1.4,
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
                             {b}
                           </span>
                         </li>
@@ -271,13 +269,17 @@ const Uitvoerders = () => {
                     >
                       <p
                         className="font-sans font-semibold"
-                        style={{ fontSize: 12, color: "#152C4E", letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 6 }}
+                        style={{
+                          fontSize: 12,
+                          color: "#152C4E",
+                          letterSpacing: "0.04em",
+                          textTransform: "uppercase",
+                          marginBottom: 6,
+                        }}
                       >
                         Wat het oplevert
                       </p>
-                      <p style={{ fontSize: 14, color: "#2B2B2B", lineHeight: 1.55 }}>
-                        {p.result}
-                      </p>
+                      <p style={{ fontSize: 14, color: "#2B2B2B", lineHeight: 1.55 }}>{p.result}</p>
                     </div>
 
                     <div style={{ marginTop: "auto", paddingTop: 24 }}>
@@ -308,7 +310,7 @@ const Uitvoerders = () => {
           <div className="container-content">
             <div className="text-center mx-auto" style={{ maxWidth: 820 }}>
               <h2 className="h2-section" style={{ color: "#152C4E", marginBottom: 16 }}>
-                Waarom dit <span style={{ color: "#E8B547" }}>werkt</span>
+                Menselijke begeleiding, <span style={{ color: "#E8B547" }}>ondersteund</span> door slimme systemen
               </h2>
               <p
                 className="mx-auto"
