@@ -365,11 +365,24 @@ const Uitvoerders = () => {
                         letterSpacing: "-0.02em",
                         lineHeight: 1.25,
                         paddingRight: p.badge ? 110 : 0,
-                        minHeight: 50,
                       }}
                     >
                       {p.title}
                     </h3>
+                    <p
+                      style={{
+                        marginTop: 8,
+                        fontSize: 13,
+                        color: "#6B6B6B",
+                        lineHeight: 1.4,
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                      title={p.subtitle}
+                    >
+                      {p.subtitle}
+                    </p>
                     <hr style={{ margin: "20px 0", border: "none", borderTop: "1px solid #E5E2DB" }} />
                     <ul className="space-y-3">
                       {p.bullets.map((b) => (
