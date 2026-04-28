@@ -37,8 +37,7 @@ export const Technology = () => (
     <div className="container-content">
       <div className="text-center mx-auto" style={{ maxWidth: 960 }}>
         <h2 id="tech-title" className="h2-section" style={{ marginBottom: 16 }}>
-          Menselijke begeleiding, ondersteund door slimme{" "}
-          <span style={{ color: "#E8B547" }}>systemen</span>
+          Menselijke begeleiding, <span style={{ color: "#E8B547" }}>ondersteund</span> door slimme systemen
         </h2>
         <p
           className="mx-auto"

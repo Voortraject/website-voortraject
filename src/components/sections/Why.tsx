@@ -1,4 +1,3 @@
-import { AlertCircle } from "lucide-react";
 import whyPhoto from "@/assets/why-photo.jpg";
 
 const points = [
@@ -16,8 +15,8 @@ export const Why = () => (
     <div className="container-content">
       <div className="text-center mb-16">
         <h2 className="h2-section">
-          Wat blijft er bij jullie liggen als niemand dit{" "}
-          <span style={{ color: "#E8B547" }}>oppakt?</span>
+          Wat <span style={{ color: "#E8B547" }}>blijft</span> er bij jullie{" "}
+          <span style={{ color: "#E8B547" }}>liggen</span> als niemand dit oppakt?
         </h2>
       </div>
 
@@ -33,22 +32,37 @@ export const Why = () => (
         </div>
 
         <div>
-          <ul className="space-y-6">
+          <ul className="space-y-5">
             {points.map((p) => (
-              <li key={p} className="flex items-start gap-5">
-                <AlertCircle
-                  size={24}
-                  strokeWidth={2.5}
-                  className="text-accent shrink-0 mt-1"
+              <li key={p} className="flex items-start gap-4">
+                <span
                   aria-hidden="true"
+                  className="shrink-0 rounded-full"
+                  style={{
+                    width: 6,
+                    height: 6,
+                    backgroundColor: "#E8B547",
+                    marginTop: 12,
+                  }}
                 />
-                <p className="font-display font-semibold text-[18px] tracking-[-0.02em] text-primary leading-snug">
+                <p
+                  className="text-primary"
+                  style={{
+                    fontSize: 17,
+                    fontWeight: 400,
+                    lineHeight: 1.7,
+                    margin: 0,
+                  }}
+                >
                   {p}
                 </p>
               </li>
             ))}
           </ul>
-          <p className="mt-10 text-[16px] leading-[1.6] text-muted-foreground italic">
+          <p
+            className="mt-10 italic"
+            style={{ fontSize: 15, lineHeight: 1.6, color: "#8A8A8A" }}
+          >
             Tijd, aandacht en overzicht lekken weg zonder dat iemand het direct ziet.
           </p>
         </div>
