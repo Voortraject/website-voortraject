@@ -299,7 +299,7 @@ const Uitvoerders = () => {
         </section>
 
         {/* PAKKETTEN */}
-        <section id="pakketten" className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
+        <section id="pakketten" className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F9F9F7" }}>
           <div className="container-content">
             <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E" }}>
               <span style={{ color: "hsl(var(--accent))" }}>Kies</span> wat past bij jullie
@@ -322,7 +322,7 @@ const Uitvoerders = () => {
                     key={p.title}
                     className={`relative flex flex-col transition-all duration-200 ease-out lg:col-span-2 ${colStart}`}
                     style={{
-                      backgroundColor: "#F5F2EC",
+                      backgroundColor: "#FFFFFF",
                       borderRadius: 16,
                       padding: 32,
                       border: `${borderWidth} solid ${borderColor}`,
@@ -442,7 +442,7 @@ const Uitvoerders = () => {
         </section>
 
         {/* WAAROM DIT WERKT */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
             <div className="text-center mx-auto" style={{ maxWidth: 820 }}>
               <h2 className="h2-section" style={{ color: "#152C4E", marginBottom: 16 }}>
