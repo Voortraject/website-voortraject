@@ -199,6 +199,54 @@ export const Process = () => {
                 <StepRow n={handover.n} title={handover.title} body={handover.body} muted />
               </ol>
             </div>
+
+            <div className="mt-12">
+              <div
+                aria-hidden="true"
+                style={{ borderTop: "1.5px solid #E5E2DB", margin: "24px 0", marginTop: 32 }}
+              />
+              <p
+                className="font-sans pl-[80px]"
+                style={{
+                  letterSpacing: "0.1em",
+                  color: "hsl(var(--accent))",
+                  fontWeight: 700,
+                  fontSize: "0.7rem",
+                  textTransform: "uppercase",
+                  marginBottom: 24,
+                }}
+              >
+                Nazorg Traject — wij nemen het weer over
+              </p>
+              <div className="relative pr-[140px]">
+                <div
+                  aria-hidden="true"
+                  className="absolute left-[26px] w-[4px] rounded-[2px]"
+                  style={{
+                    top: CIRCLE / 2,
+                    bottom: CIRCLE / 2,
+                    background: "#E8B547",
+                  }}
+                />
+                <ol className="relative space-y-12">
+                  {aftercareSteps.map((s) => (
+                    <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
+                  ))}
+                </ol>
+
+                <div className="absolute right-0 top-0 bottom-0 flex items-center gap-4">
+                  <div className="h-full py-2">
+                    <Brace />
+                  </div>
+                  <p
+                    className="font-sans text-[14px] leading-[1.3]"
+                    style={{ color: "hsl(var(--accent))", maxWidth: "110px", fontWeight: 700 }}
+                  >
+                    Nazorg<br />Traject
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
