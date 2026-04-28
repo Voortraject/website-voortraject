@@ -18,6 +18,7 @@ const withItems = [
   "Jullie houden de volledige focus op planning, uitvoering en groei.",
 ];
 import { Header } from "@/components/Header";
+import { Why } from "@/components/sections/Why";
 import { Footer } from "@/components/Footer";
 import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
 
@@ -467,6 +468,8 @@ const Uitvoerders = () => {
             </div>
           </div>
         </section>
+
+        <Why />
 
         {/* SLUIT-CTA */}
         <section
