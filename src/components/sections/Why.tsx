@@ -15,8 +15,8 @@ export const Why = () => (
     <div className="container-content">
       <div className="text-center mb-16">
         <h2 className="h2-section">
-          Wat <span style={{ color: "#E8B547" }}>blijft</span> er bij jullie{" "}
-          <span style={{ color: "#E8B547" }}>liggen</span> als niemand dit oppakt?
+          Wat blijft er bij jullie liggen als{" "}
+          <span style={{ color: "#E8B547" }}>niemand</span> dit oppakt?
         </h2>
       </div>
 
