@@ -375,9 +375,10 @@ const Uitvoerders = () => {
                         fontSize: 13,
                         color: "#6B6B6B",
                         lineHeight: 1.4,
-                        whiteSpace: "nowrap",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
                         overflow: "hidden",
-                        textOverflow: "ellipsis",
                       }}
                       title={p.subtitle}
                     >
