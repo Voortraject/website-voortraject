@@ -50,11 +50,11 @@ export const Technology = () => (
           uitvoering.
         </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-        {cards.map(({ icon: Icon, title, body }) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 items-stretch">
+        {cards.map(({ icon: Icon, title, body }, i) => (
           <article
             key={title}
-            className="bg-white flex flex-col"
+            className={`bg-white flex flex-col lg:col-span-2 ${i === 3 ? "lg:col-start-2" : ""}`}
             style={{
               borderRadius: 16,
               padding: 32,
