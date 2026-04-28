@@ -51,11 +51,27 @@ const StepRow = ({
       >
         {title}
       </h3>
-      <p className="mt-1.5 text-[16px] leading-relaxed text-muted-foreground max-w-[360px]">
+      <p className="mt-2 text-[16px] leading-relaxed text-muted-foreground max-w-[420px]">
         {body}
       </p>
     </div>
   </li>
+);
+
+const PhaseLabel = ({ children }: { children: React.ReactNode }) => (
+  <h3
+    className="font-display pl-[80px]"
+    style={{
+      letterSpacing: "0.08em",
+      color: "hsl(var(--primary))",
+      fontWeight: 800,
+      fontSize: "1.25rem",
+      textTransform: "uppercase",
+      marginBottom: 32,
+    }}
+  >
+    <span style={{ color: "hsl(var(--accent))" }}>—</span> {children}
+  </h3>
 );
 
 export const Process = () => {
@@ -86,7 +102,7 @@ export const Process = () => {
     <section ref={sectionRef} id="flowchart-section" className="section-pad" style={{ backgroundColor: "#FFFFFF" }}>
       <div className="container-content">
         {/* Header */}
-        <div className="max-w-[720px] mb-12">
+        <div className="max-w-[720px] mb-16">
           <h2 className="h2-section lg:!text-[44px]">
             Van aanvraag tot <span style={{ color: "hsl(var(--accent))" }}>5-star review</span>
           </h2>
@@ -95,16 +111,18 @@ export const Process = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
-          {/* Left column: two stacked images */}
-          <div className="flex flex-col gap-6 lg:sticky lg:top-24 self-start">
+        {/* Two-row layout: each phase pairs with its own image on the left.
+            The right column hosts a single, continuous timeline. */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+          {/* LEFT: stacked images, NOT sticky, spaced to align with phases */}
+          <div className="flex flex-col gap-[140px]">
             <img
               src={processPhoto}
               alt="Twee collega's overleggen aan een bureau, een met headset"
               loading="lazy"
               className="w-full rounded-2xl object-cover"
               style={{
-                height: "360px",
+                height: "440px",
                 boxShadow: "0 4px 20px rgba(21,44,78,0.08)",
               }}
             />
@@ -114,20 +132,20 @@ export const Process = () => {
               loading="lazy"
               className="w-full rounded-2xl object-cover"
               style={{
-                height: "360px",
+                height: "440px",
                 boxShadow: "0 4px 20px rgba(21,44,78,0.08)",
               }}
             />
           </div>
 
-          {/* Right column: continuous timeline */}
+          {/* RIGHT: continuous timeline spanning both phases */}
           <div className="relative" ref={timelineRef}>
             {/* Background grey track */}
             <div
               aria-hidden="true"
               className="absolute left-[26px] w-[4px] rounded-[2px]"
               style={{
-                top: CIRCLE / 2 + 28,
+                top: 60,
                 bottom: CIRCLE / 2,
                 background: "#E5E2DB",
               }}
@@ -137,7 +155,7 @@ export const Process = () => {
               aria-hidden="true"
               className="absolute left-[26px] w-[4px] origin-top rounded-[2px]"
               style={{
-                top: CIRCLE / 2 + 28,
+                top: 60,
                 bottom: CIRCLE / 2,
                 background: "#E8B547",
                 transform: `scaleY(${progress})`,
@@ -145,58 +163,43 @@ export const Process = () => {
               }}
             />
 
-            {/* Voortraject label */}
-            <p
-              className="font-sans pl-[80px]"
-              style={{
-                letterSpacing: "0.1em",
-                color: "hsl(var(--accent))",
-                fontWeight: 700,
-                fontSize: "0.7rem",
-                textTransform: "uppercase",
-                marginBottom: 16,
-              }}
-            >
-              Voortraject
-            </p>
+            {/* Voortraject */}
+            <PhaseLabel>Voortraject</PhaseLabel>
 
-            <ol className="relative space-y-6">
+            <ol className="relative space-y-12">
               {voortrajectSteps.map((s) => (
                 <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
               ))}
             </ol>
 
-            {/* Inline asterisk marker (line continues behind) */}
-            <div className="relative pl-[80px] py-4">
-              <p
-                className="font-sans italic"
+            {/* Execution marker */}
+            <div className="relative pl-[80px] py-10">
+              <div
+                className="inline-block rounded-lg px-5 py-3"
                 style={{
-                  color: "hsl(var(--muted-foreground))",
-                  fontSize: "0.9rem",
-                  lineHeight: 1.5,
+                  background: "hsl(var(--accent) / 0.08)",
+                  border: "1px solid hsl(var(--accent) / 0.3)",
                 }}
               >
-                <span style={{ color: "hsl(var(--accent))", fontWeight: 700 }}>*</span>{" "}
-                Hier vindt de uitvoering plaats
-              </p>
+                <p
+                  className="font-display italic"
+                  style={{
+                    color: "hsl(var(--primary))",
+                    fontSize: "1.05rem",
+                    lineHeight: 1.4,
+                    fontWeight: 600,
+                  }}
+                >
+                  <span style={{ color: "hsl(var(--accent))", fontWeight: 800 }}>*</span>{" "}
+                  Hier vindt de uitvoering plaats
+                </p>
+              </div>
             </div>
 
-            {/* Nazorg label */}
-            <p
-              className="font-sans pl-[80px]"
-              style={{
-                letterSpacing: "0.1em",
-                color: "hsl(var(--accent))",
-                fontWeight: 700,
-                fontSize: "0.7rem",
-                textTransform: "uppercase",
-                marginBottom: 16,
-              }}
-            >
-              Nazorg Traject
-            </p>
+            {/* Nazorg Traject */}
+            <PhaseLabel>Nazorg Traject</PhaseLabel>
 
-            <ol className="relative space-y-6">
+            <ol className="relative space-y-12">
               {nazorgSteps.map((s) => (
                 <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
               ))}
