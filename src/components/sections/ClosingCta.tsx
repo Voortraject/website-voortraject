@@ -13,7 +13,7 @@ export const ClosingCta = () => (
           marginBottom: 20,
         }}
       >
-        Zoek je extra capaciteit zonder extra <span style={{ color: "#E8B547" }}>kantoorlast?</span>
+        Zoek je extra capaciteit zonder extra kantoorlast?
       </h2>
       <p
         style={{
