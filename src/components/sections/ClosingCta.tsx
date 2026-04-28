@@ -13,19 +13,18 @@ export const ClosingCta = () => (
           marginBottom: 20,
         }}
       >
-        Zoek je extra capaciteit zonder extra kantoorlast?
+        Klaar om jouw project een vliegende start te geven?
       </h2>
       <p
         style={{
-          color: "rgba(255,255,255,0.85)",
+          color: "#FFFFFF",
           fontSize: 17,
           lineHeight: 1.6,
           maxWidth: 760,
           marginBottom: 32,
         }}
       >
-        Wij helpen uitvoerders sneller schakelen van de eerste intake tot aan de 5-star
-        review, zodat jullie de focus volledig op de uitvoering kunnen houden.
+        Of je nu een bewoner bent met een grote verbouwwens of een uitvoerder die focus zoekt op de bouwplaats; wij staan voor je klaar.
       </p>
       <a
         href="/contact"

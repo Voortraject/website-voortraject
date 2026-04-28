@@ -3,8 +3,6 @@ import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/sections/Hero";
 import { ForWhom } from "@/components/sections/ForWhom";
 import { Process } from "@/components/sections/Process";
-import { Why } from "@/components/sections/Why";
-import { Technology } from "@/components/sections/Technology";
 import { ClosingCta } from "@/components/sections/ClosingCta";
 
 const Index = () => {
@@ -15,8 +13,6 @@ const Index = () => {
         <Hero />
         <ForWhom />
         <Process />
-        <Why />
-        <Technology />
         <ClosingCta />
       </main>
       <Footer />
