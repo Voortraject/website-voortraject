@@ -182,7 +182,7 @@ const Uitvoerders = () => {
         </section>
 
         {/* VOORTRAJECT VERGELIJKING */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
             <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E", maxWidth: 900 }}>
               Voor en <span style={{ color: "hsl(var(--accent))" }}>na</span>
