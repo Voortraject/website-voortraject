@@ -71,7 +71,7 @@ export const Hero = () => {
             <div className="animate-fade-up">
               <h1
                 id="hero-title"
-                className="h1-hero text-foreground text-left text-5xl md:text-6xl lg:text-7xl"
+                className="h1-hero text-foreground text-left md:text-6xl lg:text-7xl text-5xl"
                 style={{
                   wordBreak: "keep-all",
                   hyphens: "none",
