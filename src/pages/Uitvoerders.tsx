@@ -254,7 +254,7 @@ const Uitvoerders = () => {
         </section>
 
         {/* PAKKETTEN */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
+        <section id="pakketten" className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
             <h2 className="h2-section" style={{ color: "#152C4E" }}>
               <span style={{ color: "hsl(var(--accent))" }}>Kies</span> wat past bij jullie
