@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import processPhoto from "@/assets/process-photo.jpg";
+import processPhotoAftercare from "@/assets/process-photo-aftercare.jpg";
 
 const voortrajectSteps = [
   { n: "01", title: "Intake en situatie", body: "We brengen de bewoner, de woning en de wensen helder in beeld." },
@@ -10,7 +11,7 @@ const voortrajectSteps = [
 
 const nazorgSteps = [
   { n: "05", title: "Facturatie per uitvoering", body: "Directe en foutloze afhandeling van de administratie na de klus." },
-  { n: "06", title: "Vervolgplanning", body: "Vooruitkijken naar de volgende logische stappen in het verduurzamingsplan." },
+  { n: "06", title: "Vervolgplanning", body: "We kijken samen vooruit naar de volgende logische stappen voor jouw woning." },
   { n: "07", title: "Begeleiding naar 5-star review", body: "Wij begeleiden het proces tot een perfecte review en 100% tevredenheid." },
 ];
 
@@ -59,7 +60,6 @@ const StepRow = ({
 
 export const Process = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
   const lineWrapRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
 
@@ -85,19 +85,24 @@ export const Process = () => {
   return (
     <section ref={sectionRef} id="flowchart-section" className="section-pad" style={{ backgroundColor: "#FFFFFF" }}>
       <div className="container-content">
+        {/* Header */}
+        <div className="max-w-[720px] mb-12">
+          <h2 className="h2-section lg:!text-[44px]">
+            Van aanvraag tot <span style={{ color: "hsl(var(--accent))" }}>5-star review</span>
+          </h2>
+          <p className="mt-6 body-lg text-muted-foreground">
+            Wij pakken het volledige traject op, zodat jullie focus blijft op het bouwen.
+          </p>
+        </div>
+
+        {/* Voortraject row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
           <div>
-            <h2 ref={titleRef} className="h2-section lg:!text-[44px] lg:whitespace-nowrap">
-              Van aanvraag tot <span style={{ color: "hsl(var(--accent))" }}>5-star review</span>
-            </h2>
-            <p className="mt-6 body-lg text-muted-foreground max-w-[640px]">
-              Wij pakken het volledige traject op, zodat jullie focus blijft op het bouwen.
-            </p>
             <img
               src={processPhoto}
               alt="Twee collega's overleggen aan een bureau, een met headset"
               loading="lazy"
-              className="w-full rounded-2xl object-cover mt-10"
+              className="w-full rounded-2xl object-cover"
               style={{
                 height: "440px",
                 boxShadow: "0 4px 20px rgba(21,44,78,0.08)",
@@ -106,101 +111,140 @@ export const Process = () => {
           </div>
 
           <div className="relative" ref={lineWrapRef}>
-            <div className="relative" ref={lineWrapRef}>
-              {/* Background grey track spanning full timeline */}
+            {/* Background grey track spanning full timeline */}
+            <div
+              aria-hidden="true"
+              className="absolute left-[26px] w-[4px] rounded-[2px]"
+              style={{
+                top: CIRCLE / 2,
+                bottom: CIRCLE / 2,
+                background: "#E5E2DB",
+              }}
+            />
+            {/* Foreground progressive yellow line */}
+            <div
+              aria-hidden="true"
+              className="absolute left-[26px] w-[4px] origin-top rounded-[2px]"
+              style={{
+                top: CIRCLE / 2,
+                bottom: CIRCLE / 2,
+                background: "#E8B547",
+                transform: `scaleY(${progress})`,
+                transition: "transform 80ms linear",
+              }}
+            />
+
+            {/* Voortraject label */}
+            <p
+              className="font-sans pl-[80px]"
+              style={{
+                letterSpacing: "0.1em",
+                color: "hsl(var(--accent))",
+                fontWeight: 700,
+                fontSize: "0.7rem",
+                textTransform: "uppercase",
+                marginBottom: 24,
+              }}
+            >
+              Voortraject
+            </p>
+
+            <ol className="relative space-y-12">
+              {voortrajectSteps.map((s) => (
+                <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
+              ))}
+            </ol>
+
+            {/* Asterisk marker between step 4 and 5 */}
+            <div className="relative pl-[80px] my-10">
               <div
                 aria-hidden="true"
-                className="absolute left-[26px] w-[4px] rounded-[2px]"
                 style={{
-                  top: CIRCLE / 2,
-                  bottom: CIRCLE / 2,
-                  background: "#E5E2DB",
+                  borderTop: "1.5px dashed #D4D2CC",
+                  marginBottom: 16,
                 }}
               />
-              {/* Foreground progressive yellow line */}
+              <p
+                className="font-sans italic"
+                style={{
+                  color: "hsl(var(--muted-foreground))",
+                  fontSize: "0.9rem",
+                  lineHeight: 1.5,
+                }}
+              >
+                <span style={{ color: "hsl(var(--accent))", fontWeight: 700 }}>*</span>{" "}
+                Hier vindt de uitvoering door jullie team plaats
+              </p>
               <div
                 aria-hidden="true"
-                className="absolute left-[26px] w-[4px] origin-top rounded-[2px]"
                 style={{
-                  top: CIRCLE / 2,
-                  bottom: CIRCLE / 2,
-                  background: "#E8B547",
-                  transform: `scaleY(${progress})`,
-                  transition: "transform 80ms linear",
+                  borderTop: "1.5px dashed #D4D2CC",
+                  marginTop: 16,
                 }}
               />
-
-              {/* Voortraject label */}
-              <p
-                className="font-sans pl-[80px]"
-                style={{
-                  letterSpacing: "0.1em",
-                  color: "hsl(var(--accent))",
-                  fontWeight: 700,
-                  fontSize: "0.7rem",
-                  textTransform: "uppercase",
-                  marginBottom: 24,
-                }}
-              >
-                Voortraject
-              </p>
-
-              <ol className="relative space-y-12">
-                {voortrajectSteps.map((s) => (
-                  <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
-                ))}
-              </ol>
-
-              {/* Asterisk marker between step 4 and 5 */}
-              <div className="relative pl-[80px] my-10">
-                <div
-                  aria-hidden="true"
-                  style={{
-                    borderTop: "1.5px dashed #D4D2CC",
-                    marginBottom: 16,
-                  }}
-                />
-                <p
-                  className="font-sans italic"
-                  style={{
-                    color: "hsl(var(--muted-foreground))",
-                    fontSize: "0.9rem",
-                    lineHeight: 1.5,
-                  }}
-                >
-                  <span style={{ color: "hsl(var(--accent))", fontWeight: 700 }}>*</span>{" "}
-                  Hier vindt de uitvoering door jullie team plaats
-                </p>
-                <div
-                  aria-hidden="true"
-                  style={{
-                    borderTop: "1.5px dashed #D4D2CC",
-                    marginTop: 16,
-                  }}
-                />
-              </div>
-
-              {/* Nazorg label */}
-              <p
-                className="font-sans pl-[80px]"
-                style={{
-                  letterSpacing: "0.1em",
-                  color: "hsl(var(--accent))",
-                  fontWeight: 700,
-                  fontSize: "0.7rem",
-                  textTransform: "uppercase",
-                  marginBottom: 24,
-                }}
-              >
-                Nazorg Traject
-              </p>
-
-              <ol className="relative space-y-12">
-                {nazorgSteps.map((s) => (
-                  <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
-                ))}
-              </ol>
             </div>
+          </div>
+        </div>
+
+        {/* Nazorg row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start mt-16">
+          <div>
+            <img
+              src={processPhotoAftercare}
+              alt="Bewoner met tablet aan de keukentafel"
+              loading="lazy"
+              className="w-full rounded-2xl object-cover"
+              style={{
+                height: "440px",
+                boxShadow: "0 4px 20px rgba(21,44,78,0.08)",
+              }}
+            />
+          </div>
+
+          <div className="relative">
+            {/* Background grey track */}
+            <div
+              aria-hidden="true"
+              className="absolute left-[26px] w-[4px] rounded-[2px]"
+              style={{
+                top: CIRCLE / 2,
+                bottom: CIRCLE / 2,
+                background: "#E5E2DB",
+              }}
+            />
+            {/* Foreground progressive yellow line */}
+            <div
+              aria-hidden="true"
+              className="absolute left-[26px] w-[4px] origin-top rounded-[2px]"
+              style={{
+                top: CIRCLE / 2,
+                bottom: CIRCLE / 2,
+                background: "#E8B547",
+                transform: `scaleY(${progress})`,
+                transition: "transform 80ms linear",
+              }}
+            />
+
+            {/* Nazorg label */}
+            <p
+              className="font-sans pl-[80px]"
+              style={{
+                letterSpacing: "0.1em",
+                color: "hsl(var(--accent))",
+                fontWeight: 700,
+                fontSize: "0.7rem",
+                textTransform: "uppercase",
+                marginBottom: 24,
+              }}
+            >
+              Nazorg Traject
+            </p>
+
+            <ol className="relative space-y-12">
+              {nazorgSteps.map((s) => (
+                <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
+              ))}
+            </ol>
           </div>
         </div>
       </div>
