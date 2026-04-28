@@ -170,16 +170,26 @@ export const Process = () => {
             </div>
           </div>
 
-          {/* EXECUTION MARKER — full width, dashed line with centered italic label */}
+          {/* EXECUTION MARKER — dashed line sits to the RIGHT of the yellow
+              timeline so it doesn't cross it. On mobile it falls back to a
+              full-width line. */}
           <div className="relative my-16">
+            {/* Mobile: full-width dashed line */}
             <div
               aria-hidden="true"
-              className="absolute inset-x-0 top-1/2"
+              className="lg:hidden absolute inset-x-0 top-1/2"
+              style={{ borderTop: "1px dashed #D4D2CC" }}
+            />
+            {/* Desktop: dashed line only on the right side of the yellow line */}
+            <div
+              aria-hidden="true"
+              className="hidden lg:block absolute top-1/2 right-0"
               style={{
+                left: "calc(50% + 32px + 26px + 4px)",
                 borderTop: "1px dashed #D4D2CC",
               }}
             />
-            <div className="relative flex justify-center">
+            <div className="relative flex lg:justify-start justify-center lg:pl-[calc(50%+32px+80px)]">
               <span
                 className="font-display italic px-6 bg-white"
                 style={{
