@@ -34,7 +34,7 @@ const packages: Package[] = [
     badge: null,
   },
   {
-    title: "Totaal Ontzorging & Nazorg",
+    title: "Totaal Ontzorging",
     bullets: [
       "Alles uit Akkoord & begeleiding",
       "Intake en eerste bewonerscontact",
