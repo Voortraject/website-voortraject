@@ -6,6 +6,9 @@ const points = [
   "Offertes worden steeds vooruitgeschoven",
   "Dossiers raken versnipperd over mails en appjes",
   "Na uitvoering blijven acties en stukken openstaan",
+  "Facturen blijven na uitvoering te lang op de plank liggen",
+  "Vervolgafspraken voor onderhoud of nieuwe maatregelen worden vergeten",
+  "De kans op een 5-sterren review wordt niet benut door gebrek aan opvolging",
 ];
 
 export const Why = () => (
@@ -14,7 +17,7 @@ export const Why = () => (
       <div className="text-center mb-16">
         <h2 className="h2-section">
           Wat blijft er bij jullie liggen als niemand dit{" "}
-          <span style={{ color: "hsl(var(--accent))" }}>oppakt?</span>
+          <span style={{ color: "#E8B547" }}>oppakt?</span>
         </h2>
       </div>
 

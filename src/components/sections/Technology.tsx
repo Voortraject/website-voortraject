@@ -19,12 +19,12 @@ const cards: { icon: LucideIcon; title: string; body: string }[] = [
   {
     icon: ClipboardCheck,
     title: "Grip op wat na uitvoering blijft hangen",
-    body: "Wij houden overzicht op ontbrekende stukken en acties, zodat jullie niet opnieuw het dossier in hoeven omdat er iets is blijven liggen.",
+    body: "Wij houden overzicht op ontbrekende stukken en openstaande acties, zodat jullie niet opnieuw het dossier in hoeven door gezeur of losse eindjes.",
   },
   {
     icon: CheckCircle,
     title: "Dossiercontrole voor overdracht",
-    body: "We controleren of alles compleet is, zodat er geen losse eindjes of ontbrekende stukken tussen blijven zitten.",
+    body: "We controleren of alles compleet is voor de overdracht, zodat er geen onduidelijke afspraken of ontbrekende stukken tussen blijven zitten.",
   },
 ];
 
@@ -50,11 +50,11 @@ export const Technology = () => (
           uitvoering.
         </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-        {cards.map(({ icon: Icon, title, body }) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 items-stretch">
+        {cards.map(({ icon: Icon, title, body }, i) => (
           <article
             key={title}
-            className="bg-white flex flex-col"
+            className={`bg-white flex flex-col lg:col-span-2 ${i === 3 ? "lg:col-start-2" : ""}`}
             style={{
               borderRadius: 16,
               padding: 32,

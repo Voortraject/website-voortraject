@@ -13,7 +13,7 @@ export const ClosingCta = () => (
           marginBottom: 20,
         }}
       >
-        Zoek je extra capaciteit zonder extra kantoorlast?
+        Zoek je extra capaciteit zonder extra <span style={{ color: "#E8B547" }}>kantoorlast?</span>
       </h2>
       <p
         style={{
@@ -24,8 +24,8 @@ export const ClosingCta = () => (
           marginBottom: 32,
         }}
       >
-        Wij helpen uitvoerders sneller schakelen in bewonerscontact, offerte-opbouw,
-        opvolging en dossiervorming, zodat jullie meer focus houden op uitvoering.
+        Wij helpen uitvoerders sneller schakelen van de eerste intake tot aan de 5-star
+        review, zodat jullie de focus volledig op de uitvoering kunnen houden.
       </p>
       <a
         href="/contact"
