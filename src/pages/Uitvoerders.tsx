@@ -270,6 +270,34 @@ const Uitvoerders = () => {
           </div>
         </section>
 
+        {/* INLEIDING PAKKETTEN */}
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
+          <div className="container-content">
+            <div className="mx-auto" style={{ maxWidth: 820 }}>
+              <h2
+                className="h2-section text-center"
+                style={{ color: "#152C4E", marginBottom: 32 }}
+              >
+                Waar uitvoerders in dit soort trajecten op{" "}
+                <span style={{ color: "hsl(var(--accent))" }}>vastlopen</span>
+              </h2>
+              <p
+                style={{
+                  fontSize: 19,
+                  lineHeight: 1.7,
+                  color: "#2B2B2B",
+                  marginBottom: 24,
+                }}
+              >
+                De meeste tijd gaat vaak niet verloren in de uitvoering zelf, maar in alles eromheen. Bewoners willen duidelijkheid, plannen moeten worden doorgenomen, offertes moeten logisch worden opgebouwd en dossiers moeten kloppen van eerste contact tot afronding.
+              </p>
+              <p style={{ fontSize: 19, lineHeight: 1.7, color: "#2B2B2B" }}>
+                Na uitvoering stopt het vaak ook niet: facturen moeten door, stukken moeten compleet zijn en openstaande acties mogen niet blijven liggen. Juist daar helpen wij overzicht en rust terugbrengen.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* PAKKETTEN */}
         <section id="pakketten" className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
