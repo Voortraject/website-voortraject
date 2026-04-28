@@ -1,69 +1,102 @@
-import { Check } from "lucide-react";
+import { Check, Inbox, FileText, Bell } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
 
-const packages = [
+type Package = {
+  title: string;
+  sub: string;
+  bullets: string[];
+  result: string;
+  badge: string | null;
+  featured?: boolean;
+  highlight?: boolean;
+};
+
+const packages: Package[] = [
   {
-    title: "De Start",
-    sub: "De basis op orde, voor een soepele opstart per woning.",
+    title: "Offerte & dossier",
+    sub: "Voor uitvoerders die tijd verliezen op papierwerk en dossiervorming.",
     bullets: [
-      "Intakegesprek met de bewoner",
-      "Opmeten van de woning",
-      "Inventarisatie bewonerswensen",
-      "Dossieropbouw",
+      "Offertevoorbereiding en opmaak",
+      "Dossieropbouw en controle",
+      "Overdracht van compleet dossier",
     ],
-    featured: false,
-    badge: null as string | null,
-  },
-  {
-    title: "Het Plan",
-    sub: "Voor uitvoerders die ook regelingen en advies willen overdragen.",
-    bullets: [
-      "Alles uit 'De Start'",
-      "Uitleg lokale regelingen",
-      "Subsidiecheck",
-      "Energie-advies op maat",
-    ],
-    featured: false,
+    result:
+      "Minder handmatig uitzoekwerk, minder losse documenten, sneller van aanvraag naar bruikbaar dossier.",
     badge: null,
   },
   {
-    title: "Volledig Voortraject",
-    sub: "Het complete voortraject uit handen, tot getekend akkoord.",
+    title: "Akkoord & begeleiding",
+    sub: "Voor uitvoerders die bewonersvragen en opvolging tot akkoord willen loslaten.",
     bullets: [
-      "Alles uit 'Het Plan'",
-      "Offertevoorbereiding",
-      "Volledige dossiercontrole",
-      "Begeleiding tot akkoord",
+      "Alles uit Offerte & dossier",
+      "Bewonersbegeleiding rond het akkoordtraject",
+      "Uitleg van plannen en regelingen",
+      "Opvolging tot getekend akkoord",
     ],
-    featured: true,
-    badge: "Meest gekozen",
+    result:
+      "Minder tijd kwijt aan terugbellen, minder offertes die blijven liggen, meer grip op doorlooptijd.",
+    badge: null,
   },
   {
-    title: "Maatwerk",
-    sub: "Voor complexe projecten of specifieke herstelwerkzaamheden.",
+    title: "Full ontzorging",
+    sub: "Voor uitvoerders die het volledige voortraject buiten de deur willen zetten.",
     bullets: [
-      "Op maat samengesteld traject",
-      "Specifieke herstelwerkzaamheden",
-      "Persoonlijk voorstel",
-      "Neem contact op voor een aanbod",
+      "Alles uit Akkoord & begeleiding",
+      "Intake en eerste bewonerscontact",
+      "Volledige bewonerscommunicatie",
+      "Overzicht op vervolgstappen",
     ],
-    featured: false,
+    result:
+      "Vrijwel geen druk meer aan de voorkant, meer focus op uitvoering, opschalen zonder extra kantoorlast.",
+    badge: "Meest gekozen",
+    featured: true,
+  },
+  {
+    title: "AI-workflow ondersteuning",
+    sub: "Voor uitvoerders die het voortraject intern willen houden, maar efficiënter willen werken.",
+    bullets: [
+      "Slimme intake en dossieropbouw",
+      "Snelle offertevoorbereiding",
+      "Opvolging van openstaande acties",
+      "Grip op wat na uitvoering blijft hangen",
+    ],
+    result:
+      "Minder dossiers die stilvallen, minder handmatig werk, meer overzicht zonder extra kantoorcapaciteit.",
     badge: null,
   },
   {
     title: "Nazorg Traject",
-    sub: "De unieke nazorg die de rest van de markt niet biedt.",
+    sub: "Voor uitvoerders die grip willen houden op de afronding en klanttevredenheid.",
     bullets: [
       "Facturatie per uitvoering",
       "Vervolgplanning voor volgende woning-stappen",
       "Actieve begeleiding naar een 5-star review",
       "Eén aanspreekpunt blijft betrokken",
     ],
-    featured: false,
-    badge: "Nieuw",
+    result:
+      "Snellere cashflow, meer vervolgopdrachten, een perfecte reputatie zonder extra werk.",
+    badge: "Uniek",
     highlight: true,
+  },
+];
+
+const whyCards = [
+  {
+    icon: Inbox,
+    title: "Automatische intake",
+    body: "Geen verloren contactmomenten meer in mails of appjes.",
+  },
+  {
+    icon: FileText,
+    title: "Slimme offertevoorbereiding",
+    body: "Sneller van plan naar akkoord zonder dat het blijft liggen.",
+  },
+  {
+    icon: Bell,
+    title: "Opvolging zonder gejaag",
+    body: "Grip op openstaande acties en losse eindjes, ook na de uitvoering.",
   },
 ];
 
@@ -95,9 +128,9 @@ const Uitvoerders = () => {
                 </h1>
                 <p
                   className="mt-8 text-[16px] md:text-[18px]"
-                  style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 580, textAlign: "left" }}
+                  style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 620, textAlign: "left" }}
                 >
-                  De meeste tijd lekt weg in bewonersvragen, offerte-opvolging en versnipperde dossiers. Wij nemen de kantoorlast over, zodat jullie focus op de bouwplaats blijft.
+                  Waar veel tijd op lekt, zit vaak niet op de bouwplaats, maar in alles eromheen: bewonersvragen, planuitleg, offerte-opbouw, opvolging en dossiers die strak moeten blijven lopen. Wij pakken juist dat stuk op, zodat jullie minder kantoorlast hebben en meer focus op uitvoering houden.
                 </p>
                 <div className="mt-10" style={{ textAlign: "left" }}>
                   <a
@@ -144,33 +177,24 @@ const Uitvoerders = () => {
               className="mt-6 text-[18px] text-center mx-auto"
               style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 720 }}
             >
-              Vijf pakketten, van losse intake tot volledige ontzorging en nazorg.
+              Vijf pakketten, van losse offerte- en dossieropbouw tot volledige ontzorging en unieke nazorg.
             </p>
 
             <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 items-stretch">
               {packages.map((p, i) => {
-                const isHighlight = (p as any).highlight;
-                const borderColor = p.featured
-                  ? "#E8B547"
-                  : isHighlight
-                  ? "#152C4E"
-                  : "#E5E2DB";
-                const borderWidth = p.featured || isHighlight ? "2px" : "1px";
-                const bgColor = isHighlight ? "#F4F7FB" : "#F5F2EC";
-
-                // Layout: 3 boven, 2 gecentreerd onder
-                const colSpan = "lg:col-span-2";
+                const accent = p.featured ? "#E8B547" : p.highlight ? "#152C4E" : "#E5E2DB";
+                const borderWidth = p.featured || p.highlight ? "2px" : "1px";
                 const colStart = i === 3 ? "lg:col-start-2" : "";
 
                 return (
                   <article
                     key={p.title}
-                    className={`relative flex flex-col transition-all duration-200 ease-out ${colSpan} ${colStart}`}
+                    className={`relative flex flex-col transition-all duration-200 ease-out lg:col-span-2 ${colStart}`}
                     style={{
-                      backgroundColor: bgColor,
+                      backgroundColor: "#F5F2EC",
                       borderRadius: 16,
-                      padding: 40,
-                      border: `${borderWidth} solid ${borderColor}`,
+                      padding: 36,
+                      border: `${borderWidth} solid ${accent}`,
                       boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
                     }}
                     onMouseEnter={(e) => {
@@ -186,8 +210,8 @@ const Uitvoerders = () => {
                         style={{
                           top: 20,
                           right: 20,
-                          backgroundColor: isHighlight ? "#152C4E" : "#E8B547",
-                          color: isHighlight ? "#FFFFFF" : "#2B2B2B",
+                          backgroundColor: p.highlight ? "#152C4E" : "#E8B547",
+                          color: p.highlight ? "#FFFFFF" : "#2B2B2B",
                           padding: "6px 12px",
                           borderRadius: 999,
                           fontSize: 12,
@@ -223,16 +247,11 @@ const Uitvoerders = () => {
                             style={{
                               width: 22,
                               height: 22,
-                              backgroundColor: isHighlight ? "#E3EBF5" : "#F0E4D0",
+                              backgroundColor: "#F0E4D0",
                               marginTop: 2,
                             }}
                           >
-                            <Check
-                              size={13}
-                              color={isHighlight ? "#152C4E" : "#E8B547"}
-                              strokeWidth={3}
-                              aria-hidden="true"
-                            />
+                            <Check size={13} color="#E8B547" strokeWidth={3} aria-hidden="true" />
                           </span>
                           <span style={{ fontSize: 15, color: "#2B2B2B", lineHeight: 1.6 }}>
                             {b}
@@ -240,24 +259,41 @@ const Uitvoerders = () => {
                         </li>
                       ))}
                     </ul>
-                    <div style={{ marginTop: "auto", paddingTop: 28 }}>
+
+                    <div
+                      style={{
+                        marginTop: 24,
+                        padding: 16,
+                        backgroundColor: "#FFFFFF",
+                        borderRadius: 10,
+                        border: "1px solid #ECE7DD",
+                      }}
+                    >
+                      <p
+                        className="font-sans font-semibold"
+                        style={{ fontSize: 12, color: "#152C4E", letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 6 }}
+                      >
+                        Wat het oplevert
+                      </p>
+                      <p style={{ fontSize: 14, color: "#2B2B2B", lineHeight: 1.55 }}>
+                        {p.result}
+                      </p>
+                    </div>
+
+                    <div style={{ marginTop: "auto", paddingTop: 24 }}>
                       <a
                         href="/contact"
                         className={`${ctaButton} w-full`}
                         style={{
-                          backgroundColor: isHighlight ? "#152C4E" : "#E8B547",
-                          color: isHighlight ? "#FFFFFF" : "#2B2B2B",
+                          backgroundColor: "#E8B547",
+                          color: "#2B2B2B",
                           padding: "12px 20px",
                           borderRadius: 8,
                         }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.backgroundColor = isHighlight ? "#0F2240" : "#D9A538")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.backgroundColor = isHighlight ? "#152C4E" : "#E8B547")
-                        }
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
                       >
-                        {p.title === "Maatwerk" ? "Aanvragen" : "Selecteer pakket"}
+                        Selecteer pakket
                       </a>
                     </div>
                   </article>
@@ -270,22 +306,55 @@ const Uitvoerders = () => {
         {/* WAAROM DIT WERKT */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
-            <div className="max-w-[820px] mx-auto text-center">
-              <h2 className="h2-section" style={{ color: "#152C4E" }}>
-                Waarom dit <span style={{ color: "hsl(var(--accent))" }}>werkt</span>
+            <div className="text-center mx-auto" style={{ maxWidth: 820 }}>
+              <h2 className="h2-section" style={{ color: "#152C4E", marginBottom: 16 }}>
+                Waarom dit <span style={{ color: "#E8B547" }}>werkt</span>
               </h2>
               <p
-                className="mt-8 text-[20px] md:text-[22px]"
-                style={{ color: "#2B2B2B", lineHeight: 1.6, fontWeight: 500 }}
+                className="mx-auto"
+                style={{ fontSize: 17, color: "#6B6B6B", lineHeight: 1.6, marginBottom: 48 }}
               >
-                Geen losse mailtjes meer, geen versnipperde appjes. Eén aanspreekpunt voor het hele traject.
+                Eén lijn voor bewonerscontact, offertes en dossiers, ondersteund door slimme systemen die voorkomen dat er iets blijft liggen.
               </p>
-              <p
-                className="mt-6 text-[16px]"
-                style={{ color: "#6B6B6B", lineHeight: 1.7 }}
-              >
-                Bewonerscontact, offerte-opvolging, dossiers en nazorg lopen via één lijn. Jullie houden overzicht zonder de kantoorlast erbij te nemen.
-              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+              {whyCards.map(({ icon: Icon, title, body }) => (
+                <article
+                  key={title}
+                  className="bg-white flex flex-col"
+                  style={{
+                    borderRadius: 16,
+                    padding: 32,
+                    border: "1px solid #E5E2DB",
+                    boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
+                  }}
+                >
+                  <div className="flex flex-row items-center" style={{ gap: 12 }}>
+                    <div
+                      className="flex items-center justify-center rounded-full shrink-0"
+                      style={{ width: 48, height: 48, backgroundColor: "#F0E4D0" }}
+                    >
+                      <Icon size={22} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
+                    </div>
+                    <h3
+                      className="font-display"
+                      style={{
+                        fontSize: "1.05rem",
+                        fontWeight: 600,
+                        color: "#152C4E",
+                        letterSpacing: "-0.01em",
+                        lineHeight: 1.3,
+                        margin: 0,
+                      }}
+                    >
+                      {title}
+                    </h3>
+                  </div>
+                  <p style={{ marginTop: 16, fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>
+                    {body}
+                  </p>
+                </article>
+              ))}
             </div>
           </div>
         </section>
@@ -300,16 +369,27 @@ const Uitvoerders = () => {
               className="font-display"
               style={{
                 fontWeight: 600,
-                fontSize: "clamp(32px, 5vw, 44px)",
+                fontSize: "clamp(28px, 4.5vw, 44px)",
                 color: "#FFFFFF",
                 letterSpacing: "-0.02em",
                 lineHeight: 1.2,
-                maxWidth: 760,
-                marginBottom: 40,
+                maxWidth: 900,
+                marginBottom: 20,
               }}
             >
-              Wil je sneller schakelen zonder extra vast personeel?
+              Zoek je extra capaciteit zonder extra kantoorlast?
             </h2>
+            <p
+              style={{
+                color: "rgba(255,255,255,0.85)",
+                fontSize: 17,
+                lineHeight: 1.6,
+                maxWidth: 760,
+                marginBottom: 32,
+              }}
+            >
+              Wij helpen uitvoerders sneller schakelen in bewonerscontact, offerte-opbouw, opvolging en dossiervorming.
+            </p>
             <a
               href="/contact"
               className={ctaButton}
