@@ -110,24 +110,25 @@ const Uitvoerders = () => {
                   className="font-display font-semibold"
                   style={{
                     color: "#2B2B2B",
-                    fontSize: "clamp(32px, 3.6vw, 48px)",
-                    lineHeight: 1.15,
+                    fontSize: "clamp(40px, 5vw, 64px)",
+                    lineHeight: 1.1,
                     letterSpacing: "-0.02em",
                     maxWidth: 720,
                     textAlign: "left",
                   }}
                 >
-                  Wij vangen het{" "}
-                  <span style={{ color: "hsl(var(--accent))" }}>voortraject</span>{" "}
-                  op, zodat jullie kunnen bouwen
+                  Focus op <span style={{ color: "hsl(var(--accent))" }}>uitvoering</span>.
+                  <br />
+                  Wij regelen de rest.
                 </h1>
                 <p
                   className="mt-8 text-[16px] md:text-[18px]"
                   style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 620, textAlign: "left" }}
                 >
-                  Waar veel tijd op lekt, zit vaak niet op de bouwplaats, maar in alles eromheen: bewonersvragen, planuitleg, offerte-opbouw, opvolging en dossiers die strak moeten blijven lopen.
+                  Wij ontzorgen uitvoerders met{" "}
+                  <span style={{ color: "hsl(var(--accent))" }}>offertewerk</span>, bewonerscontact en dossieropbouw.
                 </p>
-                <div className="mt-10" style={{ textAlign: "left" }}>
+                <div className="mt-10 flex flex-wrap items-center gap-4" style={{ textAlign: "left" }}>
                   <a
                     href="/contact"
                     className={ctaButton}
@@ -141,6 +142,21 @@ const Uitvoerders = () => {
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
                   >
                     Plan een kennismaking
+                  </a>
+                  <a
+                    href="/uitvoerders#pakketten"
+                    className={ctaButton}
+                    style={{
+                      backgroundColor: "#FFFFFF",
+                      color: "#152C4E",
+                      padding: "14px 32px",
+                      borderRadius: 8,
+                      border: "1px solid #152C4E",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#F5F2EC")}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#FFFFFF")}
+                  >
+                    Bekijk pakketten
                   </a>
                 </div>
               </div>
