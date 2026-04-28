@@ -40,7 +40,7 @@ const packages: Package[] = [
       "Intake en eerste bewonerscontact",
       "Bewonerscommunicatie tot overdracht",
       "Overzicht op natraject en nazorg",
-      "Begeleiding tot 5-star review",
+      "Begeleiding tot 5-sterren review",
     ],
     result: "Volledige focus op uitvoering en groei.",
     badge: "Meest gekozen",
@@ -62,7 +62,7 @@ const packages: Package[] = [
     bullets: [
       "Facturatie per uitvoering",
       "Vervolgplanning voor woning",
-      "Begeleiding naar 5-star review",
+      "Begeleiding naar 5-sterren review",
       "Eén vast aanspreekpunt",
     ],
     result: "Snellere cashflow en een perfecte reputatie.",
