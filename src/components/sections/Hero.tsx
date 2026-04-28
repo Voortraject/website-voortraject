@@ -82,12 +82,14 @@ export const Hero = () => {
                 Focus op <span style={{ color: "hsl(var(--accent))" }}>uitvoering</span>.<br />Wij regelen de rest.
               </h1>
               <p className="mt-8 text-[20px] leading-[1.5] text-muted-foreground max-w-[760px] md:text-[22px] lg:text-[24px]">
-                Wij ondersteunen uitvoerders met{" "}
-                <TypewriterWord words={rotating} />
+                Wij ondersteunen uitvoerders en bewoners van offertevoorbereiding tot aan de nazorg. Minder kantoorlast voor de vakman, sneller duidelijkheid voor de bewoner.
               </p>
-              <div className="mt-10">
+              <div className="mt-10 flex flex-wrap items-center gap-4">
                 <Button href="/contact" variant="primary">
                   Plan een kennismaking
+                </Button>
+                <Button href="/uitvoerders#pakketten" variant="secondary">
+                  Bekijk onze pakketten
                 </Button>
               </div>
             </div>
