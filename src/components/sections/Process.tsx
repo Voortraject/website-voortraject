@@ -111,11 +111,39 @@ export const Process = () => {
           </p>
         </div>
 
-        {/* Two-row layout: each phase pairs with its own image on the left.
-            The right column hosts a single, continuous timeline. */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-          {/* LEFT: stacked images, NOT sticky, spaced to align with phases */}
-          <div className="flex flex-col gap-[140px]">
+        {/* Layout: phases stacked vertically. Each phase is a 2-col grid with
+            its own image on the left. Between them sits a full-width separator
+            marker. The continuous yellow timeline runs through the right column
+            of both phases AND the marker. */}
+        <div ref={timelineRef} className="relative">
+          {/* Continuous timeline tracks live in an absolute layer that spans
+              the entire stacked block, positioned in the right column only. */}
+          <div
+            aria-hidden="true"
+            className="hidden lg:block absolute pointer-events-none"
+            style={{
+              top: 60,
+              bottom: CIRCLE / 2,
+              left: "calc(50% + 32px + 26px)",
+              width: 4,
+            }}
+          >
+            <div
+              className="absolute inset-0 rounded-[2px]"
+              style={{ background: "#E5E2DB" }}
+            />
+            <div
+              className="absolute inset-0 rounded-[2px] origin-top"
+              style={{
+                background: "#E8B547",
+                transform: `scaleY(${progress})`,
+                transition: "transform 80ms linear",
+              }}
+            />
+          </div>
+
+          {/* PHASE 1: Voortraject */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             <img
               src={processPhoto}
               alt="Twee collega's overleggen aan een bureau, een met headset"
@@ -126,6 +154,49 @@ export const Process = () => {
                 boxShadow: "0 4px 20px rgba(21,44,78,0.08)",
               }}
             />
+            <div className="relative">
+              {/* Mobile-only timeline track */}
+              <div
+                aria-hidden="true"
+                className="lg:hidden absolute left-[26px] w-[4px] rounded-[2px]"
+                style={{ top: 60, bottom: 0, background: "#E5E2DB" }}
+              />
+              <PhaseLabel>Voortraject</PhaseLabel>
+              <ol className="relative space-y-12">
+                {voortrajectSteps.map((s) => (
+                  <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
+                ))}
+              </ol>
+            </div>
+          </div>
+
+          {/* EXECUTION MARKER — full width, dashed line with centered italic label */}
+          <div className="relative my-16">
+            <div
+              aria-hidden="true"
+              className="absolute inset-x-0 top-1/2"
+              style={{
+                borderTop: "1px dashed #D4D2CC",
+              }}
+            />
+            <div className="relative flex justify-center">
+              <span
+                className="font-display italic px-6 bg-white"
+                style={{
+                  color: "hsl(var(--muted-foreground))",
+                  fontSize: "0.95rem",
+                  lineHeight: 1.4,
+                  fontWeight: 500,
+                }}
+              >
+                <span style={{ color: "hsl(var(--accent))", fontWeight: 700 }}>*</span>{" "}
+                Hier vindt de uitvoering plaats
+              </span>
+            </div>
+          </div>
+
+          {/* PHASE 2: Nazorg Traject */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             <img
               src={processPhotoAftercare}
               alt="Bewoner met tablet aan de keukentafel"
@@ -136,74 +207,20 @@ export const Process = () => {
                 boxShadow: "0 4px 20px rgba(21,44,78,0.08)",
               }}
             />
-          </div>
-
-          {/* RIGHT: continuous timeline spanning both phases */}
-          <div className="relative" ref={timelineRef}>
-            {/* Background grey track */}
-            <div
-              aria-hidden="true"
-              className="absolute left-[26px] w-[4px] rounded-[2px]"
-              style={{
-                top: 60,
-                bottom: CIRCLE / 2,
-                background: "#E5E2DB",
-              }}
-            />
-            {/* Foreground progressive yellow line */}
-            <div
-              aria-hidden="true"
-              className="absolute left-[26px] w-[4px] origin-top rounded-[2px]"
-              style={{
-                top: 60,
-                bottom: CIRCLE / 2,
-                background: "#E8B547",
-                transform: `scaleY(${progress})`,
-                transition: "transform 80ms linear",
-              }}
-            />
-
-            {/* Voortraject */}
-            <PhaseLabel>Voortraject</PhaseLabel>
-
-            <ol className="relative space-y-12">
-              {voortrajectSteps.map((s) => (
-                <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
-              ))}
-            </ol>
-
-            {/* Execution marker */}
-            <div className="relative pl-[80px] py-10">
+            <div className="relative">
+              {/* Mobile-only timeline track */}
               <div
-                className="inline-block rounded-lg px-5 py-3"
-                style={{
-                  background: "hsl(var(--accent) / 0.08)",
-                  border: "1px solid hsl(var(--accent) / 0.3)",
-                }}
-              >
-                <p
-                  className="font-display italic"
-                  style={{
-                    color: "hsl(var(--primary))",
-                    fontSize: "1.05rem",
-                    lineHeight: 1.4,
-                    fontWeight: 600,
-                  }}
-                >
-                  <span style={{ color: "hsl(var(--accent))", fontWeight: 800 }}>*</span>{" "}
-                  Hier vindt de uitvoering plaats
-                </p>
-              </div>
+                aria-hidden="true"
+                className="lg:hidden absolute left-[26px] w-[4px] rounded-[2px]"
+                style={{ top: 60, bottom: CIRCLE / 2, background: "#E5E2DB" }}
+              />
+              <PhaseLabel>Nazorg Traject</PhaseLabel>
+              <ol className="relative space-y-12">
+                {nazorgSteps.map((s) => (
+                  <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
+                ))}
+              </ol>
             </div>
-
-            {/* Nazorg Traject */}
-            <PhaseLabel>Nazorg Traject</PhaseLabel>
-
-            <ol className="relative space-y-12">
-              {nazorgSteps.map((s) => (
-                <StepRow key={s.n} n={s.n} title={s.title} body={s.body} />
-              ))}
-            </ol>
           </div>
         </div>
       </div>
