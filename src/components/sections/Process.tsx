@@ -12,7 +12,7 @@ const voortrajectSteps = [
 const nazorgSteps = [
   { n: "05", title: "Facturatie per uitvoering", body: "Directe en foutloze afhandeling van de administratie na de klus." },
   { n: "06", title: "Vervolgplanning", body: "We kijken samen vooruit naar de volgende logische stappen voor jouw woning." },
-  { n: "07", title: "Begeleiding naar 5-star review", body: "Wij begeleiden het proces tot een perfecte review en 100% tevredenheid." },
+  { n: "07", title: "Begeleiding naar 5-sterren review", body: "Wij begeleiden het proces tot een perfecte review en 100% tevredenheid." },
 ];
 
 const CIRCLE = 56;
@@ -104,7 +104,7 @@ export const Process = () => {
         {/* Header */}
         <div className="max-w-[720px] mb-16">
           <h2 className="h2-section lg:!text-[44px]">
-            Van aanvraag tot <span style={{ color: "hsl(var(--accent))" }}>5-star review</span>
+            Van aanvraag tot <span style={{ color: "hsl(var(--accent))" }}>5-sterren review</span>
           </h2>
           <p className="mt-6 body-lg text-muted-foreground">
             Wij pakken het volledige traject op, zodat jullie focus blijft op het bouwen.
