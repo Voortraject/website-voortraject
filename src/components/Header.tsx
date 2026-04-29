@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { NavLink } from "./NavLink";
 import { Button } from "./Button";
+import logoVoortraject from "@/assets/logo-voortraject.png";
 
 const links = [
   { href: "/uitvoerders", label: "Voor uitvoerders" },
