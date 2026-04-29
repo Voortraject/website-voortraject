@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, ChevronDown, HelpCircle } from "lucide-react";
+import { Check, ChevronDown, HelpCircle, Compass, LayoutList, BookOpen, Zap, Handshake } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import heroBewoners from "@/assets/bewoners-hero.jpg";
@@ -38,47 +38,52 @@ const allQuestions = [...questionsRow1, ...questionsRow2];
 
 const services = [
   {
-    title: "Onafhankelijk meekijken",
-    body: "We luisteren eerst en kijken zonder commercieel belang naar jouw situatie. Geen voorgekauwd antwoord. Advies dat past bij jouw woning.",
+    icon: Compass,
+    title: "Onafhankelijk advies",
+    body: "Geen producten te verkopen, geen vaste partner. Alleen advies dat slim is voor jouw woning.",
   },
   {
+    icon: LayoutList,
     title: "Overzicht in maatregelen",
-    body: "Isolatie, ventilatie, zonnepanelen, warmtepomp: we helpen je zien welke maatregelen logisch zijn voor jouw woning, in welke volgorde en wat de gevolgen zijn voor je energierekening.",
+    body: "Welke maatregelen voor jouw woning logisch zijn, en in welke volgorde ze het meeste opleveren.",
   },
   {
-    title: "Uitleg over regelingen en subsidies",
-    body: "We zetten op een rij welke landelijke en gemeentelijke regelingen voor jou relevant zijn, inclusief aanvullende subsidies en combinaties die je makkelijk mist.",
+    icon: BookOpen,
+    title: "Uitleg over regelingen",
+    body: "Landelijke en gemeentelijke regelingen op een rij, inclusief aanvullende kansen die je makkelijk over het hoofd ziet.",
   },
   {
-    title: "Hulp bij keuzes, zonder wachtrij",
-    body: "Geen wachttijden van weken of maanden. We schakelen snel zodat je niet stilstaat.",
+    icon: Zap,
+    title: "Geen wachtrij",
+    body: "Geen wachttijden van weken of maanden. We schakelen snel, zodat je niet stilstaat.",
   },
   {
-    title: "Begeleiding naar een betrouwbare uitvoerder",
-    body: "Als de keuze helder is, koppelen we je aan een uitvoerder waarvan we weten dat ze goed werk leveren. Zo hoef jij niet te gokken op een naam van internet.",
+    icon: Handshake,
+    title: "Naar een betrouwbare uitvoerder",
+    body: "Als de keuze helder is, koppelen we je aan een uitvoerder waarvan we weten dat ze goed werk leveren.",
   },
 ];
 
 const routeSteps = [
   {
     title: "Inzicht in je woning",
-    body: "We kijken eerst naar isolatie, ventilatie en de huidige staat van je woning. Dat bepaalt wat zinvol is.",
+    body: "We kijken eerst naar isolatie, ventilatie en de huidige staat van je woning. Wat is er al gedaan, wat is de basis, en welke maatregelen liggen voor de hand? Zonder dit fundament weet je niet waar je aan begint.",
   },
   {
     title: "Weten wat nu slim is",
-    body: "Niet alles tegelijk. We bepalen welke maatregel op dit moment het meeste oplevert voor jouw situatie.",
+    body: "Niet alles hoeft tegelijk. Soms is een nieuwe ketel nu nog logisch, soms juist niet. We bepalen wat op dit moment het meeste oplevert voor jouw situatie, en wat beter kan wachten.",
   },
   {
     title: "Een logische volgorde",
-    body: "Sommige stappen werken alleen als andere eerst gedaan zijn. We zetten een volgorde uit die past.",
+    body: "Sommige maatregelen werken alleen als andere eerst gedaan zijn. Een warmtepomp in een slecht geïsoleerde woning levert weinig op. We zetten een volgorde uit die past bij jouw woning en budget.",
   },
   {
     title: "Alle regelingen op een rij",
-    body: "Subsidies en aanvullende regelingen koppelen we aan de juiste stappen, zodat je niets misloopt.",
+    body: "Landelijke subsidies, gemeentelijke aanvullingen, combinaties met onderhoud, koppelingen aan trajecten zoals Nij Begun. We zetten op een rij wat voor jou relevant is, zodat je niets misloopt.",
   },
   {
     title: "Naar de juiste uitvoerder",
-    body: "Met een helder plan in de hand koppelen we je aan een uitvoerder en begeleiden we je tot het werk start.",
+    body: "Als de keuze helder is, koppelen we je aan een uitvoerder waarvan we weten dat ze goed werk leveren voor een eerlijke prijs. Geen gokken op een naam van internet.",
   },
 ];
 
@@ -359,57 +364,81 @@ const Bewoners = () => {
         {/* 4. WAT WIJ VOOR JE DOEN */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
-            <h2 className="h2-section" style={{ color: "#152C4E" }}>
-              Wat <span style={{ color: "hsl(var(--accent))" }}>wij</span> voor je doen
-            </h2>
-            <p
-              className="mt-6 text-[18px]"
-              style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 760 }}
-            >
-              Geen verkooppraatje, geen vooropgezet plan. We kijken eerst naar jouw woning, jouw situatie en wat je écht wilt bereiken. Pas daarna komt het advies.
-            </p>
-            <ul className="mt-16">
-              {services.map((s, i) => (
-                <li
-                  key={s.title}
-                  className="flex items-start gap-6"
-                  style={{
-                    paddingTop: 32,
-                    paddingBottom: 32,
-                    borderBottom: i === services.length - 1 ? "none" : "1px solid #E5E2DB",
-                  }}
-                >
-                  <span
-                    className="font-display"
+            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+              {/* Linker kolom */}
+              <div className="lg:col-span-5 flex flex-col" style={{ minHeight: "100%" }}>
+                <div>
+                  <h2 className="h2-section" style={{ color: "#152C4E" }}>
+                    Wat <span style={{ color: "hsl(var(--accent))" }}>wij</span> voor je doen
+                  </h2>
+                  <p
+                    className="mt-6 max-w-md"
+                    style={{ color: "#152C4E", opacity: 0.75, fontSize: 16, lineHeight: 1.6 }}
+                  >
+                    Geen verkooppraatje, geen standaardverhaal. We kijken eerst naar jouw woning, situatie en doel. Daarna pas komt het advies.
+                  </p>
+                </div>
+                <div className="mt-10 lg:mt-auto lg:pt-12">
+                  <div style={{ width: 48, height: 2, backgroundColor: "#E8B547", marginBottom: 16 }} />
+                  <p
                     style={{
-                      fontSize: 40,
-                      fontWeight: 300,
-                      color: "#E8B547",
-                      width: 80,
-                      flexShrink: 0,
-                      lineHeight: 1,
-                      letterSpacing: "-0.02em",
+                      color: "#152C4E",
+                      fontSize: 18,
+                      fontWeight: 500,
+                      fontStyle: "italic",
+                      margin: 0,
                     }}
                   >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <div>
-                    <h3
-                      className="font-display font-semibold"
-                      style={{ fontSize: 20, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3 }}
+                    Eerst luisteren. Dan adviseren.
+                  </p>
+                </div>
+              </div>
+
+              {/* Rechter kolom */}
+              <ul className="lg:col-span-7" style={{ margin: 0, padding: 0, listStyle: "none" }}>
+                {services.map((s, i) => {
+                  const Icon = s.icon;
+                  return (
+                    <li
+                      key={s.title}
+                      className="flex flex-row gap-4 items-start"
+                      style={{
+                        padding: "20px 0",
+                        borderBottom: i === services.length - 1 ? "none" : "1px solid #E5E2DB",
+                      }}
                     >
-                      {s.title}
-                    </h3>
-                    <p
-                      className="mt-2"
-                      style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6, maxWidth: 720 }}
-                    >
-                      {s.body}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                      <Icon size={24} color="#E8B547" style={{ flexShrink: 0, marginTop: 2 }} />
+                      <div>
+                        <h3
+                          className="font-display"
+                          style={{
+                            color: "#152C4E",
+                            fontSize: 17,
+                            fontWeight: 600,
+                            marginBottom: 6,
+                            margin: "0 0 6px",
+                            lineHeight: 1.3,
+                          }}
+                        >
+                          {s.title}
+                        </h3>
+                        <p
+                          style={{
+                            color: "#152C4E",
+                            opacity: 0.75,
+                            fontSize: 15,
+                            lineHeight: 1.5,
+                            margin: 0,
+                          }}
+                        >
+                          {s.body}
+                        </p>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           </div>
         </section>
 
