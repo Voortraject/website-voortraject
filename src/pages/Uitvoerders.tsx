@@ -1,4 +1,4 @@
-import { Check, Inbox, FileText, Bell, X } from "lucide-react";
+import { Check, Inbox, FileText, Bell, X, PhoneCall, MessageCircle, FolderOpen, AlertCircle } from "lucide-react";
 
 const withoutItems = [
   "Bewoners blijven bellen en appen met vragen over planning, maatregelen en verwachtingen.",
@@ -288,19 +288,73 @@ const Uitvoerders = () => {
                 <span style={{ color: "hsl(var(--accent))" }}>vastlopen</span>
               </h2>
               <p
+                className="text-center mx-auto"
                 style={{
-                  fontSize: 19,
-                  lineHeight: 1.7,
-                  color: "#2B2B2B",
-                  marginBottom: 24,
+                  maxWidth: 768,
+                  fontSize: 18,
+                  lineHeight: 1.6,
+                  color: "#152C4E",
+                  marginBottom: 48,
                 }}
               >
-                De meeste tijd gaat vaak niet verloren in de uitvoering zelf, maar in alles eromheen. Bewoners willen duidelijkheid, plannen moeten worden doorgenomen, offertes moeten logisch worden opgebouwd en dossiers moeten kloppen van eerste contact tot afronding.
-              </p>
-              <p style={{ fontSize: 19, lineHeight: 1.7, color: "#2B2B2B" }}>
-                Na uitvoering stopt het vaak ook niet: facturen moeten door, stukken moeten compleet zijn en openstaande acties mogen niet blijven liggen. Juist daar helpen wij overzicht en rust terugbrengen.
+                De meeste tijd lekt niet weg op de bouwplaats, maar in alles eromheen. Vijf plekken waar uitvoerders structureel op vastlopen:
               </p>
             </div>
+
+            {(() => {
+              const painCards = [
+                { icon: PhoneCall, title: "Bewonersvragen blijven binnenkomen", body: "Telefoontjes en appjes over planning, maatregelen en verwachtingen blijven naar jullie kant lopen." },
+                { icon: MessageCircle, title: "Plannen steeds opnieuw uitleggen", body: "Isolatieplannen en losse maatregelen vragen tijd om iedere keer toe te lichten aan een nieuwe bewoner." },
+                { icon: FileText, title: "Offertes blijven liggen", body: "Tussen uitvoering door komen offertes vaak pas 's avonds aan de beurt, en blijven dan hangen." },
+                { icon: FolderOpen, title: "Dossiers raken versnipperd", body: "Afspraken, mails en notities zitten verspreid over verschillende plekken. Iets compleet maken kost tijd." },
+                { icon: AlertCircle, title: "Na uitvoering blijft er hangen", body: "Facturen, ontbrekende stukken en openstaande acties krijgen geen prioriteit als de bouw weer roept." },
+              ];
+              const renderCard = (c: typeof painCards[number]) => {
+                const Icon = c.icon;
+                return (
+                  <article
+                    key={c.title}
+                    className="flex flex-col"
+                    style={{
+                      backgroundColor: "#FFFFFF",
+                      border: "1px solid #E5E2DB",
+                      borderRadius: 16,
+                      padding: 24,
+                      gap: 12,
+                    }}
+                  >
+                    <Icon size={22} color="#E8B547" strokeWidth={2} aria-hidden="true" />
+                    <h3 style={{ color: "#152C4E", fontSize: 16, fontWeight: 600, margin: 0, lineHeight: 1.3 }}>{c.title}</h3>
+                    <p style={{ color: "#152C4E", opacity: 0.75, fontSize: 14, lineHeight: 1.5, margin: 0 }}>{c.body}</p>
+                  </article>
+                );
+              };
+              return (
+                <>
+                  <div className="grid grid-cols-1 lg:grid-cols-3" style={{ gap: 16 }}>
+                    {painCards.slice(0, 3).map(renderCard)}
+                  </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 mx-auto" style={{ gap: 16, maxWidth: "42rem", marginTop: 16 }}>
+                    {painCards.slice(3).map(renderCard)}
+                  </div>
+                </>
+              );
+            })()}
+
+            <p
+              className="text-center mx-auto"
+              style={{
+                maxWidth: "42rem",
+                marginTop: 32,
+                color: "#152C4E",
+                fontSize: 18,
+                fontWeight: 500,
+                fontStyle: "italic",
+                lineHeight: 1.5,
+              }}
+            >
+              Juist op deze plekken brengen wij overzicht en rust terug.
+            </p>
           </div>
         </section>
 
