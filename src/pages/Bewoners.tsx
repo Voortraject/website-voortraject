@@ -387,36 +387,38 @@ const Bewoners = () => {
         {/* 4. WAT WIJ VOOR JE DOEN */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
               {/* Linker kolom */}
-              <div className="lg:col-span-5 flex flex-col">
+              <div
+                className="lg:col-span-5 flex flex-col lg:pr-8"
+                style={{ justifyContent: "center", gap: 24 }}
+              >
                 <h2 className="h2-section" style={{ color: "#152C4E" }}>
                   Wat <span style={{ color: "hsl(var(--accent))" }}>wij</span> voor je doen
                 </h2>
                 <p
-                  className="mt-6 max-w-md"
-                  style={{ color: "#152C4E", opacity: 0.75, fontSize: 16, lineHeight: 1.6 }}
+                  className="max-w-md"
+                  style={{ color: "#152C4E", opacity: 0.75, fontSize: 16, lineHeight: 1.6, margin: 0 }}
                 >
                   Geen verkooppraatje, geen standaardverhaal. We kijken eerst naar jouw woning, situatie en doel. Daarna pas komt het advies.
                 </p>
                 <p
-                  className="mt-auto"
                   style={{
                     color: "#152C4E",
                     fontSize: 22,
                     fontWeight: 500,
                     fontStyle: "italic",
                     lineHeight: 1.3,
-                    marginTop: 32,
+                    margin: 0,
                   }}
                 >
-                  Eerst luisteren. Dan adviseren.
+                  Van twijfel naar plan.
                 </p>
               </div>
 
               {/* Rechter kolom */}
               <ul
-                className="lg:col-span-7 lg:pl-12 lg:border-l"
+                className="lg:col-span-7 lg:pl-[72px] lg:border-l"
                 style={{ margin: 0, padding: 0, listStyle: "none", borderColor: "#E5E2DB" }}
               >
                 {services.map((s, i) => {
