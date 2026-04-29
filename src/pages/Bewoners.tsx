@@ -387,10 +387,17 @@ const Bewoners = () => {
         {/* 4. WAT WIJ VOOR JE DOEN */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            <div className="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-y-8 lg:gap-x-16 items-center">
+              {/* Verticale scheidingslijn (desktop) */}
+              <div
+                aria-hidden="true"
+                className="hidden lg:block absolute"
+                style={{ top: 0, bottom: 0, left: "50%", width: 2, backgroundColor: "#E5E2DB", transform: "translateX(-1px)" }}
+              />
+
               {/* Linker kolom */}
               <div
-                className="lg:col-span-6 flex flex-col lg:pr-8"
+                className="flex flex-col"
                 style={{ justifyContent: "center", gap: 24 }}
               >
                 <h2 className="h2-section" style={{ color: "#152C4E" }}>
@@ -418,8 +425,7 @@ const Bewoners = () => {
 
               {/* Rechter kolom */}
               <ul
-                className="lg:col-span-6 lg:pl-[56px] lg:border-l-2"
-                style={{ margin: 0, padding: 0, listStyle: "none", borderColor: "#E5E2DB" }}
+                style={{ margin: 0, padding: 0, listStyle: "none" }}
               >
                 {services.map((s, i) => {
                   const Icon = s.icon;
