@@ -120,7 +120,7 @@ export const Faq = () => {
                       color: "#6B6B6B",
                       lineHeight: 1.6,
                       margin: 0,
-                      padding: "0 24px 20px 100px",
+                      padding: "0 24px 20px 24px",
                     }}
                   >
                     {item.a}
