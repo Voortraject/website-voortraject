@@ -323,8 +323,10 @@ const Uitvoerders = () => {
                       gap: 12,
                     }}
                   >
-                    <Icon size={22} color="#E8B547" strokeWidth={2} aria-hidden="true" />
-                    <h3 style={{ color: "#152C4E", fontSize: 16, fontWeight: 600, margin: 0, lineHeight: 1.3 }}>{c.title}</h3>
+                    <div className="flex flex-row items-center gap-3">
+                      <Icon size={22} color="#E8B547" strokeWidth={2} className="shrink-0" aria-hidden="true" />
+                      <h3 style={{ color: "#152C4E", fontSize: 16, fontWeight: 600, margin: 0, lineHeight: 1.3 }}>{c.title}</h3>
+                    </div>
                     <p style={{ color: "#152C4E", opacity: 0.75, fontSize: 14, lineHeight: 1.5, margin: 0 }}>{c.body}</p>
                   </article>
                 );
