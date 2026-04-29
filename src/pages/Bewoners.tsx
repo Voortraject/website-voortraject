@@ -47,7 +47,7 @@ const gemeenteCardsData = [
 ];
 
 const questionsRow1 = [
-  "Waar begin ik?",
+  "Kan ik volledig van het gas af?",
   "Wat is slim om eerst te doen?",
   "Welke subsidies zijn relevant?",
 ];
@@ -55,7 +55,7 @@ const questionsRow2 = [
   "Wat past bij mijn woning?",
   "Hoe kom ik tot uitvoering?",
   "Wat als ik huurder ben?",
-  "Kan ik volledig van het gas af?",
+  "Waar begin ik?",
 ];
 const allQuestions = [...questionsRow1, ...questionsRow2];
 

@@ -73,9 +73,9 @@ export const Faq = () => (
               <span className="text-left">{item.q}</span>
               <ChevronDown
                 size={20}
-                color="#E8B547"
-                style={{ opacity: 0.7 }}
-                className="shrink-0 transition-transform duration-200 [[data-state=open]_&]:rotate-180"
+                color="#152C4E"
+                style={{ opacity: 0.5 }}
+                className="shrink-0 transition-transform duration-200 ease-in-out [[data-state=open]_&]:rotate-180"
               />
             </AccordionTrigger>
             <AccordionContent
