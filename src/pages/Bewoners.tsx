@@ -1,4 +1,5 @@
-import { HelpCircle, Check, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { Check, ChevronDown } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import heroBewoners from "@/assets/bewoners-hero.jpg";
@@ -22,20 +23,21 @@ const recognitions = [
   },
 ];
 
-const questions = [
-  "Waar begin ik?",
-  "Wat is slim om eerst te doen?",
-  "Welke subsidies zijn relevant?",
-  "Wat past bij mijn woning?",
-  "Hoe kom ik van plan naar uitvoering?",
-  "Wat als ik huurder ben?",
-  "Kan ik uiteindelijk volledig van het gas af?",
+// Hub-and-spoke vragen
+const hubQuestions = [
+  { text: "Waar begin ik?", top: "15%", left: "50%" },
+  { text: "Wat is slim om eerst te doen?", top: "29%", left: "68%" },
+  { text: "Welke subsidies zijn relevant?", top: "56%", left: "73%" },
+  { text: "Hoe kom ik van plan naar uitvoering?", top: "81%", left: "60%" },
+  { text: "Wat past bij mijn woning?", top: "81%", left: "40%" },
+  { text: "Wat als ik huurder ben?", top: "56%", left: "27%" },
+  { text: "Kan ik volledig van het gas af?", top: "29%", left: "32%" },
 ];
 
 const services = [
   {
     title: "Onafhankelijk meekijken",
-    body: "We luisteren eerst en kijken zonder commercieel belang naar jouw situatie. Geen voorgekauwd antwoord, maar advies dat past bij jouw woning.",
+    body: "We luisteren eerst en kijken zonder commercieel belang naar jouw situatie. Geen voorgekauwd antwoord. Advies dat past bij jouw woning.",
   },
   {
     title: "Overzicht in maatregelen",
@@ -43,7 +45,7 @@ const services = [
   },
   {
     title: "Uitleg over regelingen en subsidies",
-    body: "We zetten op een rij welke landelijke en gemeentelijke regelingen voor jou relevant zijn — inclusief aanvullende subsidies en combinaties die je makkelijk mist.",
+    body: "We zetten op een rij welke landelijke en gemeentelijke regelingen voor jou relevant zijn, inclusief aanvullende subsidies en combinaties die je makkelijk mist.",
   },
   {
     title: "Hulp bij keuzes, zonder wachtrij",
@@ -51,7 +53,7 @@ const services = [
   },
   {
     title: "Begeleiding naar een betrouwbare uitvoerder",
-    body: "Als de keuze helder is, koppelen we je aan een uitvoerder waarvan we weten dat ze goed werk leveren — zodat jij niet hoeft te gokken op een naam van internet.",
+    body: "Als de keuze helder is, koppelen we je aan een uitvoerder waarvan we weten dat ze goed werk leveren. Zo hoef jij niet te gokken op een naam van internet.",
   },
 ];
 
@@ -70,7 +72,7 @@ const routeSteps = [
   },
   {
     title: "Regelingen meenemen",
-    body: "Subsidies en aanvullende regelingen koppelen we aan de juiste stappen — zodat je niets misloopt.",
+    body: "Subsidies en aanvullende regelingen koppelen we aan de juiste stappen, zodat je niets misloopt.",
   },
   {
     title: "Richting uitvoering",
@@ -81,17 +83,17 @@ const routeSteps = [
 const gemeenteCards = [
   "Aanvullende gemeentelijke subsidies",
   "Combinaties met andere regelingen",
-  "Onderhoud koppelen aan verduurzaming",
-  "Aansluiting bij Nij Begun en vergelijkbare trajecten",
+  "Onderhoud en verduurzaming koppelen",
+  "Aansluiting bij Nij Begun",
 ];
 
 const reasons = [
-  "Onafhankelijk advies, zonder commercieel belang",
-  "Geen verkooppraatje, geen pushy sales",
-  "Snel schakelen, geen wachtrijen van maanden",
-  "Duidelijkheid in gewone taal, geen vakjargon",
-  "Aandacht voor jouw woning, situatie en lokale kansen",
-  "Begeleiding naar een uitvoerder die we kennen en vertrouwen",
+  "Onafhankelijk, geen commercieel belang",
+  "Geen verkooppraatje",
+  "Geen wachtrijen van maanden",
+  "Duidelijkheid in gewone taal",
+  "Aandacht voor jouw situatie",
+  "Begeleiding naar betrouwbare uitvoerder",
 ];
 
 const ctaButton =
@@ -106,6 +108,8 @@ const cardBase: React.CSSProperties = {
 };
 
 const Bewoners = () => {
+  const [openStep, setOpenStep] = useState<number | null>(null);
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
@@ -125,13 +129,13 @@ const Bewoners = () => {
                   style={{ color: "#2B2B2B", wordBreak: "keep-all", overflowWrap: "normal" }}
                 >
                   <span style={{ color: "hsl(var(--accent))" }}>Onafhankelijk</span>{" "}
-                  verduurzamingsadvies zonder wachtrijen
+                  advies, zonder wachtrijen
                 </h1>
                 <p
                   className="mt-8 text-[16px] md:text-[18px]"
                   style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 580 }}
                 >
-                  Tegenstrijdige adviezen, lange wachttijden bij bestaande loketten en onduidelijkheid over wat nu echt slim is. Wij kijken onafhankelijk met je mee, brengen rust in de keuzes en begeleiden je richting een passende uitvoerder — zonder verkooppraatje en zonder onnodige vertraging.
+                  Tegenstrijdige adviezen, lange wachttijden bij bestaande loketten en onduidelijkheid over wat nu echt slim is. Wij kijken onafhankelijk met je mee, brengen rust in de keuzes en begeleiden je richting een passende uitvoerder. Zonder verkooppraatje, zonder onnodige vertraging.
                 </p>
                 <div className="mt-10">
                   <a
@@ -194,75 +198,130 @@ const Bewoners = () => {
                 </article>
               ))}
             </div>
-            <p
-              className="mt-12 text-center font-display font-semibold"
-              style={{ fontSize: 20, color: "#152C4E", letterSpacing: "-0.01em" }}
-            >
-              Wij brengen rust in deze chaos.
-            </p>
           </div>
         </section>
 
-        {/* 3. VRAGENBLOK */}
+        {/* 3. VRAGENBLOK - HUB AND SPOKE */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
           <div className="container-content">
-            <h2 className="h2-section" style={{ color: "#152C4E" }}>
-              De <span style={{ color: "hsl(var(--accent))" }}>vragen</span> waar wij mee beginnen
-            </h2>
-            <p
-              className="mt-6 text-[18px]"
-              style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 760 }}
+            {/* Desktop hub-and-spoke */}
+            <div
+              className="hidden md:block relative mx-auto"
+              style={{ maxWidth: 900, aspectRatio: "800 / 540" }}
             >
-              De meeste bewoners lopen vast op dezelfde punten: te veel keuzes, onduidelijke regelingen, wachttijden of advies dat elkaar tegenspreekt. Met deze vragen beginnen wij meestal.
-            </p>
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4">
-              {questions.map((q, i) => {
-                const isLast = i === questions.length - 1;
-                return (
-                  <article
-                    key={q}
-                    className={`bg-white transition-all duration-200 ease-out hover:-translate-y-0.5 ${isLast ? "md:col-span-3" : ""}`}
+              <svg
+                className="absolute inset-0 w-full h-full"
+                viewBox="0 0 800 540"
+                preserveAspectRatio="xMidYMid meet"
+                aria-hidden="true"
+              >
+                <line x1="400" y1="270" x2="400" y2="80" stroke="#E8B547" strokeWidth="1" opacity="0.45" />
+                <line x1="400" y1="270" x2="545" y2="158" stroke="#E8B547" strokeWidth="1" opacity="0.45" />
+                <line x1="400" y1="270" x2="585" y2="305" stroke="#E8B547" strokeWidth="1" opacity="0.45" />
+                <line x1="400" y1="270" x2="478" y2="440" stroke="#E8B547" strokeWidth="1" opacity="0.45" />
+                <line x1="400" y1="270" x2="322" y2="440" stroke="#E8B547" strokeWidth="1" opacity="0.45" />
+                <line x1="400" y1="270" x2="215" y2="305" stroke="#E8B547" strokeWidth="1" opacity="0.45" />
+                <line x1="400" y1="270" x2="255" y2="158" stroke="#E8B547" strokeWidth="1" opacity="0.45" />
+              </svg>
+
+              {/* Center pill */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: 160,
+                  height: 60,
+                  borderRadius: 30,
+                  backgroundColor: "#E8B547",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#152C4E",
+                  fontSize: 22,
+                  fontWeight: 500,
+                }}
+              >
+                Voortraject
+              </div>
+
+              {/* Question labels */}
+              {hubQuestions.map((q) => (
+                <span
+                  key={q.text}
+                  style={{
+                    position: "absolute",
+                    top: q.top,
+                    left: q.left,
+                    transform: "translate(-50%, -50%)",
+                    maxWidth: 200,
+                    textAlign: "center",
+                    color: "#152C4E",
+                    fontSize: 15,
+                    fontWeight: 400,
+                  }}
+                >
+                  {q.text}
+                </span>
+              ))}
+            </div>
+
+            {/* Mobile stacked */}
+            <div className="md:hidden flex flex-col items-center">
+              <div
+                style={{
+                  width: 160,
+                  height: 60,
+                  borderRadius: 30,
+                  backgroundColor: "#E8B547",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#152C4E",
+                  fontSize: 22,
+                  fontWeight: 500,
+                }}
+              >
+                Voortraject
+              </div>
+              {hubQuestions.map((q, i) => (
+                <div key={q.text} className="flex flex-col items-center">
+                  <span
                     style={{
-                      borderRadius: 16,
-                      padding: 20,
-                      border: "1px solid #E5E2DB",
-                      boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
+                      display: "block",
+                      width: 1,
+                      height: 24,
+                      backgroundColor: "#E8B547",
+                      opacity: 0.45,
+                      marginTop: i === 0 ? 0 : 0,
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.boxShadow = "0 8px 32px rgba(21,44,78,0.10)";
-                      e.currentTarget.style.borderColor = "#E8B547";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.boxShadow = "0 4px 24px rgba(21,44,78,0.04)";
-                      e.currentTarget.style.borderColor = "#E5E2DB";
+                  />
+                  <p
+                    style={{
+                      color: "#152C4E",
+                      fontSize: 16,
+                      textAlign: "center",
+                      margin: 0,
+                      paddingTop: 12,
                     }}
                   >
-                    <div
-                      className={`flex items-center md:p-1 ${isLast ? "justify-center" : ""}`}
-                      style={{ gap: 20 }}
-                    >
-                      <div
-                        className="flex items-center justify-center rounded-full shrink-0"
-                        style={{ width: 48, height: 48, backgroundColor: "#F0E4D0" }}
-                      >
-                        <HelpCircle size={22} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
-                      </div>
-                      <h3
-                        className="font-display font-semibold"
-                        style={{
-                          fontSize: 20,
-                          color: "#152C4E",
-                          letterSpacing: "-0.01em",
-                          lineHeight: 1.3,
-                          margin: 0,
-                        }}
-                      >
-                        {q}
-                      </h3>
-                    </div>
-                  </article>
-                );
-              })}
+                    {q.text}
+                  </p>
+                  {i < hubQuestions.length - 1 && (
+                    <span
+                      style={{
+                        display: "block",
+                        width: 1,
+                        height: 24,
+                        backgroundColor: "#E8B547",
+                        opacity: 0.45,
+                        marginTop: 12,
+                      }}
+                    />
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -324,64 +383,116 @@ const Bewoners = () => {
           </div>
         </section>
 
-        {/* 5. PRAKTISCHE ROUTE */}
+        {/* 5. PRAKTISCHE ROUTE - ACCORDION */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
           <div className="container-content">
             <div className="text-center max-w-[820px] mx-auto">
               <h2 className="h2-section" style={{ color: "#152C4E" }}>
-                Verduurzamen is geen <span style={{ color: "hsl(var(--accent))" }}>losse</span> stap, maar een route
+                Verduurzamen is een <span style={{ color: "hsl(var(--accent))" }}>route</span>, geen losse stap
               </h2>
               <p className="mt-6 text-[18px]" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>
-                De meeste bewoners denken in losse maatregelen: even een warmtepomp, of even zonnepanelen. Maar slim verduurzamen werkt het beste als je in de juiste volgorde denkt — anders betaal je dubbel of mis je kansen.
+                De meeste bewoners denken in losse maatregelen: even een warmtepomp, of even zonnepanelen. Maar slim verduurzamen werkt het beste als je in de juiste volgorde denkt. Anders betaal je dubbel of mis je kansen.
               </p>
             </div>
 
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-3 items-start">
-              {routeSteps.map((s, i) => (
-                <div key={s.title} className="flex md:block items-start gap-5">
-                  <div className="md:flex md:items-start">
-                    <div className="flex-1" style={{ ...cardBase, padding: 20, height: "100%" }}>
+            <div
+              className="mt-16 mx-auto"
+              style={{ maxWidth: 820, ...cardBase, padding: 0, overflow: "hidden" }}
+            >
+              {routeSteps.map((s, i) => {
+                const isOpen = openStep === i;
+                return (
+                  <div
+                    key={s.title}
+                    style={{
+                      borderBottom: i === routeSteps.length - 1 ? "none" : "1px solid #E5E2DB",
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setOpenStep(isOpen ? null : i)}
+                      aria-expanded={isOpen}
+                      className="w-full flex items-center text-left"
+                      style={{
+                        padding: "20px 24px",
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        gap: 20,
+                      }}
+                    >
                       <span
                         className="font-display"
                         style={{
-                          fontSize: 36,
-                          fontWeight: 300,
+                          fontSize: 28,
+                          fontWeight: 500,
                           color: "#E8B547",
                           letterSpacing: "-0.02em",
                           lineHeight: 1,
-                          display: "block",
-                          marginBottom: 12,
+                          flexShrink: 0,
+                          width: 56,
                         }}
                       >
                         {String(i + 1).padStart(2, "0")}
                       </span>
                       <h3
-                        className="font-display font-semibold"
-                        style={{ fontSize: 17, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
+                        className="font-display flex-1"
+                        style={{
+                          fontSize: 18,
+                          fontWeight: 500,
+                          color: "#152C4E",
+                          letterSpacing: "-0.01em",
+                          lineHeight: 1.3,
+                          margin: 0,
+                        }}
                       >
                         {s.title}
                       </h3>
-                      <p className="mt-2" style={{ fontSize: 14, color: "#6B6B6B", lineHeight: 1.55, margin: "8px 0 0" }}>
+                      <ChevronDown
+                        size={20}
+                        color="#E8B547"
+                        style={{
+                          opacity: 0.5,
+                          transition: "transform 200ms ease",
+                          transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                          flexShrink: 0,
+                        }}
+                        aria-hidden="true"
+                      />
+                    </button>
+                    <div
+                      style={{
+                        maxHeight: isOpen ? 200 : 0,
+                        overflow: "hidden",
+                        transition: "max-height 300ms ease",
+                      }}
+                    >
+                      <p
+                        style={{
+                          fontSize: 15,
+                          color: "#6B6B6B",
+                          lineHeight: 1.6,
+                          margin: 0,
+                          padding: "0 24px 20px 100px",
+                        }}
+                      >
                         {s.body}
                       </p>
                     </div>
-                    {i < routeSteps.length - 1 && (
-                      <ChevronRight
-                        className="hidden md:block shrink-0"
-                        size={20}
-                        color="#E8B547"
-                        style={{ marginTop: 36, marginLeft: -2, marginRight: -2 }}
-                        aria-hidden="true"
-                      />
-                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <p
-              className="mt-12 text-center"
-              style={{ fontSize: 16, lineHeight: 1.6, color: "rgba(21,44,78,0.7)", maxWidth: 720, margin: "48px auto 0" }}
+              className="text-center"
+              style={{
+                fontSize: 16,
+                lineHeight: 1.6,
+                color: "rgba(21,44,78,0.7)",
+                maxWidth: 720,
+                margin: "48px auto 0",
+              }}
             >
               Wil je uiteindelijk volledig van het gas af? Dat vraagt vaak meer dan één maatregel. Wij helpen je het plan uitzetten.
             </p>
@@ -389,7 +500,7 @@ const Bewoners = () => {
         </section>
 
         {/* 6. AANVULLENDE MOGELIJKHEDEN PER GEMEENTE */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
           <div className="container-content">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               <div>
@@ -411,7 +522,8 @@ const Bewoners = () => {
                     style={{
                       ...cardBase,
                       padding: 20,
-                      backgroundColor: "#FBFAF7",
+                      backgroundColor: "#FFFFFF",
+                      minHeight: 64,
                     }}
                   >
                     <Check size={18} color="#E8B547" strokeWidth={2.5} aria-hidden="true" />
@@ -433,7 +545,7 @@ const Bewoners = () => {
           <div className="container-content">
             <div className="text-center max-w-[760px] mx-auto">
               <h2 className="h2-section" style={{ color: "#152C4E" }}>
-                Waarom bewoners hier <span style={{ color: "hsl(var(--accent))" }}>rust</span> van krijgen
+                Waarom bewoners dit <span style={{ color: "hsl(var(--accent))" }}>prettig</span> vinden
               </h2>
               <p className="mt-6 text-[18px]" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>
                 Wat bewoners ons het vaakst teruggeven over onze aanpak.
@@ -443,16 +555,21 @@ const Bewoners = () => {
               {reasons.map((r) => (
                 <div
                   key={r}
-                  className="flex items-start gap-3"
-                  style={{ ...cardBase, padding: 20 }}
+                  className="flex items-center gap-3"
+                  style={{ ...cardBase, padding: 20, minHeight: 56 }}
                 >
                   <span
                     className="flex items-center justify-center rounded-full shrink-0"
-                    style={{ width: 28, height: 28, backgroundColor: "#F0E4D0", marginTop: 2 }}
+                    style={{ width: 28, height: 28, backgroundColor: "#F0E4D0" }}
                   >
                     <Check size={16} color="#152C4E" strokeWidth={2.5} aria-hidden="true" />
                   </span>
-                  <p style={{ fontSize: 15, color: "#152C4E", lineHeight: 1.5, margin: 0 }}>{r}</p>
+                  <p
+                    className="lg:whitespace-nowrap"
+                    style={{ fontSize: 15, color: "#152C4E", lineHeight: 1.5, margin: 0 }}
+                  >
+                    {r}
+                  </p>
                 </div>
               ))}
             </div>
@@ -477,7 +594,7 @@ const Bewoners = () => {
                 marginBottom: 20,
               }}
             >
-              Snel duidelijkheid voor <span style={{ color: "#E8B547" }}>jouw</span> woning
+              Snel duidelijkheid voor jouw woning
             </h2>
             <p
               style={{
