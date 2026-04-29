@@ -19,8 +19,23 @@ const OverOns = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <main className="flex-1">
+        {/* Oprichtingsverhaal */}
+        <section className="py-20 md:py-24" style={{ backgroundColor: "#F5F2EC" }}>
+          <div className="container-content">
+            <h2 className="h2-section text-center mb-8">
+              Hoe Voortraject is <span style={accent}>ontstaan</span>
+            </h2>
+            <p
+              className="mx-auto text-center text-[17px] md:text-lg leading-relaxed text-foreground/80"
+              style={{ maxWidth: "70%" }}
+            >
+              Voortraject is ontstaan uit de frustratie dat verduurzamingsbedrijven te veel tijd kwijt zijn aan alles behalve het bouwen zelf. Wij zagen uitvoerders vastlopen op papierwerk, subsidievragen en dossiervoering. Daarom namen wij het voortraject ter hand.
+            </p>
+          </div>
+        </section>
+
         {/* Team */}
-        <section className="section-pad" style={{ backgroundColor: "#F5F2EC" }}>
+        <section className="section-pad bg-white">
           <div className="container-content">
             <h2 className="h2-section text-center mb-12">
               Ons <span style={accent}>team</span>
@@ -60,21 +75,6 @@ const OverOns = () => {
                 </article>
               ))}
             </div>
-          </div>
-        </section>
-
-        {/* Oprichtingsverhaal */}
-        <section className="py-20 md:py-24 bg-white">
-          <div className="container-content">
-            <h2 className="h2-section text-center mb-8">
-              Hoe Voortraject is <span style={accent}>ontstaan</span>
-            </h2>
-            <p
-              className="mx-auto text-center text-[17px] md:text-lg leading-relaxed text-foreground/80"
-              style={{ maxWidth: "70%" }}
-            >
-              Voortraject is ontstaan uit de frustratie dat verduurzamingsbedrijven te veel tijd kwijt zijn aan alles behalve het bouwen zelf. Wij zagen uitvoerders vastlopen op papierwerk, subsidievragen en dossiervoering. Daarom namen wij het voortraject ter hand.
-            </p>
           </div>
         </section>
 
