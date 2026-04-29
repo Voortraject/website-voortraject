@@ -606,36 +606,59 @@ const Bewoners = () => {
             <h2 className="h2-section text-center" style={{ color: "#152C4E" }}>
               Meer dan alleen<br /><span style={{ color: "hsl(var(--accent))" }}>landelijke</span> subsidies
             </h2>
-            <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
-              {gemeenteCards.map((c) => (
+            <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto items-stretch">
+              {gemeenteCardsData.map((c) => (
                 <div
-                  key={c}
-                  className="flex items-center gap-3"
+                  key={c.title}
+                  className="flex items-start gap-3 h-full"
                   style={{
-                    ...cardBase,
-                    padding: 20,
                     backgroundColor: "#FFFFFF",
-                    minHeight: 64,
+                    border: "1px solid #E5E2DB",
+                    borderRadius: 16,
+                    padding: "20px 24px",
                   }}
                 >
-                  <Check size={18} color="#E8B547" strokeWidth={2.5} aria-hidden="true" />
-                  <span
-                    className="font-display font-semibold"
-                    style={{ fontSize: 15, color: "#152C4E", lineHeight: 1.35 }}
-                  >
-                    {c}
-                  </span>
+                  <Check
+                    size={18}
+                    color="#E8B547"
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                    style={{ flexShrink: 0, marginTop: 4 }}
+                  />
+                  <div>
+                    <h3
+                      className="font-display font-semibold"
+                      style={{ fontSize: 16, color: "#152C4E", lineHeight: 1.35, margin: 0 }}
+                    >
+                      {c.title}
+                    </h3>
+                    <p
+                      style={{
+                        marginTop: 8,
+                        fontSize: 15,
+                        color: "#6B6B6B",
+                        lineHeight: 1.55,
+                        margin: "8px 0 0",
+                      }}
+                    >
+                      {c.body}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
-            <div className="mt-12 max-w-3xl mx-auto text-center">
-              <p className="text-[17px]" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>
-                Naast de landelijke regelingen zijn er per gemeente vaak aanvullende subsidies en kansen die makkelijk over het hoofd worden gezien. Soms in combinatie met klein of groot onderhoud, soms gekoppeld aan WOZ-waarden of lopende trajecten zoals Nij Begun.
-              </p>
-              <p className="mt-4 text-[17px]" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>
-                Wij kijken specifiek naar wat in jouw gemeente speelt, welke combinaties slim zijn en wat dat voor jouw plan betekent.
-              </p>
-            </div>
+            <p
+              className="text-center mx-auto"
+              style={{
+                marginTop: 32,
+                maxWidth: "48rem",
+                fontSize: 16,
+                lineHeight: 1.6,
+                color: "rgba(21,44,78,0.75)",
+              }}
+            >
+              Wij kijken specifiek naar wat in jouw gemeente speelt, welke combinaties slim zijn en wat dat voor jouw plan betekent.
+            </p>
           </div>
         </section>
 
