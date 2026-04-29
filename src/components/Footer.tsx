@@ -1,4 +1,4 @@
-const navCols = [
+import logoVoortraject from "@/assets/logo-voortraject.png";
   {
     label: "Navigatie",
     items: [
