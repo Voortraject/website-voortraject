@@ -270,7 +270,7 @@ const Bewoners = () => {
                         backgroundColor: "#FFFFFF",
                         border: "1px solid #E5E2DB",
                         borderRadius: 16,
-                        padding: "18px 20px",
+                        padding: "12px 16px",
                         display: "flex",
                         alignItems: "center",
                         gap: 12,
@@ -289,7 +289,7 @@ const Bewoners = () => {
                         backgroundColor: "#FFFFFF",
                         border: "1px solid #E5E2DB",
                         borderRadius: 16,
-                        padding: "18px 20px",
+                        padding: "12px 16px",
                         display: "flex",
                         alignItems: "center",
                         gap: 12,
@@ -341,7 +341,7 @@ const Bewoners = () => {
                       backgroundColor: "#FFFFFF",
                       border: "1px solid #E5E2DB",
                       borderRadius: 16,
-                      padding: "18px 20px",
+                      padding: "12px 16px",
                       display: "flex",
                       alignItems: "center",
                       gap: 12,
@@ -530,7 +530,7 @@ const Bewoners = () => {
         </section>
 
         {/* 6. AANVULLENDE MOGELIJKHEDEN PER GEMEENTE */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
             <h2 className="h2-section text-center" style={{ color: "#152C4E" }}>
               Meer dan alleen<br /><span style={{ color: "hsl(var(--accent))" }}>landelijke</span> subsidies
@@ -569,7 +569,7 @@ const Bewoners = () => {
         </section>
 
         {/* 7. WAAROM BEWONERS DIT PRETTIG VINDEN */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
           <div className="container-content">
             <div className="text-center max-w-[760px] mx-auto">
               <h2 className="h2-section" style={{ color: "#152C4E" }}>
