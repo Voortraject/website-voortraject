@@ -1,3 +1,5 @@
+import logoVoortraject from "@/assets/logo-voortraject.png";
+
 const navCols = [
   {
     label: "Navigatie",
@@ -32,9 +34,7 @@ export const Footer = () => (
     <div className="container-content md:py-20 py-[40px]">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
         <div>
-          <p className="font-display font-semibold text-[20px] tracking-tight">
-            Voortraject
-          </p>
+          <img src={logoVoortraject} alt="Voortraject" className="h-8 w-auto" />
           <p className="mt-4 text-sm leading-relaxed text-white/80 max-w-xs">
             Voortraject voor verduurzamingsbedrijven
           </p>

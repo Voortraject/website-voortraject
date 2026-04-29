@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { NavLink } from "./NavLink";
 import { Button } from "./Button";
+import logoVoortraject from "@/assets/logo-voortraject.png";
 
 const links = [
   { href: "/uitvoerders", label: "Voor uitvoerders" },
@@ -31,9 +32,10 @@ export const Header = () => {
       <div className="container-content flex items-center justify-between h-[72px] gap-6">
         <a
           href="/"
-          className="font-display font-semibold text-white text-[20px] tracking-tight shrink-0 hover:text-accent transition-colors"
+          className="shrink-0 hover:opacity-90 transition-opacity"
+          aria-label="Voortraject home"
         >
-          Voortraject
+          <img src={logoVoortraject} alt="Voortraject" className="h-7 w-auto" />
         </a>
 
         <nav className="hidden lg:flex items-center gap-8 shrink-0 ml-auto" aria-label="Hoofdnavigatie">
