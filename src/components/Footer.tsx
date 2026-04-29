@@ -1,4 +1,6 @@
 import logoVoortraject from "@/assets/logo-voortraject.png";
+
+const navCols = [
   {
     label: "Navigatie",
     items: [
