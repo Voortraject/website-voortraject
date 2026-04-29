@@ -418,7 +418,7 @@ const Bewoners = () => {
           <div className="container-content">
             <div className="text-center max-w-[820px] mx-auto">
               <h2 className="h2-section" style={{ color: "#152C4E" }}>
-                Verduurzamen is een <span style={{ color: "hsl(var(--accent))" }}>route</span>, geen losse stap
+                Verduurzamen is een <span style={{ color: "hsl(var(--accent))" }}>route</span>,<br />geen losse stap
               </h2>
               <p className="mt-6 text-[18px]" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>
                 De meeste bewoners denken in losse maatregelen: even een warmtepomp, of even zonnepanelen. Maar slim verduurzamen werkt het beste als je in de juiste volgorde denkt. Anders betaal je dubbel of mis je kansen.
