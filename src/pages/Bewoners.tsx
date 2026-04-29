@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, ChevronDown, HelpCircle, Compass, LayoutList, BookOpen, Zap, Handshake } from "lucide-react";
+import { Check, ChevronDown, HelpCircle, Compass, LayoutList, BookOpen, Zap, Handshake, MessagesSquare, Clock, ShieldQuestion, AlertCircle } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import heroBewoners from "@/assets/bewoners-hero.jpg";
