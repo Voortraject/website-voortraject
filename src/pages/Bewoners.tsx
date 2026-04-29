@@ -214,19 +214,23 @@ const Bewoners = () => {
               </p>
             </div>
             <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-5">
-              {recognitions.map((r) => (
-                <article key={r.title} style={cardBase}>
-                  <h3
-                    className="font-display font-semibold"
-                    style={{ fontSize: 19, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
-                  >
-                    {r.title}
-                  </h3>
-                  <p className="mt-3" style={{ fontSize: 16, color: "#6B6B6B", lineHeight: 1.6, margin: "12px 0 0" }}>
-                    {r.body}
-                  </p>
-                </article>
-              ))}
+              {recognitions.map((r) => {
+                const Icon = r.icon;
+                return (
+                  <article key={r.title} style={cardBase}>
+                    <Icon size={22} color="#E8B547" style={{ marginBottom: 12 }} aria-hidden="true" />
+                    <h3
+                      className="font-display font-semibold"
+                      style={{ fontSize: 19, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
+                    >
+                      {r.title}
+                    </h3>
+                    <p className="mt-3" style={{ fontSize: 16, color: "#6B6B6B", lineHeight: 1.6, margin: "12px 0 0" }}>
+                      {r.body}
+                    </p>
+                  </article>
+                );
+              })}
             </div>
           </div>
         </section>
