@@ -30,7 +30,7 @@ const questionsRow1 = [
 ];
 const questionsRow2 = [
   "Wat past bij mijn woning?",
-  "Hoe kom ik van plan naar uitvoering?",
+  "Hoe kom ik tot uitvoering?",
   "Wat als ik huurder ben?",
   "Kan ik volledig van het gas af?",
 ];
@@ -61,23 +61,23 @@ const services = [
 
 const routeSteps = [
   {
-    title: "Basis van je woning",
+    title: "Inzicht in je woning",
     body: "We kijken eerst naar isolatie, ventilatie en de huidige staat van je woning. Dat bepaalt wat zinvol is.",
   },
   {
-    title: "Wat is nu logisch",
+    title: "Weten wat nu slim is",
     body: "Niet alles tegelijk. We bepalen welke maatregel op dit moment het meeste oplevert voor jouw situatie.",
   },
   {
-    title: "De juiste volgorde",
+    title: "Een logische volgorde",
     body: "Sommige stappen werken alleen als andere eerst gedaan zijn. We zetten een volgorde uit die past.",
   },
   {
-    title: "Regelingen meenemen",
+    title: "Alle regelingen op een rij",
     body: "Subsidies en aanvullende regelingen koppelen we aan de juiste stappen, zodat je niets misloopt.",
   },
   {
-    title: "Richting uitvoering",
+    title: "Naar de juiste uitvoerder",
     body: "Met een helder plan in de hand koppelen we je aan een uitvoerder en begeleiden we je tot het werk start.",
   },
 ];
@@ -131,7 +131,7 @@ const Bewoners = () => {
                   style={{ color: "#2B2B2B", wordBreak: "keep-all", overflowWrap: "normal" }}
                 >
                   <span style={{ color: "hsl(var(--accent))" }}>Onafhankelijk</span>{" "}
-                  advies, zonder wachtrijen
+                  advies,<br />zonder wachtrijen
                 </h1>
                 <p
                   className="mt-8 text-[16px] md:text-[18px]"
@@ -418,7 +418,7 @@ const Bewoners = () => {
           <div className="container-content">
             <div className="text-center max-w-[820px] mx-auto">
               <h2 className="h2-section" style={{ color: "#152C4E" }}>
-                Verduurzamen is een <span style={{ color: "hsl(var(--accent))" }}>route</span>, geen losse stap
+                Verduurzamen is een <span style={{ color: "hsl(var(--accent))" }}>route</span>,<br />geen losse stap
               </h2>
               <p className="mt-6 text-[18px]" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>
                 De meeste bewoners denken in losse maatregelen: even een warmtepomp, of even zonnepanelen. Maar slim verduurzamen werkt het beste als je in de juiste volgorde denkt. Anders betaal je dubbel of mis je kansen.
@@ -532,40 +532,38 @@ const Bewoners = () => {
         {/* 6. AANVULLENDE MOGELIJKHEDEN PER GEMEENTE */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
           <div className="container-content">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-              <div>
-                <h2 className="h2-section" style={{ color: "#152C4E" }}>
-                  Meer dan alleen <span style={{ color: "hsl(var(--accent))" }}>landelijke</span> subsidies
-                </h2>
-                <p className="mt-6 text-[17px]" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>
-                  Naast de landelijke regelingen zijn er per gemeente vaak aanvullende subsidies en kansen die makkelijk over het hoofd worden gezien. Soms in combinatie met klein of groot onderhoud, soms gekoppeld aan WOZ-waarden of lopende trajecten zoals Nij Begun.
-                </p>
-                <p className="mt-4 text-[17px]" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>
-                  Wij kijken specifiek naar wat in jouw gemeente speelt, welke combinaties slim zijn en wat dat voor jouw plan betekent.
-                </p>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {gemeenteCards.map((c) => (
-                  <div
-                    key={c}
-                    className="flex items-center gap-3"
-                    style={{
-                      ...cardBase,
-                      padding: 20,
-                      backgroundColor: "#FFFFFF",
-                      minHeight: 64,
-                    }}
+            <h2 className="h2-section text-center" style={{ color: "#152C4E" }}>
+              Meer dan alleen<br /><span style={{ color: "hsl(var(--accent))" }}>landelijke</span> subsidies
+            </h2>
+            <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              {gemeenteCards.map((c) => (
+                <div
+                  key={c}
+                  className="flex items-center gap-3"
+                  style={{
+                    ...cardBase,
+                    padding: 20,
+                    backgroundColor: "#FFFFFF",
+                    minHeight: 64,
+                  }}
+                >
+                  <Check size={18} color="#E8B547" strokeWidth={2.5} aria-hidden="true" />
+                  <span
+                    className="font-display font-semibold"
+                    style={{ fontSize: 15, color: "#152C4E", lineHeight: 1.35 }}
                   >
-                    <Check size={18} color="#E8B547" strokeWidth={2.5} aria-hidden="true" />
-                    <span
-                      className="font-display font-semibold"
-                      style={{ fontSize: 15, color: "#152C4E", lineHeight: 1.35 }}
-                    >
-                      {c}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                    {c}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-12 max-w-3xl mx-auto text-center">
+              <p className="text-[17px]" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>
+                Naast de landelijke regelingen zijn er per gemeente vaak aanvullende subsidies en kansen die makkelijk over het hoofd worden gezien. Soms in combinatie met klein of groot onderhoud, soms gekoppeld aan WOZ-waarden of lopende trajecten zoals Nij Begun.
+              </p>
+              <p className="mt-4 text-[17px]" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>
+                Wij kijken specifiek naar wat in jouw gemeente speelt, welke combinaties slim zijn en wat dat voor jouw plan betekent.
+              </p>
             </div>
           </div>
         </section>
