@@ -61,23 +61,23 @@ const services = [
 
 const routeSteps = [
   {
-    title: "Basis van je woning",
+    title: "Inzicht in je woning",
     body: "We kijken eerst naar isolatie, ventilatie en de huidige staat van je woning. Dat bepaalt wat zinvol is.",
   },
   {
-    title: "Wat is nu logisch",
+    title: "Weten wat nu slim is",
     body: "Niet alles tegelijk. We bepalen welke maatregel op dit moment het meeste oplevert voor jouw situatie.",
   },
   {
-    title: "De juiste volgorde",
+    title: "Een logische volgorde",
     body: "Sommige stappen werken alleen als andere eerst gedaan zijn. We zetten een volgorde uit die past.",
   },
   {
-    title: "Regelingen meenemen",
+    title: "Alle regelingen op een rij",
     body: "Subsidies en aanvullende regelingen koppelen we aan de juiste stappen, zodat je niets misloopt.",
   },
   {
-    title: "Richting uitvoering",
+    title: "Naar de juiste uitvoerder",
     body: "Met een helder plan in de hand koppelen we je aan een uitvoerder en begeleiden we je tot het werk start.",
   },
 ];
