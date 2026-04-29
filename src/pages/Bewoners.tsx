@@ -6,20 +6,43 @@ import heroBewoners from "@/assets/bewoners-hero.jpg";
 
 const recognitions = [
   {
+    icon: MessagesSquare,
     title: "Iedereen vertelt iets anders",
     body: "De ene partij raadt isolatie aan, de andere een warmtepomp en de derde zegt dat je beter kunt wachten. Wat klopt er nu?",
   },
   {
+    icon: Clock,
     title: "Wachttijden bij bestaande loketten",
     body: "Een afspraak via een gemeentelijk loket of energiecoöperatie laat soms maanden op zich wachten. Ondertussen sta jij stil.",
   },
   {
+    icon: ShieldQuestion,
     title: "Onduidelijk wie betrouwbaar is",
     body: "Welke uitvoerder doet goed werk en welke niet? Op internet vind je tegenstrijdige reviews en het voelt als gokken.",
   },
   {
+    icon: AlertCircle,
     title: "Bang om iets te missen",
     body: "Subsidies, regelingen en aanvullende kansen: het is veel om bij te houden, en niemand wil achteraf horen dat hij geld heeft laten liggen.",
+  },
+];
+
+const gemeenteCardsData = [
+  {
+    title: "Aanvullende gemeentelijke subsidies",
+    body: "Veel gemeenten hebben aanvullende regelingen bovenop de landelijke subsidies. We kijken welke voor jouw adres relevant zijn.",
+  },
+  {
+    title: "Combinaties met andere regelingen",
+    body: "Sommige regelingen kunnen samen worden gebruikt. We brengen in kaart welke combinaties voor jouw situatie kunnen werken.",
+  },
+  {
+    title: "Onderhoud en verduurzaming koppelen",
+    body: "Klein of groot onderhoud loopt soms slim samen met verduurzaming. We kijken of dat voor jouw woning kansen biedt.",
+  },
+  {
+    title: "Aansluiting bij Nij Begun",
+    body: "Voor adressen in het aardbevingsgebied checken we of een verduurzamingstraject kan aansluiten bij Nij Begun.",
   },
 ];
 
