@@ -240,18 +240,18 @@ const Bewoners = () => {
                 Voortraject
               </div>
 
-              <div className="w-full max-w-[800px] mx-auto" style={{ aspectRatio: "10 / 1" }}>
+              <div className="w-full" style={{ aspectRatio: "15 / 1" }}>
                 <svg
-                  viewBox="0 0 800 80"
+                  viewBox="0 0 1200 80"
                   xmlns="http://www.w3.org/2000/svg"
                   preserveAspectRatio="xMidYMid meet"
                   className="w-full h-full"
                   aria-hidden="true"
                 >
-                  <line x1="400" y1="38" x2="400" y2="20" stroke="#E8B547" strokeWidth="1.5" opacity="0.75" />
-                  <polygon points="394,20 406,20 400,12" fill="#E8B547" opacity="0.85" />
+                  <line x1="600" y1="38" x2="600" y2="20" stroke="#E8B547" strokeWidth="1.5" opacity="0.75" />
+                  <polygon points="594,20 606,20 600,12" fill="#E8B547" opacity="0.85" />
                   <path
-                    d="M 50,80 Q 50,55 70,55 L 385,55 Q 400,55 400,38 Q 400,55 415,55 L 730,55 Q 750,55 750,80"
+                    d="M 60,80 Q 60,55 80,55 L 585,55 Q 600,55 600,38 Q 600,55 615,55 L 1120,55 Q 1140,55 1140,80"
                     fill="none"
                     stroke="#E8B547"
                     strokeWidth="1.5"
@@ -261,8 +261,8 @@ const Bewoners = () => {
                 </svg>
               </div>
 
-              <div className="max-w-[800px] mx-auto" style={{ marginTop: 24 }}>
-                <div className="grid grid-cols-3" style={{ gap: 18 }}>
+              <div className="w-full" style={{ marginTop: 24 }}>
+                <div className="grid grid-cols-3 w-full" style={{ gap: 18 }}>
                   {questionsRow1.map((q) => (
                     <article
                       key={q}
@@ -281,7 +281,7 @@ const Bewoners = () => {
                     </article>
                   ))}
                 </div>
-                <div className="grid grid-cols-4" style={{ gap: 14, marginTop: 14 }}>
+                <div className="grid grid-cols-4 w-full" style={{ gap: 14, marginTop: 14 }}>
                   {questionsRow2.map((q) => (
                     <article
                       key={q}
