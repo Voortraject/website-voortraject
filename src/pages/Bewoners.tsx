@@ -390,7 +390,7 @@ const Bewoners = () => {
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
               {/* Linker kolom */}
               <div
-                className="lg:col-span-5 flex flex-col lg:pr-8"
+                className="lg:col-span-6 flex flex-col lg:pr-8"
                 style={{ justifyContent: "center", gap: 24 }}
               >
                 <h2 className="h2-section" style={{ color: "#152C4E" }}>
@@ -418,7 +418,7 @@ const Bewoners = () => {
 
               {/* Rechter kolom */}
               <ul
-                className="lg:col-span-7 lg:pl-[72px] lg:border-l"
+                className="lg:col-span-6 lg:pl-[56px] lg:border-l-2"
                 style={{ margin: 0, padding: 0, listStyle: "none", borderColor: "#E5E2DB" }}
               >
                 {services.map((s, i) => {
