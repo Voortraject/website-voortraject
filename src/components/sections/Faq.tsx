@@ -82,20 +82,6 @@ export const Faq = () => {
                     gap: 20,
                   }}
                 >
-                  <span
-                    className="font-display"
-                    style={{
-                      fontSize: 28,
-                      fontWeight: 500,
-                      color: "#E8B547",
-                      letterSpacing: "-0.02em",
-                      lineHeight: 1,
-                      flexShrink: 0,
-                      width: 56,
-                    }}
-                  >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
                   <h3
                     className="font-display flex-1"
                     style={{
