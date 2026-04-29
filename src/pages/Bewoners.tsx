@@ -131,7 +131,7 @@ const Bewoners = () => {
                   style={{ color: "#2B2B2B", wordBreak: "keep-all", overflowWrap: "normal" }}
                 >
                   <span style={{ color: "hsl(var(--accent))" }}>Onafhankelijk</span>{" "}
-                  advies, zonder wachtrijen
+                  advies,<br />zonder wachtrijen
                 </h1>
                 <p
                   className="mt-8 text-[16px] md:text-[18px]"
