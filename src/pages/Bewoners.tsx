@@ -393,32 +393,47 @@ const Bewoners = () => {
           <div className="container-content">
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
               {/* Linker kolom */}
-              <div className="lg:col-span-5 flex flex-col" style={{ minHeight: "100%" }}>
-                <div>
-                  <h2 className="h2-section" style={{ color: "#152C4E" }}>
-                    Wat <span style={{ color: "hsl(var(--accent))" }}>wij</span> voor je doen
-                  </h2>
-                  <p
-                    className="mt-6 max-w-md"
-                    style={{ color: "#152C4E", opacity: 0.75, fontSize: 16, lineHeight: 1.6 }}
-                  >
-                    Geen verkooppraatje, geen standaardverhaal. We kijken eerst naar jouw woning, situatie en doel. Daarna pas komt het advies.
-                  </p>
-                </div>
-                <div className="mt-10 lg:mt-auto lg:pt-12">
-                  <div style={{ width: 48, height: 2, backgroundColor: "#E8B547", marginBottom: 16 }} />
-                  <p
-                    style={{
-                      color: "#152C4E",
-                      fontSize: 18,
-                      fontWeight: 500,
-                      fontStyle: "italic",
-                      margin: 0,
-                    }}
-                  >
-                    Eerst luisteren. Dan adviseren.
-                  </p>
-                </div>
+              <div
+                className="lg:col-span-5 flex flex-col p-6 md:p-8"
+                style={{
+                  backgroundColor: "rgba(232, 181, 71, 0.05)",
+                  borderRadius: 16,
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  style={{
+                    color: "#E8B547",
+                    fontSize: 72,
+                    lineHeight: 0.8,
+                    marginBottom: 8,
+                    fontFamily: "var(--font-serif, Georgia), serif",
+                    display: "block",
+                  }}
+                >
+                  &ldquo;
+                </span>
+                <h2 className="h2-section" style={{ color: "#152C4E" }}>
+                  Wat <span style={{ color: "hsl(var(--accent))" }}>wij</span> voor je doen
+                </h2>
+                <p
+                  className="mt-6 max-w-md"
+                  style={{ color: "#152C4E", opacity: 0.75, fontSize: 16, lineHeight: 1.6 }}
+                >
+                  Geen verkooppraatje, geen standaardverhaal. We kijken eerst naar jouw woning, situatie en doel. Daarna pas komt het advies.
+                </p>
+                <p
+                  style={{
+                    color: "#152C4E",
+                    fontSize: 20,
+                    fontWeight: 500,
+                    fontStyle: "italic",
+                    marginTop: 24,
+                    margin: "24px 0 0",
+                  }}
+                >
+                  Eerst luisteren. Dan adviseren.
+                </p>
               </div>
 
               {/* Rechter kolom */}
