@@ -212,13 +212,15 @@ const Bewoners = () => {
                 const Icon = r.icon;
                 return (
                   <article key={r.title} style={cardBase}>
-                    <Icon size={22} color="#E8B547" style={{ marginBottom: 12 }} aria-hidden="true" />
-                    <h3
-                      className="font-display font-semibold"
-                      style={{ fontSize: 19, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
-                    >
-                      {r.title}
-                    </h3>
+                    <div className="flex flex-row items-center gap-3">
+                      <Icon size={20} color="#E8B547" style={{ flexShrink: 0 }} aria-hidden="true" />
+                      <h3
+                        className="font-display font-semibold"
+                        style={{ fontSize: 19, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
+                      >
+                        {r.title}
+                      </h3>
+                    </div>
                     <p className="mt-3" style={{ fontSize: 16, color: "#6B6B6B", lineHeight: 1.6, margin: "12px 0 0" }}>
                       {r.body}
                     </p>
@@ -387,26 +389,7 @@ const Bewoners = () => {
           <div className="container-content">
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
               {/* Linker kolom */}
-              <div
-                className="lg:col-span-5 flex flex-col p-6 md:p-8"
-                style={{
-                  backgroundColor: "rgba(232, 181, 71, 0.05)",
-                  borderRadius: 16,
-                }}
-              >
-                <span
-                  aria-hidden="true"
-                  style={{
-                    color: "#E8B547",
-                    fontSize: 72,
-                    lineHeight: 0.8,
-                    marginBottom: 8,
-                    fontFamily: "var(--font-serif, Georgia), serif",
-                    display: "block",
-                  }}
-                >
-                  &ldquo;
-                </span>
+              <div className="lg:col-span-5 flex flex-col">
                 <h2 className="h2-section" style={{ color: "#152C4E" }}>
                   Wat <span style={{ color: "hsl(var(--accent))" }}>wij</span> voor je doen
                 </h2>
@@ -417,13 +400,14 @@ const Bewoners = () => {
                   Geen verkooppraatje, geen standaardverhaal. We kijken eerst naar jouw woning, situatie en doel. Daarna pas komt het advies.
                 </p>
                 <p
+                  className="mt-auto"
                   style={{
                     color: "#152C4E",
-                    fontSize: 20,
+                    fontSize: 22,
                     fontWeight: 500,
                     fontStyle: "italic",
-                    marginTop: 24,
-                    margin: "24px 0 0",
+                    lineHeight: 1.3,
+                    marginTop: 32,
                   }}
                 >
                   Eerst luisteren. Dan adviseren.
@@ -431,7 +415,10 @@ const Bewoners = () => {
               </div>
 
               {/* Rechter kolom */}
-              <ul className="lg:col-span-7" style={{ margin: 0, padding: 0, listStyle: "none" }}>
+              <ul
+                className="lg:col-span-7 lg:pl-12 lg:border-l"
+                style={{ margin: 0, padding: 0, listStyle: "none", borderColor: "#E5E2DB" }}
+              >
                 {services.map((s, i) => {
                   const Icon = s.icon;
                   return (
