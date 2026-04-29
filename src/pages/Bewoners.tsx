@@ -110,12 +110,6 @@ const routeSteps = [
   },
 ];
 
-const gemeenteCards = [
-  "Aanvullende gemeentelijke subsidies",
-  "Combinaties met andere regelingen",
-  "Onderhoud en verduurzaming koppelen",
-  "Aansluiting bij Nij Begun",
-];
 
 const reasons = [
   "Onafhankelijk, geen commercieel belang",
