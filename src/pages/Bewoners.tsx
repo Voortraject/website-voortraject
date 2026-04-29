@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, HelpCircle } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import heroBewoners from "@/assets/bewoners-hero.jpg";
@@ -23,16 +23,18 @@ const recognitions = [
   },
 ];
 
-// Hub-and-spoke vragen
-const hubQuestions = [
-  { text: "Waar begin ik?", top: "15%", left: "50%" },
-  { text: "Wat is slim om eerst te doen?", top: "29%", left: "68%" },
-  { text: "Welke subsidies zijn relevant?", top: "56%", left: "73%" },
-  { text: "Hoe kom ik van plan naar uitvoering?", top: "81%", left: "60%" },
-  { text: "Wat past bij mijn woning?", top: "81%", left: "40%" },
-  { text: "Wat als ik huurder ben?", top: "56%", left: "27%" },
-  { text: "Kan ik volledig van het gas af?", top: "29%", left: "32%" },
+const questionsRow1 = [
+  "Waar begin ik?",
+  "Wat is slim om eerst te doen?",
+  "Welke subsidies zijn relevant?",
 ];
+const questionsRow2 = [
+  "Wat past bij mijn woning?",
+  "Hoe kom ik van plan naar uitvoering?",
+  "Wat als ik huurder ben?",
+  "Kan ik volledig van het gas af?",
+];
+const allQuestions = [...questionsRow1, ...questionsRow2];
 
 const services = [
   {
@@ -201,127 +203,155 @@ const Bewoners = () => {
           </div>
         </section>
 
-        {/* 3. VRAGENBLOK - HUB AND SPOKE */}
+        {/* 3. VRAGENBLOK */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
           <div className="container-content">
-            {/* Desktop hub-and-spoke */}
-            <div
-              className="hidden md:block relative mx-auto"
-              style={{ maxWidth: 900, aspectRatio: "800 / 540" }}
-            >
-              <svg
-                className="absolute inset-0 w-full h-full"
-                viewBox="0 0 800 540"
-                preserveAspectRatio="xMidYMid meet"
-                aria-hidden="true"
+            {/* Kop */}
+            <div className="text-center max-w-[760px] mx-auto">
+              <h2 className="h2-section" style={{ color: "#152C4E" }}>
+                De <span style={{ color: "hsl(var(--accent))" }}>vragen</span> waar wij mee beginnen
+              </h2>
+              <p
+                className="mt-6 text-[18px] mx-auto"
+                style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: "60ch" }}
               >
-                <line x1="400" y1="270" x2="400" y2="80" stroke="#E8B547" strokeWidth="1" opacity="0.45" />
-                <line x1="400" y1="270" x2="545" y2="158" stroke="#E8B547" strokeWidth="1" opacity="0.45" />
-                <line x1="400" y1="270" x2="585" y2="305" stroke="#E8B547" strokeWidth="1" opacity="0.45" />
-                <line x1="400" y1="270" x2="478" y2="440" stroke="#E8B547" strokeWidth="1" opacity="0.45" />
-                <line x1="400" y1="270" x2="322" y2="440" stroke="#E8B547" strokeWidth="1" opacity="0.45" />
-                <line x1="400" y1="270" x2="215" y2="305" stroke="#E8B547" strokeWidth="1" opacity="0.45" />
-                <line x1="400" y1="270" x2="255" y2="158" stroke="#E8B547" strokeWidth="1" opacity="0.45" />
-              </svg>
-
-              {/* Center pill */}
-              <div
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: 160,
-                  height: 60,
-                  borderRadius: 30,
-                  backgroundColor: "#E8B547",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#152C4E",
-                  fontSize: 22,
-                  fontWeight: 500,
-                }}
-              >
-                Voortraject
-              </div>
-
-              {/* Question labels */}
-              {hubQuestions.map((q) => (
-                <span
-                  key={q.text}
-                  style={{
-                    position: "absolute",
-                    top: q.top,
-                    left: q.left,
-                    transform: "translate(-50%, -50%)",
-                    maxWidth: 200,
-                    textAlign: "center",
-                    color: "#152C4E",
-                    fontSize: 15,
-                    fontWeight: 400,
-                  }}
-                >
-                  {q.text}
-                </span>
-              ))}
+                De meeste bewoners lopen vast op dezelfde punten: te veel keuzes, onduidelijke regelingen, wachttijden of advies dat elkaar tegenspreekt. Met deze vragen beginnen wij meestal.
+              </p>
             </div>
 
-            {/* Mobile stacked */}
-            <div className="md:hidden flex flex-col items-center">
+            {/* Desktop: pill + svg + grid */}
+            <div className="hidden md:block">
               <div
+                className="mx-auto"
                 style={{
+                  marginTop: 32,
                   width: 160,
-                  height: 60,
-                  borderRadius: 30,
+                  height: 52,
+                  borderRadius: 26,
                   backgroundColor: "#E8B547",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: "#152C4E",
-                  fontSize: 22,
+                  fontSize: 19,
                   fontWeight: 500,
                 }}
               >
                 Voortraject
               </div>
-              {hubQuestions.map((q, i) => (
-                <div key={q.text} className="flex flex-col items-center">
-                  <span
-                    style={{
-                      display: "block",
-                      width: 1,
-                      height: 24,
-                      backgroundColor: "#E8B547",
-                      opacity: 0.45,
-                      marginTop: i === 0 ? 0 : 0,
-                    }}
+
+              <div className="w-full max-w-[800px] mx-auto" style={{ aspectRatio: "10 / 1" }}>
+                <svg
+                  viewBox="0 0 800 80"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid meet"
+                  className="w-full h-full"
+                  aria-hidden="true"
+                >
+                  <line x1="400" y1="38" x2="400" y2="20" stroke="#E8B547" strokeWidth="1.5" opacity="0.75" />
+                  <polygon points="394,20 406,20 400,12" fill="#E8B547" opacity="0.85" />
+                  <path
+                    d="M 50,80 Q 50,55 70,55 L 385,55 Q 400,55 400,38 Q 400,55 415,55 L 730,55 Q 750,55 750,80"
+                    fill="none"
+                    stroke="#E8B547"
+                    strokeWidth="1.5"
+                    opacity="0.75"
+                    strokeLinecap="round"
                   />
-                  <p
+                </svg>
+              </div>
+
+              <div className="max-w-[800px] mx-auto" style={{ marginTop: 24 }}>
+                <div className="grid grid-cols-3" style={{ gap: 18 }}>
+                  {questionsRow1.map((q) => (
+                    <article
+                      key={q}
+                      style={{
+                        backgroundColor: "#FFFFFF",
+                        border: "1px solid #E5E2DB",
+                        borderRadius: 16,
+                        padding: "18px 20px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 12,
+                      }}
+                    >
+                      <HelpCircle size={18} style={{ color: "#E8B547", opacity: 0.8, flexShrink: 0 }} />
+                      <span style={{ color: "#152C4E", fontSize: 14, lineHeight: 1.4 }}>{q}</span>
+                    </article>
+                  ))}
+                </div>
+                <div className="grid grid-cols-4" style={{ gap: 14, marginTop: 14 }}>
+                  {questionsRow2.map((q) => (
+                    <article
+                      key={q}
+                      style={{
+                        backgroundColor: "#FFFFFF",
+                        border: "1px solid #E5E2DB",
+                        borderRadius: 16,
+                        padding: "18px 20px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 12,
+                      }}
+                    >
+                      <HelpCircle size={18} style={{ color: "#E8B547", opacity: 0.8, flexShrink: 0 }} />
+                      <span style={{ color: "#152C4E", fontSize: 14, lineHeight: 1.4 }}>{q}</span>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile fallback */}
+            <div className="md:hidden flex flex-col items-center" style={{ marginTop: 32 }}>
+              <div
+                style={{
+                  width: 160,
+                  height: 52,
+                  borderRadius: 26,
+                  backgroundColor: "#E8B547",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#152C4E",
+                  fontSize: 19,
+                  fontWeight: 500,
+                }}
+              >
+                Voortraject
+              </div>
+              <span
+                aria-hidden="true"
+                style={{
+                  display: "block",
+                  width: 1,
+                  height: 28,
+                  backgroundColor: "#E8B547",
+                  opacity: 0.7,
+                  marginTop: 8,
+                  marginBottom: 8,
+                }}
+              />
+              <div className="grid grid-cols-1 w-full" style={{ gap: 12 }}>
+                {allQuestions.map((q) => (
+                  <article
+                    key={q}
                     style={{
-                      color: "#152C4E",
-                      fontSize: 16,
-                      textAlign: "center",
-                      margin: 0,
-                      paddingTop: 12,
+                      backgroundColor: "#FFFFFF",
+                      border: "1px solid #E5E2DB",
+                      borderRadius: 16,
+                      padding: "18px 20px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
                     }}
                   >
-                    {q.text}
-                  </p>
-                  {i < hubQuestions.length - 1 && (
-                    <span
-                      style={{
-                        display: "block",
-                        width: 1,
-                        height: 24,
-                        backgroundColor: "#E8B547",
-                        opacity: 0.45,
-                        marginTop: 12,
-                      }}
-                    />
-                  )}
-                </div>
-              ))}
+                    <HelpCircle size={18} style={{ color: "#E8B547", opacity: 0.8, flexShrink: 0 }} />
+                    <span style={{ color: "#152C4E", fontSize: 14, lineHeight: 1.4 }}>{q}</span>
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
         </section>
