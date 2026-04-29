@@ -23,16 +23,18 @@ const recognitions = [
   },
 ];
 
-// Hub-and-spoke vragen
-const hubQuestions = [
-  { text: "Waar begin ik?", top: "15%", left: "50%" },
-  { text: "Wat is slim om eerst te doen?", top: "29%", left: "68%" },
-  { text: "Welke subsidies zijn relevant?", top: "56%", left: "73%" },
-  { text: "Hoe kom ik van plan naar uitvoering?", top: "81%", left: "60%" },
-  { text: "Wat past bij mijn woning?", top: "81%", left: "40%" },
-  { text: "Wat als ik huurder ben?", top: "56%", left: "27%" },
-  { text: "Kan ik volledig van het gas af?", top: "29%", left: "32%" },
+const questionsRow1 = [
+  "Waar begin ik?",
+  "Wat is slim om eerst te doen?",
+  "Welke subsidies zijn relevant?",
 ];
+const questionsRow2 = [
+  "Wat past bij mijn woning?",
+  "Hoe kom ik van plan naar uitvoering?",
+  "Wat als ik huurder ben?",
+  "Kan ik volledig van het gas af?",
+];
+const allQuestions = [...questionsRow1, ...questionsRow2];
 
 const services = [
   {
