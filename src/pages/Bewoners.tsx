@@ -364,57 +364,81 @@ const Bewoners = () => {
         {/* 4. WAT WIJ VOOR JE DOEN */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
-            <h2 className="h2-section" style={{ color: "#152C4E" }}>
-              Wat <span style={{ color: "hsl(var(--accent))" }}>wij</span> voor je doen
-            </h2>
-            <p
-              className="mt-6 text-[18px]"
-              style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 760 }}
-            >
-              Geen verkooppraatje, geen vooropgezet plan. We kijken eerst naar jouw woning, jouw situatie en wat je écht wilt bereiken. Pas daarna komt het advies.
-            </p>
-            <ul className="mt-16">
-              {services.map((s, i) => (
-                <li
-                  key={s.title}
-                  className="flex items-start gap-6"
-                  style={{
-                    paddingTop: 32,
-                    paddingBottom: 32,
-                    borderBottom: i === services.length - 1 ? "none" : "1px solid #E5E2DB",
-                  }}
-                >
-                  <span
-                    className="font-display"
+            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+              {/* Linker kolom */}
+              <div className="lg:col-span-5 flex flex-col" style={{ minHeight: "100%" }}>
+                <div>
+                  <h2 className="h2-section" style={{ color: "#152C4E" }}>
+                    Wat <span style={{ color: "hsl(var(--accent))" }}>wij</span> voor je doen
+                  </h2>
+                  <p
+                    className="mt-6 max-w-md"
+                    style={{ color: "#152C4E", opacity: 0.75, fontSize: 16, lineHeight: 1.6 }}
+                  >
+                    Geen verkooppraatje, geen standaardverhaal. We kijken eerst naar jouw woning, situatie en doel. Daarna pas komt het advies.
+                  </p>
+                </div>
+                <div className="mt-10 lg:mt-auto lg:pt-12">
+                  <div style={{ width: 48, height: 2, backgroundColor: "#E8B547", marginBottom: 16 }} />
+                  <p
                     style={{
-                      fontSize: 40,
-                      fontWeight: 300,
-                      color: "#E8B547",
-                      width: 80,
-                      flexShrink: 0,
-                      lineHeight: 1,
-                      letterSpacing: "-0.02em",
+                      color: "#152C4E",
+                      fontSize: 18,
+                      fontWeight: 500,
+                      fontStyle: "italic",
+                      margin: 0,
                     }}
                   >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <div>
-                    <h3
-                      className="font-display font-semibold"
-                      style={{ fontSize: 20, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3 }}
+                    Eerst luisteren. Dan adviseren.
+                  </p>
+                </div>
+              </div>
+
+              {/* Rechter kolom */}
+              <ul className="lg:col-span-7" style={{ margin: 0, padding: 0, listStyle: "none" }}>
+                {services.map((s, i) => {
+                  const Icon = s.icon;
+                  return (
+                    <li
+                      key={s.title}
+                      className="flex flex-row gap-4 items-start"
+                      style={{
+                        padding: "20px 0",
+                        borderBottom: i === services.length - 1 ? "none" : "1px solid #E5E2DB",
+                      }}
                     >
-                      {s.title}
-                    </h3>
-                    <p
-                      className="mt-2"
-                      style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6, maxWidth: 720 }}
-                    >
-                      {s.body}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                      <Icon size={24} color="#E8B547" style={{ flexShrink: 0, marginTop: 2 }} />
+                      <div>
+                        <h3
+                          className="font-display"
+                          style={{
+                            color: "#152C4E",
+                            fontSize: 17,
+                            fontWeight: 600,
+                            marginBottom: 6,
+                            margin: "0 0 6px",
+                            lineHeight: 1.3,
+                          }}
+                        >
+                          {s.title}
+                        </h3>
+                        <p
+                          style={{
+                            color: "#152C4E",
+                            opacity: 0.75,
+                            fontSize: 15,
+                            lineHeight: 1.5,
+                            margin: 0,
+                          }}
+                        >
+                          {s.body}
+                        </p>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           </div>
         </section>
 
