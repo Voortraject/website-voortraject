@@ -141,7 +141,7 @@ const Bewoners = () => {
         {/* 1. HERO */}
         <section
           className="pt-8 md:pt-12 pb-[56px] md:pb-[80px]"
-          style={{ backgroundColor: "#FBFAF7" }}
+          style={{ backgroundColor: "#FFFFFF" }}
           aria-labelledby="bew-hero-title"
         >
           <div className="container-content">
@@ -232,7 +232,7 @@ const Bewoners = () => {
         </section>
 
         {/* 3. VRAGENBLOK */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
             {/* Kop */}
             <div className="text-center max-w-[760px] mx-auto">
@@ -468,7 +468,7 @@ const Bewoners = () => {
         </section>
 
         {/* 5. PRAKTISCHE ROUTE - ACCORDION */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
             <div className="text-center max-w-[820px] mx-auto">
               <h2 className="h2-section" style={{ color: "#152C4E" }}>
@@ -646,7 +646,7 @@ const Bewoners = () => {
         </section>
 
         {/* 7. WAAROM BEWONERS DIT PRETTIG VINDEN */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
             <div className="text-center max-w-[760px] mx-auto">
               <h2 className="h2-section" style={{ color: "#152C4E" }}>
