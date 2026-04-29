@@ -30,7 +30,7 @@ const questionsRow1 = [
 ];
 const questionsRow2 = [
   "Wat past bij mijn woning?",
-  "Hoe kom ik van plan naar uitvoering?",
+  "Hoe kom ik tot uitvoering?",
   "Wat als ik huurder ben?",
   "Kan ik volledig van het gas af?",
 ];
