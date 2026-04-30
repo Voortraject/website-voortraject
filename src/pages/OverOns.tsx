@@ -1,15 +1,13 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import christian from "@/assets/team-christian.png";
 import michael from "@/assets/team-michael.png";
 import tim from "@/assets/team-tim.png";
 import wouter from "@/assets/team-wouter.png";
 
 const team = [
-  { name: "Christian", role: "Mede-oprichter", specialty: "Bewonersbegeleiding en commercie", img: christian },
-  { name: "Michael", role: "Mede-oprichter", specialty: "Verduurzamingsspecialist", img: michael },
-  { name: "Tim", role: "", specialty: "", img: tim },
-  { name: "Wouter", role: "", specialty: "", img: wouter },
+  { name: "Michael", role: "Partner", specialty: "Verduurzamingsspecialist", img: michael },
+  { name: "Tim", role: "Partner", specialty: "Bewonersbegeleider", img: tim },
+  { name: "Wouter", role: "Partner", specialty: "Relatiemanager", img: wouter },
 ];
 
 const accent = { color: "hsl(var(--accent))" };
