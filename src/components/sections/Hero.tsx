@@ -84,18 +84,18 @@ export const Hero = () => {
               <p className="mt-10 text-[16px] leading-[1.6] text-muted-foreground max-w-[680px] md:text-[17px] lg:text-[18px]">
                 Wij ontzorgen uitvoerders met <TypewriterWord words={rotating} />.
               </p>
-              <div className="mt-12 flex flex-wrap items-center gap-4">
-                <Button href="/contact" variant="primary">
+              <div className="mt-12 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-4">
+                <Button href="/contact" variant="primary" className="w-full sm:w-auto">
                   Plan een kennismaking
                 </Button>
-                <Button href="/uitvoerders#pakketten" variant="secondary">
+                <Button href="/uitvoerders#pakketten" variant="secondary" className="w-full sm:w-auto">
                   Bekijk pakketten
                 </Button>
               </div>
             </div>
           </div>
 
-          <div className="lg:basis-[37%] lg:shrink-0 min-w-0 hidden md:block">
+          <div className="lg:basis-[37%] lg:shrink-0 min-w-0">
             <img
               src={heroHouses}
               alt="Nederlandse rijtjeshuizen met zonnepanelen op het dak"
