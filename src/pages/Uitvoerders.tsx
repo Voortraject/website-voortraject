@@ -459,9 +459,6 @@ const Uitvoerders = () => {
                               fontSize: 14,
                               color: "#2B2B2B",
                               lineHeight: 1.4,
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
                             }}
                           >
                             {b}
