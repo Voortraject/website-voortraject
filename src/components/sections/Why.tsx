@@ -21,12 +21,12 @@ export const Why = () => (
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-stretch">
-        <div className="hidden md:block">
+        <div>
           <img
             src={whyPhoto}
             alt="Adviseur in gesprek met bewoners aan tafel"
             loading="lazy"
-            className="w-full h-full object-cover rounded-2xl"
+            className="w-full h-auto md:h-full object-cover rounded-2xl"
             style={{ boxShadow: "0 4px 24px rgba(21,44,78,0.06)" }}
           />
         </div>
