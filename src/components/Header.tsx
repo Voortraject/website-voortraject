@@ -38,7 +38,7 @@ export const Header = () => {
           <img src={logoVoortraject} alt="Voortraject" className="h-7 w-auto" />
         </a>
 
-        <nav className="hidden lg:flex items-center gap-8 shrink-0 ml-auto" aria-label="Hoofdnavigatie">
+        <nav className="hidden md:flex items-center gap-5 lg:gap-8 shrink-0 ml-auto" aria-label="Hoofdnavigatie">
           {links.map((l) => {
             const active = typeof window !== "undefined" && window.location.pathname === l.href;
             return (
