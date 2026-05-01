@@ -57,7 +57,7 @@ export const Header = () => {
             return (
               <a
                 href="/contact"
-                className={`inline-flex items-center justify-center rounded-full text-accent-foreground transition-all duration-150 ease-out hover:scale-[1.02] px-5 py-2.5 text-[15px] font-medium ${contactActive ? "bg-[#D9A538]" : "bg-accent hover:bg-accent-hover"}`}
+                className={`inline-flex items-center justify-center rounded-full text-accent-foreground transition-all duration-150 ease-out hover:scale-[1.02] px-4 lg:px-5 py-2.5 text-[14px] lg:text-[15px] font-medium ${contactActive ? "bg-[#D9A538]" : "bg-accent hover:bg-accent-hover"}`}
               >
                 Contact
               </a>
