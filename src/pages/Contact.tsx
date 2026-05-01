@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer";
 type Mode = "uitvoerder" | "bewoner";
 
 const inputClass =
-  "w-full rounded-lg border border-[#D4D2CC] bg-[#FBFAF7] px-4 py-3 text-[16px] text-[#2B2B2B] outline-none transition focus:border-[#E8B547] focus:shadow-[0_0_0_3px_rgba(232,181,71,0.15)] min-h-[44px]";
+  "w-full rounded-lg border border-[#D4D2CC] bg-[#FBFAF7] px-4 py-3 text-[16px] lg:text-[15px] text-[#2B2B2B] outline-none transition focus:border-[#E8B547] focus:shadow-[0_0_0_3px_rgba(232,181,71,0.15)] min-h-[44px]";
 const labelClass = "block mb-2 text-[14px] font-semibold text-[#2B2B2B]";
 const fieldWrap = "mb-4";
 const required = <span className="text-[#E8B547] ml-1">*</span>;
