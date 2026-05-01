@@ -66,7 +66,7 @@ export const Header = () => {
         </nav>
 
         <button
-          className="lg:hidden p-2 -mr-2 text-white"
+          className="md:hidden p-2 -mr-2 text-white min-w-[44px] min-h-[44px] flex items-center justify-center"
           aria-label="Menu openen"
           aria-expanded={open}
           onClick={() => setOpen(true)}
