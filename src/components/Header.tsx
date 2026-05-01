@@ -76,7 +76,7 @@ export const Header = () => {
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-50 bg-background lg:hidden flex flex-col animate-fade-up">
+        <div className="fixed inset-0 z-50 bg-background md:hidden flex flex-col animate-fade-up overflow-y-auto">
           <div className="container-content flex items-center justify-between h-[72px] border-b border-border">
             <span className="font-display font-semibold text-primary text-[20px]">
               Voortraject
