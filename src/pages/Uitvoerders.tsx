@@ -155,12 +155,13 @@ const Uitvoerders = () => {
                 <div className="mt-10" style={{ textAlign: "left" }}>
                   <a
                     href="/contact"
-                    className={ctaButton}
+                    className={`${ctaButton} w-full sm:w-auto`}
                     style={{
                       backgroundColor: "#E8B547",
                       color: "#2B2B2B",
                       padding: "14px 32px",
                       borderRadius: 8,
+                      minHeight: 44,
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
