@@ -48,16 +48,24 @@ const TypewriterWord = ({ words }: { words: string[] }) => {
 
   return (
     <span
-      className="inline-block font-semibold align-baseline max-w-full"
-      style={{ color: "hsl(var(--accent))" }}
+      className="font-semibold max-w-full"
+      style={{ color: "#E8B547" }}
     >
       <span>{text}</span>
       <span
+        aria-hidden="true"
         className={isActive ? "" : "animate-blink"}
-        style={{ color: "hsl(var(--accent))" }}
-      >
-        _
-      </span>
+        style={{
+          display: "inline-block",
+          width: "2px",
+          height: "1em",
+          backgroundColor: "#E8B547",
+          verticalAlign: "-0.15em",
+          marginLeft: "1px",
+          marginRight: "1px",
+        }}
+      />
+      <span style={{ color: "#E8B547" }}>_</span>
     </span>
   );
 };
