@@ -226,12 +226,21 @@ export const Process = () => {
               }}
             />
             <div className="relative">
-              {/* Mobile-only timeline track */}
+              {/* Mobile/tablet timeline track */}
               <div
                 aria-hidden="true"
-                className="lg:hidden absolute left-[26px] w-[4px] rounded-[2px]"
+                className="lg:hidden absolute left-[26px] w-[4px] rounded-[2px] overflow-hidden"
                 style={{ top: 60, bottom: CIRCLE / 2, background: "#E5E2DB" }}
-              />
+              >
+                <div
+                  className="absolute inset-0 rounded-[2px] origin-top"
+                  style={{
+                    background: "#E8B547",
+                    transform: `scaleY(${Math.max(0, Math.min(1, progress * 2 - 1))})`,
+                    transition: "transform 80ms linear",
+                  }}
+                />
+              </div>
               <PhaseLabel>Nazorg Traject</PhaseLabel>
               <ol className="relative space-y-12">
                 {nazorgSteps.map((s) => (
