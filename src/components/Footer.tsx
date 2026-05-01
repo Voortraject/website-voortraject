@@ -14,17 +14,9 @@ const navCols = [
   {
     label: "Contact",
     items: [
-      { href: "mailto:info@placeholder.nl", label: "info@placeholder.nl" },
-      { href: "tel:+31000000000", label: "+31 (0)00 000 0000" },
-      { href: "#", label: "Noord-Nederland" },
-    ],
-  },
-  {
-    label: "Juridisch",
-    items: [
-      { href: "#", label: "Privacyverklaring" },
-      { href: "#", label: "Algemene voorwaarden" },
-      { href: "#", label: "KvK: 00000000" },
+      { href: "mailto:info@voortraject.nl", label: "info@voortraject.nl" },
+      { href: "tel:+31640248371", label: "+31 6 40248371" },
+      { href: "#", label: "Groningen, Nederland" },
     ],
   },
 ];
@@ -32,11 +24,11 @@ const navCols = [
 export const Footer = () => (
   <footer className="text-white" style={{ backgroundColor: "#152C4E" }}>
     <div className="container-content md:py-20 py-[40px]">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
         <div>
           <img src={logoVoortraject} alt="Voortraject" className="h-8 w-auto" />
           <p className="mt-4 text-sm leading-relaxed text-white/80 max-w-xs">
-            Voortraject voor verduurzamingsbedrijven
+            Ondersteuning in het verduurzamingstraject
           </p>
         </div>
 

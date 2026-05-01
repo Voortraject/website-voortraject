@@ -34,10 +34,9 @@ const contactIntros: Record<Mode, string> = {
 };
 
 const contactRows = [
-  { icon: Mail, value: "info@placeholder.nl", href: "mailto:info@placeholder.nl" },
-  { icon: Phone, value: "+31 (0)00 000 0000", href: "tel:+31000000000" },
-  { icon: MapPin, value: "Groningen" },
-  { icon: Globe, value: "Noord-Nederland" },
+  { icon: Mail, value: "info@voortraject.nl", href: "mailto:info@voortraject.nl" },
+  { icon: Phone, value: "+31 6 40248371", href: "tel:+31640248371" },
+  { icon: MapPin, value: "Groningen, Nederland" },
 ];
 
 const Contact = () => {

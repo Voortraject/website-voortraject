@@ -7,7 +7,7 @@ import wouter from "@/assets/team-wouter.png";
 const team = [
   { name: "Michael", role: "Partner", specialty: "Verduurzamingsspecialist", img: michael },
   { name: "Tim", role: "Partner", specialty: "Bewonersbegeleider", img: tim },
-  { name: "Wouter", role: "Partner", specialty: "Relatiemanager", img: wouter },
+  { name: "Wouter", role: "Partner", specialty: "Bewonersbegeleider", img: wouter },
 ];
 
 const accent = { color: "hsl(var(--accent))" };
@@ -57,7 +57,11 @@ const OverOns = () => {
                       height={1254}
                       loading="lazy"
                       className="w-full h-full object-cover"
-                      style={{ objectPosition: p.name === "Wouter" ? "center 20%" : "center center" }}
+                      style={{
+                        objectPosition: p.name === "Wouter" ? "center 30%" : "center center",
+                        transform: p.name === "Wouter" ? "scale(0.92)" : "none",
+                        transformOrigin: "center top",
+                      }}
                     />
                   </div>
                   <div className="p-6 flex-1 flex flex-col">
