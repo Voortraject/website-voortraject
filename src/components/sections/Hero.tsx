@@ -100,8 +100,8 @@ export const Hero = () => {
               src={heroHouses}
               alt="Nederlandse rijtjeshuizen met zonnepanelen op het dak"
               loading="lazy"
-              className="w-full rounded-2xl object-cover"
-              style={{ height: 480, boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
+              className="w-full rounded-2xl object-cover h-[240px] sm:h-[320px] md:h-[400px] lg:h-[480px]"
+              style={{ boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
             />
           </div>
         </div>
