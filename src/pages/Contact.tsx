@@ -105,11 +105,10 @@ const Contact = () => {
                       setMode(m);
                       setSubmitted(false);
                     }}
-                    className="font-sans transition-colors flex-1 sm:flex-initial"
+                    className="font-sans transition-colors flex-1 sm:flex-initial text-[14px] sm:text-[15px]"
                     style={{
                       padding: "12px 28px",
                       borderRadius: 999,
-                      fontSize: 14,
                       fontWeight: 600,
                       backgroundColor: active ? "#E8B547" : "transparent",
                       color: active ? "#2B2B2B" : "#6B6B6B",
