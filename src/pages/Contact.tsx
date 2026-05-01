@@ -88,7 +88,7 @@ const Contact = () => {
 
             {/* Toggle */}
             <div
-              className="inline-flex"
+              className="flex sm:inline-flex w-full sm:w-auto"
               style={{
                 marginTop: 24,
                 backgroundColor: "#E5E2DB",
@@ -105,15 +105,16 @@ const Contact = () => {
                       setMode(m);
                       setSubmitted(false);
                     }}
-                    className="font-sans transition-colors"
+                    className="font-sans transition-colors flex-1 sm:flex-initial"
                     style={{
                       padding: "12px 28px",
                       borderRadius: 999,
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: 600,
                       backgroundColor: active ? "#E8B547" : "transparent",
                       color: active ? "#2B2B2B" : "#6B6B6B",
                       cursor: "pointer",
+                      minHeight: 44,
                     }}
                     onMouseEnter={(e) => {
                       if (!active) e.currentTarget.style.color = "#152C4E";
