@@ -164,12 +164,13 @@ const Bewoners = () => {
                 <div className="mt-10">
                   <a
                     href="/contact"
-                    className={ctaButton}
+                    className={`${ctaButton} w-full sm:w-auto`}
                     style={{
                       backgroundColor: "#E8B547",
                       color: "#2B2B2B",
                       padding: "14px 32px",
                       borderRadius: 8,
+                      minHeight: 44,
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
@@ -387,11 +388,11 @@ const Bewoners = () => {
         {/* 4. WAT WIJ VOOR JE DOEN */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
-            <div className="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-y-8 lg:gap-x-16 items-center">
-              {/* Verticale scheidingslijn (desktop) */}
+            <div className="relative max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-y-8 md:gap-x-12 lg:gap-x-16 items-center">
+              {/* Verticale scheidingslijn (tablet+desktop) */}
               <div
                 aria-hidden="true"
-                className="hidden lg:block absolute"
+                className="hidden md:block absolute"
                 style={{ top: 0, bottom: 0, left: "50%", width: 2, backgroundColor: "#E5E2DB", transform: "translateX(-1px)" }}
               />
 

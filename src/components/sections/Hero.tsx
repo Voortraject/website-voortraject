@@ -48,8 +48,8 @@ const TypewriterWord = ({ words }: { words: string[] }) => {
 
   return (
     <span
-      className="inline-block font-semibold align-baseline"
-      style={{ color: "hsl(var(--accent))", minWidth: `${longest.length}ch` }}
+      className="inline-block font-semibold align-baseline max-w-full"
+      style={{ color: "hsl(var(--accent))" }}
     >
       <span>{text}</span>
       <span
@@ -71,7 +71,7 @@ export const Hero = () => {
             <div className="animate-fade-up">
               <h1
                 id="hero-title"
-                className="h1-hero text-foreground text-left md:text-6xl lg:text-7xl text-5xl"
+                className="h1-hero text-foreground text-left md:text-6xl lg:text-7xl text-[32px] leading-[1.1]"
                 style={{
                   wordBreak: "keep-all",
                   hyphens: "none",
@@ -84,24 +84,24 @@ export const Hero = () => {
               <p className="mt-10 text-[16px] leading-[1.6] text-muted-foreground max-w-[680px] md:text-[17px] lg:text-[18px]">
                 Wij ontzorgen uitvoerders met <TypewriterWord words={rotating} />.
               </p>
-              <div className="mt-12 flex flex-wrap items-center gap-4">
-                <Button href="/contact" variant="primary">
+              <div className="mt-12 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-4">
+                <Button href="/contact" variant="primary" className="w-full sm:w-auto">
                   Plan een kennismaking
                 </Button>
-                <Button href="/uitvoerders#pakketten" variant="secondary">
+                <Button href="/uitvoerders#pakketten" variant="secondary" className="w-full sm:w-auto">
                   Bekijk pakketten
                 </Button>
               </div>
             </div>
           </div>
 
-          <div className="lg:basis-[37%] lg:shrink-0 min-w-0 hidden md:block">
+          <div className="lg:basis-[37%] lg:shrink-0 min-w-0">
             <img
               src={heroHouses}
               alt="Nederlandse rijtjeshuizen met zonnepanelen op het dak"
               loading="lazy"
-              className="w-full rounded-2xl object-cover"
-              style={{ height: 480, boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
+              className="w-full rounded-2xl object-cover h-[240px] sm:h-[320px] md:h-[400px] lg:h-[480px]"
+              style={{ boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
             />
           </div>
         </div>

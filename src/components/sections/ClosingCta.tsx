@@ -28,13 +28,17 @@ export const ClosingCta = () => (
       </p>
       <a
         href="/contact"
-        className="font-sans font-semibold transition-colors text-center"
+        className="font-sans font-semibold transition-colors text-center w-full sm:w-auto"
         style={{
           backgroundColor: "#E8B547",
           color: "#2B2B2B",
           padding: "14px 32px",
           borderRadius: 8,
           fontSize: 15,
+          minHeight: 44,
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
         onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}

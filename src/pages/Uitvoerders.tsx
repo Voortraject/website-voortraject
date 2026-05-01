@@ -155,12 +155,13 @@ const Uitvoerders = () => {
                 <div className="mt-10" style={{ textAlign: "left" }}>
                   <a
                     href="/contact"
-                    className={ctaButton}
+                    className={`${ctaButton} w-full sm:w-auto`}
                     style={{
                       backgroundColor: "#E8B547",
                       color: "#2B2B2B",
                       padding: "14px 32px",
                       borderRadius: 8,
+                      minHeight: 44,
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
@@ -257,15 +258,16 @@ const Uitvoerders = () => {
               </div>
             </div>
 
-            <div className="mt-16 text-center flex flex-col items-center">
+            <div className="mt-16 text-center flex flex-col items-stretch sm:items-center">
               <a
                 href="/contact"
-                className={ctaButton}
+                className={`${ctaButton} w-full sm:w-auto`}
                 style={{
                   backgroundColor: "#E8B547",
                   color: "#2B2B2B",
                   padding: "14px 32px",
                   borderRadius: 8,
+                  minHeight: 44,
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
@@ -333,10 +335,10 @@ const Uitvoerders = () => {
               };
               return (
                 <>
-                  <div className="grid grid-cols-1 lg:grid-cols-3" style={{ gap: 16 }}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: 16 }}>
                     {painCards.slice(0, 3).map(renderCard)}
                   </div>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 mx-auto" style={{ gap: 16, maxWidth: "42rem", marginTop: 16 }}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 mx-auto" style={{ gap: 16, maxWidth: "42rem", marginTop: 16 }}>
                     {painCards.slice(3).map(renderCard)}
                   </div>
                 </>
@@ -455,13 +457,11 @@ const Uitvoerders = () => {
                             <Check size={12} color="#E8B547" strokeWidth={3} aria-hidden="true" />
                           </span>
                           <span
+                            className="lg:whitespace-nowrap lg:overflow-hidden lg:text-ellipsis"
                             style={{
                               fontSize: 14,
                               color: "#2B2B2B",
                               lineHeight: 1.4,
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
                             }}
                           >
                             {b}

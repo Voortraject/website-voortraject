@@ -38,14 +38,14 @@ export const Header = () => {
           <img src={logoVoortraject} alt="Voortraject" className="h-7 w-auto" />
         </a>
 
-        <nav className="hidden lg:flex items-center gap-8 shrink-0 ml-auto" aria-label="Hoofdnavigatie">
+        <nav className="hidden md:flex items-center gap-5 lg:gap-8 shrink-0 ml-auto" aria-label="Hoofdnavigatie">
           {links.map((l) => {
             const active = typeof window !== "undefined" && window.location.pathname === l.href;
             return (
               <a
                 key={l.href}
                 href={l.href}
-                className={`text-[15px] font-medium transition-colors ${active ? "text-accent" : "text-white/85 hover:text-accent"}`}
+                className={`text-[14px] lg:text-[15px] font-medium transition-colors ${active ? "text-accent" : "text-white/85 hover:text-accent"}`}
                 style={active ? { borderBottom: "2px solid hsl(var(--accent))", paddingBottom: 2 } : undefined}
               >
                 {l.label}
@@ -57,7 +57,7 @@ export const Header = () => {
             return (
               <a
                 href="/contact"
-                className={`inline-flex items-center justify-center rounded-full text-accent-foreground transition-all duration-150 ease-out hover:scale-[1.02] px-5 py-2.5 text-[15px] font-medium ${contactActive ? "bg-[#D9A538]" : "bg-accent hover:bg-accent-hover"}`}
+                className={`inline-flex items-center justify-center rounded-full text-accent-foreground transition-all duration-150 ease-out hover:scale-[1.02] px-4 lg:px-5 py-2.5 text-[14px] lg:text-[15px] font-medium ${contactActive ? "bg-[#D9A538]" : "bg-accent hover:bg-accent-hover"}`}
               >
                 Contact
               </a>
@@ -66,7 +66,7 @@ export const Header = () => {
         </nav>
 
         <button
-          className="lg:hidden p-2 -mr-2 text-white"
+          className="md:hidden p-2 -mr-2 text-white min-w-[44px] min-h-[44px] flex items-center justify-center"
           aria-label="Menu openen"
           aria-expanded={open}
           onClick={() => setOpen(true)}
@@ -76,7 +76,7 @@ export const Header = () => {
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-50 bg-background lg:hidden flex flex-col animate-fade-up">
+        <div className="fixed inset-0 z-50 bg-background md:hidden flex flex-col animate-fade-up overflow-y-auto">
           <div className="container-content flex items-center justify-between h-[72px] border-b border-border">
             <span className="font-display font-semibold text-primary text-[20px]">
               Voortraject
