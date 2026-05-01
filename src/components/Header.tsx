@@ -45,7 +45,7 @@ export const Header = () => {
               <a
                 key={l.href}
                 href={l.href}
-                className={`text-[15px] font-medium transition-colors ${active ? "text-accent" : "text-white/85 hover:text-accent"}`}
+                className={`text-[14px] lg:text-[15px] font-medium transition-colors ${active ? "text-accent" : "text-white/85 hover:text-accent"}`}
                 style={active ? { borderBottom: "2px solid hsl(var(--accent))", paddingBottom: 2 } : undefined}
               >
                 {l.label}
