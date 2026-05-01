@@ -24,8 +24,7 @@ const OverOns = () => {
               Hoe Voortraject is <span style={accent}>ontstaan</span>
             </h2>
             <p
-              className="mx-auto text-center text-[17px] md:text-lg leading-relaxed text-foreground/80"
-              style={{ maxWidth: "70%" }}
+              className="mx-auto text-center text-[16px] md:text-lg leading-relaxed text-foreground/80 max-w-[90%] md:max-w-[80%] lg:max-w-[70%]"
             >
               Voortraject is ontstaan uit de frustratie dat verduurzamingsbedrijven te veel tijd kwijt zijn aan alles behalve het bouwen zelf. Wij zagen uitvoerders vastlopen op papierwerk, subsidievragen en dossiervoering. Daarom namen wij het voortraject ter hand.
             </p>
