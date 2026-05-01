@@ -7,7 +7,7 @@ import wouter from "@/assets/team-wouter.png";
 const team = [
   { name: "Michael", role: "Partner", specialty: "Verduurzamingsspecialist", img: michael },
   { name: "Tim", role: "Partner", specialty: "Bewonersbegeleider", img: tim },
-  { name: "Wouter", role: "Partner", specialty: "Relatiemanager", img: wouter },
+  { name: "Wouter", role: "Partner", specialty: "Bewonersbegeleider", img: wouter },
 ];
 
 const accent = { color: "hsl(var(--accent))" };
