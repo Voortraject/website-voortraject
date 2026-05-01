@@ -14,17 +14,9 @@ const navCols = [
   {
     label: "Contact",
     items: [
-      { href: "mailto:info@placeholder.nl", label: "info@placeholder.nl" },
-      { href: "tel:+31000000000", label: "+31 (0)00 000 0000" },
-      { href: "#", label: "Noord-Nederland" },
-    ],
-  },
-  {
-    label: "Juridisch",
-    items: [
-      { href: "#", label: "Privacyverklaring" },
-      { href: "#", label: "Algemene voorwaarden" },
-      { href: "#", label: "KvK: 00000000" },
+      { href: "mailto:info@voortraject.nl", label: "info@voortraject.nl" },
+      { href: "tel:+31640248371", label: "+31 6 40248371" },
+      { href: "#", label: "Groningen, Nederland" },
     ],
   },
 ];
