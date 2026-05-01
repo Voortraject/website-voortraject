@@ -193,10 +193,9 @@ const Maatregelen = () => {
                 return (
                   <article
                     key={m.num}
-                    className="bg-white"
+                    className="bg-white p-6 md:p-10"
                     style={{
                       borderRadius: 16,
-                      padding: 40,
                       border: "1px solid #E5E2DB",
                       boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
                       marginBottom: 24,
