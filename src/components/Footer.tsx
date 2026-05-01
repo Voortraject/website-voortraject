@@ -28,7 +28,7 @@ export const Footer = () => (
         <div>
           <img src={logoVoortraject} alt="Voortraject" className="h-8 w-auto" />
           <p className="mt-4 text-sm leading-relaxed text-white/80 max-w-xs">
-            Voortraject voor verduurzamingsbedrijven
+            Ondersteuning in het verduurzamingstraject
           </p>
         </div>
 
