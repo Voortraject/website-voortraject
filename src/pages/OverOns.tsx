@@ -37,7 +37,7 @@ const OverOns = () => {
             <h2 className="h2-section text-center mb-12">
               Ons <span style={accent}>team</span>
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {team.map((p) => (
                 <article
                   key={p.name}
@@ -49,8 +49,15 @@ const OverOns = () => {
                   onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 12px 36px rgba(21,44,78,0.14)")}
                   onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 4px 24px rgba(21,44,78,0.06)")}
                 >
-                  <div className="aspect-square w-full overflow-hidden" style={{ backgroundColor: "#FAFAFA" }}>
-                    <img src={p.img} alt={p.name} loading="lazy" className="w-full h-full object-cover" />
+                  <div className="w-full overflow-hidden lg:aspect-square h-[240px] md:h-[280px] lg:h-auto" style={{ backgroundColor: "#FAFAFA" }}>
+                    <img
+                      src={p.img}
+                      alt={p.name}
+                      width={1254}
+                      height={1254}
+                      loading="lazy"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div className="p-6 flex-1 flex flex-col">
                     <h3 className="font-display font-bold text-primary text-[20px] tracking-[-0.01em] leading-tight">
