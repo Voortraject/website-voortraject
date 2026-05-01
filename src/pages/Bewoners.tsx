@@ -350,16 +350,14 @@ const Bewoners = () => {
               >
                 Voortraject
               </div>
-              <span
+              <ChevronDown
                 aria-hidden="true"
+                size={24}
                 style={{
-                  display: "block",
-                  width: 1,
-                  height: 28,
-                  backgroundColor: "#E8B547",
-                  opacity: 0.7,
-                  marginTop: 8,
-                  marginBottom: 8,
+                  color: "#E8B547",
+                  opacity: 0.75,
+                  marginTop: 12,
+                  marginBottom: 16,
                 }}
               />
               <div className="grid grid-cols-1 w-full" style={{ gap: 12 }}>
