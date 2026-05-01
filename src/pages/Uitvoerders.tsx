@@ -333,10 +333,10 @@ const Uitvoerders = () => {
               };
               return (
                 <>
-                  <div className="grid grid-cols-1 lg:grid-cols-3" style={{ gap: 16 }}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: 16 }}>
                     {painCards.slice(0, 3).map(renderCard)}
                   </div>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 mx-auto" style={{ gap: 16, maxWidth: "42rem", marginTop: 16 }}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 mx-auto" style={{ gap: 16, maxWidth: "42rem", marginTop: 16 }}>
                     {painCards.slice(3).map(renderCard)}
                   </div>
                 </>
