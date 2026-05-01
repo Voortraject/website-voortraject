@@ -455,6 +455,7 @@ const Uitvoerders = () => {
                             <Check size={12} color="#E8B547" strokeWidth={3} aria-hidden="true" />
                           </span>
                           <span
+                            className="lg:whitespace-nowrap lg:overflow-hidden lg:text-ellipsis"
                             style={{
                               fontSize: 14,
                               color: "#2B2B2B",
