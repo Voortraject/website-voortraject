@@ -201,7 +201,7 @@ const Maatregelen = () => {
                       marginBottom: 24,
                     }}
                   >
-                    <div className="flex items-center" style={{ gap: 20 }}>
+                    <div className="flex items-center gap-3 md:gap-5">
                       <div
                         className="flex items-center justify-center rounded-full shrink-0"
                         style={{ width: 48, height: 48, backgroundColor: "#F0E4D0" }}
@@ -209,9 +209,8 @@ const Maatregelen = () => {
                         <Icon size={22} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
                       </div>
                       <div
-                        className="font-display"
+                        className="font-display text-[28px] md:text-[40px]"
                         style={{
-                          fontSize: 40,
                           fontWeight: 300,
                           color: "#E8B547",
                           lineHeight: 1,
@@ -221,10 +220,9 @@ const Maatregelen = () => {
                         {m.num}
                       </div>
                       <h3
-                        className="font-display"
+                        className="font-display text-[20px] md:text-[28px]"
                         style={{
                           fontWeight: 600,
-                          fontSize: 28,
                           color: "#152C4E",
                           letterSpacing: "-0.01em",
                           lineHeight: 1.2,
