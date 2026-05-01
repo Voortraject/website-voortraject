@@ -48,8 +48,8 @@ const TypewriterWord = ({ words }: { words: string[] }) => {
 
   return (
     <span
-      className="inline-block font-semibold align-baseline"
-      style={{ color: "hsl(var(--accent))", minWidth: `${longest.length}ch` }}
+      className="inline-block font-semibold align-baseline max-w-full"
+      style={{ color: "hsl(var(--accent))" }}
     >
       <span>{text}</span>
       <span
