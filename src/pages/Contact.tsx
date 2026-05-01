@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer";
 type Mode = "uitvoerder" | "bewoner";
 
 const inputClass =
-  "w-full rounded-lg border border-[#D4D2CC] bg-[#FBFAF7] px-4 py-3 text-[15px] text-[#2B2B2B] outline-none transition focus:border-[#E8B547] focus:shadow-[0_0_0_3px_rgba(232,181,71,0.15)]";
+  "w-full rounded-lg border border-[#D4D2CC] bg-[#FBFAF7] px-4 py-3 text-[16px] lg:text-[15px] text-[#2B2B2B] outline-none transition focus:border-[#E8B547] focus:shadow-[0_0_0_3px_rgba(232,181,71,0.15)] min-h-[44px]";
 const labelClass = "block mb-2 text-[14px] font-semibold text-[#2B2B2B]";
 const fieldWrap = "mb-4";
 const required = <span className="text-[#E8B547] ml-1">*</span>;
@@ -88,7 +88,7 @@ const Contact = () => {
 
             {/* Toggle */}
             <div
-              className="inline-flex"
+              className="flex sm:inline-flex w-full sm:w-auto"
               style={{
                 marginTop: 24,
                 backgroundColor: "#E5E2DB",
@@ -105,15 +105,15 @@ const Contact = () => {
                       setMode(m);
                       setSubmitted(false);
                     }}
-                    className="font-sans transition-colors"
+                    className="font-sans transition-colors flex-1 sm:flex-initial text-[14px] sm:text-[15px]"
                     style={{
                       padding: "12px 28px",
                       borderRadius: 999,
-                      fontSize: 15,
                       fontWeight: 600,
                       backgroundColor: active ? "#E8B547" : "transparent",
                       color: active ? "#2B2B2B" : "#6B6B6B",
                       cursor: "pointer",
+                      minHeight: 44,
                     }}
                     onMouseEnter={(e) => {
                       if (!active) e.currentTarget.style.color = "#152C4E";
@@ -137,7 +137,7 @@ const Contact = () => {
         className="py-12 md:py-16"
       >
         <div className="mx-auto px-6 md:px-12" style={{ maxWidth: 1200 }}>
-          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-12 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 md:gap-10 lg:gap-12 items-start">
             {/* Left column — Form */}
             <div
               style={{

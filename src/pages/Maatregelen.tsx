@@ -193,16 +193,15 @@ const Maatregelen = () => {
                 return (
                   <article
                     key={m.num}
-                    className="bg-white"
+                    className="bg-white p-6 md:p-10"
                     style={{
                       borderRadius: 16,
-                      padding: 40,
                       border: "1px solid #E5E2DB",
                       boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
                       marginBottom: 24,
                     }}
                   >
-                    <div className="flex items-center" style={{ gap: 20 }}>
+                    <div className="flex items-center gap-3 md:gap-5">
                       <div
                         className="flex items-center justify-center rounded-full shrink-0"
                         style={{ width: 48, height: 48, backgroundColor: "#F0E4D0" }}
@@ -210,9 +209,8 @@ const Maatregelen = () => {
                         <Icon size={22} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
                       </div>
                       <div
-                        className="font-display"
+                        className="font-display text-[28px] md:text-[40px]"
                         style={{
-                          fontSize: 40,
                           fontWeight: 300,
                           color: "#E8B547",
                           lineHeight: 1,
@@ -222,10 +220,9 @@ const Maatregelen = () => {
                         {m.num}
                       </div>
                       <h3
-                        className="font-display"
+                        className="font-display text-[20px] md:text-[28px]"
                         style={{
                           fontWeight: 600,
-                          fontSize: 28,
                           color: "#152C4E",
                           letterSpacing: "-0.01em",
                           lineHeight: 1.2,
@@ -349,13 +346,14 @@ const Maatregelen = () => {
             </p>
             <a
               href="/contact"
-              className={ctaButton}
+              className={`${ctaButton} w-full sm:w-auto`}
               style={{
                 backgroundColor: "#E8B547",
                 color: "#2B2B2B",
                 padding: "14px 32px",
                 borderRadius: 8,
                 marginTop: 40,
+                minHeight: 44,
               }}
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}

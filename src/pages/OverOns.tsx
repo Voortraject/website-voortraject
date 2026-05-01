@@ -24,8 +24,7 @@ const OverOns = () => {
               Hoe Voortraject is <span style={accent}>ontstaan</span>
             </h2>
             <p
-              className="mx-auto text-center text-[17px] md:text-lg leading-relaxed text-foreground/80"
-              style={{ maxWidth: "70%" }}
+              className="mx-auto text-center text-[16px] md:text-lg leading-relaxed text-foreground/80 max-w-[90%] md:max-w-[80%] lg:max-w-[70%]"
             >
               Voortraject is ontstaan uit de frustratie dat verduurzamingsbedrijven te veel tijd kwijt zijn aan alles behalve het bouwen zelf. Wij zagen uitvoerders vastlopen op papierwerk, subsidievragen en dossiervoering. Daarom namen wij het voortraject ter hand.
             </p>
@@ -38,7 +37,7 @@ const OverOns = () => {
             <h2 className="h2-section text-center mb-12">
               Ons <span style={accent}>team</span>
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {team.map((p) => (
                 <article
                   key={p.name}
@@ -50,8 +49,15 @@ const OverOns = () => {
                   onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 12px 36px rgba(21,44,78,0.14)")}
                   onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 4px 24px rgba(21,44,78,0.06)")}
                 >
-                  <div className="aspect-square w-full overflow-hidden" style={{ backgroundColor: "#FAFAFA" }}>
-                    <img src={p.img} alt={p.name} loading="lazy" className="w-full h-full object-cover" />
+                  <div className="w-full overflow-hidden lg:aspect-square h-[240px] md:h-[280px] lg:h-auto" style={{ backgroundColor: "#FAFAFA" }}>
+                    <img
+                      src={p.img}
+                      alt={p.name}
+                      width={1254}
+                      height={1254}
+                      loading="lazy"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div className="p-6 flex-1 flex flex-col">
                     <h3 className="font-display font-bold text-primary text-[20px] tracking-[-0.01em] leading-tight">
@@ -94,13 +100,14 @@ const OverOns = () => {
             </h2>
             <a
               href="/contact"
-              className="font-sans font-semibold transition-colors text-center"
+              className="font-sans font-semibold transition-colors text-center w-full sm:w-auto inline-flex items-center justify-center"
               style={{
                 backgroundColor: "#E8B547",
                 color: "#2B2B2B",
                 padding: "14px 32px",
                 borderRadius: 8,
                 fontSize: 15,
+                minHeight: 44,
               }}
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
