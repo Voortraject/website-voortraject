@@ -54,7 +54,7 @@ const TypewriterWord = ({ words }: { words: string[] }) => {
       <span>{text}</span>
       <span
         aria-hidden="true"
-        className={isActive ? "" : "animate-blink"}
+        className="animate-blink"
         style={{
           display: "inline-block",
           width: "2px",
@@ -62,10 +62,8 @@ const TypewriterWord = ({ words }: { words: string[] }) => {
           backgroundColor: "#E8B547",
           verticalAlign: "-0.15em",
           marginLeft: "1px",
-          marginRight: "1px",
         }}
       />
-      <span style={{ color: "#E8B547" }}>_</span>
     </span>
   );
 };
