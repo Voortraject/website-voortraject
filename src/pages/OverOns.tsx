@@ -59,6 +59,8 @@ const OverOns = () => {
                       className="w-full h-full object-cover"
                       style={{
                         objectPosition: "center top",
+                        transform: p.name === "Wouter" ? "scale(1.08)" : "none",
+                        transformOrigin: "center top",
                       }}
                     />
                   </div>
