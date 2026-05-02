@@ -88,7 +88,10 @@ export const Hero = () => {
                 Focus op <span style={{ color: "hsl(var(--accent))" }}>uitvoering</span>.<br />Wij regelen de rest.
               </h1>
               <p className="mt-10 text-[16px] leading-[1.6] text-muted-foreground max-w-[680px] md:text-[17px] lg:text-[18px]">
-                Wij ontzorgen uitvoerders met <TypewriterWord words={rotating} />.
+                <span className="block sm:inline">Wij ontzorgen uitvoerders met</span>{" "}
+                <span className="block sm:inline" style={{ minHeight: "1.6em" }}>
+                  <TypewriterWord words={rotating} />
+                </span>
               </p>
               <div className="mt-12 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-4">
                 <Button href="/contact" variant="primary" className="w-full sm:w-auto">
