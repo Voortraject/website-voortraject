@@ -58,9 +58,7 @@ const OverOns = () => {
                       loading="lazy"
                       className="w-full h-full object-cover"
                       style={{
-                        objectPosition: p.name === "Wouter" ? "center 30%" : "center center",
-                        transform: p.name === "Wouter" ? "scale(0.92)" : "none",
-                        transformOrigin: "center top",
+                        objectPosition: "center top",
                       }}
                     />
                   </div>
