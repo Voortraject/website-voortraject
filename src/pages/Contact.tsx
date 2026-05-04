@@ -1,6 +1,5 @@
 import { useState, FormEvent } from "react";
-import { ChevronDown } from "lucide-react";
-import { CheckCircle, Mail, Phone, MapPin, Globe } from "lucide-react";
+import { CheckCircle, Mail, Phone, MapPin } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
@@ -42,7 +41,6 @@ const contactRows = [
 const Contact = () => {
   const [mode, setMode] = useState<Mode>("uitvoerder");
   const [submitted, setSubmitted] = useState(false);
-  const [vastlopersOpen, setVastlopersOpen] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
