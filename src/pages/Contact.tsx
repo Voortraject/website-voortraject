@@ -1,6 +1,5 @@
 import { useState, FormEvent } from "react";
-import { ChevronDown } from "lucide-react";
-import { CheckCircle, Mail, Phone, MapPin, Globe } from "lucide-react";
+import { CheckCircle, Mail, Phone, MapPin } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
@@ -42,7 +41,6 @@ const contactRows = [
 const Contact = () => {
   const [mode, setMode] = useState<Mode>("uitvoerder");
   const [submitted, setSubmitted] = useState(false);
-  const [vastlopersOpen, setVastlopersOpen] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -198,71 +196,6 @@ const Contact = () => {
                           <input type="tel" required className={inputClass} />
                         </div>
                         <div className={fieldWrap}>
-                          <button
-                            type="button"
-                            onClick={() => setVastlopersOpen((v) => !v)}
-                            className="w-full flex items-center justify-between font-sans"
-                            style={{
-                              border: "1px solid #E5E2DB",
-                              borderRadius: 8,
-                              padding: "12px 16px",
-                              backgroundColor: "#FFFFFF",
-                              fontSize: 14,
-                              fontWeight: 600,
-                              color: "#2B2B2B",
-                              cursor: "pointer",
-                            }}
-                            aria-expanded={vastlopersOpen}
-                          >
-                            <span>Waar loopt het nu vast?</span>
-                            <ChevronDown
-                              size={18}
-                              style={{
-                                transition: "transform 0.2s",
-                                transform: vastlopersOpen ? "rotate(180deg)" : "rotate(0deg)",
-                              }}
-                            />
-                          </button>
-                          {vastlopersOpen && (
-                            <div
-                              className="grid grid-cols-1 sm:grid-cols-2"
-                              style={{ gap: 10, marginTop: 10 }}
-                            >
-                              {[
-                                "Subsidies & regelingen",
-                                "Offertetraject",
-                                "Dossier & administratie",
-                                "Capaciteit / personeel",
-                                "Klantcommunicatie",
-                                "Anders",
-                              ].map((opt) => (
-                                <label
-                                  key={opt}
-                                  className="flex items-center font-sans"
-                                  style={{
-                                    gap: 10,
-                                    padding: "10px 12px",
-                                    border: "1px solid #D4D2CC",
-                                    borderRadius: 8,
-                                    backgroundColor: "#FBFAF7",
-                                    fontSize: 14,
-                                    color: "#2B2B2B",
-                                    cursor: "pointer",
-                                  }}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    name="vastlopers"
-                                    value={opt}
-                                    style={{ accentColor: "#E8B547" }}
-                                  />
-                                  {opt}
-                                </label>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                        <div className={fieldWrap}>
                           <label className={labelClass}>
                             Vragen of opmerkingen{optional}
                           </label>
@@ -288,14 +221,32 @@ const Contact = () => {
                           <input type="tel" required className={inputClass} />
                         </div>
                         <div className={fieldWrap}>
-                          <label className={labelClass}>Adres of plaatsnaam{required}</label>
-                          <input type="text" required className={inputClass} />
+                          <label className={labelClass}>Adres{required}</label>
+                          <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr] gap-3">
+                            <input
+                              type="text"
+                              required
+                              placeholder="Postcode"
+                              className={inputClass}
+                            />
+                            <input
+                              type="text"
+                              required
+                              placeholder="Huisnummer"
+                              className={inputClass}
+                            />
+                            <input
+                              type="text"
+                              placeholder="Toevoeging"
+                              className={inputClass}
+                            />
+                          </div>
                         </div>
                         <div className={fieldWrap}>
-                          <label className={labelClass}>Waar ben je naar op zoek?{required}</label>
+                          <label className={labelClass}>Vragen of opmerkingen{optional}</label>
                           <textarea
-                            required
                             className={inputClass}
+                            placeholder="Stel hier je vraag of voeg toe wat je wil meegeven."
                             style={{ minHeight: 120, resize: "vertical" }}
                           />
                         </div>
