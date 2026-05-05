@@ -594,11 +594,11 @@ const Bewoners = () => {
             <h2 className="h2-section text-center" style={{ color: "#152C4E" }}>
               Meer dan alleen<br /><span style={{ color: "hsl(var(--accent))" }}>landelijke</span> subsidies
             </h2>
-            <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto items-stretch">
+            <div className="card-grid mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto items-stretch">
               {gemeenteCardsData.map((c) => (
                 <div
                   key={c.title}
-                  className="flex items-start gap-3 h-full"
+                  className="card flex items-start gap-3 h-full"
                   style={{
                     backgroundColor: "#FFFFFF",
                     border: "1px solid #E5E2DB",
