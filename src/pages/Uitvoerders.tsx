@@ -531,11 +531,11 @@ const Uitvoerders = () => {
                 Eén lijn voor bewonerscontact, offertes en dossiers, ondersteund door slimme systemen die voorkomen dat er iets blijft liggen.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+            <div className="card-grid grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
               {whyCards.map(({ icon: Icon, title, body }) => (
                 <article
                   key={title}
-                  className="bg-white flex flex-col"
+                  className="card bg-white flex flex-col"
                   style={{
                     borderRadius: 16,
                     padding: 32,
