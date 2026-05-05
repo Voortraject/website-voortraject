@@ -208,11 +208,11 @@ const Bewoners = () => {
                 Verduurzamen roept bij bijna iedere bewoner dezelfde twijfels op.
               </p>
             </div>
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="card-grid mt-12 grid grid-cols-1 md:grid-cols-2 gap-5">
               {recognitions.map((r) => {
                 const Icon = r.icon;
                 return (
-                  <article key={r.title} style={cardBase}>
+                  <article key={r.title} className="card" style={cardBase}>
                     <div className="flex flex-row items-center gap-3">
                       <Icon size={20} color="#E8B547" style={{ flexShrink: 0 }} aria-hidden="true" />
                       <h3
@@ -594,11 +594,11 @@ const Bewoners = () => {
             <h2 className="h2-section text-center" style={{ color: "#152C4E" }}>
               Meer dan alleen<br /><span style={{ color: "hsl(var(--accent))" }}>landelijke</span> subsidies
             </h2>
-            <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto items-stretch">
+            <div className="card-grid mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto items-stretch">
               {gemeenteCardsData.map((c) => (
                 <div
                   key={c.title}
-                  className="flex items-start gap-3 h-full"
+                  className="card flex items-start gap-3 h-full"
                   style={{
                     backgroundColor: "#FFFFFF",
                     border: "1px solid #E5E2DB",
@@ -661,11 +661,11 @@ const Bewoners = () => {
                 Wat bewoners ons het vaakst teruggeven over onze aanpak.
               </p>
             </div>
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="card-grid mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {reasons.map((r) => (
                 <div
                   key={r}
-                  className="flex items-center gap-3"
+                  className="card flex items-center gap-3"
                   style={{ ...cardBase, padding: 20, minHeight: 56 }}
                 >
                   <span

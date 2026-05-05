@@ -316,7 +316,7 @@ const Uitvoerders = () => {
                 return (
                   <article
                     key={c.title}
-                    className="flex flex-col"
+                    className="card flex flex-col"
                     style={{
                       backgroundColor: "#FFFFFF",
                       border: "1px solid #E5E2DB",
@@ -334,14 +334,14 @@ const Uitvoerders = () => {
                 );
               };
               return (
-                <>
+                <div className="card-grid">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: 16 }}>
                     {painCards.slice(0, 3).map(renderCard)}
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 mx-auto" style={{ gap: 16, maxWidth: "42rem", marginTop: 16 }}>
                     {painCards.slice(3).map(renderCard)}
                   </div>
-                </>
+                </div>
               );
             })()}
 
@@ -531,11 +531,11 @@ const Uitvoerders = () => {
                 Eén lijn voor bewonerscontact, offertes en dossiers, ondersteund door slimme systemen die voorkomen dat er iets blijft liggen.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+            <div className="card-grid grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
               {whyCards.map(({ icon: Icon, title, body }) => (
                 <article
                   key={title}
-                  className="bg-white flex flex-col"
+                  className="card bg-white flex flex-col"
                   style={{
                     borderRadius: 16,
                     padding: 32,
