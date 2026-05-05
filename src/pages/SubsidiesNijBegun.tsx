@@ -619,174 +619,33 @@ const SubsidiesNijBegun = () => {
         </div>
       </section>
 
-      {/* 8. CONTACT */}
-      <section id="contactformulier" style={{ backgroundColor: C.primary }} className="py-16 md:py-24">
+      {/* 8. FOOTER-CTA */}
+      <section style={{ backgroundColor: C.primary }} className="py-20">
         <div className="container-content">
-          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-10 lg:gap-14 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center max-w-6xl mx-auto">
+            <Illustration src={imgAanvraag} alt="Laptop met de melding: aanvraag akkoord" />
             <div className="text-white">
-              <H2>
-                <span style={{ color: "#fff" }}>Klaar om jouw subsidie aan te </span>
-                <Gold>vragen</Gold>
-                <span style={{ color: "#fff" }}>?</span>
-              </H2>
+              <h2
+                className="font-display"
+                style={{
+                  fontWeight: 700,
+                  fontSize: "clamp(28px, 4vw, 40px)",
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1.15,
+                  color: "#fff",
+                }}
+              >
+                Klaar om jouw subsidie aan te <Gold>vragen</Gold>?
+              </h2>
               <p style={{ fontSize: 17, lineHeight: 1.6, marginTop: 16, color: "rgba(255,255,255,0.8)" }}>
-                Plan een vrijblijvende intake. Wij komen langs, checken jouw situatie en rekenen uit wat je krijgt.
+                Plan een vrijblijvend intakegesprek. Wij komen langs en checken jouw situatie.
               </p>
-              <ul className="mt-8 space-y-3">
-                {[
-                  "Lokale adviseur uit Groningen of Drenthe",
-                  "Persoonlijk huisbezoek binnen 1 week",
-                  "Wij werken alleen met aangesloten Nij Begun-bedrijven",
-                ].map((t) => (
-                  <li key={t} className="flex items-start gap-3">
-                    <Check size={20} style={{ color: C.accent, marginTop: 2, flexShrink: 0 }} aria-hidden />
-                    <span style={{ fontSize: 16, color: "#fff" }}>{t}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div style={{ ...cardSoftBase, padding: 28 }}>
-              {submitted ? (
-                <div className="flex flex-col items-center text-center py-6">
-                  <CheckCircle2 size={48} style={{ color: C.accent }} aria-hidden />
-                  <p className="font-display mt-4" style={{ fontSize: 20, fontWeight: 700, color: C.primary }}>
-                    Bedankt!
-                  </p>
-                  <p style={{ fontSize: 15, color: C.text, marginTop: 6 }}>
-                    We nemen binnen 1 werkdag contact op.
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} noValidate>
-                  <h3 className="font-display" style={{ fontSize: 20, fontWeight: 700, color: C.primary, marginBottom: 16 }}>
-                    Plan jouw gratis intake
-                  </h3>
-                  <div className="space-y-3">
-                    {[
-                      { name: "naam", label: "Naam", type: "text" },
-                      { name: "email", label: "E-mailadres", type: "email" },
-                      { name: "telefoon", label: "Telefoonnummer", type: "tel" },
-                      { name: "postcode", label: "Postcode", type: "text", placeholder: "1234 AB" },
-                      { name: "adres", label: "Adres", type: "text" },
-                      { name: "bouwjaar", label: "Bouwjaar woning (optioneel)", type: "number" },
-                    ].map((f) => (
-                      <div key={f.name}>
-                        <label
-                          htmlFor={f.name}
-                          style={{ display: "block", fontSize: 13, fontWeight: 600, color: C.primary, marginBottom: 4 }}
-                        >
-                          {f.label}
-                        </label>
-                        <input
-                          id={f.name}
-                          name={f.name}
-                          type={f.type}
-                          placeholder={f.placeholder}
-                          className={inputCls}
-                          style={inputStyle}
-                          maxLength={120}
-                        />
-                        {errors[f.name] && (
-                          <p style={{ fontSize: 12, color: "#B91C1C", marginTop: 4 }}>{errors[f.name]}</p>
-                        )}
-                      </div>
-                    ))}
-                    <div>
-                      <label
-                        htmlFor="toelichting"
-                        style={{ display: "block", fontSize: 13, fontWeight: 600, color: C.primary, marginBottom: 4 }}
-                      >
-                        Korte toelichting (optioneel)
-                      </label>
-                      <textarea
-                        id="toelichting"
-                        name="toelichting"
-                        rows={3}
-                        maxLength={500}
-                        placeholder="Bijv: ik wil dak en vloer laten isoleren"
-                        className={inputCls}
-                        style={inputStyle}
-                      />
-                    </div>
-                    <label className="flex items-start gap-2 mt-2" style={{ fontSize: 13, color: C.text }}>
-                      <input type="checkbox" name="privacy" className="mt-1" />
-                      <span>
-                        Ik ga akkoord met het{" "}
-                        <a href="/privacy" style={{ color: C.accent, textDecoration: "underline" }}>
-                          privacybeleid
-                        </a>
-                      </span>
-                    </label>
-                    {errors.privacy && (
-                      <p style={{ fontSize: 12, color: "#B91C1C", marginTop: -4 }}>{errors.privacy}</p>
-                    )}
-                    <button
-                      type="submit"
-                      style={{ ...goldBtn, width: "100%", marginTop: 8 }}
-                    >
-                      Verstuur intake-aanvraag
-                    </button>
-                    <p style={{ fontSize: 12, color: C.muted, textAlign: "center", marginTop: 4 }}>
-                      Wij reageren binnen 1 werkdag.
-                    </p>
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 9. ANDERE SUBSIDIES */}
-      <section style={{ backgroundColor: C.cardSoft }} className="py-14 md:py-16">
-        <div className="container-content max-w-5xl mx-auto">
-          <h3 className="font-display" style={{ fontSize: 22, fontWeight: 700, color: C.primary, marginBottom: 20 }}>
-            Andere subsidies die <Gold>misschien interessant</Gold> zijn
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div style={{ ...cardBase, padding: 24 }}>
-              <span
-                className="inline-flex items-center justify-center"
-                style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: C.cardSoft, color: C.accent }}
-              >
-                <Globe size={18} aria-hidden />
-              </span>
-              <h4 className="font-display" style={{ fontSize: 17, fontWeight: 700, color: C.primary, marginTop: 12 }}>
-                Landelijke subsidies (ISDE)
-              </h4>
-              <p style={{ fontSize: 14, color: C.text, lineHeight: 1.6, marginTop: 6 }}>
-                Voor warmtepomp, zonneboiler en isolatie buiten het Nij Begun-gebied.
-              </p>
-              <a
-                href="/subsidies/landelijk"
-                style={{ color: C.accent, fontWeight: 600, fontSize: 14, marginTop: 12, display: "inline-block" }}
-              >
-                Bekijk landelijke subsidies →
-              </a>
-            </div>
-            <div style={{ ...cardBase, padding: 24 }}>
-              <span
-                className="inline-flex items-center justify-center"
-                style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: C.cardSoft, color: C.accent }}
-              >
-                <MapPin size={18} aria-hidden />
-              </span>
-              <h4 className="font-display" style={{ fontSize: 17, fontWeight: 700, color: C.primary, marginTop: 12 }}>
-                Regionale en gemeentelijke subsidies
-              </h4>
-              <p style={{ fontSize: 14, color: C.text, lineHeight: 1.6, marginTop: 6 }}>
-                Aanvullende regelingen per gemeente, vaak stapelbaar met ISDE.
-              </p>
-              <a
-                href="/subsidies/regionaal"
-                style={{ color: C.accent, fontWeight: 600, fontSize: 14, marginTop: 12, display: "inline-block" }}
-              >
-                Bekijk regionale subsidies →
+              <a href="/contact" style={{ ...goldBtn, marginTop: 24 }}>
+                Plan een intakegesprek
               </a>
             </div>
           </div>
-          <p className="text-center mt-10" style={{ fontSize: 12, color: C.muted }}>
+          <p className="text-center mt-12" style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
             Laatst bijgewerkt: {LAATST_BIJGEWERKT}
           </p>
         </div>
