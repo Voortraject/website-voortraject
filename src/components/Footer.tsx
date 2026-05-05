@@ -7,9 +7,16 @@ const navCols = [
       { href: "/uitvoerders", label: "Voor uitvoerders" },
       { href: "/bewoners", label: "Voor bewoners" },
       { href: "/maatregelen", label: "Maatregelen" },
-      { href: "/subsidies/nij-begun", label: "Nij Begun" },
       { href: "/over-ons", label: "Over ons" },
       { href: "/contact", label: "Contact" },
+    ],
+  },
+  {
+    label: "Subsidies",
+    items: [
+      { href: "/subsidies/nij-begun", label: "Nij Begun" },
+      { href: "/subsidies/landelijk", label: "Landelijke subsidies" },
+      { href: "/subsidies/regionaal", label: "Regionale subsidies" },
     ],
   },
   {
@@ -25,7 +32,7 @@ const navCols = [
 export const Footer = () => (
   <footer className="text-white" style={{ backgroundColor: "#152C4E" }}>
     <div className="container-content md:py-20 py-[40px]">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-10 lg:gap-12">
         <div>
           <img src={logoVoortraject} alt="Voortraject" className="h-8 w-auto" />
           <p className="mt-4 text-sm leading-relaxed text-white/80 max-w-xs">
