@@ -661,11 +661,11 @@ const Bewoners = () => {
                 Wat bewoners ons het vaakst teruggeven over onze aanpak.
               </p>
             </div>
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="card-grid mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {reasons.map((r) => (
                 <div
                   key={r}
-                  className="flex items-center gap-3"
+                  className="card flex items-center gap-3"
                   style={{ ...cardBase, padding: 20, minHeight: 56 }}
                 >
                   <span
