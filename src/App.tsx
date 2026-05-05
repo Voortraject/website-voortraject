@@ -11,6 +11,8 @@ import Maatregelen from "./pages/Maatregelen.tsx";
 import OverOns from "./pages/OverOns.tsx";
 import Contact from "./pages/Contact.tsx";
 import SubsidiesNijBegun from "./pages/SubsidiesNijBegun.tsx";
+import SubsidiesLandelijk from "./pages/SubsidiesLandelijk.tsx";
+import SubsidiesRegionaal from "./pages/SubsidiesRegionaal.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -30,6 +32,8 @@ const App = () => (
             <Route path="/over-ons" element={<OverOns />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/subsidies/nij-begun" element={<SubsidiesNijBegun />} />
+            <Route path="/subsidies/landelijk" element={<SubsidiesLandelijk />} />
+            <Route path="/subsidies/regionaal" element={<SubsidiesRegionaal />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
