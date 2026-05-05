@@ -10,6 +10,7 @@ import Bewoners from "./pages/Bewoners.tsx";
 import Maatregelen from "./pages/Maatregelen.tsx";
 import OverOns from "./pages/OverOns.tsx";
 import Contact from "./pages/Contact.tsx";
+import SubsidiesNijBegun from "./pages/SubsidiesNijBegun.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/maatregelen" element={<Maatregelen />} />
             <Route path="/over-ons" element={<OverOns />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/subsidies/nij-begun" element={<SubsidiesNijBegun />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
