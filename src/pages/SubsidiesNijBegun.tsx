@@ -1,4 +1,4 @@
-import { useEffect, useState, FormEvent } from "react";
+import { useEffect, useState } from "react";
 import {
   Home,
   Coins,
@@ -14,11 +14,11 @@ import {
   Send,
   CheckCircle2,
   ChevronDown,
-  Globe,
-  MapPin,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import logoVoortrajectBlauw from "@/assets/logo-voortraject-blauw.png";
+import logoNijBegun from "@/assets/logo-nij-begun.png";
 
 // Editable constants
 const LAATST_BIJGEWERKT = "mei 2026";
@@ -40,6 +40,7 @@ const C = {
 const IMG = "/images/nij-begun";
 const imgKaart = `${IMG}/Afbeelding_50-100_Groningen.webp`;
 const imgHuis = `${IMG}/Isolatie_huis_afbeelding.webp`;
+const imgAanvraag = `${IMG}/Aanvraag_akkoord_afbeelding.webp`;
 
 const faqs: { q: string; a: string }[] = [
   {
