@@ -126,16 +126,36 @@ export const Header = () => {
             </button>
           </div>
           <nav className="container-content flex flex-col gap-2 pt-10" aria-label="Mobiele navigatie">
-            {links.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className="py-4 text-2xl font-display font-semibold tracking-tight text-foreground border-b border-border"
-              >
-                {l.label}
-              </a>
-            ))}
+            {links.map((l) =>
+              l.dropdown ? (
+                <div key={l.href} className="border-b border-border">
+                  <div className="py-4 text-2xl font-display font-semibold tracking-tight text-foreground">
+                    {l.label}
+                  </div>
+                  <div className="pb-4 pl-2 flex flex-col gap-2">
+                    {l.dropdown.map((s) => (
+                      <a
+                        key={s.href}
+                        href={s.href}
+                        onClick={() => setOpen(false)}
+                        className="py-2 text-lg text-foreground/80"
+                      >
+                        {s.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="py-4 text-2xl font-display font-semibold tracking-tight text-foreground border-b border-border"
+                >
+                  {l.label}
+                </a>
+              )
+            )}
             <div className="mt-8">
               <Button href="/contact" variant="primary" className="w-full">
                 Contact
