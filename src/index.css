@@ -167,15 +167,15 @@
 
 /* Card-grid hover effect (desktop only, with hover-capable pointer) */
 @media (hover: hover) and (pointer: fine) {
-  .card-grid > .card {
+  .card-grid .card {
     transition: transform 300ms ease, filter 300ms ease;
     will-change: transform, filter;
   }
-  .card-grid > .card:hover {
+  .card-grid .card:hover {
     transform: scale(1.05);
     z-index: 1;
   }
-  .card-grid:hover > .card:not(:hover) {
+  .card-grid:hover .card:not(:hover) {
     filter: blur(4px);
     transform: scale(0.97);
   }
