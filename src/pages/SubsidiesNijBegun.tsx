@@ -216,42 +216,6 @@ const SubsidiesNijBegun = () => {
   }, []);
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const data = new FormData(form);
-    const obj = Object.fromEntries(data.entries()) as Record<string, string>;
-    const next: Record<string, string> = {};
-    if (!obj.naam?.trim()) next.naam = "Vul je naam in";
-    if (!obj.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(obj.email)) next.email = "Vul een geldig e-mailadres in";
-    if (!obj.telefoon?.trim()) next.telefoon = "Vul je telefoonnummer in";
-    if (!obj.postcode?.trim() || !/^\d{4}\s?[A-Za-z]{2}$/.test(obj.postcode)) next.postcode = "Vul een geldige postcode in (1234 AB)";
-    if (!obj.adres?.trim()) next.adres = "Vul je adres in";
-    if (!obj.privacy) next.privacy = "Akkoord met privacybeleid is vereist";
-    setErrors(next);
-    if (Object.keys(next).length > 0) return;
-
-    try {
-      await fetch("/api/intake-nij-begun", {
-        method: "POST",
-        body: JSON.stringify(obj),
-        headers: { "Content-Type": "application/json" },
-      });
-    } catch {
-      // placeholder endpoint
-    }
-    setSubmitted(true);
-  };
-
-  const inputCls =
-    "w-full rounded-lg border bg-white px-4 py-3 text-[15px] outline-none transition focus:shadow-[0_0_0_3px_rgba(212,175,61,0.25)]";
-  const inputStyle: React.CSSProperties = {
-    borderColor: `${C.accentSoft}99`,
-    color: C.text,
-  };
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: C.bg, color: C.text }}>
