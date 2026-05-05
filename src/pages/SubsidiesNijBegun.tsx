@@ -264,36 +264,64 @@ const SubsidiesNijBegun = () => {
               </div>
             </div>
 
-            <div style={{ ...cardBase, padding: 24 }}>
-              <ul className="space-y-4">
-                {[
-                  { icon: Home, text: <><strong>300.000+</strong> woningen komen in aanmerking</> },
-                  { icon: Coins, text: <><strong>€1,65 miljard</strong> beschikbaar tot 2035</> },
-                  { icon: Clock, text: <><strong>2 jaar</strong> de tijd na toekenning</> },
-                ].map((s, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <span
-                      className="inline-flex items-center justify-center shrink-0"
-                      style={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: 9999,
-                        backgroundColor: C.cardSoft,
-                        color: C.accent,
-                      }}
-                    >
-                      <s.icon size={18} aria-hidden />
-                    </span>
-                    <span style={{ fontSize: 15, color: C.text, lineHeight: 1.5, paddingTop: 6 }}>
-                      {s.text}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <div style={{ borderTop: `1px solid ${C.accentSoft}66`, marginTop: 20, paddingTop: 12 }}>
-                <p style={{ fontSize: 12, color: C.muted, margin: 0 }}>
-                  Officiële regeling van Nij Begun
-                </p>
+            <div>
+              {/* Partnership-marker: twee logo's */}
+              <div
+                className="flex items-center justify-center"
+                style={{ padding: "16px 24px", marginBottom: 16 }}
+              >
+                <img
+                  src={logoVoortrajectBlauw}
+                  alt="Voortraject"
+                  style={{ maxHeight: 40, width: "auto", objectFit: "contain" }}
+                  className="max-h-8 md:max-h-10"
+                />
+                <span
+                  aria-hidden
+                  style={{
+                    display: "inline-block",
+                    width: 1,
+                    height: 40,
+                    backgroundColor: C.primary,
+                    opacity: 0.25,
+                    margin: "0 20px",
+                  }}
+                  className="h-8 md:h-10"
+                />
+                <img
+                  src={logoNijBegun}
+                  alt="Nij Begun Groningen Noord-Drenthe"
+                  style={{ maxHeight: 40, width: "auto", objectFit: "contain" }}
+                  className="max-h-8 md:max-h-10"
+                />
+              </div>
+
+              <div style={{ ...cardBase, padding: 24 }}>
+                <ul className="space-y-4">
+                  {[
+                    { icon: Home, text: <><strong>300.000+</strong> woningen komen in aanmerking</> },
+                    { icon: Coins, text: <><strong>€1,65 miljard</strong> beschikbaar tot 2035</> },
+                    { icon: Clock, text: <><strong>2 jaar</strong> de tijd na toekenning</> },
+                  ].map((s, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span
+                        className="inline-flex items-center justify-center shrink-0"
+                        style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: 9999,
+                          backgroundColor: C.cardSoft,
+                          color: C.accent,
+                        }}
+                      >
+                        <s.icon size={18} aria-hidden />
+                      </span>
+                      <span style={{ fontSize: 15, color: C.text, lineHeight: 1.5, paddingTop: 6 }}>
+                        {s.text}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
