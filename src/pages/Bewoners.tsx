@@ -208,11 +208,11 @@ const Bewoners = () => {
                 Verduurzamen roept bij bijna iedere bewoner dezelfde twijfels op.
               </p>
             </div>
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="card-grid mt-12 grid grid-cols-1 md:grid-cols-2 gap-5">
               {recognitions.map((r) => {
                 const Icon = r.icon;
                 return (
-                  <article key={r.title} style={cardBase}>
+                  <article key={r.title} className="card" style={cardBase}>
                     <div className="flex flex-row items-center gap-3">
                       <Icon size={20} color="#E8B547" style={{ flexShrink: 0 }} aria-hidden="true" />
                       <h3
