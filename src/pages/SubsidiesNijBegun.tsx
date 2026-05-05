@@ -104,12 +104,10 @@ const Illustration = ({ src, alt }: { src: string; alt: string }) => (
       loading="lazy"
       decoding="async"
       style={{
-        width: "106%",
-        height: "112%",
+        width: "100%",
+        height: "100%",
         objectFit: "cover",
         objectPosition: "center",
-        marginLeft: "-3%",
-        marginTop: "-6%",
       }}
     />
   </div>
