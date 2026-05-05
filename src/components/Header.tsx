@@ -4,11 +4,17 @@ import { NavLink } from "./NavLink";
 import { Button } from "./Button";
 import logoVoortraject from "@/assets/logo-voortraject.png";
 
-const links = [
+const subsidiesItems = [
+  { href: "/subsidies/nij-begun", label: "Nij Begun" },
+  { href: "/subsidies/landelijk", label: "Landelijke subsidies" },
+  { href: "/subsidies/regionaal", label: "Regionale subsidies" },
+];
+
+const links: { href: string; label: string; dropdown?: typeof subsidiesItems }[] = [
   { href: "/uitvoerders", label: "Voor uitvoerders" },
   { href: "/bewoners", label: "Voor bewoners" },
   { href: "/maatregelen", label: "Maatregelen" },
-  { href: "/subsidies/nij-begun", label: "Nij Begun" },
+  { href: "/subsidies", label: "Subsidies", dropdown: subsidiesItems },
   { href: "/over-ons", label: "Over ons" },
 ];
 
