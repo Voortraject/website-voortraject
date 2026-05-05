@@ -255,7 +255,7 @@ const SubsidiesNijBegun = () => {
                 Woon je in Groningen of Noord-Drenthe? Via de Isolatieaanpak Nij Begun kun je je woning gratis of voor de helft van de kosten laten isoleren. Wij regelen de intake.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <a href="#contactformulier" style={goldBtn}>
+                <a href="/contact" style={goldBtn}>
                   Plan een gratis intake
                 </a>
                 <a href="#bedragen" style={outlineBtn}>
