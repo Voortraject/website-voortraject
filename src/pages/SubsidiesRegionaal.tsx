@@ -488,7 +488,7 @@ const SubsidiesRegionaal = () => {
             </p>
             <div style={{ marginTop: 22 }}>
               <a href="/contact" style={outlineBtn}>
-                Laat ons meekijken
+                Reken het voor mijn woning uit
               </a>
             </div>
           </div>
