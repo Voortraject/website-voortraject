@@ -734,7 +734,7 @@ const SubsidiesRegionaal = () => {
                   "Na de uitvoering blijven we beschikbaar. Voor vervolgmaatregelen, garantie of een nieuwe gemeentelijke regeling die later wordt gelanceerd.",
               },
             ].map((b, i) => (
-              <div key={i} style={{ ...cardOnWhite, padding: 24, display: "flex", gap: 16 }}>
+              <div key={i} style={{ ...cardOnCream, padding: 24, display: "flex", gap: 16 }}>
                 <IconCircle Icon={b.Icon} size={22} />
                 <div>
                   <h3 style={{ fontSize: 19, fontWeight: 700, color: C.primary, margin: 0, marginBottom: 6 }}>
