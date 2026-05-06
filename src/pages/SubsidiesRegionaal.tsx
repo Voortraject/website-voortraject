@@ -579,7 +579,7 @@ const SubsidiesRegionaal = () => {
                   ref={(el) => (stepRefs.current[i] = el)}
                   data-step-index={i}
                   style={{
-                    ...cardOnWhite,
+                    ...cardOnCream,
                     padding: "28px 28px",
                     opacity: visible ? 1 : 0,
                     transform: visible ? "translateY(0)" : "translateY(20px)",
