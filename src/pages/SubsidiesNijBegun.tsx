@@ -543,7 +543,7 @@ const SubsidiesNijBegun = () => {
                 style={{ fontSize: 14, color: C.muted }}
               >
                 <Info size={16} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
-                <span>Ook buiten het versterkingsgebied kun je 100% subsidie krijgen als je inkomen onder de grens valt. Niet zeker in welke categorie je valt? Wij checken het tijdens het huisbezoek. Dat scheelt vaak duizenden euro's.</span>
+                <span>Ook buiten het versterkingsgebied kun je 100% subsidie krijgen als je inkomen onder de grens valt. Niet zeker in welke categorie je valt? Wij checken het vrijblijvend voor je.</span>
               </div>
             </div>
 
@@ -577,7 +577,7 @@ const SubsidiesNijBegun = () => {
                 </p>
                 <ul>
                   <CheckLi>Je woont in het versterkingsgebied (NCG)</CheckLi>
-                  <CheckLi>Of je inkomen valt onder 140% sociaal minimum (alleenstaand {INKOMEN_ALLEEN}, samen {INKOMEN_SAMEN} in 2025)</CheckLi>
+                  <CheckLi>Of je inkomen valt onder 140% sociaal minimum</CheckLi>
                   <CheckLi>Of je bent VvE of kleine verhuurder in het versterkingsgebied</CheckLi>
                 </ul>
               </div>
@@ -689,7 +689,7 @@ const SubsidiesNijBegun = () => {
                   n: "01",
                   icon: Phone,
                   t: "Vrijblijvend telefoongesprek",
-                  d: "Alles begint met een gesprek aan de telefoon. We stellen wat vragen over jou en je woning, en doen meteen de postcode- en inkomenscheck. Zo weet je nog vóór een huisbezoek of je voor 50% of 100% in aanmerking komt.",
+                  d: "Klikt het? Dan plannen we een huisbezoek in. Vrijblijvend en onafhankelijk. Een lokale adviseur komt persoonlijk bij je langs.",
                 },
                 {
                   n: "02",
@@ -861,7 +861,7 @@ const SubsidiesNijBegun = () => {
               Plan een gratis huisbezoek. Een lokale adviseur uit jouw regio belt of komt langs binnen een week.
             </p>
             <a href="/contact" style={{ ...goldBtn, marginTop: 20 }}>
-              Plan een huisbezoek
+              Ik wil gebeld worden
             </a>
           </div>
         </div>
@@ -981,10 +981,10 @@ const SubsidiesNijBegun = () => {
               Ontdek welke stap voor jou <Gold>logisch</Gold> is.
             </h2>
             <p style={{ fontSize: 17, lineHeight: 1.6, marginTop: 16, color: "rgba(255,255,255,0.8)" }}>
-              Plan een gratis huisbezoek. Een lokale adviseur uit Groningen of Drenthe komt persoonlijk langs binnen een week. Geen verplichtingen, geen verkooppraatje.
+              Plan een gratis huisbezoek. Een lokale adviseur komt persoonlijk langs binnen een week. Geen verplichtingen, geen verkooppraatje.
             </p>
             <a href="/contact" style={{ ...goldBtn, marginTop: 24 }}>
-              Plan een huisbezoek
+              Ik wil gebeld worden
             </a>
           </div>
           <p className="text-center mt-12" style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
