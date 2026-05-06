@@ -257,13 +257,13 @@ const SubsidiesLandelijk = () => {
   };
 
   const steps = [
-    { n: "01", t: "Vrijblijvend telefoongesprek", icon: Phone, d: "Alles begint met een gesprek aan de telefoon. We stellen wat vragen over jouw woning en je verduurzamingswens. Daarna weten we al grofweg welke ISDE-bedragen voor jou interessant zijn." },
-    { n: "02", t: "Afspraak voor een huisbezoek", icon: Calendar, d: "Klikt het? Dan plannen we een huisbezoek in. Vrijblijvend en onafhankelijk. Een lokale adviseur komt persoonlijk bij je langs en bekijkt jouw woning." },
-    { n: "03", t: "Plan op maat met optimale combinatie", icon: FileText, d: "Tijdens het bezoek bepalen we welke maatregelen voor jouw woning slim zijn én in welke volgorde. Combineren levert vaak duizenden euro's extra subsidie op. Wij rekenen het concreet voor je uit." },
-    { n: "04", t: "Erkende uitvoerder kiezen", icon: Users, d: "Wij brengen je in contact met aangesloten installateurs die voldoen aan de ISDE-eisen. Geen verkooppraatje, geen vooringenomen keuze. Belangrijk: doe-het-zelf werk komt niet in aanmerking voor subsidie." },
-    { n: "05", t: "Uitvoering met begeleiding", icon: Hammer, d: "De installateur voert het werk uit. Wij begeleiden, bewaken kwaliteit en planning, en zorgen dat de juiste meldcodes en foto's worden vastgelegd. Dat zijn straks de bewijsstukken voor de aanvraag." },
-    { n: "06", t: "Wij dienen de aanvraag in bij RVO", icon: Send, d: "Geen DigiD-gedoe, geen formulieren. Wij dienen de aanvraag in bij RVO via mijnRVO.nl. RVO beslist doorgaans binnen 8 weken en stort het bedrag op jouw rekening." },
-    { n: "07", t: "Vervolgmaatregelen en natraject", icon: LifeBuoy, d: "Wil je daarna meer doen? Combineren binnen 24 maanden levert verdubbelde subsidie op. Wij blijven jouw aanspreekpunt voor vervolgmaatregelen, vragen over onderhoud, of advies over warmtepomp of warmtenet." },
+    { n: "01", t: "Vrijblijvend telefoongesprek", icon: Phone, d: "Geen wachtrij, geen formulier-eerst. We bellen rustig met je over jouw woning en wens. Aan het eind van het gesprek weet je grofweg welke ISDE-bedragen voor jou interessant zijn, en of een huisbezoek zin heeft." },
+    { n: "02", t: "Afspraak voor een huisbezoek", icon: Calendar, d: "Klikt het? Dan plannen we binnen een week een huisbezoek in. Een lokale adviseur uit jouw regio komt persoonlijk bij je langs. Geen verplichtingen, geen verkooppraatje." },
+    { n: "03", t: "Plan op maat met optimale combinatie", icon: FileText, d: "Wij kennen de regeling. Tijdens het bezoek rekenen we uit welke maatregelen voor jouw woning slim zijn én in welke volgorde. Vaak levert combineren duizenden euro's extra op. Jij hoeft niet zelf in regelingen te duiken." },
+    { n: "04", t: "Erkende uitvoerder kiezen", icon: Users, d: "Werkt een niet-erkend bedrijf voor je, dan vervalt je subsidie volledig. Wij brengen je in contact met installateurs die voldoen aan de ISDE-eisen en bij jouw woning passen. Geen vooringenomen keuze, gewoon wat werkt." },
+    { n: "05", t: "Uitvoering met begeleiding", icon: Hammer, d: "Tijdens de uitvoering bewaken wij de meldcodes, de fotodocumentatie en de planning. Dat zijn straks de bewijsstukken voor je aanvraag. Eén ontbrekende foto kost een hoop geld. Wij zorgen dat dat niet gebeurt." },
+    { n: "06", t: "Wij dienen de aanvraag in bij RVO", icon: Send, d: "Geen DigiD-gedoe, geen formulieren. Wij dienen de aanvraag in via mijnRVO.nl en wachten samen met jou de beslissing af. RVO beslist doorgaans binnen 8 weken en stort het bedrag op jouw rekening." },
+    { n: "07", t: "Vervolgmaatregelen en natraject", icon: LifeBuoy, d: "Wil je daarna nog meer doen? Combineren binnen 24 maanden levert verdubbelde subsidie op. Wij blijven jouw aanspreekpunt voor vervolgmaatregelen, vragen over onderhoud, of advies over warmtepomp of warmtenet." },
   ];
 
   const categories = [
@@ -322,7 +322,7 @@ const SubsidiesLandelijk = () => {
                 Subsidie voor jouw <Gold>verduurzaming</Gold>, in heel Nederland.
               </h1>
               <p style={{ marginTop: 24, fontSize: 18, lineHeight: 1.6, color: C.text }}>
-                ISDE is de landelijke subsidie voor warmtepomp, isolatie, zonneboiler en meer. Wij regelen de aanvraag voor je en zorgen dat je optimaal combineert. Jij krijgt het bedrag op je rekening.
+                Via ISDE krijg je honderden tot duizenden euro's terug op je verduurzaming. Maar je vraagt achteraf aan met meldcodes, foto's en de juiste timing. Eén foutje kost geld of vertraging. Wij regelen het van advies tot aanvraag bij RVO. Jij krijgt het bedrag op je rekening.
               </p>
               <div className="flex flex-wrap gap-3 mt-8">
                 <PrimaryBtn href="/contact">Plan een gratis huisbezoek</PrimaryBtn>
@@ -330,6 +330,34 @@ const SubsidiesLandelijk = () => {
               </div>
             </div>
             <div className="md:col-span-2">
+              <div
+                className="flex items-center justify-center"
+                style={{ padding: "16px 24px", marginBottom: 16 }}
+              >
+                <img
+                  src="/images/landelijk/logo-voortraject-blauw.png"
+                  alt="Voortraject"
+                  className="object-contain"
+                  style={{ maxHeight: 40, height: "auto" }}
+                />
+                <span
+                  aria-hidden
+                  style={{
+                    display: "inline-block",
+                    width: 1,
+                    height: 40,
+                    backgroundColor: "#1B2E4A",
+                    opacity: 0.25,
+                    margin: "0 20px",
+                  }}
+                />
+                <img
+                  src="/images/landelijk/rijksoverheid_logo.svg"
+                  alt="Rijksoverheid"
+                  className="object-contain"
+                  style={{ maxHeight: 40, height: "auto" }}
+                />
+              </div>
               <div
                 style={{
                   backgroundColor: C.card,
@@ -362,17 +390,39 @@ const SubsidiesLandelijk = () => {
         </section>
 
         {/* SECTIE 2: WAT IS ISDE */}
-        <section className="container-content py-16 md:py-20">
-          <div className="max-w-3xl">
-            <H2>
-              Wat is <Gold>ISDE</Gold> precies?
-            </H2>
-            <p style={{ marginTop: 20, fontSize: 17, lineHeight: 1.7 }}>
-              ISDE staat voor Investeringssubsidie Duurzame Energie en Klimaattransitie. Het is de landelijke subsidie van de Rijksoverheid voor woningeigenaren die hun huis verduurzamen. De regeling wordt uitgevoerd door RVO en loopt door tot 2031.
-            </p>
-            <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.7 }}>
-              Anders dan Nij Begun werkt ISDE met vaste bedragen per maatregel. Voor isolatie krijg je een bedrag per vierkante meter. Voor een warmtepomp of zonneboiler een vast bedrag per apparaat. En als je twee of meer maatregelen combineert, verdubbelt de subsidie per vierkante meter voor isolatie.
-            </p>
+        <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-20">
+          <div className="container-content">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-center">
+              <div>
+                <H2>
+                  Wat is <Gold>ISDE</Gold> precies?
+                </H2>
+                <p style={{ marginTop: 20, fontSize: 17, lineHeight: 1.7 }}>
+                  ISDE staat voor Investeringssubsidie Duurzame Energie en Klimaattransitie. Het is de landelijke subsidie van de Rijksoverheid voor woningeigenaren die hun huis verduurzamen. De regeling wordt uitgevoerd door RVO en loopt door tot 2031.
+                </p>
+                <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.7 }}>
+                  Anders dan Nij Begun werkt ISDE met vaste bedragen per maatregel. Voor isolatie krijg je een bedrag per vierkante meter. Voor een warmtepomp of zonneboiler een vast bedrag per apparaat. En als je twee of meer maatregelen combineert, verdubbelt de subsidie per vierkante meter voor isolatie.
+                </p>
+              </div>
+              <div
+                style={{
+                  border: `1px solid rgba(229, 201, 103, 0.4)`,
+                  borderRadius: 16,
+                  padding: 16,
+                  backgroundColor: "#FFFFFF",
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+                }}
+              >
+                <div style={{ aspectRatio: "5 / 3", width: "100%" }}>
+                  <img
+                    src="/images/landelijk/isde-subsidie.jpg"
+                    alt="Schematische illustratie van een woning met groen blad en energielabels A tot G, symbool voor verduurzaming via de ISDE-subsidie"
+                    loading="lazy"
+                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -445,12 +495,13 @@ const SubsidiesLandelijk = () => {
         </section>
 
         {/* SECTIE 4: HOEVEEL SUBSIDIE */}
-        <section id="bedragen" className="container-content py-16 md:py-20">
+        <section id="bedragen" style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-20">
+          <div className="container-content">
           <H2>
             Hoeveel <Gold>subsidie</Gold> krijg je?
           </H2>
           <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.6, maxWidth: 820 }}>
-            De bedragen verschillen per maatregel. Voor isolatie geldt een bedrag per vierkante meter. Voor een warmtepomp of zonneboiler een vast bedrag. Combineer je twee of meer maatregelen binnen 24 maanden, dan verdubbelt het isolatiebedrag.
+            De bedragen verschillen per maatregel, maar één regel maakt het écht interessant: combineer je twee of meer maatregelen binnen 24 maanden, dan <strong>verdubbelt</strong> het isolatiebedrag per vierkante meter. Wij rekenen voor jouw woning uit hoe je daar het maximale uit haalt.
           </p>
 
           {/* 4.1 Categoriekaarten */}
@@ -460,7 +511,7 @@ const SubsidiesLandelijk = () => {
                 key={c.t}
                 className="transition-shadow hover:shadow-md"
                 style={{
-                  backgroundColor: C.card,
+                  backgroundColor: C.cardSoft,
                   border: `1px solid ${C.accentSoft}66`,
                   borderRadius: 16,
                   padding: 28,
@@ -484,11 +535,34 @@ const SubsidiesLandelijk = () => {
             ))}
           </div>
 
-          {/* 4.2 Tabel */}
+          {/* 4.2a Combineer-banner */}
           <div
             className="mt-10"
             style={{
-              backgroundColor: C.card,
+              backgroundColor: C.cardSoft,
+              borderLeft: `4px solid ${C.accent}`,
+              borderRadius: 8,
+              padding: 24,
+            }}
+          >
+            <div className="flex items-start gap-3">
+              <TrendingUp size={22} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
+              <div>
+                <h4 className="font-display" style={{ color: C.primary, fontWeight: 700, fontSize: 18 }}>
+                  Combineren is waar de winst zit
+                </h4>
+                <p style={{ marginTop: 8, fontSize: 15.5, lineHeight: 1.6 }}>
+                  Eén isolatiemaatregel levert ongeveer 15% van je investering aan subsidie op. Twee maatregelen, of één maatregel plus een warmtepomp of zonneboiler, brengt dat naar ongeveer 30%. Dat is letterlijk verdubbelen.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 4.2 Tabel */}
+          <div
+            className="mt-8"
+            style={{
+              backgroundColor: C.cardSoft,
               border: `1px solid ${C.accentSoft}66`,
               borderRadius: 16,
               padding: 28,
@@ -507,9 +581,9 @@ const SubsidiesLandelijk = () => {
                       style={{
                         padding: "12px 12px",
                         color: C.primary,
-                        fontWeight: 700,
+                        fontWeight: 800,
                         fontSize: 14,
-                        backgroundColor: `${C.cardSoft}`,
+                        backgroundColor: C.accent,
                       }}
                     >
                       2+ maatregelen
@@ -521,7 +595,7 @@ const SubsidiesLandelijk = () => {
                     <tr key={row.naam} style={{ borderBottom: i === ISDE.isolatie.length - 1 ? "none" : `1px solid ${C.accentSoft}33` }}>
                       <td style={{ padding: "12px 12px", fontSize: 15 }}>{row.naam}</td>
                       <td style={{ padding: "12px 12px", fontSize: 15 }}>{row.een}</td>
-                      <td style={{ padding: "12px 12px", fontSize: 15, fontWeight: 600, backgroundColor: `${C.cardSoft}` }}>
+                      <td style={{ padding: "12px 12px", fontSize: 15, fontWeight: 700, color: C.accent, backgroundColor: "rgba(229, 201, 103, 0.08)" }}>
                         {row.twee}
                       </td>
                     </tr>
@@ -568,14 +642,15 @@ const SubsidiesLandelijk = () => {
           {/* 4.4 Mini-CTA */}
           <div className="mt-10 text-center">
             <p style={{ color: C.primary, fontWeight: 700, fontSize: 18 }}>
-              Niet zeker hoe je het beste combineert?
+              Bang dat je geld laat liggen?
             </p>
             <p style={{ color: C.muted, fontSize: 14, marginTop: 6 }}>
-              Wij rekenen tijdens het huisbezoek precies uit wat voor jouw woning het slimst is.
+              Tijdens het huisbezoek rekenen we voor jouw woning uit welke combinatie het slimst is. Vrijblijvend en gratis.
             </p>
             <div className="mt-5">
               <OutlineBtn href="/contact">Plan een gratis huisbezoek</OutlineBtn>
             </div>
+          </div>
           </div>
         </section>
 
@@ -655,7 +730,7 @@ const SubsidiesLandelijk = () => {
                     ref={(el) => (stepRefs.current[i] = el)}
                     data-step-index={i}
                     style={{
-                      backgroundColor: C.card,
+                      backgroundColor: C.cardSoft,
                       border: `1px solid ${C.accentSoft}66`,
                       borderRadius: 16,
                       padding: 28,
@@ -707,10 +782,10 @@ const SubsidiesLandelijk = () => {
               }}
             >
               <p className="font-display" style={{ color: C.primary, fontWeight: 700, fontSize: 22 }}>
-                Wil je het maximale uit ISDE halen?
+                Wil je sneller verder zonder gedoe?
               </p>
               <p style={{ color: C.muted, fontSize: 15, marginTop: 8 }}>
-                Plan een gratis huisbezoek. Wij rekenen voor jouw woning uit wat slim is om te combineren.
+                Plan een gratis huisbezoek. Wij rekenen voor jouw woning uit wat slim is om te combineren, en zorgen dat de aanvraag straks foutloos doorkomt.
               </p>
               <div className="mt-6">
                 <PrimaryBtn href="/contact">Plan een huisbezoek</PrimaryBtn>
