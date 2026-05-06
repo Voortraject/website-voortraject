@@ -14,6 +14,10 @@ import {
   Send,
   CheckCircle2,
   ChevronDown,
+  Hammer,
+  LifeBuoy,
+  FileCheck,
+  Scale,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -49,7 +53,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Krijg ik 50% of 100% subsidie?",
-    a: "Dat hangt af van of je in het versterkingsgebied woont en van je inkomen. Tijdens de intake checken we beide.",
+    a: "Dat hangt af van of je in het versterkingsgebied woont én van je inkomen. Tijdens de intake checken we beide. De €1.000 advies- en afwerkbijdrage is er trouwens alleen voor de 100%-categorie.",
   },
   {
     q: "Heb ik een isolatieplan nodig?",
@@ -424,8 +428,17 @@ const SubsidiesNijBegun = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mt-10 items-center max-w-6xl mx-auto">
-            <Illustration src={imgKaart} alt="Kaart van Groningen met 50% en 100% subsidiegebieden" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mt-10 items-start max-w-6xl mx-auto">
+            <div>
+              <Illustration src={imgKaart} alt="Kaart van Groningen met 50% en 100% subsidiegebieden" />
+              <div
+                className="flex items-start gap-2 mt-4"
+                style={{ fontSize: 14, color: C.muted }}
+              >
+                <Info size={16} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
+                <span>Niet zeker in welke categorie je valt? Wij checken dat tijdens de intake. Dat scheelt vaak duizenden euro's.</span>
+              </div>
+            </div>
 
             <div className="space-y-6">
               {/* Card 50% */}
@@ -445,33 +458,10 @@ const SubsidiesNijBegun = () => {
               </div>
 
               {/* Card 100% */}
-              <div
-                style={{
-                  ...cardSoftBase,
-                  padding: 28,
-                  border: `2px solid ${C.accent}`,
-                  position: "relative",
-                }}
-              >
-                <span
-                  style={{
-                    position: "absolute",
-                    top: -12,
-                    left: 24,
-                    backgroundColor: C.accent,
-                    color: C.primary,
-                    fontSize: 11,
-                    fontWeight: 800,
-                    letterSpacing: "0.1em",
-                    padding: "4px 10px",
-                    borderRadius: 9999,
-                  }}
-                >
-                  MEEST GUNSTIG
-                </span>
-                <div className="flex items-baseline gap-3 mt-2">
+              <div style={{ ...cardBase, padding: 28 }}>
+                <div className="flex items-baseline gap-3">
                   <span style={{ fontSize: 44, fontWeight: 800, color: C.primary, letterSpacing: "-0.02em" }}>100%</span>
-                  <span style={{ fontSize: 15, color: C.muted }}>tot <strong style={{ color: C.text }}>€40.000</strong> per woning, plus €1.000 advies</span>
+                  <span style={{ fontSize: 15, color: C.muted }}>tot <strong style={{ color: C.text }}>€40.000</strong> per woning, plus €1.000 advies- en afwerkbijdrage</span>
                 </div>
                 <h4 style={{ fontSize: 14, fontWeight: 700, color: C.primary, marginTop: 14, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>
                   Voor wie?
@@ -482,15 +472,14 @@ const SubsidiesNijBegun = () => {
                   <CheckLi>Inkomen onder 140% sociaal minimum</CheckLi>
                 </ul>
               </div>
-            </div>
-          </div>
 
-          <div
-            className="flex items-center gap-2 max-w-6xl mx-auto mt-6"
-            style={{ fontSize: 14, color: C.muted }}
-          >
-            <Info size={16} style={{ color: C.accent, flexShrink: 0 }} aria-hidden />
-            <span>Niet zeker in welke categorie je valt? Wij checken het tijdens de intake.</span>
+              <p
+                className="text-center"
+                style={{ fontSize: 14, color: C.primary, fontWeight: 600, marginTop: 8 }}
+              >
+                De €1.000 advies- en afwerkbijdrage geldt alleen voor de 100%-categorie.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -538,42 +527,141 @@ const SubsidiesNijBegun = () => {
         </div>
       </section>
 
-      {/* 6. ZO WERKT HET */}
+      {/* 6. ZO WERKT HET — verticale tijdlijn met 7 stappen */}
       <section style={{ backgroundColor: C.card }} className="py-16 md:py-20">
         <div className="container-content">
           <div className="max-w-3xl mx-auto text-center">
             <H2>
-              Zo werkt het van intake tot <Gold>uitbetaling</Gold>
+              Van eerste vraag tot na de <Gold>uitvoering</Gold>
             </H2>
+            <p style={{ fontSize: 17, lineHeight: 1.6, color: C.muted, marginTop: 14 }}>
+              Zo werkt het bij ons. Geen telefooncentrale, geen wachtrij, geen formulieren in pdf. Wij doen het zware werk, jij houdt de regie.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-10 max-w-6xl mx-auto">
-            {[
-              { n: "01", icon: Phone, t: "Gratis intake", d: "Wij komen langs voor een vrijblijvend gesprek over jouw woning." },
-              { n: "02", icon: MapPinned, t: "Postcode en inkomenscheck", d: "Wij controleren of je voor 50% of 100% in aanmerking komt." },
-              { n: "03", icon: FileText, t: "Isolatieplan", d: "Voor maatregelen boven €10.000 maakt een Nij Begun-adviseur een gratis plan." },
-              { n: "04", icon: Send, t: "Aanvraag bij SNN", d: "Wij dienen de aanvraag in. De beslistermijn is maximaal 13 weken." },
-              { n: "05", icon: CheckCircle2, t: "Uitvoering en uitbetaling", d: "Na toekenning heb je 2 jaar voor de werkzaamheden. SNN keert daarna uit." },
-            ].map((s) => (
-              <div key={s.n} style={{ ...cardBase, padding: 20 }}>
-                <div style={{ fontSize: 18, fontWeight: 800, color: C.accent, letterSpacing: "0.05em" }}>{s.n}</div>
-                <span
-                  className="inline-flex items-center justify-center mt-3"
-                  style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: C.cardSoft, color: C.accent }}
-                >
-                  <s.icon size={18} aria-hidden />
-                </span>
-                <h4 className="font-display" style={{ fontSize: 15, fontWeight: 700, color: C.primary, marginTop: 12, marginBottom: 6 }}>
-                  {s.t}
-                </h4>
-                <p style={{ fontSize: 13, color: C.muted, lineHeight: 1.5, margin: 0 }}>{s.d}</p>
-              </div>
-            ))}
+          <div className="relative max-w-4xl mx-auto mt-12">
+            {/* Verticale lijn */}
+            <div
+              aria-hidden
+              className="absolute"
+              style={{
+                left: 31,
+                top: 0,
+                bottom: 0,
+                width: 1,
+                backgroundColor: C.accent,
+                opacity: 0.4,
+              }}
+            />
+
+            <ol className="space-y-10">
+              {[
+                {
+                  n: "01",
+                  icon: Phone,
+                  t: "Gratis huisbezoek",
+                  d: "Geen onbekende callcenter-medewerker, geen wachtlijst van weken. Een lokale adviseur uit Groningen of Drenthe komt binnen een week persoonlijk bij je langs. We bespreken jouw situatie, jouw woning en wat je verwacht.",
+                },
+                {
+                  n: "02",
+                  icon: MapPinned,
+                  t: "Postcode- en inkomenscheck",
+                  d: "We checken jouw postcode tegen het versterkingsgebied en je inkomen tegen de 140%-grens. Daarna weet je meteen of je voor 50% of 100% in aanmerking komt. Geen gedoe met regelingen, geen onduidelijkheid.",
+                },
+                {
+                  n: "03",
+                  icon: FileText,
+                  t: "Isolatieplan op maat",
+                  d: "Voor maatregelen boven €10.000 maakt een Nij Begun-isolatieadviseur een gratis plan op maat. Daarin staat welke isolatie jouw woning nodig heeft om aan de standaard te voldoen, in welke volgorde, en wat het ongeveer kost.",
+                },
+                {
+                  n: "04",
+                  icon: Send,
+                  t: "Wij dienen de aanvraag in",
+                  d: "Geen formulieren in pdf, geen DigiD-gedoe, geen termijnen die je zelf moet bewaken. Wij dienen de aanvraag in bij SNN en houden de 13 wekentermijn voor je in de gaten. Je hoort van ons zodra er beweging is.",
+                },
+                {
+                  n: "05",
+                  icon: CheckCircle2,
+                  t: "Goedkeuring",
+                  d: "Aanvraag akkoord! De subsidie is toegekend. Vanaf nu heb je 2 jaar de tijd om de werkzaamheden te laten uitvoeren door een aangesloten Nij Begun-bedrijf. Wij sturen je de toekenningsbrief en bespreken de vervolgstappen.",
+                  image: imgAanvraag,
+                },
+                {
+                  n: "06",
+                  icon: Hammer,
+                  t: "Uitvoering met begeleiding",
+                  d: "Wij brengen je in contact met aangesloten uitvoerders die echt bij jouw woning passen. Geen verkooppraatje, geen vooringenomen keuze. Tijdens de uitvoering blijven we beschikbaar voor vragen en bewaken we de kwaliteit en planning.",
+                },
+                {
+                  n: "07",
+                  icon: LifeBuoy,
+                  t: "Natraject en nazorg",
+                  d: "Na de oplevering loopt het bij ons niet op nul. We blijven beschikbaar voor vragen over onderhoud, garantie of vervolgmaatregelen (zoals een warmtepomp via ISDE). Wij blijven jouw aanspreekpunt, ook als de uitvoerder zijn werk al heeft afgeleverd.",
+                },
+              ].map((s) => (
+                <li key={s.n} className="relative grid grid-cols-[64px_1fr] gap-5 items-start">
+                  <div className="flex flex-col items-center">
+                    <span
+                      className="font-display"
+                      style={{ fontSize: 40, fontWeight: 800, color: C.accent, lineHeight: 1, letterSpacing: "-0.02em" }}
+                    >
+                      {s.n}
+                    </span>
+                    <span
+                      className="inline-flex items-center justify-center mt-3"
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 9999,
+                        backgroundColor: C.accent,
+                        color: C.primary,
+                      }}
+                    >
+                      <s.icon size={18} aria-hidden />
+                    </span>
+                  </div>
+                  <div className="pt-1">
+                    <h3
+                      className="font-display"
+                      style={{ fontSize: 22, fontWeight: 700, color: C.primary, letterSpacing: "-0.01em", marginBottom: 8 }}
+                    >
+                      {s.t}
+                    </h3>
+                    <p style={{ fontSize: 16, color: C.text, lineHeight: 1.6, margin: 0 }}>{s.d}</p>
+                    {s.image && (
+                      <div className="mt-5" style={{ maxWidth: 360 }}>
+                        <Illustration src={s.image} alt="Aanvraag akkoord op laptop" />
+                      </div>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
 
-          <p className="text-center mt-8 max-w-3xl mx-auto" style={{ fontSize: 13, color: C.muted }}>
-            Werk uitgevoerd door een niet-aangesloten bedrijf komt niet in aanmerking voor subsidie. Wij werken alleen met aangesloten partners.
-          </p>
+          {/* Mini-CTA */}
+          <div
+            className="max-w-4xl mx-auto mt-14 text-center"
+            style={{
+              backgroundColor: C.bg,
+              borderRadius: "1rem",
+              padding: "40px 24px",
+            }}
+          >
+            <h3
+              className="font-display"
+              style={{ fontSize: "clamp(22px, 3vw, 28px)", fontWeight: 700, color: C.primary, letterSpacing: "-0.01em" }}
+            >
+              Wil je sneller door zonder gedoe?
+            </h3>
+            <p style={{ fontSize: 15, color: C.muted, marginTop: 10, maxWidth: 520, marginLeft: "auto", marginRight: "auto", lineHeight: 1.6 }}>
+              Plan een gratis huisbezoek. Een lokale adviseur uit jouw regio belt of komt langs binnen een week.
+            </p>
+            <a href="/contact" style={{ ...goldBtn, marginTop: 20 }}>
+              Plan een huisbezoek
+            </a>
+          </div>
         </div>
       </section>
 
@@ -619,31 +707,83 @@ const SubsidiesNijBegun = () => {
         </div>
       </section>
 
-      {/* 8. FOOTER-CTA */}
+      {/* 8. WAAROM VOORTRAJECT */}
+      <section style={{ backgroundColor: C.cardSoft }} className="py-16 md:py-20">
+        <div className="container-content">
+          <div className="max-w-3xl mx-auto text-center">
+            <H2>
+              Waarom bewoners voor Voortraject <Gold>kiezen</Gold>
+            </H2>
+            <p style={{ fontSize: 17, lineHeight: 1.6, color: C.muted, marginTop: 14 }}>
+              Wat ons anders maakt dan een gemeenteloket of een ingehuurde callcenter-helpdesk.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 max-w-5xl mx-auto">
+            {[
+              {
+                icon: Home,
+                t: "Persoonlijk huisbezoek",
+                d: "Geen wachtrij, geen formulier-eerst. Een lokale adviseur uit jouw regio belt of komt langs binnen een week.",
+              },
+              {
+                icon: FileCheck,
+                t: "Wij regelen de papierwinkel",
+                d: "Geen DigiD-gedoe, geen termijnen die je zelf moet bewaken. Wij dienen in, bewaken de procedure en houden je op de hoogte.",
+              },
+              {
+                icon: Scale,
+                t: "Onafhankelijk advies",
+                d: "Wij hebben geen voorkeur voor bepaalde uitvoerders. We brengen je in contact met aangesloten Nij Begun-bedrijven die bij jouw woning passen.",
+              },
+              {
+                icon: LifeBuoy,
+                t: "Nazorg en natraject",
+                d: "Na de oplevering blijven we beschikbaar. Voor garantie, onderhoud of een vervolgvraag over warmtepomp of zonnepanelen.",
+              },
+            ].map((s) => (
+              <div key={s.t} style={{ ...cardSoftBase, padding: 28 }}>
+                <span
+                  className="inline-flex items-center justify-center"
+                  style={{ width: 40, height: 40, borderRadius: 9999, backgroundColor: C.accent, color: C.primary }}
+                >
+                  <s.icon size={18} aria-hidden />
+                </span>
+                <h3
+                  className="font-display"
+                  style={{ fontSize: 18, fontWeight: 700, color: C.primary, marginTop: 14, marginBottom: 8 }}
+                >
+                  {s.t}
+                </h3>
+                <p style={{ fontSize: 15, color: C.text, lineHeight: 1.6, margin: 0 }}>{s.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 9. FOOTER-CTA */}
       <section style={{ backgroundColor: C.primary }} className="py-20">
         <div className="container-content">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center max-w-6xl mx-auto">
-            <Illustration src={imgAanvraag} alt="Laptop met de melding: aanvraag akkoord" />
-            <div className="text-white">
-              <h2
-                className="font-display"
-                style={{
-                  fontWeight: 700,
-                  fontSize: "clamp(28px, 4vw, 40px)",
-                  letterSpacing: "-0.02em",
-                  lineHeight: 1.15,
-                  color: "#fff",
-                }}
-              >
-                Klaar om jouw subsidie aan te <Gold>vragen</Gold>?
-              </h2>
-              <p style={{ fontSize: 17, lineHeight: 1.6, marginTop: 16, color: "rgba(255,255,255,0.8)" }}>
-                Plan een vrijblijvend intakegesprek. Wij komen langs en checken jouw situatie.
-              </p>
-              <a href="/contact" style={{ ...goldBtn, marginTop: 24 }}>
-                Plan een intakegesprek
-              </a>
-            </div>
+          <div className="text-center mx-auto" style={{ maxWidth: 600 }}>
+            <h2
+              className="font-display"
+              style={{
+                fontWeight: 700,
+                fontSize: "clamp(28px, 4vw, 40px)",
+                letterSpacing: "-0.02em",
+                lineHeight: 1.15,
+                color: "#fff",
+              }}
+            >
+              Ontdek welke stap voor jou <Gold>logisch</Gold> is.
+            </h2>
+            <p style={{ fontSize: 17, lineHeight: 1.6, marginTop: 16, color: "rgba(255,255,255,0.8)" }}>
+              Plan een gratis huisbezoek. Een lokale adviseur uit Groningen of Drenthe komt persoonlijk langs binnen een week. Geen verplichtingen, geen verkooppraatje.
+            </p>
+            <a href="/contact" style={{ ...goldBtn, marginTop: 24 }}>
+              Plan een huisbezoek
+            </a>
           </div>
           <p className="text-center mt-12" style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
             Laatst bijgewerkt: {LAATST_BIJGEWERKT}
