@@ -390,17 +390,39 @@ const SubsidiesLandelijk = () => {
         </section>
 
         {/* SECTIE 2: WAT IS ISDE */}
-        <section className="container-content py-16 md:py-20">
-          <div className="max-w-3xl">
-            <H2>
-              Wat is <Gold>ISDE</Gold> precies?
-            </H2>
-            <p style={{ marginTop: 20, fontSize: 17, lineHeight: 1.7 }}>
-              ISDE staat voor Investeringssubsidie Duurzame Energie en Klimaattransitie. Het is de landelijke subsidie van de Rijksoverheid voor woningeigenaren die hun huis verduurzamen. De regeling wordt uitgevoerd door RVO en loopt door tot 2031.
-            </p>
-            <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.7 }}>
-              Anders dan Nij Begun werkt ISDE met vaste bedragen per maatregel. Voor isolatie krijg je een bedrag per vierkante meter. Voor een warmtepomp of zonneboiler een vast bedrag per apparaat. En als je twee of meer maatregelen combineert, verdubbelt de subsidie per vierkante meter voor isolatie.
-            </p>
+        <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-20">
+          <div className="container-content">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-center">
+              <div>
+                <H2>
+                  Wat is <Gold>ISDE</Gold> precies?
+                </H2>
+                <p style={{ marginTop: 20, fontSize: 17, lineHeight: 1.7 }}>
+                  ISDE staat voor Investeringssubsidie Duurzame Energie en Klimaattransitie. Het is de landelijke subsidie van de Rijksoverheid voor woningeigenaren die hun huis verduurzamen. De regeling wordt uitgevoerd door RVO en loopt door tot 2031.
+                </p>
+                <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.7 }}>
+                  Anders dan Nij Begun werkt ISDE met vaste bedragen per maatregel. Voor isolatie krijg je een bedrag per vierkante meter. Voor een warmtepomp of zonneboiler een vast bedrag per apparaat. En als je twee of meer maatregelen combineert, verdubbelt de subsidie per vierkante meter voor isolatie.
+                </p>
+              </div>
+              <div
+                style={{
+                  border: `1px solid rgba(229, 201, 103, 0.4)`,
+                  borderRadius: 16,
+                  padding: 16,
+                  backgroundColor: "#FFFFFF",
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+                }}
+              >
+                <div style={{ aspectRatio: "5 / 3", width: "100%" }}>
+                  <img
+                    src="/images/landelijk/isde-subsidie.jpg"
+                    alt="Schematische illustratie van een woning met groen blad en energielabels A tot G, symbool voor verduurzaming via de ISDE-subsidie"
+                    loading="lazy"
+                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
