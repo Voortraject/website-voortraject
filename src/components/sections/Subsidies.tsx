@@ -1,148 +1,237 @@
+import { useEffect, useRef, useState } from "react";
+
 const cards = [
   {
     tag: "GRONINGEN & NOORD-DRENTHE",
     naam: "Nij Begun",
-    feit: "Tot 100% vergoed voor isolatie",
-    duiding:
-      "Niet alleen voor het versterkingsgebied. Ook met een lager inkomen kun je 100% krijgen, in tien Groningse en drie Drentse gemeenten.",
+    uitleg:
+      "Tot 100% vergoed voor isolatie. Niet alleen voor het versterkingsgebied, ook met een lager inkomen.",
+    actie:
+      "Wij checken of jij in aanmerking komt en dienen de aanvraag bij SNN in.",
     linkTekst: "Lees meer over Nij Begun",
     href: "/subsidies/nij-begun",
   },
   {
     tag: "HEEL NEDERLAND",
-    naam: "ISDE",
-    feit: "Combineren verdubbelt je subsidie",
-    duiding:
-      "Eén maatregel levert ongeveer 15% van de kosten op. Twee maatregelen tegelijk verdubbelen het bedrag per vierkante meter.",
-    linkTekst: "Lees meer over ISDE",
+    naam: "Landelijke subsidies",
+    uitleg:
+      "Vaste bedragen voor warmtepomp, isolatie en zonneboiler. Combineren verdubbelt het bedrag per vierkante meter.",
+    actie: "Wij rekenen voor jouw woning uit hoe je optimaal combineert.",
+    linkTekst: "Lees meer over Landelijke subsidies",
     href: "/subsidies/landelijk",
   },
   {
     tag: "PER GEMEENTE",
     naam: "Regionale subsidies",
-    feit: "Stapelbaar met ISDE en Nij Begun",
-    duiding:
-      "Veel gemeenten bieden eigen regelingen bovenop de landelijke. Maar de bedragen wisselen, dus we houden bij wat er nu actueel is.",
+    uitleg:
+      "Eigen gemeentelijke regelingen, stapelbaar bovenop ISDE en Nij Begun. Bedragen wisselen.",
+    actie: "Wij houden bij wat er nu actueel is in jouw gemeente.",
     linkTekst: "Lees meer over regionale subsidies",
     href: "/subsidies/regionaal",
   },
 ];
 
-export const Subsidies = () => (
-  <section className="section-pad" style={{ backgroundColor: "#F5F2EC" }}>
-    <div className="container-content">
-      <div className="max-w-3xl mx-auto text-center">
-        <h2 className="h2-section">
-          Drie potten, vaak{" "}
-          <span style={{ color: "hsl(var(--accent))" }}>stapelbaar</span>
-        </h2>
-        <p
-          className="mx-auto mt-6 mb-12 md:mb-16 max-w-2xl"
-          style={{
-            fontSize: 18,
-            color: "hsl(var(--primary) / 0.8)",
-            lineHeight: 1.6,
-          }}
-        >
-          Veel bewoners weten niet welke subsidies bij hun woning passen, of dat
-          ze gestapeld kunnen worden. Daardoor laat een groot deel honderden tot
-          duizenden euro's liggen.
-        </p>
-      </div>
+export const Subsidies = () => {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {cards.map((c) => (
-          <article
-            key={c.naam}
-            className="rounded-2xl p-6 md:p-8 transition-shadow duration-200 hover:shadow-md"
+  useEffect(() => {
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersReduced) {
+      setVisible(true);
+      return;
+    }
+    const el = gridRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            setVisible(true);
+            obs.disconnect();
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <section className="section-pad" style={{ backgroundColor: "#F5F2EC" }}>
+      <div className="container-content">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="h2-section">
+            Allerlei subsidies,{" "}
+            <span style={{ color: "hsl(var(--accent))" }}>één partij</span>
+          </h2>
+          <p
+            className="mx-auto mt-6 mb-12 md:mb-16 max-w-2xl"
             style={{
-              backgroundColor: "#FFFFFF",
-              border: "1px solid rgba(229, 201, 103, 0.4)",
-              boxShadow: "0 1px 3px rgba(21,44,78,0.04)",
+              fontSize: 18,
+              color: "hsl(var(--primary) / 0.8)",
+              lineHeight: 1.6,
             }}
           >
-            <span
-              className="font-sans uppercase"
-              style={{
-                fontSize: 12,
-                letterSpacing: "0.05em",
-                color: "hsl(var(--accent))",
-                fontWeight: 600,
-              }}
-            >
-              {c.tag}
-            </span>
-            <h3
-              className="font-display mt-3"
-              style={{
-                fontSize: 22,
-                fontWeight: 700,
-                color: "hsl(var(--primary))",
-                letterSpacing: "-0.02em",
-                lineHeight: 1.25,
-              }}
-            >
-              {c.naam}
-            </h3>
-            <p
-              className="mt-3"
-              style={{
-                fontSize: 19,
-                fontWeight: 700,
-                color: "hsl(var(--accent))",
-                lineHeight: 1.35,
-              }}
-            >
-              {c.feit}
-            </p>
-            <p
-              className="mt-3"
-              style={{
-                fontSize: 15,
-                color: "hsl(var(--primary) / 0.8)",
-                lineHeight: 1.6,
-              }}
-            >
-              {c.duiding}
-            </p>
+            Subsidies stapelen, termijnen bewaken, voorwaarden begrijpen. Wij
+            kennen het hele subsidielandschap voor verduurzaming, en zorgen dat
+            er niets blijft liggen. Voor jou als bewoner, of voor jouw bewoners
+            als uitvoerder.
+          </p>
+        </div>
+
+        <div
+          ref={gridRef}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 subsidies-grid"
+        >
+          {cards.map((c, i) => (
             <a
+              key={c.naam}
               href={c.href}
-              className="inline-flex items-center mt-4 font-sans font-semibold hover:underline"
-              style={{ fontSize: 15, color: "hsl(var(--accent))" }}
+              className="subsidy-card group rounded-2xl p-6 md:p-8 flex flex-col"
+              style={{
+                backgroundColor: "#FFFFFF",
+                border: "1px solid rgba(229, 201, 103, 0.4)",
+                boxShadow: "0 1px 3px rgba(21,44,78,0.04)",
+                opacity: visible ? 1 : 0,
+                transform: visible ? "translateY(0)" : "translateY(20px)",
+                transition:
+                  "opacity 500ms ease-out, transform 500ms ease-out, box-shadow 250ms ease-out",
+                transitionDelay: visible ? `${i * 120}ms` : "0ms",
+              }}
             >
-              {c.linkTekst}
-              <span style={{ marginLeft: 6 }} aria-hidden="true">
-                →
+              <span
+                className="font-sans uppercase"
+                style={{
+                  fontSize: 12,
+                  letterSpacing: "0.05em",
+                  color: "hsl(var(--accent))",
+                  fontWeight: 600,
+                }}
+              >
+                {c.tag}
+              </span>
+              <h3
+                className="font-display mt-3"
+                style={{
+                  fontSize: 22,
+                  fontWeight: 700,
+                  color: "hsl(var(--primary))",
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1.25,
+                }}
+              >
+                {c.naam}
+              </h3>
+              <p
+                className="mt-3"
+                style={{
+                  fontSize: 16,
+                  color: "hsl(var(--primary))",
+                  lineHeight: 1.55,
+                }}
+              >
+                {c.uitleg}
+              </p>
+
+              <div
+                className="my-4"
+                style={{
+                  width: 48,
+                  height: 1,
+                  backgroundColor: "hsl(var(--accent) / 0.3)",
+                }}
+                aria-hidden="true"
+              />
+
+              <p
+                style={{
+                  fontSize: 16,
+                  fontWeight: 600,
+                  color: "hsl(var(--primary))",
+                  lineHeight: 1.5,
+                }}
+              >
+                {c.actie}
+              </p>
+
+              <span
+                className="inline-flex items-center mt-auto pt-4 font-sans font-semibold subsidy-link"
+                style={{ fontSize: 15, color: "hsl(var(--accent))" }}
+              >
+                <span className="subsidy-link-text">{c.linkTekst}</span>
+                <span
+                  className="subsidy-arrow"
+                  style={{ marginLeft: 6, display: "inline-block" }}
+                  aria-hidden="true"
+                >
+                  →
+                </span>
               </span>
             </a>
-          </article>
-        ))}
+          ))}
+        </div>
+
+        <div className="mt-12 text-center flex flex-col items-center">
+          <p
+            className="mx-auto max-w-2xl"
+            style={{
+              fontSize: 16,
+              color: "hsl(var(--primary) / 0.8)",
+              lineHeight: 1.6,
+            }}
+          >
+            Wil je weten welke combinatie voor jouw woning werkt? Dat rekenen we
+            tijdens een gratis gesprek voor je uit.
+          </p>
+          <a
+            href="/contact"
+            className="mt-6 inline-flex items-center justify-center rounded-full px-7 py-3.5 font-sans font-semibold transition-all duration-150 hover:scale-[1.02]"
+            style={{
+              backgroundColor: "hsl(var(--accent))",
+              color: "hsl(var(--primary))",
+              fontSize: 15,
+            }}
+          >
+            Plan een gesprek
+          </a>
+        </div>
       </div>
 
-      <div className="mt-12 text-center flex flex-col items-center">
-        <p
-          className="mx-auto max-w-2xl"
-          style={{
-            fontSize: 16,
-            color: "hsl(var(--primary) / 0.8)",
-            lineHeight: 1.6,
-          }}
-        >
-          Wil je weten welke combinatie voor jouw woning werkt? Dat rekenen we
-          tijdens een gratis gesprek voor je uit.
-        </p>
-        <a
-          href="/contact"
-          className="mt-6 inline-flex items-center justify-center rounded-full px-7 py-3.5 font-sans font-semibold transition-all duration-150 hover:scale-[1.02]"
-          style={{
-            backgroundColor: "hsl(var(--accent))",
-            color: "hsl(var(--primary))",
-            fontSize: 15,
-          }}
-        >
-          Plan een gesprek
-        </a>
-      </div>
-    </div>
-  </section>
-);
+      <style>{`
+        @media (hover: hover) and (pointer: fine) {
+          .subsidy-card:hover {
+            transform: translateY(-4px) !important;
+            box-shadow: 0 10px 25px -5px rgba(21,44,78,0.12), 0 4px 10px -4px rgba(21,44,78,0.08) !important;
+          }
+          .subsidy-card .subsidy-arrow {
+            transition: transform 200ms ease-out;
+          }
+          .subsidy-card .subsidy-link-text {
+            background-image: linear-gradient(currentColor, currentColor);
+            background-size: 0% 1px;
+            background-repeat: no-repeat;
+            background-position: 0 100%;
+            transition: background-size 200ms ease-out;
+          }
+          .subsidy-card:hover .subsidy-arrow {
+            transform: translateX(4px);
+          }
+          .subsidy-card:hover .subsidy-link-text {
+            background-size: 100% 1px;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .subsidy-card,
+          .subsidy-card .subsidy-arrow,
+          .subsidy-card .subsidy-link-text {
+            transition: none !important;
+          }
+        }
+      `}</style>
+    </section>
+  );
+};
