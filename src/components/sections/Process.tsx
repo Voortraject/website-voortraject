@@ -102,11 +102,12 @@ export const Process = () => {
     <section ref={sectionRef} id="flowchart-section" className="section-pad" style={{ backgroundColor: "#FFFFFF" }}>
       <div className="container-content">
         {/* Header */}
-        <div className="max-w-[720px] mb-16">
+        <div className="max-w-5xl mx-auto mb-16 text-center px-4 md:px-6 lg:px-8">
           <h2 className="h2-section lg:!text-[44px] mx-0 my-0 px-0">
-            Van eerste contact tot afgerond traject
+            Van eerste contact tot{" "}
+            <span style={{ color: "hsl(var(--accent))" }}>afgerond traject</span>
           </h2>
-          <p className="mt-6 body-lg text-muted-foreground">
+          <p className="mt-6 body-lg text-muted-foreground mx-auto max-w-2xl">
             Wij pakken het volledige traject op, zodat jullie focus blijft op het bouwen.
           </p>
         </div>

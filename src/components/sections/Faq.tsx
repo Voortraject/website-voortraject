@@ -35,7 +35,7 @@ export const Faq = () => {
     <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
       <div className="max-w-4xl mx-auto px-6">
         <h2 className="h2-section text-center" style={{ color: "#152C4E", fontWeight: 600 }}>
-          Veelgestelde vragen
+          Veelgestelde <span style={{ color: "hsl(var(--accent))" }}>vragen</span>
         </h2>
         <p
           className="text-center mx-auto"
