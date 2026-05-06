@@ -87,7 +87,7 @@ export const Hero = () => {
                 <span className="mx-2 md:mx-3" aria-hidden="true">•</span>
                 <span>Lokaal adviesteam</span>
                 <span className="mx-2 md:mx-3" aria-hidden="true">•</span>
-                <span>Onafhankelijk en vrijblijvend</span>
+                <span>Ervaren in subsidies</span>
               </div>
             </div>
           </div>

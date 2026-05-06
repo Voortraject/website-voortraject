@@ -13,7 +13,7 @@ export const ClosingCta = () => (
           marginBottom: 20,
         }}
       >
-        Klaar om jouw project een vliegende start te geven?
+        Wil je sneller verder zonder gedoe en wachttijd?
       </h2>
       <p
         style={{
