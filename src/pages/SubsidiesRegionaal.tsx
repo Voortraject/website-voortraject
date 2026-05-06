@@ -32,7 +32,7 @@ const C = {
   accentSoft: "#E5C967",
   bg: "#F8F4ED",
   card: "#FFFFFF",
-  cardSoft: "#F4ECDC",
+  cardSoft: "var(--card-soft)",
   text: "#1F2937",
   muted: "#6B7280",
 };
