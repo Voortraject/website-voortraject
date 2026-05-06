@@ -563,14 +563,53 @@ const SubsidiesNijBegun = () => {
                   Vergoede maatregelen
                 </h3>
                 <ul>
-                  <CheckLi>Spouwmuurisolatie</CheckLi>
-                  <CheckLi>Dak en vloerisolatie</CheckLi>
-                  <CheckLi>Gevelisolatie (binnen of buiten)</CheckLi>
-                  <CheckLi>HR++ glas of vacuümglas</CheckLi>
-                  <CheckLi>Triple glas met nieuwe kozijnen (30% subsidie)</CheckLi>
-                  <CheckLi>Mechanische ventilatie of balansventilatie</CheckLi>
-                  <CheckLi>Diervriendelijk isoleren</CheckLi>
+                  <MeasureLi
+                    label="Spouwmuurisolatie"
+                    info="Voor woningen met spouwmuren (bouwjaar na 1920) is dit vaak de eerste en meest gebruikelijke stap. Goed rendement voor relatief lage kosten."
+                  />
+                  <MeasureLi
+                    label="Dak- en vloerisolatie"
+                    info="Dakisolatie levert vaak het hoogste rendement op, omdat warmte vooral via het dak ontsnapt. Vloerisolatie is een logische volgende stap."
+                  />
+                  <MeasureLi
+                    label="Gevelisolatie (binnen of buiten)"
+                    info="Voor woningen zonder spouwmuren. Buitenisolatie is duurder maar effectiever, binnenisolatie verkleint de leefruimte iets."
+                  />
+                  <MeasureLi
+                    label="HR++ glas of vacuümglas"
+                    info="Vervangt enkel of dubbel glas. Vacuümglas is dunner en past vaak in bestaande kozijnen."
+                  />
+                  <MeasureLi
+                    label="Triple glas met nieuwe kozijnen (30% subsidie)"
+                    info="De hoogste isolatiewaarde voor ramen. Hier geldt een aparte 30%-regeling, los van het €20.000 of €40.000-plafond."
+                  />
+                  <MeasureLi
+                    label="Mechanische ventilatie of balansventilatie"
+                    info="Na goede isolatie verplicht. Voorkomt vocht en schimmel, houdt de lucht gezond."
+                  />
+                  <MeasureLi
+                    label="Diervriendelijk isoleren"
+                    info="Wettelijk verplicht als er vleermuizen, mussen of gierzwaluwen in of aan je woning leven."
+                  />
                 </ul>
+              </div>
+
+              {/* Standaard voor woningisolatie callout */}
+              <div
+                style={{
+                  backgroundColor: C.cardSoft,
+                  borderLeft: `4px solid ${C.accent}`,
+                  borderRadius: "0.75rem",
+                  padding: "20px 22px",
+                  display: "flex",
+                  gap: 14,
+                  alignItems: "flex-start",
+                }}
+              >
+                <Lightbulb size={22} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
+                <p style={{ fontSize: 15, color: C.text, lineHeight: 1.6, margin: 0 }}>
+                  Niet alle maatregelen passen bij elke woning. Het doel van Nij Begun is jouw woning naar de Standaard voor woningisolatie te brengen. Een adviseur kijkt naar wat jouw huis écht nodig heeft. Soms wijkt dat advies af van wat je had verwacht. Vloerisolatie of nieuwe deuren zijn niet altijd de eerste stap. De adviseur is daarin eerlijk, want het doel is een warm en zuinig huis, niet zoveel mogelijk maatregelen.
+                </p>
               </div>
 
               <div>
