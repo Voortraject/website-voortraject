@@ -707,31 +707,83 @@ const SubsidiesNijBegun = () => {
         </div>
       </section>
 
-      {/* 8. FOOTER-CTA */}
+      {/* 8. WAAROM VOORTRAJECT */}
+      <section style={{ backgroundColor: C.cardSoft }} className="py-16 md:py-20">
+        <div className="container-content">
+          <div className="max-w-3xl mx-auto text-center">
+            <H2>
+              Waarom bewoners voor Voortraject <Gold>kiezen</Gold>
+            </H2>
+            <p style={{ fontSize: 17, lineHeight: 1.6, color: C.muted, marginTop: 14 }}>
+              Wat ons anders maakt dan een gemeenteloket of een ingehuurde callcenter-helpdesk.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 max-w-5xl mx-auto">
+            {[
+              {
+                icon: Home,
+                t: "Persoonlijk huisbezoek",
+                d: "Geen wachtrij, geen formulier-eerst. Een lokale adviseur uit jouw regio belt of komt langs binnen een week.",
+              },
+              {
+                icon: FileCheck,
+                t: "Wij regelen de papierwinkel",
+                d: "Geen DigiD-gedoe, geen termijnen die je zelf moet bewaken. Wij dienen in, bewaken de procedure en houden je op de hoogte.",
+              },
+              {
+                icon: Scale,
+                t: "Onafhankelijk advies",
+                d: "Wij hebben geen voorkeur voor bepaalde uitvoerders. We brengen je in contact met aangesloten Nij Begun-bedrijven die bij jouw woning passen.",
+              },
+              {
+                icon: LifeBuoy,
+                t: "Nazorg en natraject",
+                d: "Na de oplevering blijven we beschikbaar. Voor garantie, onderhoud of een vervolgvraag over warmtepomp of zonnepanelen.",
+              },
+            ].map((s) => (
+              <div key={s.t} style={{ ...cardSoftBase, padding: 28 }}>
+                <span
+                  className="inline-flex items-center justify-center"
+                  style={{ width: 40, height: 40, borderRadius: 9999, backgroundColor: C.accent, color: C.primary }}
+                >
+                  <s.icon size={18} aria-hidden />
+                </span>
+                <h3
+                  className="font-display"
+                  style={{ fontSize: 18, fontWeight: 700, color: C.primary, marginTop: 14, marginBottom: 8 }}
+                >
+                  {s.t}
+                </h3>
+                <p style={{ fontSize: 15, color: C.text, lineHeight: 1.6, margin: 0 }}>{s.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 9. FOOTER-CTA */}
       <section style={{ backgroundColor: C.primary }} className="py-20">
         <div className="container-content">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center max-w-6xl mx-auto">
-            <Illustration src={imgAanvraag} alt="Laptop met de melding: aanvraag akkoord" />
-            <div className="text-white">
-              <h2
-                className="font-display"
-                style={{
-                  fontWeight: 700,
-                  fontSize: "clamp(28px, 4vw, 40px)",
-                  letterSpacing: "-0.02em",
-                  lineHeight: 1.15,
-                  color: "#fff",
-                }}
-              >
-                Klaar om jouw subsidie aan te <Gold>vragen</Gold>?
-              </h2>
-              <p style={{ fontSize: 17, lineHeight: 1.6, marginTop: 16, color: "rgba(255,255,255,0.8)" }}>
-                Plan een vrijblijvend intakegesprek. Wij komen langs en checken jouw situatie.
-              </p>
-              <a href="/contact" style={{ ...goldBtn, marginTop: 24 }}>
-                Plan een intakegesprek
-              </a>
-            </div>
+          <div className="text-center mx-auto" style={{ maxWidth: 600 }}>
+            <h2
+              className="font-display"
+              style={{
+                fontWeight: 700,
+                fontSize: "clamp(28px, 4vw, 40px)",
+                letterSpacing: "-0.02em",
+                lineHeight: 1.15,
+                color: "#fff",
+              }}
+            >
+              Ontdek welke stap voor jou <Gold>logisch</Gold> is.
+            </h2>
+            <p style={{ fontSize: 17, lineHeight: 1.6, marginTop: 16, color: "rgba(255,255,255,0.8)" }}>
+              Plan een gratis huisbezoek. Een lokale adviseur uit Groningen of Drenthe komt persoonlijk langs binnen een week. Geen verplichtingen, geen verkooppraatje.
+            </p>
+            <a href="/contact" style={{ ...goldBtn, marginTop: 24 }}>
+              Plan een huisbezoek
+            </a>
           </div>
           <p className="text-center mt-12" style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
             Laatst bijgewerkt: {LAATST_BIJGEWERKT}
