@@ -410,9 +410,9 @@ const SubsidiesRegionaal = () => {
             >
               <ul style={{ display: "flex", flexDirection: "column", gap: 18 }}>
                 {[
-                  { Icon: MapPin, text: <><strong style={{ color: C.primary }}>13 gemeenten</strong> in ons werkgebied</> },
                   { Icon: Layers, text: <><strong style={{ color: C.primary }}>Stapelbaar</strong> met ISDE en Nij Begun</> },
                   { Icon: RefreshCw, text: <><strong style={{ color: C.primary }}>Actuele regelingen</strong> worden door ons bijgehouden</> },
+                  { Icon: Users, text: <><strong style={{ color: C.primary }}>Eén aanspreekpunt</strong> voor alle aanvragen</> },
                 ].map((it, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <IconCircle Icon={it.Icon} />
