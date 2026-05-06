@@ -647,7 +647,7 @@ const SubsidiesRegionaal = () => {
                 <div
                   key={i}
                   style={{
-                    ...cardOnCream,
+                    ...cardOnWhite,
                     overflow: "hidden",
                   }}
                 >
