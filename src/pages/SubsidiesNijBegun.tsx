@@ -55,7 +55,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Krijg ik 50% of 100% subsidie?",
-    a: "Dat hangt af van of je in het versterkingsgebied woont én van je inkomen. Tijdens het huisbezoek checken we beide. De €1.000 advies- en afwerkbijdrage is er trouwens alleen voor de 100%-categorie.",
+    a: "Je krijgt 100% subsidie als je in het versterkingsgebied woont, óf als je inkomen onder 140% sociaal minimum valt. Eén van die twee is genoeg. Voldoe je aan geen van beide, dan krijg je 50%. Tijdens het huisbezoek checken we precies waar je staat. De €1.000 advies- en afwerkbijdrage hoort overigens alleen bij de 100%-categorie.",
   },
   {
     q: "Heb ik een isolatieplan nodig?",
@@ -543,7 +543,7 @@ const SubsidiesNijBegun = () => {
                 style={{ fontSize: 14, color: C.muted }}
               >
                 <Info size={16} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
-                <span>Niet zeker in welke categorie je valt? Wij checken dat tijdens het huisbezoek. Dat scheelt vaak duizenden euro's.</span>
+                <span>Ook buiten het versterkingsgebied kun je 100% subsidie krijgen als je inkomen onder de grens valt. Niet zeker in welke categorie je valt? Wij checken het tijdens het huisbezoek. Dat scheelt vaak duizenden euro's.</span>
               </div>
             </div>
 
@@ -558,9 +558,8 @@ const SubsidiesNijBegun = () => {
                   Voor wie?
                 </h4>
                 <ul>
-                  <CheckLi>Alle woningeigenaren in het Nij Begun-gebied</CheckLi>
-                  <CheckLi>Buiten het versterkingsgebied</CheckLi>
-                  <CheckLi>Inkomen boven 140% sociaal minimum</CheckLi>
+                  <CheckLi>Woningeigenaar in het Nij Begun-gebied</CheckLi>
+                  <CheckLi>Niet in het versterkingsgebied én inkomen boven 140% sociaal minimum</CheckLi>
                 </ul>
               </div>
 
@@ -573,10 +572,13 @@ const SubsidiesNijBegun = () => {
                 <h4 style={{ fontSize: 14, fontWeight: 700, color: C.primary, marginTop: 14, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>
                   Voor wie?
                 </h4>
+                <p style={{ fontSize: 14, color: C.muted, marginBottom: 8 }}>
+                  Eén van deze voorwaarden volstaat:
+                </p>
                 <ul>
-                  <CheckLi>Bewoners in het versterkingsgebied</CheckLi>
-                  <CheckLi>Bewoners in NCG-versterkingsprogramma</CheckLi>
-                  <CheckLi>Inkomen onder 140% sociaal minimum</CheckLi>
+                  <CheckLi>Je woont in het versterkingsgebied (NCG)</CheckLi>
+                  <CheckLi>Of je inkomen valt onder 140% sociaal minimum (alleenstaand {INKOMEN_ALLEEN}, samen {INKOMEN_SAMEN} in 2025)</CheckLi>
+                  <CheckLi>Of je bent VvE of kleine verhuurder in het versterkingsgebied</CheckLi>
                 </ul>
               </div>
             </div>
