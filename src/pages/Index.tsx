@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/sections/Hero";
 import { ForWhom } from "@/components/sections/ForWhom";
 import { Process } from "@/components/sections/Process";
+import { Subsidies } from "@/components/sections/Subsidies";
 import { Faq } from "@/components/sections/Faq";
 import { ClosingCta } from "@/components/sections/ClosingCta";
 
@@ -14,6 +15,7 @@ const Index = () => {
         <Hero />
         <ForWhom />
         <Process />
+        <Subsidies />
         <Faq />
         <ClosingCta />
       </main>
