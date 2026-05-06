@@ -144,13 +144,43 @@ const OutlineBtn = ({ href, children, onClick }: { href?: string; children: Reac
   );
 };
 
+// Card variant helper — strict color rule
+const cardStyle = (variant: "on-cream" | "on-white"): React.CSSProperties => ({
+  backgroundColor: variant === "on-cream" ? C.card : C.cardSoft,
+  border: `1px solid ${C.accentSoft}66`,
+  borderRadius: 16,
+  padding: 28,
+});
+
+// Icon circle (used as left-prefix in card headers)
+const IconCircle = ({
+  Icon,
+  size = 44,
+}: {
+  Icon: React.ComponentType<{ size?: number }>;
+  size?: number;
+}) => (
+  <span
+    className="inline-flex items-center justify-center rounded-full"
+    style={{
+      backgroundColor: C.accent,
+      width: size,
+      height: size,
+      color: C.primary,
+      flexShrink: 0,
+    }}
+  >
+    <Icon size={Math.round(size * 0.5)} />
+  </span>
+);
+
 // Tooltip-toegankelijke maatregel
 const MeasureLi = ({ label, tip }: { label: string; tip: string }) => {
   const [open, setOpen] = useState(false);
   return (
     <li className="flex items-start gap-3 py-2">
       <Check size={20} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
-      <span style={{ color: C.text, fontSize: 16, lineHeight: 1.6 }}>{label}</span>
+      <span style={{ color: C.text, fontSize: 16, lineHeight: 1.6, flex: 1 }}>{label}</span>
       <span className="relative inline-flex">
         <button
           type="button"
@@ -168,7 +198,7 @@ const MeasureLi = ({ label, tip }: { label: string; tip: string }) => {
         {open && (
           <span
             role="tooltip"
-            className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-20"
+            className="absolute right-0 top-full mt-2 z-20"
             style={{
               backgroundColor: "#fff",
               border: `1px solid ${C.accent}`,
@@ -301,12 +331,20 @@ const SubsidiesLandelijk = () => {
     { icon: LifeBuoy, t: "Nazorg en natraject", d: "Na de uitvoering blijven we beschikbaar. Voor vervolgmaatregelen, garantie, of advies over warmtepomp of warmtenet." },
   ];
 
+  // Half-and-half splitter for 2-column lists
+  const half = <T,>(arr: T[]): [T[], T[]] => {
+    const mid = Math.ceil(arr.length / 2);
+    return [arr.slice(0, mid), arr.slice(mid)];
+  };
+  const [measuresLeft, measuresRight] = half(measures);
+  const [nietLeft, nietRight] = half(niet);
+
   return (
     <div style={{ backgroundColor: C.bg }}>
       <Header />
       <main style={{ color: C.text }}>
-        {/* SECTIE 1: HERO */}
-        <section className="container-content pt-16 md:pt-24 pb-16 md:pb-24">
+        {/* SECTIE 1: HERO — cream */}
+        <section className="container-content pt-16 md:pt-24 pb-16 md:pb-20">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-14 items-center">
             <div className="md:col-span-3">
               <h1
@@ -330,43 +368,36 @@ const SubsidiesLandelijk = () => {
               </div>
             </div>
             <div className="md:col-span-2">
+              {/* Logos — vergroot, in balans */}
               <div
                 className="flex items-center justify-center"
-                style={{ padding: "16px 24px", marginBottom: 16 }}
+                style={{ padding: "16px 24px", marginBottom: 16, gap: 24 }}
               >
                 <img
                   src="/images/landelijk/logo-voortraject-blauw.png"
                   alt="Voortraject"
                   className="object-contain"
-                  style={{ maxHeight: 40, height: "auto" }}
+                  style={{ maxHeight: 56, height: "auto", width: "auto" }}
                 />
                 <span
                   aria-hidden
+                  className="hidden sm:inline-block"
                   style={{
-                    display: "inline-block",
                     width: 1,
-                    height: 40,
+                    height: 56,
                     backgroundColor: "#1B2E4A",
                     opacity: 0.25,
-                    margin: "0 20px",
                   }}
                 />
                 <img
                   src="/images/landelijk/rijksoverheid_logo.svg"
                   alt="Rijksoverheid"
                   className="object-contain"
-                  style={{ maxHeight: 40, height: "auto" }}
+                  style={{ maxHeight: 56, height: "auto", width: "auto" }}
                 />
               </div>
-              <div
-                style={{
-                  backgroundColor: C.card,
-                  border: `1px solid ${C.accentSoft}66`,
-                  borderRadius: 16,
-                  padding: 24,
-                  boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
-                }}
-              >
+              {/* Statkaart — wit op cream */}
+              <div style={cardStyle("on-cream")}>
                 <div style={{ backgroundColor: C.cardSoft, borderRadius: 12, padding: 20 }}>
                   {[
                     { icon: Globe, t: "Heel Nederland komt in aanmerking" },
@@ -389,8 +420,8 @@ const SubsidiesLandelijk = () => {
           </div>
         </section>
 
-        {/* SECTIE 2: WAT IS ISDE */}
-        <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-20">
+        {/* SECTIE 2: WAT IS ISDE — wit */}
+        <section style={{ backgroundColor: "#FFFFFF" }} className="py-12 md:py-16">
           <div className="container-content">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-center">
               <div>
@@ -409,7 +440,7 @@ const SubsidiesLandelijk = () => {
                   border: `1px solid rgba(229, 201, 103, 0.4)`,
                   borderRadius: 16,
                   padding: 16,
-                  backgroundColor: "#FFFFFF",
+                  backgroundColor: C.cardSoft,
                   boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
                 }}
               >
@@ -426,15 +457,15 @@ const SubsidiesLandelijk = () => {
           </div>
         </section>
 
-        {/* SECTIE 3: VOOR WIE */}
-        <section className="container-content py-16 md:py-20">
+        {/* SECTIE 3: VOOR WIE — cream */}
+        <section className="container-content py-12 md:py-16">
           <H2>
             Voor wie is ISDE <Gold>bedoeld</Gold>?
           </H2>
           <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.6, maxWidth: 760 }}>
             De ISDE-subsidie is er voor woningeigenaren die hun bestaande woning verduurzamen. Heel Nederland, geen inkomenstoets, geen postcode-check.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
             {[
               {
                 icon: User,
@@ -457,28 +488,18 @@ const SubsidiesLandelijk = () => {
                 ],
               },
             ].map((card) => (
-              <div
-                key={card.t}
-                style={{
-                  backgroundColor: C.cardSoft,
-                  border: `1px solid ${C.accentSoft}66`,
-                  borderRadius: 16,
-                  padding: 28,
-                }}
-              >
-                <span
-                  className="inline-flex items-center justify-center rounded-full"
-                  style={{ backgroundColor: C.accent, width: 40, height: 40, color: C.primary }}
-                >
-                  <card.icon size={20} />
-                </span>
-                <h3
-                  className="font-display"
-                  style={{ marginTop: 16, color: C.primary, fontWeight: 700, fontSize: 22 }}
-                >
-                  {card.t}
-                </h3>
-                <ul className="mt-4 space-y-2">
+              <div key={card.t} style={cardStyle("on-cream")}>
+                {/* Icon-left header */}
+                <div className="flex items-center gap-4">
+                  <IconCircle Icon={card.icon} size={48} />
+                  <h3
+                    className="font-display"
+                    style={{ color: C.primary, fontWeight: 700, fontSize: 22, margin: 0 }}
+                  >
+                    {card.t}
+                  </h3>
+                </div>
+                <ul className="mt-5 space-y-2">
                   {card.items.map((it) => (
                     <li key={it} className="flex items-start gap-3">
                       <Check size={20} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
@@ -494,8 +515,8 @@ const SubsidiesLandelijk = () => {
           </p>
         </section>
 
-        {/* SECTIE 4: HOEVEEL SUBSIDIE */}
-        <section id="bedragen" style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-20">
+        {/* SECTIE 4: HOEVEEL SUBSIDIE — wit */}
+        <section id="bedragen" style={{ backgroundColor: "#FFFFFF" }} className="py-12 md:py-16">
           <div className="container-content">
           <H2>
             Hoeveel <Gold>subsidie</Gold> krijg je?
@@ -504,40 +525,34 @@ const SubsidiesLandelijk = () => {
             De bedragen verschillen per maatregel, maar één regel maakt het écht interessant: combineer je twee of meer maatregelen binnen 24 maanden, dan <strong>verdubbelt</strong> het isolatiebedrag per vierkante meter. Wij rekenen voor jouw woning uit hoe je daar het maximale uit haalt.
           </p>
 
-          {/* 4.1 Categoriekaarten */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+          {/* 4.1 Categoriekaarten — cream-soft op wit, icoon links */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
             {categories.map((c) => (
               <div
                 key={c.t}
                 className="transition-shadow hover:shadow-md"
-                style={{
-                  backgroundColor: C.cardSoft,
-                  border: `1px solid ${C.accentSoft}66`,
-                  borderRadius: 16,
-                  padding: 28,
-                }}
+                style={cardStyle("on-white")}
               >
-                <span
-                  className="inline-flex items-center justify-center rounded-full"
-                  style={{ backgroundColor: C.accent, width: 56, height: 56, color: C.primary }}
-                >
-                  <c.icon size={28} />
-                </span>
-                <h3
-                  className="font-display"
-                  style={{ marginTop: 18, color: C.primary, fontWeight: 700, fontSize: 22 }}
-                >
-                  {c.t}
-                </h3>
-                <p style={{ marginTop: 6, color: C.accent, fontWeight: 700, fontSize: 17 }}>{c.b}</p>
-                <p style={{ marginTop: 10, fontSize: 15, lineHeight: 1.55, color: C.text }}>{c.d}</p>
+                <div className="flex items-start gap-4">
+                  <IconCircle Icon={c.icon} size={48} />
+                  <div className="flex-1 min-w-0">
+                    <h3
+                      className="font-display"
+                      style={{ color: C.primary, fontWeight: 700, fontSize: 22, margin: 0 }}
+                    >
+                      {c.t}
+                    </h3>
+                    <p style={{ marginTop: 4, color: C.accent, fontWeight: 700, fontSize: 16 }}>{c.b}</p>
+                  </div>
+                </div>
+                <p style={{ marginTop: 14, fontSize: 15, lineHeight: 1.55, color: C.text }}>{c.d}</p>
               </div>
             ))}
           </div>
 
           {/* 4.2a Combineer-banner */}
           <div
-            className="mt-10"
+            className="mt-8"
             style={{
               backgroundColor: C.cardSoft,
               borderLeft: `4px solid ${C.accent}`,
@@ -654,51 +669,70 @@ const SubsidiesLandelijk = () => {
           </div>
         </section>
 
-        {/* SECTIE 5: WELKE MAATREGELEN */}
-        <section className="container-content py-16 md:py-20">
-          <div className="max-w-3xl mx-auto">
-            <H2>
-              Welke maatregelen worden <Gold>vergoed</Gold>?
-            </H2>
-            <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.6 }}>
-              ISDE vergoedt isolatie, warmtepomp, zonneboiler, warmtenet en (sinds 2026) ventilatie. Per maatregel gelden eisen aan de installatie, het materiaal en het oppervlak.
-            </p>
-            <ul className="mt-8">
-              {measures.map((m) => (
-                <MeasureLi key={m.l} label={m.l} tip={m.tip} />
-              ))}
-            </ul>
+        {/* SECTIE 5: WELKE MAATREGELEN — cream, twee koloms */}
+        <section className="container-content py-12 md:py-16">
+          <H2>
+            Welke maatregelen worden <Gold>vergoed</Gold>?
+          </H2>
+          <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.6, maxWidth: 820 }}>
+            ISDE vergoedt isolatie, warmtepomp, zonneboiler, warmtenet en (sinds 2026) ventilatie. Per maatregel gelden eisen aan de installatie, het materiaal en het oppervlak.
+          </p>
 
-            {/* Biobased callout */}
-            <div
-              className="mt-8"
-              style={{
-                backgroundColor: C.cardSoft,
-                borderLeft: `4px solid ${C.accent}`,
-                borderRadius: 8,
-                padding: 24,
-              }}
-            >
-              <div className="flex items-start gap-3">
-                <Leaf size={22} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
-                <div>
-                  <h4 className="font-display" style={{ color: C.primary, fontWeight: 700, fontSize: 18 }}>
-                    Bonus voor biobased isolatie
-                  </h4>
-                  <p style={{ marginTop: 8, fontSize: 15.5, lineHeight: 1.6 }}>
-                    Kies je voor isolatiemateriaal uit hernieuwbare bronnen (zoals hennep, vlas, houtvezel of cellulose), dan krijg je een extra bedrag per vierkante meter. Deze bonus wordt niet verdubbeld bij combineren, maar telt wel op bij het standaardbedrag. Wij weten welke materialen kwalificeren en bespreken het tijdens het huisbezoek.
-                  </p>
-                </div>
+          {/* 5.1 Hoofdlijst maatregelen — twee koloms op desktop, in witte card op cream */}
+          <div className="mt-8" style={cardStyle("on-cream")}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10">
+              <ul>
+                {measuresLeft.map((m) => (
+                  <MeasureLi key={m.l} label={m.l} tip={m.tip} />
+                ))}
+              </ul>
+              <ul>
+                {measuresRight.map((m) => (
+                  <MeasureLi key={m.l} label={m.l} tip={m.tip} />
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* 5.2 Biobased callout — volle breedte */}
+          <div
+            className="mt-6"
+            style={{
+              backgroundColor: C.card,
+              borderLeft: `4px solid ${C.accent}`,
+              borderRadius: 8,
+              padding: 24,
+            }}
+          >
+            <div className="flex items-start gap-3">
+              <Leaf size={22} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
+              <div>
+                <h4 className="font-display" style={{ color: C.primary, fontWeight: 700, fontSize: 18 }}>
+                  Bonus voor biobased isolatie
+                </h4>
+                <p style={{ marginTop: 8, fontSize: 15.5, lineHeight: 1.6 }}>
+                  Kies je voor isolatiemateriaal uit hernieuwbare bronnen (zoals hennep, vlas, houtvezel of cellulose), dan krijg je een extra bedrag per vierkante meter. Deze bonus wordt niet verdubbeld bij combineren, maar telt wel op bij het standaardbedrag. Wij weten welke materialen kwalificeren en bespreken het tijdens het huisbezoek.
+                </p>
               </div>
             </div>
+          </div>
 
-            {/* Niet vergoed */}
-            <div className="mt-10">
-              <h3 className="font-display" style={{ color: C.primary, fontWeight: 700, fontSize: 20 }}>
-                Niet vergoed via ISDE
-              </h3>
-              <ul className="mt-4 space-y-2">
-                {niet.map((n) => (
+          {/* 5.3 Niet vergoed — twee koloms */}
+          <div className="mt-10">
+            <h3 className="font-display" style={{ color: C.primary, fontWeight: 700, fontSize: 20 }}>
+              Niet vergoed via ISDE
+            </h3>
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2">
+              <ul className="space-y-2">
+                {nietLeft.map((n) => (
+                  <li key={n} className="flex items-start gap-3">
+                    <XIcon size={18} style={{ color: C.muted, flexShrink: 0, marginTop: 3 }} aria-hidden />
+                    <span style={{ fontSize: 15.5, lineHeight: 1.55 }}>{n}</span>
+                  </li>
+                ))}
+              </ul>
+              <ul className="space-y-2">
+                {nietRight.map((n) => (
                   <li key={n} className="flex items-start gap-3">
                     <XIcon size={18} style={{ color: C.muted, flexShrink: 0, marginTop: 3 }} aria-hidden />
                     <span style={{ fontSize: 15.5, lineHeight: 1.55 }}>{n}</span>
@@ -709,8 +743,8 @@ const SubsidiesLandelijk = () => {
           </div>
         </section>
 
-        {/* SECTIE 6: STAPPENPLAN */}
-        <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-24">
+        {/* SECTIE 6: STAPPENPLAN — wit */}
+        <section style={{ backgroundColor: "#FFFFFF" }} className="py-12 md:py-16">
           <div className="container-content">
             <div className="max-w-3xl">
               <H2>
@@ -721,7 +755,7 @@ const SubsidiesLandelijk = () => {
               </p>
             </div>
 
-            <div className="mt-12 flex flex-col gap-12 md:gap-16">
+            <div className="mt-10 flex flex-col gap-8 md:gap-10">
               {steps.map((s, i) => {
                 const visible = visibleSteps.has(i);
                 return (
@@ -730,10 +764,7 @@ const SubsidiesLandelijk = () => {
                     ref={(el) => (stepRefs.current[i] = el)}
                     data-step-index={i}
                     style={{
-                      backgroundColor: C.cardSoft,
-                      border: `1px solid ${C.accentSoft}66`,
-                      borderRadius: 16,
-                      padding: 28,
+                      ...cardStyle("on-white"),
                       boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
                       opacity: visible ? 1 : 0,
                       transform: visible ? "translateY(0)" : "translateY(20px)",
@@ -773,7 +804,7 @@ const SubsidiesLandelijk = () => {
             </div>
 
             <div
-              className="mt-14 text-center mx-auto"
+              className="mt-12 text-center mx-auto"
               style={{
                 backgroundColor: C.cardSoft,
                 borderRadius: 16,
@@ -794,9 +825,9 @@ const SubsidiesLandelijk = () => {
           </div>
         </section>
 
-        {/* SECTIE 7: FAQ */}
-        <section className="container-content py-16 md:py-24">
-          <div className="max-w-3xl mx-auto">
+        {/* SECTIE 7: FAQ — cream, smal voor leesbaarheid */}
+        <section className="py-12 md:py-16">
+          <div className="mx-auto px-6" style={{ maxWidth: 768 }}>
             <H2>
               Veelgestelde <Gold>vragen</Gold>
             </H2>
@@ -858,8 +889,8 @@ const SubsidiesLandelijk = () => {
           </div>
         </section>
 
-        {/* SECTIE 8: WAAROM VOORTRAJECT */}
-        <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-24">
+        {/* SECTIE 8: WAAROM VOORTRAJECT — wit */}
+        <section style={{ backgroundColor: "#FFFFFF" }} className="py-12 md:py-16">
           <div className="container-content">
             <div className="max-w-3xl">
               <H2>
@@ -869,38 +900,27 @@ const SubsidiesLandelijk = () => {
                 Wat ons anders maakt dan een algemene subsidie-website of een ingehuurde callcenter-helpdesk.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-8">
               {why.map((w) => (
-                <div
-                  key={w.t}
-                  style={{
-                    backgroundColor: C.cardSoft,
-                    border: `1px solid ${C.accentSoft}66`,
-                    borderRadius: 16,
-                    padding: 28,
-                  }}
-                >
-                  <span
-                    className="inline-flex items-center justify-center rounded-full"
-                    style={{ backgroundColor: C.accent, width: 44, height: 44, color: C.primary }}
-                  >
-                    <w.icon size={22} />
-                  </span>
-                  <h3
-                    className="font-display"
-                    style={{ marginTop: 16, color: C.primary, fontWeight: 700, fontSize: 20 }}
-                  >
-                    {w.t}
-                  </h3>
-                  <p style={{ marginTop: 10, fontSize: 15.5, lineHeight: 1.6 }}>{w.d}</p>
+                <div key={w.t} style={cardStyle("on-white")}>
+                  <div className="flex items-center gap-4">
+                    <IconCircle Icon={w.icon} size={48} />
+                    <h3
+                      className="font-display"
+                      style={{ color: C.primary, fontWeight: 700, fontSize: 20, margin: 0 }}
+                    >
+                      {w.t}
+                    </h3>
+                  </div>
+                  <p style={{ marginTop: 12, fontSize: 15.5, lineHeight: 1.6 }}>{w.d}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* SECTIE 9: FOOTER CTA */}
-        <section style={{ backgroundColor: C.primary }} className="py-20">
+        {/* SECTIE 9: FOOTER CTA — donkerblauw, compact */}
+        <section style={{ backgroundColor: C.primary }} className="py-16 md:py-20">
           <div className="mx-auto px-6 text-center" style={{ maxWidth: 600 }}>
             <h2
               className="font-display"
