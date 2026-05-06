@@ -222,7 +222,7 @@ const SubsidiesLandelijk = () => {
     });
     document.head.appendChild(ld);
     return () => {
-      document.head.removeChild(ld);
+      if (ld.parentNode) ld.parentNode.removeChild(ld);
     };
   }, []);
 
