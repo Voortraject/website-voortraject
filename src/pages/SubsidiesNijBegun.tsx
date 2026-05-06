@@ -417,7 +417,7 @@ const SubsidiesNijBegun = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mt-10 items-start max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mt-10 items-center max-w-6xl mx-auto">
             <div>
               <Illustration src={imgKaart} alt="Kaart van Groningen met 50% en 100% subsidiegebieden" />
               <div
