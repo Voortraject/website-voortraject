@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Home,
   Coins,
@@ -18,6 +18,7 @@ import {
   LifeBuoy,
   FileCheck,
   Scale,
+  Lightbulb,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -53,7 +54,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Krijg ik 50% of 100% subsidie?",
-    a: "Dat hangt af van of je in het versterkingsgebied woont én van je inkomen. Tijdens de intake checken we beide. De €1.000 advies- en afwerkbijdrage is er trouwens alleen voor de 100%-categorie.",
+    a: "Dat hangt af van of je in het versterkingsgebied woont én van je inkomen. Tijdens het huisbezoek checken we beide. De €1.000 advies- en afwerkbijdrage is er trouwens alleen voor de 100%-categorie.",
   },
   {
     q: "Heb ik een isolatieplan nodig?",
@@ -69,7 +70,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Wat kost jullie hulp?",
-    a: "Niets. Onze intake en begeleiding zijn gratis voor bewoners.",
+    a: "Niets. Ons huisbezoek en de begeleiding zijn gratis voor bewoners.",
   },
 ];
 
@@ -132,6 +133,85 @@ const XLi = ({ children }: { children: React.ReactNode }) => (
   </li>
 );
 
+const MeasureLi = ({ label, info }: { label: string; info: string }) => {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, [open]);
+  return (
+    <li className="flex items-start gap-2 py-1">
+      <Check size={18} style={{ color: C.accent, marginTop: 3, flexShrink: 0 }} aria-hidden />
+      <span style={{ fontSize: 15, color: C.text, lineHeight: 1.5 }} className="flex-1">
+        {label}{" "}
+        <span ref={wrapRef} style={{ position: "relative", display: "inline-block" }}>
+          <button
+            type="button"
+            aria-label={`Meer informatie over ${label}`}
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+            onMouseEnter={() => setOpen(true)}
+            onMouseLeave={() => setOpen(false)}
+            onFocus={() => setOpen(true)}
+            onBlur={() => setOpen(false)}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              color: C.accent,
+              padding: 0,
+              verticalAlign: "middle",
+            }}
+          >
+            <Info size={16} aria-hidden />
+          </button>
+          {open && (
+            <span
+              role="tooltip"
+              style={{
+                position: "absolute",
+                bottom: "calc(100% + 8px)",
+                left: "50%",
+                transform: "translateX(-50%)",
+                backgroundColor: "#FFFFFF",
+                border: `1px solid ${C.accent}`,
+                borderRadius: "0.5rem",
+                padding: "12px 14px",
+                width: "max-content",
+                maxWidth: 320,
+                fontSize: 13,
+                color: C.text,
+                lineHeight: 1.5,
+                boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
+                zIndex: 30,
+                textAlign: "left",
+                whiteSpace: "normal",
+              }}
+            >
+              {info}
+            </span>
+          )}
+        </span>
+      </span>
+    </li>
+  );
+};
+
 const cardBase: React.CSSProperties = {
   backgroundColor: C.card,
   border: `1px solid ${C.accentSoft}66`,
@@ -187,7 +267,7 @@ const SubsidiesNijBegun = () => {
     };
     setMeta(
       "description",
-      "Tot €40.000 subsidie voor isolatie via Nij Begun (Maatregel 29). Wij regelen de intake voor bewoners in Groningen en Noord-Drenthe."
+      "Tot €40.000 subsidie voor isolatie via Nij Begun (Maatregel 29). Wij regelen het hele traject voor bewoners in Groningen en Noord-Drenthe."
     );
 
     let canon = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
@@ -221,6 +301,32 @@ const SubsidiesNijBegun = () => {
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
+  // Section 6: scroll progress indicator
+  const stepRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const [activeStep, setActiveStep] = useState(0);
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    const visible = new Set<number>();
+    stepRefs.current.forEach((el, i) => {
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) visible.add(i);
+            else visible.delete(i);
+          });
+          if (visible.size > 0) {
+            setActiveStep(Math.min(...Array.from(visible)));
+          }
+        },
+        { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+    return () => observers.forEach((o) => o.disconnect());
+  }, []);
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: C.bg, color: C.text }}>
       <Header />
@@ -230,18 +336,6 @@ const SubsidiesNijBegun = () => {
         <div className="container-content">
           <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-10 lg:gap-14 items-center">
             <div>
-              <div
-                style={{
-                  color: C.accent,
-                  textTransform: "uppercase",
-                  fontSize: 12,
-                  letterSpacing: "0.14em",
-                  fontWeight: 700,
-                  marginBottom: 16,
-                }}
-              >
-                MAATREGEL 29
-              </div>
               <h1
                 className="font-display"
                 style={{
@@ -256,14 +350,14 @@ const SubsidiesNijBegun = () => {
                 Tot <Gold>€40.000 subsidie</Gold> voor het isoleren van jouw huis
               </h1>
               <p style={{ fontSize: 18, lineHeight: 1.6, color: C.muted, marginBottom: 28, maxWidth: 620 }}>
-                Woon je in Groningen of Noord-Drenthe? Via de Isolatieaanpak Nij Begun kun je je woning gratis of voor de helft van de kosten laten isoleren. Wij regelen de intake.
+                Woon je in Groningen of Noord-Drenthe? Dan kun je je woning gratis of voor de helft laten isoleren via Nij Begun. Wij regelen het hele traject voor je, van advies tot oplevering.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <a href="/contact" style={goldBtn}>
-                  Plan een gratis intake
+                  Plan een gratis huisbezoek
                 </a>
                 <a href="#bedragen" style={outlineBtn}>
-                  Bekijk hoeveel je krijgt
+                  Bekijk wat jij krijgt
                 </a>
               </div>
             </div>
@@ -428,7 +522,7 @@ const SubsidiesNijBegun = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mt-10 items-start max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mt-10 items-center max-w-6xl mx-auto">
             <div>
               <Illustration src={imgKaart} alt="Kaart van Groningen met 50% en 100% subsidiegebieden" />
               <div
@@ -436,7 +530,7 @@ const SubsidiesNijBegun = () => {
                 style={{ fontSize: 14, color: C.muted }}
               >
                 <Info size={16} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
-                <span>Niet zeker in welke categorie je valt? Wij checken dat tijdens de intake. Dat scheelt vaak duizenden euro's.</span>
+                <span>Niet zeker in welke categorie je valt? Wij checken dat tijdens het huisbezoek. Dat scheelt vaak duizenden euro's.</span>
               </div>
             </div>
 
@@ -472,13 +566,6 @@ const SubsidiesNijBegun = () => {
                   <CheckLi>Inkomen onder 140% sociaal minimum</CheckLi>
                 </ul>
               </div>
-
-              <p
-                className="text-center"
-                style={{ fontSize: 14, color: C.primary, fontWeight: 600, marginTop: 8 }}
-              >
-                De €1.000 advies- en afwerkbijdrage geldt alleen voor de 100%-categorie.
-              </p>
             </div>
           </div>
         </div>
@@ -502,14 +589,53 @@ const SubsidiesNijBegun = () => {
                   Vergoede maatregelen
                 </h3>
                 <ul>
-                  <CheckLi>Spouwmuurisolatie</CheckLi>
-                  <CheckLi>Dak en vloerisolatie</CheckLi>
-                  <CheckLi>Gevelisolatie (binnen of buiten)</CheckLi>
-                  <CheckLi>HR++ glas of vacuümglas</CheckLi>
-                  <CheckLi>Triple glas met nieuwe kozijnen (30% subsidie)</CheckLi>
-                  <CheckLi>Mechanische ventilatie of balansventilatie</CheckLi>
-                  <CheckLi>Diervriendelijk isoleren</CheckLi>
+                  <MeasureLi
+                    label="Spouwmuurisolatie"
+                    info="Voor woningen met spouwmuren (bouwjaar na 1920) is dit vaak de eerste en meest gebruikelijke stap. Goed rendement voor relatief lage kosten."
+                  />
+                  <MeasureLi
+                    label="Dak- en vloerisolatie"
+                    info="Dakisolatie levert vaak het hoogste rendement op, omdat warmte vooral via het dak ontsnapt. Vloerisolatie is een logische volgende stap."
+                  />
+                  <MeasureLi
+                    label="Gevelisolatie (binnen of buiten)"
+                    info="Voor woningen zonder spouwmuren. Buitenisolatie is duurder maar effectiever, binnenisolatie verkleint de leefruimte iets."
+                  />
+                  <MeasureLi
+                    label="HR++ glas of vacuümglas"
+                    info="Vervangt enkel of dubbel glas. Vacuümglas is dunner en past vaak in bestaande kozijnen."
+                  />
+                  <MeasureLi
+                    label="Triple glas met nieuwe kozijnen (30% subsidie)"
+                    info="De hoogste isolatiewaarde voor ramen. Hier geldt een aparte 30%-regeling, los van het €20.000 of €40.000-plafond."
+                  />
+                  <MeasureLi
+                    label="Mechanische ventilatie of balansventilatie"
+                    info="Na goede isolatie verplicht. Voorkomt vocht en schimmel, houdt de lucht gezond."
+                  />
+                  <MeasureLi
+                    label="Diervriendelijk isoleren"
+                    info="Wettelijk verplicht als er vleermuizen, mussen of gierzwaluwen in of aan je woning leven."
+                  />
                 </ul>
+              </div>
+
+              {/* Standaard voor woningisolatie callout */}
+              <div
+                style={{
+                  backgroundColor: C.cardSoft,
+                  borderLeft: `4px solid ${C.accent}`,
+                  borderRadius: "0.75rem",
+                  padding: "20px 22px",
+                  display: "flex",
+                  gap: 14,
+                  alignItems: "flex-start",
+                }}
+              >
+                <Lightbulb size={22} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
+                <p style={{ fontSize: 15, color: C.text, lineHeight: 1.6, margin: 0 }}>
+                  Niet alle maatregelen passen bij elke woning. Het doel van Nij Begun is jouw woning naar de Standaard voor woningisolatie te brengen. Een adviseur kijkt naar wat jouw huis écht nodig heeft. Soms wijkt dat advies af van wat je had verwacht. Vloerisolatie of nieuwe deuren zijn niet altijd de eerste stap. De adviseur is daarin eerlijk, want het doel is een warm en zuinig huis, niet zoveel mogelijk maatregelen.
+                </p>
               </div>
 
               <div>
@@ -527,12 +653,12 @@ const SubsidiesNijBegun = () => {
         </div>
       </section>
 
-      {/* 6. ZO WERKT HET — verticale tijdlijn met 7 stappen */}
-      <section style={{ backgroundColor: C.card }} className="py-16 md:py-20">
+      {/* 6. ZO VERLOOPT JOUW TRAJECT — kaarten + verticale tijdlijn + scroll progress */}
+      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-20">
         <div className="container-content">
           <div className="max-w-3xl mx-auto text-center">
             <H2>
-              Van eerste vraag tot na de <Gold>uitvoering</Gold>
+              Zo verloopt jouw <Gold>traject</Gold>
             </H2>
             <p style={{ fontSize: 17, lineHeight: 1.6, color: C.muted, marginTop: 14 }}>
               Zo werkt het bij ons. Geen telefooncentrale, geen wachtrij, geen formulieren in pdf. Wij doen het zware werk, jij houdt de regie.
@@ -540,21 +666,56 @@ const SubsidiesNijBegun = () => {
           </div>
 
           <div className="relative max-w-4xl mx-auto mt-12">
-            {/* Verticale lijn */}
+            {/* Scroll progress indicator (desktop) */}
+            <div
+              aria-hidden="true"
+              className="hidden md:flex flex-col"
+              style={{
+                position: "sticky",
+                float: "right",
+                top: 24,
+                right: 0,
+                marginRight: -8,
+                gap: 16,
+                zIndex: 10,
+                width: 14,
+                alignItems: "center",
+              }}
+            >
+              {[0, 1, 2, 3, 4, 5, 6].map((i) => {
+                const isActive = i === activeStep;
+                return (
+                  <span
+                    key={i}
+                    style={{
+                      width: isActive ? 12 : 10,
+                      height: isActive ? 12 : 10,
+                      borderRadius: 9999,
+                      backgroundColor: isActive ? C.accent : C.primary,
+                      opacity: isActive ? 1 : 0.2,
+                      transform: isActive ? "scale(1.2)" : "scale(1)",
+                      transition: "transform 200ms ease, background-color 200ms ease, opacity 200ms ease",
+                      display: "inline-block",
+                    }}
+                  />
+                );
+              })}
+            </div>
+
+            {/* Verticale tijdlijn (achter de kaarten, links) */}
             <div
               aria-hidden
-              className="absolute"
+              className="hidden md:block absolute"
               style={{
-                left: 31,
-                top: 0,
-                bottom: 0,
-                width: 1,
+                left: 16,
+                top: 12,
+                bottom: 12,
+                width: 2,
                 backgroundColor: C.accent,
-                opacity: 0.4,
               }}
             />
 
-            <ol className="space-y-10">
+            <ol className="flex flex-col gap-8 md:gap-12 relative">
               {[
                 {
                   n: "01",
@@ -586,6 +747,7 @@ const SubsidiesNijBegun = () => {
                   t: "Goedkeuring",
                   d: "Aanvraag akkoord! De subsidie is toegekend. Vanaf nu heb je 2 jaar de tijd om de werkzaamheden te laten uitvoeren door een aangesloten Nij Begun-bedrijf. Wij sturen je de toekenningsbrief en bespreken de vervolgstappen.",
                   image: imgAanvraag,
+                  spotlight: true,
                 },
                 {
                   n: "06",
@@ -599,44 +761,127 @@ const SubsidiesNijBegun = () => {
                   t: "Natraject en nazorg",
                   d: "Na de oplevering loopt het bij ons niet op nul. We blijven beschikbaar voor vragen over onderhoud, garantie of vervolgmaatregelen (zoals een warmtepomp via ISDE). Wij blijven jouw aanspreekpunt, ook als de uitvoerder zijn werk al heeft afgeleverd.",
                 },
-              ].map((s) => (
-                <li key={s.n} className="relative grid grid-cols-[64px_1fr] gap-5 items-start">
-                  <div className="flex flex-col items-center">
+              ].map((s, i) => {
+                const isSpotlight = (s as { spotlight?: boolean }).spotlight;
+                return (
+                  <li
+                    key={s.n}
+                    ref={(el) => (stepRefs.current[i] = el)}
+                    className="relative md:ml-12"
+                    style={{
+                      backgroundColor: C.card,
+                      border: `1px solid ${C.accentSoft}66`,
+                      borderLeft: isSpotlight ? `4px solid ${C.accent}` : `1px solid ${C.accentSoft}66`,
+                      borderRadius: "1rem",
+                      boxShadow: isSpotlight
+                        ? "0 8px 28px rgba(27,46,74,0.10)"
+                        : "0 1px 3px rgba(0,0,0,0.04)",
+                    }}
+                  >
+                    {/* Tijdlijn-dot */}
                     <span
-                      className="font-display"
-                      style={{ fontSize: 40, fontWeight: 800, color: C.accent, lineHeight: 1, letterSpacing: "-0.02em" }}
-                    >
-                      {s.n}
-                    </span>
-                    <span
-                      className="inline-flex items-center justify-center mt-3"
+                      aria-hidden
+                      className="hidden md:block absolute"
                       style={{
-                        width: 40,
-                        height: 40,
+                        left: -36,
+                        top: 28,
+                        width: 12,
+                        height: 12,
                         borderRadius: 9999,
                         backgroundColor: C.accent,
-                        color: C.primary,
                       }}
-                    >
-                      <s.icon size={18} aria-hidden />
-                    </span>
-                  </div>
-                  <div className="pt-1">
-                    <h3
-                      className="font-display"
-                      style={{ fontSize: 22, fontWeight: 700, color: C.primary, letterSpacing: "-0.01em", marginBottom: 8 }}
-                    >
-                      {s.t}
-                    </h3>
-                    <p style={{ fontSize: 16, color: C.text, lineHeight: 1.6, margin: 0 }}>{s.d}</p>
-                    {s.image && (
-                      <div className="mt-5" style={{ maxWidth: 360 }}>
+                    />
+                    {isSpotlight && s.image ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center p-6 md:p-8">
+                        <div>
+                          <div className="flex items-center gap-3 mb-3">
+                            <span
+                              className="font-display"
+                              style={{
+                                fontSize: 56,
+                                fontWeight: 800,
+                                color: C.accent,
+                                lineHeight: 1,
+                                letterSpacing: "-0.02em",
+                              }}
+                            >
+                              {s.n}
+                            </span>
+                            <span
+                              className="inline-flex items-center justify-center"
+                              style={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: 9999,
+                                backgroundColor: C.accent,
+                                color: C.primary,
+                              }}
+                            >
+                              <s.icon size={18} aria-hidden />
+                            </span>
+                          </div>
+                          <h3
+                            className="font-display"
+                            style={{
+                              fontSize: 24,
+                              fontWeight: 700,
+                              color: C.primary,
+                              letterSpacing: "-0.01em",
+                              marginBottom: 8,
+                            }}
+                          >
+                            {s.t}
+                          </h3>
+                          <p style={{ fontSize: 16, color: C.text, lineHeight: 1.6, margin: 0 }}>{s.d}</p>
+                        </div>
                         <Illustration src={s.image} alt="Aanvraag akkoord op laptop" />
                       </div>
+                    ) : (
+                      <div className="p-6 md:p-8">
+                        <div className="flex items-center gap-3 mb-3">
+                          <span
+                            className="font-display"
+                            style={{
+                              fontSize: 56,
+                              fontWeight: 800,
+                              color: C.accent,
+                              lineHeight: 1,
+                              letterSpacing: "-0.02em",
+                            }}
+                          >
+                            {s.n}
+                          </span>
+                          <span
+                            className="inline-flex items-center justify-center"
+                            style={{
+                              width: 40,
+                              height: 40,
+                              borderRadius: 9999,
+                              backgroundColor: C.accent,
+                              color: C.primary,
+                            }}
+                          >
+                            <s.icon size={18} aria-hidden />
+                          </span>
+                        </div>
+                        <h3
+                          className="font-display"
+                          style={{
+                            fontSize: 22,
+                            fontWeight: 700,
+                            color: C.primary,
+                            letterSpacing: "-0.01em",
+                            marginBottom: 8,
+                          }}
+                        >
+                          {s.t}
+                        </h3>
+                        <p style={{ fontSize: 16, color: C.text, lineHeight: 1.6, margin: 0 }}>{s.d}</p>
+                      </div>
                     )}
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ol>
           </div>
 
@@ -644,7 +889,8 @@ const SubsidiesNijBegun = () => {
           <div
             className="max-w-4xl mx-auto mt-14 text-center"
             style={{
-              backgroundColor: C.bg,
+              backgroundColor: C.card,
+              border: `1px solid ${C.accentSoft}66`,
               borderRadius: "1rem",
               padding: "40px 24px",
             }}
@@ -708,7 +954,7 @@ const SubsidiesNijBegun = () => {
       </section>
 
       {/* 8. WAAROM VOORTRAJECT */}
-      <section style={{ backgroundColor: C.cardSoft }} className="py-16 md:py-20">
+      <section style={{ backgroundColor: C.card }} className="py-16 md:py-20">
         <div className="container-content">
           <div className="max-w-3xl mx-auto text-center">
             <H2>
