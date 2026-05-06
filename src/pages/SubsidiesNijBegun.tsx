@@ -295,8 +295,8 @@ const SubsidiesNijBegun = () => {
 
     return () => {
       document.title = prevTitle;
-      ld.remove();
-      if (created && canon) canon.remove();
+      if (ld.parentNode) ld.parentNode.removeChild(ld);
+      if (created && canon && canon.parentNode) canon.parentNode.removeChild(canon);
     };
   }, []);
 
