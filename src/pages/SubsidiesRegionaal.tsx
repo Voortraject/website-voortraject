@@ -231,6 +231,27 @@ const IconCircle = ({ Icon, size = 20 }: { Icon: React.ComponentType<any>; size?
   </span>
 );
 
+const GemeenteBadge = ({ name }: { name: string }) => (
+  <span
+    className="transition-shadow hover:shadow-md"
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 6,
+      backgroundColor: "var(--card-soft)",
+      border: "1px solid rgba(229, 201, 103, 0.3)",
+      borderRadius: 9999,
+      padding: "8px 16px",
+      fontSize: 14,
+      fontWeight: 500,
+      color: "#1B2E4A",
+    }}
+  >
+    <MapPin size={12} color="#D4AF3D" />
+    {name}
+  </span>
+);
+
 const SubsidiesRegionaal = () => {
   useEffect(() => {
     const prevTitle = document.title;
@@ -366,10 +387,10 @@ const SubsidiesRegionaal = () => {
               </p>
               <div className="flex flex-wrap gap-3">
                 <a href="/contact" style={goldBtn}>
-                  Plan een gratis huisbezoek
+                  Vraag een gratis check aan
                 </a>
                 <a href="#gemeenten" onClick={scrollToGemeenten} style={outlineBtn}>
-                  Check welke regelingen er gelden
+                  Bekijk ons werkgebied
                 </a>
               </div>
             </div>
@@ -488,7 +509,7 @@ const SubsidiesRegionaal = () => {
             </p>
             <div style={{ marginTop: 22 }}>
               <a href="/contact" style={outlineBtn}>
-                Laat ons meekijken
+                Reken het voor mijn woning uit
               </a>
             </div>
           </div>
@@ -503,87 +524,52 @@ const SubsidiesRegionaal = () => {
               In welke <Gold>gemeenten</Gold> zijn wij actief?
             </H2>
             <p style={{ marginTop: 20, fontSize: 17, lineHeight: 1.7, color: C.text }}>
-              Wij werken in alle gemeenten van het Nij Begun-gebied: tien Groningse gemeenten en drie Drentse. Daar kennen we de lokale regelingen. Voor andere gemeenten kijken we graag mee, neem contact op om te checken wat we voor jouw woning kunnen betekenen.
+              Wij werken in alle gemeenten van het Nij Begun-gebied: tien Groningse gemeenten en drie Drentse. Daar kennen we de lokale regelingen. Voor andere gemeenten kijken we graag mee.
             </p>
           </div>
 
-          {/* Werkgebied-illustratie (placeholder) */}
+          {/* Provincie Groningen */}
           <div
             style={{
-              ...cardOnWhite,
-              maxWidth: 600,
-              margin: "32px auto 0",
-              padding: 16,
-            }}
-          >
-            <img
-              src={WERKGEBIED_KAART}
-              alt="Kaart van het werkgebied van Voortraject in de provincie Groningen en Noord-Drenthe"
-              loading="lazy"
-              style={{ width: "100%", height: "auto", display: "block", borderRadius: "0.75rem" }}
-            />
-          </div>
-
-          {/* Provincie Groningen */}
-          <h3
-            style={{
-              fontSize: 18,
-              fontWeight: 700,
-              color: C.primary,
+              fontSize: 13,
+              fontWeight: 600,
+              color: C.accent,
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
               marginTop: 40,
               marginBottom: 16,
-              letterSpacing: "-0.01em",
             }}
           >
             Provincie Groningen
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          </div>
+          <div className="flex flex-wrap gap-3">
             {gemeentenGroningen.map((g) => (
-              <div
-                key={g}
-                style={{ ...cardOnWhite, padding: 20, display: "flex", alignItems: "flex-start", gap: 12, transition: "box-shadow 200ms ease" }}
-                className="hover:shadow-md"
-              >
-                <MapPin size={18} color={C.accent} style={{ marginTop: 4, flexShrink: 0 }} />
-                <div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: C.primary, lineHeight: 1.2 }}>{g}</div>
-                  <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>Provincie Groningen</div>
-                </div>
-              </div>
+              <GemeenteBadge key={g} name={g} />
             ))}
           </div>
 
           {/* Noord-Drenthe */}
-          <h3
+          <div
             style={{
-              fontSize: 18,
-              fontWeight: 700,
-              color: C.primary,
+              fontSize: 13,
+              fontWeight: 600,
+              color: C.accent,
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
               marginTop: 32,
               marginBottom: 16,
-              letterSpacing: "-0.01em",
             }}
           >
             Noord-Drenthe
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          </div>
+          <div className="flex flex-wrap gap-3">
             {gemeentenDrenthe.map((g) => (
-              <div
-                key={g}
-                style={{ ...cardOnWhite, padding: 20, display: "flex", alignItems: "flex-start", gap: 12, transition: "box-shadow 200ms ease" }}
-                className="hover:shadow-md"
-              >
-                <Trees size={18} color={C.accent} style={{ marginTop: 4, flexShrink: 0 }} />
-                <div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: C.primary, lineHeight: 1.2 }}>{g}</div>
-                  <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>Noord-Drenthe</div>
-                </div>
-              </div>
+              <GemeenteBadge key={g} name={g} />
             ))}
           </div>
 
-          <p style={{ textAlign: "center", marginTop: 28, fontSize: 14, color: C.muted }}>
-            Woon je in een andere gemeente? Neem contact op, we kijken graag mee wat er bij jou mogelijk is.
+          <p style={{ marginTop: 24, fontSize: 14, color: C.muted }}>
+            Woon je in een andere gemeente? Neem contact op, we kijken graag mee.
           </p>
         </div>
       </section>
@@ -616,7 +602,7 @@ const SubsidiesRegionaal = () => {
 
           <div style={{ textAlign: "center", marginTop: 32 }}>
             <a href="/contact" style={outlineBtn}>
-              Wil je weten wat er voor jouw woning open staat?
+              Plan een gratis check
             </a>
           </div>
         </div>
@@ -685,14 +671,14 @@ const SubsidiesRegionaal = () => {
             }}
           >
             <p style={{ fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 700, color: C.primary, margin: 0 }}>
-              Wil je weten wat er voor jouw woning open staat?
+              Geen drie loketten, <Gold>één aanspreekpunt</Gold>
             </p>
             <p style={{ fontSize: 15, color: C.muted, marginTop: 10 }}>
-              Plan een gratis huisbezoek. Wij rekenen voor jouw gemeente uit welke regelingen actueel zijn en hoe je ze stapelt.
+              Wij doen ISDE bij RVO, Nij Begun bij SNN en de gemeentelijke aanvraag bij jouw gemeente. Allemaal in één traject.
             </p>
             <div style={{ marginTop: 20 }}>
               <a href="/contact" style={goldBtn}>
-                Plan een gesprek in
+                Vraag een huisbezoek aan
               </a>
             </div>
           </div>
@@ -826,14 +812,14 @@ const SubsidiesRegionaal = () => {
               lineHeight: 1.2,
             }}
           >
-            Wil je weten wat er voor <span style={{ color: C.accent }}>jouw woning</span> open staat?
+            Welke regelingen liggen open in <span style={{ color: C.accent }}>jouw gemeente</span>?
           </h2>
           <p style={{ color: "rgba(255,255,255,0.8)", fontSize: 16, lineHeight: 1.65, marginTop: 18 }}>
-            Plan een gratis huisbezoek. Wij checken voor jouw gemeente welke regelingen actueel zijn, en stapelen ze voor je bovenop ISDE en Nij Begun. Vrijblijvend en gratis.
+            Wij zoeken het voor jouw woning uit en stapelen alles bovenop ISDE en Nij Begun. Geen drie loketten, één gesprek. Vrijblijvend en gratis.
           </p>
           <div style={{ marginTop: 26 }}>
             <a href="/contact" style={goldBtn}>
-              Plan een huisbezoek
+              Plan een gratis check
             </a>
           </div>
           <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, marginTop: 28 }}>
