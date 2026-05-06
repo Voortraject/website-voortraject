@@ -823,7 +823,7 @@ const SubsidiesLandelijk = () => {
                 Wil je sneller verder zonder gedoe?
               </p>
               <div className="mt-6">
-                <PrimaryBtn href="/contact">Plan een huisbezoek</PrimaryBtn>
+                <PrimaryBtn href="/contact">Neem contact op</PrimaryBtn>
               </div>
             </div>
           </div>

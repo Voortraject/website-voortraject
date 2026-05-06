@@ -342,7 +342,7 @@ const SubsidiesRegionaal = () => {
               </p>
               <div className="flex flex-wrap gap-3">
                 <a href="/contact" style={goldBtn}>
-                  Vraag een gratis check aan
+                  Ja ik wil gratis advies
                 </a>
                 <a
                   href="#stapelen"
@@ -582,7 +582,7 @@ const SubsidiesRegionaal = () => {
             </p>
             <div style={{ marginTop: 20 }}>
               <a href="/contact" style={goldBtn}>
-                Vraag een huisbezoek aan
+                Neem contact op
               </a>
             </div>
           </div>
@@ -723,7 +723,7 @@ const SubsidiesRegionaal = () => {
           </p>
           <div style={{ marginTop: 26 }}>
             <a href="/contact" style={goldBtn}>
-              Plan een gratis check
+              Neem contact op
             </a>
           </div>
           <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, marginTop: 28 }}>
