@@ -936,7 +936,7 @@ const SubsidiesLandelijk = () => {
               Neem contact op. Wij rekenen voor jouw woning uit wat je via ISDE kunt krijgen, en hoe je optimaal combineert. Geen verplichtingen, geen verkooppraatje.
             </p>
             <div className="mt-8">
-              <PrimaryBtn href="/contact">Plan een huisbezoek</PrimaryBtn>
+              <PrimaryBtn href="/contact">Neem contact op</PrimaryBtn>
             </div>
             <p style={{ marginTop: 24, color: "rgba(255,255,255,0.5)", fontSize: 12 }}>
               Laatst bijgewerkt: {LAATST_BIJGEWERKT}
