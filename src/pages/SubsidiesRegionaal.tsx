@@ -443,7 +443,7 @@ const SubsidiesRegionaal = () => {
       </section>
 
       {/* 3. ZO WERKT STAPELEN — cream */}
-      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
+      <section id="stapelen" style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
         <div className="container-content">
           <div className="max-w-3xl">
             <H2>
