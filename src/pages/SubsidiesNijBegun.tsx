@@ -188,7 +188,7 @@ const SubsidiesNijBegun = () => {
     };
     setMeta(
       "description",
-      "Tot €40.000 subsidie voor isolatie via Nij Begun (Maatregel 29). Wij regelen de intake voor bewoners in Groningen en Noord-Drenthe."
+      "Tot €40.000 subsidie voor isolatie via Nij Begun (Maatregel 29). Wij regelen het hele traject voor bewoners in Groningen en Noord-Drenthe."
     );
 
     let canon = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
