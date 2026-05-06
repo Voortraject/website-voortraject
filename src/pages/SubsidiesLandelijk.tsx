@@ -730,7 +730,7 @@ const SubsidiesLandelijk = () => {
                     ref={(el) => (stepRefs.current[i] = el)}
                     data-step-index={i}
                     style={{
-                      backgroundColor: C.card,
+                      backgroundColor: C.cardSoft,
                       border: `1px solid ${C.accentSoft}66`,
                       borderRadius: 16,
                       padding: 28,
@@ -782,10 +782,10 @@ const SubsidiesLandelijk = () => {
               }}
             >
               <p className="font-display" style={{ color: C.primary, fontWeight: 700, fontSize: 22 }}>
-                Wil je het maximale uit ISDE halen?
+                Wil je sneller verder zonder gedoe?
               </p>
               <p style={{ color: C.muted, fontSize: 15, marginTop: 8 }}>
-                Plan een gratis huisbezoek. Wij rekenen voor jouw woning uit wat slim is om te combineren.
+                Plan een gratis huisbezoek. Wij rekenen voor jouw woning uit wat slim is om te combineren, en zorgen dat de aanvraag straks foutloos doorkomt.
               </p>
               <div className="mt-6">
                 <PrimaryBtn href="/contact">Plan een huisbezoek</PrimaryBtn>
