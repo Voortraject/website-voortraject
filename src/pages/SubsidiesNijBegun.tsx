@@ -653,12 +653,12 @@ const SubsidiesNijBegun = () => {
         </div>
       </section>
 
-      {/* 6. ZO WERKT HET — verticale tijdlijn met 7 stappen */}
-      <section style={{ backgroundColor: C.card }} className="py-16 md:py-20">
+      {/* 6. ZO VERLOOPT JOUW TRAJECT — kaarten + verticale tijdlijn + scroll progress */}
+      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-20">
         <div className="container-content">
           <div className="max-w-3xl mx-auto text-center">
             <H2>
-              Van eerste vraag tot na de <Gold>uitvoering</Gold>
+              Zo verloopt jouw <Gold>traject</Gold>
             </H2>
             <p style={{ fontSize: 17, lineHeight: 1.6, color: C.muted, marginTop: 14 }}>
               Zo werkt het bij ons. Geen telefooncentrale, geen wachtrij, geen formulieren in pdf. Wij doen het zware werk, jij houdt de regie.
@@ -666,21 +666,56 @@ const SubsidiesNijBegun = () => {
           </div>
 
           <div className="relative max-w-4xl mx-auto mt-12">
-            {/* Verticale lijn */}
+            {/* Scroll progress indicator (desktop) */}
+            <div
+              aria-hidden="true"
+              className="hidden md:flex flex-col"
+              style={{
+                position: "sticky",
+                float: "right",
+                top: 24,
+                right: 0,
+                marginRight: -8,
+                gap: 16,
+                zIndex: 10,
+                width: 14,
+                alignItems: "center",
+              }}
+            >
+              {[0, 1, 2, 3, 4, 5, 6].map((i) => {
+                const isActive = i === activeStep;
+                return (
+                  <span
+                    key={i}
+                    style={{
+                      width: isActive ? 12 : 10,
+                      height: isActive ? 12 : 10,
+                      borderRadius: 9999,
+                      backgroundColor: isActive ? C.accent : C.primary,
+                      opacity: isActive ? 1 : 0.2,
+                      transform: isActive ? "scale(1.2)" : "scale(1)",
+                      transition: "transform 200ms ease, background-color 200ms ease, opacity 200ms ease",
+                      display: "inline-block",
+                    }}
+                  />
+                );
+              })}
+            </div>
+
+            {/* Verticale tijdlijn (achter de kaarten, links) */}
             <div
               aria-hidden
-              className="absolute"
+              className="hidden md:block absolute"
               style={{
-                left: 31,
-                top: 0,
-                bottom: 0,
-                width: 1,
+                left: 16,
+                top: 12,
+                bottom: 12,
+                width: 2,
                 backgroundColor: C.accent,
-                opacity: 0.4,
               }}
             />
 
-            <ol className="space-y-10">
+            <ol className="flex flex-col gap-8 md:gap-12 relative">
               {[
                 {
                   n: "01",
@@ -712,6 +747,7 @@ const SubsidiesNijBegun = () => {
                   t: "Goedkeuring",
                   d: "Aanvraag akkoord! De subsidie is toegekend. Vanaf nu heb je 2 jaar de tijd om de werkzaamheden te laten uitvoeren door een aangesloten Nij Begun-bedrijf. Wij sturen je de toekenningsbrief en bespreken de vervolgstappen.",
                   image: imgAanvraag,
+                  spotlight: true,
                 },
                 {
                   n: "06",
@@ -725,44 +761,127 @@ const SubsidiesNijBegun = () => {
                   t: "Natraject en nazorg",
                   d: "Na de oplevering loopt het bij ons niet op nul. We blijven beschikbaar voor vragen over onderhoud, garantie of vervolgmaatregelen (zoals een warmtepomp via ISDE). Wij blijven jouw aanspreekpunt, ook als de uitvoerder zijn werk al heeft afgeleverd.",
                 },
-              ].map((s) => (
-                <li key={s.n} className="relative grid grid-cols-[64px_1fr] gap-5 items-start">
-                  <div className="flex flex-col items-center">
+              ].map((s, i) => {
+                const isSpotlight = (s as { spotlight?: boolean }).spotlight;
+                return (
+                  <li
+                    key={s.n}
+                    ref={(el) => (stepRefs.current[i] = el)}
+                    className="relative md:ml-12"
+                    style={{
+                      backgroundColor: C.card,
+                      border: `1px solid ${C.accentSoft}66`,
+                      borderLeft: isSpotlight ? `4px solid ${C.accent}` : `1px solid ${C.accentSoft}66`,
+                      borderRadius: "1rem",
+                      boxShadow: isSpotlight
+                        ? "0 8px 28px rgba(27,46,74,0.10)"
+                        : "0 1px 3px rgba(0,0,0,0.04)",
+                    }}
+                  >
+                    {/* Tijdlijn-dot */}
                     <span
-                      className="font-display"
-                      style={{ fontSize: 40, fontWeight: 800, color: C.accent, lineHeight: 1, letterSpacing: "-0.02em" }}
-                    >
-                      {s.n}
-                    </span>
-                    <span
-                      className="inline-flex items-center justify-center mt-3"
+                      aria-hidden
+                      className="hidden md:block absolute"
                       style={{
-                        width: 40,
-                        height: 40,
+                        left: -36,
+                        top: 28,
+                        width: 12,
+                        height: 12,
                         borderRadius: 9999,
                         backgroundColor: C.accent,
-                        color: C.primary,
                       }}
-                    >
-                      <s.icon size={18} aria-hidden />
-                    </span>
-                  </div>
-                  <div className="pt-1">
-                    <h3
-                      className="font-display"
-                      style={{ fontSize: 22, fontWeight: 700, color: C.primary, letterSpacing: "-0.01em", marginBottom: 8 }}
-                    >
-                      {s.t}
-                    </h3>
-                    <p style={{ fontSize: 16, color: C.text, lineHeight: 1.6, margin: 0 }}>{s.d}</p>
-                    {s.image && (
-                      <div className="mt-5" style={{ maxWidth: 360 }}>
+                    />
+                    {isSpotlight && s.image ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center p-6 md:p-8">
+                        <div>
+                          <div className="flex items-center gap-3 mb-3">
+                            <span
+                              className="font-display"
+                              style={{
+                                fontSize: 56,
+                                fontWeight: 800,
+                                color: C.accent,
+                                lineHeight: 1,
+                                letterSpacing: "-0.02em",
+                              }}
+                            >
+                              {s.n}
+                            </span>
+                            <span
+                              className="inline-flex items-center justify-center"
+                              style={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: 9999,
+                                backgroundColor: C.accent,
+                                color: C.primary,
+                              }}
+                            >
+                              <s.icon size={18} aria-hidden />
+                            </span>
+                          </div>
+                          <h3
+                            className="font-display"
+                            style={{
+                              fontSize: 24,
+                              fontWeight: 700,
+                              color: C.primary,
+                              letterSpacing: "-0.01em",
+                              marginBottom: 8,
+                            }}
+                          >
+                            {s.t}
+                          </h3>
+                          <p style={{ fontSize: 16, color: C.text, lineHeight: 1.6, margin: 0 }}>{s.d}</p>
+                        </div>
                         <Illustration src={s.image} alt="Aanvraag akkoord op laptop" />
                       </div>
+                    ) : (
+                      <div className="p-6 md:p-8">
+                        <div className="flex items-center gap-3 mb-3">
+                          <span
+                            className="font-display"
+                            style={{
+                              fontSize: 56,
+                              fontWeight: 800,
+                              color: C.accent,
+                              lineHeight: 1,
+                              letterSpacing: "-0.02em",
+                            }}
+                          >
+                            {s.n}
+                          </span>
+                          <span
+                            className="inline-flex items-center justify-center"
+                            style={{
+                              width: 40,
+                              height: 40,
+                              borderRadius: 9999,
+                              backgroundColor: C.accent,
+                              color: C.primary,
+                            }}
+                          >
+                            <s.icon size={18} aria-hidden />
+                          </span>
+                        </div>
+                        <h3
+                          className="font-display"
+                          style={{
+                            fontSize: 22,
+                            fontWeight: 700,
+                            color: C.primary,
+                            letterSpacing: "-0.01em",
+                            marginBottom: 8,
+                          }}
+                        >
+                          {s.t}
+                        </h3>
+                        <p style={{ fontSize: 16, color: C.text, lineHeight: 1.6, margin: 0 }}>{s.d}</p>
+                      </div>
                     )}
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ol>
           </div>
 
@@ -770,7 +889,8 @@ const SubsidiesNijBegun = () => {
           <div
             className="max-w-4xl mx-auto mt-14 text-center"
             style={{
-              backgroundColor: C.bg,
+              backgroundColor: C.card,
+              border: `1px solid ${C.accentSoft}66`,
               borderRadius: "1rem",
               padding: "40px 24px",
             }}
