@@ -495,12 +495,13 @@ const SubsidiesLandelijk = () => {
         </section>
 
         {/* SECTIE 4: HOEVEEL SUBSIDIE */}
-        <section id="bedragen" className="container-content py-16 md:py-20">
+        <section id="bedragen" style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-20">
+          <div className="container-content">
           <H2>
             Hoeveel <Gold>subsidie</Gold> krijg je?
           </H2>
           <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.6, maxWidth: 820 }}>
-            De bedragen verschillen per maatregel. Voor isolatie geldt een bedrag per vierkante meter. Voor een warmtepomp of zonneboiler een vast bedrag. Combineer je twee of meer maatregelen binnen 24 maanden, dan verdubbelt het isolatiebedrag.
+            De bedragen verschillen per maatregel, maar één regel maakt het écht interessant: combineer je twee of meer maatregelen binnen 24 maanden, dan <strong>verdubbelt</strong> het isolatiebedrag per vierkante meter. Wij rekenen voor jouw woning uit hoe je daar het maximale uit haalt.
           </p>
 
           {/* 4.1 Categoriekaarten */}
@@ -510,7 +511,7 @@ const SubsidiesLandelijk = () => {
                 key={c.t}
                 className="transition-shadow hover:shadow-md"
                 style={{
-                  backgroundColor: C.card,
+                  backgroundColor: C.cardSoft,
                   border: `1px solid ${C.accentSoft}66`,
                   borderRadius: 16,
                   padding: 28,
@@ -534,11 +535,34 @@ const SubsidiesLandelijk = () => {
             ))}
           </div>
 
-          {/* 4.2 Tabel */}
+          {/* 4.2a Combineer-banner */}
           <div
             className="mt-10"
             style={{
-              backgroundColor: C.card,
+              backgroundColor: C.cardSoft,
+              borderLeft: `4px solid ${C.accent}`,
+              borderRadius: 8,
+              padding: 24,
+            }}
+          >
+            <div className="flex items-start gap-3">
+              <TrendingUp size={22} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
+              <div>
+                <h4 className="font-display" style={{ color: C.primary, fontWeight: 700, fontSize: 18 }}>
+                  Combineren is waar de winst zit
+                </h4>
+                <p style={{ marginTop: 8, fontSize: 15.5, lineHeight: 1.6 }}>
+                  Eén isolatiemaatregel levert ongeveer 15% van je investering aan subsidie op. Twee maatregelen, of één maatregel plus een warmtepomp of zonneboiler, brengt dat naar ongeveer 30%. Dat is letterlijk verdubbelen.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 4.2 Tabel */}
+          <div
+            className="mt-8"
+            style={{
+              backgroundColor: C.cardSoft,
               border: `1px solid ${C.accentSoft}66`,
               borderRadius: 16,
               padding: 28,
@@ -557,9 +581,9 @@ const SubsidiesLandelijk = () => {
                       style={{
                         padding: "12px 12px",
                         color: C.primary,
-                        fontWeight: 700,
+                        fontWeight: 800,
                         fontSize: 14,
-                        backgroundColor: `${C.cardSoft}`,
+                        backgroundColor: C.accent,
                       }}
                     >
                       2+ maatregelen
@@ -571,7 +595,7 @@ const SubsidiesLandelijk = () => {
                     <tr key={row.naam} style={{ borderBottom: i === ISDE.isolatie.length - 1 ? "none" : `1px solid ${C.accentSoft}33` }}>
                       <td style={{ padding: "12px 12px", fontSize: 15 }}>{row.naam}</td>
                       <td style={{ padding: "12px 12px", fontSize: 15 }}>{row.een}</td>
-                      <td style={{ padding: "12px 12px", fontSize: 15, fontWeight: 600, backgroundColor: `${C.cardSoft}` }}>
+                      <td style={{ padding: "12px 12px", fontSize: 15, fontWeight: 700, color: C.accent, backgroundColor: "rgba(229, 201, 103, 0.08)" }}>
                         {row.twee}
                       </td>
                     </tr>
@@ -618,10 +642,10 @@ const SubsidiesLandelijk = () => {
           {/* 4.4 Mini-CTA */}
           <div className="mt-10 text-center">
             <p style={{ color: C.primary, fontWeight: 700, fontSize: 18 }}>
-              Niet zeker hoe je het beste combineert?
+              Bang dat je geld laat liggen?
             </p>
             <p style={{ color: C.muted, fontSize: 14, marginTop: 6 }}>
-              Wij rekenen tijdens het huisbezoek precies uit wat voor jouw woning het slimst is.
+              Tijdens het huisbezoek rekenen we voor jouw woning uit welke combinatie het slimst is. Vrijblijvend en gratis.
             </p>
             <div className="mt-5">
               <OutlineBtn href="/contact">Plan een gratis huisbezoek</OutlineBtn>
