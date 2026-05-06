@@ -543,7 +543,7 @@ const SubsidiesNijBegun = () => {
                 style={{ fontSize: 14, color: C.muted }}
               >
                 <Info size={16} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
-                <span>Niet zeker in welke categorie je valt? Wij checken dat tijdens het huisbezoek. Dat scheelt vaak duizenden euro's.</span>
+                <span>Ook buiten het versterkingsgebied kun je 100% subsidie krijgen als je inkomen onder de grens valt. Niet zeker in welke categorie je valt? Wij checken het tijdens het huisbezoek. Dat scheelt vaak duizenden euro's.</span>
               </div>
             </div>
 
