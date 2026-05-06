@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import {
   Home,
   Coins,
-  Clock,
   Euro,
   Building2,
   Trees,
