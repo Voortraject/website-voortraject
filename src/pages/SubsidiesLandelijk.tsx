@@ -822,9 +822,6 @@ const SubsidiesLandelijk = () => {
               <p className="font-display" style={{ color: C.primary, fontWeight: 700, fontSize: 22 }}>
                 Wil je sneller verder zonder gedoe?
               </p>
-              <p style={{ color: C.muted, fontSize: 15, marginTop: 8 }}>
-                Plan een gratis huisbezoek. Wij rekenen voor jouw woning uit wat slim is om te combineren, en zorgen dat de aanvraag straks foutloos doorkomt.
-              </p>
               <div className="mt-6">
                 <PrimaryBtn href="/contact">Plan een huisbezoek</PrimaryBtn>
               </div>
