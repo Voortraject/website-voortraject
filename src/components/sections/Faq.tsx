@@ -19,10 +19,6 @@ const faqs = [
     a: "Primair in de provincies Groningen en Noord-Drenthe, met focus op gemeenten waar Nij Begun loopt. Voor andere regio's kun je contact opnemen, dan kijken we wat mogelijk is.",
   },
   {
-    q: "Wat kost een gesprek?",
-    a: "Het eerste gesprek is gratis en vrijblijvend. Daarna bespreken we samen of verdere begeleiding zinvol is en wat dat kost.",
-  },
-  {
     q: "Hoe snel kunnen jullie schakelen?",
     a: "Meestal kunnen we binnen een paar werkdagen een eerste gesprek inplannen. Geen wachttijden van weken of maanden zoals bij sommige bestaande loketten.",
   },
