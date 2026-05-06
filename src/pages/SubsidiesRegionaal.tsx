@@ -156,8 +156,8 @@ const faqs: { q: string; a: string }[] = [
     a: "Sommige gemeentelijke regelingen hebben een beperkt budget en stoppen als de pot leeg is. Daarom werken we per woning en plannen we de aanvraag op het juiste moment. Wachten kan geld kosten.",
   },
   {
-    q: "Werken jullie alleen in het Nij Begun-gebied?",
-    a: "Wij kennen het Nij Begun-gebied het best, dus daar weten we zeker wat actueel is. Voor andere gemeenten kijken we graag mee, neem contact op en we vertellen je wat we kunnen.",
+    q: "In welke regio's zijn jullie actief?",
+    a: "We kijken graag mee in elke Nederlandse gemeente. Voor jouw woning zoeken we uit welke regelingen er nu actueel zijn en hoe ze stapelen met ISDE.",
   },
   {
     q: "Hoe lang duurt het voor ik gemeentelijke subsidie krijg?",
