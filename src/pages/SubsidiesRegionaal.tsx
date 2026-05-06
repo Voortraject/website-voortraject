@@ -389,8 +389,15 @@ const SubsidiesRegionaal = () => {
                 <a href="/contact" style={goldBtn}>
                   Vraag een gratis check aan
                 </a>
-                <a href="#gemeenten" onClick={scrollToGemeenten} style={outlineBtn}>
-                  Bekijk ons werkgebied
+                <a
+                  href="#stapelen"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("stapelen")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                  style={outlineBtn}
+                >
+                  Zo werkt stapelen
                 </a>
               </div>
             </div>
