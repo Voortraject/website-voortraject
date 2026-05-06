@@ -428,8 +428,17 @@ const SubsidiesNijBegun = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mt-10 items-center max-w-6xl mx-auto">
-            <Illustration src={imgKaart} alt="Kaart van Groningen met 50% en 100% subsidiegebieden" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mt-10 items-start max-w-6xl mx-auto">
+            <div>
+              <Illustration src={imgKaart} alt="Kaart van Groningen met 50% en 100% subsidiegebieden" />
+              <div
+                className="flex items-start gap-2 mt-4"
+                style={{ fontSize: 14, color: C.muted }}
+              >
+                <Info size={16} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
+                <span>Niet zeker in welke categorie je valt? Wij checken dat tijdens de intake. Dat scheelt vaak duizenden euro's.</span>
+              </div>
+            </div>
 
             <div className="space-y-6">
               {/* Card 50% */}
@@ -449,33 +458,10 @@ const SubsidiesNijBegun = () => {
               </div>
 
               {/* Card 100% */}
-              <div
-                style={{
-                  ...cardSoftBase,
-                  padding: 28,
-                  border: `2px solid ${C.accent}`,
-                  position: "relative",
-                }}
-              >
-                <span
-                  style={{
-                    position: "absolute",
-                    top: -12,
-                    left: 24,
-                    backgroundColor: C.accent,
-                    color: C.primary,
-                    fontSize: 11,
-                    fontWeight: 800,
-                    letterSpacing: "0.1em",
-                    padding: "4px 10px",
-                    borderRadius: 9999,
-                  }}
-                >
-                  MEEST GUNSTIG
-                </span>
-                <div className="flex items-baseline gap-3 mt-2">
+              <div style={{ ...cardBase, padding: 28 }}>
+                <div className="flex items-baseline gap-3">
                   <span style={{ fontSize: 44, fontWeight: 800, color: C.primary, letterSpacing: "-0.02em" }}>100%</span>
-                  <span style={{ fontSize: 15, color: C.muted }}>tot <strong style={{ color: C.text }}>€40.000</strong> per woning, plus €1.000 advies</span>
+                  <span style={{ fontSize: 15, color: C.muted }}>tot <strong style={{ color: C.text }}>€40.000</strong> per woning, plus €1.000 advies- en afwerkbijdrage</span>
                 </div>
                 <h4 style={{ fontSize: 14, fontWeight: 700, color: C.primary, marginTop: 14, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>
                   Voor wie?
@@ -486,15 +472,14 @@ const SubsidiesNijBegun = () => {
                   <CheckLi>Inkomen onder 140% sociaal minimum</CheckLi>
                 </ul>
               </div>
-            </div>
-          </div>
 
-          <div
-            className="flex items-center gap-2 max-w-6xl mx-auto mt-6"
-            style={{ fontSize: 14, color: C.muted }}
-          >
-            <Info size={16} style={{ color: C.accent, flexShrink: 0 }} aria-hidden />
-            <span>Niet zeker in welke categorie je valt? Wij checken het tijdens de intake.</span>
+              <p
+                className="text-center"
+                style={{ fontSize: 14, color: C.primary, fontWeight: 600, marginTop: 8 }}
+              >
+                De €1.000 advies- en afwerkbijdrage geldt alleen voor de 100%-categorie.
+              </p>
+            </div>
           </div>
         </div>
       </section>
