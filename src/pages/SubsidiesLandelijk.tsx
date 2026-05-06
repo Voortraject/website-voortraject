@@ -322,7 +322,7 @@ const SubsidiesLandelijk = () => {
                 Subsidie voor jouw <Gold>verduurzaming</Gold>, in heel Nederland.
               </h1>
               <p style={{ marginTop: 24, fontSize: 18, lineHeight: 1.6, color: C.text }}>
-                ISDE is de landelijke subsidie voor warmtepomp, isolatie, zonneboiler en meer. Wij regelen de aanvraag voor je en zorgen dat je optimaal combineert. Jij krijgt het bedrag op je rekening.
+                Via ISDE krijg je honderden tot duizenden euro's terug op je verduurzaming. Maar je vraagt achteraf aan met meldcodes, foto's en de juiste timing. Eén foutje kost geld of vertraging. Wij regelen het van advies tot aanvraag bij RVO. Jij krijgt het bedrag op je rekening.
               </p>
               <div className="flex flex-wrap gap-3 mt-8">
                 <PrimaryBtn href="/contact">Plan een gratis huisbezoek</PrimaryBtn>
@@ -330,6 +330,34 @@ const SubsidiesLandelijk = () => {
               </div>
             </div>
             <div className="md:col-span-2">
+              <div
+                className="flex items-center justify-center"
+                style={{ padding: "16px 24px", marginBottom: 16 }}
+              >
+                <img
+                  src="/images/landelijk/logo-voortraject-blauw.png"
+                  alt="Voortraject"
+                  className="object-contain"
+                  style={{ maxHeight: 40, height: "auto" }}
+                />
+                <span
+                  aria-hidden
+                  style={{
+                    display: "inline-block",
+                    width: 1,
+                    height: 40,
+                    backgroundColor: "#1B2E4A",
+                    opacity: 0.25,
+                    margin: "0 20px",
+                  }}
+                />
+                <img
+                  src="/images/landelijk/rijksoverheid_logo.svg"
+                  alt="Rijksoverheid"
+                  className="object-contain"
+                  style={{ maxHeight: 40, height: "auto" }}
+                />
+              </div>
               <div
                 style={{
                   backgroundColor: C.card,
