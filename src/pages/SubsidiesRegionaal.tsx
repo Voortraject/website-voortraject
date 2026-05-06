@@ -634,8 +634,8 @@ const SubsidiesRegionaal = () => {
         </div>
       </section>
 
-      {/* 7. FAQ — cream */}
-      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
+      {/* 7. FAQ — wit */}
+      <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-24">
         <div className="container-content max-w-3xl">
           <H2>
             Veelgestelde <Gold>vragen</Gold>
