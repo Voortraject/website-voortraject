@@ -53,7 +53,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Krijg ik 50% of 100% subsidie?",
-    a: "Dat hangt af van of je in het versterkingsgebied woont en van je inkomen. Tijdens de intake checken we beide.",
+    a: "Dat hangt af van of je in het versterkingsgebied woont én van je inkomen. Tijdens de intake checken we beide. De €1.000 advies- en afwerkbijdrage is er trouwens alleen voor de 100%-categorie.",
   },
   {
     q: "Heb ik een isolatieplan nodig?",
