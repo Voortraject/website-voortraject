@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   Home,
   Coins,
-  Clock,
+  Euro,
   Building2,
   Trees,
   Check,
@@ -412,7 +412,7 @@ const SubsidiesNijBegun = () => {
                   {[
                     { icon: Home, text: <><strong>300.000+</strong> woningen komen in aanmerking</> },
                     { icon: Coins, text: <><strong>€1,65 miljard</strong> beschikbaar tot 2035</> },
-                    { icon: Clock, text: <><strong>2 jaar</strong> de tijd na toekenning</> },
+                    { icon: Euro, text: <><strong>20.000+</strong> woningen gingen je voor</> },
                   ].map((s, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <span
