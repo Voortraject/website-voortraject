@@ -212,27 +212,6 @@ const IconCircle = ({ Icon, size = 20 }: { Icon: React.ComponentType<any>; size?
   </span>
 );
 
-const GemeenteBadge = ({ name }: { name: string }) => (
-  <span
-    className="transition-shadow hover:shadow-md"
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 6,
-      backgroundColor: "var(--card-soft)",
-      border: "1px solid rgba(229, 201, 103, 0.3)",
-      borderRadius: 9999,
-      padding: "8px 16px",
-      fontSize: 14,
-      fontWeight: 500,
-      color: "#1B2E4A",
-    }}
-  >
-    <MapPin size={12} color="#D4AF3D" />
-    {name}
-  </span>
-);
-
 const SubsidiesRegionaal = () => {
   useEffect(() => {
     const prevTitle = document.title;
