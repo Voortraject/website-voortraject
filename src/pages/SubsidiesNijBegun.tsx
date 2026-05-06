@@ -55,7 +55,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Krijg ik 50% of 100% subsidie?",
-    a: "Dat hangt af van of je in het versterkingsgebied woont én van je inkomen. Tijdens het huisbezoek checken we beide. De €1.000 advies- en afwerkbijdrage is er trouwens alleen voor de 100%-categorie.",
+    a: "Je krijgt 100% subsidie als je in het versterkingsgebied woont, óf als je inkomen onder 140% sociaal minimum valt. Eén van die twee is genoeg. Voldoe je aan geen van beide, dan krijg je 50%. Tijdens het huisbezoek checken we precies waar je staat. De €1.000 advies- en afwerkbijdrage hoort overigens alleen bij de 100%-categorie.",
   },
   {
     q: "Heb ik een isolatieplan nodig?",
