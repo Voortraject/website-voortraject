@@ -599,23 +599,35 @@ const SubsidiesNijBegun = () => {
             <div className="space-y-6">
               <Illustration src={imgHuis} alt="Doorsnede van een huis met de vergoede isolatiemaatregelen" />
 
-              {/* Standaard voor woningisolatie callout */}
-              <div
+              {/* Standaard voor woningisolatie callout (uitklapbaar) */}
+              <details
                 style={{
                   backgroundColor: C.cardSoft,
                   borderLeft: `4px solid ${C.accent}`,
                   borderRadius: "0.75rem",
-                  padding: "20px 22px",
-                  display: "flex",
-                  gap: 14,
-                  alignItems: "flex-start",
+                  padding: "16px 22px",
                 }}
               >
-                <Lightbulb size={22} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
-                <p style={{ fontSize: 15, color: C.text, lineHeight: 1.6, margin: 0 }}>
-                  Niet alle maatregelen passen bij elke woning. Het doel van Nij Begun is jouw woning naar de Standaard voor woningisolatie te brengen. Een adviseur kijkt naar wat jouw huis écht nodig heeft. Soms wijkt dat advies af van wat je had verwacht. Vloerisolatie of nieuwe deuren zijn niet altijd de eerste stap. De adviseur is daarin eerlijk, want het doel is een warm en zuinig huis, niet zoveel mogelijk maatregelen.
+                <summary
+                  style={{
+                    display: "flex",
+                    gap: 14,
+                    alignItems: "center",
+                    cursor: "pointer",
+                    listStyle: "none",
+                    fontSize: 15,
+                    fontWeight: 600,
+                    color: C.primary,
+                  }}
+                >
+                  <Lightbulb size={22} style={{ color: C.accent, flexShrink: 0 }} aria-hidden />
+                  <span style={{ flex: 1 }}>Niet alle maatregelen passen bij elke woning</span>
+                  <ChevronDown size={18} style={{ color: C.accent, flexShrink: 0 }} aria-hidden />
+                </summary>
+                <p style={{ fontSize: 15, color: C.text, lineHeight: 1.6, margin: "12px 0 0 36px" }}>
+                  Het doel van Nij Begun is jouw woning naar de Standaard voor woningisolatie te brengen. Een adviseur kijkt naar wat jouw huis écht nodig heeft. Soms wijkt dat advies af van wat je had verwacht. Vloerisolatie of nieuwe deuren zijn niet altijd de eerste stap. De adviseur is daarin eerlijk, want het doel is een warm en zuinig huis, niet zoveel mogelijk maatregelen.
                 </p>
-              </div>
+              </details>
             </div>
 
             <div className="space-y-8">
