@@ -133,6 +133,85 @@ const XLi = ({ children }: { children: React.ReactNode }) => (
   </li>
 );
 
+const MeasureLi = ({ label, info }: { label: string; info: string }) => {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, [open]);
+  return (
+    <li className="flex items-start gap-2 py-1">
+      <Check size={18} style={{ color: C.accent, marginTop: 3, flexShrink: 0 }} aria-hidden />
+      <span style={{ fontSize: 15, color: C.text, lineHeight: 1.5 }} className="flex-1">
+        {label}{" "}
+        <span ref={wrapRef} style={{ position: "relative", display: "inline-block" }}>
+          <button
+            type="button"
+            aria-label={`Meer informatie over ${label}`}
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+            onMouseEnter={() => setOpen(true)}
+            onMouseLeave={() => setOpen(false)}
+            onFocus={() => setOpen(true)}
+            onBlur={() => setOpen(false)}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              color: C.accent,
+              padding: 0,
+              verticalAlign: "middle",
+            }}
+          >
+            <Info size={16} aria-hidden />
+          </button>
+          {open && (
+            <span
+              role="tooltip"
+              style={{
+                position: "absolute",
+                bottom: "calc(100% + 8px)",
+                left: "50%",
+                transform: "translateX(-50%)",
+                backgroundColor: "#FFFFFF",
+                border: `1px solid ${C.accent}`,
+                borderRadius: "0.5rem",
+                padding: "12px 14px",
+                width: "max-content",
+                maxWidth: 320,
+                fontSize: 13,
+                color: C.text,
+                lineHeight: 1.5,
+                boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
+                zIndex: 30,
+                textAlign: "left",
+                whiteSpace: "normal",
+              }}
+            >
+              {info}
+            </span>
+          )}
+        </span>
+      </span>
+    </li>
+  );
+};
+
 const cardBase: React.CSSProperties = {
   backgroundColor: C.card,
   border: `1px solid ${C.accentSoft}66`,
