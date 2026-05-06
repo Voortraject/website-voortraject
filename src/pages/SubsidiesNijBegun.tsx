@@ -572,10 +572,13 @@ const SubsidiesNijBegun = () => {
                 <h4 style={{ fontSize: 14, fontWeight: 700, color: C.primary, marginTop: 14, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>
                   Voor wie?
                 </h4>
+                <p style={{ fontSize: 14, color: C.muted, marginBottom: 8 }}>
+                  Eén van deze voorwaarden volstaat:
+                </p>
                 <ul>
-                  <CheckLi>Bewoners in het versterkingsgebied</CheckLi>
-                  <CheckLi>Bewoners in NCG-versterkingsprogramma</CheckLi>
-                  <CheckLi>Inkomen onder 140% sociaal minimum</CheckLi>
+                  <CheckLi>Je woont in het versterkingsgebied (NCG)</CheckLi>
+                  <CheckLi>Of je inkomen valt onder 140% sociaal minimum (alleenstaand {INKOMEN_ALLEEN}, samen {INKOMEN_SAMEN} in 2025)</CheckLi>
+                  <CheckLi>Of je bent VvE of kleine verhuurder in het versterkingsgebied</CheckLi>
                 </ul>
               </div>
             </div>
