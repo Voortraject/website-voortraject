@@ -301,30 +301,42 @@ const SubsidiesNijBegun = () => {
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  // Section 6: scroll progress indicator
+  // Section 6: per-step fade/slide-in via IntersectionObserver
   const stepRefs = useRef<(HTMLLIElement | null)[]>([]);
-  const [activeStep, setActiveStep] = useState(0);
+  const [visibleSteps, setVisibleSteps] = useState<Set<number>>(new Set());
   useEffect(() => {
-    const observers: IntersectionObserver[] = [];
-    const visible = new Set<number>();
-    stepRefs.current.forEach((el, i) => {
-      if (!el) return;
-      const obs = new IntersectionObserver(
-        (entries) => {
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) {
+      setVisibleSteps(new Set([0, 1, 2, 3, 4, 5, 6]));
+      return;
+    }
+    const obs = new IntersectionObserver(
+      (entries) => {
+        setVisibleSteps((prev) => {
+          let changed = false;
+          const next = new Set(prev);
           entries.forEach((e) => {
-            if (e.isIntersecting) visible.add(i);
-            else visible.delete(i);
+            if (e.isIntersecting) {
+              const idx = Number((e.target as HTMLElement).dataset.stepIndex);
+              if (!next.has(idx)) {
+                next.add(idx);
+                changed = true;
+                obs.unobserve(e.target);
+              }
+            }
           });
-          if (visible.size > 0) {
-            setActiveStep(Math.min(...Array.from(visible)));
-          }
-        },
-        { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
-      );
-      obs.observe(el);
-      observers.push(obs);
+          return changed ? next : prev;
+        });
+      },
+      { threshold: 0.3 }
+    );
+    stepRefs.current.forEach((el) => {
+      if (el) obs.observe(el);
     });
-    return () => observers.forEach((o) => o.disconnect());
+    return () => obs.disconnect();
   }, []);
 
   return (
