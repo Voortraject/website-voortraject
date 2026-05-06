@@ -214,7 +214,7 @@ const outlineBtn: React.CSSProperties = {
   justifyContent: "center",
 };
 
-const IconCircle = ({ Icon, size = 20 }: { Icon: React.ComponentType<{ size?: number; color?: string }>; size?: number }) => (
+const IconCircle = ({ Icon, size = 20 }: { Icon: React.ComponentType<any>; size?: number }) => (
   <span
     style={{
       display: "inline-flex",
