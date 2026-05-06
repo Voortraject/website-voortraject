@@ -366,10 +366,10 @@ const SubsidiesRegionaal = () => {
               </p>
               <div className="flex flex-wrap gap-3">
                 <a href="/contact" style={goldBtn}>
-                  Plan een gratis huisbezoek
+                  Vraag een gratis check aan
                 </a>
                 <a href="#gemeenten" onClick={scrollToGemeenten} style={outlineBtn}>
-                  Check welke regelingen er gelden
+                  Bekijk ons werkgebied
                 </a>
               </div>
             </div>
