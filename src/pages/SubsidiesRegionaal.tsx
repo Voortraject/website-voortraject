@@ -409,7 +409,7 @@ const SubsidiesRegionaal = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+          <div className="mt-10 flex flex-col md:flex-row md:items-stretch gap-4 md:gap-3">
             {[
               {
                 Icon: Globe,
@@ -432,16 +432,30 @@ const SubsidiesRegionaal = () => {
                 tekst: "Verschilt per gemeente. Vaak isolatiepremie, lening of gratis energiecoach. Wij weten wat actueel is.",
                 bedrag: "vaak honderden tot duizenden euro's",
               },
-            ].map((c, i) => (
-              <div key={i} style={{ ...cardOnCream, padding: 24, display: "flex", flexDirection: "column", gap: 12 }}>
-                <IconCircle Icon={c.Icon} size={22} />
-                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: C.accent }}>
-                  {c.tag}
-                </span>
-                <h3 style={{ fontSize: 22, fontWeight: 700, color: C.primary, margin: 0 }}>{c.titel}</h3>
-                <p style={{ fontSize: 15, color: C.text, lineHeight: 1.6, margin: 0 }}>{c.tekst}</p>
-                <span style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>{c.bedrag}</span>
-              </div>
+            ].map((c, i, arr) => (
+              <>
+                <div key={i} style={{ ...cardOnCream, padding: 24, display: "flex", flexDirection: "column", gap: 12, flex: 1 }}>
+                  <div className="flex items-center gap-3">
+                    <IconCircle Icon={c.Icon} size={22} />
+                    <h3 style={{ fontSize: 22, fontWeight: 700, color: C.primary, margin: 0 }}>{c.titel}</h3>
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: C.accent }}>
+                    {c.tag}
+                  </span>
+                  <p style={{ fontSize: 15, color: C.text, lineHeight: 1.6, margin: 0 }}>{c.tekst}</p>
+                  <span style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>{c.bedrag}</span>
+                </div>
+                {i < arr.length - 1 && (
+                  <div
+                    key={`plus-${i}`}
+                    aria-hidden="true"
+                    className="flex items-center justify-center"
+                    style={{ color: C.accent, fontSize: 32, fontWeight: 700, lineHeight: 1, padding: "4px 0" }}
+                  >
+                    +
+                  </div>
+                )}
+              </>
             ))}
           </div>
 
