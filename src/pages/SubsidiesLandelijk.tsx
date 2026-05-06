@@ -363,7 +363,7 @@ const SubsidiesLandelijk = () => {
                 Via ISDE krijg je honderden tot duizenden euro's terug op je verduurzaming. Maar je vraagt achteraf aan met meldcodes, foto's en de juiste timing. Eén foutje kost geld of vertraging. Wij regelen het van advies tot aanvraag bij RVO. Jij krijgt het bedrag op je rekening.
               </p>
               <div className="flex flex-wrap gap-3 mt-8">
-                <PrimaryBtn href="/contact">Plan een gratis huisbezoek</PrimaryBtn>
+                <PrimaryBtn href="/contact">Ja ik wil gratis advies</PrimaryBtn>
                 <OutlineBtn onClick={scrollToBedragen}>Bekijk wat je kunt krijgen</OutlineBtn>
               </div>
             </div>
@@ -670,7 +670,7 @@ const SubsidiesLandelijk = () => {
               Tijdens het huisbezoek rekenen we voor jouw woning uit welke combinatie het slimst is. Vrijblijvend en gratis.
             </p>
             <div className="mt-5">
-              <OutlineBtn href="/contact">Plan een gratis huisbezoek</OutlineBtn>
+              <OutlineBtn href="/contact">Neem contact op</OutlineBtn>
             </div>
           </div>
           </div>
@@ -933,7 +933,7 @@ const SubsidiesLandelijk = () => {
               Wil je sneller verder met je <Gold>verduurzaming</Gold>?
             </h2>
             <p style={{ marginTop: 16, color: "rgba(255,255,255,0.8)", fontSize: 16, lineHeight: 1.6 }}>
-              Plan een gratis huisbezoek. Wij rekenen voor jouw woning uit wat je via ISDE kunt krijgen, en hoe je optimaal combineert. Geen verplichtingen, geen verkooppraatje.
+              Neem contact op. Wij rekenen voor jouw woning uit wat je via ISDE kunt krijgen, en hoe je optimaal combineert. Geen verplichtingen, geen verkooppraatje.
             </p>
             <div className="mt-8">
               <PrimaryBtn href="/contact">Plan een huisbezoek</PrimaryBtn>
