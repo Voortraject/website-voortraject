@@ -14,6 +14,10 @@ import {
   Send,
   CheckCircle2,
   ChevronDown,
+  Hammer,
+  LifeBuoy,
+  FileCheck,
+  Scale,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
