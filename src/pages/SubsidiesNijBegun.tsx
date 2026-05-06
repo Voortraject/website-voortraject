@@ -558,9 +558,8 @@ const SubsidiesNijBegun = () => {
                   Voor wie?
                 </h4>
                 <ul>
-                  <CheckLi>Alle woningeigenaren in het Nij Begun-gebied</CheckLi>
-                  <CheckLi>Buiten het versterkingsgebied</CheckLi>
-                  <CheckLi>Inkomen boven 140% sociaal minimum</CheckLi>
+                  <CheckLi>Woningeigenaar in het Nij Begun-gebied</CheckLi>
+                  <CheckLi>Niet in het versterkingsgebied én inkomen boven 140% sociaal minimum</CheckLi>
                 </ul>
               </div>
 
