@@ -671,14 +671,14 @@ const SubsidiesRegionaal = () => {
             }}
           >
             <p style={{ fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 700, color: C.primary, margin: 0 }}>
-              Wil je weten wat er voor jouw woning open staat?
+              Geen drie loketten, <Gold>één aanspreekpunt</Gold>
             </p>
             <p style={{ fontSize: 15, color: C.muted, marginTop: 10 }}>
-              Plan een gratis huisbezoek. Wij rekenen voor jouw gemeente uit welke regelingen actueel zijn en hoe je ze stapelt.
+              Wij doen ISDE bij RVO, Nij Begun bij SNN en de gemeentelijke aanvraag bij jouw gemeente. Allemaal in één traject.
             </p>
             <div style={{ marginTop: 20 }}>
               <a href="/contact" style={goldBtn}>
-                Plan een gesprek in
+                Vraag een huisbezoek aan
               </a>
             </div>
           </div>
