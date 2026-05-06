@@ -667,8 +667,8 @@ const SubsidiesNijBegun = () => {
         </div>
       </section>
 
-      {/* 6. ZO VERLOOPT JOUW TRAJECT — kaarten + verticale tijdlijn + scroll progress */}
-      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-20">
+      {/* 6. ZO VERLOOPT JOUW TRAJECT */}
+      <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-20">
         <div className="container-content">
           <div className="max-w-3xl mx-auto text-center">
             <H2>
@@ -680,133 +680,72 @@ const SubsidiesNijBegun = () => {
           </div>
 
           <div className="relative max-w-4xl mx-auto mt-12">
-            {/* Scroll progress indicator (desktop) */}
-            <div
-              aria-hidden="true"
-              className="hidden md:flex flex-col"
-              style={{
-                position: "sticky",
-                float: "right",
-                top: 24,
-                right: 0,
-                marginRight: -8,
-                gap: 16,
-                zIndex: 10,
-                width: 14,
-                alignItems: "center",
-              }}
-            >
-              {[0, 1, 2, 3, 4, 5, 6].map((i) => {
-                const isActive = i === activeStep;
-                return (
-                  <span
-                    key={i}
-                    style={{
-                      width: isActive ? 12 : 10,
-                      height: isActive ? 12 : 10,
-                      borderRadius: 9999,
-                      backgroundColor: isActive ? C.accent : C.primary,
-                      opacity: isActive ? 1 : 0.2,
-                      transform: isActive ? "scale(1.2)" : "scale(1)",
-                      transition: "transform 200ms ease, background-color 200ms ease, opacity 200ms ease",
-                      display: "inline-block",
-                    }}
-                  />
-                );
-              })}
-            </div>
-
-            {/* Verticale tijdlijn (achter de kaarten, links) */}
-            <div
-              aria-hidden
-              className="hidden md:block absolute"
-              style={{
-                left: 16,
-                top: 12,
-                bottom: 12,
-                width: 2,
-                backgroundColor: C.accent,
-              }}
-            />
-
-            <ol className="flex flex-col gap-8 md:gap-12 relative">
+            <ol className="flex flex-col gap-12 md:gap-16 relative">
               {[
                 {
                   n: "01",
                   icon: Phone,
-                  t: "Gratis huisbezoek",
-                  d: "Geen onbekende callcenter-medewerker, geen wachtlijst van weken. Een lokale adviseur uit Groningen of Drenthe komt binnen een week persoonlijk bij je langs. We bespreken jouw situatie, jouw woning en wat je verwacht.",
+                  t: "Vrijblijvend telefoongesprek",
+                  d: "Alles begint met een gesprek aan de telefoon. We stellen wat vragen over jou en je woning, en doen meteen de postcode- en inkomenscheck. Zo weet je nog vóór een huisbezoek of je voor 50% of 100% in aanmerking komt.",
                 },
                 {
                   n: "02",
-                  icon: MapPinned,
-                  t: "Postcode- en inkomenscheck",
-                  d: "We checken jouw postcode tegen het versterkingsgebied en je inkomen tegen de 140%-grens. Daarna weet je meteen of je voor 50% of 100% in aanmerking komt. Geen gedoe met regelingen, geen onduidelijkheid.",
+                  icon: Calendar,
+                  t: "Afspraak voor een huisbezoek",
+                  d: "Klikt het? Dan plannen we een huisbezoek in. Vrijblijvend en onafhankelijk. Een lokale adviseur uit Groningen of Drenthe komt persoonlijk bij je langs.",
                 },
                 {
                   n: "03",
                   icon: FileText,
-                  t: "Isolatieplan op maat",
-                  d: "Voor maatregelen boven €10.000 maakt een Nij Begun-isolatieadviseur een gratis plan op maat. Daarin staat welke isolatie jouw woning nodig heeft om aan de standaard te voldoen, in welke volgorde, en wat het ongeveer kost.",
+                  t: "Samen bepalen wat haalbaar is",
+                  d: "Tijdens het bezoek bekijken we wat we kunnen uitvoeren. Heb je al een isolatieplan? Dan kijken we welke maatregelen we als eerste oppakken. Heb je nog geen plan? Dan starten we met maatregelen tot €10.000. Daar is geen isolatieplan voor nodig en jij bepaalt waar we beginnen.",
                 },
                 {
                   n: "04",
                   icon: Send,
                   t: "Wij dienen de aanvraag in",
-                  d: "Geen formulieren in pdf, geen DigiD-gedoe, geen termijnen die je zelf moet bewaken. Wij dienen de aanvraag in bij SNN en houden de 13 wekentermijn voor je in de gaten. Je hoort van ons zodra er beweging is.",
+                  d: "Geen DigiD-gedoe, geen formulieren in pdf. Wij dienen de aanvraag in bij SNN en bewaken de 13 wekentermijn voor je.",
                 },
                 {
                   n: "05",
                   icon: CheckCircle2,
                   t: "Goedkeuring",
-                  d: "Aanvraag akkoord! De subsidie is toegekend. Vanaf nu heb je 2 jaar de tijd om de werkzaamheden te laten uitvoeren door een aangesloten Nij Begun-bedrijf. Wij sturen je de toekenningsbrief en bespreken de vervolgstappen.",
+                  d: "Aanvraag akkoord. Vanaf nu heb je 2 jaar de tijd om de werkzaamheden te laten uitvoeren door een aangesloten Nij Begun-bedrijf. Wij sturen je de toekenningsbrief en bespreken de vervolgstappen.",
                   image: imgAanvraag,
-                  spotlight: true,
                 },
                 {
                   n: "06",
                   icon: Hammer,
                   t: "Uitvoering met begeleiding",
-                  d: "Wij brengen je in contact met aangesloten uitvoerders die echt bij jouw woning passen. Geen verkooppraatje, geen vooringenomen keuze. Tijdens de uitvoering blijven we beschikbaar voor vragen en bewaken we de kwaliteit en planning.",
+                  d: "Een aangesloten Nij Begun-bedrijf voert het werk uit. Geen verkooppraatje, geen vooringenomen keuze. Wij begeleiden tijdens de uitvoering en bewaken kwaliteit en planning.",
                 },
                 {
                   n: "07",
                   icon: LifeBuoy,
-                  t: "Natraject en nazorg",
-                  d: "Na de oplevering loopt het bij ons niet op nul. We blijven beschikbaar voor vragen over onderhoud, garantie of vervolgmaatregelen (zoals een warmtepomp via ISDE). Wij blijven jouw aanspreekpunt, ook als de uitvoerder zijn werk al heeft afgeleverd.",
+                  t: "Vervolgmaatregelen en natraject",
+                  d: "Wil je daarna meer doen? Samen met het isolatieplan kijken we welke aanvullende stappen logisch zijn. Wij blijven jouw aanspreekpunt voor vragen over onderhoud, garantie of vervolgmaatregelen zoals warmtepomp of zonnepanelen.",
                 },
               ].map((s, i) => {
-                const isSpotlight = (s as { spotlight?: boolean }).spotlight;
+                const isVisible = visibleSteps.has(i);
+                const hasImage = !!(s as { image?: string }).image;
                 return (
                   <li
                     key={s.n}
                     ref={(el) => (stepRefs.current[i] = el)}
-                    className="relative md:ml-12"
+                    data-step-index={i}
                     style={{
                       backgroundColor: C.card,
                       border: `1px solid ${C.accentSoft}66`,
-                      borderLeft: isSpotlight ? `4px solid ${C.accent}` : `1px solid ${C.accentSoft}66`,
                       borderRadius: "1rem",
-                      boxShadow: isSpotlight
-                        ? "0 8px 28px rgba(27,46,74,0.10)"
-                        : "0 1px 3px rgba(0,0,0,0.04)",
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+                      opacity: isVisible ? 1 : 0,
+                      transform: isVisible ? "translateY(0)" : "translateY(20px)",
+                      transition: "opacity 400ms ease-out, transform 400ms ease-out",
+                      willChange: "opacity, transform",
                     }}
                   >
-                    {/* Tijdlijn-dot */}
-                    <span
-                      aria-hidden
-                      className="hidden md:block absolute"
-                      style={{
-                        left: -36,
-                        top: 28,
-                        width: 12,
-                        height: 12,
-                        borderRadius: 9999,
-                        backgroundColor: C.accent,
-                      }}
-                    />
-                    {isSpotlight && s.image ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center p-6 md:p-8">
+                    {hasImage ? (
+                      <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-6 md:gap-8 items-center p-6 md:p-8">
                         <div>
                           <div className="flex items-center gap-3 mb-3">
                             <span
@@ -837,7 +776,7 @@ const SubsidiesNijBegun = () => {
                           <h3
                             className="font-display"
                             style={{
-                              fontSize: 24,
+                              fontSize: 22,
                               fontWeight: 700,
                               color: C.primary,
                               letterSpacing: "-0.01em",
@@ -848,7 +787,7 @@ const SubsidiesNijBegun = () => {
                           </h3>
                           <p style={{ fontSize: 16, color: C.text, lineHeight: 1.6, margin: 0 }}>{s.d}</p>
                         </div>
-                        <Illustration src={s.image} alt="Aanvraag akkoord op laptop" />
+                        <Illustration src={(s as { image: string }).image} alt="Aanvraag akkoord op laptop" />
                       </div>
                     ) : (
                       <div className="p-6 md:p-8">
