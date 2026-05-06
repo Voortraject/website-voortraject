@@ -506,7 +506,7 @@ const SubsidiesRegionaal = () => {
 
           <div style={{ textAlign: "center", marginTop: 32 }}>
             <a href="/contact" style={outlineBtn}>
-              Plan een gratis check
+              Neem contact op
             </a>
           </div>
         </div>
