@@ -157,7 +157,7 @@ const IconCircle = ({
   Icon,
   size = 44,
 }: {
-  Icon: React.ComponentType<{ size?: number }>;
+  Icon: React.ComponentType<any>;
   size?: number;
 }) => (
   <span
