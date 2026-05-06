@@ -146,7 +146,7 @@ const OutlineBtn = ({ href, children, onClick }: { href?: string; children: Reac
 
 // Card variant helper — strict color rule
 const cardStyle = (variant: "on-cream" | "on-white"): React.CSSProperties => ({
-  backgroundColor: variant === "on-cream" ? C.card : C.cardSoft,
+  backgroundColor: variant === "on-cream" ? C.card : C.bg,
   border: `1px solid ${C.accentSoft}66`,
   borderRadius: 16,
   padding: 28,
