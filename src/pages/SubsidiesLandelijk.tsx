@@ -146,7 +146,7 @@ const OutlineBtn = ({ href, children, onClick }: { href?: string; children: Reac
 
 // Card variant helper — strict color rule
 const cardStyle = (variant: "on-cream" | "on-white"): React.CSSProperties => ({
-  backgroundColor: variant === "on-cream" ? C.card : C.cardSoft,
+  backgroundColor: variant === "on-cream" ? C.card : C.bg,
   border: `1px solid ${C.accentSoft}66`,
   borderRadius: 16,
   padding: 28,
@@ -397,24 +397,32 @@ const SubsidiesLandelijk = () => {
                 />
               </div>
               {/* Statkaart — wit op cream */}
-              <div style={cardStyle("on-cream")}>
-                <div style={{ backgroundColor: C.cardSoft, borderRadius: 12, padding: 20 }}>
+              <div style={{ ...cardStyle("on-cream"), padding: 24 }}>
+                <ul className="space-y-4">
                   {[
-                    { icon: Globe, t: "Heel Nederland komt in aanmerking" },
-                    { icon: Coins, t: `${ISDE.budget2026} budget in 2026` },
-                    { icon: TrendingUp, t: "Verdubbel bij 2 of meer maatregelen" },
+                    { icon: Globe, t: <>Heel Nederland komt in aanmerking</> },
+                    { icon: Coins, t: <><strong>{ISDE.budget2026}</strong> budget in 2026</> },
+                    { icon: TrendingUp, t: <>Verdubbel bij <strong>2 of meer</strong> maatregelen</> },
                   ].map((s, i) => (
-                    <div key={i} className="flex items-center gap-3" style={{ padding: "10px 0" }}>
+                    <li key={i} className="flex items-start gap-3">
                       <span
-                        className="inline-flex items-center justify-center rounded-full"
-                        style={{ backgroundColor: C.accent, width: 36, height: 36, color: C.primary, flexShrink: 0 }}
+                        className="inline-flex items-center justify-center shrink-0"
+                        style={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: 9999,
+                          backgroundColor: C.cardSoft,
+                          color: C.accent,
+                        }}
                       >
-                        <s.icon size={18} />
+                        <s.icon size={18} aria-hidden />
                       </span>
-                      <span style={{ color: C.primary, fontWeight: 600, fontSize: 15 }}>{s.t}</span>
-                    </div>
+                      <span style={{ fontSize: 15, color: C.text, lineHeight: 1.5, paddingTop: 6 }}>
+                        {s.t}
+                      </span>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
             </div>
           </div>
@@ -440,8 +448,7 @@ const SubsidiesLandelijk = () => {
                   border: `1px solid rgba(229, 201, 103, 0.4)`,
                   borderRadius: 16,
                   padding: 16,
-                  backgroundColor: C.cardSoft,
-                  boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+                  backgroundColor: "transparent",
                 }}
               >
                 <div style={{ aspectRatio: "5 / 3", width: "100%" }}>
