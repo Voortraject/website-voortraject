@@ -433,8 +433,8 @@ const SubsidiesRegionaal = () => {
                 bedrag: "vaak honderden tot duizenden euro's",
               },
             ].map((c, i, arr) => (
-              <>
-                <div key={i} style={{ ...cardOnCream, padding: 24, display: "flex", flexDirection: "column", gap: 12, flex: 1 }}>
+              <Fragment key={i}>
+                <div style={{ ...cardOnCream, padding: 24, display: "flex", flexDirection: "column", gap: 12, flex: 1 }}>
                   <div className="flex items-center gap-3">
                     <IconCircle Icon={c.Icon} size={22} />
                     <h3 style={{ fontSize: 22, fontWeight: 700, color: C.primary, margin: 0 }}>{c.titel}</h3>
@@ -447,7 +447,6 @@ const SubsidiesRegionaal = () => {
                 </div>
                 {i < arr.length - 1 && (
                   <div
-                    key={`plus-${i}`}
                     aria-hidden="true"
                     className="flex items-center justify-center"
                     style={{ color: C.accent, fontSize: 32, fontWeight: 700, lineHeight: 1, padding: "4px 0" }}
@@ -455,7 +454,7 @@ const SubsidiesRegionaal = () => {
                     +
                   </div>
                 )}
-              </>
+              </Fragment>
             ))}
           </div>
 
