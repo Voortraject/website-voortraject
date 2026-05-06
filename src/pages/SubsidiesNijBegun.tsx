@@ -367,7 +367,7 @@ const SubsidiesNijBegun = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <a href="/contact" style={goldBtn}>
-                  Plan een gratis huisbezoek
+                  Ja ik wil gratis advies
                 </a>
                 <a href="#bedragen" style={outlineBtn}>
                   Bekijk wat jij krijgt
@@ -870,7 +870,7 @@ const SubsidiesNijBegun = () => {
               Wil je sneller door zonder gedoe?
             </h3>
             <p style={{ fontSize: 15, color: C.muted, marginTop: 10, maxWidth: 520, marginLeft: "auto", marginRight: "auto", lineHeight: 1.6 }}>
-              Plan een gratis huisbezoek. Een lokale adviseur uit jouw regio belt of komt langs binnen een week.
+              Neem contact op. Een lokale adviseur uit jouw regio belt of komt langs binnen een week.
             </p>
             <a href="/contact" style={{ ...goldBtn, marginTop: 20 }}>
               Ik wil gebeld worden
@@ -993,7 +993,7 @@ const SubsidiesNijBegun = () => {
               Ontdek welke stap voor jou <Gold>logisch</Gold> is.
             </h2>
             <p style={{ fontSize: 17, lineHeight: 1.6, marginTop: 16, color: "rgba(255,255,255,0.8)" }}>
-              Plan een gratis huisbezoek. Een lokale adviseur komt persoonlijk langs binnen een week. Geen verplichtingen, geen verkooppraatje.
+              Neem contact op. Een lokale adviseur komt persoonlijk langs binnen een week. Geen verplichtingen, geen verkooppraatje.
             </p>
             <a href="/contact" style={{ ...goldBtn, marginTop: 24 }}>
               Ik wil gebeld worden
