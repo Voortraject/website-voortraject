@@ -448,8 +448,7 @@ const SubsidiesLandelijk = () => {
                   border: `1px solid rgba(229, 201, 103, 0.4)`,
                   borderRadius: 16,
                   padding: 16,
-                  backgroundColor: C.cardSoft,
-                  boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+                  backgroundColor: "transparent",
                 }}
               >
                 <div style={{ aspectRatio: "5 / 3", width: "100%" }}>
