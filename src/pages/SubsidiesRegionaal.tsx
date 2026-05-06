@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  MapPin,
   Layers,
   RefreshCw,
   Globe,
@@ -20,7 +19,6 @@ import {
   Home,
   FileCheck,
   Scale,
-  Trees,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -39,23 +37,6 @@ const C = {
 
 const LAATST_BIJGEWERKT = "mei 2026";
 
-// TODO: vervang door schone werkgebied-kaart zonder 50%/100%-labels.
-const WERKGEBIED_KAART = "/images/nij-begun/Afbeelding_50-100_Groningen.webp";
-
-const gemeentenGroningen = [
-  "Eemsdelta",
-  "Groningen",
-  "Het Hogeland",
-  "Midden-Groningen",
-  "Oldambt",
-  "Pekela",
-  "Stadskanaal",
-  "Veendam",
-  "Westerkwartier",
-  "Westerwolde",
-];
-
-const gemeentenDrenthe = ["Aa en Hunze", "Noordenveld", "Tynaarlo"];
 
 const regelingen = [
   {
@@ -156,8 +137,8 @@ const faqs: { q: string; a: string }[] = [
     a: "Sommige gemeentelijke regelingen hebben een beperkt budget en stoppen als de pot leeg is. Daarom werken we per woning en plannen we de aanvraag op het juiste moment. Wachten kan geld kosten.",
   },
   {
-    q: "Werken jullie alleen in het Nij Begun-gebied?",
-    a: "Wij kennen het Nij Begun-gebied het best, dus daar weten we zeker wat actueel is. Voor andere gemeenten kijken we graag mee, neem contact op en we vertellen je wat we kunnen.",
+    q: "In welke regio's zijn jullie actief?",
+    a: "We kijken graag mee in elke Nederlandse gemeente. Voor jouw woning zoeken we uit welke regelingen er nu actueel zijn en hoe ze stapelen met ISDE.",
   },
   {
     q: "Hoe lang duurt het voor ik gemeentelijke subsidie krijg?",
@@ -228,27 +209,6 @@ const IconCircle = ({ Icon, size = 20 }: { Icon: React.ComponentType<any>; size?
     }}
   >
     <Icon size={size} color={C.accent} />
-  </span>
-);
-
-const GemeenteBadge = ({ name }: { name: string }) => (
-  <span
-    className="transition-shadow hover:shadow-md"
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 6,
-      backgroundColor: "var(--card-soft)",
-      border: "1px solid rgba(229, 201, 103, 0.3)",
-      borderRadius: 9999,
-      padding: "8px 16px",
-      fontSize: 14,
-      fontWeight: 500,
-      color: "#1B2E4A",
-    }}
-  >
-    <MapPin size={12} color="#D4AF3D" />
-    {name}
   </span>
 );
 
@@ -341,11 +301,6 @@ const SubsidiesRegionaal = () => {
     return () => obs.disconnect();
   }, []);
 
-  const scrollToGemeenten = (e: React.MouseEvent) => {
-    e.preventDefault();
-    document.getElementById("gemeenten")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
   const cardOnCream: React.CSSProperties = {
     backgroundColor: C.card,
     border: `1px solid ${C.accentSoft}66`,
@@ -389,8 +344,15 @@ const SubsidiesRegionaal = () => {
                 <a href="/contact" style={goldBtn}>
                   Vraag een gratis check aan
                 </a>
-                <a href="#gemeenten" onClick={scrollToGemeenten} style={outlineBtn}>
-                  Bekijk ons werkgebied
+                <a
+                  href="#stapelen"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("stapelen")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                  style={outlineBtn}
+                >
+                  Zo werkt stapelen
                 </a>
               </div>
             </div>
@@ -403,9 +365,9 @@ const SubsidiesRegionaal = () => {
             >
               <ul style={{ display: "flex", flexDirection: "column", gap: 18 }}>
                 {[
-                  { Icon: MapPin, text: <><strong style={{ color: C.primary }}>13 gemeenten</strong> in ons werkgebied</> },
                   { Icon: Layers, text: <><strong style={{ color: C.primary }}>Stapelbaar</strong> met ISDE en Nij Begun</> },
                   { Icon: RefreshCw, text: <><strong style={{ color: C.primary }}>Actuele regelingen</strong> worden door ons bijgehouden</> },
+                  { Icon: Users, text: <><strong style={{ color: C.primary }}>Eén aanspreekpunt</strong> voor alle aanvragen</> },
                 ].map((it, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <IconCircle Icon={it.Icon} />
@@ -436,7 +398,7 @@ const SubsidiesRegionaal = () => {
       </section>
 
       {/* 3. ZO WERKT STAPELEN — cream */}
-      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
+      <section id="stapelen" style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
         <div className="container-content">
           <div className="max-w-3xl">
             <H2>
@@ -516,66 +478,8 @@ const SubsidiesRegionaal = () => {
         </div>
       </section>
 
-      {/* 4. WERKGEBIED — wit */}
-      <section id="gemeenten" style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-24">
-        <div className="container-content">
-          <div className="max-w-3xl">
-            <H2>
-              In welke <Gold>gemeenten</Gold> zijn wij actief?
-            </H2>
-            <p style={{ marginTop: 20, fontSize: 17, lineHeight: 1.7, color: C.text }}>
-              Wij werken in alle gemeenten van het Nij Begun-gebied: tien Groningse gemeenten en drie Drentse. Daar kennen we de lokale regelingen. Voor andere gemeenten kijken we graag mee.
-            </p>
-          </div>
-
-          {/* Provincie Groningen */}
-          <div
-            style={{
-              fontSize: 13,
-              fontWeight: 600,
-              color: C.accent,
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              marginTop: 40,
-              marginBottom: 16,
-            }}
-          >
-            Provincie Groningen
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {gemeentenGroningen.map((g) => (
-              <GemeenteBadge key={g} name={g} />
-            ))}
-          </div>
-
-          {/* Noord-Drenthe */}
-          <div
-            style={{
-              fontSize: 13,
-              fontWeight: 600,
-              color: C.accent,
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              marginTop: 32,
-              marginBottom: 16,
-            }}
-          >
-            Noord-Drenthe
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {gemeentenDrenthe.map((g) => (
-              <GemeenteBadge key={g} name={g} />
-            ))}
-          </div>
-
-          <p style={{ marginTop: 24, fontSize: 14, color: C.muted }}>
-            Woon je in een andere gemeente? Neem contact op, we kijken graag mee.
-          </p>
-        </div>
-      </section>
-
-      {/* 5. WELKE REGELINGEN — cream */}
-      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
+      {/* 4. WELKE REGELINGEN — wit */}
+      <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-24">
         <div className="container-content">
           <div className="max-w-3xl">
             <H2>
@@ -608,8 +512,8 @@ const SubsidiesRegionaal = () => {
         </div>
       </section>
 
-      {/* 6. STAPPENPLAN — wit */}
-      <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-24">
+      {/* 6. STAPPENPLAN — cream */}
+      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
         <div className="container-content">
           <div className="max-w-3xl">
             <H2>
@@ -630,7 +534,7 @@ const SubsidiesRegionaal = () => {
                   ref={(el) => (stepRefs.current[i] = el)}
                   data-step-index={i}
                   style={{
-                    ...cardOnWhite,
+                    ...cardOnCream,
                     padding: "28px 28px",
                     opacity: visible ? 1 : 0,
                     transform: visible ? "translateY(0)" : "translateY(20px)",
@@ -664,7 +568,7 @@ const SubsidiesRegionaal = () => {
 
           <div
             style={{
-              ...cardOnWhite,
+              ...cardOnCream,
               marginTop: 48,
               padding: "32px 28px",
               textAlign: "center",
@@ -685,8 +589,8 @@ const SubsidiesRegionaal = () => {
         </div>
       </section>
 
-      {/* 7. FAQ — cream */}
-      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
+      {/* 7. FAQ — wit */}
+      <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-24">
         <div className="container-content max-w-3xl">
           <H2>
             Veelgestelde <Gold>vragen</Gold>
@@ -698,7 +602,7 @@ const SubsidiesRegionaal = () => {
                 <div
                   key={i}
                   style={{
-                    ...cardOnCream,
+                    ...cardOnWhite,
                     overflow: "hidden",
                   }}
                 >
@@ -746,8 +650,8 @@ const SubsidiesRegionaal = () => {
         </div>
       </section>
 
-      {/* 8. WAAROM VOORTRAJECT — wit */}
-      <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-24">
+      {/* 8. WAAROM VOORTRAJECT — cream */}
+      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
         <div className="container-content">
           <div className="max-w-3xl">
             <H2>
@@ -785,7 +689,7 @@ const SubsidiesRegionaal = () => {
                   "Na de uitvoering blijven we beschikbaar. Voor vervolgmaatregelen, garantie of een nieuwe gemeentelijke regeling die later wordt gelanceerd.",
               },
             ].map((b, i) => (
-              <div key={i} style={{ ...cardOnWhite, padding: 24, display: "flex", gap: 16 }}>
+              <div key={i} style={{ ...cardOnCream, padding: 24, display: "flex", gap: 16 }}>
                 <IconCircle Icon={b.Icon} size={22} />
                 <div>
                   <h3 style={{ fontSize: 19, fontWeight: 700, color: C.primary, margin: 0, marginBottom: 6 }}>
