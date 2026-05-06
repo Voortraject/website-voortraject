@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  MapPin,
   Layers,
   RefreshCw,
   Globe,
@@ -20,7 +19,6 @@ import {
   Home,
   FileCheck,
   Scale,
-  Trees,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
