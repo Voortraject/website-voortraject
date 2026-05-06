@@ -301,6 +301,32 @@ const SubsidiesNijBegun = () => {
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
+  // Section 6: scroll progress indicator
+  const stepRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const [activeStep, setActiveStep] = useState(0);
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    const visible = new Set<number>();
+    stepRefs.current.forEach((el, i) => {
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) visible.add(i);
+            else visible.delete(i);
+          });
+          if (visible.size > 0) {
+            setActiveStep(Math.min(...Array.from(visible)));
+          }
+        },
+        { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+    return () => observers.forEach((o) => o.disconnect());
+  }, []);
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: C.bg, color: C.text }}>
       <Header />
