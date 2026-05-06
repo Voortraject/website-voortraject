@@ -461,13 +461,6 @@ const SubsidiesNijBegun = () => {
                   <CheckLi>Inkomen onder 140% sociaal minimum</CheckLi>
                 </ul>
               </div>
-
-              <p
-                className="text-center"
-                style={{ fontSize: 14, color: C.primary, fontWeight: 600, marginTop: 8 }}
-              >
-                De €1.000 advies- en afwerkbijdrage geldt alleen voor de 100%-categorie.
-              </p>
             </div>
           </div>
         </div>
