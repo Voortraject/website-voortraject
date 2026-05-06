@@ -503,87 +503,52 @@ const SubsidiesRegionaal = () => {
               In welke <Gold>gemeenten</Gold> zijn wij actief?
             </H2>
             <p style={{ marginTop: 20, fontSize: 17, lineHeight: 1.7, color: C.text }}>
-              Wij werken in alle gemeenten van het Nij Begun-gebied: tien Groningse gemeenten en drie Drentse. Daar kennen we de lokale regelingen. Voor andere gemeenten kijken we graag mee, neem contact op om te checken wat we voor jouw woning kunnen betekenen.
+              Wij werken in alle gemeenten van het Nij Begun-gebied: tien Groningse gemeenten en drie Drentse. Daar kennen we de lokale regelingen. Voor andere gemeenten kijken we graag mee.
             </p>
           </div>
 
-          {/* Werkgebied-illustratie (placeholder) */}
+          {/* Provincie Groningen */}
           <div
             style={{
-              ...cardOnWhite,
-              maxWidth: 600,
-              margin: "32px auto 0",
-              padding: 16,
-            }}
-          >
-            <img
-              src={WERKGEBIED_KAART}
-              alt="Kaart van het werkgebied van Voortraject in de provincie Groningen en Noord-Drenthe"
-              loading="lazy"
-              style={{ width: "100%", height: "auto", display: "block", borderRadius: "0.75rem" }}
-            />
-          </div>
-
-          {/* Provincie Groningen */}
-          <h3
-            style={{
-              fontSize: 18,
-              fontWeight: 700,
-              color: C.primary,
+              fontSize: 13,
+              fontWeight: 600,
+              color: C.accent,
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
               marginTop: 40,
               marginBottom: 16,
-              letterSpacing: "-0.01em",
             }}
           >
             Provincie Groningen
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          </div>
+          <div className="flex flex-wrap gap-3">
             {gemeentenGroningen.map((g) => (
-              <div
-                key={g}
-                style={{ ...cardOnWhite, padding: 20, display: "flex", alignItems: "flex-start", gap: 12, transition: "box-shadow 200ms ease" }}
-                className="hover:shadow-md"
-              >
-                <MapPin size={18} color={C.accent} style={{ marginTop: 4, flexShrink: 0 }} />
-                <div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: C.primary, lineHeight: 1.2 }}>{g}</div>
-                  <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>Provincie Groningen</div>
-                </div>
-              </div>
+              <GemeenteBadge key={g} name={g} />
             ))}
           </div>
 
           {/* Noord-Drenthe */}
-          <h3
+          <div
             style={{
-              fontSize: 18,
-              fontWeight: 700,
-              color: C.primary,
+              fontSize: 13,
+              fontWeight: 600,
+              color: C.accent,
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
               marginTop: 32,
               marginBottom: 16,
-              letterSpacing: "-0.01em",
             }}
           >
             Noord-Drenthe
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          </div>
+          <div className="flex flex-wrap gap-3">
             {gemeentenDrenthe.map((g) => (
-              <div
-                key={g}
-                style={{ ...cardOnWhite, padding: 20, display: "flex", alignItems: "flex-start", gap: 12, transition: "box-shadow 200ms ease" }}
-                className="hover:shadow-md"
-              >
-                <Trees size={18} color={C.accent} style={{ marginTop: 4, flexShrink: 0 }} />
-                <div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: C.primary, lineHeight: 1.2 }}>{g}</div>
-                  <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>Noord-Drenthe</div>
-                </div>
-              </div>
+              <GemeenteBadge key={g} name={g} />
             ))}
           </div>
 
-          <p style={{ textAlign: "center", marginTop: 28, fontSize: 14, color: C.muted }}>
-            Woon je in een andere gemeente? Neem contact op, we kijken graag mee wat er bij jou mogelijk is.
+          <p style={{ marginTop: 24, fontSize: 14, color: C.muted }}>
+            Woon je in een andere gemeente? Neem contact op, we kijken graag mee.
           </p>
         </div>
       </section>
