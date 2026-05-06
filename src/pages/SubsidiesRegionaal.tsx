@@ -613,7 +613,7 @@ const SubsidiesRegionaal = () => {
 
           <div
             style={{
-              ...cardOnWhite,
+              ...cardOnCream,
               marginTop: 48,
               padding: "32px 28px",
               textAlign: "center",
