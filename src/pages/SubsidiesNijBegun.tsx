@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Home,
   Coins,
@@ -18,6 +18,7 @@ import {
   LifeBuoy,
   FileCheck,
   Scale,
+  Lightbulb,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
