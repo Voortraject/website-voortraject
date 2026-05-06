@@ -602,7 +602,7 @@ const SubsidiesRegionaal = () => {
 
           <div style={{ textAlign: "center", marginTop: 32 }}>
             <a href="/contact" style={outlineBtn}>
-              Wil je weten wat er voor jouw woning open staat?
+              Plan een gratis check
             </a>
           </div>
         </div>
