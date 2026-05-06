@@ -103,8 +103,8 @@ export const Process = () => {
       <div className="container-content">
         {/* Header */}
         <div className="max-w-[720px] mb-16">
-          <h2 className="h2-section lg:!text-[44px]">
-            Van aanvraag tot <span style={{ color: "hsl(var(--accent))" }}>5-sterren review</span>
+          <h2 className="h2-section lg:!text-[44px] mx-0 my-0 px-0">
+            Van eerste contact tot afgerond traject
           </h2>
           <p className="mt-6 body-lg text-muted-foreground">
             Wij pakken het volledige traject op, zodat jullie focus blijft op het bouwen.
