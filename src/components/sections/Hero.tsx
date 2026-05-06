@@ -1,72 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { Button } from "../Button";
+import { Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import heroHouses from "@/assets/hero-houses.jpg";
-
-const rotating = ["bewonersbegeleiding", "regelinguitleg", "offertevoorbereiding", "akkoordtrajecten"];
-
-const TYPE_MS = 80;
-const ERASE_MS = 50;
-const HOLD_MS = 1500;
-const EMPTY_MS = 200;
-
-const TypewriterWord = ({ words }: { words: string[] }) => {
-  const [wordIndex, setWordIndex] = useState(0);
-  const [text, setText] = useState("");
-  const phaseRef = useRef<"typing" | "holding" | "erasing" | "empty">("typing");
-  const longest = words.reduce((a, b) => (a.length >= b.length ? a : b), "");
-
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
-    const word = words[wordIndex];
-    const phase = phaseRef.current;
-
-    if (phase === "typing") {
-      if (text.length < word.length) {
-        timer = setTimeout(() => setText(word.slice(0, text.length + 1)), TYPE_MS);
-      } else {
-        phaseRef.current = "holding";
-        timer = setTimeout(() => {
-          phaseRef.current = "erasing";
-          setText((t) => t.slice(0, -1));
-        }, HOLD_MS);
-      }
-    } else if (phase === "erasing") {
-      if (text.length > 0) {
-        timer = setTimeout(() => setText((t) => t.slice(0, -1)), ERASE_MS);
-      } else {
-        phaseRef.current = "empty";
-        timer = setTimeout(() => {
-          phaseRef.current = "typing";
-          setWordIndex((i) => (i + 1) % words.length);
-        }, EMPTY_MS);
-      }
-    }
-    return () => clearTimeout(timer);
-  }, [text, wordIndex, words]);
-
-  const isActive = phaseRef.current === "typing" || phaseRef.current === "erasing";
-
-  return (
-    <span
-      className="font-semibold max-w-full"
-      style={{ color: "#E8B547" }}
-    >
-      <span>{text}</span>
-      <span
-        aria-hidden="true"
-        className="animate-blink"
-        style={{
-          display: "inline-block",
-          width: "2px",
-          height: "1em",
-          backgroundColor: "#E8B547",
-          verticalAlign: "-0.15em",
-          marginLeft: "1px",
-        }}
-      />
-    </span>
-  );
-};
 
 export const Hero = () => {
   return (
@@ -87,19 +21,73 @@ export const Hero = () => {
               >
                 Focus op <span style={{ color: "hsl(var(--accent))" }}>uitvoering</span>.<br />Wij regelen de rest.
               </h1>
-              <p className="mt-10 text-[16px] leading-[1.6] text-muted-foreground max-w-[680px] md:text-[17px] lg:text-[18px]">
-                <span className="block sm:inline">Wij ontzorgen uitvoerders met</span>{" "}
-                <span className="block sm:inline" style={{ minHeight: "1.6em" }}>
-                  <TypewriterWord words={rotating} />
-                </span>
+
+              <p
+                className="mt-6 md:mt-8 mb-6 md:mb-8 text-[16px] md:text-[19px] leading-[1.6] max-w-xl"
+                style={{ color: "hsl(var(--primary) / 0.8)" }}
+              >
+                Voor uitvoerders en bewoners. Wij brengen overzicht in een vaak chaotisch verduurzamingstraject.
               </p>
-              <div className="mt-12 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-4">
-                <Button href="/contact" variant="primary" className="w-full sm:w-auto">
-                  Plan een kennismaking
-                </Button>
-                <Button href="/uitvoerders#pakketten" variant="secondary" className="w-full sm:w-auto">
-                  Bekijk pakketten
-                </Button>
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <a
+                  href="/uitvoerders"
+                  className="inline-flex items-center justify-center rounded-full px-7 py-3.5 text-[15px] font-semibold transition-all duration-150 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                  style={{
+                    backgroundColor: "hsl(var(--accent))",
+                    color: "hsl(var(--primary))",
+                  }}
+                >
+                  Ik ben een uitvoerder
+                </a>
+                <a
+                  href="/bewoners"
+                  className="inline-flex items-center justify-center rounded-full px-7 py-3.5 text-[15px] font-medium border transition-all duration-150 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                  style={{
+                    borderColor: "hsl(var(--primary))",
+                    color: "hsl(var(--primary))",
+                    backgroundColor: "transparent",
+                  }}
+                >
+                  Ik ben een bewoner
+                </a>
+              </div>
+
+              <div
+                className="mt-6 flex flex-wrap items-center gap-y-2 text-[14px]"
+                style={{ color: "hsl(var(--primary) / 0.65)" }}
+              >
+                <span className="inline-flex items-center">
+                  Gecertificeerde uitvoerders
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        aria-label="Meer informatie over certificeringen"
+                        className="ml-1.5 inline-flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+                        style={{ color: "hsl(var(--accent))" }}
+                      >
+                        <Info size={14} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="top"
+                      className="max-w-[300px] p-4 text-[13px] leading-[1.5] shadow-md"
+                      style={{
+                        backgroundColor: "#FFFFFF",
+                        border: "1px solid rgba(229, 201, 103, 0.4)",
+                        color: "hsl(var(--primary))",
+                        borderRadius: "0.5rem",
+                      }}
+                    >
+                      Onze uitvoerders zijn SKG-IKOB, Insula en VENIN-gecertificeerd. Keurmerken voor kwaliteit, vakmanschap en veiligheid.
+                    </TooltipContent>
+                  </Tooltip>
+                </span>
+                <span className="mx-2 md:mx-3" aria-hidden="true">•</span>
+                <span>Lokaal adviesteam</span>
+                <span className="mx-2 md:mx-3" aria-hidden="true">•</span>
+                <span>Onafhankelijk en vrijblijvend</span>
               </div>
             </div>
           </div>
