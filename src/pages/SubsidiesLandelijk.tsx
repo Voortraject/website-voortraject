@@ -651,6 +651,7 @@ const SubsidiesLandelijk = () => {
               <OutlineBtn href="/contact">Plan een gratis huisbezoek</OutlineBtn>
             </div>
           </div>
+          </div>
         </section>
 
         {/* SECTIE 5: WELKE MAATREGELEN */}
