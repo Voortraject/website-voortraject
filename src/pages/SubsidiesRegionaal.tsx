@@ -37,23 +37,6 @@ const C = {
 
 const LAATST_BIJGEWERKT = "mei 2026";
 
-// TODO: vervang door schone werkgebied-kaart zonder 50%/100%-labels.
-const WERKGEBIED_KAART = "/images/nij-begun/Afbeelding_50-100_Groningen.webp";
-
-const gemeentenGroningen = [
-  "Eemsdelta",
-  "Groningen",
-  "Het Hogeland",
-  "Midden-Groningen",
-  "Oldambt",
-  "Pekela",
-  "Stadskanaal",
-  "Veendam",
-  "Westerkwartier",
-  "Westerwolde",
-];
-
-const gemeentenDrenthe = ["Aa en Hunze", "Noordenveld", "Tynaarlo"];
 
 const regelingen = [
   {
