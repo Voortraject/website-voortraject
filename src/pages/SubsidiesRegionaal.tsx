@@ -301,11 +301,6 @@ const SubsidiesRegionaal = () => {
     return () => obs.disconnect();
   }, []);
 
-  const scrollToGemeenten = (e: React.MouseEvent) => {
-    e.preventDefault();
-    document.getElementById("gemeenten")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
   const cardOnCream: React.CSSProperties = {
     backgroundColor: C.card,
     border: `1px solid ${C.accentSoft}66`,
