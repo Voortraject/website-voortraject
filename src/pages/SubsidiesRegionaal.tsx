@@ -523,66 +523,8 @@ const SubsidiesRegionaal = () => {
         </div>
       </section>
 
-      {/* 4. WERKGEBIED — wit */}
-      <section id="gemeenten" style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-24">
-        <div className="container-content">
-          <div className="max-w-3xl">
-            <H2>
-              In welke <Gold>gemeenten</Gold> zijn wij actief?
-            </H2>
-            <p style={{ marginTop: 20, fontSize: 17, lineHeight: 1.7, color: C.text }}>
-              Wij werken in alle gemeenten van het Nij Begun-gebied: tien Groningse gemeenten en drie Drentse. Daar kennen we de lokale regelingen. Voor andere gemeenten kijken we graag mee.
-            </p>
-          </div>
-
-          {/* Provincie Groningen */}
-          <div
-            style={{
-              fontSize: 13,
-              fontWeight: 600,
-              color: C.accent,
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              marginTop: 40,
-              marginBottom: 16,
-            }}
-          >
-            Provincie Groningen
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {gemeentenGroningen.map((g) => (
-              <GemeenteBadge key={g} name={g} />
-            ))}
-          </div>
-
-          {/* Noord-Drenthe */}
-          <div
-            style={{
-              fontSize: 13,
-              fontWeight: 600,
-              color: C.accent,
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              marginTop: 32,
-              marginBottom: 16,
-            }}
-          >
-            Noord-Drenthe
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {gemeentenDrenthe.map((g) => (
-              <GemeenteBadge key={g} name={g} />
-            ))}
-          </div>
-
-          <p style={{ marginTop: 24, fontSize: 14, color: C.muted }}>
-            Woon je in een andere gemeente? Neem contact op, we kijken graag mee.
-          </p>
-        </div>
-      </section>
-
-      {/* 5. WELKE REGELINGEN — cream */}
-      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
+      {/* 4. WELKE REGELINGEN — wit */}
+      <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-24">
         <div className="container-content">
           <div className="max-w-3xl">
             <H2>
