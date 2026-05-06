@@ -19,10 +19,6 @@ const faqs = [
     a: "Primair in de provincies Groningen en Noord-Drenthe, met focus op gemeenten waar Nij Begun loopt. Voor andere regio's kun je contact opnemen, dan kijken we wat mogelijk is.",
   },
   {
-    q: "Wat kost een gesprek?",
-    a: "Het eerste gesprek is gratis en vrijblijvend. Daarna bespreken we samen of verdere begeleiding zinvol is en wat dat kost.",
-  },
-  {
     q: "Hoe snel kunnen jullie schakelen?",
     a: "Meestal kunnen we binnen een paar werkdagen een eerste gesprek inplannen. Geen wachttijden van weken of maanden zoals bij sommige bestaande loketten.",
   },
@@ -32,7 +28,7 @@ export const Faq = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
+    <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
       <div className="max-w-4xl mx-auto px-6">
         <h2 className="h2-section text-center" style={{ color: "#152C4E", fontWeight: 600 }}>
           Veelgestelde <span style={{ color: "hsl(var(--accent))" }}>vragen</span>

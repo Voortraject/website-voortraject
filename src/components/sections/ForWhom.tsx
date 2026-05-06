@@ -39,7 +39,7 @@ export const ForWhom = () => (
           >
             <span
               className="font-sans uppercase"
-              style={{ fontSize: 12, letterSpacing: "0.1em", color: "#E8B547", fontWeight: 600 }}
+              style={{ fontSize: 15, letterSpacing: "0.14em", color: "#E8B547", fontWeight: 700 }}
             >
               {c.label}
             </span>
