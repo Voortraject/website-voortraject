@@ -613,6 +613,75 @@ const SubsidiesNijBegun = () => {
         </div>
       </section>
 
+      {/* AANMERKING */}
+      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-20">
+        <div className="container-content">
+          <div className="max-w-3xl mx-auto text-center">
+            <H2>
+              Komt jouw woning in <Gold>aanmerking</Gold>?
+            </H2>
+            <p style={{ fontSize: 17, lineHeight: 1.7, color: C.text, marginTop: 16 }}>
+              De subsidie geldt voor woningeigenaren in <strong>de hele provincie Groningen</strong> en in <strong>drie Drentse gemeenten</strong>.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 max-w-5xl mx-auto">
+            <div style={{ ...cardSoftBase, padding: 28 }}>
+              <span
+                className="inline-flex items-center justify-center"
+                style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: C.card, color: C.accent }}
+              >
+                <Building2 size={18} aria-hidden />
+              </span>
+              <h3
+                className="font-display"
+                style={{ fontSize: 18, fontWeight: 700, color: C.primary, marginTop: 12, marginBottom: 14 }}
+              >
+                Provincie Groningen, alle 10 gemeenten
+              </h3>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+                {[
+                  "Eemsdelta", "Groningen",
+                  "Het Hogeland", "Midden-Groningen",
+                  "Oldambt", "Pekela",
+                  "Stadskanaal", "Veendam",
+                  "Westerkwartier", "Westerwolde",
+                ].map((g) => (
+                  <CheckLi key={g}>{g}</CheckLi>
+                ))}
+              </ul>
+            </div>
+
+            <div style={{ ...cardSoftBase, padding: 28 }}>
+              <span
+                className="inline-flex items-center justify-center"
+                style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: C.card, color: C.accent }}
+              >
+                <Trees size={18} aria-hidden />
+              </span>
+              <h3
+                className="font-display"
+                style={{ fontSize: 18, fontWeight: 700, color: C.primary, marginTop: 12, marginBottom: 14 }}
+              >
+                Noord-Drenthe, drie gemeenten
+              </h3>
+              <ul>
+                <CheckLi>Aa en Hunze</CheckLi>
+                <CheckLi>Noordenveld</CheckLi>
+                <CheckLi>Tynaarlo</CheckLi>
+              </ul>
+            </div>
+          </div>
+
+          <p
+            className="text-center mt-6 max-w-3xl mx-auto"
+            style={{ fontSize: 13, color: C.muted }}
+          >
+            Andere Drentse gemeenten zoals Assen, Emmen en Coevorden vallen niet onder Nij Begun. Voor hen gelden andere subsidies.
+          </p>
+        </div>
+      </section>
+
       {/* 6. ZO VERLOOPT JOUW TRAJECT */}
       <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-20">
         <div className="container-content">
