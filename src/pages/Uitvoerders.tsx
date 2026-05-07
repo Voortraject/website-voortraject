@@ -1,12 +1,12 @@
 import { Check, Inbox, FileText, Bell, X, PhoneCall, MessageCircle, FolderOpen, AlertCircle } from "lucide-react";
 
 const withoutItems = [
-  "Bewoners blijven bellen en appen met vragen over planning, maatregelen en verwachtingen.",
-  "Isolatieplannen en losse maatregelen moeten steeds opnieuw worden uitgelegd.",
-  "Offertes kosten tijd en blijven liggen tussen de uitvoering door.",
-  "Dossiers raken versnipperd over mails, notities en losse terugbelmomenten.",
-  "Na uitvoering blijven facturen, stukken en openstaande acties hangen.",
-  "Groei betekent vaak meer kantoorwerk en meer kans dat iets blijft liggen.",
+  "Bewoners bellen en appen dezelfde vragen, keer op keer",
+  "Elk nieuw dossier kost uren aan uitleg en terugzoeken",
+  "Offertes liggen te wachten terwijl de bouwplanning doorloopt",
+  "Mails, appjes en notities verspreid over vijf plekken, niets compleet",
+  "Na uitvoering blijven facturen, stukken en openstaande acties hangen",
+  "Groeien betekent meer kantoorwerk erbij, niet minder",
 ];
 
 const withItems = [
@@ -40,7 +40,7 @@ const packages: Package[] = [
       "Dossieropbouw en controle",
       "Overdracht compleet dossier",
     ],
-    result: "Snellere doorloop van aanvraag naar bruikbaar dossier.",
+    result: "Jullie aanvraag gaat sneller van intake naar klaar dossier, zonder dat er iets tussenuit valt.",
     badge: null,
   },
   {
@@ -52,7 +52,7 @@ const packages: Package[] = [
       "Uitleg plannen en regelingen",
       "Opvolging tot getekend akkoord",
     ],
-    result: "Minder tijd kwijt aan terugbellen en uitleggen.",
+    result: "Geen bewoners meer die wachten op uitleg of het akkoord niet begrijpen. Jullie hoeven niet meer terug te bellen.",
     badge: null,
   },
   {
@@ -65,7 +65,7 @@ const packages: Package[] = [
       "Overzicht op natraject en nazorg",
       "Begeleiding tot 5-sterren review",
     ],
-    result: "Volledige focus op uitvoering en groei.",
+    result: "Jullie bouwen. Wij regelen alles van eerste bewonerscontact tot afgerond traject.",
     badge: "Meest gekozen",
     featured: true,
   },
@@ -78,7 +78,7 @@ const packages: Package[] = [
       "Opvolging openstaande acties",
       "Grip op wat na uitvoering blijft hangen",
     ],
-    result: "Meer overzicht zonder extra kantoorcapaciteit.",
+    result: "Minder handmatig werk intern, betere opvolging, en sneller van aanvraag naar uitvoering.",
     badge: null,
   },
   {
@@ -90,7 +90,7 @@ const packages: Package[] = [
       "Begeleiding naar 5-sterren review",
       "Eén vast aanspreekpunt",
     ],
-    result: "Snellere cashflow en een perfecte reputatie.",
+    result: "Facturen sneller betaald, reviews die binnenkomen, en bewoners die jullie blijven aanbevelen.",
     badge: null,
   },
 ];
@@ -147,10 +147,10 @@ const Uitvoerders = () => {
                   op, zodat jullie kunnen bouwen
                 </h1>
                 <p
-                  className="mt-8 text-[16px] md:text-[18px]"
-                  style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 620, textAlign: "left" }}
+                  className="mt-8"
+                  style={{ color: "#6B6B6B", fontSize: 18, fontWeight: 400, lineHeight: 1.6, maxWidth: 560, textAlign: "left" }}
                 >
-                  Waar veel tijd op lekt, zit vaak niet op de bouwplaats, maar in alles eromheen: bewonersvragen, planuitleg, offerte-opbouw, opvolging en dossiers die strak moeten blijven lopen. Wij pakken juist dat stuk op, zodat jullie minder kantoorlast hebben en meer focus op uitvoering houden.
+                  Wij nemen bewonerscontact, offerte-opvolging, akkoordtrajecten en nazorg uit handen, zodat jullie minder tijd verliezen aan kantoorwerk en meer focus houden op de uitvoering.
                 </p>
                 <div className="mt-10" style={{ textAlign: "left" }}>
                   <a
@@ -187,6 +187,93 @@ const Uitvoerders = () => {
             </div>
           </div>
         </section>
+
+        {/* INLEIDING PAKKETTEN (Vastlopen) */}
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F9F9F7" }}>
+          <div className="container-content">
+            <div className="mx-auto" style={{ maxWidth: 820 }}>
+              <h2
+                className="h2-section text-center"
+                style={{ color: "#152C4E", marginBottom: 32 }}
+              >
+                Waar uitvoerders in dit soort trajecten op{" "}
+                <span style={{ color: "hsl(var(--accent))" }}>vastlopen</span>
+              </h2>
+              <p
+                className="text-center mx-auto"
+                style={{
+                  maxWidth: 768,
+                  fontSize: 18,
+                  lineHeight: 1.6,
+                  color: "#152C4E",
+                  marginBottom: 48,
+                }}
+              >
+                De meeste tijd lekt niet weg op de bouwplaats, maar in alles eromheen. Vijf plekken waar uitvoerders structureel op vastlopen:
+              </p>
+            </div>
+
+            {(() => {
+              const painCards = [
+                { icon: PhoneCall, title: "Bewonersvragen blijven binnenkomen", body: "Telefoontjes en appjes over planning, maatregelen en verwachtingen blijven naar jullie kant lopen." },
+                { icon: MessageCircle, title: "Plannen steeds opnieuw uitleggen", body: "Isolatieplannen en losse maatregelen vragen tijd om iedere keer toe te lichten aan een nieuwe bewoner." },
+                { icon: FileText, title: "Offertes blijven liggen", body: "Tussen uitvoering door komen offertes vaak pas 's avonds aan de beurt, en blijven dan hangen." },
+                { icon: FolderOpen, title: "Dossiers raken versnipperd", body: "Afspraken, mails en notities zitten verspreid over verschillende plekken. Iets compleet maken kost tijd." },
+                { icon: AlertCircle, title: "Na uitvoering blijft er hangen", body: "Facturen, ontbrekende stukken en openstaande acties krijgen geen prioriteit als de bouw weer roept." },
+              ];
+              const renderCard = (c: typeof painCards[number]) => {
+                const Icon = c.icon;
+                return (
+                  <article
+                    key={c.title}
+                    className="card flex flex-col"
+                    style={{
+                      backgroundColor: "#FFFFFF",
+                      border: "1px solid #E5E2DB",
+                      borderRadius: 16,
+                      padding: 24,
+                      gap: 12,
+                    }}
+                  >
+                    <div className="flex flex-row items-center gap-3">
+                      <Icon size={22} color="#E8B547" strokeWidth={2} className="shrink-0" aria-hidden="true" />
+                      <h3 style={{ color: "#152C4E", fontSize: 16, fontWeight: 600, margin: 0, lineHeight: 1.3 }}>{c.title}</h3>
+                    </div>
+                    <p style={{ color: "#152C4E", opacity: 0.75, fontSize: 14, lineHeight: 1.5, margin: 0 }}>{c.body}</p>
+                  </article>
+                );
+              };
+              return (
+                <div className="card-grid">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: 16 }}>
+                    {painCards.slice(0, 3).map(renderCard)}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 mx-auto" style={{ gap: 16, maxWidth: "42rem", marginTop: 16 }}>
+                    {painCards.slice(3).map(renderCard)}
+                  </div>
+                </div>
+              );
+            })()}
+
+            <p
+              className="text-center mx-auto"
+              style={{
+                maxWidth: "42rem",
+                marginTop: 32,
+                color: "#152C4E",
+                fontSize: 18,
+                fontWeight: 500,
+                fontStyle: "italic",
+                lineHeight: 1.5,
+              }}
+            >
+              Juist op deze plekken brengen wij overzicht en rust terug.
+            </p>
+          </div>
+        </section>
+
+        {/* WAT BLIJFT LIGGEN */}
+        <Why />
 
         {/* VOORTRAJECT VERGELIJKING */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F9F9F7" }}>
@@ -278,87 +365,59 @@ const Uitvoerders = () => {
           </div>
         </section>
 
-        {/* INLEIDING PAKKETTEN */}
+        {/* WAAROM DIT WERKT */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
-            <div className="mx-auto" style={{ maxWidth: 820 }}>
-              <h2
-                className="h2-section text-center"
-                style={{ color: "#152C4E", marginBottom: 32 }}
-              >
-                Waar uitvoerders in dit soort trajecten op{" "}
-                <span style={{ color: "hsl(var(--accent))" }}>vastlopen</span>
+            <div className="text-center mx-auto" style={{ maxWidth: 820 }}>
+              <h2 className="h2-section" style={{ color: "#152C4E", marginBottom: 16 }}>
+                Menselijke begeleiding, <span style={{ color: "#E8B547" }}>ondersteund</span> door slimme systemen
               </h2>
               <p
-                className="text-center mx-auto"
-                style={{
-                  maxWidth: 768,
-                  fontSize: 18,
-                  lineHeight: 1.6,
-                  color: "#152C4E",
-                  marginBottom: 48,
-                }}
+                className="mx-auto"
+                style={{ fontSize: 17, color: "#6B6B6B", lineHeight: 1.6, marginBottom: 48 }}
               >
-                De meeste tijd lekt niet weg op de bouwplaats, maar in alles eromheen. Vijf plekken waar uitvoerders structureel op vastlopen:
+                Eén lijn voor bewonerscontact, offertes en dossiers, ondersteund door slimme systemen die voorkomen dat er iets blijft liggen.
               </p>
             </div>
-
-            {(() => {
-              const painCards = [
-                { icon: PhoneCall, title: "Bewonersvragen blijven binnenkomen", body: "Telefoontjes en appjes over planning, maatregelen en verwachtingen blijven naar jullie kant lopen." },
-                { icon: MessageCircle, title: "Plannen steeds opnieuw uitleggen", body: "Isolatieplannen en losse maatregelen vragen tijd om iedere keer toe te lichten aan een nieuwe bewoner." },
-                { icon: FileText, title: "Offertes blijven liggen", body: "Tussen uitvoering door komen offertes vaak pas 's avonds aan de beurt, en blijven dan hangen." },
-                { icon: FolderOpen, title: "Dossiers raken versnipperd", body: "Afspraken, mails en notities zitten verspreid over verschillende plekken. Iets compleet maken kost tijd." },
-                { icon: AlertCircle, title: "Na uitvoering blijft er hangen", body: "Facturen, ontbrekende stukken en openstaande acties krijgen geen prioriteit als de bouw weer roept." },
-              ];
-              const renderCard = (c: typeof painCards[number]) => {
-                const Icon = c.icon;
-                return (
-                  <article
-                    key={c.title}
-                    className="card flex flex-col"
-                    style={{
-                      backgroundColor: "#FFFFFF",
-                      border: "1px solid #E5E2DB",
-                      borderRadius: 16,
-                      padding: 24,
-                      gap: 12,
-                    }}
-                  >
-                    <div className="flex flex-row items-center gap-3">
-                      <Icon size={22} color="#E8B547" strokeWidth={2} className="shrink-0" aria-hidden="true" />
-                      <h3 style={{ color: "#152C4E", fontSize: 16, fontWeight: 600, margin: 0, lineHeight: 1.3 }}>{c.title}</h3>
+            <div className="card-grid grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+              {whyCards.map(({ icon: Icon, title, body }) => (
+                <article
+                  key={title}
+                  className="card bg-white flex flex-col"
+                  style={{
+                    borderRadius: 16,
+                    padding: 32,
+                    border: "1px solid #E5E2DB",
+                    boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
+                  }}
+                >
+                  <div className="flex flex-row items-center" style={{ gap: 12 }}>
+                    <div
+                      className="flex items-center justify-center rounded-full shrink-0"
+                      style={{ width: 48, height: 48, backgroundColor: "#F0E4D0" }}
+                    >
+                      <Icon size={22} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
                     </div>
-                    <p style={{ color: "#152C4E", opacity: 0.75, fontSize: 14, lineHeight: 1.5, margin: 0 }}>{c.body}</p>
-                  </article>
-                );
-              };
-              return (
-                <div className="card-grid">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: 16 }}>
-                    {painCards.slice(0, 3).map(renderCard)}
+                    <h3
+                      className="font-display"
+                      style={{
+                        fontSize: "1.05rem",
+                        fontWeight: 600,
+                        color: "#152C4E",
+                        letterSpacing: "-0.01em",
+                        lineHeight: 1.3,
+                        margin: 0,
+                      }}
+                    >
+                      {title}
+                    </h3>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 mx-auto" style={{ gap: 16, maxWidth: "42rem", marginTop: 16 }}>
-                    {painCards.slice(3).map(renderCard)}
-                  </div>
-                </div>
-              );
-            })()}
-
-            <p
-              className="text-center mx-auto"
-              style={{
-                maxWidth: "42rem",
-                marginTop: 32,
-                color: "#152C4E",
-                fontSize: 18,
-                fontWeight: 500,
-                fontStyle: "italic",
-                lineHeight: 1.5,
-              }}
-            >
-              Juist op deze plekken brengen wij overzicht en rust terug.
-            </p>
+                  <p style={{ marginTop: 16, fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>
+                    {body}
+                  </p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -494,20 +553,21 @@ const Uitvoerders = () => {
                       <p style={{ fontSize: 14, color: "#2B2B2B", lineHeight: 1.55 }}>{p.result}</p>
                     </div>
 
-                    <div style={{ marginTop: "auto", paddingTop: 24 }}>
+                    <div style={{ marginTop: "auto", paddingTop: 20 }}>
                       <a
                         href="/contact"
-                        className={`${ctaButton} w-full`}
-                        style={{
-                          backgroundColor: "#E8B547",
-                          color: "#2B2B2B",
-                          padding: "12px 20px",
-                          borderRadius: 8,
+                        className="inline-flex items-center gap-1 text-sm font-medium transition-colors"
+                        style={{ color: "#E8B547" }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = "#D9A538";
+                          e.currentTarget.style.textDecoration = "underline";
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = "#E8B547";
+                          e.currentTarget.style.textDecoration = "none";
+                        }}
                       >
-                        Selecteer pakket
+                        Bespreek dit pakket →
                       </a>
                     </div>
                   </article>
@@ -516,64 +576,6 @@ const Uitvoerders = () => {
             </div>
           </div>
         </section>
-
-        {/* WAAROM DIT WERKT */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
-          <div className="container-content">
-            <div className="text-center mx-auto" style={{ maxWidth: 820 }}>
-              <h2 className="h2-section" style={{ color: "#152C4E", marginBottom: 16 }}>
-                Menselijke begeleiding, <span style={{ color: "#E8B547" }}>ondersteund</span> door slimme systemen
-              </h2>
-              <p
-                className="mx-auto"
-                style={{ fontSize: 17, color: "#6B6B6B", lineHeight: 1.6, marginBottom: 48 }}
-              >
-                Eén lijn voor bewonerscontact, offertes en dossiers, ondersteund door slimme systemen die voorkomen dat er iets blijft liggen.
-              </p>
-            </div>
-            <div className="card-grid grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-              {whyCards.map(({ icon: Icon, title, body }) => (
-                <article
-                  key={title}
-                  className="card bg-white flex flex-col"
-                  style={{
-                    borderRadius: 16,
-                    padding: 32,
-                    border: "1px solid #E5E2DB",
-                    boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
-                  }}
-                >
-                  <div className="flex flex-row items-center" style={{ gap: 12 }}>
-                    <div
-                      className="flex items-center justify-center rounded-full shrink-0"
-                      style={{ width: 48, height: 48, backgroundColor: "#F0E4D0" }}
-                    >
-                      <Icon size={22} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
-                    </div>
-                    <h3
-                      className="font-display"
-                      style={{
-                        fontSize: "1.05rem",
-                        fontWeight: 600,
-                        color: "#152C4E",
-                        letterSpacing: "-0.01em",
-                        lineHeight: 1.3,
-                        margin: 0,
-                      }}
-                    >
-                      {title}
-                    </h3>
-                  </div>
-                  <p style={{ marginTop: 16, fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>
-                    {body}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <Why />
 
         {/* SLUIT-CTA */}
         <section
@@ -593,7 +595,7 @@ const Uitvoerders = () => {
                 marginBottom: 20,
               }}
             >
-              Zoek je extra capaciteit zonder extra kantoorlast?
+              Wil je sneller van aanvraag naar uitvoering, zonder extra kantoorlast?
             </h2>
             <p
               style={{
@@ -604,7 +606,7 @@ const Uitvoerders = () => {
                 marginBottom: 32,
               }}
             >
-              Wij helpen uitvoerders sneller schakelen in bewonerscontact, offerte-opbouw, opvolging en dossiervorming.
+              Wij nemen het voortraject uit handen. Jullie houden de focus op bouwen.
             </p>
             <a
               href="/contact"
