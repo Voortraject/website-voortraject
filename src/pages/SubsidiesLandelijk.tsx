@@ -355,13 +355,12 @@ const SubsidiesLandelijk = () => {
   };
 
   const steps = [
-    { n: "01", t: "Vrijblijvend telefoongesprek", icon: Phone, d: "Geen wachtrij, geen formulier-eerst. We bellen rustig met je over jouw woning en wens. Aan het eind van het gesprek weet je grofweg welke ISDE-bedragen voor jou interessant zijn, en of een huisbezoek zin heeft." },
-    { n: "02", t: "Afspraak voor een huisbezoek", icon: Calendar, d: "Klikt het? Dan plannen we binnen een week een huisbezoek in. Een lokale adviseur uit jouw regio komt persoonlijk bij je langs. Geen verplichtingen, geen verkooppraatje." },
+    { n: "01", t: "Vrijblijvend telefoongesprek", icon: Phone, d: "We bespreken kort jouw woning, situatie en wens. Aan het eind van het gesprek weet je grofweg welke ISDE-bedragen voor jou interessant zijn en of een huisbezoek de volgende stap is. Het gesprek duurt 15 minuten en is volledig vrijblijvend." },
+    { n: "02", t: "Huisbezoek", icon: Calendar, d: "Een lokale adviseur uit jouw regio komt bij je langs en bekijkt samen met jou welke maatregelen slim zijn en in welke volgorde. Geen verplichtingen, geen verkooppraatje." },
     { n: "03", t: "Plan op maat met optimale combinatie", icon: FileText, d: "Wij kennen de regeling. Tijdens het bezoek rekenen we uit welke maatregelen voor jouw woning slim zijn én in welke volgorde. Vaak levert combineren duizenden euro's extra op. Jij hoeft niet zelf in regelingen te duiken." },
     { n: "04", t: "Erkende uitvoerder kiezen", icon: Users, d: "Werkt een niet-erkend bedrijf voor je, dan vervalt je subsidie volledig. Wij brengen je in contact met installateurs die voldoen aan de ISDE-eisen en bij jouw woning passen. Geen vooringenomen keuze, gewoon wat werkt." },
-    { n: "05", t: "Uitvoering met begeleiding", icon: Hammer, d: "Tijdens de uitvoering bewaken wij de meldcodes, de fotodocumentatie en de planning. Dat zijn straks de bewijsstukken voor je aanvraag. Eén ontbrekende foto kost een hoop geld. Wij zorgen dat dat niet gebeurt." },
-    { n: "06", t: "Wij dienen de aanvraag in bij RVO", icon: Send, d: "Geen DigiD-gedoe, geen formulieren. Wij dienen de aanvraag in via mijnRVO.nl en wachten samen met jou de beslissing af. RVO beslist doorgaans binnen 8 weken en stort het bedrag op jouw rekening." },
-    { n: "07", t: "Vervolgmaatregelen en natraject", icon: LifeBuoy, d: "Wil je daarna nog meer doen? Combineren binnen 24 maanden levert verdubbelde subsidie op. Wij blijven jouw aanspreekpunt voor vervolgmaatregelen, vragen over onderhoud, of advies over warmtepomp of warmtenet." },
+    { n: "05", t: "Uitvoering en aanvraag indienen", icon: Hammer, d: "Wij bewaken de uitvoering, de meldcodes en de fotodocumentatie. Tegelijkertijd dienen wij de aanvraag in bij RVO via mijnRVO.nl. RVO beslist doorgaans binnen 8 weken en stort het bedrag op jouw rekening." },
+    { n: "06", t: "Vervolgmaatregelen en natraject", icon: LifeBuoy, d: "Wil je daarna nog meer doen? Combineren binnen 24 maanden levert verdubbelde subsidie op. Wij blijven jouw aanspreekpunt voor vervolgmaatregelen, vragen over onderhoud, of advies over warmtepomp of warmtenet." },
   ];
 
   const categories = [

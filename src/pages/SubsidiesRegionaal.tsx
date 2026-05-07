@@ -77,14 +77,14 @@ const stappen = [
     icon: Phone,
     titel: "Vrijblijvend telefoongesprek",
     tekst:
-      "Geen wachtrij, geen formulier-eerst. We bellen rustig met je over jouw woning, je postcode en je wens. Aan het eind van het gesprek weten we al ruwweg welke regelingen voor jouw gemeente actueel zijn.",
+      "We bespreken kort jouw woning, je postcode en je wens. Aan het eind van het gesprek weten we al ruwweg welke regelingen voor jouw gemeente actueel zijn en of een huisbezoek zinvol is. Het gesprek duurt 15 minuten en is volledig vrijblijvend.",
   },
   {
     num: "02",
     icon: Calendar,
-    titel: "Afspraak voor een huisbezoek",
+    titel: "Huisbezoek",
     tekst:
-      "Klikt het? Dan plannen we binnen een week een huisbezoek in. Een lokale adviseur uit jouw regio komt persoonlijk langs. Vrijblijvend en onafhankelijk.",
+      "Een lokale adviseur uit jouw regio komt bij je langs en bekijkt samen met jou welke regelingen van toepassing zijn en hoe je ze slim combineert. Vrijblijvend en onafhankelijk.",
   },
   {
     num: "03",
@@ -103,19 +103,12 @@ const stappen = [
   {
     num: "05",
     icon: Hammer,
-    titel: "Uitvoering met begeleiding",
+    titel: "Uitvoering en aanvragen indienen",
     tekst:
-      "Tijdens de uitvoering bewaken wij de meldcodes, de fotodocumentatie en alle bewijsstukken. Voor één regeling, voor drie regelingen, wij houden alles bij.",
+      "Wij bewaken de uitvoering, de meldcodes en alle bewijsstukken. Wij dienen ISDE in bij RVO, Nij Begun bij SNN en de gemeentelijke regelingen via het juiste kanaal, elk met de juiste timing.",
   },
   {
     num: "06",
-    icon: Send,
-    titel: "Wij dienen alle aanvragen in",
-    tekst:
-      "Geen drie loketten, geen drie aanvragen die je zelf moet bewaken. Wij dienen ISDE in bij RVO, Nij Begun bij SNN, en de gemeentelijke regelingen via het juiste kanaal. Elk met de juiste timing.",
-  },
-  {
-    num: "07",
     icon: LifeBuoy,
     titel: "Vervolgmaatregelen en natraject",
     tekst:
