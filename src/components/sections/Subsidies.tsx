@@ -16,7 +16,7 @@ const cards = [
     tag: "HEEL NEDERLAND",
     naam: "Landelijke subsidies",
     uitleg:
-      "Vaste bedragen voor warmtepomp, isolatie en zonneboiler. Combineren verdubbelt het bedrag per vierkante meter.",
+      "ISDE is de landelijke subsidie voor isolatie, warmtepomp en zonneboiler. Combineer je twee of meer maatregelen, dan verdubbelen de tarieven automatisch.",
     actie: "Wij rekenen voor jouw woning uit hoe je optimaal combineert.",
     linkTekst: "Lees meer over landelijke subsidies",
     href: "/subsidies/landelijk",
