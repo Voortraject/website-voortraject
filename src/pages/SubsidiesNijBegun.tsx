@@ -726,7 +726,7 @@ const SubsidiesNijBegun = () => {
                   icon: CheckCircle2,
                   t: "Goedkeuring",
                   d: "Aanvraag akkoord. Vanaf nu heb je 2 jaar de tijd om de werkzaamheden te laten uitvoeren door een aangesloten Nij Begun-bedrijf. Wij sturen je de toekenningsbrief en bespreken de vervolgstappen.",
-                  image: imgAanvraag,
+                  
                 },
                 {
                   n: "06",
