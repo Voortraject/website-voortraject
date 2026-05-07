@@ -13,11 +13,11 @@ const cards = [
   },
   {
     tag: "HEEL NEDERLAND",
-    naam: "Landelijke subsidies",
+    naam: "ISDE",
     uitleg:
       "Vaste bedragen voor warmtepomp, isolatie en zonneboiler. Combineren verdubbelt het bedrag per vierkante meter.",
     actie: "Wij rekenen voor jouw woning uit hoe je optimaal combineert.",
-    linkTekst: "Lees meer over Landelijke subsidies",
+    linkTekst: "Lees meer over ISDE",
     href: "/subsidies/landelijk",
   },
   {
@@ -69,7 +69,7 @@ export const Subsidies = () => {
             <span style={{ color: "hsl(var(--accent))" }}>één partij</span>
           </h2>
           <p
-            className="mx-auto mt-6 mb-12 md:mb-16 max-w-2xl"
+            className="mx-auto mt-6 mb-12 md:mb-16 max-w-4xl"
             style={{
               fontSize: 18,
               color: "hsl(var(--primary) / 0.8)",
@@ -108,7 +108,7 @@ export const Subsidies = () => {
                 style={{
                   fontSize: 12,
                   letterSpacing: "0.05em",
-                  color: "hsl(var(--accent))",
+                  color: "#6B7280",
                   fontWeight: 600,
                 }}
               >
