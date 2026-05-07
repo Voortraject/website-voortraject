@@ -78,7 +78,7 @@ const packages: Package[] = [
       "Opvolging openstaande acties",
       "Grip op wat na uitvoering blijft hangen",
     ],
-    result: "Meer overzicht zonder extra kantoorcapaciteit.",
+    result: "Minder handmatig werk intern, betere opvolging, en sneller van aanvraag naar uitvoering.",
     badge: null,
   },
   {
