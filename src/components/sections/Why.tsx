@@ -11,7 +11,7 @@ const points = [
 ];
 
 export const Why = () => (
-  <section className="section-pad bg-primary-foreground" style={{ backgroundColor: "#F9F9F7" }}>
+  <section className="section-pad bg-primary-foreground" style={{ backgroundColor: "#FFFFFF" }}>
     <div className="container-content">
       <div className="text-center mb-16">
         <h2 className="h2-section">
