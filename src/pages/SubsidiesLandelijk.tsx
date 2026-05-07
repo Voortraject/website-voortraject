@@ -220,6 +220,73 @@ const MeasureLi = ({ label, tip }: { label: string; tip: string }) => {
   );
 };
 
+// Disclosure (accordion) — gedeeld voor de drie uitklapbare blokken
+const Disclosure = ({
+  Icon,
+  title,
+  variant,
+  children,
+}: {
+  Icon: React.ComponentType<any>;
+  title: string;
+  variant: "on-cream" | "on-white";
+  children: React.ReactNode;
+}) => {
+  const [open, setOpen] = useState(false);
+  const id = title.replace(/\s+/g, "-").toLowerCase();
+  const reduce =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  return (
+    <div
+      style={{
+        backgroundColor: variant === "on-cream" ? C.card : C.cardSoft,
+        border: `1px solid ${C.accentSoft}66`,
+        borderRadius: 12,
+      }}
+    >
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-controls={`disc-${id}`}
+        className="w-full flex items-center text-left"
+        style={{ padding: 16, gap: 12, background: "transparent", border: "none", cursor: "pointer" }}
+      >
+        <Icon size={20} style={{ color: C.accent, flexShrink: 0 }} aria-hidden />
+        <h4
+          className="font-display flex-1"
+          style={{ color: C.primary, fontWeight: 700, fontSize: 17, margin: 0 }}
+        >
+          {title}
+        </h4>
+        <ChevronDown
+          size={20}
+          style={{
+            color: C.primary,
+            flexShrink: 0,
+            transition: reduce ? "none" : "transform 280ms ease-in-out",
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+          }}
+          aria-hidden
+        />
+      </button>
+      <div
+        id={`disc-${id}`}
+        style={{
+          maxHeight: open ? 800 : 0,
+          overflow: "hidden",
+          transition: reduce ? "none" : "max-height 280ms ease-in-out",
+        }}
+      >
+        <div style={{ padding: "0 20px 20px 52px", fontSize: 15.5, lineHeight: 1.6 }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const SubsidiesLandelijk = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
