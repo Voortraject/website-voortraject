@@ -128,8 +128,8 @@ const reasons: { title: string; body: string }[] = [
     body: "Maatregelen, subsidies, volgorde en uitvoerder. Je hoeft niet zelf vijf partijen te vergelijken.",
   },
   {
-    title: "Ook als je huurder bent of twijfelt",
-    body: "Je hoeft nog geen beslissing genomen te hebben. Wij helpen je ook als je nog aan het oriënteren bent.",
+    title: "Jij hoeft geen subsidie-expert te zijn",
+    body: "Wij kennen alle regelingen en houden de wijzigingen bij. Jij hoeft alleen te weten dat je wil verduurzamen.",
   },
   {
     title: "Begeleiding tot het af is",
