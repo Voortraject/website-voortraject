@@ -283,55 +283,64 @@ const Maatregelen = () => {
                     </ul>
 
                     <div style={{ marginTop: 32, borderTop: "1px solid #E5E2DB" }}>
-                      <button
-                        onClick={() => setOpen((s) => ({ ...s, [m.num]: !s[m.num] }))}
-                        aria-expanded={isOpen}
-                        className="group w-full flex items-center justify-between transition-colors"
-                        style={{
-                          padding: "16px 0",
-                          cursor: "pointer",
-                          color: "#152C4E",
-                          background: "transparent",
-                          border: "none",
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.color = "#E8B547")}
-                        onMouseLeave={(e) => (e.currentTarget.style.color = "#152C4E")}
-                      >
-                        <span
-                          className="font-sans"
-                          style={{ fontWeight: 600, fontSize: 14 }}
-                        >
-                          Waarom dit?
-                        </span>
-                        <ChevronDown
-                          size={16}
-                          style={{
-                            transition: "transform 200ms",
-                            transform: isOpen ? "rotate(180deg)" : "rotate(0)",
-                          }}
-                        />
-                      </button>
-                      <div
-                        style={{
-                          display: "grid",
-                          gridTemplateRows: isOpen ? "1fr" : "0fr",
-                          transition: "grid-template-rows 200ms ease",
-                        }}
-                      >
-                        <div style={{ overflow: "hidden" }}>
-                          <p
-                            style={{
-                              fontSize: 15,
-                              color: "#6B6B6B",
-                              lineHeight: 1.7,
-                              paddingTop: 16,
-                              paddingBottom: 8,
-                            }}
-                          >
-                            {m.why}
-                          </p>
-                        </div>
-                      </div>
+                      {[
+                        { key: "why", label: "Waarom dit?", text: m.why },
+                        { key: "when", label: "Wanneer slim?", text: m.when },
+                        { key: "watch", label: "Waar op letten?", text: m.watch },
+                      ].map((sec, idx) => {
+                        const k = `${m.num}-${sec.key}`;
+                        const sOpen = !!open[k];
+                        return (
+                          <div key={k} style={{ borderTop: idx === 0 ? "none" : "1px solid #E5E2DB" }}>
+                            <button
+                              onClick={() => setOpen((s) => ({ ...s, [k]: !s[k] }))}
+                              aria-expanded={sOpen}
+                              className="group w-full flex items-center justify-between transition-colors"
+                              style={{
+                                padding: "16px 0",
+                                cursor: "pointer",
+                                color: "#152C4E",
+                                background: "transparent",
+                                border: "none",
+                              }}
+                              onMouseEnter={(e) => (e.currentTarget.style.color = "#E8B547")}
+                              onMouseLeave={(e) => (e.currentTarget.style.color = "#152C4E")}
+                            >
+                              <span className="font-sans" style={{ fontWeight: 600, fontSize: 14 }}>
+                                {sec.label}
+                              </span>
+                              <ChevronDown
+                                size={16}
+                                style={{
+                                  transition: "transform 200ms",
+                                  transform: sOpen ? "rotate(180deg)" : "rotate(0)",
+                                }}
+                              />
+                            </button>
+                            <div
+                              style={{
+                                display: "grid",
+                                gridTemplateRows: sOpen ? "1fr" : "0fr",
+                                transition: "grid-template-rows 200ms ease",
+                              }}
+                            >
+                              <div style={{ overflow: "hidden" }}>
+                                <p
+                                  style={{
+                                    fontSize: 15,
+                                    color: "#6B6B6B",
+                                    lineHeight: 1.7,
+                                    paddingTop: 4,
+                                    paddingBottom: 16,
+                                  }}
+                                >
+                                  {sec.text}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </article>
                 );
