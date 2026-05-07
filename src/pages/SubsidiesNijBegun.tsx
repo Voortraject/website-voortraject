@@ -880,40 +880,64 @@ const SubsidiesNijBegun = () => {
       </section>
 
       {/* 7. FAQ */}
-      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-20">
-        <div className="container-content max-w-3xl mx-auto">
-          <H2>
-            Veelgestelde <Gold>vragen</Gold>
-          </H2>
-          <div className="mt-8 divide-y" style={{ borderTop: `1px solid ${C.accentSoft}66`, borderBottom: `1px solid ${C.accentSoft}66` }}>
+      <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="h2-section text-center" style={{ color: "#152C4E", fontWeight: 600 }}>
+            Veelgestelde <span style={{ color: "hsl(var(--accent))" }}>vragen</span>
+          </h2>
+          <p
+            className="text-center mx-auto"
+            style={{ color: "#152C4E", opacity: 0.75, fontSize: 16, marginTop: 16, marginBottom: 40 }}
+          >
+            Wat we het vaakst gevraagd krijgen, kort beantwoord.
+          </p>
+          <div
+            className="mx-auto"
+            style={{
+              maxWidth: 820,
+              backgroundColor: "#FFFFFF",
+              border: "1px solid #E5E2DB",
+              borderRadius: 16,
+              overflow: "hidden",
+            }}
+          >
             {faqs.map((f, i) => {
-              const open = openFaq === i;
+              const isOpen = openFaq === i;
               return (
-                <div key={i} style={{ borderColor: `${C.accentSoft}66` }}>
+                <div
+                  key={i}
+                  style={{ borderBottom: i === faqs.length - 1 ? "none" : "1px solid #E5E2DB" }}
+                >
                   <button
                     type="button"
-                    aria-expanded={open}
-                    onClick={() => setOpenFaq(open ? null : i)}
-                    className="w-full flex items-center justify-between gap-4 py-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-                    style={{ color: C.primary }}
+                    onClick={() => setOpenFaq(isOpen ? null : i)}
+                    aria-expanded={isOpen}
+                    className="w-full flex items-center text-left"
+                    style={{ padding: "20px 24px", background: "transparent", border: "none", cursor: "pointer", gap: 20 }}
                   >
-                    <span className="font-display" style={{ fontSize: 17, fontWeight: 600 }}>
+                    <h3
+                      className="font-display flex-1"
+                      style={{ fontSize: 18, fontWeight: 500, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
+                    >
                       {f.q}
-                    </span>
+                    </h3>
                     <ChevronDown
                       size={20}
+                      color="#E8B547"
                       style={{
-                        color: C.accent,
+                        opacity: 0.5,
                         transition: "transform 200ms ease",
-                        transform: open ? "rotate(180deg)" : "rotate(0deg)",
+                        transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
                         flexShrink: 0,
                       }}
-                      aria-hidden
+                      aria-hidden="true"
                     />
                   </button>
-                  {open && (
-                    <div style={{ paddingBottom: 20, fontSize: 15, color: C.text, lineHeight: 1.6 }}>{f.a}</div>
-                  )}
+                  <div style={{ maxHeight: isOpen ? 400 : 0, overflow: "hidden", transition: "max-height 300ms ease" }}>
+                    <p style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6, margin: 0, padding: "0 24px 20px 24px" }}>
+                      {f.a}
+                    </p>
+                  </div>
                 </div>
               );
             })}

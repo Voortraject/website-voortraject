@@ -855,60 +855,62 @@ const SubsidiesLandelijk = () => {
           </div>
         </section>
 
-        {/* SECTIE 7: FAQ — cream, smal voor leesbaarheid */}
-        <section className="py-12 md:py-16">
-          <div className="mx-auto px-6" style={{ maxWidth: 768 }}>
-            <H2>
-              Veelgestelde <Gold>vragen</Gold>
-            </H2>
+        {/* SECTIE 7: FAQ */}
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
+          <div className="max-w-4xl mx-auto px-6">
+            <h2 className="h2-section text-center" style={{ color: "#152C4E", fontWeight: 600 }}>
+              Veelgestelde <span style={{ color: "hsl(var(--accent))" }}>vragen</span>
+            </h2>
+            <p
+              className="text-center mx-auto"
+              style={{ color: "#152C4E", opacity: 0.75, fontSize: 16, marginTop: 16, marginBottom: 40 }}
+            >
+              Wat we het vaakst gevraagd krijgen, kort beantwoord.
+            </p>
             <div
-              className="mt-8"
+              className="mx-auto"
               style={{
-                backgroundColor: C.card,
-                border: `1px solid ${C.accentSoft}66`,
+                maxWidth: 820,
+                backgroundColor: "#FFFFFF",
+                border: "1px solid #E5E2DB",
                 borderRadius: 16,
                 overflow: "hidden",
               }}
             >
               {faqs.map((f, i) => {
-                const open = openFaq === i;
+                const isOpen = openFaq === i;
                 return (
                   <div
                     key={f.q}
-                    style={{ borderBottom: i === faqs.length - 1 ? "none" : `1px solid ${C.accentSoft}33` }}
+                    style={{ borderBottom: i === faqs.length - 1 ? "none" : "1px solid #E5E2DB" }}
                   >
                     <button
                       type="button"
-                      onClick={() => setOpenFaq(open ? null : i)}
-                      aria-expanded={open}
-                      className="w-full flex items-center text-left gap-4 focus:outline-none focus-visible:ring-2"
-                      style={{ padding: "20px 24px", background: "transparent", border: "none", cursor: "pointer" }}
+                      onClick={() => setOpenFaq(isOpen ? null : i)}
+                      aria-expanded={isOpen}
+                      className="w-full flex items-center text-left"
+                      style={{ padding: "20px 24px", background: "transparent", border: "none", cursor: "pointer", gap: 20 }}
                     >
                       <h3
-                        className="flex-1 font-display"
-                        style={{ color: C.primary, fontWeight: 600, fontSize: 17, margin: 0, lineHeight: 1.35 }}
+                        className="font-display flex-1"
+                        style={{ fontSize: 18, fontWeight: 500, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
                       >
                         {f.q}
                       </h3>
                       <ChevronDown
                         size={20}
+                        color="#E8B547"
                         style={{
-                          color: C.accent,
+                          opacity: 0.5,
                           transition: "transform 200ms ease",
-                          transform: open ? "rotate(180deg)" : "rotate(0deg)",
+                          transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
                           flexShrink: 0,
                         }}
-                        aria-hidden
+                        aria-hidden="true"
                       />
                     </button>
-                    <div
-                      style={{
-                        maxHeight: open ? 400 : 0,
-                        overflow: "hidden",
-                        transition: "max-height 300ms ease",
-                      }}
-                    >
-                      <p style={{ padding: "0 24px 20px 24px", margin: 0, color: C.text, fontSize: 15.5, lineHeight: 1.65 }}>
+                    <div style={{ maxHeight: isOpen ? 400 : 0, overflow: "hidden", transition: "max-height 300ms ease" }}>
+                      <p style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6, margin: 0, padding: "0 24px 20px 24px" }}>
                         {f.a}
                       </p>
                     </div>
