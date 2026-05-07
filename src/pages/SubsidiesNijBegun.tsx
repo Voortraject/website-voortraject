@@ -992,7 +992,7 @@ const SubsidiesNijBegun = () => {
                 color: "#fff",
               }}
             >
-              Ontdek welke stap voor jou <Gold>logisch</Gold> is.
+              Ontdek welke stap voor jou logisch is.
             </h2>
             <p style={{ fontSize: 17, lineHeight: 1.6, marginTop: 16, color: "rgba(255,255,255,0.8)" }}>
               Neem contact op. Een lokale adviseur komt persoonlijk langs binnen een week. Geen verplichtingen, geen verkooppraatje.
