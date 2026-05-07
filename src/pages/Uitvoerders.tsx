@@ -276,7 +276,7 @@ const Uitvoerders = () => {
         <Why />
 
         {/* VOORTRAJECT VERGELIJKING */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F9F9F7" }}>
           <div className="container-content">
             <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E", maxWidth: 900 }}>
               Voor en <span style={{ color: "hsl(var(--accent))" }}>na</span>
@@ -366,7 +366,7 @@ const Uitvoerders = () => {
         </section>
 
         {/* WAAROM DIT WERKT */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F9F9F7" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
             <div className="text-center mx-auto" style={{ maxWidth: 820 }}>
               <h2 className="h2-section" style={{ color: "#152C4E", marginBottom: 16 }}>
@@ -422,7 +422,7 @@ const Uitvoerders = () => {
         </section>
 
         {/* PAKKETTEN */}
-        <section id="pakketten" className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
+        <section id="pakketten" className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F9F9F7" }}>
           <div className="container-content">
             <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E" }}>
               <span style={{ color: "hsl(var(--accent))" }}>Kies</span> wat past bij jullie
