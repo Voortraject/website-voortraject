@@ -701,7 +701,7 @@ const SubsidiesNijBegun = () => {
                   n: "01",
                   icon: Phone,
                   t: "Vrijblijvend telefoongesprek",
-                  d: "Klikt het? Dan plannen we een huisbezoek in. Vrijblijvend en onafhankelijk. Een lokale adviseur komt persoonlijk bij je langs.",
+                  d: "We bespreken kort jouw situatie en woning. Is er een match? Dan plannen we een huisbezoek in. Het gesprek duurt 15 minuten en is volledig vrijblijvend.",
                 },
                 {
                   n: "02",
