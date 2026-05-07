@@ -18,6 +18,7 @@ export const ClosingCta = () => (
       <p
         style={{
           color: "#FFFFFF",
+          opacity: 0.8,
           fontSize: 17,
           lineHeight: 1.6,
           maxWidth: 760,
