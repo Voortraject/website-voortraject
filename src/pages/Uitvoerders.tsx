@@ -286,7 +286,7 @@ const Uitvoerders = () => {
               {/* Zonder */}
               <div
                 style={{
-                  backgroundColor: "#F9F9F7",
+                  backgroundColor: "#FFFFFF",
                   borderRadius: 16,
                   padding: 40,
                   boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
@@ -316,7 +316,7 @@ const Uitvoerders = () => {
               {/* Met */}
               <div
                 style={{
-                  backgroundColor: "#F9F9F7",
+                  backgroundColor: "#FFFFFF",
                   border: "2px solid #E8B547",
                   borderRadius: 16,
                   padding: 40,
@@ -533,7 +533,7 @@ const Uitvoerders = () => {
                       style={{
                         marginTop: 24,
                         padding: 16,
-                        backgroundColor: "#F9F9F7",
+                        backgroundColor: "#FFFFFF",
                         borderRadius: 10,
                         border: "1px solid #ECE7DD",
                       }}
