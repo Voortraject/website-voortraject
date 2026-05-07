@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Tag } from "lucide-react";
 
 const cards = [
   {
@@ -17,7 +18,7 @@ const cards = [
     uitleg:
       "Vaste bedragen voor warmtepomp, isolatie en zonneboiler. Combineren verdubbelt het bedrag per vierkante meter.",
     actie: "Wij rekenen voor jouw woning uit hoe je optimaal combineert.",
-    linkTekst: "Lees meer over ISDE",
+    linkTekst: "Lees meer over landelijke subsidies",
     href: "/subsidies/landelijk",
   },
   {
@@ -91,7 +92,7 @@ export const Subsidies = () => {
             <a
               key={c.naam}
               href={c.href}
-              className="subsidy-card group rounded-2xl p-8 md:p-10 flex flex-col"
+              className="subsidy-card group rounded-2xl p-10 md:p-12 flex flex-col"
               style={{
                 backgroundColor: "#FFFFFF",
                 border: "1px solid rgba(229, 201, 103, 0.5)",
@@ -115,7 +116,7 @@ export const Subsidies = () => {
                 {c.tag}
               </span>
               <h3
-                className="font-display mt-3 text-[28px] md:text-[32px]"
+                className="font-display mt-5 text-[28px] md:text-[32px]"
                 style={{
                   fontWeight: 700,
                   color: "hsl(var(--primary))",
@@ -126,7 +127,7 @@ export const Subsidies = () => {
                 {c.naam}
               </h3>
               <p
-                className="mt-3"
+                className="mt-5"
                 style={{
                   fontSize: 16,
                   color: "hsl(var(--primary))",
@@ -136,8 +137,23 @@ export const Subsidies = () => {
                 {c.uitleg}
               </p>
 
+              {c.naam === "Landelijke subsidies" && (
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 mt-4 self-start"
+                  style={{
+                    backgroundColor: "#FDF6E3",
+                    color: "#A07C1E",
+                    fontSize: 12,
+                    fontWeight: 500,
+                  }}
+                >
+                  <Tag className="w-3 h-3" aria-hidden="true" />
+                  Voornaamste regeling: ISDE
+                </span>
+              )}
+
               <div
-                className="my-4"
+                className="my-5"
                 style={{
                   width: 48,
                   height: 1,
@@ -158,7 +174,7 @@ export const Subsidies = () => {
               </p>
 
               <span
-                className="inline-flex items-center mt-auto pt-4 font-sans font-semibold subsidy-link"
+                className="inline-flex items-center mt-auto pt-5 font-sans font-semibold subsidy-link"
                 style={{ fontSize: 15, color: "hsl(var(--accent))" }}
               >
                 <span className="subsidy-link-text">{c.linkTekst}</span>
