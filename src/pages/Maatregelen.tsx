@@ -223,7 +223,7 @@ const Maatregelen = () => {
                       marginBottom: 24,
                     }}
                   >
-                    <div className="flex items-center gap-3 md:gap-5">
+                    <div className="flex flex-wrap items-center gap-3 md:gap-5">
                       <div
                         className="flex items-center justify-center rounded-full shrink-0"
                         style={{ width: 48, height: 48, backgroundColor: "#F0E4D0" }}
@@ -252,6 +252,11 @@ const Maatregelen = () => {
                       >
                         {m.title}
                       </h3>
+                      <span
+                        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${badgeStyles[m.badge.variant]}`}
+                      >
+                        {m.badge.label}
+                      </span>
                     </div>
 
                     <div
