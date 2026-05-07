@@ -154,23 +154,7 @@ const reasons: { title: string; body: string }[] = [
   },
 ];
 
-const conversationSteps = [
-  {
-    n: "01",
-    title: "Jij plant een moment",
-    body: "Kies een tijdstip dat jou uitkomt. Je ontvangt een bevestiging en een paar korte vragen vooraf.",
-  },
-  {
-    n: "02",
-    title: "Wij kijken samen naar jouw woning",
-    body: "In 30 minuten brengen we in kaart wat voor jouw situatie logisch is: maatregelen, volgorde en regelingen.",
-  },
-  {
-    n: "03",
-    title: "Je vertrekt met een helder plan",
-    body: "Geen vage aanbevelingen. Concreet: wat nu, wat later, en wat het kost en oplevert.",
-  },
-];
+
 
 const ctaButton =
   "inline-flex items-center justify-center font-sans font-semibold text-[15px] transition-colors";
