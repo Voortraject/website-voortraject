@@ -1,46 +1,33 @@
 import { useState } from "react";
-import { Check, ChevronDown, HelpCircle, Compass, LayoutList, BookOpen, Zap, Handshake } from "lucide-react";
+import { Check, CheckCircle, ChevronDown, HelpCircle, Compass, LayoutList, BookOpen, Zap, Handshake, MessageSquare, Clock, ShieldQuestion, CircleDollarSign } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import heroBewoners from "@/assets/bewoners-hero.jpg";
 
 const recognitions = [
   {
+    icon: MessageSquare,
     title: "Iedereen vertelt iets anders",
     body: "De ene partij raadt isolatie aan, de andere een warmtepomp, de derde zegt dat je beter kunt wachten. Je weet niet meer wie je kunt geloven.",
   },
   {
+    icon: Clock,
     title: "Maanden wachten op een afspraak",
     body: "Gemeentelijke loketten en energiecoöperaties hebben wachtlijsten van weken tot maanden. Ondertussen staat alles stil.",
   },
   {
+    icon: ShieldQuestion,
     title: "Onduidelijk wie je kunt vertrouwen",
     body: "Welke uitvoerder levert goede kwaliteit en welke niet? Reviews spreken elkaar tegen en het voelt als gokken.",
   },
   {
+    icon: CircleDollarSign,
     title: "Bang om geld te laten liggen",
     body: "Er zijn meer regelingen dan je denkt, maar ze stapelen slim of helemaal niet. Niemand wil achteraf horen dat hij duizenden euro's heeft gemist.",
   },
 ];
 
-const gemeenteCardsData = [
-  {
-    title: "Aanvullende gemeentelijke subsidies",
-    body: "Veel gemeenten hebben aanvullende regelingen bovenop de landelijke subsidies. We kijken welke voor jouw adres relevant zijn.",
-  },
-  {
-    title: "Combinaties met andere regelingen",
-    body: "Sommige regelingen kunnen samen worden gebruikt. We brengen in kaart welke combinaties voor jouw situatie kunnen werken.",
-  },
-  {
-    title: "Onderhoud en verduurzaming koppelen",
-    body: "Klein of groot onderhoud loopt soms slim samen met verduurzaming. We kijken of dat voor jouw woning kansen biedt.",
-  },
-  {
-    title: "Aansluiting bij Nij Begun",
-    body: "Voor adressen in het aardbevingsgebied checken we of een verduurzamingstraject kan aansluiten bij Nij Begun.",
-  },
-];
+
 
 const questionsRow1 = [
   "Kan ik volledig van het gas af?",
@@ -150,23 +137,7 @@ const reasons: { title: string; body: string }[] = [
   },
 ];
 
-const conversationSteps = [
-  {
-    n: "01",
-    title: "Jij plant een moment",
-    body: "Kies een tijdstip dat jou uitkomt. Je ontvangt een bevestiging en een paar korte vragen vooraf.",
-  },
-  {
-    n: "02",
-    title: "Wij kijken samen naar jouw woning",
-    body: "In 30 minuten brengen we in kaart wat voor jouw situatie logisch is: maatregelen, volgorde en regelingen.",
-  },
-  {
-    n: "03",
-    title: "Je vertrekt met een helder plan",
-    body: "Geen vage aanbevelingen. Concreet: wat nu, wat later, en wat het kost en oplevert.",
-  },
-];
+
 
 const ctaButton =
   "inline-flex items-center justify-center font-sans font-semibold text-[15px] transition-colors";
@@ -292,33 +263,50 @@ const Bewoners = () => {
         </section>
 
         {/* 2. HERKENNING */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#152C4E" }}>
           <div className="container-content">
             <div className="text-center max-w-[760px] mx-auto">
-              <h2 className="h2-section" style={{ color: "#152C4E" }}>
+              <h2 className="h2-section" style={{ color: "#FFFFFF" }}>
                 Misschien <span style={{ color: "hsl(var(--accent))" }}>herken</span> je dit
               </h2>
-              <p className="mt-6 text-[18px]" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>
+              <p className="mt-6 text-[18px]" style={{ color: "rgba(255,255,255,0.7)", lineHeight: 1.6 }}>
                 Verduurzamen roept bij bijna iedere bewoner dezelfde twijfels op.
               </p>
             </div>
-            <div className="card-grid mt-12 grid grid-cols-1 md:grid-cols-2 gap-5">
-              {recognitions.map((r) => (
-                <article key={r.title} className="card" style={cardBase}>
-                  <h3
-                    className="font-display font-semibold"
-                    style={{ fontSize: 19, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-5">
+              {recognitions.map((r) => {
+                const Icon = r.icon;
+                return (
+                  <article
+                    key={r.title}
+                    className="rounded-2xl p-6"
+                    style={{
+                      backgroundColor: "rgba(255,255,255,0.07)",
+                      border: "1px solid rgba(255,255,255,0.12)",
+                    }}
                   >
-                    {r.title}
-                  </h3>
-                  <p className="mt-3" style={{ fontSize: 16, color: "#6B6B6B", lineHeight: 1.6, margin: "12px 0 0" }}>
-                    {r.body}
-                  </p>
-                </article>
-              ))}
+                    <div
+                      className="flex items-center justify-center rounded-full mb-4"
+                      style={{ width: 40, height: 40, backgroundColor: "#E8B547" }}
+                    >
+                      <Icon size={20} color="#152C4E" aria-hidden="true" />
+                    </div>
+                    <h3
+                      className="font-display"
+                      style={{ fontSize: 17, fontWeight: 600, color: "#FFFFFF", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
+                    >
+                      {r.title}
+                    </h3>
+                    <p style={{ marginTop: 10, fontSize: 15, color: "rgba(255,255,255,0.75)", lineHeight: 1.6, margin: "10px 0 0" }}>
+                      {r.body}
+                    </p>
+                  </article>
+                );
+              })}
             </div>
           </div>
         </section>
+
 
         {/* 3. WAT WIJ VOOR JE DOEN */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
@@ -390,107 +378,19 @@ const Bewoners = () => {
           </div>
         </section>
 
-        {/* 4. ZO WERKT HET GESPREK */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#152C4E" }}>
-          <div className="container-content">
-            <div className="text-center max-w-[760px] mx-auto">
-              <h2
-                className="font-display"
-                style={{
-                  fontWeight: 700,
-                  fontSize: "clamp(28px, 4vw, 40px)",
-                  color: "#FFFFFF",
-                  letterSpacing: "-0.02em",
-                  lineHeight: 1.2,
-                  margin: 0,
-                }}
-              >
-                Zo werkt het gesprek
-              </h2>
-              <p
-                className="mx-auto"
-                style={{
-                  color: "#FFFFFF",
-                  opacity: 0.8,
-                  fontSize: 17,
-                  lineHeight: 1.6,
-                  maxWidth: 500,
-                  marginTop: 16,
-                }}
-              >
-                Geen verplichtingen, geen verkooppraatje. Gewoon een gesprek van 30 minuten.
-              </p>
-            </div>
-
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 max-w-5xl mx-auto">
-              {conversationSteps.map((s) => (
-                <div key={s.n}>
-                  <div
-                    className="font-display"
-                    style={{
-                      fontWeight: 700,
-                      fontSize: 32,
-                      color: "#E8B547",
-                      lineHeight: 1,
-                      marginBottom: 12,
-                    }}
-                  >
-                    {s.n}
-                  </div>
-                  <h3
-                    className="font-display"
-                    style={{
-                      fontWeight: 600,
-                      fontSize: 19,
-                      color: "#FFFFFF",
-                      letterSpacing: "-0.01em",
-                      lineHeight: 1.3,
-                      margin: "0 0 10px",
-                    }}
-                  >
-                    {s.title}
-                  </h3>
-                  <p style={{ color: "#FFFFFF", opacity: 0.8, fontSize: 15, lineHeight: 1.6, margin: 0 }}>
-                    {s.body}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-12 flex flex-col items-center">
-              <a
-                href="/contact"
-                className="inline-flex items-center justify-center font-semibold rounded-full transition-colors"
-                style={{
-                  backgroundColor: "#E8B547",
-                  color: "#152C4E",
-                  padding: "14px 32px",
-                  fontSize: 15,
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
-              >
-                Plan een vrijblijvend gesprek
-              </a>
-              <p style={{ color: "#FFFFFF", opacity: 0.6, fontSize: 13, marginTop: 12 }}>
-                Geen verplichtingen. Geen kosten.
-              </p>
-            </div>
-          </div>
-        </section>
 
         {/* 5. VRAGENBLOK */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
             <div className="text-center max-w-[760px] mx-auto">
               <h2 className="h2-section" style={{ color: "#152C4E" }}>
-                De <span style={{ color: "hsl(var(--accent))" }}>vragen</span> waar wij mee beginnen
+                Dit vragen bewoners ons het <span style={{ color: "hsl(var(--accent))" }}>vaakst</span>
               </h2>
               <p
                 className="mt-6 text-[18px] mx-auto"
-                style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: "90ch" }}
+                style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: "90ch", fontWeight: 400 }}
               >
-                De meeste bewoners lopen vast op dezelfde punten: te veel keuzes, onduidelijke regelingen, wachttijden of advies dat elkaar tegenspreekt. Met deze vragen beginnen wij meestal.
+                Klik op een vraag voor een direct antwoord.
               </p>
             </div>
 
@@ -709,44 +609,89 @@ const Bewoners = () => {
         {/* 7. AANVULLENDE MOGELIJKHEDEN PER GEMEENTE */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
-            <h2 className="h2-section text-center" style={{ color: "#152C4E" }}>
-              Meer dan alleen<br /><span style={{ color: "hsl(var(--accent))" }}>landelijke</span> subsidies
-            </h2>
-            <div className="card-grid mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto items-stretch">
-              {gemeenteCardsData.map((c) => (
-                <div
-                  key={c.title}
-                  className="card flex items-start gap-3 h-full"
-                  style={{
-                    backgroundColor: "#FFFFFF",
-                    border: "1px solid #E5E2DB",
-                    borderRadius: 16,
-                    padding: "20px 24px",
-                  }}
-                >
-                  <Check size={18} color="#E8B547" strokeWidth={2.5} aria-hidden="true" style={{ flexShrink: 0, marginTop: 4 }} />
-                  <div>
-                    <h3
-                      className="font-display font-semibold"
-                      style={{ fontSize: 16, color: "#152C4E", lineHeight: 1.35, margin: 0 }}
-                    >
-                      {c.title}
-                    </h3>
-                    <p style={{ marginTop: 8, fontSize: 15, color: "#6B6B6B", lineHeight: 1.55, margin: "8px 0 0" }}>
-                      {c.body}
-                    </p>
-                  </div>
-                </div>
-              ))}
+            <div className="text-center max-w-[760px] mx-auto">
+              <h2 className="h2-section" style={{ color: "#152C4E" }}>
+                Wist je dat je subsidies kunt <span style={{ color: "hsl(var(--accent))" }}>stapelen</span>?
+              </h2>
+              <p
+                className="mt-6 mx-auto"
+                style={{ color: "#6B6B6B", lineHeight: 1.6, fontSize: 16, maxWidth: 620, fontWeight: 400 }}
+              >
+                De meeste bewoners kennen één regeling. Maar wie slim combineert, kan het totaalbedrag verdubbelen of verdriedubbelen. Wij brengen voor jouw adres in kaart wat er allemaal mogelijk is.
+              </p>
             </div>
+
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-start">
+              {/* Linker kolom — rekenvoorbeeld */}
+              <div
+                className="rounded-2xl p-8"
+                style={{
+                  backgroundColor: "#FDF9EE",
+                  border: "1px solid rgba(232,181,71,0.4)",
+                }}
+              >
+                <div
+                  className="text-xs uppercase mb-4"
+                  style={{ color: "#A07C1E", fontWeight: 600, letterSpacing: "0.15em" }}
+                >
+                  Rekenvoorbeeld
+                </div>
+                <p style={{ color: "#6B6B6B", fontSize: 14, lineHeight: 1.55, marginBottom: 16, fontWeight: 400 }}>
+                  Vrijstaande woning, bouwjaar 1972, Groningen.<br />
+                  Spouwisolatie, dakisolatie en vloerisolatie.
+                </p>
+                <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 12 }}>
+                  {[
+                    "Nij Begun: tot €8.000 vergoed",
+                    "ISDE (2+ maatregelen, verdubbeld tarief): €4.200",
+                    "Gemeentelijke bijdrage: €2.500",
+                    "Totaal: tot €14.700 terug op een investering van €16.000",
+                  ].map((t) => (
+                    <li key={t} className="flex items-start gap-3">
+                      <CheckCircle size={16} color="#E8B547" style={{ flexShrink: 0, marginTop: 2 }} aria-hidden="true" />
+                      <span style={{ color: "#2B2B2B", fontSize: 15, fontWeight: 500, lineHeight: 1.5 }}>{t}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p style={{ marginTop: 20, color: "#6B6B6B", fontSize: 12, fontStyle: "italic", fontWeight: 400 }}>
+                  Bedragen zijn indicatief en afhankelijk van jouw situatie.
+                </p>
+              </div>
+
+              {/* Rechter kolom — wat wij uitzoeken */}
+              <div className="p-8">
+                <div
+                  className="text-xs uppercase mb-4"
+                  style={{ color: "#A07C1E", fontWeight: 600, letterSpacing: "0.15em" }}
+                >
+                  Wat wij voor jou uitzoeken
+                </div>
+                <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 16 }}>
+                  {[
+                    "Welke landelijke regelingen voor jouw woning gelden",
+                    "Of jij in aanmerking komt voor Nij Begun",
+                    "Welke gemeentelijke en provinciale bijdragen er zijn",
+                    "Hoe je regelingen slim combineert zonder ze mis te lopen",
+                    "Wat de logische volgorde is om maximaal te benutten",
+                  ].map((t) => (
+                    <li key={t} className="flex items-start gap-3">
+                      <CheckCircle size={16} color="#E8B547" style={{ flexShrink: 0, marginTop: 3 }} aria-hidden="true" />
+                      <span style={{ color: "#2B2B2B", fontSize: 15, fontWeight: 400, lineHeight: 1.5 }}>{t}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
             <p
               className="text-center mx-auto"
               style={{
-                marginTop: 32,
+                marginTop: 40,
                 maxWidth: "48rem",
                 fontSize: 16,
                 lineHeight: 1.6,
-                color: "rgba(21,44,78,0.75)",
+                color: "#6B6B6B",
+                fontStyle: "italic",
               }}
             >
               Wij kijken specifiek naar wat in jouw gemeente speelt, welke combinaties slim zijn en wat dat voor jouw plan betekent.
