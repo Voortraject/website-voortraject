@@ -129,17 +129,13 @@ const OverOns = () => {
                   onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 12px 36px rgba(21,44,78,0.14)")}
                   onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 4px 24px rgba(21,44,78,0.06)")}
                 >
-                  <div className="w-full overflow-hidden h-[220px] md:h-[260px]" style={{ backgroundColor: "#FAFAFA" }}>
+                  <div className="w-full overflow-hidden h-[280px] md:h-[320px]" style={{ backgroundColor: "#FAFAFA" }}>
                     <img
                       src={p.img}
                       alt={p.name}
                       loading="lazy"
                       className="w-full h-full object-cover"
-                      style={{
-                        objectPosition: "center top",
-                        transform: p.name === "Wouter" ? "scale(1.08)" : "none",
-                        transformOrigin: "center top",
-                      }}
+                      style={{ objectPosition: "top center" }}
                     />
                   </div>
                   <div className="p-6 flex-1 flex flex-col">
@@ -152,12 +148,12 @@ const OverOns = () => {
                     <p className="text-muted-foreground text-[14px] leading-tight" style={{ marginTop: 4 }}>
                       {p.specialty}
                     </p>
+                    <div className="border-t mt-3 mb-3" style={{ borderColor: "#E5E2DB" }} />
                     <p
                       style={{
                         fontStyle: "italic",
                         color: "#6B6B6B",
                         fontSize: 14,
-                        marginTop: 8,
                         lineHeight: 1.5,
                         fontWeight: 400,
                       }}
