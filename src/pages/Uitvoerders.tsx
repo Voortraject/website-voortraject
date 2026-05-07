@@ -40,7 +40,7 @@ const packages: Package[] = [
       "Dossieropbouw en controle",
       "Overdracht compleet dossier",
     ],
-    result: "Snellere doorloop van aanvraag naar bruikbaar dossier.",
+    result: "Jullie aanvraag gaat sneller van intake naar klaar dossier, zonder dat er iets tussenuit valt.",
     badge: null,
   },
   {
