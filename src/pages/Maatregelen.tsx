@@ -4,10 +4,17 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 const principles = [
-  { num: "01", title: "Beperk", body: "Zorg dat je woning zo min mogelijk energie verspilt. Isolatie en ventilatie zijn de basis.", icon: Shield },
-  { num: "02", title: "Wek op", body: "Wek een deel van je eigen energie op, zodat je minder afhankelijk bent van het net.", icon: Sun },
-  { num: "03", title: "Gebruik slim", body: "Verwarm efficiënt en gebruik je opgewekte energie op het juiste moment.", icon: Zap },
+  { num: "01", title: "Beperk", body: "Isolatie en ventilatie verlagen je energieverbruik direct. Dit is de basis: zonder deze stap renderen alle latere maatregelen minder goed.", icon: Shield },
+  { num: "02", title: "Wek op", body: "Zonnepanelen werken het beste in een al goed geïsoleerde woning. Dan verbruik je minder dan je opwekt, in plaats van andersom.", icon: Sun },
+  { num: "03", title: "Gebruik slim", body: "Een warmtepomp of batterij rendeert pas goed als de eerdere stappen zijn gezet. In de juiste volgorde haal je het meeste uit elke investering.", icon: Zap },
 ];
+
+const badgeStyles: Record<string, string> = {
+  green: "bg-green-50 text-green-700 border border-green-200",
+  blue: "bg-blue-50 text-blue-700 border border-blue-200",
+  oker: "bg-[#FDF6E3] text-[#A07C1E] border border-[#E8B547]/40",
+  gray: "bg-gray-50 text-gray-600 border border-gray-200",
+};
 
 const measures = [
   {
