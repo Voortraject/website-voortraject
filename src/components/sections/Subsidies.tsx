@@ -18,7 +18,7 @@ const cards = [
     uitleg:
       "Vaste bedragen voor warmtepomp, isolatie en zonneboiler. Combineren verdubbelt het bedrag per vierkante meter.",
     actie: "Wij rekenen voor jouw woning uit hoe je optimaal combineert.",
-    linkTekst: "Lees meer over ISDE",
+    linkTekst: "Lees meer over landelijke subsidies",
     href: "/subsidies/landelijk",
   },
   {
