@@ -63,10 +63,6 @@ const checkpoints = [
     desc: "Bewoners worden proactief ge\u00EFnformeerd, niet achteraf verrast.",
   },
   {
-    title: "Betrouwbaarheid in planning",
-    desc: "Afspraken worden nagekomen. Als er iets verandert, wordt dat tijdig gecommuniceerd.",
-  },
-  {
     title: "Nette dossiervorming",
     desc: "Alle stukken, tekeningen en akkoorden worden geordend aangeleverd en bewaard.",
   },
@@ -77,6 +73,10 @@ const checkpoints = [
   {
     title: "Passend werkgebied",
     desc: "Wij koppelen bewoners aan bedrijven die ook daadwerkelijk actief zijn in de regio.",
+  },
+  {
+    title: "Betrouwbaarheid in planning",
+    desc: "Afspraken worden nagekomen. Als er iets verandert, wordt dat tijdig gecommuniceerd.",
   },
   {
     title: "Relevante certificeringen",
@@ -100,8 +100,8 @@ const OverOns = () => {
               Hoe Voortraject is <span style={accent}>ontstaan</span>
             </h2>
             <div
-              className="mx-auto text-center"
-              style={{ maxWidth: 640, color: "#4B4B4B", fontSize: 17, lineHeight: 1.6, fontWeight: 400 }}
+              className="mx-auto text-center max-w-3xl"
+              style={{ color: "#4B4B4B", fontSize: 17, lineHeight: 1.6, fontWeight: 400 }}
             >
               <p className="mb-4">
                 Verduurzamingsbedrijven verloren te veel tijd aan alles behalve bouwen. Bewoners wachtten maanden op duidelijkheid en werden van het kastje naar de muur gestuurd.
@@ -129,17 +129,13 @@ const OverOns = () => {
                   onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 12px 36px rgba(21,44,78,0.14)")}
                   onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 4px 24px rgba(21,44,78,0.06)")}
                 >
-                  <div className="w-full overflow-hidden h-[220px] md:h-[260px]" style={{ backgroundColor: "#FAFAFA" }}>
+                  <div className="w-full overflow-hidden h-[280px] md:h-[320px]" style={{ backgroundColor: "#FAFAFA" }}>
                     <img
                       src={p.img}
                       alt={p.name}
                       loading="lazy"
                       className="w-full h-full object-cover"
-                      style={{
-                        objectPosition: "center top",
-                        transform: p.name === "Wouter" ? "scale(1.08)" : "none",
-                        transformOrigin: "center top",
-                      }}
+                      style={{ objectPosition: "top center" }}
                     />
                   </div>
                   <div className="p-6 flex-1 flex flex-col">
@@ -152,12 +148,12 @@ const OverOns = () => {
                     <p className="text-muted-foreground text-[14px] leading-tight" style={{ marginTop: 4 }}>
                       {p.specialty}
                     </p>
+                    <div className="border-t mt-3 mb-3" style={{ borderColor: "#E5E2DB" }} />
                     <p
                       style={{
                         fontStyle: "italic",
                         color: "#6B6B6B",
                         fontSize: 14,
-                        marginTop: 8,
                         lineHeight: 1.5,
                         fontWeight: 400,
                       }}
@@ -185,7 +181,7 @@ const OverOns = () => {
                   lineHeight: 1.2,
                 }}
               >
-                Hoe wij werken
+                Hoe wij <span style={accent}>werken</span>
               </h2>
               <p
                 className="mx-auto mt-4"
@@ -201,23 +197,25 @@ const OverOns = () => {
                   className="rounded-2xl p-7 shadow-sm"
                   style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E2DB" }}
                 >
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center mb-4"
-                    style={{ backgroundColor: "#E8B547" }}
-                  >
-                    <Icon size={20} color="#152C4E" />
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: "#E8B547" }}
+                    >
+                      <Icon size={20} color="#152C4E" />
+                    </div>
+                    <h3
+                      style={{
+                        fontFamily: "'Inter Tight', sans-serif",
+                        fontWeight: 600,
+                        color: "#152C4E",
+                        fontSize: 16,
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {title}
+                    </h3>
                   </div>
-                  <h3
-                    style={{
-                      fontFamily: "'Inter Tight', sans-serif",
-                      fontWeight: 600,
-                      color: "#152C4E",
-                      fontSize: 16,
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {title}
-                  </h3>
                   <p style={{ color: "#6B6B6B", fontSize: 14, lineHeight: 1.6, marginTop: 8, fontWeight: 400 }}>
                     {desc}
                   </p>
@@ -241,10 +239,23 @@ const OverOns = () => {
                 Niet elk bedrijf werkt via ons mee aan een traject. Dit vinden wij belangrijk in de samenwerking.
               </p>
             </div>
+            <p
+              className="text-center mb-6"
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 600,
+                color: "#A07C1E",
+                fontSize: 12,
+                textTransform: "uppercase",
+                letterSpacing: "0.15em",
+              }}
+            >
+              Alleen bedrijven die aan deze criteria voldoen
+            </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6 max-w-4xl mx-auto">
               {checkpoints.map((p) => (
                 <div key={p.title} className="flex items-start gap-3">
-                  <CheckCircle size={20} style={{ color: "#E8B547", flexShrink: 0, marginTop: 2 }} />
+                  <CheckCircle className="w-5 h-5" style={{ color: "#E8B547", flexShrink: 0, marginTop: 2 }} />
                   <div>
                     <h3 style={{ fontWeight: 500, color: "#152C4E", fontSize: 15, lineHeight: 1.4 }}>{p.title}</h3>
                     <p style={{ color: "#6B6B6B", fontSize: 14, lineHeight: 1.6, marginTop: 4, fontWeight: 400 }}>
