@@ -197,23 +197,25 @@ const OverOns = () => {
                   className="rounded-2xl p-7 shadow-sm"
                   style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E2DB" }}
                 >
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center mb-4"
-                    style={{ backgroundColor: "#E8B547" }}
-                  >
-                    <Icon size={20} color="#152C4E" />
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: "#E8B547" }}
+                    >
+                      <Icon size={20} color="#152C4E" />
+                    </div>
+                    <h3
+                      style={{
+                        fontFamily: "'Inter Tight', sans-serif",
+                        fontWeight: 600,
+                        color: "#152C4E",
+                        fontSize: 16,
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {title}
+                    </h3>
                   </div>
-                  <h3
-                    style={{
-                      fontFamily: "'Inter Tight', sans-serif",
-                      fontWeight: 600,
-                      color: "#152C4E",
-                      fontSize: 16,
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {title}
-                  </h3>
                   <p style={{ color: "#6B6B6B", fontSize: 14, lineHeight: 1.6, marginTop: 8, fontWeight: 400 }}>
                     {desc}
                   </p>
