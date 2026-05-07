@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from "react";
+
 type Logo = { src: string; alt: string };
 
 interface LogoCarouselProps {
@@ -9,31 +11,64 @@ const defaultLogos: Logo[] = [
   { src: "/images/instanties/rijksoverheid.svg", alt: "Rijksoverheid" },
   { src: "/images/instanties/snn.svg", alt: "SNN" },
   { src: "/images/instanties/nij-begun.svg", alt: "Nij Begun" },
-  { src: "/images/instanties/isde.jpg", alt: "ISDE" },
-  { src: "/images/instanties/nationaal-warmtefonds.webp", alt: "Nationaal Warmtefonds" },
+  { src: "/images/instanties/isde.png", alt: "ISDE" },
+  { src: "/images/instanties/nationaal-warmtefonds.png", alt: "Nationaal Warmtefonds" },
 ];
 
 const BG = "#F5F2EC";
 
 export const LogoCarousel = ({
-  title = "Wij regelen aanvragen voor deze subsidies",
+  title = "De subsidies en instanties waarmee wij werken.",
   logos = defaultLogos,
 }: LogoCarouselProps) => {
   const loop = [...logos, ...logos, ...logos, ...logos];
+  const titleRef = useRef<HTMLParagraphElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = titleRef.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setVisible(true);
+      return;
+    }
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            setVisible(true);
+            obs.disconnect();
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   return (
     <section
-      aria-label="Subsidies waarvoor wij aanvragen regelen"
-      className="py-10 md:py-12"
+      aria-label="Subsidies en instanties waarmee wij werken"
+      className="py-10 md:py-12 relative"
       style={{ backgroundColor: BG }}
     >
+      <div
+        aria-hidden="true"
+        className="absolute left-1/2 -translate-x-1/2 max-w-24 md:max-w-32 w-full"
+        style={{
+          top: 0,
+          height: 1,
+          backgroundColor: "rgba(212, 175, 61, 0.3)",
+        }}
+      />
       <style>{`
         @keyframes logoScroll {
           0% { transform: translateX(0); }
           100% { transform: translateX(-25%); }
         }
         .logo-marquee-track {
-          animation: logoScroll 25s linear infinite;
+          animation: logoScroll 35s linear infinite;
         }
         .logo-marquee-mask:hover .logo-marquee-track {
           animation-play-state: paused;
@@ -56,6 +91,7 @@ export const LogoCarousel = ({
 
       <div className="container-content">
         <p
+          ref={titleRef}
           className="text-center mb-6"
           style={{
             fontSize: 12,
@@ -63,6 +99,9 @@ export const LogoCarousel = ({
             letterSpacing: "0.05em",
             textTransform: "uppercase",
             color: "#6B7280",
+            opacity: visible ? 1 : 0,
+            transform: visible ? "translateY(0)" : "translateY(20px)",
+            transition: "opacity 500ms ease-out, transform 500ms ease-out",
           }}
         >
           {title}
