@@ -100,8 +100,8 @@ const OverOns = () => {
               Hoe Voortraject is <span style={accent}>ontstaan</span>
             </h2>
             <div
-              className="mx-auto text-center"
-              style={{ maxWidth: 640, color: "#4B4B4B", fontSize: 17, lineHeight: 1.6, fontWeight: 400 }}
+              className="mx-auto text-center max-w-3xl"
+              style={{ color: "#4B4B4B", fontSize: 17, lineHeight: 1.6, fontWeight: 400 }}
             >
               <p className="mb-4">
                 Verduurzamingsbedrijven verloren te veel tijd aan alles behalve bouwen. Bewoners wachtten maanden op duidelijkheid en werden van het kastje naar de muur gestuurd.
