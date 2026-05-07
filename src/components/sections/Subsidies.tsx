@@ -69,7 +69,7 @@ export const Subsidies = () => {
             <span style={{ color: "hsl(var(--accent))" }}>één partij</span>
           </h2>
           <p
-            className="mx-auto mt-6 mb-12 md:mb-16 max-w-2xl"
+            className="mx-auto mt-6 mb-12 md:mb-16 max-w-4xl"
             style={{
               fontSize: 18,
               color: "hsl(var(--primary) / 0.8)",
