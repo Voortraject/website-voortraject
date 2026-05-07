@@ -211,7 +211,6 @@ const Maatregelen = () => {
             <div className="mx-auto" style={{ marginTop: 64, maxWidth: 900 }}>
               {measures.map((m) => {
                 const Icon = m.icon;
-                const isOpen = !!open[m.num];
                 return (
                   <article
                     key={m.num}
