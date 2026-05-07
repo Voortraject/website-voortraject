@@ -531,67 +531,8 @@ const SubsidiesLandelijk = () => {
           </div>
         </section>
 
-        {/* SECTIE 3: VOOR WIE — cream */}
-        <section className="container-content py-12 md:py-16">
-          <H2>
-            Voor wie is ISDE <Gold>bedoeld</Gold>?
-          </H2>
-          <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.6, maxWidth: 760 }}>
-            De ISDE-subsidie is er voor woningeigenaren die hun bestaande woning verduurzamen. Heel Nederland, geen inkomenstoets, geen postcode-check.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-            {[
-              {
-                icon: User,
-                t: "Wie kan aanvragen?",
-                items: [
-                  "Eigenaar én bewoner van de woning",
-                  "Woning staat in Nederland",
-                  "Bestaande woning (geen nieuwbouw in de bouwfase)",
-                  "Geen inkomenstoets, geen postcodebeperking",
-                ],
-              },
-              {
-                icon: Calendar,
-                t: "Wanneer aanvragen?",
-                items: [
-                  "Eerst de maatregel laten uitvoeren door een erkend bedrijf",
-                  "Aanvraag indienen binnen 24 maanden na uitvoering",
-                  "Doe-het-zelf telt niet mee voor subsidie",
-                  "Foto's en factuur zijn verplicht bij de aanvraag",
-                ],
-              },
-            ].map((card) => (
-              <div key={card.t} style={cardStyle("on-cream")}>
-                {/* Icon-left header */}
-                <div className="flex items-center gap-4">
-                  <IconCircle Icon={card.icon} size={48} />
-                  <h3
-                    className="font-display"
-                    style={{ color: C.primary, fontWeight: 700, fontSize: 22, margin: 0 }}
-                  >
-                    {card.t}
-                  </h3>
-                </div>
-                <ul className="mt-5 space-y-2">
-                  {card.items.map((it) => (
-                    <li key={it} className="flex items-start gap-3">
-                      <Check size={20} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
-                      <span style={{ fontSize: 15.5, lineHeight: 1.55 }}>{it}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <p style={{ marginTop: 20, fontSize: 13, color: C.muted }}>
-            Verhuurders en VvE's hebben een aparte regeling (SVOH). Voor hen geldt ISDE niet.
-          </p>
-        </section>
-
-        {/* SECTIE 4: HOEVEEL SUBSIDIE — wit */}
-        <section id="bedragen" style={{ backgroundColor: "#FFFFFF" }} className="py-12 md:py-16">
-          <div className="container-content">
+        {/* SECTIE 3: HOEVEEL SUBSIDIE — cream */}
+        <section id="bedragen" className="container-content py-12 md:py-16">
           <H2>
             Hoeveel <Gold>subsidie</Gold> krijg je?
           </H2>
@@ -599,13 +540,13 @@ const SubsidiesLandelijk = () => {
             De bedragen verschillen per maatregel, maar één regel maakt het écht interessant: combineer je twee of meer maatregelen binnen 24 maanden, dan <strong>verdubbelt</strong> het isolatiebedrag per vierkante meter. Wij rekenen voor jouw woning uit hoe je daar het maximale uit haalt.
           </p>
 
-          {/* 4.1 Categoriekaarten — cream-soft op wit, icoon links */}
+          {/* 3.1 Categoriekaarten — wit op cream */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
             {categories.map((c) => (
               <div
                 key={c.t}
                 className="transition-shadow hover:shadow-md"
-                style={cardStyle("on-white")}
+                style={cardStyle("on-cream")}
               >
                 <div className="flex items-start gap-4">
                   <IconCircle Icon={c.icon} size={48} />
@@ -624,34 +565,20 @@ const SubsidiesLandelijk = () => {
             ))}
           </div>
 
-          {/* 4.2a Combineer-banner */}
-          <div
-            className="mt-8"
-            style={{
-              backgroundColor: C.cardSoft,
-              borderLeft: `4px solid ${C.accent}`,
-              borderRadius: 8,
-              padding: 24,
-            }}
-          >
-            <div className="flex items-start gap-3">
-              <TrendingUp size={22} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
-              <div>
-                <h4 className="font-display" style={{ color: C.primary, fontWeight: 700, fontSize: 18 }}>
-                  Combineren is waar de winst zit
-                </h4>
-                <p style={{ marginTop: 8, fontSize: 15.5, lineHeight: 1.6 }}>
-                  Eén isolatiemaatregel levert ongeveer 15% van je investering aan subsidie op. Twee maatregelen, of één maatregel plus een warmtepomp of zonneboiler, brengt dat naar ongeveer 30%. Dat is letterlijk verdubbelen.
-                </p>
-              </div>
-            </div>
+          {/* 3.2a Combineren — uitklapbaar */}
+          <div className="mt-8">
+            <Disclosure Icon={Lightbulb} title="Combineren is waar de winst zit" variant="on-cream">
+              <p>
+                Eén isolatiemaatregel levert ongeveer 15% van je investering aan subsidie op. Twee maatregelen, of één maatregel plus een warmtepomp of zonneboiler, brengt dat naar ongeveer 30%. Dat is letterlijk verdubbelen.
+              </p>
+            </Disclosure>
           </div>
 
-          {/* 4.2 Tabel */}
+          {/* 3.2 Tabel — wit op cream */}
           <div
             className="mt-8"
             style={{
-              backgroundColor: C.cardSoft,
+              backgroundColor: C.card,
               border: `1px solid ${C.accentSoft}66`,
               borderRadius: 16,
               padding: 28,
@@ -698,37 +625,23 @@ const SubsidiesLandelijk = () => {
             </div>
           </div>
 
-          {/* 4.3 Voorbeeld callout */}
-          <div
-            className="mt-8"
-            style={{
-              backgroundColor: C.cardSoft,
-              borderLeft: `4px solid ${C.accent}`,
-              borderRadius: 8,
-              padding: 24,
-            }}
-          >
-            <div className="flex items-start gap-3">
-              <Calculator size={22} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
-              <div>
-                <h4 className="font-display" style={{ color: C.primary, fontWeight: 700, fontSize: 18 }}>
-                  Voorbeeld: dak en vloer combineren
-                </h4>
-                <p style={{ marginTop: 8, fontSize: 15.5, lineHeight: 1.6 }}>
-                  Stel: je laat 80 m² dakisolatie en 60 m² vloerisolatie tegelijk uitvoeren. Door de combinatie verdubbelen beide bedragen.
-                </p>
-                <ul className="mt-3 space-y-1" style={{ fontSize: 15.5, lineHeight: 1.6 }}>
-                  <li>Dakisolatie: 80 × €32,50 = <strong>€2.600</strong></li>
-                  <li>Vloerisolatie: 60 × €11,00 = <strong>€660</strong></li>
-                </ul>
-                <p style={{ marginTop: 10, fontSize: 15.5, lineHeight: 1.6 }}>
-                  Totaal: <strong style={{ color: C.primary }}>€3.260</strong> subsidie. Zonder combineren: €1.630. Verschil: <strong style={{ color: C.accent }}>€1.630 extra</strong> door slim te combineren.
-                </p>
-              </div>
-            </div>
+          {/* 3.3 Voorbeeld — uitklapbaar */}
+          <div className="mt-8">
+            <Disclosure Icon={Calculator} title="Voorbeeld: dak en vloer combineren" variant="on-cream">
+              <p>
+                Stel: je laat 80 m² dakisolatie en 60 m² vloerisolatie tegelijk uitvoeren. Door de combinatie verdubbelen beide bedragen.
+              </p>
+              <ul className="mt-3 space-y-1">
+                <li>Dakisolatie: 80 × €32,50 = <strong>€2.600</strong></li>
+                <li>Vloerisolatie: 60 × €11,00 = <strong>€660</strong></li>
+              </ul>
+              <p style={{ marginTop: 10 }}>
+                Totaal: <strong style={{ color: C.primary }}>€3.260</strong> subsidie. Zonder combineren: €1.630. Verschil: <strong style={{ color: C.accent }}>€1.630 extra</strong> door slim te combineren.
+              </p>
+            </Disclosure>
           </div>
 
-          {/* 4.4 Mini-CTA */}
+          {/* 3.4 Mini-CTA */}
           <div className="mt-10 text-center">
             <p style={{ color: C.primary, fontWeight: 700, fontSize: 18 }}>
               Bang dat je geld laat liggen?
@@ -740,6 +653,124 @@ const SubsidiesLandelijk = () => {
               <OutlineBtn href="/contact">Neem contact op</OutlineBtn>
             </div>
           </div>
+        </section>
+
+        {/* SECTIE 4: VOOR WIE — wit */}
+        <section style={{ backgroundColor: "#FFFFFF" }} className="py-12 md:py-16">
+          <div className="container-content">
+            <H2>
+              Voor wie is ISDE <Gold>bedoeld</Gold>?
+            </H2>
+            <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.6, maxWidth: 760 }}>
+              De ISDE-subsidie is er voor woningeigenaren die hun bestaande woning verduurzamen. Heel Nederland, geen inkomenstoets, geen postcode-check.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+              {[
+                {
+                  icon: User,
+                  t: "Wie kan aanvragen?",
+                  items: [
+                    "Eigenaar én bewoner van de woning",
+                    "Woning staat in Nederland",
+                    "Bestaande woning (geen nieuwbouw in de bouwfase)",
+                    "Geen inkomenstoets, geen postcodebeperking",
+                  ],
+                },
+                {
+                  icon: Calendar,
+                  t: "Wanneer aanvragen?",
+                  items: [
+                    "Eerst de maatregel laten uitvoeren door een erkend bedrijf",
+                    "Aanvraag indienen binnen 24 maanden na uitvoering",
+                    "Doe-het-zelf telt niet mee voor subsidie",
+                    "Foto's en factuur zijn verplicht bij de aanvraag",
+                  ],
+                },
+              ].map((card) => (
+                <div key={card.t} style={cardStyle("on-white")}>
+                  <div className="flex items-center gap-4">
+                    <IconCircle Icon={card.icon} size={48} />
+                    <h3
+                      className="font-display"
+                      style={{ color: C.primary, fontWeight: 700, fontSize: 22, margin: 0 }}
+                    >
+                      {card.t}
+                    </h3>
+                  </div>
+                  <ul className="mt-5 space-y-2">
+                    {card.items.map((it) => (
+                      <li key={it} className="flex items-start gap-3">
+                        <Check size={20} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
+                        <span style={{ fontSize: 15.5, lineHeight: 1.55 }}>{it}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <p style={{ marginTop: 20, fontSize: 13, color: C.muted }}>
+              Verhuurders en VvE's hebben een aparte regeling (SVOH). Voor hen geldt ISDE niet.
+            </p>
+          </div>
+        </section>
+
+        {/* SECTIE 5: WELKE MAATREGELEN — cream, twee koloms */}
+        <section className="container-content py-12 md:py-16">
+          <H2>
+            Welke maatregelen worden <Gold>vergoed</Gold>?
+          </H2>
+          <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.6, maxWidth: 820 }}>
+            ISDE vergoedt isolatie, warmtepomp, zonneboiler, warmtenet en (sinds 2026) ventilatie. Per maatregel gelden eisen aan de installatie, het materiaal en het oppervlak.
+          </p>
+
+          {/* 5.1 Hoofdlijst maatregelen — twee koloms op desktop, in witte card op cream */}
+          <div className="mt-8" style={cardStyle("on-cream")}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10">
+              <ul>
+                {measuresLeft.map((m) => (
+                  <MeasureLi key={m.l} label={m.l} tip={m.tip} />
+                ))}
+              </ul>
+              <ul>
+                {measuresRight.map((m) => (
+                  <MeasureLi key={m.l} label={m.l} tip={m.tip} />
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* 5.2 Biobased — uitklapbaar */}
+          <div className="mt-6">
+            <Disclosure Icon={Leaf} title="Bonus voor biobased isolatie" variant="on-cream">
+              <p>
+                Kies je voor isolatiemateriaal uit hernieuwbare bronnen (zoals hennep, vlas, houtvezel of cellulose), dan krijg je een extra bedrag per vierkante meter. Deze bonus wordt niet verdubbeld bij combineren, maar telt wel op bij het standaardbedrag. Wij weten welke materialen kwalificeren en bespreken het tijdens het huisbezoek.
+              </p>
+            </Disclosure>
+          </div>
+
+          {/* 5.3 Niet vergoed — twee koloms */}
+          <div className="mt-10">
+            <h3 className="font-display" style={{ color: C.primary, fontWeight: 700, fontSize: 20 }}>
+              Niet vergoed via ISDE
+            </h3>
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2">
+              <ul className="space-y-2">
+                {nietLeft.map((n) => (
+                  <li key={n} className="flex items-start gap-3">
+                    <XIcon size={18} style={{ color: C.muted, flexShrink: 0, marginTop: 3 }} aria-hidden />
+                    <span style={{ fontSize: 15.5, lineHeight: 1.55 }}>{n}</span>
+                  </li>
+                ))}
+              </ul>
+              <ul className="space-y-2">
+                {nietRight.map((n) => (
+                  <li key={n} className="flex items-start gap-3">
+                    <XIcon size={18} style={{ color: C.muted, flexShrink: 0, marginTop: 3 }} aria-hidden />
+                    <span style={{ fontSize: 15.5, lineHeight: 1.55 }}>{n}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </section>
 
