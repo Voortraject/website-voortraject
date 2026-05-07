@@ -802,7 +802,7 @@ const SubsidiesNijBegun = () => {
                           </h3>
                           <p style={{ fontSize: 16, color: C.text, lineHeight: 1.6, margin: 0 }}>{s.d}</p>
                         </div>
-                        <Illustration src={(s as { image: string }).image} alt="Aanvraag akkoord op laptop" />
+                        <Illustration src={(s as unknown as { image: string }).image} alt="Aanvraag akkoord op laptop" />
                       </div>
                     ) : (
                       <div className="p-6 md:p-8">
