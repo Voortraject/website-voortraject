@@ -72,7 +72,7 @@ export const HowWeWork = () => {
 
           {/* HOE WIJ HET DOEN */}
           <div
-            className="rounded-2xl p-8 shadow-sm md:border-l md:border-l-[#E5E2DB]"
+            className="rounded-2xl p-6 shadow-sm md:border-l md:border-l-[#E5E2DB]"
             style={{
               backgroundColor: "#FDF9EE",
               border: "1px solid rgba(232, 181, 71, 0.3)",
