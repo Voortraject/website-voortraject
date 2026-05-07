@@ -239,10 +239,23 @@ const OverOns = () => {
                 Niet elk bedrijf werkt via ons mee aan een traject. Dit vinden wij belangrijk in de samenwerking.
               </p>
             </div>
+            <p
+              className="text-center mb-6"
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 600,
+                color: "#A07C1E",
+                fontSize: 12,
+                textTransform: "uppercase",
+                letterSpacing: "0.15em",
+              }}
+            >
+              Alleen bedrijven die aan deze criteria voldoen
+            </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6 max-w-4xl mx-auto">
               {checkpoints.map((p) => (
                 <div key={p.title} className="flex items-start gap-3">
-                  <CheckCircle size={20} style={{ color: "#E8B547", flexShrink: 0, marginTop: 2 }} />
+                  <CheckCircle className="w-5 h-5" style={{ color: "#E8B547", flexShrink: 0, marginTop: 2 }} />
                   <div>
                     <h3 style={{ fontWeight: 500, color: "#152C4E", fontSize: 15, lineHeight: 1.4 }}>{p.title}</h3>
                     <p style={{ color: "#6B6B6B", fontSize: 14, lineHeight: 1.6, marginTop: 4, fontWeight: 400 }}>
