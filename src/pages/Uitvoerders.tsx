@@ -188,98 +188,8 @@ const Uitvoerders = () => {
           </div>
         </section>
 
-        {/* VOORTRAJECT VERGELIJKING */}
+        {/* INLEIDING PAKKETTEN (Vastlopen) */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F9F9F7" }}>
-          <div className="container-content">
-            <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E", maxWidth: 900 }}>
-              Voor en <span style={{ color: "hsl(var(--accent))" }}>na</span>
-            </h2>
-
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch">
-              {/* Zonder */}
-              <div
-                style={{
-                  backgroundColor: "#FFFFFF",
-                  borderRadius: 16,
-                  padding: 40,
-                  boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
-                }}
-              >
-                <h3
-                  className="font-display font-semibold"
-                  style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid #E5E2DB" }}
-                >
-                  Zonder Voortraject
-                </h3>
-                <ul className="space-y-5">
-                  {withoutItems.map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <span
-                        className="flex items-center justify-center rounded-full flex-shrink-0"
-                        style={{ width: 24, height: 24, backgroundColor: "#FBE5E5", marginTop: 2 }}
-                      >
-                        <X size={14} color="#C0392B" strokeWidth={3} aria-hidden="true" />
-                      </span>
-                      <span style={{ fontSize: 16, color: "#152C4E", lineHeight: 1.6 }}>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Met */}
-              <div
-                style={{
-                  backgroundColor: "#FFFFFF",
-                  border: "2px solid #E8B547",
-                  borderRadius: 16,
-                  padding: 40,
-                  boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
-                }}
-              >
-                <h3
-                  className="font-display font-semibold"
-                  style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid #F0E4D0" }}
-                >
-                  Met Voortraject
-                </h3>
-                <ul className="space-y-5">
-                  {withItems.map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <span
-                        className="flex items-center justify-center rounded-full flex-shrink-0"
-                        style={{ width: 24, height: 24, backgroundColor: "#F0E4D0", marginTop: 2 }}
-                      >
-                        <Check size={14} color="#E8B547" strokeWidth={3} aria-hidden="true" />
-                      </span>
-                      <span style={{ fontSize: 16, color: "#152C4E", lineHeight: 1.6 }}>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="mt-16 text-center flex flex-col items-stretch sm:items-center">
-              <a
-                href="/contact"
-                className={`${ctaButton} w-full sm:w-auto`}
-                style={{
-                  backgroundColor: "#E8B547",
-                  color: "#2B2B2B",
-                  padding: "14px 32px",
-                  borderRadius: 8,
-                  minHeight: 44,
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
-              >
-                Plan een kennismaking
-              </a>
-            </div>
-          </div>
-        </section>
-
-        {/* INLEIDING PAKKETTEN */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
             <div className="mx-auto" style={{ maxWidth: 820 }}>
               <h2
@@ -362,8 +272,157 @@ const Uitvoerders = () => {
           </div>
         </section>
 
+        {/* WAT BLIJFT LIGGEN */}
+        <Why />
+
+        {/* VOORTRAJECT VERGELIJKING */}
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
+          <div className="container-content">
+            <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E", maxWidth: 900 }}>
+              Voor en <span style={{ color: "hsl(var(--accent))" }}>na</span>
+            </h2>
+
+            <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch">
+              {/* Zonder */}
+              <div
+                style={{
+                  backgroundColor: "#F9F9F7",
+                  borderRadius: 16,
+                  padding: 40,
+                  boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
+                }}
+              >
+                <h3
+                  className="font-display font-semibold"
+                  style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid #E5E2DB" }}
+                >
+                  Zonder Voortraject
+                </h3>
+                <ul className="space-y-5">
+                  {withoutItems.map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span
+                        className="flex items-center justify-center rounded-full flex-shrink-0"
+                        style={{ width: 24, height: 24, backgroundColor: "#FBE5E5", marginTop: 2 }}
+                      >
+                        <X size={14} color="#C0392B" strokeWidth={3} aria-hidden="true" />
+                      </span>
+                      <span style={{ fontSize: 16, color: "#152C4E", lineHeight: 1.6 }}>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Met */}
+              <div
+                style={{
+                  backgroundColor: "#F9F9F7",
+                  border: "2px solid #E8B547",
+                  borderRadius: 16,
+                  padding: 40,
+                  boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
+                }}
+              >
+                <h3
+                  className="font-display font-semibold"
+                  style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid #F0E4D0" }}
+                >
+                  Met Voortraject
+                </h3>
+                <ul className="space-y-5">
+                  {withItems.map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span
+                        className="flex items-center justify-center rounded-full flex-shrink-0"
+                        style={{ width: 24, height: 24, backgroundColor: "#F0E4D0", marginTop: 2 }}
+                      >
+                        <Check size={14} color="#E8B547" strokeWidth={3} aria-hidden="true" />
+                      </span>
+                      <span style={{ fontSize: 16, color: "#152C4E", lineHeight: 1.6 }}>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-16 text-center flex flex-col items-stretch sm:items-center">
+              <a
+                href="/contact"
+                className={`${ctaButton} w-full sm:w-auto`}
+                style={{
+                  backgroundColor: "#E8B547",
+                  color: "#2B2B2B",
+                  padding: "14px 32px",
+                  borderRadius: 8,
+                  minHeight: 44,
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
+              >
+                Plan een kennismaking
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* WAAROM DIT WERKT */}
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F9F9F7" }}>
+          <div className="container-content">
+            <div className="text-center mx-auto" style={{ maxWidth: 820 }}>
+              <h2 className="h2-section" style={{ color: "#152C4E", marginBottom: 16 }}>
+                Menselijke begeleiding, <span style={{ color: "#E8B547" }}>ondersteund</span> door slimme systemen
+              </h2>
+              <p
+                className="mx-auto"
+                style={{ fontSize: 17, color: "#6B6B6B", lineHeight: 1.6, marginBottom: 48 }}
+              >
+                Eén lijn voor bewonerscontact, offertes en dossiers, ondersteund door slimme systemen die voorkomen dat er iets blijft liggen.
+              </p>
+            </div>
+            <div className="card-grid grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+              {whyCards.map(({ icon: Icon, title, body }) => (
+                <article
+                  key={title}
+                  className="card bg-white flex flex-col"
+                  style={{
+                    borderRadius: 16,
+                    padding: 32,
+                    border: "1px solid #E5E2DB",
+                    boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
+                  }}
+                >
+                  <div className="flex flex-row items-center" style={{ gap: 12 }}>
+                    <div
+                      className="flex items-center justify-center rounded-full shrink-0"
+                      style={{ width: 48, height: 48, backgroundColor: "#F0E4D0" }}
+                    >
+                      <Icon size={22} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
+                    </div>
+                    <h3
+                      className="font-display"
+                      style={{
+                        fontSize: "1.05rem",
+                        fontWeight: 600,
+                        color: "#152C4E",
+                        letterSpacing: "-0.01em",
+                        lineHeight: 1.3,
+                        margin: 0,
+                      }}
+                    >
+                      {title}
+                    </h3>
+                  </div>
+                  <p style={{ marginTop: 16, fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>
+                    {body}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* PAKKETTEN */}
-        <section id="pakketten" className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F9F9F7" }}>
+        <section id="pakketten" className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
             <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E" }}>
               <span style={{ color: "hsl(var(--accent))" }}>Kies</span> wat past bij jullie
@@ -474,7 +533,7 @@ const Uitvoerders = () => {
                       style={{
                         marginTop: 24,
                         padding: 16,
-                        backgroundColor: "#FFFFFF",
+                        backgroundColor: "#F9F9F7",
                         borderRadius: 10,
                         border: "1px solid #ECE7DD",
                       }}
@@ -517,64 +576,6 @@ const Uitvoerders = () => {
             </div>
           </div>
         </section>
-
-        {/* WAAROM DIT WERKT */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
-          <div className="container-content">
-            <div className="text-center mx-auto" style={{ maxWidth: 820 }}>
-              <h2 className="h2-section" style={{ color: "#152C4E", marginBottom: 16 }}>
-                Menselijke begeleiding, <span style={{ color: "#E8B547" }}>ondersteund</span> door slimme systemen
-              </h2>
-              <p
-                className="mx-auto"
-                style={{ fontSize: 17, color: "#6B6B6B", lineHeight: 1.6, marginBottom: 48 }}
-              >
-                Eén lijn voor bewonerscontact, offertes en dossiers, ondersteund door slimme systemen die voorkomen dat er iets blijft liggen.
-              </p>
-            </div>
-            <div className="card-grid grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-              {whyCards.map(({ icon: Icon, title, body }) => (
-                <article
-                  key={title}
-                  className="card bg-white flex flex-col"
-                  style={{
-                    borderRadius: 16,
-                    padding: 32,
-                    border: "1px solid #E5E2DB",
-                    boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
-                  }}
-                >
-                  <div className="flex flex-row items-center" style={{ gap: 12 }}>
-                    <div
-                      className="flex items-center justify-center rounded-full shrink-0"
-                      style={{ width: 48, height: 48, backgroundColor: "#F0E4D0" }}
-                    >
-                      <Icon size={22} color="#152C4E" strokeWidth={2.25} aria-hidden="true" />
-                    </div>
-                    <h3
-                      className="font-display"
-                      style={{
-                        fontSize: "1.05rem",
-                        fontWeight: 600,
-                        color: "#152C4E",
-                        letterSpacing: "-0.01em",
-                        lineHeight: 1.3,
-                        margin: 0,
-                      }}
-                    >
-                      {title}
-                    </h3>
-                  </div>
-                  <p style={{ marginTop: 16, fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>
-                    {body}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <Why />
 
         {/* SLUIT-CTA */}
         <section
