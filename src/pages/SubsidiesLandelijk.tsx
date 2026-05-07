@@ -10,6 +10,7 @@ import {
   Home,
   Wind,
   Info,
+  Lightbulb,
   Calculator,
   Leaf,
   Check,
