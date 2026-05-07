@@ -52,7 +52,7 @@ const packages: Package[] = [
       "Uitleg plannen en regelingen",
       "Opvolging tot getekend akkoord",
     ],
-    result: "Minder tijd kwijt aan terugbellen en uitleggen.",
+    result: "Geen bewoners meer die wachten op uitleg of het akkoord niet begrijpen. Jullie hoeven niet meer terug te bellen.",
     badge: null,
   },
   {
