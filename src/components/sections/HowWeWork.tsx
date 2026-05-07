@@ -41,10 +41,10 @@ export const HowWeWork = () => {
           </p>
         </div>
 
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* HOE HET VAAK GAAT */}
           <div
-            className="rounded-2xl p-8 shadow-sm border border-red-100"
+            className="rounded-2xl p-6 shadow-sm border border-red-100"
             style={{ backgroundColor: "#FEF7F7" }}
           >
             <div
