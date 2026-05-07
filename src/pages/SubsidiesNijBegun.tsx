@@ -696,7 +696,7 @@ const SubsidiesNijBegun = () => {
 
           <div className="relative max-w-4xl mx-auto mt-12">
             <ol className="flex flex-col gap-12 md:gap-16 relative">
-              {[
+            {[
                 {
                   n: "01",
                   icon: Phone,
@@ -706,14 +706,14 @@ const SubsidiesNijBegun = () => {
                 {
                   n: "02",
                   icon: Calendar,
-                  t: "Afspraak voor een huisbezoek",
-                  d: "Klikt het? Dan plannen we een huisbezoek in. Vrijblijvend en onafhankelijk. Een lokale adviseur uit Groningen of Drenthe komt persoonlijk bij je langs.",
+                  t: "Huisbezoek",
+                  d: "Een lokale adviseur uit Groningen of Drenthe komt bij je langs en bekijkt samen met jou welke mogelijkheden er zijn voor jouw woning. Vrijblijvend en onafhankelijk.",
                 },
                 {
                   n: "03",
                   icon: FileText,
                   t: "Samen bepalen wat haalbaar is",
-                  d: "Tijdens het bezoek bekijken we wat we kunnen uitvoeren. Heb je al een isolatieplan? Dan kijken we welke maatregelen we als eerste oppakken. Heb je nog geen plan? Dan starten we met maatregelen tot €10.000. Daar is geen isolatieplan voor nodig en jij bepaalt waar we beginnen.",
+                  d: "Tijdens het bezoek bekijken we wat er mogelijk is voor jouw woning. Heb je al een isolatieplan? Dan kijken we welke maatregelen we als eerste oppakken. Heb je nog geen plan? Dan kijkt de adviseur waar je alvast mee kunt beginnen.",
                 },
                 {
                   n: "04",
@@ -723,19 +723,12 @@ const SubsidiesNijBegun = () => {
                 },
                 {
                   n: "05",
-                  icon: CheckCircle2,
-                  t: "Goedkeuring",
-                  d: "Aanvraag akkoord. Vanaf nu heb je 2 jaar de tijd om de werkzaamheden te laten uitvoeren door een aangesloten Nij Begun-bedrijf. Wij sturen je de toekenningsbrief en bespreken de vervolgstappen.",
-                  
+                  icon: Hammer,
+                  t: "Uitvoering door een getoetste uitvoerder",
+                  d: "Wij zoeken een passende uitvoerder die is aangesloten bij Nij Begun. Deze uitvoerders zijn door ons getoetst op diverse kwaliteitscriteria. Wij begeleiden tijdens de uitvoering en bewaken kwaliteit en planning.",
                 },
                 {
                   n: "06",
-                  icon: Hammer,
-                  t: "Uitvoering met begeleiding",
-                  d: "Een aangesloten Nij Begun-bedrijf voert het werk uit. Geen verkooppraatje, geen vooringenomen keuze. Wij begeleiden tijdens de uitvoering en bewaken kwaliteit en planning.",
-                },
-                {
-                  n: "07",
                   icon: LifeBuoy,
                   t: "Vervolgmaatregelen en natraject",
                   d: "Wil je daarna meer doen? Samen met het isolatieplan kijken we welke aanvullende stappen logisch zijn. Wij blijven jouw aanspreekpunt voor vragen over onderhoud, garantie of vervolgmaatregelen zoals warmtepomp of zonnepanelen.",
