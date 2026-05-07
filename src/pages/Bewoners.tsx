@@ -296,33 +296,50 @@ const Bewoners = () => {
         </section>
 
         {/* 2. HERKENNING */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#152C4E" }}>
           <div className="container-content">
             <div className="text-center max-w-[760px] mx-auto">
-              <h2 className="h2-section" style={{ color: "#152C4E" }}>
+              <h2 className="h2-section" style={{ color: "#FFFFFF" }}>
                 Misschien <span style={{ color: "hsl(var(--accent))" }}>herken</span> je dit
               </h2>
-              <p className="mt-6 text-[18px]" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>
+              <p className="mt-6 text-[18px]" style={{ color: "rgba(255,255,255,0.7)", lineHeight: 1.6 }}>
                 Verduurzamen roept bij bijna iedere bewoner dezelfde twijfels op.
               </p>
             </div>
-            <div className="card-grid mt-12 grid grid-cols-1 md:grid-cols-2 gap-5">
-              {recognitions.map((r) => (
-                <article key={r.title} className="card" style={cardBase}>
-                  <h3
-                    className="font-display font-semibold"
-                    style={{ fontSize: 19, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-5">
+              {recognitions.map((r) => {
+                const Icon = r.icon;
+                return (
+                  <article
+                    key={r.title}
+                    className="rounded-2xl p-6"
+                    style={{
+                      backgroundColor: "rgba(255,255,255,0.07)",
+                      border: "1px solid rgba(255,255,255,0.12)",
+                    }}
                   >
-                    {r.title}
-                  </h3>
-                  <p className="mt-3" style={{ fontSize: 16, color: "#6B6B6B", lineHeight: 1.6, margin: "12px 0 0" }}>
-                    {r.body}
-                  </p>
-                </article>
-              ))}
+                    <div
+                      className="flex items-center justify-center rounded-full mb-4"
+                      style={{ width: 40, height: 40, backgroundColor: "#E8B547" }}
+                    >
+                      <Icon size={20} color="#152C4E" aria-hidden="true" />
+                    </div>
+                    <h3
+                      className="font-display"
+                      style={{ fontSize: 17, fontWeight: 600, color: "#FFFFFF", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
+                    >
+                      {r.title}
+                    </h3>
+                    <p style={{ marginTop: 10, fontSize: 15, color: "rgba(255,255,255,0.75)", lineHeight: 1.6, margin: "10px 0 0" }}>
+                      {r.body}
+                    </p>
+                  </article>
+                );
+              })}
             </div>
           </div>
         </section>
+
 
         {/* 3. WAT WIJ VOOR JE DOEN */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
