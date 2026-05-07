@@ -6,18 +6,22 @@ import heroBewoners from "@/assets/bewoners-hero.jpg";
 
 const recognitions = [
   {
+    icon: MessageSquare,
     title: "Iedereen vertelt iets anders",
     body: "De ene partij raadt isolatie aan, de andere een warmtepomp, de derde zegt dat je beter kunt wachten. Je weet niet meer wie je kunt geloven.",
   },
   {
+    icon: Clock,
     title: "Maanden wachten op een afspraak",
     body: "Gemeentelijke loketten en energiecoöperaties hebben wachtlijsten van weken tot maanden. Ondertussen staat alles stil.",
   },
   {
+    icon: ShieldQuestion,
     title: "Onduidelijk wie je kunt vertrouwen",
     body: "Welke uitvoerder levert goede kwaliteit en welke niet? Reviews spreken elkaar tegen en het voelt als gokken.",
   },
   {
+    icon: CircleDollarSign,
     title: "Bang om geld te laten liggen",
     body: "Er zijn meer regelingen dan je denkt, maar ze stapelen slim of helemaal niet. Niemand wil achteraf horen dat hij duizenden euro's heeft gemist.",
   },
