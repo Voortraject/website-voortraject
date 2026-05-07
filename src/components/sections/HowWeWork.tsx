@@ -31,13 +31,14 @@ export const HowWeWork = () => {
               fontSize: 17,
               color: "#6B6B6B",
               lineHeight: 1.6,
-              maxWidth: 580,
+              maxWidth: 860,
               fontWeight: 400,
             }}
           >
-            Geen mooie beloften vooraf en teleurstellingen achteraf. Wij zijn
-            duidelijk over wat je van ons kunt verwachten, voor bewoners en
-            uitvoerders.
+            Geen mooie beloften vooraf en teleurstellingen achteraf.
+            <br />
+            Wij zijn duidelijk over wat je van ons kunt verwachten, voor
+            bewoners en uitvoerders.
           </p>
         </div>
 
