@@ -65,7 +65,7 @@ const packages: Package[] = [
       "Overzicht op natraject en nazorg",
       "Begeleiding tot 5-sterren review",
     ],
-    result: "Volledige focus op uitvoering en groei.",
+    result: "Jullie bouwen. Wij regelen alles van eerste bewonerscontact tot afgerond traject.",
     badge: "Meest gekozen",
     featured: true,
   },
