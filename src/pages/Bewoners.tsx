@@ -128,8 +128,8 @@ const reasons: { title: string; body: string }[] = [
     body: "Maatregelen, subsidies, volgorde en uitvoerder. Je hoeft niet zelf vijf partijen te vergelijken.",
   },
   {
-    title: "Ook als je huurder bent of twijfelt",
-    body: "Je hoeft nog geen beslissing genomen te hebben. Wij helpen je ook als je nog aan het oriënteren bent.",
+    title: "Jij hoeft geen subsidie-expert te zijn",
+    body: "Wij kennen alle regelingen en houden de wijzigingen bij. Jij hoeft alleen te weten dat je wil verduurzamen.",
   },
   {
     title: "Begeleiding tot het af is",
@@ -618,7 +618,7 @@ const Bewoners = () => {
               </h2>
             </div>
 
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto items-stretch">
               {/* Linker kolom */}
               <div
                 className="rounded-2xl p-8 flex flex-col"
@@ -630,8 +630,8 @@ const Bewoners = () => {
                 }}
               >
                 <div
-                  className="text-xs uppercase mb-3"
-                  style={{ color: "#E8B547", fontWeight: 600, letterSpacing: "0.15em" }}
+                  className="text-sm font-bold tracking-wider uppercase mb-3"
+                  style={{ color: "#E8B547" }}
                 >
                   Zo werkt stapelen
                 </div>
@@ -644,7 +644,6 @@ const Bewoners = () => {
                     "ISDE is een landelijke regeling die hier gewoon bovenop komt",
                     "Veel gemeenten hebben daarnaast een eigen bijdrageregeling",
                     "Deze drie samen vergoeden soms het grootste deel van de investering",
-                    "Wij checken voor jouw adres precies wat er geldt en hoe je het combineert",
                   ].map((t) => (
                     <li key={t} className="flex items-start gap-3">
                       <CheckCircle size={16} color="#E8B547" style={{ flexShrink: 0, marginTop: 2 }} aria-hidden="true" />
@@ -665,11 +664,14 @@ const Bewoners = () => {
                 }}
               >
                 <div
-                  className="text-xs uppercase mb-4"
-                  style={{ color: "#E8B547", fontWeight: 600, letterSpacing: "0.15em" }}
+                  className="text-sm font-bold tracking-wider uppercase mb-3"
+                  style={{ color: "#E8B547" }}
                 >
-                  Wat wij voor jou uitzoeken
+                  Wat wij gratis voor jou regelen
                 </div>
+                <p style={{ color: "#6B6B6B", fontSize: 14, lineHeight: 1.55, marginBottom: 20, fontWeight: 400 }}>
+                  Wij zoeken voor jouw adres volledig gratis uit welke regelingen gelden en hoe je ze slim combineert. Zo loop je geen euro mis.
+                </p>
                 <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 16 }}>
                   {[
                     "Welke landelijke regelingen voor jouw woning gelden",
