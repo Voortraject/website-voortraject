@@ -1,29 +1,25 @@
 import { useState } from "react";
-import { Check, ChevronDown, HelpCircle, Compass, LayoutList, BookOpen, Zap, Handshake, MessagesSquare, Clock, ShieldQuestion, AlertCircle } from "lucide-react";
+import { Check, ChevronDown, HelpCircle, Compass, LayoutList, BookOpen, Zap, Handshake } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import heroBewoners from "@/assets/bewoners-hero.jpg";
 
 const recognitions = [
   {
-    icon: MessagesSquare,
     title: "Iedereen vertelt iets anders",
-    body: "De ene partij raadt isolatie aan, de andere een warmtepomp en de derde zegt dat je beter kunt wachten. Wat klopt er nu?",
+    body: "De ene partij raadt isolatie aan, de andere een warmtepomp, de derde zegt dat je beter kunt wachten. Je weet niet meer wie je kunt geloven.",
   },
   {
-    icon: Clock,
-    title: "Wachttijden bij bestaande loketten",
-    body: "Een afspraak via een gemeentelijk loket of energiecoöperatie laat soms maanden op zich wachten. Ondertussen sta jij stil.",
+    title: "Maanden wachten op een afspraak",
+    body: "Gemeentelijke loketten en energiecoöperaties hebben wachtlijsten van weken tot maanden. Ondertussen staat alles stil.",
   },
   {
-    icon: ShieldQuestion,
-    title: "Onduidelijk wie betrouwbaar is",
-    body: "Welke uitvoerder doet goed werk en welke niet? Op internet vind je tegenstrijdige reviews en het voelt als gokken.",
+    title: "Onduidelijk wie je kunt vertrouwen",
+    body: "Welke uitvoerder levert goede kwaliteit en welke niet? Reviews spreken elkaar tegen en het voelt als gokken.",
   },
   {
-    icon: AlertCircle,
-    title: "Bang om iets te missen",
-    body: "Subsidies, regelingen en aanvullende kansen: het is veel om bij te houden, en niemand wil achteraf horen dat hij geld heeft laten liggen.",
+    title: "Bang om geld te laten liggen",
+    body: "Er zijn meer regelingen dan je denkt, maar ze stapelen slim of helemaal niet. Niemand wil achteraf horen dat hij duizenden euro's heeft gemist.",
   },
 ];
 
@@ -59,42 +55,59 @@ const questionsRow2 = [
 ];
 const allQuestions = [...questionsRow1, ...questionsRow2];
 
+const questionAnswers: Record<string, string> = {
+  "Kan ik volledig van het gas af?":
+    "Dat hangt af van jouw woning en situatie. Voor de meeste woningen is het technisch mogelijk, maar het vraagt een logische volgorde: eerst isoleren, dan pas een warmtepomp overwegen. Wij helpen je bepalen of en wanneer dat voor jou realistisch is.",
+  "Wat is slim om eerst te doen?":
+    "Bijna altijd: isoleren. Een goed geïsoleerde woning verlaagt je energieverbruik direct en maakt andere maatregelen later effectiever en goedkoper. We kijken welke isolatiemaatregelen voor jouw woning het meeste opleveren.",
+  "Welke subsidies zijn relevant?":
+    "Dat verschilt per adres, inkomen en welke maatregelen je plant. Landelijke ISDE, Nij Begun (Groningen en Noord-Drenthe), gemeentelijke bijdragen en provinciale regelingen kunnen vaak worden gestapeld. We brengen voor jouw situatie in kaart wat er geldt.",
+  "Wat past bij mijn woning?":
+    "We kijken naar bouwjaar, constructie, verwarmingssysteem en energieverbruik. Op basis daarvan geven we concrete aanbevelingen die passen bij jouw woning en budget, geen standaardlijstje.",
+  "Hoe kom ik tot uitvoering?":
+    "Na het gesprek weet je wat logisch is, wat het kost en welke regelingen je kunt benutten. Als je wilt, koppelen we je aan een uitvoerder die we kennen en die goed werk levert in jouw regio.",
+  "Wat als ik huurder ben?":
+    "Als huurder zijn de mogelijkheden beperkter, maar niet nul. Afhankelijk van jouw huurcontract en verhuurder zijn er soms regelingen mogelijk. We kijken wat in jouw situatie van toepassing is en wat je kunt vragen aan jouw verhuurder.",
+  "Waar begin ik?":
+    "Met een gesprek van 30 minuten. We stellen je een paar gerichte vragen over je woning en situatie, en je vertrekt met een helder beeld van wat logisch is als eerste stap. Geen verplichtingen, geen kosten.",
+};
+
 const services = [
   {
     icon: Compass,
     title: "Onafhankelijk advies",
-    body: "Geen producten te verkopen, geen vaste partner. Alleen advies dat slim is voor jouw woning.",
+    body: "Geen producten te verkopen, geen vaste installateur. Alleen wat voor jouw woning logisch is.",
   },
   {
     icon: LayoutList,
-    title: "Overzicht in maatregelen",
-    body: "Welke maatregelen voor jouw woning logisch zijn, en in welke volgorde ze het meeste opleveren.",
+    title: "Een logische volgorde",
+    body: "Welke maatregelen eerst, welke later. Zodat je niet twee keer betaalt of kansen mist.",
   },
   {
     icon: BookOpen,
-    title: "Uitleg over regelingen",
-    body: "Landelijke en gemeentelijke regelingen op een rij, inclusief aanvullende kansen die je makkelijk over het hoofd ziet.",
+    title: "Alle regelingen op een rij",
+    body: "Landelijk, gemeentelijk, provinciaal. Wij brengen in kaart wat voor jouw adres relevant is.",
   },
   {
     icon: Zap,
-    title: "Geen wachtrij",
-    body: "Geen wachttijden van weken of maanden. We schakelen snel, zodat je niet stilstaat.",
+    title: "Geen wachtlijsten",
+    body: "Geen maanden wachten op een afspraak die niets oplevert. Wij schakelen snel.",
   },
   {
     icon: Handshake,
-    title: "Naar een betrouwbare uitvoerder",
-    body: "Als de keuze helder is, koppelen we je aan een uitvoerder waarvan we weten dat ze goed werk leveren.",
+    title: "Begeleiding naar de juiste uitvoerder",
+    body: "Als de keuze helder is, koppelen we je aan een uitvoerder waarvan we weten dat hij goed werk levert.",
   },
 ];
 
 const routeSteps = [
   {
     title: "Inzicht in je woning",
-    body: "We kijken eerst naar isolatie, ventilatie en de huidige staat van je woning. Wat is er al gedaan, wat is de basis, en welke maatregelen liggen voor de hand? Zonder dit fundament weet je niet waar je aan begint.",
+    body: "We beginnen met jouw specifieke situatie: bouwjaar, isolatiewaarden, verwarmingssysteem en energieverbruik. Geen standaardadvies, maar een beeld van wat jouw woning nu nodig heeft en waar de meeste winst zit.",
   },
   {
     title: "Weten wat nu slim is",
-    body: "Niet alles hoeft tegelijk. Soms is een nieuwe ketel nu nog logisch, soms juist niet. We bepalen wat op dit moment het meeste oplevert voor jouw situatie, en wat beter kan wachten.",
+    body: "Niet elke maatregel is op elk moment de juiste keuze. We kijken wat voor jouw woning logisch is om nu aan te pakken, wat je beter kunt uitstellen en waarom. Zo voorkom je dat je investeert in iets wat je later duurder uitkomt.",
   },
   {
     title: "Een logische volgorde",
@@ -102,22 +115,57 @@ const routeSteps = [
   },
   {
     title: "Alle regelingen op een rij",
-    body: "Landelijke subsidies, gemeentelijke aanvullingen, combinaties met onderhoud, koppelingen aan trajecten zoals Nij Begun. We zetten op een rij wat voor jou relevant is, zodat je niets misloopt.",
+    body: "Landelijke subsidies, gemeentelijke bijdragen, provinciale regelingen en aanvullende financieringsmogelijkheden. We brengen in kaart wat voor jouw adres en situatie geldt, hoe je ze kunt stapelen en wat je daadwerkelijk kunt verwachten.",
   },
   {
     title: "Naar de juiste uitvoerder",
-    body: "Als de keuze helder is, koppelen we je aan een uitvoerder waarvan we weten dat ze goed werk leveren voor een eerlijke prijs. Geen gokken op een naam van internet.",
+    body: "Als het plan helder is, koppelen we je aan een uitvoerder die we kennen en die goed werk levert. Geen aanbevelingen op basis van commissie, maar op basis van kwaliteit en passend werkgebied.",
   },
 ];
 
+const reasons: { title: string; body: string }[] = [
+  {
+    title: "Geen verkooppraatje, nooit",
+    body: "Wij verkopen geen warmtepompen, zonnepanelen of isolatiemateriaal. Ons advies heeft geen commercieel belang.",
+  },
+  {
+    title: "Binnen dagen een gesprek, niet maanden",
+    body: "Geen wachtlijst van twaalf weken. Je plant een moment dat jou uitkomt en wordt snel geholpen.",
+  },
+  {
+    title: "Concreet, niet vaag",
+    body: "Je vertrekt niet met \"het hangt ervan af.\" Je krijgt een helder beeld van wat logisch is, wat het kost en wat je terug kunt krijgen.",
+  },
+  {
+    title: "Alles op één plek",
+    body: "Maatregelen, subsidies, volgorde en uitvoerder. Je hoeft niet zelf vijf partijen te vergelijken.",
+  },
+  {
+    title: "Ook als je huurder bent of twijfelt",
+    body: "Je hoeft nog geen beslissing genomen te hebben. Wij helpen je ook als je nog aan het oriënteren bent.",
+  },
+  {
+    title: "Begeleiding tot het af is",
+    body: "Wij stoppen niet na het advies. We begeleiden je naar de juiste uitvoerder en houden overzicht tot het traject klaar is.",
+  },
+];
 
-const reasons = [
-  "Onafhankelijk, geen commercieel belang",
-  "Geen verkooppraatje",
-  "Geen wachtrijen van maanden",
-  "Duidelijkheid in gewone taal",
-  "Aandacht voor jouw situatie",
-  "Begeleiding naar betrouwbare uitvoerder",
+const conversationSteps = [
+  {
+    n: "01",
+    title: "Jij plant een moment",
+    body: "Kies een tijdstip dat jou uitkomt. Je ontvangt een bevestiging en een paar korte vragen vooraf.",
+  },
+  {
+    n: "02",
+    title: "Wij kijken samen naar jouw woning",
+    body: "In 30 minuten brengen we in kaart wat voor jouw situatie logisch is: maatregelen, volgorde en regelingen.",
+  },
+  {
+    n: "03",
+    title: "Je vertrekt met een helder plan",
+    body: "Geen vage aanbevelingen. Concreet: wat nu, wat later, en wat het kost en oplevert.",
+  },
 ];
 
 const ctaButton =
@@ -133,6 +181,52 @@ const cardBase: React.CSSProperties = {
 
 const Bewoners = () => {
   const [openStep, setOpenStep] = useState<number | null>(null);
+  const [activeQuestion, setActiveQuestion] = useState<string | null>(null);
+
+  const renderQuestionPill = (q: string) => {
+    const isActive = activeQuestion === q;
+    return (
+      <button
+        key={q}
+        type="button"
+        onClick={() => setActiveQuestion(isActive ? null : q)}
+        aria-expanded={isActive}
+        className="text-center transition-colors"
+        style={{
+          backgroundColor: isActive ? "#E8B547" : "#FFFFFF",
+          border: "1px solid #E5E2DB",
+          borderRadius: 16,
+          padding: "12px 16px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 12,
+          cursor: "pointer",
+          width: "100%",
+        }}
+      >
+        <HelpCircle
+          size={18}
+          style={{
+            color: isActive ? "#152C4E" : "#E8B547",
+            opacity: isActive ? 1 : 0.8,
+            flexShrink: 0,
+          }}
+        />
+        <span
+          style={{
+            color: "#152C4E",
+            fontSize: 14,
+            lineHeight: 1.4,
+            fontWeight: isActive ? 600 : 400,
+            textAlign: "center",
+          }}
+        >
+          {q}
+        </span>
+      </button>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -157,9 +251,9 @@ const Bewoners = () => {
                 </h1>
                 <p
                   className="mt-8 text-[16px] md:text-[18px]"
-                  style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 580 }}
+                  style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 540 }}
                 >
-                  Tegenstrijdige adviezen, lange wachttijden bij bestaande loketten en onduidelijkheid over wat nu echt slim is. Wij kijken onafhankelijk met je mee, brengen rust in de keuzes en begeleiden je richting een passende uitvoerder. Zonder verkooppraatje, zonder onnodige vertraging.
+                  Veel bewoners willen wel verduurzamen, maar lopen vast in tegenstrijdige adviezen, lange wachttijden en onduidelijkheid over wat slim is voor hun woning. Wij kijken onafhankelijk mee en helpen je sneller verder naar een duidelijke, uitvoerbare volgende stap.
                 </p>
                 <div className="mt-10">
                   <a
@@ -175,7 +269,7 @@ const Bewoners = () => {
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
                   >
-                    Plan een gratis gesprek
+                    Plan een vrijblijvend gesprek
                   </a>
                 </div>
               </div>
@@ -209,33 +303,185 @@ const Bewoners = () => {
               </p>
             </div>
             <div className="card-grid mt-12 grid grid-cols-1 md:grid-cols-2 gap-5">
-              {recognitions.map((r) => {
-                const Icon = r.icon;
-                return (
-                  <article key={r.title} className="card" style={cardBase}>
-                    <div className="flex flex-row items-center gap-3">
-                      <Icon size={20} color="#E8B547" style={{ flexShrink: 0 }} aria-hidden="true" />
-                      <h3
-                        className="font-display font-semibold"
-                        style={{ fontSize: 19, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
-                      >
-                        {r.title}
-                      </h3>
-                    </div>
-                    <p className="mt-3" style={{ fontSize: 16, color: "#6B6B6B", lineHeight: 1.6, margin: "12px 0 0" }}>
-                      {r.body}
-                    </p>
-                  </article>
-                );
-              })}
+              {recognitions.map((r) => (
+                <article key={r.title} className="card" style={cardBase}>
+                  <h3
+                    className="font-display font-semibold"
+                    style={{ fontSize: 19, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
+                  >
+                    {r.title}
+                  </h3>
+                  <p className="mt-3" style={{ fontSize: 16, color: "#6B6B6B", lineHeight: 1.6, margin: "12px 0 0" }}>
+                    {r.body}
+                  </p>
+                </article>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* 3. VRAGENBLOK */}
+        {/* 3. WAT WIJ VOOR JE DOEN */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
-            {/* Kop */}
+            <div className="relative max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-y-8 md:gap-x-12 lg:gap-x-16 items-center">
+              <div
+                aria-hidden="true"
+                className="hidden md:block absolute"
+                style={{ top: 0, bottom: 0, left: "50%", width: 2, backgroundColor: "#E5E2DB", transform: "translateX(-1px)" }}
+              />
+              <div className="flex flex-col" style={{ justifyContent: "center", gap: 24 }}>
+                <h2 className="h2-section" style={{ color: "#152C4E" }}>
+                  Wat <span style={{ color: "hsl(var(--accent))" }}>wij</span> voor je doen
+                </h2>
+                <p
+                  className="max-w-md"
+                  style={{ color: "#152C4E", opacity: 0.75, fontSize: 16, lineHeight: 1.6, margin: 0 }}
+                >
+                  Geen verkooppraatje, geen standaardverhaal. We kijken eerst naar jouw woning, situatie en doel. Daarna pas komt het advies.
+                </p>
+                <p
+                  style={{
+                    color: "#152C4E",
+                    fontSize: 22,
+                    fontWeight: 500,
+                    fontStyle: "italic",
+                    lineHeight: 1.3,
+                    margin: 0,
+                  }}
+                >
+                  Van twijfel naar plan.
+                </p>
+              </div>
+              <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
+                {services.map((s, i) => {
+                  const Icon = s.icon;
+                  return (
+                    <li
+                      key={s.title}
+                      className="flex flex-row gap-4 items-start"
+                      style={{
+                        padding: "20px 0",
+                        borderBottom: i === services.length - 1 ? "none" : "1px solid #E5E2DB",
+                      }}
+                    >
+                      <Icon size={24} color="#E8B547" style={{ flexShrink: 0, marginTop: 2 }} />
+                      <div>
+                        <h3
+                          className="font-display"
+                          style={{
+                            color: "#152C4E",
+                            fontSize: 17,
+                            fontWeight: 600,
+                            margin: "0 0 6px",
+                            lineHeight: 1.3,
+                          }}
+                        >
+                          {s.title}
+                        </h3>
+                        <p style={{ color: "#152C4E", opacity: 0.75, fontSize: 15, lineHeight: 1.5, margin: 0 }}>
+                          {s.body}
+                        </p>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* 4. ZO WERKT HET GESPREK */}
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#152C4E" }}>
+          <div className="container-content">
+            <div className="text-center max-w-[760px] mx-auto">
+              <h2
+                className="font-display"
+                style={{
+                  fontWeight: 700,
+                  fontSize: "clamp(28px, 4vw, 40px)",
+                  color: "#FFFFFF",
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1.2,
+                  margin: 0,
+                }}
+              >
+                Zo werkt het gesprek
+              </h2>
+              <p
+                className="mx-auto"
+                style={{
+                  color: "#FFFFFF",
+                  opacity: 0.8,
+                  fontSize: 17,
+                  lineHeight: 1.6,
+                  maxWidth: 500,
+                  marginTop: 16,
+                }}
+              >
+                Geen verplichtingen, geen verkooppraatje. Gewoon een gesprek van 30 minuten.
+              </p>
+            </div>
+
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 max-w-5xl mx-auto">
+              {conversationSteps.map((s) => (
+                <div key={s.n}>
+                  <div
+                    className="font-display"
+                    style={{
+                      fontWeight: 700,
+                      fontSize: 32,
+                      color: "#E8B547",
+                      lineHeight: 1,
+                      marginBottom: 12,
+                    }}
+                  >
+                    {s.n}
+                  </div>
+                  <h3
+                    className="font-display"
+                    style={{
+                      fontWeight: 600,
+                      fontSize: 19,
+                      color: "#FFFFFF",
+                      letterSpacing: "-0.01em",
+                      lineHeight: 1.3,
+                      margin: "0 0 10px",
+                    }}
+                  >
+                    {s.title}
+                  </h3>
+                  <p style={{ color: "#FFFFFF", opacity: 0.8, fontSize: 15, lineHeight: 1.6, margin: 0 }}>
+                    {s.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-12 flex flex-col items-center">
+              <a
+                href="/contact"
+                className="inline-flex items-center justify-center font-semibold rounded-full transition-colors"
+                style={{
+                  backgroundColor: "#E8B547",
+                  color: "#152C4E",
+                  padding: "14px 32px",
+                  fontSize: 15,
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
+              >
+                Plan een vrijblijvend gesprek
+              </a>
+              <p style={{ color: "#FFFFFF", opacity: 0.6, fontSize: 13, marginTop: 12 }}>
+                Geen verplichtingen. Geen kosten.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* 5. VRAGENBLOK */}
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
+          <div className="container-content">
             <div className="text-center max-w-[760px] mx-auto">
               <h2 className="h2-section" style={{ color: "#152C4E" }}>
                 De <span style={{ color: "hsl(var(--accent))" }}>vragen</span> waar wij mee beginnen
@@ -248,7 +494,7 @@ const Bewoners = () => {
               </p>
             </div>
 
-            {/* Desktop: pill + svg + grid */}
+            {/* Desktop */}
             <div className="hidden md:block">
               <div
                 className="mx-auto"
@@ -268,7 +514,6 @@ const Bewoners = () => {
               >
                 Voortraject
               </div>
-
               <div className="w-full" style={{ aspectRatio: "15 / 1" }}>
                 <svg
                   viewBox="0 0 1200 80"
@@ -292,47 +537,15 @@ const Bewoners = () => {
 
               <div className="w-full" style={{ marginTop: 24 }}>
                 <div className="grid grid-cols-3 w-full" style={{ gap: 18 }}>
-                  {questionsRow1.map((q) => (
-                    <article
-                      key={q}
-                      style={{
-                        backgroundColor: "#FFFFFF",
-                        border: "1px solid #E5E2DB",
-                        borderRadius: 16,
-                        padding: "12px 16px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 12,
-                      }}
-                    >
-                      <HelpCircle size={18} style={{ color: "#E8B547", opacity: 0.8, flexShrink: 0 }} />
-                      <span style={{ color: "#152C4E", fontSize: 14, lineHeight: 1.4 }}>{q}</span>
-                    </article>
-                  ))}
+                  {questionsRow1.map((q) => renderQuestionPill(q))}
                 </div>
                 <div className="grid grid-cols-4 w-full" style={{ gap: 14, marginTop: 14 }}>
-                  {questionsRow2.map((q) => (
-                    <article
-                      key={q}
-                      style={{
-                        backgroundColor: "#FFFFFF",
-                        border: "1px solid #E5E2DB",
-                        borderRadius: 16,
-                        padding: "12px 16px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 12,
-                      }}
-                    >
-                      <HelpCircle size={18} style={{ color: "#E8B547", opacity: 0.8, flexShrink: 0 }} />
-                      <span style={{ color: "#152C4E", fontSize: 14, lineHeight: 1.4 }}>{q}</span>
-                    </article>
-                  ))}
+                  {questionsRow2.map((q) => renderQuestionPill(q))}
                 </div>
               </div>
             </div>
 
-            {/* Mobile fallback */}
+            {/* Mobile */}
             <div className="md:hidden flex flex-col items-center" style={{ marginTop: 32 }}>
               <div
                 style={{
@@ -353,126 +566,36 @@ const Bewoners = () => {
               <ChevronDown
                 aria-hidden="true"
                 size={24}
-                style={{
-                  color: "#E8B547",
-                  opacity: 0.75,
-                  marginTop: 12,
-                  marginBottom: 16,
-                }}
+                style={{ color: "#E8B547", opacity: 0.75, marginTop: 12, marginBottom: 16 }}
               />
               <div className="grid grid-cols-1 w-full" style={{ gap: 12 }}>
-                {allQuestions.map((q) => (
-                  <article
-                    key={q}
-                    style={{
-                      backgroundColor: "#FFFFFF",
-                      border: "1px solid #E5E2DB",
-                      borderRadius: 16,
-                      padding: "12px 16px",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 12,
-                    }}
-                  >
-                    <HelpCircle size={18} style={{ color: "#E8B547", opacity: 0.8, flexShrink: 0 }} />
-                    <span style={{ color: "#152C4E", fontSize: 14, lineHeight: 1.4 }}>{q}</span>
-                  </article>
-                ))}
+                {allQuestions.map((q) => renderQuestionPill(q))}
               </div>
             </div>
+
+            {/* Antwoordblok */}
+            {activeQuestion && (
+              <div
+                key={activeQuestion}
+                style={{
+                  marginTop: 24,
+                  backgroundColor: "#FDF9EE",
+                  border: "1px solid rgba(232,181,71,0.3)",
+                  borderRadius: 16,
+                  padding: 24,
+                  animation: "fadeIn 200ms ease-out",
+                }}
+              >
+                <p style={{ fontSize: 16, color: "#2B2B2B", lineHeight: 1.6, margin: 0 }}>
+                  {questionAnswers[activeQuestion]}
+                </p>
+              </div>
+            )}
+            <style>{`@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }`}</style>
           </div>
         </section>
 
-        {/* 4. WAT WIJ VOOR JE DOEN */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
-          <div className="container-content">
-            <div className="relative max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-y-8 md:gap-x-12 lg:gap-x-16 items-center">
-              {/* Verticale scheidingslijn (tablet+desktop) */}
-              <div
-                aria-hidden="true"
-                className="hidden md:block absolute"
-                style={{ top: 0, bottom: 0, left: "50%", width: 2, backgroundColor: "#E5E2DB", transform: "translateX(-1px)" }}
-              />
-
-              {/* Linker kolom */}
-              <div
-                className="flex flex-col"
-                style={{ justifyContent: "center", gap: 24 }}
-              >
-                <h2 className="h2-section" style={{ color: "#152C4E" }}>
-                  Wat <span style={{ color: "hsl(var(--accent))" }}>wij</span> voor je doen
-                </h2>
-                <p
-                  className="max-w-md"
-                  style={{ color: "#152C4E", opacity: 0.75, fontSize: 16, lineHeight: 1.6, margin: 0 }}
-                >
-                  Geen verkooppraatje, geen standaardverhaal. We kijken eerst naar jouw woning, situatie en doel. Daarna pas komt het advies.
-                </p>
-                <p
-                  style={{
-                    color: "#152C4E",
-                    fontSize: 22,
-                    fontWeight: 500,
-                    fontStyle: "italic",
-                    lineHeight: 1.3,
-                    margin: 0,
-                  }}
-                >
-                  Van twijfel naar plan.
-                </p>
-              </div>
-
-              {/* Rechter kolom */}
-              <ul
-                style={{ margin: 0, padding: 0, listStyle: "none" }}
-              >
-                {services.map((s, i) => {
-                  const Icon = s.icon;
-                  return (
-                    <li
-                      key={s.title}
-                      className="flex flex-row gap-4 items-start"
-                      style={{
-                        padding: "20px 0",
-                        borderBottom: i === services.length - 1 ? "none" : "1px solid #E5E2DB",
-                      }}
-                    >
-                      <Icon size={24} color="#E8B547" style={{ flexShrink: 0, marginTop: 2 }} />
-                      <div>
-                        <h3
-                          className="font-display"
-                          style={{
-                            color: "#152C4E",
-                            fontSize: 17,
-                            fontWeight: 600,
-                            marginBottom: 6,
-                            margin: "0 0 6px",
-                            lineHeight: 1.3,
-                          }}
-                        >
-                          {s.title}
-                        </h3>
-                        <p
-                          style={{
-                            color: "#152C4E",
-                            opacity: 0.75,
-                            fontSize: 15,
-                            lineHeight: 1.5,
-                            margin: 0,
-                          }}
-                        >
-                          {s.body}
-                        </p>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* 5. PRAKTISCHE ROUTE - ACCORDION */}
+        {/* 6. PRAKTISCHE ROUTE - ACCORDION */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
             <div className="text-center max-w-[820px] mx-auto">
@@ -484,18 +607,13 @@ const Bewoners = () => {
               </p>
             </div>
 
-            <div
-              className="mt-16 mx-auto"
-              style={{ maxWidth: 820, ...cardBase, padding: 0, overflow: "hidden" }}
-            >
+            <div className="mt-16 mx-auto" style={{ maxWidth: 820, ...cardBase, padding: 0, overflow: "hidden" }}>
               {routeSteps.map((s, i) => {
                 const isOpen = openStep === i;
                 return (
                   <div
                     key={s.title}
-                    style={{
-                      borderBottom: i === routeSteps.length - 1 ? "none" : "1px solid #E5E2DB",
-                    }}
+                    style={{ borderBottom: i === routeSteps.length - 1 ? "none" : "1px solid #E5E2DB" }}
                   >
                     <button
                       type="button"
@@ -551,7 +669,7 @@ const Bewoners = () => {
                     </button>
                     <div
                       style={{
-                        maxHeight: isOpen ? 200 : 0,
+                        maxHeight: isOpen ? 400 : 0,
                         overflow: "hidden",
                         transition: "max-height 300ms ease",
                       }}
@@ -588,7 +706,7 @@ const Bewoners = () => {
           </div>
         </section>
 
-        {/* 6. AANVULLENDE MOGELIJKHEDEN PER GEMEENTE */}
+        {/* 7. AANVULLENDE MOGELIJKHEDEN PER GEMEENTE */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
             <h2 className="h2-section text-center" style={{ color: "#152C4E" }}>
@@ -606,13 +724,7 @@ const Bewoners = () => {
                     padding: "20px 24px",
                   }}
                 >
-                  <Check
-                    size={18}
-                    color="#E8B547"
-                    strokeWidth={2.5}
-                    aria-hidden="true"
-                    style={{ flexShrink: 0, marginTop: 4 }}
-                  />
+                  <Check size={18} color="#E8B547" strokeWidth={2.5} aria-hidden="true" style={{ flexShrink: 0, marginTop: 4 }} />
                   <div>
                     <h3
                       className="font-display font-semibold"
@@ -620,15 +732,7 @@ const Bewoners = () => {
                     >
                       {c.title}
                     </h3>
-                    <p
-                      style={{
-                        marginTop: 8,
-                        fontSize: 15,
-                        color: "#6B6B6B",
-                        lineHeight: 1.55,
-                        margin: "8px 0 0",
-                      }}
-                    >
+                    <p style={{ marginTop: 8, fontSize: 15, color: "#6B6B6B", lineHeight: 1.55, margin: "8px 0 0" }}>
                       {c.body}
                     </p>
                   </div>
@@ -650,43 +754,43 @@ const Bewoners = () => {
           </div>
         </section>
 
-        {/* 7. WAAROM BEWONERS DIT PRETTIG VINDEN */}
+        {/* 8. WAAROM BEWONERS VOOR ONS KIEZEN */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
             <div className="text-center max-w-[760px] mx-auto">
               <h2 className="h2-section" style={{ color: "#152C4E" }}>
-                Waarom bewoners dit <span style={{ color: "hsl(var(--accent))" }}>prettig</span> vinden
+                Waarom bewoners <span style={{ color: "hsl(var(--accent))" }}>voor ons kiezen</span>
               </h2>
-              <p className="mt-6 text-[18px]" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>
-                Wat bewoners ons het vaakst teruggeven over onze aanpak.
-              </p>
             </div>
             <div className="card-grid mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {reasons.map((r) => (
-                <div
-                  key={r}
-                  className="card flex items-center gap-3"
-                  style={{ ...cardBase, padding: 20, minHeight: 56 }}
-                >
-                  <span
-                    className="flex items-center justify-center rounded-full shrink-0"
-                    style={{ width: 28, height: 28, backgroundColor: "#F0E4D0" }}
-                  >
-                    <Check size={16} color="#152C4E" strokeWidth={2.5} aria-hidden="true" />
-                  </span>
-                  <p
-                    className="lg:whitespace-nowrap"
-                    style={{ fontSize: 15, color: "#152C4E", lineHeight: 1.5, margin: 0 }}
-                  >
-                    {r}
-                  </p>
+                <div key={r.title} className="card" style={cardBase}>
+                  <div className="flex items-start gap-3">
+                    <span
+                      className="flex items-center justify-center rounded-full shrink-0"
+                      style={{ width: 28, height: 28, backgroundColor: "#F0E4D0", marginTop: 2 }}
+                    >
+                      <Check size={16} color="#152C4E" strokeWidth={2.5} aria-hidden="true" />
+                    </span>
+                    <div>
+                      <h3
+                        className="font-display font-semibold"
+                        style={{ fontSize: 17, color: "#152C4E", lineHeight: 1.3, margin: 0 }}
+                      >
+                        {r.title}
+                      </h3>
+                      <p style={{ marginTop: 8, fontSize: 15, color: "#2B2B2B", lineHeight: 1.55, margin: "8px 0 0" }}>
+                        {r.body}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* 8. SLUIT-CTA */}
+        {/* 9. SLUIT-CTA */}
         <section
           className="text-primary-foreground py-[56px] md:py-[80px]"
           style={{ backgroundColor: "#152C4E" }}
