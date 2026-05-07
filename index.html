@@ -20,6 +20,51 @@
   <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/af1f22d3-6b7f-4c2a-9f17-7976e9338db5/id-preview-a905daa3--583f77a9-3b44-49f6-a77d-22730f65a2df.lovable.app-1777624705683.png">
   <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/af1f22d3-6b7f-4c2a-9f17-7976e9338db5/id-preview-a905daa3--583f77a9-3b44-49f6-a77d-22730f65a2df.lovable.app-1777624705683.png">
   <meta name="twitter:card" content="summary_large_image">
+
+    <!-- Axeptio cookiebanner + Google Consent Mode v2 -->
+    <script>
+    window.axeptioSettings = {
+      clientId: "69fcfcbd88ad07be32031c0b",
+      cookiesVersion: "f5aef1d1-5df2-4904-9499-6cbb3b785ee4",
+      googleConsentMode: {
+        default: {
+          analytics_storage: "denied",
+          ad_storage: "denied",
+          ad_user_data: "denied",
+          ad_personalization: "denied",
+          wait_for_update: 500
+        }
+      }
+    };
+    (function(d, s) {
+      var t = d.getElementsByTagName(s)[0], e = d.createElement(s);
+      e.async = true; e.src = "//static.axept.io/sdk.js";
+      t.parentNode.insertBefore(e, t);
+    })(document, "script");
+    </script>
+
+    <!-- Google Analytics 4 — respecteert automatisch Consent Mode v2 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VQL43876VN"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-VQL43876VN');
+    </script>
+
+    <!-- Microsoft Clarity — laadt alleen na analytics-toestemming via Axeptio -->
+    <script>
+      void 0 === window._axeptio_ && (window._axeptio_ = []);
+      window._axeptio_.push(["on", "cookies:complete", function(choices) {
+        if (choices.microsoft_clarity) {
+          (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+          })(window, document, "clarity", "script", "wnjzpfed0v");
+        }
+      }]);
+    </script>
 </head>
 
   <body>
