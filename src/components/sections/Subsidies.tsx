@@ -174,7 +174,7 @@ export const Subsidies = () => {
               </p>
 
               <span
-                className="inline-flex items-center mt-auto pt-4 font-sans font-semibold subsidy-link"
+                className="inline-flex items-center mt-auto pt-5 font-sans font-semibold subsidy-link"
                 style={{ fontSize: 15, color: "hsl(var(--accent))" }}
               >
                 <span className="subsidy-link-text">{c.linkTekst}</span>
