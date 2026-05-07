@@ -221,7 +221,10 @@ const Contact = () => {
                           <input type="tel" required className={inputClass} />
                         </div>
                         <div className={fieldWrap}>
-                          <label className={labelClass}>Adres{required}</label>
+                          <label className={labelClass}>
+                            Adres{required}
+                            <span className="text-[#8B8680] font-normal ml-1">(toevoeging optioneel)</span>
+                          </label>
                           <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr] gap-3">
                             <input
                               type="text"
