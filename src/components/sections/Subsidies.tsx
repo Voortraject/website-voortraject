@@ -13,7 +13,7 @@ const cards = [
   },
   {
     tag: "HEEL NEDERLAND",
-    naam: "ISDE",
+    naam: "Landelijke subsidies",
     uitleg:
       "Vaste bedragen voor warmtepomp, isolatie en zonneboiler. Combineren verdubbelt het bedrag per vierkante meter.",
     actie: "Wij rekenen voor jouw woning uit hoe je optimaal combineert.",
@@ -76,10 +76,10 @@ export const Subsidies = () => {
               lineHeight: 1.6,
             }}
           >
-            Subsidies stapelen, termijnen bewaken, voorwaarden begrijpen. Wij
-            kennen het hele subsidielandschap voor verduurzaming, en zorgen dat
-            er niets blijft liggen. Voor jou als bewoner, of voor jouw bewoners
-            als uitvoerder.
+            Veel bewoners laten duizenden euro's liggen. Niet omdat ze geen
+            recht hebben op subsidie, maar omdat ze niet weten dat je ze kunt
+            stapelen. Wij kennen het hele subsidielandschap, bewaken de
+            termijnen en zorgen dat elke euro wordt benut.
           </p>
         </div>
 
@@ -91,11 +91,11 @@ export const Subsidies = () => {
             <a
               key={c.naam}
               href={c.href}
-              className="subsidy-card group rounded-2xl p-6 md:p-8 flex flex-col"
+              className="subsidy-card group rounded-2xl p-8 md:p-10 flex flex-col"
               style={{
                 backgroundColor: "#FFFFFF",
-                border: "1px solid rgba(229, 201, 103, 0.4)",
-                boxShadow: "0 1px 3px rgba(21,44,78,0.04)",
+                border: "1px solid rgba(229, 201, 103, 0.5)",
+                boxShadow: "0 4px 14px rgba(21,44,78,0.08), 0 2px 4px rgba(21,44,78,0.04)",
                 opacity: visible ? 1 : 0,
                 transform: visible ? "translateY(0)" : "translateY(20px)",
                 transition:
@@ -115,13 +115,12 @@ export const Subsidies = () => {
                 {c.tag}
               </span>
               <h3
-                className="font-display mt-3"
+                className="font-display mt-3 text-[28px] md:text-[32px]"
                 style={{
-                  fontSize: 22,
                   fontWeight: 700,
                   color: "hsl(var(--primary))",
                   letterSpacing: "-0.02em",
-                  lineHeight: 1.25,
+                  lineHeight: 1.2,
                 }}
               >
                 {c.naam}
