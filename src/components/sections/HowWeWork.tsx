@@ -16,7 +16,7 @@ const welItems = [
 
 const ACCENT = "#E8B547";
 const RED = "#C0392B";
-const OKER_LABEL = "#A07C1E";
+const OKER_LABEL = "#E8B547";
 
 export const HowWeWork = () => {
   return (

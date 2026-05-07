@@ -30,8 +30,8 @@ import { Footer } from "@/components/Footer";
 
 // Page-scoped palette (identical to Nij Begun page)
 const C = {
-  primary: "#1B2E4A",
-  accent: "#D4AF3D",
+  primary: "#152C4E",
+  accent: "#E8B547",
   accentSoft: "#E5C967",
   bg: "#F8F4ED",
   card: "#FFFFFF",
@@ -453,7 +453,7 @@ const SubsidiesLandelijk = () => {
                   style={{
                     width: 1,
                     height: 56,
-                    backgroundColor: "#1B2E4A",
+                    backgroundColor: "#152C4E",
                     opacity: 0.25,
                   }}
                 />

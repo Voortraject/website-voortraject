@@ -33,8 +33,8 @@ const INKOMEN_SAMEN = "€40.088";
 
 // Palette (page-scoped)
 const C = {
-  primary: "#1B2E4A",
-  accent: "#D4AF3D",
+  primary: "#152C4E",
+  accent: "#E8B547",
   accentSoft: "#E5C967",
   bg: "#F8F4ED",
   card: "#FFFFFF",
