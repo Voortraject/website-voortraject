@@ -518,7 +518,7 @@ const SubsidiesNijBegun = () => {
       </section>
 
       {/* 5. WAT WORDT VERGOED */}
-      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-20">
+      <section style={{ backgroundColor: C.card }} className="py-16 md:py-20">
         <div className="container-content">
           <div className="max-w-3xl mx-auto text-center">
             <H2>
