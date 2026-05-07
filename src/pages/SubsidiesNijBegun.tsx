@@ -311,7 +311,7 @@ const SubsidiesNijBegun = () => {
       window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduceMotion) {
-      setVisibleSteps(new Set([0, 1, 2, 3, 4, 5, 6]));
+      setVisibleSteps(new Set([0, 1, 2, 3, 4, 5]));
       return;
     }
     const obs = new IntersectionObserver(
