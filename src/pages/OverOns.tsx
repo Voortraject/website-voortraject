@@ -63,10 +63,6 @@ const checkpoints = [
     desc: "Bewoners worden proactief ge\u00EFnformeerd, niet achteraf verrast.",
   },
   {
-    title: "Betrouwbaarheid in planning",
-    desc: "Afspraken worden nagekomen. Als er iets verandert, wordt dat tijdig gecommuniceerd.",
-  },
-  {
     title: "Nette dossiervorming",
     desc: "Alle stukken, tekeningen en akkoorden worden geordend aangeleverd en bewaard.",
   },
@@ -77,6 +73,10 @@ const checkpoints = [
   {
     title: "Passend werkgebied",
     desc: "Wij koppelen bewoners aan bedrijven die ook daadwerkelijk actief zijn in de regio.",
+  },
+  {
+    title: "Betrouwbaarheid in planning",
+    desc: "Afspraken worden nagekomen. Als er iets verandert, wordt dat tijdig gecommuniceerd.",
   },
   {
     title: "Relevante certificeringen",
