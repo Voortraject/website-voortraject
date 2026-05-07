@@ -4,46 +4,68 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 const principles = [
-  { num: "01", title: "Beperk", body: "Zorg dat je woning zo min mogelijk energie verspilt. Isolatie en ventilatie zijn de basis.", icon: Shield },
-  { num: "02", title: "Wek op", body: "Wek een deel van je eigen energie op, zodat je minder afhankelijk bent van het net.", icon: Sun },
-  { num: "03", title: "Gebruik slim", body: "Verwarm efficiënt en gebruik je opgewekte energie op het juiste moment.", icon: Zap },
+  { num: "01", title: "Beperk", body: "Isolatie en ventilatie verlagen je energieverbruik direct. Dit is de basis: zonder deze stap renderen alle latere maatregelen minder goed.", icon: Shield },
+  { num: "02", title: "Wek op", body: "Zonnepanelen werken het beste in een al goed geïsoleerde woning. Dan verbruik je minder dan je opwekt, in plaats van andersom.", icon: Sun },
+  { num: "03", title: "Gebruik slim", body: "Een warmtepomp of batterij rendeert pas goed als de eerdere stappen zijn gezet. In de juiste volgorde haal je het meeste uit elke investering.", icon: Zap },
 ];
+
+const badgeStyles: Record<string, string> = {
+  green: "bg-green-50 text-green-700 border border-green-200",
+  blue: "bg-blue-50 text-blue-700 border border-blue-200",
+  oker: "bg-[#FDF6E3] text-[#A07C1E] border border-[#E8B547]/40",
+  gray: "bg-gray-50 text-gray-600 border border-gray-200",
+};
 
 const measures = [
   {
     num: "01",
     icon: Home,
     title: "Isoleren",
+    badge: { variant: "green", label: "Vaak eerste stap" },
     bullets: ["Dakisolatie", "Vloerisolatie", "Spouwmuurisolatie", "HR++ of triple glas en goede kozijnen"],
     why: "Minder warmteverlies, meer comfort en lagere energiekosten. Een goed geïsoleerde woning heeft simpelweg minder energie nodig om warm te blijven. Dit is de belangrijkste eerste stap omdat elke volgende maatregel beter werkt in een geïsoleerde woning.",
+    when: "Bijna altijd als eerste. Isolatie verlaagt je energieverbruik direct en maakt elke volgende maatregel effectiever en goedkoper. Of je nu een warmtepomp wil of zonnepanelen: begin hier.",
+    watch: "Dakisolatie heeft doorgaans de kortste terugverdientijd. Spouwmuurisolatie is relatief goedkoop en effectief. Controleer eerst of er al isolatie aanwezig is voor je opnieuw investeert. Laat ook de staat van je kozijnen meenemen in het advies.",
   },
   {
     num: "02",
     icon: Wind,
     title: "Ventileren",
+    badge: { variant: "green", label: "Altijd samen met isoleren" },
     bullets: ["Natuurlijke ventilatie", "Mechanische ventilatie", "Balansventilatie met warmteterugwinning (WTW)"],
     why: "Goed isoleren zonder goed ventileren geeft vocht- en gezondheidsproblemen. Een geïsoleerde woning is luchtdicht en heeft daardoor bewuste ventilatie nodig om schimmel, tocht en een slechte binnenlucht te voorkomen.",
+    when: "Direct bij of vlak na het isoleren. Een goed geïsoleerde woning is luchtdicht en heeft bewuste ventilatie nodig. Zonder goede ventilatie krijg je vochtproblemen en een ongezond binnenklimaat.",
+    watch: "Balansventilatie met warmteterugwinning (WTW) is de meest energiezuinige optie, maar ook de duurste. Zorg dat het systeem correct wordt ingeregeld na installatie, anders heeft het weinig effect. Een goedkoop systeem dat slecht is ingesteld werkt averechts.",
   },
   {
     num: "03",
     icon: Sun,
     title: "Zelf energie opwekken",
+    badge: { variant: "blue", label: "Vaak vervolgstap" },
     bullets: ["Zonnepanelen op dak of bijgebouw"],
     why: "Lagere energiekosten en betere benutting van eigen opwek. Zonnepanelen verlagen je energierekening direct en maken je minder afhankelijk van netstroom. Pas na de isolatiestap is opwekken echt efficiënt, want dan verbruikt je woning minder.",
+    when: "Pas nadat je hebt geïsoleerd. In een slecht geïsoleerde woning verbruik je meer dan je opwekt. Dan betaal je voor panelen die je energieprobleem niet oplossen. Na isolatie is de businesscase voor zonnepanelen vrijwel altijd sterk.",
+    watch: "De terugverdientijd hangt sterk af van dakrichting, hellingshoek en schaduw van bomen of schoorstenen. Laat dit goed uitrekenen voor je tekent. Controleer ook je netaansluiting: bij grotere installaties is soms een verzwaring nodig.",
   },
   {
     num: "04",
     icon: Thermometer,
     title: "Slim verwarmen",
+    badge: { variant: "oker", label: "Alleen in passende situatie" },
     bullets: ["Hybride warmtepomp", "Volledig elektrische warmtepomp", "Lage-temperatuur verwarming als einddoel"],
     why: "Een goed geïsoleerde woning maakt de overstap naar gasloos verwarmen haalbaar. Warmtepompen werken het beste in woningen die weinig warmte verliezen. Ze vervangen de cv-ketel en halen warmte uit de lucht, bodem of water.",
+    when: "Alleen als je woning al goed geïsoleerd is. Een warmtepomp in een slecht geïsoleerde woning werkt inefficiënt en kan zelfs leiden tot hogere energiekosten. Een hybride warmtepomp is vaak een slimmere tussenstap: die combineert een warmtepomp met je bestaande cv-ketel.",
+    watch: "Volledige elektrische warmtepompen werken het beste met lage-temperatuurverwarming: vloerverwarming of grote radiatoren. Heb je kleine radiatoren, dan is een hybride pomp meestal de betere keuze. Laat je woning altijd doorrekenen voor je een beslissing neemt.",
   },
   {
     num: "05",
     icon: Battery,
     title: "Opslag en slim gebruik",
+    badge: { variant: "gray", label: "Meestal latere stap" },
     bullets: ["Thuisbatterij of accu", "Slim energiemanagement", "Laadsystemen voor elektrisch rijden"],
     why: "Meer grip op je eigen opwek en verbruik. Met opslag kun je overdag opgewekte stroom 's avonds gebruiken. Dit wordt steeds relevanter nu de salderingsregeling verdwijnt en je zelf opgewekte stroom beter moet benutten.",
+    when: "Pas als je al zonnepanelen hebt en meer wilt halen uit wat je opwekt. Zonder zonnepanelen is een thuisbatterij zelden zinvol. Een laadpaal voor elektrisch rijden is vaak wel direct interessant, ook zonder batterij.",
+    watch: "De businesscase voor een thuisbatterij is voor de meeste huishoudens op dit moment nog beperkt. Terugverdientijden zijn lang. Slim energiemanagement, zoals je wasmachine of vaatwasser automatisch laten draaien als de zon schijnt, levert vaak meer op dan een batterij.",
   },
 ];
 
@@ -189,7 +211,6 @@ const Maatregelen = () => {
             <div className="mx-auto" style={{ marginTop: 64, maxWidth: 900 }}>
               {measures.map((m) => {
                 const Icon = m.icon;
-                const isOpen = !!open[m.num];
                 return (
                   <article
                     key={m.num}
@@ -201,7 +222,7 @@ const Maatregelen = () => {
                       marginBottom: 24,
                     }}
                   >
-                    <div className="flex items-center gap-3 md:gap-5">
+                    <div className="flex flex-wrap items-center gap-3 md:gap-5">
                       <div
                         className="flex items-center justify-center rounded-full shrink-0"
                         style={{ width: 48, height: 48, backgroundColor: "#F0E4D0" }}
@@ -230,6 +251,11 @@ const Maatregelen = () => {
                       >
                         {m.title}
                       </h3>
+                      <span
+                        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${badgeStyles[m.badge.variant]}`}
+                      >
+                        {m.badge.label}
+                      </span>
                     </div>
 
                     <div
@@ -256,55 +282,64 @@ const Maatregelen = () => {
                     </ul>
 
                     <div style={{ marginTop: 32, borderTop: "1px solid #E5E2DB" }}>
-                      <button
-                        onClick={() => setOpen((s) => ({ ...s, [m.num]: !s[m.num] }))}
-                        aria-expanded={isOpen}
-                        className="group w-full flex items-center justify-between transition-colors"
-                        style={{
-                          padding: "16px 0",
-                          cursor: "pointer",
-                          color: "#152C4E",
-                          background: "transparent",
-                          border: "none",
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.color = "#E8B547")}
-                        onMouseLeave={(e) => (e.currentTarget.style.color = "#152C4E")}
-                      >
-                        <span
-                          className="font-sans"
-                          style={{ fontWeight: 600, fontSize: 14 }}
-                        >
-                          Waarom dit?
-                        </span>
-                        <ChevronDown
-                          size={16}
-                          style={{
-                            transition: "transform 200ms",
-                            transform: isOpen ? "rotate(180deg)" : "rotate(0)",
-                          }}
-                        />
-                      </button>
-                      <div
-                        style={{
-                          display: "grid",
-                          gridTemplateRows: isOpen ? "1fr" : "0fr",
-                          transition: "grid-template-rows 200ms ease",
-                        }}
-                      >
-                        <div style={{ overflow: "hidden" }}>
-                          <p
-                            style={{
-                              fontSize: 15,
-                              color: "#6B6B6B",
-                              lineHeight: 1.7,
-                              paddingTop: 16,
-                              paddingBottom: 8,
-                            }}
-                          >
-                            {m.why}
-                          </p>
-                        </div>
-                      </div>
+                      {[
+                        { key: "why", label: "Waarom dit?", text: m.why },
+                        { key: "when", label: "Wanneer slim?", text: m.when },
+                        { key: "watch", label: "Waar op letten?", text: m.watch },
+                      ].map((sec, idx) => {
+                        const k = `${m.num}-${sec.key}`;
+                        const sOpen = !!open[k];
+                        return (
+                          <div key={k} style={{ borderTop: idx === 0 ? "none" : "1px solid #E5E2DB" }}>
+                            <button
+                              onClick={() => setOpen((s) => ({ ...s, [k]: !s[k] }))}
+                              aria-expanded={sOpen}
+                              className="group w-full flex items-center justify-between transition-colors"
+                              style={{
+                                padding: "16px 0",
+                                cursor: "pointer",
+                                color: "#152C4E",
+                                background: "transparent",
+                                border: "none",
+                              }}
+                              onMouseEnter={(e) => (e.currentTarget.style.color = "#E8B547")}
+                              onMouseLeave={(e) => (e.currentTarget.style.color = "#152C4E")}
+                            >
+                              <span className="font-sans" style={{ fontWeight: 600, fontSize: 14 }}>
+                                {sec.label}
+                              </span>
+                              <ChevronDown
+                                size={16}
+                                style={{
+                                  transition: "transform 200ms",
+                                  transform: sOpen ? "rotate(180deg)" : "rotate(0)",
+                                }}
+                              />
+                            </button>
+                            <div
+                              style={{
+                                display: "grid",
+                                gridTemplateRows: sOpen ? "1fr" : "0fr",
+                                transition: "grid-template-rows 200ms ease",
+                              }}
+                            >
+                              <div style={{ overflow: "hidden" }}>
+                                <p
+                                  style={{
+                                    fontSize: 15,
+                                    color: "#6B6B6B",
+                                    lineHeight: 1.7,
+                                    paddingTop: 4,
+                                    paddingBottom: 16,
+                                  }}
+                                >
+                                  {sec.text}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </article>
                 );
@@ -330,7 +365,7 @@ const Maatregelen = () => {
                 maxWidth: 720,
               }}
             >
-              Wil je weten wat voor jouw woning logisch is?
+              Niet zeker welke maatregel als eerste logisch is voor jouw woning?
             </h2>
             <p
               style={{
@@ -342,7 +377,7 @@ const Maatregelen = () => {
                 maxWidth: 560,
               }}
             >
-              We kijken samen naar je situatie en leggen uit wat past bij je woning.
+              Wij kijken samen naar je situatie en geven je een eerlijk advies over wat nu slim is, wat je kunt uitstellen en wat het oplevert. Gratis en zonder verplichtingen.
             </p>
             <a
               href="/contact"
