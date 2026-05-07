@@ -263,13 +263,13 @@ const Bewoners = () => {
         </section>
 
         {/* 2. HERKENNING */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#152C4E" }}>
+        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
             <div className="text-center max-w-[760px] mx-auto">
-              <h2 className="h2-section" style={{ color: "#FFFFFF" }}>
+              <h2 className="h2-section" style={{ color: "#152C4E" }}>
                 Misschien <span style={{ color: "hsl(var(--accent))" }}>herken</span> je dit
               </h2>
-              <p className="mt-6 text-[18px]" style={{ color: "rgba(255,255,255,0.7)", lineHeight: 1.6 }}>
+              <p className="mt-6 text-[18px]" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>
                 Verduurzamen roept bij bijna iedere bewoner dezelfde twijfels op.
               </p>
             </div>
@@ -281,23 +281,26 @@ const Bewoners = () => {
                     key={r.title}
                     className="rounded-2xl p-6"
                     style={{
-                      backgroundColor: "rgba(255,255,255,0.07)",
-                      border: "1px solid rgba(255,255,255,0.12)",
+                      backgroundColor: "#FFFFFF",
+                      border: "1px solid #E5E2DB",
+                      boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
                     }}
                   >
-                    <div
-                      className="flex items-center justify-center rounded-full mb-4"
-                      style={{ width: 40, height: 40, backgroundColor: "#E8B547" }}
-                    >
-                      <Icon size={20} color="#152C4E" aria-hidden="true" />
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="flex items-center justify-center rounded-full"
+                        style={{ width: 36, height: 36, backgroundColor: "#E8B547", flexShrink: 0 }}
+                      >
+                        <Icon size={16} color="#152C4E" aria-hidden="true" />
+                      </div>
+                      <h3
+                        className="font-display"
+                        style={{ fontSize: 17, fontWeight: 600, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
+                      >
+                        {r.title}
+                      </h3>
                     </div>
-                    <h3
-                      className="font-display"
-                      style={{ fontSize: 17, fontWeight: 600, color: "#FFFFFF", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
-                    >
-                      {r.title}
-                    </h3>
-                    <p style={{ marginTop: 10, fontSize: 15, color: "rgba(255,255,255,0.75)", lineHeight: 1.6, margin: "10px 0 0" }}>
+                    <p className="mt-2" style={{ fontSize: 15, color: "#4B4B4B", lineHeight: 1.6, margin: "8px 0 0" }}>
                       {r.body}
                     </p>
                   </article>
@@ -613,53 +616,54 @@ const Bewoners = () => {
               <h2 className="h2-section" style={{ color: "#152C4E" }}>
                 Wist je dat je subsidies kunt <span style={{ color: "hsl(var(--accent))" }}>stapelen</span>?
               </h2>
-              <p
-                className="mt-6 mx-auto"
-                style={{ color: "#6B6B6B", lineHeight: 1.6, fontSize: 16, maxWidth: 620, fontWeight: 400 }}
-              >
-                De meeste bewoners kennen één regeling. Maar wie slim combineert, kan het totaalbedrag verdubbelen of verdriedubbelen. Wij brengen voor jouw adres in kaart wat er allemaal mogelijk is.
-              </p>
             </div>
 
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-start">
-              {/* Linker kolom — rekenvoorbeeld */}
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
+              {/* Linker kolom */}
               <div
-                className="rounded-2xl p-8"
+                className="rounded-2xl p-8 flex flex-col"
                 style={{
-                  backgroundColor: "#FDF9EE",
-                  border: "1px solid rgba(232,181,71,0.4)",
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid #E5E2DB",
+                  boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
+                  minHeight: 340,
                 }}
               >
                 <div
-                  className="text-xs uppercase mb-4"
+                  className="text-xs uppercase mb-3"
                   style={{ color: "#A07C1E", fontWeight: 600, letterSpacing: "0.15em" }}
                 >
-                  Rekenvoorbeeld
+                  Zo werkt stapelen
                 </div>
-                <p style={{ color: "#6B6B6B", fontSize: 14, lineHeight: 1.55, marginBottom: 16, fontWeight: 400 }}>
-                  Vrijstaande woning, bouwjaar 1972, Groningen.<br />
-                  Spouwisolatie, dakisolatie en vloerisolatie.
+                <p style={{ color: "#6B6B6B", fontSize: 14, lineHeight: 1.55, marginBottom: 20, fontWeight: 400 }}>
+                  De meeste regelingen mogen naast elkaar worden gebruikt. Dat betekent dat je voor dezelfde maatregel vanuit meerdere potjes vergoed kunt worden. Weinig bewoners weten dit.
                 </p>
-                <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 12 }}>
+                <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 16 }}>
                   {[
-                    "Nij Begun: tot €8.000 vergoed",
-                    "ISDE (2+ maatregelen, verdubbeld tarief): €4.200",
-                    "Gemeentelijke bijdrage: €2.500",
-                    "Totaal: tot €14.700 terug op een investering van €16.000",
+                    "Nij Begun vergoedt isolatie voor eigenaar-bewoners in Groningen en Noord-Drenthe",
+                    "ISDE is een landelijke regeling die hier gewoon bovenop komt",
+                    "Veel gemeenten hebben daarnaast een eigen bijdrageregeling",
+                    "Deze drie samen vergoeden soms het grootste deel van de investering",
+                    "Wij checken voor jouw adres precies wat er geldt en hoe je het combineert",
                   ].map((t) => (
                     <li key={t} className="flex items-start gap-3">
                       <CheckCircle size={16} color="#E8B547" style={{ flexShrink: 0, marginTop: 2 }} aria-hidden="true" />
-                      <span style={{ color: "#2B2B2B", fontSize: 15, fontWeight: 500, lineHeight: 1.5 }}>{t}</span>
+                      <span style={{ color: "#152C4E", fontSize: 15, fontWeight: 500, lineHeight: 1.5 }}>{t}</span>
                     </li>
                   ))}
                 </ul>
-                <p style={{ marginTop: 20, color: "#6B6B6B", fontSize: 12, fontStyle: "italic", fontWeight: 400 }}>
-                  Bedragen zijn indicatief en afhankelijk van jouw situatie.
-                </p>
               </div>
 
-              {/* Rechter kolom — wat wij uitzoeken */}
-              <div className="p-8">
+              {/* Rechter kolom */}
+              <div
+                className="rounded-2xl p-8 flex flex-col"
+                style={{
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid #E5E2DB",
+                  boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
+                  minHeight: 340,
+                }}
+              >
                 <div
                   className="text-xs uppercase mb-4"
                   style={{ color: "#A07C1E", fontWeight: 600, letterSpacing: "0.15em" }}
@@ -682,20 +686,6 @@ const Bewoners = () => {
                 </ul>
               </div>
             </div>
-
-            <p
-              className="text-center mx-auto"
-              style={{
-                marginTop: 40,
-                maxWidth: "48rem",
-                fontSize: 16,
-                lineHeight: 1.6,
-                color: "#6B6B6B",
-                fontStyle: "italic",
-              }}
-            >
-              Wij kijken specifiek naar wat in jouw gemeente speelt, welke combinaties slim zijn en wat dat voor jouw plan betekent.
-            </p>
           </div>
         </section>
 
@@ -709,7 +699,7 @@ const Bewoners = () => {
             </div>
             <div className="card-grid mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {reasons.map((r) => (
-                <div key={r.title} className="card" style={cardBase}>
+                <div key={r.title} className="card" style={{ ...cardBase, padding: 28 }}>
                   <div className="flex items-start gap-3">
                     <span
                       className="flex items-center justify-center rounded-full shrink-0"
@@ -724,7 +714,7 @@ const Bewoners = () => {
                       >
                         {r.title}
                       </h3>
-                      <p style={{ marginTop: 8, fontSize: 15, color: "#2B2B2B", lineHeight: 1.55, margin: "8px 0 0" }}>
+                      <p style={{ marginTop: 12, fontSize: 15, color: "#2B2B2B", lineHeight: 1.55, margin: "12px 0 0" }}>
                         {r.body}
                       </p>
                     </div>
