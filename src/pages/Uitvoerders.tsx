@@ -594,7 +594,7 @@ const Uitvoerders = () => {
                 marginBottom: 20,
               }}
             >
-              Zoek je extra capaciteit zonder extra kantoorlast?
+              Wil je sneller van aanvraag naar uitvoering, zonder extra kantoorlast?
             </h2>
             <p
               style={{
@@ -605,7 +605,7 @@ const Uitvoerders = () => {
                 marginBottom: 32,
               }}
             >
-              Wij helpen uitvoerders sneller schakelen in bewonerscontact, offerte-opbouw, opvolging en dossiervorming.
+              Wij nemen het voortraject uit handen. Jullie houden de focus op bouwen.
             </p>
             <a
               href="/contact"
