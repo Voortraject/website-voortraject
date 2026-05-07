@@ -16,12 +16,11 @@ const welItems = [
 
 const ACCENT = "#E8B547";
 const RED = "#C0392B";
-const RED_LABEL = "#C0392B";
 const OKER_LABEL = "#A07C1E";
 
 export const HowWeWork = () => {
   return (
-    <section className="section-pad" style={{ backgroundColor: "#F5F2EC" }}>
+    <section className="section-pad" style={{ backgroundColor: "#FFFFFF" }}>
       <div className="container-content">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="h2-section">
@@ -43,22 +42,16 @@ export const HowWeWork = () => {
         </div>
 
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* NIET BIJ ONS */}
+          {/* WAT BEWONERS VAAK MEEMAKEN */}
           <div
             className="rounded-2xl p-8 shadow-sm border border-red-100"
             style={{ backgroundColor: "#FEF7F7" }}
           >
             <div
-              className="mb-6"
-              style={{
-                fontSize: 12,
-                letterSpacing: "0.05em",
-                textTransform: "uppercase",
-                color: RED_LABEL,
-                fontWeight: 700,
-              }}
+              className="mb-6 text-xs font-semibold uppercase tracking-widest"
+              style={{ color: RED }}
             >
-              Niet bij ons
+              Wat bewoners vaak meemaken
             </div>
             <ul className="flex flex-col gap-4">
               {nietItems.map((t, i) => (
@@ -77,25 +70,19 @@ export const HowWeWork = () => {
             </ul>
           </div>
 
-          {/* WEL BIJ ONS */}
+          {/* HOE WIJ HET AANPAKKEN */}
           <div
-            className="rounded-2xl p-8 shadow-sm md:border-l"
+            className="rounded-2xl p-8 shadow-sm md:border-l md:border-l-[#E5E2DB]"
             style={{
               backgroundColor: "#FDF9EE",
               border: "1px solid rgba(232, 181, 71, 0.3)",
             }}
           >
             <div
-              className="mb-6"
-              style={{
-                fontSize: 12,
-                letterSpacing: "0.05em",
-                textTransform: "uppercase",
-                color: OKER_LABEL,
-                fontWeight: 700,
-              }}
+              className="mb-6 text-xs font-semibold uppercase tracking-widest"
+              style={{ color: OKER_LABEL }}
             >
-              Wel bij ons
+              Hoe wij het aanpakken
             </div>
             <ul className="flex flex-col gap-4">
               {welItems.map((t, i) => (

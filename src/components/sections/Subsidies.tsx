@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Tag } from "lucide-react";
+
 
 const cards = [
   {
@@ -16,7 +16,7 @@ const cards = [
     tag: "HEEL NEDERLAND",
     naam: "Landelijke subsidies",
     uitleg:
-      "Vaste bedragen voor warmtepomp, isolatie en zonneboiler. Combineren verdubbelt het bedrag per vierkante meter.",
+      "ISDE is de landelijke subsidie voor isolatie, warmtepomp en zonneboiler. Combineer je twee of meer maatregelen, dan verdubbelen de tarieven automatisch.",
     actie: "Wij rekenen voor jouw woning uit hoe je optimaal combineert.",
     linkTekst: "Lees meer over landelijke subsidies",
     href: "/subsidies/landelijk",
@@ -136,21 +136,6 @@ export const Subsidies = () => {
               >
                 {c.uitleg}
               </p>
-
-              {c.naam === "Landelijke subsidies" && (
-                <span
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 mt-4 self-start"
-                  style={{
-                    backgroundColor: "#FDF6E3",
-                    color: "#A07C1E",
-                    fontSize: 12,
-                    fontWeight: 500,
-                  }}
-                >
-                  <Tag className="w-3 h-3" aria-hidden="true" />
-                  Voornaamste regeling: ISDE
-                </span>
-              )}
 
               <div
                 className="my-5"
