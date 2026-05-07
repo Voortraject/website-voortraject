@@ -494,20 +494,21 @@ const Uitvoerders = () => {
                       <p style={{ fontSize: 14, color: "#2B2B2B", lineHeight: 1.55 }}>{p.result}</p>
                     </div>
 
-                    <div style={{ marginTop: "auto", paddingTop: 24 }}>
+                    <div style={{ marginTop: "auto", paddingTop: 20 }}>
                       <a
                         href="/contact"
-                        className={`${ctaButton} w-full`}
-                        style={{
-                          backgroundColor: "#E8B547",
-                          color: "#2B2B2B",
-                          padding: "12px 20px",
-                          borderRadius: 8,
+                        className="inline-flex items-center gap-1 text-sm font-medium transition-colors"
+                        style={{ color: "#E8B547" }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = "#D9A538";
+                          e.currentTarget.style.textDecoration = "underline";
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = "#E8B547";
+                          e.currentTarget.style.textDecoration = "none";
+                        }}
                       >
-                        Selecteer pakket
+                        Bespreek dit pakket →
                       </a>
                     </div>
                   </article>
