@@ -56,7 +56,7 @@ const questionAnswers: Record<string, string> = {
   "Wat als ik huurder ben?":
     "Als huurder zijn de mogelijkheden beperkter, maar niet nul. Afhankelijk van jouw huurcontract en verhuurder zijn er soms regelingen mogelijk. We kijken wat in jouw situatie van toepassing is en wat je kunt vragen aan jouw verhuurder.",
   "Waar begin ik?":
-    "Met een gesprek van 30 minuten. We stellen je een paar gerichte vragen over je woning en situatie, en je vertrekt met een helder beeld van wat logisch is als eerste stap. Geen verplichtingen, geen kosten.",
+    "Met een gesprek van 15 minuten. We stellen je een paar gerichte vragen over je woning en situatie, en je vertrekt met een helder beeld van wat logisch is als eerste stap. Geen verplichtingen, geen kosten.",
 };
 
 const services = [

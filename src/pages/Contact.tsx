@@ -15,13 +15,13 @@ const optional = <span className="text-[#8B8680] font-normal ml-1">(optioneel)</
 const expectations: Record<Mode, string[]> = {
   uitvoerder: [
     "We nemen binnen één werkdag contact op",
-    "Een kennismakingsgesprek van ongeveer 30 minuten, vrijblijvend",
+    "Een kennismakingsgesprek van ongeveer 15 minuten, vrijblijvend",
     "We brengen in kaart waar jullie op vastlopen en waar wij kunnen helpen",
     "Geen verkooppraatje, wel een concreet vervolgplan",
   ],
   bewoner: [
     "We nemen binnen één werkdag contact op",
-    "Een vrijblijvend gesprek van ongeveer 30 minuten, telefonisch of bij jou thuis",
+    "Een vrijblijvend gesprek van ongeveer 15 minuten, telefonisch of bij jou thuis",
     "We kijken samen wat er voor jouw woning logisch is",
     "Je hoeft niets voor te bereiden",
   ],
