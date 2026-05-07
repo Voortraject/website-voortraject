@@ -129,7 +129,7 @@ const Maatregelen = () => {
                   lineHeight: 1.2,
                 }}
               >
-                Eerst beperken, dan opwekken, dan slim gebruiken
+                Eerst <span style={{ color: "#E8B547" }}>beperken</span>, dan opwekken, dan slim gebruiken
               </h2>
               <p
                 className="mx-auto"
