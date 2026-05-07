@@ -147,10 +147,10 @@ const Uitvoerders = () => {
                   op, zodat jullie kunnen bouwen
                 </h1>
                 <p
-                  className="mt-8 text-[16px] md:text-[18px]"
-                  style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 620, textAlign: "left" }}
+                  className="mt-8"
+                  style={{ color: "#6B6B6B", fontSize: 18, fontWeight: 400, lineHeight: 1.6, maxWidth: 560, textAlign: "left" }}
                 >
-                  Waar veel tijd op lekt, zit vaak niet op de bouwplaats, maar in alles eromheen: bewonersvragen, planuitleg, offerte-opbouw, opvolging en dossiers die strak moeten blijven lopen. Wij pakken juist dat stuk op, zodat jullie minder kantoorlast hebben en meer focus op uitvoering houden.
+                  Wij nemen bewonerscontact, offerte-opvolging, akkoordtrajecten en nazorg uit handen, zodat jullie minder tijd verliezen aan kantoorwerk en meer focus houden op de uitvoering.
                 </p>
                 <div className="mt-10" style={{ textAlign: "left" }}>
                   <a
