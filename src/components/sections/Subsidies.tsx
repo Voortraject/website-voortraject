@@ -137,21 +137,6 @@ export const Subsidies = () => {
                 {c.uitleg}
               </p>
 
-              {c.naam === "Landelijke subsidies" && (
-                <span
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 mt-4 self-start"
-                  style={{
-                    backgroundColor: "#FDF6E3",
-                    color: "#A07C1E",
-                    fontSize: 12,
-                    fontWeight: 500,
-                  }}
-                >
-                  <Tag className="w-3 h-3" aria-hidden="true" />
-                  Voornaamste regeling: ISDE
-                </span>
-              )}
-
               <div
                 className="my-5"
                 style={{
