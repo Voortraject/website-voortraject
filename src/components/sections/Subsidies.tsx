@@ -108,7 +108,7 @@ export const Subsidies = () => {
                 style={{
                   fontSize: 12,
                   letterSpacing: "0.05em",
-                  color: "hsl(var(--accent))",
+                  color: "#6B7280",
                   fontWeight: 600,
                 }}
               >
