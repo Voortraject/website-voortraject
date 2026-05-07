@@ -957,19 +957,21 @@ const SubsidiesNijBegun = () => {
               },
             ].map((s) => (
               <div key={s.t} style={{ ...cardSoftBase, padding: 28 }}>
-                <span
-                  className="inline-flex items-center justify-center"
-                  style={{ width: 40, height: 40, borderRadius: 9999, backgroundColor: C.accent, color: C.primary }}
-                >
-                  <s.icon size={18} aria-hidden />
-                </span>
-                <h3
-                  className="font-display"
-                  style={{ fontSize: 18, fontWeight: 700, color: C.primary, marginTop: 14, marginBottom: 8 }}
-                >
-                  {s.t}
-                </h3>
-                <p style={{ fontSize: 15, color: C.text, lineHeight: 1.6, margin: 0 }}>{s.d}</p>
+                <div className="flex items-center gap-3">
+                  <span
+                    className="inline-flex items-center justify-center shrink-0"
+                    style={{ width: 40, height: 40, borderRadius: 9999, backgroundColor: C.accent, color: C.primary }}
+                  >
+                    <s.icon size={18} aria-hidden />
+                  </span>
+                  <h3
+                    className="font-display"
+                    style={{ fontSize: 18, fontWeight: 700, color: C.primary, margin: 0 }}
+                  >
+                    {s.t}
+                  </h3>
+                </div>
+                <p style={{ fontSize: 15, color: C.text, lineHeight: 1.6, margin: "12px 0 0" }}>{s.d}</p>
               </div>
             ))}
           </div>
