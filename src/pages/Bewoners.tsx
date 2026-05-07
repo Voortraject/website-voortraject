@@ -417,13 +417,13 @@ const Bewoners = () => {
           <div className="container-content">
             <div className="text-center max-w-[760px] mx-auto">
               <h2 className="h2-section" style={{ color: "#152C4E" }}>
-                De <span style={{ color: "hsl(var(--accent))" }}>vragen</span> waar wij mee beginnen
+                Dit vragen bewoners ons het <span style={{ color: "hsl(var(--accent))" }}>vaakst</span>
               </h2>
               <p
                 className="mt-6 text-[18px] mx-auto"
-                style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: "90ch" }}
+                style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: "90ch", fontWeight: 400 }}
               >
-                De meeste bewoners lopen vast op dezelfde punten: te veel keuzes, onduidelijke regelingen, wachttijden of advies dat elkaar tegenspreekt. Met deze vragen beginnen wij meestal.
+                Klik op een vraag voor een direct antwoord.
               </p>
             </div>
 
