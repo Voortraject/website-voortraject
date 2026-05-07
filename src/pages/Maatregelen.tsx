@@ -10,10 +10,10 @@ const principles = [
 ];
 
 const badgeStyles: Record<string, string> = {
-  green: "bg-green-50 text-green-700 border border-green-200",
-  blue: "bg-blue-50 text-blue-700 border border-blue-200",
+  green: "bg-[#FDF6E3] text-[#A07C1E] border border-[#E8B547]/40",
+  blue: "bg-[#FDF6E3] text-[#A07C1E] border border-[#E8B547]/40",
   oker: "bg-[#FDF6E3] text-[#A07C1E] border border-[#E8B547]/40",
-  gray: "bg-gray-50 text-gray-600 border border-gray-200",
+  gray: "bg-[#FDF6E3] text-[#A07C1E] border border-[#E8B547]/40",
 };
 
 const measures = [
@@ -129,7 +129,7 @@ const Maatregelen = () => {
                   lineHeight: 1.2,
                 }}
               >
-                Eerst beperken, dan opwekken, dan slim gebruiken
+                Eerst <span style={{ color: "#E8B547" }}>beperken</span>, dan opwekken, dan slim gebruiken
               </h2>
               <p
                 className="mx-auto"
