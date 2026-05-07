@@ -642,44 +642,89 @@ const Bewoners = () => {
         {/* 7. AANVULLENDE MOGELIJKHEDEN PER GEMEENTE */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
-            <h2 className="h2-section text-center" style={{ color: "#152C4E" }}>
-              Meer dan alleen<br /><span style={{ color: "hsl(var(--accent))" }}>landelijke</span> subsidies
-            </h2>
-            <div className="card-grid mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto items-stretch">
-              {gemeenteCardsData.map((c) => (
-                <div
-                  key={c.title}
-                  className="card flex items-start gap-3 h-full"
-                  style={{
-                    backgroundColor: "#FFFFFF",
-                    border: "1px solid #E5E2DB",
-                    borderRadius: 16,
-                    padding: "20px 24px",
-                  }}
-                >
-                  <Check size={18} color="#E8B547" strokeWidth={2.5} aria-hidden="true" style={{ flexShrink: 0, marginTop: 4 }} />
-                  <div>
-                    <h3
-                      className="font-display font-semibold"
-                      style={{ fontSize: 16, color: "#152C4E", lineHeight: 1.35, margin: 0 }}
-                    >
-                      {c.title}
-                    </h3>
-                    <p style={{ marginTop: 8, fontSize: 15, color: "#6B6B6B", lineHeight: 1.55, margin: "8px 0 0" }}>
-                      {c.body}
-                    </p>
-                  </div>
-                </div>
-              ))}
+            <div className="text-center max-w-[760px] mx-auto">
+              <h2 className="h2-section" style={{ color: "#152C4E" }}>
+                Wist je dat je subsidies kunt <span style={{ color: "hsl(var(--accent))" }}>stapelen</span>?
+              </h2>
+              <p
+                className="mt-6 mx-auto"
+                style={{ color: "#6B6B6B", lineHeight: 1.6, fontSize: 16, maxWidth: 620, fontWeight: 400 }}
+              >
+                De meeste bewoners kennen één regeling. Maar wie slim combineert, kan het totaalbedrag verdubbelen of verdriedubbelen. Wij brengen voor jouw adres in kaart wat er allemaal mogelijk is.
+              </p>
             </div>
+
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-start">
+              {/* Linker kolom — rekenvoorbeeld */}
+              <div
+                className="rounded-2xl p-8"
+                style={{
+                  backgroundColor: "#FDF9EE",
+                  border: "1px solid rgba(232,181,71,0.4)",
+                }}
+              >
+                <div
+                  className="text-xs uppercase mb-4"
+                  style={{ color: "#A07C1E", fontWeight: 600, letterSpacing: "0.15em" }}
+                >
+                  Rekenvoorbeeld
+                </div>
+                <p style={{ color: "#6B6B6B", fontSize: 14, lineHeight: 1.55, marginBottom: 16, fontWeight: 400 }}>
+                  Vrijstaande woning, bouwjaar 1972, Groningen.<br />
+                  Spouwisolatie, dakisolatie en vloerisolatie.
+                </p>
+                <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 12 }}>
+                  {[
+                    "Nij Begun: tot €8.000 vergoed",
+                    "ISDE (2+ maatregelen, verdubbeld tarief): €4.200",
+                    "Gemeentelijke bijdrage: €2.500",
+                    "Totaal: tot €14.700 terug op een investering van €16.000",
+                  ].map((t) => (
+                    <li key={t} className="flex items-start gap-3">
+                      <CheckCircle size={16} color="#E8B547" style={{ flexShrink: 0, marginTop: 2 }} aria-hidden="true" />
+                      <span style={{ color: "#2B2B2B", fontSize: 15, fontWeight: 500, lineHeight: 1.5 }}>{t}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p style={{ marginTop: 20, color: "#6B6B6B", fontSize: 12, fontStyle: "italic", fontWeight: 400 }}>
+                  Bedragen zijn indicatief en afhankelijk van jouw situatie.
+                </p>
+              </div>
+
+              {/* Rechter kolom — wat wij uitzoeken */}
+              <div className="p-8">
+                <div
+                  className="text-xs uppercase mb-4"
+                  style={{ color: "#A07C1E", fontWeight: 600, letterSpacing: "0.15em" }}
+                >
+                  Wat wij voor jou uitzoeken
+                </div>
+                <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 16 }}>
+                  {[
+                    "Welke landelijke regelingen voor jouw woning gelden",
+                    "Of jij in aanmerking komt voor Nij Begun",
+                    "Welke gemeentelijke en provinciale bijdragen er zijn",
+                    "Hoe je regelingen slim combineert zonder ze mis te lopen",
+                    "Wat de logische volgorde is om maximaal te benutten",
+                  ].map((t) => (
+                    <li key={t} className="flex items-start gap-3">
+                      <CheckCircle size={16} color="#E8B547" style={{ flexShrink: 0, marginTop: 3 }} aria-hidden="true" />
+                      <span style={{ color: "#2B2B2B", fontSize: 15, fontWeight: 400, lineHeight: 1.5 }}>{t}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
             <p
               className="text-center mx-auto"
               style={{
-                marginTop: 32,
+                marginTop: 40,
                 maxWidth: "48rem",
                 fontSize: 16,
                 lineHeight: 1.6,
-                color: "rgba(21,44,78,0.75)",
+                color: "#6B6B6B",
+                fontStyle: "italic",
               }}
             >
               Wij kijken specifiek naar wat in jouw gemeente speelt, welke combinaties slim zijn en wat dat voor jouw plan betekent.
