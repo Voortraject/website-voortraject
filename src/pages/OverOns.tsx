@@ -181,7 +181,7 @@ const OverOns = () => {
                   lineHeight: 1.2,
                 }}
               >
-                Hoe wij werken
+                Hoe wij <span style={accent}>werken</span>
               </h2>
               <p
                 className="mx-auto mt-4"
