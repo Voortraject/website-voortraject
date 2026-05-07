@@ -90,7 +90,7 @@ const packages: Package[] = [
       "Begeleiding naar 5-sterren review",
       "Eén vast aanspreekpunt",
     ],
-    result: "Snellere cashflow en een perfecte reputatie.",
+    result: "Facturen sneller betaald, reviews die binnenkomen, en bewoners die jullie blijven aanbevelen.",
     badge: null,
   },
 ];
