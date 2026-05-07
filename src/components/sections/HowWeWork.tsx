@@ -1,22 +1,21 @@
 import { Check, X } from "lucide-react";
 
 const nietItems = [
-  "Een adviseur die ook toevallig iets te verkopen heeft",
-  "Elke keer een ander aan de telefoon",
-  "Beloften die na de handtekening verdwijnen",
-  'Druk omdat "het aanbod tijdelijk is"',
+  "Adviseurs met een verborgen verkoopbelang",
+  "Elke keer een ander aanspreekpunt",
+  "Subsidiebeloften die achteraf niet blijken te kloppen",
+  "Onduidelijkheid over wie wat regelt en wanneer",
 ];
 
 const welItems = [
-  "Eén vaste adviseur die jouw dossier kent",
-  "Onafhankelijk advies, wij verdienen niks aan de installatie zelf",
-  "Realistisch beeld van kosten, subsidie en tijdlijn voor jouw woning",
-  "Jij bepaalt het tempo, wij houden het overzicht",
+  "Één vast aanspreekpunt die jouw dossier kent, van begin tot eind",
+  "Wij stoppen niet na de handtekening. Opvolging en nazorg horen bij het traject",
+  "Vooraf duidelijk wat wij regelen en wanneer je iets van ons hoort",
+  "Jij houdt de regie, wij houden het overzicht",
 ];
 
 const ACCENT = "#E8B547";
 const RED = "#C0392B";
-const OKER_LABEL = "#E8B547";
 
 export const HowWeWork = () => {
   return (
@@ -24,7 +23,7 @@ export const HowWeWork = () => {
       <div className="container-content">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="h2-section">
-            Gewoon <span style={{ color: ACCENT }}>eerlijk</span> over hoe wij werken
+            Hoe wij te <span style={{ color: ACCENT }}>werk</span> gaan
           </h2>
           <p
             className="mx-auto mt-6 mb-12 md:mb-16"
@@ -32,26 +31,27 @@ export const HowWeWork = () => {
               fontSize: 17,
               color: "#6B6B6B",
               lineHeight: 1.6,
-              maxWidth: 560,
+              maxWidth: 580,
+              fontWeight: 400,
             }}
           >
-            Veel bewoners die ons bellen, zijn ergens anders vastgelopen. Wij
-            zijn transparant over wat we wel en niet doen, zodat je precies
-            weet waar je aan toe bent.
+            Geen mooie beloften vooraf en teleurstellingen achteraf. Wij zijn
+            duidelijk over wat je van ons kunt verwachten, voor bewoners en
+            uitvoerders.
           </p>
         </div>
 
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* WAT BEWONERS VAAK MEEMAKEN */}
+          {/* HOE HET VAAK GAAT */}
           <div
             className="rounded-2xl p-8 shadow-sm border border-red-100"
             style={{ backgroundColor: "#FEF7F7" }}
           >
             <div
-              className="mb-6 text-xs font-semibold uppercase tracking-widest"
+              className="mb-6 text-sm font-bold uppercase tracking-wider"
               style={{ color: RED }}
             >
-              Wat bewoners vaak meemaken
+              Hoe het vaak gaat
             </div>
             <ul className="flex flex-col gap-4">
               {nietItems.map((t, i) => (
@@ -70,7 +70,7 @@ export const HowWeWork = () => {
             </ul>
           </div>
 
-          {/* HOE WIJ HET AANPAKKEN */}
+          {/* HOE WIJ HET DOEN */}
           <div
             className="rounded-2xl p-8 shadow-sm md:border-l md:border-l-[#E5E2DB]"
             style={{
@@ -79,10 +79,10 @@ export const HowWeWork = () => {
             }}
           >
             <div
-              className="mb-6 text-xs font-semibold uppercase tracking-widest"
-              style={{ color: OKER_LABEL }}
+              className="mb-6 text-sm font-bold uppercase tracking-wider"
+              style={{ color: "#A07C1E" }}
             >
-              Hoe wij het aanpakken
+              Hoe wij het doen
             </div>
             <ul className="flex flex-col gap-4">
               {welItems.map((t, i) => (

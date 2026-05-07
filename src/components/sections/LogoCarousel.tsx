@@ -122,7 +122,7 @@ export const LogoCarousel = ({
 
       <div
         aria-hidden="true"
-        className="absolute left-1/2 -translate-x-1/2 max-w-24 md:max-w-32 w-full"
+        className="absolute w-full"
         style={{
           bottom: 0,
           height: 1,
