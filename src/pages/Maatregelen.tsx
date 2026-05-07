@@ -195,16 +195,18 @@ const Maatregelen = () => {
         {/* VIJF MAATREGELEN */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
           <div className="container-content">
-            <h2 className="h2-section" style={{ color: "#152C4E" }}>
+            <h2 className="h2-section text-center" style={{ color: "#152C4E" }}>
               De vijf <span style={{ color: "#E8B547" }}>maatregelen</span> die ertoe doen
             </h2>
             <p
-              style={{ fontFamily: "Inter, sans-serif", marginTop: 24, fontSize: "1rem", fontWeight: 400, color: "#6B6B6B", lineHeight: 1.7, maxWidth: 720 }}
+              className="text-center mx-auto max-w-2xl"
+              style={{ fontFamily: "Inter, sans-serif", marginTop: 24, fontSize: "1rem", fontWeight: 400, color: "#6B6B6B", lineHeight: 1.7 }}
             >
               Niet elke maatregel is voor elke woning even logisch. Hieronder wat er bij elke stap hoort.
             </p>
             <p
-              style={{ fontFamily: "Inter, sans-serif", marginTop: 24, fontSize: "1rem", fontWeight: 400, color: "#6B6B6B", lineHeight: 1.7, maxWidth: 720 }}
+              className="text-center mx-auto max-w-2xl"
+              style={{ fontFamily: "Inter, sans-serif", marginTop: 24, fontSize: "1rem", fontWeight: 400, color: "#6B6B6B", lineHeight: 1.7 }}
             >
               Veel bewoners beginnen bij de meest zichtbare stap: zonnepanelen of een warmtepomp. Toch werkt elke maatregel beter als de stappen daarvoor al gezet zijn. Door de stappen in de juiste volgorde te doen, haal je het meeste uit elke investering.
             </p>
