@@ -27,24 +27,7 @@ const recognitions = [
   },
 ];
 
-const gemeenteCardsData = [
-  {
-    title: "Aanvullende gemeentelijke subsidies",
-    body: "Veel gemeenten hebben aanvullende regelingen bovenop de landelijke subsidies. We kijken welke voor jouw adres relevant zijn.",
-  },
-  {
-    title: "Combinaties met andere regelingen",
-    body: "Sommige regelingen kunnen samen worden gebruikt. We brengen in kaart welke combinaties voor jouw situatie kunnen werken.",
-  },
-  {
-    title: "Onderhoud en verduurzaming koppelen",
-    body: "Klein of groot onderhoud loopt soms slim samen met verduurzaming. We kijken of dat voor jouw woning kansen biedt.",
-  },
-  {
-    title: "Aansluiting bij Nij Begun",
-    body: "Voor adressen in het aardbevingsgebied checken we of een verduurzamingstraject kan aansluiten bij Nij Begun.",
-  },
-];
+
 
 const questionsRow1 = [
   "Kan ik volledig van het gas af?",
