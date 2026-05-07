@@ -956,7 +956,7 @@ const SubsidiesLandelijk = () => {
               className="font-display"
               style={{ color: "#fff", fontWeight: 700, fontSize: "clamp(26px, 3.5vw, 36px)", lineHeight: 1.2 }}
             >
-              Wil je sneller verder met je <Gold>verduurzaming</Gold>?
+              Wil je sneller verder met je verduurzaming?
             </h2>
             <p style={{ marginTop: 16, color: "rgba(255,255,255,0.8)", fontSize: 16, lineHeight: 1.6 }}>
               Neem contact op. Wij rekenen voor jouw woning uit wat je via ISDE kunt krijgen, en hoe je optimaal combineert. Geen verplichtingen, geen verkooppraatje.
