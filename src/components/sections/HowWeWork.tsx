@@ -1,216 +1,120 @@
-import { useEffect, useRef, useState } from "react";
 import { Check, X } from "lucide-react";
 
-const pairs = [
-  {
-    niet: "Geen koude acquisitie",
-    wel: "Jij neemt contact op wanneer het uitkomt",
-  },
-  {
-    niet: "Geen verkooppraatje",
-    wel: "Onafhankelijk advies, geen verkoop van pompen of panelen",
-  },
-  {
-    niet: "Geen anonieme call-center-stem",
-    wel: "Direct contact met een vaste adviseur uit Groningen",
-  },
-  {
-    niet: "Geen overdreven beloften",
-    wel: "Realistisch uitgerekend voor jouw woning",
-  },
+const nietItems = [
+  "Een adviseur die ook toevallig iets te verkopen heeft",
+  "Elke keer een ander aan de telefoon",
+  "Beloften die na de handtekening verdwijnen",
+  'Druk omdat "het aanbod tijdelijk is"',
 ];
 
-const ACCENT = "#D4AF3D";
+const welItems = [
+  "Eén vaste adviseur die jouw dossier kent",
+  "Onafhankelijk advies, wij verdienen niks aan de installatie zelf",
+  "Realistisch beeld van kosten, subsidie en tijdlijn voor jouw woning",
+  "Jij bepaalt het tempo, wij houden het overzicht",
+];
+
+const ACCENT = "#E8B547";
+const RED = "#C0392B";
+const RED_LABEL = "#C0392B";
+const OKER_LABEL = "#A07C1E";
 
 export const HowWeWork = () => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  const [reduced, setReduced] = useState(false);
-
-  useEffect(() => {
-    const r = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setReduced(r);
-    if (r) {
-      setVisible(true);
-      return;
-    }
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            setVisible(true);
-            obs.disconnect();
-          }
-        });
-      },
-      { threshold: 0.2 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
   return (
-    <section className="section-pad" style={{ backgroundColor: "#FFFFFF" }}>
-      <div className="container-content" ref={ref}>
-        <div
-          className="max-w-3xl mx-auto text-center"
-          style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateY(0)" : "translateY(20px)",
-            transition: reduced ? "none" : "opacity 500ms ease-out, transform 500ms ease-out",
-          }}
-        >
+    <section className="section-pad" style={{ backgroundColor: "#F5F2EC" }}>
+      <div className="container-content">
+        <div className="max-w-3xl mx-auto text-center">
           <h2 className="h2-section">
-            Zo werken wij, en zo{" "}
-            <span style={{ color: ACCENT }}>niet</span>
+            Gewoon <span style={{ color: ACCENT }}>eerlijk</span> over hoe wij werken
           </h2>
           <p
-            className="mx-auto mt-6 mb-12 md:mb-16 max-w-2xl"
+            className="mx-auto mt-6 mb-12 md:mb-16"
             style={{
-              fontSize: 18,
-              color: "hsl(var(--primary) / 0.8)",
+              fontSize: 17,
+              color: "#6B6B6B",
               lineHeight: 1.6,
+              maxWidth: 560,
             }}
           >
-            In een sector waar veel partijen onder valse vlaggen werken, zijn we vooraf duidelijk over hoe wij werken. Geen verrassingen, geen verkooppraatje.
+            Veel bewoners die ons bellen, zijn ergens anders vastgelopen. Wij
+            zijn transparant over wat we wel en niet doen, zodat je precies
+            weet waar je aan toe bent.
           </p>
         </div>
 
-        <div className="relative max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2">
-          {/* Vertical divider, desktop only */}
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* NIET BIJ ONS */}
           <div
-            aria-hidden="true"
-            className="hidden md:block absolute top-0 bottom-0 left-1/2"
-            style={{
-              width: 1,
-              backgroundColor: `${ACCENT}33`,
-            }}
-          />
-
-          {/* Left column: NIET */}
-          <div className="px-4 md:px-12">
+            className="rounded-2xl p-8 shadow-sm border border-red-100"
+            style={{ backgroundColor: "#FEF7F7" }}
+          >
             <div
-              className="mb-4"
+              className="mb-6"
               style={{
                 fontSize: 12,
                 letterSpacing: "0.05em",
                 textTransform: "uppercase",
-                color: "#6B7280",
-                fontWeight: 600,
+                color: RED_LABEL,
+                fontWeight: 700,
               }}
             >
               Niet bij ons
             </div>
-            <ul>
-              {pairs.map((p, i) => (
-                <li
-                  key={`n-${i}`}
-                  data-row={i}
-                  className="hww-row hww-left flex items-start gap-2 py-4"
-                  style={{
-                    opacity: visible ? 0.5 : 0,
-                    transform: visible ? "translateX(0)" : "translateX(-30px)",
-                    transition: reduced
-                      ? "none"
-                      : `opacity 400ms ease-out ${i * 100}ms, transform 400ms ease-out ${i * 100}ms, background-color 200ms ease-out`,
-                    color: "hsl(var(--primary))",
-                  }}
-                >
+            <ul className="flex flex-col gap-4">
+              {nietItems.map((t, i) => (
+                <li key={i} className="flex items-start gap-3">
                   <X
                     size={18}
                     className="mt-1 shrink-0"
-                    style={{ color: "#9CA3AF" }}
+                    style={{ color: RED }}
                     aria-hidden="true"
                   />
-                  <span style={{ fontSize: 16, lineHeight: 1.5 }}>{p.niet}</span>
+                  <span style={{ fontSize: 16, lineHeight: 1.5, color: "#2B2B2B", fontWeight: 400 }}>
+                    {t}
+                  </span>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Right column: WEL */}
-          <div className="px-4 md:px-12">
+          {/* WEL BIJ ONS */}
+          <div
+            className="rounded-2xl p-8 shadow-sm md:border-l"
+            style={{
+              backgroundColor: "#FDF9EE",
+              border: "1px solid rgba(232, 181, 71, 0.3)",
+            }}
+          >
             <div
-              className="mb-4"
+              className="mb-6"
               style={{
                 fontSize: 12,
                 letterSpacing: "0.05em",
                 textTransform: "uppercase",
-                color: ACCENT,
-                fontWeight: 600,
+                color: OKER_LABEL,
+                fontWeight: 700,
               }}
             >
               Wel bij ons
             </div>
-            <ul>
-              {pairs.map((p, i) => (
-                <li
-                  key={`w-${i}`}
-                  data-row={i}
-                  className="hww-row hww-right flex items-start gap-2 py-4"
-                  style={{
-                    opacity: visible ? 1 : 0,
-                    transform: visible ? "translateX(0)" : "translateX(30px)",
-                    transition: reduced
-                      ? "none"
-                      : `opacity 400ms ease-out ${i * 100}ms, transform 400ms ease-out ${i * 100}ms, background-color 200ms ease-out`,
-                    color: "hsl(var(--primary))",
-                  }}
-                >
+            <ul className="flex flex-col gap-4">
+              {welItems.map((t, i) => (
+                <li key={i} className="flex items-start gap-3">
                   <Check
                     size={18}
                     className="mt-1 shrink-0"
                     style={{ color: ACCENT }}
                     aria-hidden="true"
                   />
-                  <span style={{ fontSize: 16, lineHeight: 1.5, fontWeight: 500 }}>
-                    {p.wel}
+                  <span style={{ fontSize: 16, lineHeight: 1.5, color: "#2B2B2B", fontWeight: 500 }}>
+                    {t}
                   </span>
                 </li>
               ))}
             </ul>
           </div>
         </div>
-
-        <div className="mt-12 text-center">
-          <p
-            style={{
-              fontSize: 16,
-              color: "hsl(var(--primary) / 0.8)",
-              lineHeight: 1.6,
-            }}
-          >
-            Wil je weten wie er achter Voortraject staat?
-          </p>
-          <a
-            href="/over-ons"
-            className="hww-link inline-flex items-center mt-3 font-sans font-semibold"
-            style={{ fontSize: 15, color: ACCENT }}
-          >
-            <span className="hww-link-text">Lees over ons</span>
-            <span style={{ marginLeft: 6 }} aria-hidden="true">→</span>
-          </a>
-        </div>
       </div>
-
-      <style>{`
-        @media (hover: hover) and (pointer: fine) {
-          .hww-row { border-radius: 8px; margin-left: -8px; margin-right: -8px; padding-left: 8px; padding-right: 8px; }
-        }
-        .hww-link-text {
-          background-image: linear-gradient(currentColor, currentColor);
-          background-size: 0% 1px;
-          background-repeat: no-repeat;
-          background-position: 0 100%;
-          transition: background-size 200ms ease-out;
-        }
-        .hww-link:hover .hww-link-text { background-size: 100% 1px; }
-        @media (prefers-reduced-motion: reduce) {
-          .hww-link-text { transition: none; }
-        }
-      `}</style>
     </section>
   );
 };
