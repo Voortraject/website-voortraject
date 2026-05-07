@@ -1,12 +1,12 @@
 import { Check, Inbox, FileText, Bell, X, PhoneCall, MessageCircle, FolderOpen, AlertCircle } from "lucide-react";
 
 const withoutItems = [
-  "Bewoners blijven bellen en appen met vragen over planning, maatregelen en verwachtingen.",
-  "Isolatieplannen en losse maatregelen moeten steeds opnieuw worden uitgelegd.",
-  "Offertes kosten tijd en blijven liggen tussen de uitvoering door.",
-  "Dossiers raken versnipperd over mails, notities en losse terugbelmomenten.",
-  "Na uitvoering blijven facturen, stukken en openstaande acties hangen.",
-  "Groei betekent vaak meer kantoorwerk en meer kans dat iets blijft liggen.",
+  "Bewoners bellen en appen dezelfde vragen, keer op keer",
+  "Elk nieuw dossier kost uren aan uitleg en terugzoeken",
+  "Offertes liggen te wachten terwijl de bouwplanning doorloopt",
+  "Mails, appjes en notities verspreid over vijf plekken, niets compleet",
+  "Na uitvoering blijven facturen, stukken en openstaande acties hangen",
+  "Groeien betekent meer kantoorwerk erbij, niet minder",
 ];
 
 const withItems = [
