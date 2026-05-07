@@ -92,7 +92,7 @@ export const Subsidies = () => {
             <a
               key={c.naam}
               href={c.href}
-              className="subsidy-card group rounded-2xl p-8 md:p-10 flex flex-col"
+              className="subsidy-card group rounded-2xl p-10 md:p-12 flex flex-col"
               style={{
                 backgroundColor: "#FFFFFF",
                 border: "1px solid rgba(229, 201, 103, 0.5)",
