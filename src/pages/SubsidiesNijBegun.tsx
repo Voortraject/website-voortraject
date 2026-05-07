@@ -33,8 +33,8 @@ const INKOMEN_SAMEN = "€40.088";
 
 // Palette (page-scoped)
 const C = {
-  primary: "#1B2E4A",
-  accent: "#D4AF3D",
+  primary: "#152C4E",
+  accent: "#E8B547",
   accentSoft: "#E5C967",
   bg: "#F8F4ED",
   card: "#FFFFFF",
@@ -992,7 +992,7 @@ const SubsidiesNijBegun = () => {
                 color: "#fff",
               }}
             >
-              Ontdek welke stap voor jou <Gold>logisch</Gold> is.
+              Ontdek welke stap voor jou logisch is.
             </h2>
             <p style={{ fontSize: 17, lineHeight: 1.6, marginTop: 16, color: "rgba(255,255,255,0.8)" }}>
               Neem contact op. Een lokale adviseur komt persoonlijk langs binnen een week. Geen verplichtingen, geen verkooppraatje.

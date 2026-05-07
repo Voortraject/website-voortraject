@@ -631,7 +631,7 @@ const Bewoners = () => {
               >
                 <div
                   className="text-xs uppercase mb-3"
-                  style={{ color: "#A07C1E", fontWeight: 600, letterSpacing: "0.15em" }}
+                  style={{ color: "#E8B547", fontWeight: 600, letterSpacing: "0.15em" }}
                 >
                   Zo werkt stapelen
                 </div>
@@ -666,7 +666,7 @@ const Bewoners = () => {
               >
                 <div
                   className="text-xs uppercase mb-4"
-                  style={{ color: "#A07C1E", fontWeight: 600, letterSpacing: "0.15em" }}
+                  style={{ color: "#E8B547", fontWeight: 600, letterSpacing: "0.15em" }}
                 >
                   Wat wij voor jou uitzoeken
                 </div>

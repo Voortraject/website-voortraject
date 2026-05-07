@@ -30,8 +30,8 @@ import { Footer } from "@/components/Footer";
 
 // Page-scoped palette (identical to Nij Begun page)
 const C = {
-  primary: "#1B2E4A",
-  accent: "#D4AF3D",
+  primary: "#152C4E",
+  accent: "#E8B547",
   accentSoft: "#E5C967",
   bg: "#F8F4ED",
   card: "#FFFFFF",
@@ -453,7 +453,7 @@ const SubsidiesLandelijk = () => {
                   style={{
                     width: 1,
                     height: 56,
-                    backgroundColor: "#1B2E4A",
+                    backgroundColor: "#152C4E",
                     opacity: 0.25,
                   }}
                 />
@@ -956,7 +956,7 @@ const SubsidiesLandelijk = () => {
               className="font-display"
               style={{ color: "#fff", fontWeight: 700, fontSize: "clamp(26px, 3.5vw, 36px)", lineHeight: 1.2 }}
             >
-              Wil je sneller verder met je <Gold>verduurzaming</Gold>?
+              Wil je sneller verder met je verduurzaming?
             </h2>
             <p style={{ marginTop: 16, color: "rgba(255,255,255,0.8)", fontSize: 16, lineHeight: 1.6 }}>
               Neem contact op. Wij rekenen voor jouw woning uit wat je via ISDE kunt krijgen, en hoe je optimaal combineert. Geen verplichtingen, geen verkooppraatje.
