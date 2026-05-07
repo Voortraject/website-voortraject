@@ -116,7 +116,7 @@ export const Subsidies = () => {
                 {c.tag}
               </span>
               <h3
-                className="font-display mt-3 text-[28px] md:text-[32px]"
+                className="font-display mt-5 text-[28px] md:text-[32px]"
                 style={{
                   fontWeight: 700,
                   color: "hsl(var(--primary))",
@@ -127,7 +127,7 @@ export const Subsidies = () => {
                 {c.naam}
               </h3>
               <p
-                className="mt-3"
+                className="mt-5"
                 style={{
                   fontSize: 16,
                   color: "hsl(var(--primary))",
@@ -137,8 +137,23 @@ export const Subsidies = () => {
                 {c.uitleg}
               </p>
 
+              {c.naam === "Landelijke subsidies" && (
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 mt-4 self-start"
+                  style={{
+                    backgroundColor: "#FDF6E3",
+                    color: "#A07C1E",
+                    fontSize: 12,
+                    fontWeight: 500,
+                  }}
+                >
+                  <Tag className="w-3 h-3" aria-hidden="true" />
+                  Voornaamste regeling: ISDE
+                </span>
+              )}
+
               <div
-                className="my-4"
+                className="my-5"
                 style={{
                   width: 48,
                   height: 1,
