@@ -365,7 +365,7 @@ const Maatregelen = () => {
                 maxWidth: 720,
               }}
             >
-              Wil je weten wat voor jouw woning logisch is?
+              Niet zeker welke maatregel als eerste logisch is voor jouw woning?
             </h2>
             <p
               style={{
@@ -377,7 +377,7 @@ const Maatregelen = () => {
                 maxWidth: 560,
               }}
             >
-              We kijken samen naar je situatie en leggen uit wat past bij je woning.
+              Wij kijken samen naar je situatie en geven je een eerlijk advies over wat nu slim is, wat je kunt uitstellen en wat het oplevert. Gratis en zonder verplichtingen.
             </p>
             <a
               href="/contact"
