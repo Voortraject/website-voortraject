@@ -18,11 +18,11 @@ const defaultLogos: Logo[] = [
 const BG = "#F5F2EC";
 
 export const LogoCarousel = ({
-  title = "De subsidies en instanties waarmee wij werken.",
+  title = "De subsidies en instanties waarmee wij werken",
   logos = defaultLogos,
 }: LogoCarouselProps) => {
   const loop = [...logos, ...logos, ...logos, ...logos];
-  const titleRef = useRef<HTMLParagraphElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -53,15 +53,6 @@ export const LogoCarousel = ({
       className="py-10 md:py-12 relative"
       style={{ backgroundColor: BG }}
     >
-      <div
-        aria-hidden="true"
-        className="absolute left-1/2 -translate-x-1/2 max-w-24 md:max-w-32 w-full"
-        style={{
-          top: 0,
-          height: 1,
-          backgroundColor: "rgba(212, 175, 61, 0.3)",
-        }}
-      />
       <style>{`
         @keyframes logoScroll {
           0% { transform: translateX(0); }
@@ -90,22 +81,18 @@ export const LogoCarousel = ({
       `}</style>
 
       <div className="container-content">
-        <p
+        <h2
           ref={titleRef}
-          className="text-center mb-6"
+          className="h2-section text-center mb-12 md:mb-16"
           style={{
-            fontSize: 12,
-            fontWeight: 600,
-            letterSpacing: "0.05em",
-            textTransform: "uppercase",
-            color: "#6B7280",
             opacity: visible ? 1 : 0,
             transform: visible ? "translateY(0)" : "translateY(20px)",
             transition: "opacity 500ms ease-out, transform 500ms ease-out",
           }}
         >
-          {title}
-        </p>
+          De subsidies en instanties waarmee wij{" "}
+          <span style={{ color: "hsl(var(--accent))" }}>werken</span>
+        </h2>
       </div>
 
       <div className="logo-marquee-mask relative overflow-hidden">
@@ -132,6 +119,16 @@ export const LogoCarousel = ({
           ))}
         </div>
       </div>
+
+      <div
+        aria-hidden="true"
+        className="absolute left-1/2 -translate-x-1/2 max-w-24 md:max-w-32 w-full"
+        style={{
+          bottom: 0,
+          height: 1,
+          backgroundColor: "rgba(212, 175, 61, 0.3)",
+        }}
+      />
     </section>
   );
 };
