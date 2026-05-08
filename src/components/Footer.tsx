@@ -61,10 +61,16 @@ export const Footer = () => (
         ))}
       </div>
 
-      <div className="mt-16 pt-8 border-t border-white/10">
+      <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
         <p className="text-xs text-white/60">
           © 2026 Voortraject. Alle rechten voorbehouden.
         </p>
+        <a
+          href="javascript:openAxeptioCookies()"
+          className="text-sm text-white/80 hover:text-accent transition-colors"
+        >
+          Cookievoorkeuren
+        </a>
       </div>
     </div>
   </footer>
