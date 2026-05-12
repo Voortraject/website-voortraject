@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, Inbox, FileText, Bell, X, PhoneCall, MessageCircle, FolderOpen, AlertCircle, ChevronDown } from "lucide-react";
+import { Check, Inbox, FileText, Bell, X, PhoneCall, MessageCircle, FileCheck, ShieldCheck, FolderOpen, AlertCircle, ChevronDown } from "lucide-react";
 
 const withoutItems = [
   "Bewoners bellen en appen dezelfde vragen, keer op keer",
@@ -22,6 +22,7 @@ import { Header } from "@/components/Header";
 import { Why } from "@/components/sections/Why";
 import { Footer } from "@/components/Footer";
 import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
+import type { LucideIcon } from "lucide-react";
 
 type Bullet = { label: string; text: string };
 type Package = {
@@ -35,6 +36,7 @@ type Package = {
   outcome: string;
   cta: string;
   featured?: boolean;
+  icon: LucideIcon;
 };
 
 const packages: Package[] = [
@@ -55,11 +57,12 @@ const packages: Package[] = [
     ],
     outcome: "Geen lead die afkoelt. Geen bewoner die wegloopt. Geen omzet die je niet eens gezien hebt.",
     cta: "Bespreek dit pakket",
+    icon: MessageCircle,
   },
   {
     number: "02",
     title: "Dossierafhandeling",
-    hook: "Hoeveel dossiers blijven nu hangen op een handtekening of een verkeerd ingevuld formulier?",
+    hook: "Hoeveel dossiers blijven hangen op ontbrekende stukken of fouten?",
     time: "Bespaart minimaal 6 uur per dossier",
     timeReason: "Foutmarge omlaag. Dossiers die in één keer door de check komen.",
     bullets: [
@@ -73,6 +76,7 @@ const packages: Package[] = [
     ],
     outcome: "Sneller naar uitvoering. Minder dossiers die afketsen. Geen avonden meer kwijt aan papierwerk.",
     cta: "Bespreek dit pakket",
+    icon: FileCheck,
   },
   {
     number: "03",
@@ -93,6 +97,7 @@ const packages: Package[] = [
     outcome: "Meer omzet uit dezelfde klant, een sterkere reputatie en geen kantoordrukte meer.",
     cta: "Bespreek dit pakket",
     featured: true,
+    icon: ShieldCheck,
   },
 ];
 
