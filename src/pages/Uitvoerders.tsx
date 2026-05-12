@@ -57,7 +57,7 @@ const packages: Package[] = [
     number: "02",
     title: "Dossierafhandeling",
     hook: "Hoeveel dossiers blijven nu hangen op een handtekening of een verkeerd ingevuld formulier?",
-    time: "Bespaart 6 uur per dossier",
+    time: "MINIMAAL 6 UUR PER DOSSIER BESPAARD",
     bullets: [
       "Uitvoerbaar dossier zonder formulier-gedoe",
       "Subsidieaanvraag in één keer door de check",
