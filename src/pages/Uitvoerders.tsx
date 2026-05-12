@@ -109,6 +109,306 @@ const whyCards = [
   },
 ];
 
+const PackageCard = ({ p, index }: { p: Package; index: number }) => {
+  const [open, setOpen] = useState(false);
+  const featured = !!p.featured;
+
+  const cardBg = featured ? "rgba(232, 181, 71, 0.12)" : "#FFFFFF";
+  const cardBorder = featured ? "1px solid rgba(232, 181, 71, 0.45)" : "1px solid #E5E2DB";
+  const badgeBg = featured ? "rgba(232, 181, 71, 0.25)" : "#FDF6E3";
+  const outcomeBg = featured ? "rgba(255,255,255,0.5)" : "#F5F2EC";
+  const ctaBg = featured ? "#E8B547" : "#FFFFFF";
+  const ctaColor = featured ? "#2B2B2B" : "#152C4E";
+  const ctaBorder = featured ? "none" : "1px solid #E5E2DB";
+  const ctaHoverBg = featured ? "#D9A538" : "#152C4E";
+  const ctaHoverColor = featured ? "#2B2B2B" : "#FFFFFF";
+
+  const delays = [0.05, 0.12, 0.19];
+
+  return (
+    <div
+      className="flex flex-col animate-fade-up opacity-0"
+      style={{
+        animationDelay: `${delays[index] ?? 0.05}s`,
+        animationFillMode: "forwards",
+        animationDuration: "0.5s",
+      }}
+    >
+      {/* Pakketnummer boven de kaart */}
+      <div className="text-center" style={{ marginBottom: "1rem" }}>
+        <div
+          style={{
+            fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
+            fontSize: 11,
+            textTransform: "uppercase",
+            letterSpacing: "0.12em",
+            color: "#8B8680",
+          }}
+        >
+          PAKKET
+        </div>
+        <div
+          className="font-display"
+          style={{
+            fontFamily: "'Inter Tight', 'Inter', sans-serif",
+            fontSize: "2.25rem",
+            fontWeight: 500,
+            letterSpacing: "-0.02em",
+            color: "#152C4E",
+            lineHeight: 1.1,
+          }}
+        >
+          {p.number}
+        </div>
+      </div>
+
+      <article
+        className="flex flex-col flex-1"
+        style={{
+          backgroundColor: cardBg,
+          border: cardBorder,
+          borderRadius: 16,
+          padding: "2rem 1.75rem",
+          transition: "transform 0.2s ease, box-shadow 0.2s ease",
+          boxShadow: "0 1px 2px rgba(21,44,78,0.04)",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "translateY(-2px)";
+          e.currentTarget.style.boxShadow = "0 12px 32px rgba(21,44,78,0.10)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = "0 1px 2px rgba(21,44,78,0.04)";
+        }}
+      >
+        {/* Bovenbalk: badge rechts */}
+        <div className="flex items-center justify-between">
+          <span />
+          <span
+            className="inline-flex items-center"
+            style={{
+              gap: 6,
+              backgroundColor: badgeBg,
+              color: "#152C4E",
+              padding: "0.4rem 0.75rem",
+              borderRadius: 999,
+              fontFamily: "'Inter Tight', 'Inter', sans-serif",
+              fontSize: "0.75rem",
+              fontWeight: 600,
+            }}
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 2" />
+            </svg>
+            {p.time}
+          </span>
+        </div>
+
+        {/* Titel */}
+        <h3
+          className="font-display"
+          style={{
+            marginTop: "1.5rem",
+            fontFamily: "'Inter Tight', 'Inter', sans-serif",
+            fontSize: "1.75rem",
+            fontWeight: 600,
+            letterSpacing: "-0.02em",
+            lineHeight: 1.1,
+            color: "#152C4E",
+          }}
+        >
+          {p.title}
+        </h3>
+
+        {/* Hookzin */}
+        <p
+          style={{
+            marginTop: "1rem",
+            marginBottom: "1.5rem",
+            fontSize: "1rem",
+            lineHeight: 1.5,
+            color: "#6B6B6B",
+          }}
+        >
+          {p.hook}
+        </p>
+
+        {/* Kernpunten */}
+        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+          {p.bullets.map((b) => (
+            <li
+              key={b}
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 12,
+                margin: "0.625rem 0",
+                fontSize: "0.9375rem",
+                lineHeight: 1.5,
+                color: "#2B2B2B",
+              }}
+            >
+              <span
+                aria-hidden="true"
+                style={{
+                  display: "inline-block",
+                  width: 6,
+                  height: 1.5,
+                  backgroundColor: "#E8B547",
+                  flexShrink: 0,
+                  marginTop: "0.7em",
+                }}
+              />
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+
+        {/* Uitklap */}
+        <div style={{ marginTop: "1.25rem", borderTop: "1px solid #E5E2DB" }}>
+          <button
+            type="button"
+            onClick={() => setOpen(!open)}
+            aria-expanded={open}
+            className="w-full flex items-center justify-between"
+            style={{
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              padding: "0.75rem 0",
+              fontFamily: "'Inter Tight', 'Inter', sans-serif",
+              fontSize: "0.875rem",
+              fontWeight: 500,
+              color: "#152C4E",
+            }}
+          >
+            <span>Meer over dit pakket</span>
+            <ChevronDown
+              size={16}
+              style={{
+                transition: "transform 0.3s ease",
+                transform: open ? "rotate(-90deg)" : "rotate(0deg)",
+              }}
+              aria-hidden="true"
+            />
+          </button>
+          <div
+            style={{
+              maxHeight: open ? 600 : 0,
+              overflow: "hidden",
+              transition: "max-height 0.3s ease",
+            }}
+          >
+            <div style={{ paddingBottom: "1rem" }}>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                {p.extraBullets.map((b) => (
+                  <li
+                    key={b}
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 12,
+                      margin: "0.625rem 0",
+                      fontSize: "0.9375rem",
+                      lineHeight: 1.5,
+                      color: "#2B2B2B",
+                    }}
+                  >
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        display: "inline-block",
+                        width: 6,
+                        height: 1.5,
+                        backgroundColor: "#E8B547",
+                        flexShrink: 0,
+                        marginTop: "0.7em",
+                      }}
+                    />
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+              <div
+                style={{
+                  marginTop: "1rem",
+                  padding: "1rem 1.125rem",
+                  backgroundColor: outcomeBg,
+                  borderRadius: 10,
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: "'Inter Tight', 'Inter', sans-serif",
+                    fontSize: 11,
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.1em",
+                    color: "#8B8680",
+                    marginBottom: 6,
+                  }}
+                >
+                  Wat het oplevert
+                </div>
+                <p style={{ fontSize: "0.875rem", lineHeight: 1.5, color: "#2B2B2B", margin: 0 }}>
+                  {p.outcome}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div style={{ marginTop: "auto", paddingTop: "1.25rem" }}>
+          <a
+            href="/contact"
+            className="group inline-flex items-center justify-between w-full"
+            style={{
+              padding: "0.85rem 1.25rem",
+              borderRadius: 8,
+              fontFamily: "'Inter Tight', 'Inter', sans-serif",
+              fontSize: "0.9rem",
+              fontWeight: 600,
+              backgroundColor: ctaBg,
+              color: ctaColor,
+              border: ctaBorder,
+              transition: "background-color 0.2s ease, color 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = ctaHoverBg;
+              e.currentTarget.style.color = ctaHoverColor;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = ctaBg;
+              e.currentTarget.style.color = ctaColor;
+            }}
+          >
+            <span>{p.cta}</span>
+            <span
+              aria-hidden="true"
+              style={{ display: "inline-block", transition: "transform 0.2s ease" }}
+              className="group-hover:translate-x-[3px]"
+            >
+              →
+            </span>
+          </a>
+        </div>
+      </article>
+    </div>
+  );
+};
+
 const ctaButton =
   "inline-flex items-center justify-center font-sans font-semibold text-[15px] transition-colors";
 
