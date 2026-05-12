@@ -234,20 +234,28 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
 
         {/* Vaste content boven uitklap */}
         <div className="flex flex-col">
-          {/* Titel */}
-          <h3
-            style={{
-              fontFamily: display,
-              fontSize: "1.875rem",
-              fontWeight: 600,
-              letterSpacing: "-0.02em",
-              lineHeight: 1.05,
-              color: "#152C4E",
-              margin: 0,
-            }}
-          >
-            {p.title}
-          </h3>
+          {/* Titel met icoon */}
+          <div className="flex items-center" style={{ gap: "0.75rem" }}>
+            <p.icon
+              size={26}
+              strokeWidth={1.75}
+              style={{ color: featured ? "#D9A538" : "#152C4E", flexShrink: 0 }}
+              aria-hidden="true"
+            />
+            <h3
+              style={{
+                fontFamily: display,
+                fontSize: "1.875rem",
+                fontWeight: 600,
+                letterSpacing: "-0.02em",
+                lineHeight: 1.05,
+                color: "#152C4E",
+                margin: 0,
+              }}
+            >
+              {p.title}
+            </h3>
+          </div>
 
           {/* Doorlopende lijn onder titel */}
           <span
