@@ -153,7 +153,7 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
         animationDelay: `${delays[index] ?? 0.05}s`,
         animationFillMode: "forwards",
         animationDuration: "0.5s",
-        marginTop: featured ? "1rem" : 0,
+        marginTop: 0,
       }}
     >
       {/* Pakketnummer boven de kaart */}
