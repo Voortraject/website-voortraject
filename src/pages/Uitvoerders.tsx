@@ -42,7 +42,8 @@ const packages: Package[] = [
     number: "01",
     title: "Bewonersstart",
     hook: "Elke aanvraag die afkoelt is omzet die je niet eens gezien hebt.",
-    time: "BESPAART MINIMAAL 3 UUR PER DOSSIER",
+    time: "Bespaart minimaal 3 uur per dossier",
+    timeReason: "Snelheid omhoog. Geen leads die nog wegglippen.",
     bullets: [
       { label: "SNELHEID", text: "Aanvragen binnen 24 uur opgepakt" },
       { label: "DUIDELIJKHEID", text: "Bewoner meteen geïnformeerd" },
@@ -59,7 +60,8 @@ const packages: Package[] = [
     number: "02",
     title: "Dossierafhandeling",
     hook: "Hoeveel dossiers blijven nu hangen op een handtekening of een verkeerd ingevuld formulier?",
-    time: "BESPAART MINIMAAL 6 UUR PER DOSSIER",
+    time: "Bespaart minimaal 6 uur per dossier",
+    timeReason: "Foutmarge omlaag. Dossiers die in één keer door de check komen.",
     bullets: [
       { label: "GEMAK", text: "Uitvoerbaar dossier zonder formulier-gedoe" },
       { label: "ZEKERHEID", text: "Subsidieaanvraag in één keer door de check" },
@@ -76,7 +78,8 @@ const packages: Package[] = [
     number: "03",
     title: "Totaal Ontzorging",
     hook: "Het voortraject loopt zonder dat je erbij hoeft.",
-    time: "BESPAART MINIMAAL 10 UUR PER DOSSIER",
+    time: "Bespaart minimaal 10 uur per dossier",
+    timeReason: "Snelheid omhoog, foutmarge omlaag. Over het hele voortraject.",
     bullets: [
       { label: "VOLLEDIG", text: "Volledig voortraject uit handen" },
       { label: "REGIE", text: "Eén regisseur, één aanspreekpunt" },
