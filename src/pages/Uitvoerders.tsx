@@ -290,7 +290,7 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
                 fontFamily: display,
                 fontSize: "0.9375rem",
                 fontWeight: 600,
-                color: featured ? "#D9A538" : "#152C4E",
+                color: "#152C4E",
               }}
             >
               Wat het oplevert:
