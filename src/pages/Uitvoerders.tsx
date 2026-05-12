@@ -23,12 +23,13 @@ import { Why } from "@/components/sections/Why";
 import { Footer } from "@/components/Footer";
 import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
 
+type Bullet = { label: string; text: string };
 type Package = {
   number: string;
   title: string;
   hook: string;
   time: string;
-  bullets: string[];
+  bullets: Bullet[];
   extraBullets: string[];
   outcome: string;
   cta: string;
@@ -40,11 +41,11 @@ const packages: Package[] = [
     number: "01",
     title: "Bewonersstart",
     hook: "Elke aanvraag die afkoelt is omzet die je niet eens gezien hebt.",
-    time: "MINIMAAL 3 UUR PER DOSSIER BESPAARD",
+    time: "BESPAART MINIMAAL 3 UUR PER DOSSIER",
     bullets: [
-      "Aanvragen binnen 24 uur opgepakt",
-      "Bewoner meteen geïnformeerd",
-      "Alleen warme leads op jullie tafel",
+      { label: "SNELHEID", text: "Aanvragen binnen 24 uur opgepakt" },
+      { label: "DUIDELIJKHEID", text: "Bewoner meteen geïnformeerd" },
+      { label: "KWALITEIT", text: "Alleen warme leads op jullie tafel" },
     ],
     extraBullets: [
       "Het juiste spoor staat vast voor de eerste afspraak",
@@ -57,11 +58,11 @@ const packages: Package[] = [
     number: "02",
     title: "Dossierafhandeling",
     hook: "Hoeveel dossiers blijven nu hangen op een handtekening of een verkeerd ingevuld formulier?",
-    time: "MINIMAAL 6 UUR PER DOSSIER BESPAARD",
+    time: "BESPAART MINIMAAL 6 UUR PER DOSSIER",
     bullets: [
-      "Uitvoerbaar dossier zonder formulier-gedoe",
-      "Subsidieaanvraag in één keer door de check",
-      "Geen bewonervragen meer aan jullie kantoor",
+      { label: "GEMAK", text: "Uitvoerbaar dossier zonder formulier-gedoe" },
+      { label: "ZEKERHEID", text: "Subsidieaanvraag in één keer door de check" },
+      { label: "RUST", text: "Geen bewonervragen meer aan jullie kantoor" },
     ],
     extraBullets: [
       "Schouw die klopt met wat in de uitvoering moet gebeuren",
@@ -74,15 +75,15 @@ const packages: Package[] = [
     number: "03",
     title: "Totaal Ontzorging",
     hook: "Het voortraject loopt zonder dat je erbij hoeft.",
-    time: "MINIMAAL 10 UUR PER DOSSIER BESPAARD",
+    time: "BESPAART MINIMAAL 10 UUR PER DOSSIER",
     bullets: [
-      "Volledig voortraject uit handen",
-      "Eén regisseur, één aanspreekpunt",
-      "Vervolgwerk uit dezelfde klant",
+      { label: "VOLLEDIG", text: "Volledig voortraject uit handen" },
+      { label: "REGIE", text: "Eén regisseur, één aanspreekpunt" },
+      { label: "GROEI", text: "Vervolgwerk uit dezelfde klant" },
+      { label: "CONTINUÏTEIT", text: "Begeleiding ook na uitvoering, tot en met review" },
     ],
     extraBullets: [
       "Alles uit Bewonersstart en Dossierafhandeling",
-      "Begeleiding ook na uitvoering, tot en met review",
       "Eén aanspreekpunt voor jullie én voor de bewoner",
     ],
     outcome: "Meer omzet uit dezelfde klant, een sterkere reputatie en geen kantoordrukte meer.",
