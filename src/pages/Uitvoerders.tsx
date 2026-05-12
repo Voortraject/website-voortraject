@@ -382,6 +382,33 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
                   </li>
                 ))}
               </ul>
+              {/* Tijdsbesparing blok */}
+              <div style={{ margin: "1.5rem 0" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <Check size={18} style={{ color: "#E8B547", flexShrink: 0 }} aria-hidden="true" />
+                  <span
+                    style={{
+                      fontFamily: display,
+                      fontSize: "0.9375rem",
+                      fontWeight: 600,
+                      color: "#152C4E",
+                    }}
+                  >
+                    {p.time}
+                  </span>
+                </div>
+                <p
+                  style={{
+                    fontSize: "0.8125rem",
+                    color: "#6B6B6B",
+                    margin: "0.4rem 0 0 28px",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {p.timeReason}
+                </p>
+              </div>
+
               <div
                 style={{
                   marginTop: "1rem",
@@ -401,7 +428,7 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
                     marginBottom: 6,
                   }}
                 >
-                  WAT HET OPLEVERT
+                  KORT SAMENGEVAT
                 </div>
                 <p style={{ fontSize: "0.875rem", lineHeight: 1.5, color: "#2B2B2B", margin: 0 }}>
                   {p.outcome}
