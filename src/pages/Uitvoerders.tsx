@@ -40,7 +40,7 @@ const packages: Package[] = [
     number: "01",
     title: "Bewonersstart",
     hook: "Elke aanvraag die afkoelt is omzet die je niet eens gezien hebt.",
-    time: "Bespaart 3 uur per dossier",
+    time: "MINIMAAL 3 UUR PER DOSSIER BESPAARD",
     bullets: [
       "Aanvragen binnen 24 uur opgepakt",
       "Bewoner meteen geïnformeerd",
