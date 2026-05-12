@@ -26,9 +26,10 @@ import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
 type Package = {
   number: string;
   title: string;
-  subtitle: string;
+  hook: string;
   time: string;
   bullets: string[];
+  extraBullets: string[];
   outcome: string;
   cta: string;
   featured?: boolean;
@@ -38,12 +39,16 @@ const packages: Package[] = [
   {
     number: "01",
     title: "Bewonersstart",
-    subtitle: "Elke aanvraag die afkoelt is omzet die je niet eens gezien hebt. Bewoners bellen de concurrent als ze drie dagen niets horen.",
-    time: "Vanaf 3 uur per dossier",
+    hook: "Elke aanvraag die afkoelt is omzet die je niet eens gezien hebt.",
+    time: "Bespaart 3 uur per dossier",
     bullets: [
       "Aanvragen binnen 24 uur opgepakt",
-      "Bewoner weet meteen waar hij aan toe is",
-      "Alleen warme, geïnformeerde leads komen op jullie tafel",
+      "Bewoner meteen geïnformeerd",
+      "Alleen warme leads op jullie tafel",
+    ],
+    extraBullets: [
+      "Het juiste spoor staat vast voor de eerste afspraak",
+      "Bewoner warm gehouden tot vervolgstap",
     ],
     outcome: "Geen lead die afkoelt. Geen bewoner die wegloopt. Geen omzet die je niet eens gezien hebt.",
     cta: "Bespreek dit pakket",
@@ -51,13 +56,16 @@ const packages: Package[] = [
   {
     number: "02",
     title: "Dossierafhandeling",
-    subtitle: "Hoeveel dossiers blijven nu hangen op een handtekening, een meterstand of een verkeerd ingevuld formulier? Hoeveel weken kost het echt van interesse tot uitvoering?",
-    time: "Vanaf 6 uur per dossier",
+    hook: "Hoeveel dossiers blijven nu hangen op een handtekening of een verkeerd ingevuld formulier?",
+    time: "Bespaart 6 uur per dossier",
     bullets: [
-      "Een uitvoerbaar dossier op tafel zonder dat je ook maar één formulier hebt aangeraakt",
+      "Uitvoerbaar dossier zonder formulier-gedoe",
+      "Subsidieaanvraag in één keer door de check",
+      "Geen bewonervragen meer aan jullie kantoor",
+    ],
+    extraBullets: [
       "Schouw die klopt met wat in de uitvoering moet gebeuren",
-      "Subsidieaanvragen die in één keer door de check komen",
-      "Geen enkele bewoner die nog jullie kantoor belt met een vraag",
+      "Bewoner geïnformeerd over benodigde stukken en levert ze zelf aan",
     ],
     outcome: "Sneller naar uitvoering. Minder dossiers die afketsen. Geen avonden meer kwijt aan papierwerk.",
     cta: "Bespreek dit pakket",
@@ -65,16 +73,20 @@ const packages: Package[] = [
   {
     number: "03",
     title: "Totaal Ontzorging",
-    subtitle: "Het voortraject loopt zonder dat je erbij hoeft. Jullie bouwen, de bewoner is tevreden, het geld komt binnen, het volgende dossier staat al klaar.",
-    time: "Vanaf 10 uur per dossier",
+    hook: "Het voortraject loopt zonder dat je erbij hoeft.",
+    time: "Bespaart 10 uur per dossier",
     bullets: [
-      "Alles uit Bewonersstart",
-      "Alles uit Dossierafhandeling",
+      "Volledig voortraject uit handen",
+      "Eén regisseur, één aanspreekpunt",
       "Vervolgwerk uit dezelfde klant",
-      "Eén aanspreekpunt voor jullie én voor de bewoner, ook na uitvoering",
+    ],
+    extraBullets: [
+      "Alles uit Bewonersstart en Dossierafhandeling",
+      "Begeleiding ook na uitvoering, tot en met review",
+      "Eén aanspreekpunt voor jullie én voor de bewoner",
     ],
     outcome: "Meer omzet uit dezelfde klant, een sterkere reputatie en geen kantoordrukte meer.",
-    cta: "Plan een kennismaking",
+    cta: "Bespreek dit pakket",
     featured: true,
   },
 ];
