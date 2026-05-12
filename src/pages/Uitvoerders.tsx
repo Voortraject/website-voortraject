@@ -111,19 +111,41 @@ const whyCards = [
 
 const PackageCard = ({ p, index }: { p: Package; index: number }) => {
   const [open, setOpen] = useState(false);
+  const [hover, setHover] = useState(false);
   const featured = !!p.featured;
+  const delays = [0.05, 0.12, 0.19];
 
-  const cardBg = featured ? "rgba(232, 181, 71, 0.12)" : "#FFFFFF";
-  const cardBorder = featured ? "1px solid rgba(232, 181, 71, 0.45)" : "1px solid #E5E2DB";
-  const badgeBg = featured ? "rgba(232, 181, 71, 0.25)" : "#FDF6E3";
+  const cardBg = featured ? "rgba(232, 181, 71, 0.18)" : "#FFFFFF";
+  const cardBorder = featured ? "1.5px solid #E8B547" : "1px solid #E5E2DB";
+  const baseShadow = featured
+    ? "0 16px 48px rgba(232, 181, 71, 0.25)"
+    : "0 1px 2px rgba(21,44,78,0.04)";
+  const hoverShadow = featured
+    ? "0 22px 56px rgba(232, 181, 71, 0.32)"
+    : "0 12px 32px rgba(21,44,78,0.10)";
+
+  // Featured lifts on desktop only
+  const baseTransform =
+    featured && typeof window !== "undefined" && window.matchMedia("(min-width: 981px)").matches
+      ? "translateY(-12px)"
+      : "translateY(0)";
+  const hoverTransform = featured
+    ? typeof window !== "undefined" && window.matchMedia("(min-width: 981px)").matches
+      ? "translateY(-16px)"
+      : "translateY(-2px)"
+    : "translateY(-2px)";
+
   const outcomeBg = featured ? "rgba(255,255,255,0.5)" : "#F5F2EC";
+  const timeColor = featured ? "#152C4E" : "#8B8680";
+
   const ctaBg = featured ? "#E8B547" : "#FFFFFF";
   const ctaColor = featured ? "#2B2B2B" : "#152C4E";
-  const ctaBorder = featured ? "none" : "1px solid #E5E2DB";
+  const ctaBorder = featured ? "1px solid #E8B547" : "1px solid #E5E2DB";
   const ctaHoverBg = featured ? "#D9A538" : "#152C4E";
   const ctaHoverColor = featured ? "#2B2B2B" : "#FFFFFF";
 
-  const delays = [0.05, 0.12, 0.19];
+  const mono = "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
+  const display = "'Inter Tight', 'Inter', sans-serif";
 
   return (
     <div
@@ -138,7 +160,7 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
       <div className="text-center" style={{ marginBottom: "1rem" }}>
         <div
           style={{
-            fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
+            fontFamily: mono,
             fontSize: 11,
             textTransform: "uppercase",
             letterSpacing: "0.12em",
@@ -148,9 +170,8 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
           PAKKET
         </div>
         <div
-          className="font-display"
           style={{
-            fontFamily: "'Inter Tight', 'Inter', sans-serif",
+            fontFamily: display,
             fontSize: "2.25rem",
             fontWeight: 500,
             letterSpacing: "-0.02em",
@@ -168,115 +189,122 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
           backgroundColor: cardBg,
           border: cardBorder,
           borderRadius: 16,
-          padding: "2rem 1.75rem",
+          padding: "2.25rem 1.875rem",
           transition: "transform 0.2s ease, box-shadow 0.2s ease",
-          boxShadow: "0 1px 2px rgba(21,44,78,0.04)",
+          boxShadow: hover ? hoverShadow : baseShadow,
+          transform: hover ? hoverTransform : baseTransform,
         }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = "translateY(-2px)";
-          e.currentTarget.style.boxShadow = "0 12px 32px rgba(21,44,78,0.10)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "translateY(0)";
-          e.currentTarget.style.boxShadow = "0 1px 2px rgba(21,44,78,0.04)";
-        }}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
       >
-        {/* Bovenbalk: badge rechts */}
-        <div className="flex items-center justify-between">
-          <span />
-          <span
-            className="inline-flex items-center"
+        {featured && (
+          <div
             style={{
-              gap: 6,
-              backgroundColor: badgeBg,
-              color: "#152C4E",
-              padding: "0.4rem 0.75rem",
-              borderRadius: 999,
-              fontFamily: "'Inter Tight', 'Inter', sans-serif",
-              fontSize: "0.75rem",
-              fontWeight: 600,
+              fontFamily: mono,
+              fontSize: 11,
+              fontWeight: 500,
+              textTransform: "uppercase",
+              letterSpacing: "0.15em",
+              color: "#D9A538",
+              marginBottom: "1.25rem",
             }}
           >
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <circle cx="12" cy="12" r="9" />
-              <path d="M12 7v5l3 2" />
-            </svg>
+            COMPLETE TRAJECT
+          </div>
+        )}
+
+        {/* Vaste content boven uitklap, gelijke hoogte */}
+        <div className="flex flex-col" style={{ minHeight: 360 }}>
+          {/* Titel */}
+          <h3
+            style={{
+              fontFamily: display,
+              fontSize: "1.875rem",
+              fontWeight: 600,
+              letterSpacing: "-0.02em",
+              lineHeight: 1.05,
+              color: "#152C4E",
+              margin: 0,
+            }}
+          >
+            {p.title}
+          </h3>
+
+          {/* Accent streep */}
+          <span
+            aria-hidden="true"
+            style={{
+              display: "block",
+              width: 48,
+              height: 2,
+              backgroundColor: "#E8B547",
+              marginTop: "0.75rem",
+              marginBottom: "1rem",
+            }}
+          />
+
+          {/* Tijdsbesparing label */}
+          <div
+            style={{
+              fontFamily: mono,
+              fontSize: 11,
+              fontWeight: 500,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              color: timeColor,
+              marginBottom: "1.5rem",
+            }}
+          >
             {p.time}
-          </span>
+          </div>
+
+          {/* Hookzin */}
+          <p
+            style={{
+              fontSize: "1rem",
+              lineHeight: 1.5,
+              color: "#6B6B6B",
+              marginBottom: "1.75rem",
+              margin: 0,
+            }}
+          >
+            {p.hook}
+          </p>
+
+          {/* Kernpunten */}
+          <ul style={{ listStyle: "none", padding: 0, margin: "1.75rem 0 0 0" }}>
+            {p.bullets.map((b) => (
+              <li
+                key={b}
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 12,
+                  margin: "0.625rem 0",
+                  fontSize: "0.9375rem",
+                  lineHeight: 1.5,
+                  color: "#2B2B2B",
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  style={{
+                    display: "inline-block",
+                    width: 6,
+                    height: 1.5,
+                    backgroundColor: "#E8B547",
+                    flexShrink: 0,
+                    marginTop: "0.7em",
+                  }}
+                />
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* Titel */}
-        <h3
-          className="font-display"
-          style={{
-            marginTop: "1.5rem",
-            fontFamily: "'Inter Tight', 'Inter', sans-serif",
-            fontSize: "1.75rem",
-            fontWeight: 600,
-            letterSpacing: "-0.02em",
-            lineHeight: 1.1,
-            color: "#152C4E",
-          }}
-        >
-          {p.title}
-        </h3>
-
-        {/* Hookzin */}
-        <p
-          style={{
-            marginTop: "1rem",
-            marginBottom: "1.5rem",
-            fontSize: "1rem",
-            lineHeight: 1.5,
-            color: "#6B6B6B",
-          }}
-        >
-          {p.hook}
-        </p>
-
-        {/* Kernpunten */}
-        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-          {p.bullets.map((b) => (
-            <li
-              key={b}
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: 12,
-                margin: "0.625rem 0",
-                fontSize: "0.9375rem",
-                lineHeight: 1.5,
-                color: "#2B2B2B",
-              }}
-            >
-              <span
-                aria-hidden="true"
-                style={{
-                  display: "inline-block",
-                  width: 6,
-                  height: 1.5,
-                  backgroundColor: "#E8B547",
-                  flexShrink: 0,
-                  marginTop: "0.7em",
-                }}
-              />
-              <span>{b}</span>
-            </li>
-          ))}
-        </ul>
-
-        {/* Uitklap */}
-        <div style={{ marginTop: "1.25rem", borderTop: "1px solid #E5E2DB" }}>
+        {/* Uitklap toggle */}
+        <div style={{ marginTop: "1rem", borderTop: "1px solid #E5E2DB" }}>
           <button
             type="button"
             onClick={() => setOpen(!open)}
@@ -286,8 +314,8 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
               background: "transparent",
               border: "none",
               cursor: "pointer",
-              padding: "0.75rem 0",
-              fontFamily: "'Inter Tight', 'Inter', sans-serif",
+              padding: "0.875rem 0",
+              fontFamily: display,
               fontSize: "0.875rem",
               fontWeight: 500,
               color: "#152C4E",
@@ -298,14 +326,14 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
               size={16}
               style={{
                 transition: "transform 0.3s ease",
-                transform: open ? "rotate(-90deg)" : "rotate(0deg)",
+                transform: open ? "rotate(90deg)" : "rotate(0deg)",
               }}
               aria-hidden="true"
             />
           </button>
           <div
             style={{
-              maxHeight: open ? 600 : 0,
+              maxHeight: open ? 800 : 0,
               overflow: "hidden",
               transition: "max-height 0.3s ease",
             }}
@@ -350,7 +378,7 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
               >
                 <div
                   style={{
-                    fontFamily: "'Inter Tight', 'Inter', sans-serif",
+                    fontFamily: display,
                     fontSize: 11,
                     fontWeight: 600,
                     textTransform: "uppercase",
@@ -359,7 +387,7 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
                     marginBottom: 6,
                   }}
                 >
-                  Wat het oplevert
+                  WAT HET OPLEVERT
                 </div>
                 <p style={{ fontSize: "0.875rem", lineHeight: 1.5, color: "#2B2B2B", margin: 0 }}>
                   {p.outcome}
@@ -375,23 +403,25 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
             href="/contact"
             className="group inline-flex items-center justify-between w-full"
             style={{
-              padding: "0.85rem 1.25rem",
+              padding: "0.95rem 1.25rem",
               borderRadius: 8,
-              fontFamily: "'Inter Tight', 'Inter', sans-serif",
+              fontFamily: display,
               fontSize: "0.9rem",
               fontWeight: 600,
               backgroundColor: ctaBg,
               color: ctaColor,
               border: ctaBorder,
-              transition: "background-color 0.2s ease, color 0.2s ease",
+              transition: "background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = ctaHoverBg;
               e.currentTarget.style.color = ctaHoverColor;
+              e.currentTarget.style.borderColor = ctaHoverBg;
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = ctaBg;
               e.currentTarget.style.color = ctaColor;
+              e.currentTarget.style.borderColor = featured ? "#E8B547" : "#E5E2DB";
             }}
           >
             <span>{p.cta}</span>
