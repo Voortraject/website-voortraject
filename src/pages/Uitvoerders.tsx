@@ -155,6 +155,7 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
         animationDelay: `${delays[index] ?? 0.05}s`,
         animationFillMode: "forwards",
         animationDuration: "0.5s",
+        marginTop: featured ? "1rem" : 0,
       }}
     >
       {/* Pakketnummer boven de kaart */}
@@ -187,6 +188,7 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
       <article
         className="flex flex-col flex-1"
         style={{
+          position: "relative",
           backgroundColor: cardBg,
           border: cardBorder,
           borderRadius: 16,
@@ -201,21 +203,28 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
         {featured && (
           <div
             style={{
-              fontFamily: mono,
+              position: "absolute",
+              top: -14,
+              right: "1.5rem",
+              backgroundColor: "#FFFFFF",
+              border: "1px solid #E8B547",
+              borderRadius: 999,
+              boxShadow: "0 4px 12px rgba(21, 44, 78, 0.08)",
+              padding: "0.5rem 1.125rem",
+              fontFamily: display,
               fontSize: 11,
-              fontWeight: 500,
+              fontWeight: 600,
               textTransform: "uppercase",
-              letterSpacing: "0.15em",
-              color: "#D9A538",
-              marginBottom: "1.25rem",
+              letterSpacing: "0.12em",
+              color: "#152C4E",
             }}
           >
-            COMPLETE TRAJECT
+            ALLES IN ÉÉN
           </div>
         )}
 
-        {/* Vaste content boven uitklap, gelijke hoogte */}
-        <div className="flex flex-col" style={{ minHeight: 360 }}>
+        {/* Vaste content boven uitklap */}
+        <div className="flex flex-col">
           {/* Titel */}
           <h3
             style={{
@@ -231,15 +240,15 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
             {p.title}
           </h3>
 
-          {/* Accent streep */}
+          {/* Doorlopende lijn onder titel */}
           <span
             aria-hidden="true"
             style={{
               display: "block",
-              width: 48,
-              height: 2,
-              backgroundColor: "#E8B547",
-              marginTop: "0.75rem",
+              width: "100%",
+              height: 1,
+              backgroundColor: featured ? "rgba(232, 181, 71, 0.35)" : "#E5E2DB",
+              marginTop: "1rem",
               marginBottom: "1rem",
             }}
           />
@@ -265,40 +274,57 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
               fontSize: "1rem",
               lineHeight: 1.5,
               color: "#6B6B6B",
-              marginBottom: "1.75rem",
               margin: 0,
             }}
           >
             {p.hook}
           </p>
 
-          {/* Kernpunten */}
+          {/* Kernpunten met sublabels */}
           <ul style={{ listStyle: "none", padding: 0, margin: "1.75rem 0 0 0" }}>
             {p.bullets.map((b) => (
               <li
-                key={b}
+                key={b.label}
                 style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 12,
-                  margin: "0.625rem 0",
-                  fontSize: "0.9375rem",
-                  lineHeight: 1.5,
-                  color: "#2B2B2B",
+                  margin: "1rem 0 0 0",
                 }}
               >
-                <span
-                  aria-hidden="true"
+                <div
                   style={{
-                    display: "inline-block",
-                    width: 6,
-                    height: 1.5,
-                    backgroundColor: "#E8B547",
-                    flexShrink: 0,
-                    marginTop: "0.7em",
+                    fontFamily: mono,
+                    fontSize: 10,
+                    fontWeight: 500,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.12em",
+                    color: featured ? "#D9A538" : "#8B8680",
+                    marginBottom: "0.2rem",
                   }}
-                />
-                <span>{b}</span>
+                >
+                  {b.label}
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 12,
+                    fontSize: "0.9375rem",
+                    lineHeight: 1.5,
+                    color: "#2B2B2B",
+                  }}
+                >
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      display: "inline-block",
+                      width: 6,
+                      height: 1.5,
+                      backgroundColor: "#E8B547",
+                      flexShrink: 0,
+                      marginTop: "0.7em",
+                    }}
+                  />
+                  <span>{b.text}</span>
+                </div>
               </li>
             ))}
           </ul>
