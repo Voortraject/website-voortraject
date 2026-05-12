@@ -23,75 +23,58 @@ import { Footer } from "@/components/Footer";
 import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
 
 type Package = {
+  number: string;
   title: string;
   subtitle: string;
+  time: string;
   bullets: string[];
-  result: string;
-  badge: string | null;
+  outcome: string;
+  cta: string;
   featured?: boolean;
 };
 
 const packages: Package[] = [
   {
-    title: "Offerte & dossier",
-    subtitle: "Voor uitvoerders die tijd verliezen op papierwerk en dossiervorming.",
+    number: "01",
+    title: "Bewonersstart",
+    subtitle: "Elke aanvraag die afkoelt is omzet die je niet eens gezien hebt. Bewoners bellen de concurrent als ze drie dagen niets horen.",
+    time: "Vanaf 3 uur per dossier",
     bullets: [
-      "Offertevoorbereiding en opmaak",
-      "Dossieropbouw en controle",
-      "Overdracht compleet dossier",
+      "Aanvragen binnen 24 uur opgepakt",
+      "Bewoner weet meteen waar hij aan toe is",
+      "Alleen warme, geïnformeerde leads komen op jullie tafel",
     ],
-    result: "Jullie aanvraag gaat sneller van intake naar klaar dossier, zonder dat er iets tussenuit valt.",
-    badge: null,
+    outcome: "Geen lead die afkoelt. Geen bewoner die wegloopt. Geen omzet die je niet eens gezien hebt.",
+    cta: "Bespreek dit pakket",
   },
   {
-    title: "Akkoord & begeleiding",
-    subtitle: "Voor uitvoerders die bewonersvragen en opvolging tot akkoord willen loslaten.",
+    number: "02",
+    title: "Dossierafhandeling",
+    subtitle: "Hoeveel dossiers blijven nu hangen op een handtekening, een meterstand of een verkeerd ingevuld formulier? Hoeveel weken kost het echt van interesse tot uitvoering?",
+    time: "Vanaf 6 uur per dossier",
     bullets: [
-      "Alles uit Offerte & dossier",
-      "Begeleiding rond akkoordtraject",
-      "Uitleg plannen en regelingen",
-      "Opvolging tot getekend akkoord",
+      "Een uitvoerbaar dossier op tafel zonder dat je ook maar één formulier hebt aangeraakt",
+      "Schouw die klopt met wat in de uitvoering moet gebeuren",
+      "Subsidieaanvragen die in één keer door de check komen",
+      "Geen enkele bewoner die nog jullie kantoor belt met een vraag",
     ],
-    result: "Geen bewoners meer die wachten op uitleg of het akkoord niet begrijpen. Jullie hoeven niet meer terug te bellen.",
-    badge: null,
+    outcome: "Sneller naar uitvoering. Minder dossiers die afketsen. Geen avonden meer kwijt aan papierwerk.",
+    cta: "Bespreek dit pakket",
   },
   {
+    number: "03",
     title: "Totaal Ontzorging",
-    subtitle: "Voor uitvoerders die het volledige voortraject buiten de deur willen zetten.",
+    subtitle: "Het voortraject loopt zonder dat je erbij hoeft. Jullie bouwen, de bewoner is tevreden, het geld komt binnen, het volgende dossier staat al klaar.",
+    time: "Vanaf 10 uur per dossier",
     bullets: [
-      "Alles uit Akkoord & begeleiding",
-      "Intake en eerste bewonerscontact",
-      "Bewonerscommunicatie tot overdracht",
-      "Overzicht op natraject en nazorg",
-      "Begeleiding tot 5-sterren review",
+      "Alles uit Bewonersstart",
+      "Alles uit Dossierafhandeling",
+      "Vervolgwerk uit dezelfde klant",
+      "Eén aanspreekpunt voor jullie én voor de bewoner, ook na uitvoering",
     ],
-    result: "Jullie bouwen. Wij regelen alles van eerste bewonerscontact tot afgerond traject.",
-    badge: "Meest gekozen",
+    outcome: "Meer omzet uit dezelfde klant, een sterkere reputatie en geen kantoordrukte meer.",
+    cta: "Plan een kennismaking",
     featured: true,
-  },
-  {
-    title: "AI-workflow ondersteuning",
-    subtitle: "Voor uitvoerders die het voortraject intern willen houden, maar veel efficiënter willen werken.",
-    bullets: [
-      "Slimme intake en dossieropbouw",
-      "Snelle offertevoorbereiding",
-      "Opvolging openstaande acties",
-      "Grip op wat na uitvoering blijft hangen",
-    ],
-    result: "Minder handmatig werk intern, betere opvolging, en sneller van aanvraag naar uitvoering.",
-    badge: null,
-  },
-  {
-    title: "Nazorg Traject",
-    subtitle: "Voor de uitvoerder die grip wil op de afronding en een vlekkeloze reputatie.",
-    bullets: [
-      "Facturatie per uitvoering",
-      "Vervolgplanning voor woning",
-      "Begeleiding naar 5-sterren review",
-      "Eén vast aanspreekpunt",
-    ],
-    result: "Facturen sneller betaald, reviews die binnenkomen, en bewoners die jullie blijven aanbevelen.",
-    badge: null,
   },
 ];
 
