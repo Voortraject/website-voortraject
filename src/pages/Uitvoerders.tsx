@@ -257,21 +257,6 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
             }}
           />
 
-          {/* Tijdsbesparing label */}
-          <div
-            style={{
-              fontFamily: mono,
-              fontSize: 11,
-              fontWeight: 500,
-              textTransform: "uppercase",
-              letterSpacing: "0.12em",
-              color: timeColor,
-              marginBottom: "1.5rem",
-            }}
-          >
-            {p.time}
-          </div>
-
           {/* Hookzin */}
           <p
             style={{
@@ -284,51 +269,49 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
             {p.hook}
           </p>
 
-          {/* Kernpunten met sublabels */}
-          <ul style={{ listStyle: "none", padding: 0, margin: "1.75rem 0 0 0" }}>
+          {/* WAT HET OPLEVERT kopje */}
+          <div
+            style={{
+              fontFamily: mono,
+              fontSize: 11,
+              fontWeight: 600,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              color: featured ? "#D9A538" : "#8B8680",
+              marginTop: "1.5rem",
+              marginBottom: "0.75rem",
+            }}
+          >
+            WAT HET OPLEVERT:
+          </div>
+
+          {/* Kernpunten */}
+          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {p.bullets.map((b) => (
               <li
                 key={b.label}
                 style={{
-                  margin: "1rem 0 0 0",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 12,
+                  margin: "0.625rem 0",
+                  fontSize: "0.9375rem",
+                  lineHeight: 1.5,
+                  color: "#2B2B2B",
                 }}
               >
-                <div
+                <span
+                  aria-hidden="true"
                   style={{
-                    fontFamily: mono,
-                    fontSize: 10,
-                    fontWeight: 500,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.12em",
-                    color: featured ? "#D9A538" : "#8B8680",
-                    marginBottom: "0.2rem",
+                    display: "inline-block",
+                    width: 6,
+                    height: 1.5,
+                    backgroundColor: "#E8B547",
+                    flexShrink: 0,
+                    marginTop: "0.7em",
                   }}
-                >
-                  {b.label}
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: 12,
-                    fontSize: "0.9375rem",
-                    lineHeight: 1.5,
-                    color: "#2B2B2B",
-                  }}
-                >
-                  <span
-                    aria-hidden="true"
-                    style={{
-                      display: "inline-block",
-                      width: 6,
-                      height: 1.5,
-                      backgroundColor: "#E8B547",
-                      flexShrink: 0,
-                      marginTop: "0.7em",
-                    }}
-                  />
-                  <span>{b.text}</span>
-                </div>
+                />
+                <span>{b.text}</span>
               </li>
             ))}
           </ul>
