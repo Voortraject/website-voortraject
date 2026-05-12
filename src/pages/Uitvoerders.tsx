@@ -776,7 +776,7 @@ const Uitvoerders = () => {
 
         {/* PAKKETTEN */}
         <section id="pakketten" className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
-          <div className="container-content">
+          <div className="mx-auto w-full px-6 md:px-12" style={{ maxWidth: 1440 }}>
             <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E" }}>
               <span style={{ color: "hsl(var(--accent))" }}>Kies</span> wat past bij jullie
             </h2>
@@ -787,7 +787,7 @@ const Uitvoerders = () => {
               Drie pakketten, van losse bewonersstart tot volledige ontzorging.
             </p>
 
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
               {packages.map((p, i) => (
                 <PackageCard key={p.number} p={p} index={i} />
               ))}
