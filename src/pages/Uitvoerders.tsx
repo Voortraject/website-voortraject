@@ -365,37 +365,33 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
             }}
           >
             <div style={{ paddingBottom: "1rem" }}>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                {p.extraBullets.map((b) => (
-                  <li
-                    key={b}
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 12,
-                      margin: "0.625rem 0",
-                      fontSize: "0.9375rem",
-                      lineHeight: 1.5,
-                      color: "#2B2B2B",
-                    }}
-                  >
-                    <span
-                      aria-hidden="true"
-                      style={{
-                        display: "inline-block",
-                        width: 6,
-                        height: 1.5,
-                        backgroundColor: "#E8B547",
-                        flexShrink: 0,
-                        marginTop: "0.7em",
-                      }}
-                    />
-                    <span>{b}</span>
-                  </li>
-                ))}
-              </ul>
+              {/* Voor wie is dit pakket? */}
+              <div style={{ marginBottom: "1.5rem" }}>
+                <div
+                  style={{
+                    fontFamily: display,
+                    fontSize: "0.9375rem",
+                    fontWeight: 600,
+                    color: "#152C4E",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  Voor wie is dit pakket?
+                </div>
+                <p
+                  style={{
+                    fontSize: "0.875rem",
+                    lineHeight: 1.5,
+                    color: "#6B6B6B",
+                    margin: 0,
+                  }}
+                >
+                  {p.audience}
+                </p>
+              </div>
+
               {/* Tijdsbesparing blok */}
-              <div style={{ margin: "1.5rem 0" }}>
+              <div style={{ margin: "1.5rem 0 0" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <Check size={18} style={{ color: "#E8B547", flexShrink: 0 }} aria-hidden="true" />
                   <span
@@ -418,32 +414,6 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
                   }}
                 >
                   {p.timeReason}
-                </p>
-              </div>
-
-              <div
-                style={{
-                  marginTop: "1rem",
-                  padding: "1rem 1.125rem",
-                  backgroundColor: outcomeBg,
-                  borderRadius: 10,
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: display,
-                    fontSize: 11,
-                    fontWeight: 600,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.1em",
-                    color: "#8B8680",
-                    marginBottom: 6,
-                  }}
-                >
-                  KORT SAMENGEVAT
-                </div>
-                <p style={{ fontSize: "0.875rem", lineHeight: 1.5, color: "#2B2B2B", margin: 0 }}>
-                  {p.outcome}
                 </p>
               </div>
             </div>
