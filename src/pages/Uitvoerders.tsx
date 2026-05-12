@@ -74,7 +74,7 @@ const packages: Package[] = [
     number: "03",
     title: "Totaal Ontzorging",
     hook: "Het voortraject loopt zonder dat je erbij hoeft.",
-    time: "Bespaart 10 uur per dossier",
+    time: "MINIMAAL 10 UUR PER DOSSIER BESPAARD",
     bullets: [
       "Volledig voortraject uit handen",
       "Eén regisseur, één aanspreekpunt",
