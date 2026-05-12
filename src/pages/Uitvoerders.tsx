@@ -29,6 +29,7 @@ type Package = {
   title: string;
   hook: string;
   time: string;
+  timeReason: string;
   bullets: Bullet[];
   extraBullets: string[];
   outcome: string;
