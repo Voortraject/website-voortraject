@@ -1,12 +1,12 @@
 const cards = [
   {
-    label: "VOOR UITVOERDERS",
+    label: "UITVOERDERS",
     title: "Groeien zonder extra kantoorlast",
     body: "Voorkom dat dossiers versnipperd raken en offertes blijven liggen. Wij vangen de kantoorlast aan de voorkant en de nazorg aan de achterkant op, zodat jij je kunt focussen op wat je het liefste doet: bouwen en uitvoeren.",
     href: "/uitvoerders",
   },
   {
-    label: "VOOR BEWONERS",
+    label: "BEWONERS",
     title: "Duidelijkheid zonder wachtrijen",
     body: "Breng rust in de chaos van tegenstrijdige adviezen en complexe regelingen. Wij bieden onafhankelijk advies en een praktische route naar uitvoering, zonder dat je maanden op een wachtlijst staat.",
     href: "/bewoners",
