@@ -153,7 +153,7 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
         animationDelay: `${delays[index] ?? 0.05}s`,
         animationFillMode: "forwards",
         animationDuration: "0.5s",
-        marginTop: featured ? "1rem" : 0,
+        marginTop: 0,
       }}
     >
       {/* Pakketnummer boven de kaart */}
@@ -783,7 +783,7 @@ const Uitvoerders = () => {
               Drie pakketten, van losse bewonersstart tot volledige ontzorging.
             </p>
 
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
               {packages.map((p, i) => (
                 <PackageCard key={p.number} p={p} index={i} />
               ))}
