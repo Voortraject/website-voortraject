@@ -123,16 +123,8 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
     ? "0 22px 56px rgba(232, 181, 71, 0.32)"
     : "0 12px 32px rgba(21,44,78,0.10)";
 
-  // Featured lifts on desktop only
-  const baseTransform =
-    featured && typeof window !== "undefined" && window.matchMedia("(min-width: 981px)").matches
-      ? "translateY(-12px)"
-      : "translateY(0)";
-  const hoverTransform = featured
-    ? typeof window !== "undefined" && window.matchMedia("(min-width: 981px)").matches
-      ? "translateY(-16px)"
-      : "translateY(-2px)"
-    : "translateY(-2px)";
+  const baseTransform = "translateY(0)";
+  const hoverTransform = "translateY(-2px)";
 
   const outcomeBg = featured ? "rgba(255,255,255,0.5)" : "#F5F2EC";
   const timeColor = featured ? "#152C4E" : "#8B8680";
