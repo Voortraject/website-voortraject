@@ -32,8 +32,7 @@ type Package = {
   time: string;
   timeReason: string;
   bullets: Bullet[];
-  extraBullets: string[];
-  outcome: string;
+  audience: string;
   cta: string;
   featured?: boolean;
   icon: LucideIcon;
