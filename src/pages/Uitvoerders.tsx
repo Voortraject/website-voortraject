@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, Inbox, FileText, Bell, X, PhoneCall, MessageCircle, FolderOpen, AlertCircle, ChevronDown } from "lucide-react";
+import { Check, Inbox, FileText, Bell, X, PhoneCall, MessageCircle, FileCheck, ShieldCheck, FolderOpen, AlertCircle, ChevronDown } from "lucide-react";
 
 const withoutItems = [
   "Bewoners bellen en appen dezelfde vragen, keer op keer",
@@ -22,6 +22,7 @@ import { Header } from "@/components/Header";
 import { Why } from "@/components/sections/Why";
 import { Footer } from "@/components/Footer";
 import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
+import type { LucideIcon } from "lucide-react";
 
 type Bullet = { label: string; text: string };
 type Package = {
@@ -35,6 +36,7 @@ type Package = {
   outcome: string;
   cta: string;
   featured?: boolean;
+  icon: LucideIcon;
 };
 
 const packages: Package[] = [
@@ -55,11 +57,12 @@ const packages: Package[] = [
     ],
     outcome: "Geen lead die afkoelt. Geen bewoner die wegloopt. Geen omzet die je niet eens gezien hebt.",
     cta: "Bespreek dit pakket",
+    icon: MessageCircle,
   },
   {
     number: "02",
     title: "Dossierafhandeling",
-    hook: "Hoeveel dossiers blijven nu hangen op een handtekening of een verkeerd ingevuld formulier?",
+    hook: "Hoeveel dossiers blijven hangen op ontbrekende stukken of fouten?",
     time: "Bespaart minimaal 6 uur per dossier",
     timeReason: "Foutmarge omlaag. Dossiers die in één keer door de check komen.",
     bullets: [
@@ -73,6 +76,7 @@ const packages: Package[] = [
     ],
     outcome: "Sneller naar uitvoering. Minder dossiers die afketsen. Geen avonden meer kwijt aan papierwerk.",
     cta: "Bespreek dit pakket",
+    icon: FileCheck,
   },
   {
     number: "03",
@@ -93,6 +97,7 @@ const packages: Package[] = [
     outcome: "Meer omzet uit dezelfde klant, een sterkere reputatie en geen kantoordrukte meer.",
     cta: "Bespreek dit pakket",
     featured: true,
+    icon: ShieldCheck,
   },
 ];
 
@@ -229,20 +234,28 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
 
         {/* Vaste content boven uitklap */}
         <div className="flex flex-col">
-          {/* Titel */}
-          <h3
-            style={{
-              fontFamily: display,
-              fontSize: "1.875rem",
-              fontWeight: 600,
-              letterSpacing: "-0.02em",
-              lineHeight: 1.05,
-              color: "#152C4E",
-              margin: 0,
-            }}
-          >
-            {p.title}
-          </h3>
+          {/* Titel met icoon */}
+          <div className="flex items-center" style={{ gap: "0.75rem" }}>
+            <p.icon
+              size={26}
+              strokeWidth={1.75}
+              style={{ color: featured ? "#D9A538" : "#152C4E", flexShrink: 0 }}
+              aria-hidden="true"
+            />
+            <h3
+              style={{
+                fontFamily: display,
+                fontSize: "1.875rem",
+                fontWeight: 600,
+                letterSpacing: "-0.02em",
+                lineHeight: 1.05,
+                color: "#152C4E",
+                margin: 0,
+              }}
+            >
+              {p.title}
+            </h3>
+          </div>
 
           {/* Doorlopende lijn onder titel */}
           <span
@@ -269,20 +282,30 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
             {p.hook}
           </p>
 
-          {/* WAT HET OPLEVERT kopje */}
+          {/* Wat het oplevert kopje */}
           <div
+            className="flex items-center"
             style={{
-              fontFamily: mono,
-              fontSize: 11,
-              fontWeight: 600,
-              textTransform: "uppercase",
-              letterSpacing: "0.12em",
-              color: featured ? "#D9A538" : "#8B8680",
-              marginTop: "1.5rem",
-              marginBottom: "0.75rem",
+              gap: "0.5rem",
+              marginTop: "2rem",
+              marginBottom: "0.4rem",
             }}
           >
-            WAT HET OPLEVERT:
+            <Check
+              size={18}
+              style={{ color: "#E8B547", flexShrink: 0 }}
+              aria-hidden="true"
+            />
+            <span
+              style={{
+                fontFamily: display,
+                fontSize: "0.9375rem",
+                fontWeight: 600,
+                color: featured ? "#D9A538" : "#152C4E",
+              }}
+            >
+              Wat het oplevert:
+            </span>
           </div>
 
           {/* Kernpunten */}
