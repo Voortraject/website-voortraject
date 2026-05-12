@@ -282,20 +282,30 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
             {p.hook}
           </p>
 
-          {/* WAT HET OPLEVERT kopje */}
+          {/* Wat het oplevert kopje */}
           <div
+            className="flex items-center"
             style={{
-              fontFamily: mono,
-              fontSize: 11,
-              fontWeight: 600,
-              textTransform: "uppercase",
-              letterSpacing: "0.12em",
-              color: featured ? "#D9A538" : "#8B8680",
-              marginTop: "1.5rem",
-              marginBottom: "0.75rem",
+              gap: "0.5rem",
+              marginTop: "2rem",
+              marginBottom: "0.4rem",
             }}
           >
-            WAT HET OPLEVERT:
+            <Check
+              size={18}
+              style={{ color: "#E8B547", flexShrink: 0 }}
+              aria-hidden="true"
+            />
+            <span
+              style={{
+                fontFamily: display,
+                fontSize: "0.9375rem",
+                fontWeight: 600,
+                color: featured ? "#D9A538" : "#152C4E",
+              }}
+            >
+              Wat het oplevert:
+            </span>
           </div>
 
           {/* Kernpunten */}
