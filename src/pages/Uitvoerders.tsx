@@ -23,75 +23,58 @@ import { Footer } from "@/components/Footer";
 import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
 
 type Package = {
+  number: string;
   title: string;
   subtitle: string;
+  time: string;
   bullets: string[];
-  result: string;
-  badge: string | null;
+  outcome: string;
+  cta: string;
   featured?: boolean;
 };
 
 const packages: Package[] = [
   {
-    title: "Offerte & dossier",
-    subtitle: "Voor uitvoerders die tijd verliezen op papierwerk en dossiervorming.",
+    number: "01",
+    title: "Bewonersstart",
+    subtitle: "Elke aanvraag die afkoelt is omzet die je niet eens gezien hebt. Bewoners bellen de concurrent als ze drie dagen niets horen.",
+    time: "Vanaf 3 uur per dossier",
     bullets: [
-      "Offertevoorbereiding en opmaak",
-      "Dossieropbouw en controle",
-      "Overdracht compleet dossier",
+      "Aanvragen binnen 24 uur opgepakt",
+      "Bewoner weet meteen waar hij aan toe is",
+      "Alleen warme, geïnformeerde leads komen op jullie tafel",
     ],
-    result: "Jullie aanvraag gaat sneller van intake naar klaar dossier, zonder dat er iets tussenuit valt.",
-    badge: null,
+    outcome: "Geen lead die afkoelt. Geen bewoner die wegloopt. Geen omzet die je niet eens gezien hebt.",
+    cta: "Bespreek dit pakket",
   },
   {
-    title: "Akkoord & begeleiding",
-    subtitle: "Voor uitvoerders die bewonersvragen en opvolging tot akkoord willen loslaten.",
+    number: "02",
+    title: "Dossierafhandeling",
+    subtitle: "Hoeveel dossiers blijven nu hangen op een handtekening, een meterstand of een verkeerd ingevuld formulier? Hoeveel weken kost het echt van interesse tot uitvoering?",
+    time: "Vanaf 6 uur per dossier",
     bullets: [
-      "Alles uit Offerte & dossier",
-      "Begeleiding rond akkoordtraject",
-      "Uitleg plannen en regelingen",
-      "Opvolging tot getekend akkoord",
+      "Een uitvoerbaar dossier op tafel zonder dat je ook maar één formulier hebt aangeraakt",
+      "Schouw die klopt met wat in de uitvoering moet gebeuren",
+      "Subsidieaanvragen die in één keer door de check komen",
+      "Geen enkele bewoner die nog jullie kantoor belt met een vraag",
     ],
-    result: "Geen bewoners meer die wachten op uitleg of het akkoord niet begrijpen. Jullie hoeven niet meer terug te bellen.",
-    badge: null,
+    outcome: "Sneller naar uitvoering. Minder dossiers die afketsen. Geen avonden meer kwijt aan papierwerk.",
+    cta: "Bespreek dit pakket",
   },
   {
+    number: "03",
     title: "Totaal Ontzorging",
-    subtitle: "Voor uitvoerders die het volledige voortraject buiten de deur willen zetten.",
+    subtitle: "Het voortraject loopt zonder dat je erbij hoeft. Jullie bouwen, de bewoner is tevreden, het geld komt binnen, het volgende dossier staat al klaar.",
+    time: "Vanaf 10 uur per dossier",
     bullets: [
-      "Alles uit Akkoord & begeleiding",
-      "Intake en eerste bewonerscontact",
-      "Bewonerscommunicatie tot overdracht",
-      "Overzicht op natraject en nazorg",
-      "Begeleiding tot 5-sterren review",
+      "Alles uit Bewonersstart",
+      "Alles uit Dossierafhandeling",
+      "Vervolgwerk uit dezelfde klant",
+      "Eén aanspreekpunt voor jullie én voor de bewoner, ook na uitvoering",
     ],
-    result: "Jullie bouwen. Wij regelen alles van eerste bewonerscontact tot afgerond traject.",
-    badge: "Meest gekozen",
+    outcome: "Meer omzet uit dezelfde klant, een sterkere reputatie en geen kantoordrukte meer.",
+    cta: "Plan een kennismaking",
     featured: true,
-  },
-  {
-    title: "AI-workflow ondersteuning",
-    subtitle: "Voor uitvoerders die het voortraject intern willen houden, maar veel efficiënter willen werken.",
-    bullets: [
-      "Slimme intake en dossieropbouw",
-      "Snelle offertevoorbereiding",
-      "Opvolging openstaande acties",
-      "Grip op wat na uitvoering blijft hangen",
-    ],
-    result: "Minder handmatig werk intern, betere opvolging, en sneller van aanvraag naar uitvoering.",
-    badge: null,
-  },
-  {
-    title: "Nazorg Traject",
-    subtitle: "Voor de uitvoerder die grip wil op de afronding en een vlekkeloze reputatie.",
-    bullets: [
-      "Facturatie per uitvoering",
-      "Vervolgplanning voor woning",
-      "Begeleiding naar 5-sterren review",
-      "Eén vast aanspreekpunt",
-    ],
-    result: "Facturen sneller betaald, reviews die binnenkomen, en bewoners die jullie blijven aanbevelen.",
-    badge: null,
   },
 ];
 
@@ -422,7 +405,7 @@ const Uitvoerders = () => {
         </section>
 
         {/* PAKKETTEN */}
-        <section id="pakketten" className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F9F9F7" }}>
+        <section id="pakketten" className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
           <div className="container-content">
             <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E" }}>
               <span style={{ color: "hsl(var(--accent))" }}>Kies</span> wat past bij jullie
@@ -431,143 +414,207 @@ const Uitvoerders = () => {
               className="mt-6 text-[18px] text-center mx-auto"
               style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 720 }}
             >
-              Vijf pakketten, van losse offerte- en dossieropbouw tot volledige ontzorging.
+              Drie pakketten, van losse bewonersstart tot volledige ontzorging.
             </p>
 
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 items-stretch">
+            <div
+              className="mt-16 grid grid-cols-1 gap-5 lg:[grid-template-columns:1fr_1fr_1.15fr]"
+            >
               {packages.map((p, i) => {
-                const colStart = i === 3 ? "lg:col-start-2" : "";
-                const borderColor = p.featured ? "#E8B547" : "#E5E2DB";
-                const borderWidth = p.featured ? "2px" : "1px";
+                const featured = !!p.featured;
+                const numColor = featured ? "rgba(255,255,255,0.55)" : "#8B8680";
+                const titleColor = featured ? "#FFFFFF" : "#152C4E";
+                const subColor = featured ? "rgba(255,255,255,0.75)" : "#6B6B6B";
+                const badgeBg = featured ? "rgba(232,181,71,0.18)" : "#FDF6E3";
+                const badgeText = featured ? "#E8B547" : "#152C4E";
+                const bulletColor = featured ? "rgba(255,255,255,0.9)" : "#2B2B2B";
+                const outcomeBg = featured ? "rgba(255,255,255,0.06)" : "#F5F2EC";
+                const outcomeLabel = featured ? "#E8B547" : "#8B8680";
+                const outcomeText = featured ? "rgba(255,255,255,0.9)" : "#2B2B2B";
+                const cardBg = featured ? "#152C4E" : "#FFFFFF";
+                const cardBorder = featured ? "none" : "1px solid #E5E2DB";
+                const cardShadow = featured
+                  ? "0 12px 40px rgba(21,44,78,0.18)"
+                  : "0 1px 2px rgba(21,44,78,0.04)";
+                const cardShadowHover = featured
+                  ? "0 18px 50px rgba(21,44,78,0.26)"
+                  : "0 12px 32px rgba(21,44,78,0.10)";
+
+                const ctaBg = featured ? "#E8B547" : "#FFFFFF";
+                const ctaColor = featured ? "#2B2B2B" : "#152C4E";
+                const ctaBorder = featured ? "none" : "1px solid #E5E2DB";
+                const ctaHoverBg = featured ? "#D9A538" : "#152C4E";
+                const ctaHoverColor = featured ? "#2B2B2B" : "#FFFFFF";
 
                 return (
                   <article
-                    key={p.title}
-                    className={`relative flex flex-col transition-all duration-200 ease-out lg:col-span-2 ${colStart}`}
+                    key={p.number}
+                    className="relative flex flex-col animate-fade-up opacity-0"
                     style={{
-                      backgroundColor: "#FFFFFF",
-                      borderRadius: 16,
-                      padding: 32,
-                      border: `${borderWidth} solid ${borderColor}`,
-                      boxShadow: "0 4px 24px rgba(21,44,78,0.04)",
+                      backgroundColor: cardBg,
+                      border: cardBorder,
+                      borderRadius: 14,
+                      padding: "2rem 1.75rem 1.75rem",
+                      boxShadow: cardShadow,
+                      transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                      animationDelay: `${0.05 + i * 0.07}s`,
+                      animationFillMode: "forwards",
+                      animationDuration: "0.5s",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.boxShadow = "0 8px 32px rgba(21,44,78,0.08)";
+                      e.currentTarget.style.transform = "translateY(-2px)";
+                      e.currentTarget.style.boxShadow = cardShadowHover;
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.boxShadow = "0 4px 24px rgba(21,44,78,0.04)";
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.boxShadow = cardShadow;
                     }}
                   >
-                    {p.badge && (
-                      <span
-                        className="absolute font-sans font-semibold"
-                        style={{
-                          top: 16,
-                          right: 16,
-                          backgroundColor: "#E8B547",
-                          color: "#2B2B2B",
-                          padding: "6px 12px",
-                          borderRadius: 999,
-                          fontSize: 12,
-                        }}
-                      >
-                        {p.badge}
-                      </span>
-                    )}
-                    <h3
-                      className="font-display font-semibold"
+                    <div
                       style={{
-                        fontSize: 20,
-                        color: "#152C4E",
+                        fontFamily: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
+                        fontSize: 11,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.12em",
+                        color: numColor,
+                      }}
+                    >
+                      Pakket {p.number}
+                    </div>
+
+                    <h3
+                      className="font-display"
+                      style={{
+                        marginTop: 12,
+                        fontSize: "1.625rem",
+                        fontWeight: 600,
                         letterSpacing: "-0.02em",
-                        lineHeight: 1.25,
-                        paddingRight: p.badge ? 110 : 0,
+                        lineHeight: 1.1,
+                        color: titleColor,
                       }}
                     >
                       {p.title}
                     </h3>
+
                     <p
                       style={{
-                        marginTop: 8,
-                        fontSize: 13,
-                        color: "#6B6B6B",
-                        lineHeight: 1.4,
-                        display: "-webkit-box",
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
+                        marginTop: 12,
+                        fontSize: "0.9rem",
+                        color: subColor,
+                        lineHeight: 1.5,
+                        minHeight: "5.4em",
                       }}
-                      title={p.subtitle}
                     >
                       {p.subtitle}
                     </p>
-                    <hr style={{ margin: "20px 0", border: "none", borderTop: "1px solid #E5E2DB" }} />
-                    <ul className="space-y-3">
+
+                    <div
+                      className="inline-flex items-center self-start"
+                      style={{
+                        marginTop: 16,
+                        gap: 8,
+                        backgroundColor: badgeBg,
+                        color: badgeText,
+                        padding: "0.5rem 0.875rem",
+                        borderRadius: 8,
+                        fontSize: "0.8125rem",
+                        fontWeight: 600,
+                      }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M12 7v5l3 2" />
+                      </svg>
+                      {p.time}
+                    </div>
+
+                    <ul style={{ marginTop: 20, listStyle: "none", padding: 0 }}>
                       {p.bullets.map((b) => (
-                        <li key={b} className="flex items-center gap-3">
+                        <li
+                          key={b}
+                          style={{
+                            display: "flex",
+                            alignItems: "flex-start",
+                            gap: 12,
+                            margin: "0.5rem 0",
+                            fontSize: "0.875rem",
+                            lineHeight: 1.55,
+                            color: bulletColor,
+                          }}
+                        >
                           <span
-                            className="flex items-center justify-center rounded-full flex-shrink-0"
+                            aria-hidden="true"
                             style={{
-                              width: 20,
-                              height: 20,
-                              backgroundColor: "#F0E4D0",
+                              display: "inline-block",
+                              width: 6,
+                              height: 1.5,
+                              backgroundColor: "#E8B547",
+                              flexShrink: 0,
+                              marginTop: "0.65em",
                             }}
-                          >
-                            <Check size={12} color="#E8B547" strokeWidth={3} aria-hidden="true" />
-                          </span>
-                          <span
-                            className="lg:whitespace-nowrap lg:overflow-hidden lg:text-ellipsis"
-                            style={{
-                              fontSize: 14,
-                              color: "#2B2B2B",
-                              lineHeight: 1.4,
-                            }}
-                          >
-                            {b}
-                          </span>
+                          />
+                          <span>{b}</span>
                         </li>
                       ))}
                     </ul>
 
                     <div
                       style={{
-                        marginTop: 24,
-                        padding: 16,
-                        backgroundColor: "#FFFFFF",
+                        marginTop: 20,
+                        padding: "1rem 1.125rem",
+                        backgroundColor: outcomeBg,
                         borderRadius: 10,
-                        border: "1px solid #ECE7DD",
                       }}
                     >
-                      <p
-                        className="font-sans font-semibold"
+                      <div
+                        className="font-display"
                         style={{
-                          fontSize: 12,
-                          color: "#152C4E",
-                          letterSpacing: "0.04em",
+                          fontSize: 11,
+                          fontWeight: 600,
                           textTransform: "uppercase",
+                          letterSpacing: "0.1em",
+                          color: outcomeLabel,
                           marginBottom: 6,
                         }}
                       >
                         Wat het oplevert
+                      </div>
+                      <p style={{ fontSize: "0.8125rem", lineHeight: 1.5, color: outcomeText, margin: 0 }}>
+                        {p.outcome}
                       </p>
-                      <p style={{ fontSize: 14, color: "#2B2B2B", lineHeight: 1.55 }}>{p.result}</p>
                     </div>
 
                     <div style={{ marginTop: "auto", paddingTop: 20 }}>
                       <a
                         href="/contact"
-                        className="inline-flex items-center gap-1 text-sm font-medium transition-colors"
-                        style={{ color: "#E8B547" }}
+                        className="group inline-flex items-center justify-between w-full"
+                        style={{
+                          padding: "0.75rem 1.125rem",
+                          borderRadius: 8,
+                          fontSize: "0.875rem",
+                          fontWeight: 600,
+                          backgroundColor: ctaBg,
+                          color: ctaColor,
+                          border: ctaBorder,
+                          transition: "background-color 0.2s ease, color 0.2s ease",
+                        }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.color = "#D9A538";
-                          e.currentTarget.style.textDecoration = "underline";
+                          e.currentTarget.style.backgroundColor = ctaHoverBg;
+                          e.currentTarget.style.color = ctaHoverColor;
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.color = "#E8B547";
-                          e.currentTarget.style.textDecoration = "none";
+                          e.currentTarget.style.backgroundColor = ctaBg;
+                          e.currentTarget.style.color = ctaColor;
                         }}
                       >
-                        Bespreek dit pakket →
+                        <span>{p.cta}</span>
+                        <span
+                          aria-hidden="true"
+                          style={{ display: "inline-block", transition: "transform 0.2s ease" }}
+                          className="group-hover:translate-x-[3px]"
+                        >
+                          →
+                        </span>
                       </a>
                     </div>
                   </article>
