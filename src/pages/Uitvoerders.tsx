@@ -32,8 +32,7 @@ type Package = {
   time: string;
   timeReason: string;
   bullets: Bullet[];
-  extraBullets: string[];
-  outcome: string;
+  audience: string;
   cta: string;
   featured?: boolean;
   icon: LucideIcon;
@@ -50,12 +49,9 @@ const packages: Package[] = [
       { label: "SNELHEID", text: "Aanvragen binnen 24 uur opgepakt" },
       { label: "DUIDELIJKHEID", text: "Bewoner meteen geïnformeerd" },
       { label: "KWALITEIT", text: "Alleen warme leads op jullie tafel" },
+      { label: "WARM", text: "Bewoner warm gehouden tot het volgende contactmoment" },
     ],
-    extraBullets: [
-      "Het juiste spoor staat vast voor de eerste afspraak",
-      "Bewoner warm gehouden tot vervolgstap",
-    ],
-    outcome: "Geen lead die afkoelt. Geen bewoner die wegloopt. Geen omzet die je niet eens gezien hebt.",
+    audience: "Voor uitvoerders die meer aanvragen binnenkrijgen dan ze direct kunnen oppakken, en die merken dat warme leads afhaken bij gebrek aan snelle opvolging. Geschikt als jullie het eerste contact en de routebepaling buiten de deur willen zetten voordat een afspraak in de agenda komt.",
     cta: "Bespreek dit pakket",
     icon: MessageCircle,
   },
@@ -69,12 +65,9 @@ const packages: Package[] = [
       { label: "GEMAK", text: "Uitvoerbaar dossier zonder formulier-gedoe" },
       { label: "ZEKERHEID", text: "Subsidieaanvraag in één keer door de check" },
       { label: "RUST", text: "Geen bewonervragen meer aan jullie kantoor" },
+      { label: "AANLEVERING", text: "Bewoner die zijn eigen stukken aanlevert" },
     ],
-    extraBullets: [
-      "Schouw die klopt met wat in de uitvoering moet gebeuren",
-      "Bewoner geïnformeerd over benodigde stukken en levert ze zelf aan",
-    ],
-    outcome: "Sneller naar uitvoering. Minder dossiers die afketsen. Geen avonden meer kwijt aan papierwerk.",
+    audience: "Voor uitvoerders die hun mensen liever zien bouwen dan formulieren invullen, en die te veel tijd verliezen aan ontbrekende stukken of subsidieaanvragen die afketsen. Geschikt als jullie het hele dossiertraject van plan tot indiening uit handen willen geven.",
     cta: "Bespreek dit pakket",
     icon: FileCheck,
   },
@@ -90,11 +83,7 @@ const packages: Package[] = [
       { label: "GROEI", text: "Vervolgwerk uit dezelfde klant" },
       { label: "CONTINUÏTEIT", text: "Begeleiding ook na uitvoering, tot en met review" },
     ],
-    extraBullets: [
-      "Alles uit Bewonersstart en Dossierafhandeling",
-      "Eén aanspreekpunt voor jullie én voor de bewoner",
-    ],
-    outcome: "Meer omzet uit dezelfde klant, een sterkere reputatie en geen kantoordrukte meer.",
+    audience: "Voor uitvoerders die willen groeien zonder hun kantoor uit te breiden, en die zich volledig willen focussen op het bouwwerk zelf. Geschikt als jullie alle bewonercontact, dossierwerk en nazorg buiten de deur willen zetten en één partij willen die regie houdt.",
     cta: "Bespreek dit pakket",
     featured: true,
     icon: ShieldCheck,
@@ -301,7 +290,7 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
                 fontFamily: display,
                 fontSize: "0.9375rem",
                 fontWeight: 600,
-                color: featured ? "#D9A538" : "#152C4E",
+                color: "#152C4E",
               }}
             >
               Wat het oplevert:
@@ -376,37 +365,33 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
             }}
           >
             <div style={{ paddingBottom: "1rem" }}>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                {p.extraBullets.map((b) => (
-                  <li
-                    key={b}
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 12,
-                      margin: "0.625rem 0",
-                      fontSize: "0.9375rem",
-                      lineHeight: 1.5,
-                      color: "#2B2B2B",
-                    }}
-                  >
-                    <span
-                      aria-hidden="true"
-                      style={{
-                        display: "inline-block",
-                        width: 6,
-                        height: 1.5,
-                        backgroundColor: "#E8B547",
-                        flexShrink: 0,
-                        marginTop: "0.7em",
-                      }}
-                    />
-                    <span>{b}</span>
-                  </li>
-                ))}
-              </ul>
+              {/* Voor wie is dit pakket? */}
+              <div style={{ marginBottom: "1.5rem" }}>
+                <div
+                  style={{
+                    fontFamily: display,
+                    fontSize: "0.9375rem",
+                    fontWeight: 600,
+                    color: "#152C4E",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  Voor wie is dit pakket?
+                </div>
+                <p
+                  style={{
+                    fontSize: "0.875rem",
+                    lineHeight: 1.5,
+                    color: "#6B6B6B",
+                    margin: 0,
+                  }}
+                >
+                  {p.audience}
+                </p>
+              </div>
+
               {/* Tijdsbesparing blok */}
-              <div style={{ margin: "1.5rem 0" }}>
+              <div style={{ margin: "1.5rem 0 0" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <Check size={18} style={{ color: "#E8B547", flexShrink: 0 }} aria-hidden="true" />
                   <span
@@ -429,32 +414,6 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
                   }}
                 >
                   {p.timeReason}
-                </p>
-              </div>
-
-              <div
-                style={{
-                  marginTop: "1rem",
-                  padding: "1rem 1.125rem",
-                  backgroundColor: outcomeBg,
-                  borderRadius: 10,
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: display,
-                    fontSize: 11,
-                    fontWeight: 600,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.1em",
-                    color: "#8B8680",
-                    marginBottom: 6,
-                  }}
-                >
-                  KORT SAMENGEVAT
-                </div>
-                <p style={{ fontSize: "0.875rem", lineHeight: 1.5, color: "#2B2B2B", margin: 0 }}>
-                  {p.outcome}
                 </p>
               </div>
             </div>
