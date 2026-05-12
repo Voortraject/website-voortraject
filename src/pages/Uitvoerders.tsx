@@ -1,4 +1,5 @@
-import { Check, Inbox, FileText, Bell, X, PhoneCall, MessageCircle, FolderOpen, AlertCircle } from "lucide-react";
+import { useState } from "react";
+import { Check, Inbox, FileText, Bell, X, PhoneCall, MessageCircle, FolderOpen, AlertCircle, ChevronDown } from "lucide-react";
 
 const withoutItems = [
   "Bewoners bellen en appen dezelfde vragen, keer op keer",
