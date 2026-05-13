@@ -74,11 +74,11 @@ const packages: Package[] = [
   {
     number: "03",
     title: "Totaal Ontzorging",
-    hook: "Het voortraject loopt zonder dat je erbij hoeft.",
+    hook: "Het traject loopt zonder dat je erbij hoeft.",
     time: "Bespaart minimaal 10 uur per dossier",
-    timeReason: "Snelheid omhoog, foutmarge omlaag. Over het hele voortraject.",
+    timeReason: "Snelheid omhoog, foutmarge omlaag. Over het hele traject.",
     bullets: [
-      { label: "VOLLEDIG", text: "Volledig voortraject uit handen" },
+      { label: "VOLLEDIG", text: "Volledig traject uit handen" },
       { label: "REGIE", text: "Eén regisseur, één aanspreekpunt" },
       { label: "GROEI", text: "Vervolgwerk uit dezelfde klant" },
       { label: "CONTINUÏTEIT", text: "Begeleiding ook na uitvoering, tot en met review" },
@@ -775,7 +775,7 @@ const Uitvoerders = () => {
               Drie pakketten, van losse bewonersstart tot volledige ontzorging.
             </p>
 
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
               {packages.map((p, i) => (
                 <PackageCard key={p.number} p={p} index={i} />
               ))}
