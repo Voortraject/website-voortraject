@@ -28,6 +28,7 @@ export type Database = {
           status: string
           straatnaam: string | null
           telefoonnummer: string
+          tenant_id: string | null
           toevoeging: string | null
           vragen: string | null
         }
@@ -44,6 +45,7 @@ export type Database = {
           status?: string
           straatnaam?: string | null
           telefoonnummer: string
+          tenant_id?: string | null
           toevoeging?: string | null
           vragen?: string | null
         }
@@ -60,6 +62,7 @@ export type Database = {
           status?: string
           straatnaam?: string | null
           telefoonnummer?: string
+          tenant_id?: string | null
           toevoeging?: string | null
           vragen?: string | null
         }
@@ -75,6 +78,7 @@ export type Database = {
           naam_contactpersoon: string
           status: string
           telefoonnummer: string
+          tenant_id: string | null
           vragen: string | null
         }
         Insert: {
@@ -86,6 +90,7 @@ export type Database = {
           naam_contactpersoon: string
           status?: string
           telefoonnummer: string
+          tenant_id?: string | null
           vragen?: string | null
         }
         Update: {
@@ -97,6 +102,7 @@ export type Database = {
           naam_contactpersoon?: string
           status?: string
           telefoonnummer?: string
+          tenant_id?: string | null
           vragen?: string | null
         }
         Relationships: []
