@@ -23,10 +23,14 @@ export type Database = {
           huisnummer: string | null
           id: string
           naam: string
+          notities: string | null
           plaatsnaam: string | null
           postcode: string | null
+          stad: string | null
           status: string
+          straat: string | null
           straatnaam: string | null
+          telefoon: string | null
           telefoonnummer: string
           tenant_id: string | null
           toevoeging: string | null
@@ -40,10 +44,14 @@ export type Database = {
           huisnummer?: string | null
           id?: string
           naam: string
+          notities?: string | null
           plaatsnaam?: string | null
           postcode?: string | null
+          stad?: string | null
           status?: string
+          straat?: string | null
           straatnaam?: string | null
+          telefoon?: string | null
           telefoonnummer: string
           tenant_id?: string | null
           toevoeging?: string | null
@@ -57,10 +65,14 @@ export type Database = {
           huisnummer?: string | null
           id?: string
           naam?: string
+          notities?: string | null
           plaatsnaam?: string | null
           postcode?: string | null
+          stad?: string | null
           status?: string
+          straat?: string | null
           straatnaam?: string | null
+          telefoon?: string | null
           telefoonnummer?: string
           tenant_id?: string | null
           toevoeging?: string | null
