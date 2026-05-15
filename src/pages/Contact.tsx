@@ -110,7 +110,7 @@ const Contact = () => {
     try {
       if (mode === "bewoner") {
         const { error } = await supabase.from("leads_bewoners").insert({
-          tenant_id: "8c847155-fc29-481f-84d4-ffef6816a181",
+tenant_id: "00000000-0000-0000-0000-000000000001",
           naam: bewoner.naam,
           email: bewoner.email,
           telefoonnummer: bewoner.telefoonnummer,
@@ -131,7 +131,7 @@ const Contact = () => {
         setSubmitted(true);
       } else {
         const { error } = await supabase.from("leads_uitvoerders").insert({
-          tenant_id: "8c847155-fc29-481f-84d4-ffef6816a181",
+          tenant_id: "00000000-0000-0000-0000-000000000001",
           bedrijfsnaam: uitvoerder.bedrijfsnaam,
           naam_contactpersoon: uitvoerder.naam_contactpersoon,
           email: uitvoerder.email,
