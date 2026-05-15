@@ -79,24 +79,25 @@ const Contact = () => {
   const [adresChecked, setAdresChecked] = useState(false);
 
   const lookupAdres = async () => {
-    const pc = bewoner.postcode.replace(/\s+/g, "");
+    const pc = bewoner.postcode.replace(/\s+/g, "").toUpperCase();
     const hn = bewoner.huisnummer.trim();
     if (!pc || !hn) return;
     try {
-      const res = await fetch(
-        `https://postcode.tech/api/v1/postcode/full?postcode=${encodeURIComponent(pc)}&number=${encodeURIComponent(hn)}`,
-      );
+      const url = `https://api.pdok.nl/bzk/locatieserver/search/v3_1/free?q=${encodeURIComponent(pc)}+${encodeURIComponent(hn)}&fq=type:adres&fl=straatnaam,woonplaatsnaam&rows=1`;
+      const res = await fetch(url);
       setAdresChecked(true);
       if (res.ok) {
         const data = await res.json();
-        if (data?.street && data?.city) {
-          setBewoner((b) => ({ ...b, straatnaam: data.street, plaatsnaam: data.city }));
+        const doc = data?.response?.docs?.[0];
+        if (doc?.straatnaam && doc?.woonplaatsnaam) {
+          setBewoner((b) => ({ ...b, straatnaam: doc.straatnaam, plaatsnaam: doc.woonplaatsnaam }));
           setAdresLocked(true);
           return;
         }
       }
       setAdresLocked(false);
-    } catch {
+    } catch (err) {
+      console.error("PDOK lookup failed", err);
       setAdresChecked(true);
       setAdresLocked(false);
     }
@@ -120,11 +121,13 @@ const Contact = () => {
           bel_voorkeur: bewoner.bel_voorkeur || null,
           vragen: bewoner.vragen || null,
           bron: "website",
+          status: "nieuw",
         });
         if (error) throw error;
         setBewoner(initialBewoner);
         setAdresLocked(false);
         setAdresChecked(false);
+        setSubmitted(true);
       } else {
         const { error } = await supabase.from("leads_uitvoerders").insert({
           bedrijfsnaam: uitvoerder.bedrijfsnaam,
@@ -132,14 +135,20 @@ const Contact = () => {
           email: uitvoerder.email,
           telefoonnummer: uitvoerder.telefoonnummer,
           vragen: uitvoerder.vragen || null,
+          bron: "website",
+          status: "nieuw",
         });
         if (error) throw error;
         setUitvoerder(initialUitvoerder);
+        setSubmitted(true);
       }
-      setSubmitted(true);
     } catch (err) {
-      console.error(err);
-      setErrorMsg("Er ging iets mis. Probeer het opnieuw of bel ons direct.");
+      console.error("Lead submit failed", err);
+      setErrorMsg(
+        mode === "bewoner"
+          ? "Er ging iets mis. Probeer het opnieuw of bel ons direct op 06 402 48 371."
+          : "Er ging iets mis. Probeer het opnieuw of bel ons direct.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -232,7 +241,7 @@ const Contact = () => {
                     Bedankt!
                   </h3>
                   <p className="font-sans" style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>
-                    We nemen binnen 24 uur contact met je op.
+                    We nemen binnen één werkdag contact met je op.
                   </p>
                 </div>
               ) : (
