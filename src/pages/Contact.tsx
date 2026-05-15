@@ -2,6 +2,7 @@ import { useState, FormEvent } from "react";
 import { CheckCircle, Mail, Phone, MapPin } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { supabase } from "@/integrations/supabase/client";
 
 type Mode = "uitvoerder" | "bewoner";
 
@@ -38,14 +39,113 @@ const contactRows = [
   { icon: MapPin, value: "Groningen, Nederland" },
 ];
 
+const belVoorkeurOpties = [
+  "Ochtend (9:00 – 12:00)",
+  "Middag (12:00 – 17:00)",
+  "Avond (17:00 – 20:00)",
+  "Geen voorkeur",
+];
+
+const initialBewoner = {
+  naam: "",
+  email: "",
+  telefoonnummer: "",
+  postcode: "",
+  huisnummer: "",
+  toevoeging: "",
+  straatnaam: "",
+  plaatsnaam: "",
+  bel_voorkeur: "",
+  vragen: "",
+};
+
+const initialUitvoerder = {
+  bedrijfsnaam: "",
+  naam_contactpersoon: "",
+  email: "",
+  telefoonnummer: "",
+  vragen: "",
+};
+
 const Contact = () => {
   const [mode, setMode] = useState<Mode>("uitvoerder");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
+  const [bewoner, setBewoner] = useState(initialBewoner);
+  const [uitvoerder, setUitvoerder] = useState(initialUitvoerder);
+  const [adresLocked, setAdresLocked] = useState(false);
+  const [adresChecked, setAdresChecked] = useState(false);
+
+  const lookupAdres = async () => {
+    const pc = bewoner.postcode.replace(/\s+/g, "");
+    const hn = bewoner.huisnummer.trim();
+    if (!pc || !hn) return;
+    try {
+      const res = await fetch(
+        `https://postcode.tech/api/v1/postcode/full?postcode=${encodeURIComponent(pc)}&number=${encodeURIComponent(hn)}`,
+      );
+      setAdresChecked(true);
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.street && data?.city) {
+          setBewoner((b) => ({ ...b, straatnaam: data.street, plaatsnaam: data.city }));
+          setAdresLocked(true);
+          return;
+        }
+      }
+      setAdresLocked(false);
+    } catch {
+      setAdresChecked(true);
+      setAdresLocked(false);
+    }
   };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setErrorMsg(null);
+    setSubmitting(true);
+    try {
+      if (mode === "bewoner") {
+        const { error } = await supabase.from("leads_bewoners").insert({
+          naam: bewoner.naam,
+          email: bewoner.email,
+          telefoonnummer: bewoner.telefoonnummer,
+          postcode: bewoner.postcode || null,
+          huisnummer: bewoner.huisnummer || null,
+          toevoeging: bewoner.toevoeging || null,
+          straatnaam: bewoner.straatnaam || null,
+          plaatsnaam: bewoner.plaatsnaam || null,
+          bel_voorkeur: bewoner.bel_voorkeur || null,
+          vragen: bewoner.vragen || null,
+          bron: "website",
+        });
+        if (error) throw error;
+        setBewoner(initialBewoner);
+        setAdresLocked(false);
+        setAdresChecked(false);
+      } else {
+        const { error } = await supabase.from("leads_uitvoerders").insert({
+          bedrijfsnaam: uitvoerder.bedrijfsnaam,
+          naam_contactpersoon: uitvoerder.naam_contactpersoon,
+          email: uitvoerder.email,
+          telefoonnummer: uitvoerder.telefoonnummer,
+          vragen: uitvoerder.vragen || null,
+        });
+        if (error) throw error;
+        setUitvoerder(initialUitvoerder);
+      }
+      setSubmitted(true);
+    } catch (err) {
+      console.error(err);
+      setErrorMsg("Er ging iets mis. Probeer het opnieuw of bel ons direct.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const adresPlaceholder = adresChecked && !adresLocked ? "Niet gevonden — vul zelf in" : "";
 
   return (
     <div className="min-h-screen bg-background">
@@ -54,10 +154,7 @@ const Contact = () => {
       {/* Hero */}
       <section style={{ backgroundColor: "#FBFAF7" }}>
         <div className="mx-auto px-6 md:px-12" style={{ maxWidth: 1200 }}>
-          <div
-            className="mx-auto text-center py-8 md:py-12"
-            style={{ maxWidth: 900 }}
-          >
+          <div className="mx-auto text-center py-8 md:py-12" style={{ maxWidth: 900 }}>
             <h1
               className="font-display"
               style={{
@@ -72,26 +169,14 @@ const Contact = () => {
             </h1>
             <p
               className="mx-auto font-sans"
-              style={{
-                marginTop: 16,
-                maxWidth: 760,
-                fontSize: 16,
-                color: "#6B6B6B",
-                lineHeight: 1.5,
-              }}
+              style={{ marginTop: 16, maxWidth: 760, fontSize: 16, color: "#6B6B6B", lineHeight: 1.5 }}
             >
               Vertel ons waar je op zoek naar bent. We nemen binnen één werkdag contact op.
             </p>
 
-            {/* Toggle */}
             <div
               className="flex sm:inline-flex w-full sm:w-auto"
-              style={{
-                marginTop: 24,
-                backgroundColor: "#E5E2DB",
-                padding: 4,
-                borderRadius: 999,
-              }}
+              style={{ marginTop: 24, backgroundColor: "#E5E2DB", padding: 4, borderRadius: 999 }}
             >
               {(["uitvoerder", "bewoner"] as Mode[]).map((m) => {
                 const active = mode === m;
@@ -101,6 +186,7 @@ const Contact = () => {
                     onClick={() => {
                       setMode(m);
                       setSubmitted(false);
+                      setErrorMsg(null);
                     }}
                     className="font-sans transition-colors flex-1 sm:flex-initial text-[14px] sm:text-[15px]"
                     style={{
@@ -128,14 +214,9 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Main two-column section */}
-      <section
-        style={{ backgroundColor: "#F5F2EC" }}
-        className="py-12 md:py-16"
-      >
+      <section style={{ backgroundColor: "#F5F2EC" }} className="py-12 md:py-16">
         <div className="mx-auto px-6 md:px-12" style={{ maxWidth: 1200 }}>
           <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 md:gap-10 lg:gap-12 items-start">
-            {/* Left column — Form */}
             <div
               style={{
                 backgroundColor: "#FFFFFF",
@@ -147,30 +228,19 @@ const Contact = () => {
             >
               {submitted ? (
                 <div className="text-center">
-                  <h3
-                    className="font-display"
-                    style={{ fontSize: 22, fontWeight: 600, color: "#152C4E", marginBottom: 12 }}
-                  >
-                    Bedankt voor je bericht!
+                  <h3 className="font-display" style={{ fontSize: 22, fontWeight: 600, color: "#152C4E", marginBottom: 12 }}>
+                    Bedankt!
                   </h3>
                   <p className="font-sans" style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6 }}>
-                    We nemen binnen één werkdag contact op.
+                    We nemen binnen 24 uur contact met je op.
                   </p>
                 </div>
               ) : (
                 <>
-                  <h3
-                    className="font-display"
-                    style={{ fontSize: 22, fontWeight: 600, color: "#152C4E", marginBottom: 8 }}
-                  >
-                    {mode === "uitvoerder"
-                      ? "Vertel ons over jullie bedrijf"
-                      : "Vertel ons over jouw situatie"}
+                  <h3 className="font-display" style={{ fontSize: 22, fontWeight: 600, color: "#152C4E", marginBottom: 8 }}>
+                    {mode === "uitvoerder" ? "Vertel ons over jullie bedrijf" : "Vertel ons over jouw situatie"}
                   </h3>
-                  <p
-                    className="font-sans"
-                    style={{ fontSize: 14, color: "#6B6B6B", marginBottom: 24, lineHeight: 1.6 }}
-                  >
+                  <p className="font-sans" style={{ fontSize: 14, color: "#6B6B6B", marginBottom: 24, lineHeight: 1.6 }}>
                     {mode === "uitvoerder"
                       ? "Hoe meer we vooraf weten, hoe scherper we het gesprek kunnen voeren."
                       : "Hoe meer we vooraf weten, hoe beter we je kunnen helpen."}
@@ -181,28 +251,52 @@ const Contact = () => {
                       <>
                         <div className={fieldWrap}>
                           <label className={labelClass}>Bedrijfsnaam{required}</label>
-                          <input type="text" required className={inputClass} />
+                          <input
+                            type="text"
+                            required
+                            className={inputClass}
+                            value={uitvoerder.bedrijfsnaam}
+                            onChange={(e) => setUitvoerder({ ...uitvoerder, bedrijfsnaam: e.target.value })}
+                          />
                         </div>
                         <div className={fieldWrap}>
                           <label className={labelClass}>Naam contactpersoon{required}</label>
-                          <input type="text" required className={inputClass} />
+                          <input
+                            type="text"
+                            required
+                            className={inputClass}
+                            value={uitvoerder.naam_contactpersoon}
+                            onChange={(e) => setUitvoerder({ ...uitvoerder, naam_contactpersoon: e.target.value })}
+                          />
                         </div>
                         <div className={fieldWrap}>
                           <label className={labelClass}>E-mailadres{required}</label>
-                          <input type="email" required className={inputClass} />
+                          <input
+                            type="email"
+                            required
+                            className={inputClass}
+                            value={uitvoerder.email}
+                            onChange={(e) => setUitvoerder({ ...uitvoerder, email: e.target.value })}
+                          />
                         </div>
                         <div className={fieldWrap}>
                           <label className={labelClass}>Telefoonnummer{required}</label>
-                          <input type="tel" required className={inputClass} />
+                          <input
+                            type="tel"
+                            required
+                            className={inputClass}
+                            value={uitvoerder.telefoonnummer}
+                            onChange={(e) => setUitvoerder({ ...uitvoerder, telefoonnummer: e.target.value })}
+                          />
                         </div>
                         <div className={fieldWrap}>
-                          <label className={labelClass}>
-                            Vragen of opmerkingen{optional}
-                          </label>
+                          <label className={labelClass}>Vragen of opmerkingen{optional}</label>
                           <textarea
                             className={inputClass}
                             placeholder="Stel hier je vraag of voeg toe wat je wil meegeven."
                             style={{ minHeight: 100, resize: "vertical" }}
+                            value={uitvoerder.vragen}
+                            onChange={(e) => setUitvoerder({ ...uitvoerder, vragen: e.target.value })}
                           />
                         </div>
                       </>
@@ -210,54 +304,138 @@ const Contact = () => {
                       <>
                         <div className={fieldWrap}>
                           <label className={labelClass}>Naam{required}</label>
-                          <input type="text" required className={inputClass} />
+                          <input
+                            type="text"
+                            required
+                            className={inputClass}
+                            value={bewoner.naam}
+                            onChange={(e) => setBewoner({ ...bewoner, naam: e.target.value })}
+                          />
                         </div>
                         <div className={fieldWrap}>
                           <label className={labelClass}>E-mailadres{required}</label>
-                          <input type="email" required className={inputClass} />
+                          <input
+                            type="email"
+                            required
+                            className={inputClass}
+                            value={bewoner.email}
+                            onChange={(e) => setBewoner({ ...bewoner, email: e.target.value })}
+                          />
                         </div>
                         <div className={fieldWrap}>
                           <label className={labelClass}>Telefoonnummer{required}</label>
-                          <input type="tel" required className={inputClass} />
+                          <input
+                            type="tel"
+                            required
+                            className={inputClass}
+                            value={bewoner.telefoonnummer}
+                            onChange={(e) => setBewoner({ ...bewoner, telefoonnummer: e.target.value })}
+                          />
                         </div>
+
                         <div className={fieldWrap}>
                           <label className={labelClass}>
-                            Adres{required}
+                            Adres
                             <span className="text-[#8B8680] font-normal ml-1">(toevoeging optioneel)</span>
                           </label>
                           <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr] gap-3">
                             <input
                               type="text"
-                              required
                               placeholder="Postcode"
                               className={inputClass}
+                              value={bewoner.postcode}
+                              onChange={(e) => {
+                                setBewoner({ ...bewoner, postcode: e.target.value });
+                                setAdresLocked(false);
+                                setAdresChecked(false);
+                              }}
                             />
                             <input
                               type="text"
-                              required
                               placeholder="Huisnummer"
                               className={inputClass}
+                              value={bewoner.huisnummer}
+                              onChange={(e) => {
+                                setBewoner({ ...bewoner, huisnummer: e.target.value });
+                                setAdresLocked(false);
+                                setAdresChecked(false);
+                              }}
+                              onBlur={lookupAdres}
                             />
                             <input
                               type="text"
                               placeholder="Toevoeging"
                               className={inputClass}
+                              value={bewoner.toevoeging}
+                              onChange={(e) => setBewoner({ ...bewoner, toevoeging: e.target.value })}
                             />
                           </div>
                         </div>
+
+                        <div className={fieldWrap}>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <input
+                              type="text"
+                              placeholder={adresPlaceholder || "Straatnaam"}
+                              readOnly={adresLocked}
+                              className={inputClass}
+                              style={adresLocked ? { backgroundColor: "#F0EEE9", cursor: "not-allowed" } : undefined}
+                              value={bewoner.straatnaam}
+                              onChange={(e) => setBewoner({ ...bewoner, straatnaam: e.target.value })}
+                            />
+                            <input
+                              type="text"
+                              placeholder={adresPlaceholder || "Plaatsnaam"}
+                              readOnly={adresLocked}
+                              className={inputClass}
+                              style={adresLocked ? { backgroundColor: "#F0EEE9", cursor: "not-allowed" } : undefined}
+                              value={bewoner.plaatsnaam}
+                              onChange={(e) => setBewoner({ ...bewoner, plaatsnaam: e.target.value })}
+                            />
+                          </div>
+                        </div>
+
+                        <div className={fieldWrap}>
+                          <label className={labelClass}>Wanneer word je het liefst gebeld?{optional}</label>
+                          <select
+                            className={inputClass}
+                            value={bewoner.bel_voorkeur}
+                            onChange={(e) => setBewoner({ ...bewoner, bel_voorkeur: e.target.value })}
+                          >
+                            <option value="">Maak een keuze</option>
+                            {belVoorkeurOpties.map((o) => (
+                              <option key={o} value={o}>
+                                {o}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
                         <div className={fieldWrap}>
                           <label className={labelClass}>Vragen of opmerkingen{optional}</label>
                           <textarea
                             className={inputClass}
                             placeholder="Stel hier je vraag of voeg toe wat je wil meegeven."
                             style={{ minHeight: 120, resize: "vertical" }}
+                            value={bewoner.vragen}
+                            onChange={(e) => setBewoner({ ...bewoner, vragen: e.target.value })}
                           />
                         </div>
                       </>
                     )}
 
+                    {errorMsg && (
+                      <p
+                        className="font-sans"
+                        style={{ marginBottom: 12, fontSize: 14, color: "#B3261E" }}
+                      >
+                        {errorMsg}
+                      </p>
+                    )}
+
                     <button
                       type="submit"
+                      disabled={submitting}
                       className="w-full font-sans transition-colors"
                       style={{
                         marginTop: 12,
@@ -267,30 +445,28 @@ const Contact = () => {
                         borderRadius: 8,
                         fontSize: 15,
                         fontWeight: 600,
-                        cursor: "pointer",
+                        cursor: submitting ? "not-allowed" : "pointer",
+                        opacity: submitting ? 0.7 : 1,
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
-                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
+                      onMouseEnter={(e) => {
+                        if (!submitting) e.currentTarget.style.backgroundColor = "#D9A538";
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!submitting) e.currentTarget.style.backgroundColor = "#E8B547";
+                      }}
                     >
-                      Verstuur bericht
+                      {submitting ? "Versturen..." : "Verstuur bericht"}
                     </button>
                   </form>
                 </>
               )}
             </div>
 
-            {/* Right column — Expectations + Contact details */}
             <div className="flex flex-col" style={{ gap: 32 }}>
-              {/* Expectations */}
               <div>
                 <h3
                   className="font-display"
-                  style={{
-                    fontSize: 22,
-                    fontWeight: 600,
-                    color: "#152C4E",
-                    marginBottom: 24,
-                  }}
+                  style={{ fontSize: 22, fontWeight: 600, color: "#152C4E", marginBottom: 24 }}
                 >
                   Wat kun je verwachten?
                 </h3>
@@ -302,10 +478,7 @@ const Contact = () => {
                       style={{ gap: 12, paddingTop: 14, paddingBottom: 14 }}
                     >
                       <CheckCircle size={20} color="#E8B547" className="shrink-0 mt-0.5" />
-                      <span
-                        className="font-sans"
-                        style={{ fontSize: 15, color: "#2B2B2B", lineHeight: 1.5 }}
-                      >
+                      <span className="font-sans" style={{ fontSize: 15, color: "#2B2B2B", lineHeight: 1.5 }}>
                         {item}
                       </span>
                     </li>
@@ -313,7 +486,6 @@ const Contact = () => {
                 </ul>
               </div>
 
-              {/* Contact details card */}
               <div
                 style={{
                   backgroundColor: "#FFFFFF",
@@ -322,16 +494,10 @@ const Contact = () => {
                   padding: 28,
                 }}
               >
-                <h3
-                  className="font-display"
-                  style={{ fontSize: 18, fontWeight: 600, color: "#152C4E", marginBottom: 8 }}
-                >
+                <h3 className="font-display" style={{ fontSize: 18, fontWeight: 600, color: "#152C4E", marginBottom: 8 }}>
                   Liever direct contact?
                 </h3>
-                <p
-                  className="font-sans"
-                  style={{ fontSize: 14, color: "#6B6B6B", lineHeight: 1.5, marginBottom: 24 }}
-                >
+                <p className="font-sans" style={{ fontSize: 14, color: "#6B6B6B", lineHeight: 1.5, marginBottom: 24 }}>
                   {contactIntros[mode]}
                 </p>
 
@@ -360,10 +526,7 @@ const Contact = () => {
                             {row.value}
                           </a>
                         ) : (
-                          <span
-                            className="font-sans"
-                            style={{ fontSize: 15, fontWeight: 500, color: "#2B2B2B" }}
-                          >
+                          <span className="font-sans" style={{ fontSize: 15, fontWeight: 500, color: "#2B2B2B" }}>
                             {row.value}
                           </span>
                         )}
