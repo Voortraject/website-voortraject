@@ -109,19 +109,27 @@ const Contact = () => {
     setSubmitting(true);
     try {
       if (mode === "bewoner") {
+        const beltijd = bewoner.bel_voorkeur.trim();
+        const opmerkingen = bewoner.vragen.trim();
+        let notities: string | null = null;
+        if (beltijd && opmerkingen) {
+          notities = `Voorkeur beltijd: ${beltijd}\n${opmerkingen}`;
+        } else if (beltijd) {
+          notities = `Voorkeur beltijd: ${beltijd}`;
+        } else if (opmerkingen) {
+          notities = opmerkingen;
+        }
         const { error } = await supabase.from("leads_bewoners").insert({
-tenant_id: "00000000-0000-0000-0000-000000000001",
+          tenant_id: "00000000-0000-0000-0000-000000000001",
           naam: bewoner.naam,
           email: bewoner.email,
-          telefoonnummer: bewoner.telefoonnummer,
+          telefoon: bewoner.telefoonnummer,
           postcode: bewoner.postcode || null,
           huisnummer: bewoner.huisnummer || null,
-          toevoeging: bewoner.toevoeging || null,
-          straatnaam: bewoner.straatnaam || null,
-          plaatsnaam: bewoner.plaatsnaam || null,
-          bel_voorkeur: bewoner.bel_voorkeur || null,
-          vragen: bewoner.vragen || null,
-          bron: "website",
+          straat: bewoner.straatnaam || null,
+          stad: bewoner.plaatsnaam || null,
+          notities,
+          bron: "Website",
           status: "nieuw",
         } as any);
         if (error) throw error;
