@@ -2,7 +2,7 @@ import { useState, FormEvent } from "react";
 import { CheckCircle, Mail, Phone, MapPin } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { supabase } from "@/integrations/supabase/client";
+import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
 
 type Mode = "uitvoerder" | "bewoner";
 
