@@ -123,7 +123,7 @@ const Contact = () => {
           vragen: bewoner.vragen || null,
           bron: "website",
           status: "nieuw",
-        });
+        } as any);
         if (error) throw error;
         setBewoner(initialBewoner);
         setAdresLocked(false);
