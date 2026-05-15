@@ -25,6 +25,7 @@ export type Database = {
           naam: string
           plaatsnaam: string | null
           postcode: string | null
+          status: string
           straatnaam: string | null
           telefoonnummer: string
           toevoeging: string | null
@@ -40,6 +41,7 @@ export type Database = {
           naam: string
           plaatsnaam?: string | null
           postcode?: string | null
+          status?: string
           straatnaam?: string | null
           telefoonnummer: string
           toevoeging?: string | null
@@ -55,6 +57,7 @@ export type Database = {
           naam?: string
           plaatsnaam?: string | null
           postcode?: string | null
+          status?: string
           straatnaam?: string | null
           telefoonnummer?: string
           toevoeging?: string | null
@@ -65,28 +68,34 @@ export type Database = {
       leads_uitvoerders: {
         Row: {
           bedrijfsnaam: string
+          bron: string | null
           created_at: string | null
           email: string
           id: string
           naam_contactpersoon: string
+          status: string
           telefoonnummer: string
           vragen: string | null
         }
         Insert: {
           bedrijfsnaam: string
+          bron?: string | null
           created_at?: string | null
           email: string
           id?: string
           naam_contactpersoon: string
+          status?: string
           telefoonnummer: string
           vragen?: string | null
         }
         Update: {
           bedrijfsnaam?: string
+          bron?: string | null
           created_at?: string | null
           email?: string
           id?: string
           naam_contactpersoon?: string
+          status?: string
           telefoonnummer?: string
           vragen?: string | null
         }
