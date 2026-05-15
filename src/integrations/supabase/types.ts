@@ -14,7 +14,84 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      leads_bewoners: {
+        Row: {
+          bel_voorkeur: string | null
+          bron: string | null
+          created_at: string | null
+          email: string
+          huisnummer: string | null
+          id: string
+          naam: string
+          plaatsnaam: string | null
+          postcode: string | null
+          straatnaam: string | null
+          telefoonnummer: string
+          toevoeging: string | null
+          vragen: string | null
+        }
+        Insert: {
+          bel_voorkeur?: string | null
+          bron?: string | null
+          created_at?: string | null
+          email: string
+          huisnummer?: string | null
+          id?: string
+          naam: string
+          plaatsnaam?: string | null
+          postcode?: string | null
+          straatnaam?: string | null
+          telefoonnummer: string
+          toevoeging?: string | null
+          vragen?: string | null
+        }
+        Update: {
+          bel_voorkeur?: string | null
+          bron?: string | null
+          created_at?: string | null
+          email?: string
+          huisnummer?: string | null
+          id?: string
+          naam?: string
+          plaatsnaam?: string | null
+          postcode?: string | null
+          straatnaam?: string | null
+          telefoonnummer?: string
+          toevoeging?: string | null
+          vragen?: string | null
+        }
+        Relationships: []
+      }
+      leads_uitvoerders: {
+        Row: {
+          bedrijfsnaam: string
+          created_at: string | null
+          email: string
+          id: string
+          naam_contactpersoon: string
+          telefoonnummer: string
+          vragen: string | null
+        }
+        Insert: {
+          bedrijfsnaam: string
+          created_at?: string | null
+          email: string
+          id?: string
+          naam_contactpersoon: string
+          telefoonnummer: string
+          vragen?: string | null
+        }
+        Update: {
+          bedrijfsnaam?: string
+          created_at?: string | null
+          email?: string
+          id?: string
+          naam_contactpersoon?: string
+          telefoonnummer?: string
+          vragen?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
