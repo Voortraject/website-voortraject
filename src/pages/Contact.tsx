@@ -141,11 +141,11 @@ const Contact = () => {
         const { error } = await supabase.from("leads_uitvoerders").insert({
           tenant_id: "00000000-0000-0000-0000-000000000001",
           bedrijfsnaam: uitvoerder.bedrijfsnaam,
-          naam_contactpersoon: uitvoerder.naam_contactpersoon,
+          contactpersoon: uitvoerder.naam_contactpersoon,
           email: uitvoerder.email,
-          telefoonnummer: uitvoerder.telefoonnummer,
-          vragen: uitvoerder.vragen || null,
-          bron: "website",
+          telefoon: uitvoerder.telefoonnummer,
+          notities: uitvoerder.vragen || null,
+          bron: "Website",
           status: "nieuw",
         } as any);
         if (error) throw error;
