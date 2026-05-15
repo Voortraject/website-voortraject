@@ -131,6 +131,7 @@ const Contact = () => {
         setSubmitted(true);
       } else {
         const { error } = await supabase.from("leads_uitvoerders").insert({
+          tenant_id: "8c847155-fc29-481f-84d4-ffef6816a181",
           bedrijfsnaam: uitvoerder.bedrijfsnaam,
           naam_contactpersoon: uitvoerder.naam_contactpersoon,
           email: uitvoerder.email,
@@ -138,7 +139,7 @@ const Contact = () => {
           vragen: uitvoerder.vragen || null,
           bron: "website",
           status: "nieuw",
-        });
+        } as any);
         if (error) throw error;
         setUitvoerder(initialUitvoerder);
         setSubmitted(true);
