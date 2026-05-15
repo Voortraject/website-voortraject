@@ -110,6 +110,7 @@ const Contact = () => {
     try {
       if (mode === "bewoner") {
         const { error } = await supabase.from("leads_bewoners").insert({
+          tenant_id: "8c847155-fc29-481f-84d4-ffef6816a181",
           naam: bewoner.naam,
           email: bewoner.email,
           telefoonnummer: bewoner.telefoonnummer,
