@@ -713,7 +713,7 @@ const Contact = () => {
                         <div className={fieldWrap}>
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-[13px]" style={{ color: "#8B8680" }}>
-                              {adresLocked && !adresEditOverride ? "Automatisch ingevuld via PDOK" : ""}
+                              {adresLocked && !adresEditOverride ? "Automatisch ingevuld" : ""}
                             </span>
                             {adresLocked && !adresEditOverride && (
                               <button
