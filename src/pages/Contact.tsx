@@ -298,6 +298,7 @@ const Contact = () => {
           telefoon: bewoner.telefoonnummer.trim(),
           postcode: bewoner.postcode ? normalizePostcode(bewoner.postcode) : null,
           huisnummer: bewoner.huisnummer.trim() || null,
+          toevoeging: bewoner.toevoeging.trim() || null,
           straat: bewoner.straatnaam.trim() ? escapeHtml(bewoner.straatnaam.trim()) : null,
           stad: bewoner.plaatsnaam.trim() ? escapeHtml(bewoner.plaatsnaam.trim()) : null,
           notities,
