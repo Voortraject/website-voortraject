@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import michael from "@/assets/team-michael.png";
 import tim from "@/assets/team-tim.png";
 import wouter from "@/assets/team-wouter.png";
+import christian from "@/assets/team-christian.png";
 import { UserCheck, ShieldCheck, Zap, FolderCheck, CheckCircle } from "lucide-react";
 
 const team = [
@@ -29,6 +30,14 @@ const team = [
     img: wouter,
     quote:
       "Voor mij is een goed traject \u00E9\u00E9n waarbij de bewoner nooit hoeft te vragen hoe het staat.",
+  },
+  {
+    name: "Christian",
+    role: "Partner",
+    specialty: "Verduurzamingsspecialist",
+    img: christian,
+    quote:
+      "Een woning goed isoleren begint bij de juiste voorbereiding. Ik zorg dat er niets over het hoofd wordt gezien voor de uitvoering.",
   },
 ];
 
@@ -117,7 +126,7 @@ const OverOns = () => {
         {/* Team */}
         <section className="py-12 md:py-16 bg-white">
           <div className="container-content">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
               {team.map((p) => (
                 <article
                   key={p.name}
