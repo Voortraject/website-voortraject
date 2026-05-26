@@ -39,6 +39,7 @@ const team = [
     quote:
       "Een woning goed isoleren begint bij de juiste voorbereiding. Ik zorg dat er niets over het hoofd wordt gezien voor de uitvoering.",
   },
+];
 
 const accent = { color: "hsl(var(--accent))" };
 
