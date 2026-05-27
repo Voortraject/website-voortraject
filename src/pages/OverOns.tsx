@@ -4,7 +4,7 @@ import michael from "@/assets/team-michael.png";
 import tim from "@/assets/team-tim.png";
 import wouter from "@/assets/team-wouter.png";
 import christian from "@/assets/team-christian.png";
-import { UserCheck, ShieldCheck, Zap, FolderCheck, CheckCircle } from "lucide-react";
+import { UserCheck, ShieldCheck, Zap, FolderCheck } from "lucide-react";
 
 const team = [
   {
