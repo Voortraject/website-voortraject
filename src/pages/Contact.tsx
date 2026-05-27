@@ -392,7 +392,7 @@ const Contact = () => {
               className="flex sm:inline-flex w-full sm:w-auto"
               style={{ marginTop: 24, backgroundColor: "#E5E2DB", padding: 4, borderRadius: 999 }}
             >
-              {(["uitvoerder", "bewoner"] as Mode[]).map((m) => {
+              {(["bewoner", "uitvoerder"] as Mode[]).map((m) => {
                 const active = mode === m;
                 return (
                   <button
