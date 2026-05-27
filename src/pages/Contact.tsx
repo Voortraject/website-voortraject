@@ -99,7 +99,7 @@ const normalizePostcode = (s: string) => s.replace(/\s+/g, "").toUpperCase();
 
 // ---------- Component ----------
 const Contact = () => {
-  const [mode, setMode] = useState<Mode>("uitvoerder");
+  const [mode, setMode] = useState<Mode>("bewoner");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
