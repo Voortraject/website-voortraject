@@ -4,7 +4,7 @@ import michael from "@/assets/team-michael.png";
 import tim from "@/assets/team-tim.png";
 import wouter from "@/assets/team-wouter.png";
 import christian from "@/assets/team-christian.png";
-import { UserCheck, ShieldCheck, Zap, FolderCheck, CheckCircle } from "lucide-react";
+import { UserCheck, ShieldCheck, Zap, FolderCheck } from "lucide-react";
 
 const team = [
   {
@@ -66,36 +66,8 @@ const howWeWork = [
   },
 ];
 
-const checkpoints = [
-  {
-    title: "Duidelijke communicatie naar bewoners",
-    desc: "Bewoners worden proactief ge\u00EFnformeerd, niet achteraf verrast.",
-  },
-  {
-    title: "Nette dossiervorming",
-    desc: "Alle stukken, tekeningen en akkoorden worden geordend aangeleverd en bewaard.",
-  },
-  {
-    title: "Kwaliteit en klantgerichtheid",
-    desc: "Het werk wordt goed gedaan \u00E9n de bewoner voelt dat.",
-  },
-  {
-    title: "Passend werkgebied",
-    desc: "Wij koppelen bewoners aan bedrijven die ook daadwerkelijk actief zijn in de regio.",
-  },
-  {
-    title: "Betrouwbaarheid in planning",
-    desc: "Afspraken worden nagekomen. Als er iets verandert, wordt dat tijdig gecommuniceerd.",
-  },
-  {
-    title: "Relevante certificeringen",
-    desc: "Waar het werk dit vereist, checken wij of de juiste papieren aanwezig zijn.",
-  },
-  {
-    title: "Bereidheid tot zorgvuldige samenwerking",
-    desc: "Het traject vraagt afstemming. Bedrijven die dat serieus nemen zijn welkom.",
-  },
-];
+
+
 
 const OverOns = () => {
   return (
@@ -234,48 +206,8 @@ const OverOns = () => {
           </div>
         </section>
 
-        {/* Waar wij op letten bij bouwbedrijven */}
-        <section className="py-16 md:py-20 bg-white">
-          <div className="container-content">
-            <div className="text-center mb-12">
-              <h2 className="h2-section">
-                Waar wij op letten bij <span style={accent}>bouwbedrijven</span>
-              </h2>
-              <p
-                className="mx-auto mt-4"
-                style={{ color: "#6B6B6B", fontSize: 16, lineHeight: 1.6, maxWidth: 560, fontWeight: 400 }}
-              >
-                Niet elk bedrijf werkt via ons mee aan een traject. Dit vinden wij belangrijk in de samenwerking.
-              </p>
-            </div>
-            <p
-              className="text-center mb-6"
-              style={{
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: 600,
-                color: "#A07C1E",
-                fontSize: 12,
-                textTransform: "uppercase",
-                letterSpacing: "0.15em",
-              }}
-            >
-              Alleen bedrijven die aan deze criteria voldoen
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6 max-w-4xl mx-auto">
-              {checkpoints.map((p) => (
-                <div key={p.title} className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5" style={{ color: "#E8B547", flexShrink: 0, marginTop: 2 }} />
-                  <div>
-                    <h3 style={{ fontWeight: 500, color: "#152C4E", fontSize: 15, lineHeight: 1.4 }}>{p.title}</h3>
-                    <p style={{ color: "#6B6B6B", fontSize: 14, lineHeight: 1.6, marginTop: 4, fontWeight: 400 }}>
-                      {p.desc}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+
+
 
         {/* CTA */}
         <section className="py-[60px]" style={{ backgroundColor: "#152C4E" }}>

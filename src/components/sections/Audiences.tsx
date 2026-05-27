@@ -1,19 +1,19 @@
 const cols = [
   {
-    id: "voor-uitvoerders",
-    eyebrow: "UITVOERDERS",
-    title: "Groeien zonder extra personeel",
-    body: "Wij helpen kleine en middelgrote uitvoerders om sneller en professioneler te werken in verduurzamingstrajecten. Van intake tot akkoord, jullie kunnen zich richten op de uitvoering.",
-    cta: "Bekijk wat we voor uitvoerders doen",
-    href: "/uitvoerders",
-  },
-  {
     id: "voor-bewoners",
     eyebrow: "BEWONERS",
     title: "Helder advies, begeleiding tot uitvoering",
     body: "Wij bieden bewoners duidelijkheid over isolatie, installaties en regelingen, en begeleiden hen richting een betrouwbare uitvoerder.",
     cta: "Bekijk wat we voor bewoners doen",
     href: "/bewoners",
+  },
+  {
+    id: "voor-uitvoerders",
+    eyebrow: "UITVOERDERS",
+    title: "Groeien zonder extra personeel",
+    body: "Wij helpen kleine en middelgrote uitvoerders om sneller en professioneler te werken in verduurzamingstrajecten. Van intake tot akkoord, jullie kunnen zich richten op de uitvoering.",
+    cta: "Bekijk wat we voor uitvoerders doen",
+    href: "/uitvoerders",
   },
 ];
 

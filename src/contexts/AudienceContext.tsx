@@ -10,7 +10,7 @@ interface AudienceContextValue {
 const AudienceContext = createContext<AudienceContextValue | undefined>(undefined);
 
 export const AudienceProvider = ({ children }: { children: ReactNode }) => {
-  const [audience, setAudience] = useState<Audience>("uitvoerders");
+  const [audience, setAudience] = useState<Audience>("bewoners");
   return (
     <AudienceContext.Provider value={{ audience, setAudience }}>
       {children}

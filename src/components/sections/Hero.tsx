@@ -31,17 +31,17 @@ export const Hero = () => {
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <a
-                  href="/uitvoerders"
+                  href="/bewoners"
                   className="inline-flex items-center justify-center rounded-full px-7 py-3.5 text-[15px] font-semibold transition-all duration-150 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                   style={{
                     backgroundColor: "hsl(var(--accent))",
                     color: "hsl(var(--primary))",
                   }}
                 >
-                  Ik ben een uitvoerder
+                  Ik ben een bewoner
                 </a>
                 <a
-                  href="/bewoners"
+                  href="/uitvoerders"
                   className="inline-flex items-center justify-center rounded-full px-7 py-3.5 text-[15px] font-medium border transition-all duration-150 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                   style={{
                     borderColor: "hsl(var(--primary))",
@@ -49,7 +49,7 @@ export const Hero = () => {
                     backgroundColor: "transparent",
                   }}
                 >
-                  Ik ben een bewoner
+                  Ik ben een uitvoerder
                 </a>
               </div>
 
