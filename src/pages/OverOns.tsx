@@ -234,48 +234,8 @@ const OverOns = () => {
           </div>
         </section>
 
-        {/* Waar wij op letten bij bouwbedrijven */}
-        <section className="py-16 md:py-20 bg-white">
-          <div className="container-content">
-            <div className="text-center mb-12">
-              <h2 className="h2-section">
-                Waar wij op letten bij <span style={accent}>bouwbedrijven</span>
-              </h2>
-              <p
-                className="mx-auto mt-4"
-                style={{ color: "#6B6B6B", fontSize: 16, lineHeight: 1.6, maxWidth: 560, fontWeight: 400 }}
-              >
-                Niet elk bedrijf werkt via ons mee aan een traject. Dit vinden wij belangrijk in de samenwerking.
-              </p>
-            </div>
-            <p
-              className="text-center mb-6"
-              style={{
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: 600,
-                color: "#A07C1E",
-                fontSize: 12,
-                textTransform: "uppercase",
-                letterSpacing: "0.15em",
-              }}
-            >
-              Alleen bedrijven die aan deze criteria voldoen
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6 max-w-4xl mx-auto">
-              {checkpoints.map((p) => (
-                <div key={p.title} className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5" style={{ color: "#E8B547", flexShrink: 0, marginTop: 2 }} />
-                  <div>
-                    <h3 style={{ fontWeight: 500, color: "#152C4E", fontSize: 15, lineHeight: 1.4 }}>{p.title}</h3>
-                    <p style={{ color: "#6B6B6B", fontSize: 14, lineHeight: 1.6, marginTop: 4, fontWeight: 400 }}>
-                      {p.desc}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+
+
 
         {/* CTA */}
         <section className="py-[60px]" style={{ backgroundColor: "#152C4E" }}>
