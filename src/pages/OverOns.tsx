@@ -66,36 +66,8 @@ const howWeWork = [
   },
 ];
 
-const checkpoints = [
-  {
-    title: "Duidelijke communicatie naar bewoners",
-    desc: "Bewoners worden proactief ge\u00EFnformeerd, niet achteraf verrast.",
-  },
-  {
-    title: "Nette dossiervorming",
-    desc: "Alle stukken, tekeningen en akkoorden worden geordend aangeleverd en bewaard.",
-  },
-  {
-    title: "Kwaliteit en klantgerichtheid",
-    desc: "Het werk wordt goed gedaan \u00E9n de bewoner voelt dat.",
-  },
-  {
-    title: "Passend werkgebied",
-    desc: "Wij koppelen bewoners aan bedrijven die ook daadwerkelijk actief zijn in de regio.",
-  },
-  {
-    title: "Betrouwbaarheid in planning",
-    desc: "Afspraken worden nagekomen. Als er iets verandert, wordt dat tijdig gecommuniceerd.",
-  },
-  {
-    title: "Relevante certificeringen",
-    desc: "Waar het werk dit vereist, checken wij of de juiste papieren aanwezig zijn.",
-  },
-  {
-    title: "Bereidheid tot zorgvuldige samenwerking",
-    desc: "Het traject vraagt afstemming. Bedrijven die dat serieus nemen zijn welkom.",
-  },
-];
+
+
 
 const OverOns = () => {
   return (
