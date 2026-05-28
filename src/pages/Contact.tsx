@@ -601,7 +601,7 @@ const Contact = () => {
                     ) : (
                       <>
                         <div className={fieldWrap}>
-                          <label htmlFor="f-naam" className={labelClass}>Naam{required}</label>
+                          <label htmlFor="f-naam" className={labelClass}>Volledige naam{required}</label>
                           <input
                             id="f-naam"
                             name="naam"
@@ -710,47 +710,61 @@ const Contact = () => {
                           )}
                         </div>
 
-                        <div className={fieldWrap}>
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-[13px]" style={{ color: "#8B8680" }}>
-                              {adresLocked && !adresEditOverride ? "Automatisch ingevuld" : ""}
-                            </span>
-                            {adresLocked && !adresEditOverride && (
-                              <button
-                                type="button"
-                                onClick={() => { setAdresEditOverride(true); setAdresLocked(false); }}
-                                className="text-[13px] underline"
-                                style={{ color: "#152C4E" }}
-                              >
-                                bewerken
-                              </button>
-                            )}
-                          </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <input
-                              name="straatnaam"
-                              type="text"
-                              placeholder="Straatnaam"
-                              aria-label="Straatnaam"
-                              readOnly={adresLocked && !adresEditOverride}
-                              className={cx(baseInputClass, inputOk)}
-                              style={adresLocked && !adresEditOverride ? { backgroundColor: "#F0EEE9", cursor: "not-allowed" } : undefined}
-                              value={bewoner.straatnaam}
-                              onChange={onChangeBew("straatnaam")}
-                              maxLength={150}
-                            />
-                            <input
-                              name="plaatsnaam"
-                              type="text"
-                              placeholder="Plaatsnaam"
-                              aria-label="Plaatsnaam"
-                              readOnly={adresLocked && !adresEditOverride}
-                              className={cx(baseInputClass, inputOk)}
-                              style={adresLocked && !adresEditOverride ? { backgroundColor: "#F0EEE9", cursor: "not-allowed" } : undefined}
-                              value={bewoner.plaatsnaam}
-                              onChange={onChangeBew("plaatsnaam")}
-                              maxLength={100}
-                            />
+                        <div
+                          className={cx(
+                            "grid transition-all duration-300 ease-in-out",
+                            (bewoner.postcode.trim() && bewoner.huisnummer.trim())
+                              ? "grid-rows-[1fr] opacity-100"
+                              : "grid-rows-[0fr] opacity-0"
+                          )}
+                          aria-hidden={!(bewoner.postcode.trim() && bewoner.huisnummer.trim())}
+                        >
+                          <div className="overflow-hidden">
+                            <div className={fieldWrap}>
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-[13px]" style={{ color: "#8B8680" }}>
+                                  {adresLocked && !adresEditOverride ? "Automatisch ingevuld" : ""}
+                                </span>
+                                {adresLocked && !adresEditOverride && (
+                                  <button
+                                    type="button"
+                                    onClick={() => { setAdresEditOverride(true); setAdresLocked(false); }}
+                                    className="text-[13px] underline"
+                                    style={{ color: "#152C4E" }}
+                                  >
+                                    bewerken
+                                  </button>
+                                )}
+                              </div>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <input
+                                  name="straatnaam"
+                                  type="text"
+                                  placeholder="Straatnaam"
+                                  aria-label="Straatnaam"
+                                  tabIndex={(bewoner.postcode.trim() && bewoner.huisnummer.trim()) ? 0 : -1}
+                                  readOnly={adresLocked && !adresEditOverride}
+                                  className={cx(baseInputClass, inputOk)}
+                                  style={adresLocked && !adresEditOverride ? { backgroundColor: "#F0EEE9", cursor: "not-allowed" } : undefined}
+                                  value={bewoner.straatnaam}
+                                  onChange={onChangeBew("straatnaam")}
+                                  maxLength={150}
+                                />
+                                <input
+                                  name="plaatsnaam"
+                                  type="text"
+                                  placeholder="Plaatsnaam"
+                                  aria-label="Plaatsnaam"
+                                  tabIndex={(bewoner.postcode.trim() && bewoner.huisnummer.trim()) ? 0 : -1}
+                                  readOnly={adresLocked && !adresEditOverride}
+                                  className={cx(baseInputClass, inputOk)}
+                                  style={adresLocked && !adresEditOverride ? { backgroundColor: "#F0EEE9", cursor: "not-allowed" } : undefined}
+                                  value={bewoner.plaatsnaam}
+                                  onChange={onChangeBew("plaatsnaam")}
+                                  maxLength={100}
+                                />
+                              </div>
+                            </div>
                           </div>
                         </div>
 
