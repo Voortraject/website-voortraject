@@ -172,6 +172,8 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
         </div>
       </div>
 
+      {(() => {
+        const cardEl = (
       <article
         className="flex flex-col flex-1"
         style={{
