@@ -3,7 +3,7 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import { NavLink } from "./NavLink";
 import { Button } from "./Button";
 import logoVoortraject from "@/assets/logo-voortraject.png";
-import { Component as GlowingButton } from "@/components/ui/glowing-button";
+import SubtleButton from "@/components/ui/subtle-button";
 
 const subsidiesItems = [
   { href: "/subsidies/nij-begun", label: "Nij Begun" },
@@ -90,7 +90,7 @@ export const Header = () => {
             );
           })}
           <a href="/contact" aria-label="Contact">
-            <GlowingButton glowColor="#c9a227">Contact</GlowingButton>
+            <SubtleButton label="Contact" />
           </a>
         </nav>
 
