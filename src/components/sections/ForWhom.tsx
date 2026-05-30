@@ -14,7 +14,7 @@ const cards = [
 ];
 
 export const ForWhom = () => (
-  <section className="py-16 md:py-24" style={{ backgroundColor: "#F5F2EC" }}>
+  <section className="py-16 md:py-24" style={{ backgroundColor: "#F9F7F4" }}>
     <div className="container-content">
       <h2 className="h2-section mb-12">
         Voor <span style={{ color: "hsl(var(--accent))" }}>wie</span> wij werken

@@ -15,7 +15,7 @@ const defaultLogos: Logo[] = [
   { src: "/images/instanties/nationaal-warmtefonds.png", alt: "Nationaal Warmtefonds" },
 ];
 
-const BG = "#F5F2EC";
+const BG = "#F9F7F4";
 
 export const LogoCarousel = ({
   title = "De subsidies en instanties waarmee wij werken",

@@ -20,7 +20,7 @@ const RED = "#C0392B";
 
 export const HowWeWork = () => {
   return (
-    <section className="section-pad" style={{ backgroundColor: "#FFFFFF" }}>
+    <section className="section-pad" style={{ backgroundColor: "#F9F7F4" }}>
       <div className="container-content">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="h2-section">
