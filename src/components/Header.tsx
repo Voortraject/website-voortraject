@@ -90,7 +90,7 @@ export const Header = () => {
             );
           })}
           <a href="/contact" aria-label="Contact">
-            <GlowingButton glowColor="#c9a227">Contact</GlowingButton>
+            <SubtleButton label="Contact" />
           </a>
         </nav>
 
