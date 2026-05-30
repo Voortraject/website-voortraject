@@ -19,14 +19,14 @@ export const Hero = () => {
                   maxWidth: "none",
                 }}
               >
-                Focus op <span style={{ color: "hsl(var(--accent))" }}>uitvoering</span>.<br />Wij regelen de rest.
+                <span style={{ color: "hsl(var(--accent))" }}>Verduurzamen</span>. Zonder zorgen.
               </h1>
 
               <p
                 className="mt-6 md:mt-8 mb-6 md:mb-8 text-[16px] md:text-[19px] leading-[1.6] max-w-xl"
                 style={{ color: "hsl(var(--primary) / 0.8)" }}
               >
-                Voor uitvoerders en bewoners. Wij brengen overzicht in een vaak chaotisch verduurzamingstraject.
+                Voor bewoners en uitvoerders. Wij brengen overzicht in een vaak chaotisch verduurzamingstraject.
               </p>
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
