@@ -90,4 +90,6 @@ export const AnimatedGradientBorder = ({
   );
 };
 
+export const BorderRotate = AnimatedGradientBorder;
+
 export default AnimatedGradientBorder;

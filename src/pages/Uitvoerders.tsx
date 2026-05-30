@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Check, Inbox, FileText, Bell, X, PhoneCall, MessageCircle, FileCheck, ShieldCheck, FolderOpen, AlertCircle, ChevronDown } from "lucide-react";
-import { AnimatedGradientBorder } from "@/components/ui/animated-gradient-border";
+import { AnimatedGradientBorder, BorderRotate } from "@/components/ui/animated-gradient-border";
 
 const withoutItems = [
   "Bewoners bellen en appen dezelfde vragen, keer op keer",
@@ -669,35 +669,42 @@ const Uitvoerders = () => {
               </div>
 
               {/* Met */}
-              <div
-                style={{
-                  backgroundColor: "#FFFFFF",
-                  border: "2px solid #E8B547",
-                  borderRadius: 16,
-                  padding: 40,
-                  boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
-                }}
+              <BorderRotate
+                animationMode="auto-rotate"
+                animationSpeed={4}
+                gradientColors={{ primary: '#92701a', secondary: '#c9a227', accent: '#f5d176' }}
+                backgroundColor="#ffffff"
+                borderWidth={2}
+                borderRadius={12}
               >
-                <h3
-                  className="font-display font-semibold"
-                  style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid #F0E4D0" }}
+                <div
+                  style={{
+                    backgroundColor: "#FFFFFF",
+                    borderRadius: 10,
+                    padding: 40,
+                  }}
                 >
-                  Met Voortraject
-                </h3>
-                <ul className="space-y-5">
-                  {withItems.map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <span
-                        className="flex items-center justify-center rounded-full flex-shrink-0"
-                        style={{ width: 24, height: 24, backgroundColor: "#F0E4D0", marginTop: 2 }}
-                      >
-                        <Check size={14} color="#E8B547" strokeWidth={3} aria-hidden="true" />
-                      </span>
-                      <span style={{ fontSize: 16, color: "#152C4E", lineHeight: 1.6 }}>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                  <h3
+                    className="font-display font-semibold"
+                    style={{ fontSize: 24, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid #F0E4D0" }}
+                  >
+                    Met Voortraject
+                  </h3>
+                  <ul className="space-y-5">
+                    {withItems.map((item) => (
+                      <li key={item} className="flex items-start gap-3">
+                        <span
+                          className="flex items-center justify-center rounded-full flex-shrink-0"
+                          style={{ width: 24, height: 24, backgroundColor: "#F0E4D0", marginTop: 2 }}
+                        >
+                          <Check size={14} color="#E8B547" strokeWidth={3} aria-hidden="true" />
+                        </span>
+                        <span style={{ fontSize: 16, color: "#152C4E", lineHeight: 1.6 }}>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </BorderRotate>
             </div>
 
             <div className="mt-16 text-center flex flex-col items-stretch sm:items-center">
