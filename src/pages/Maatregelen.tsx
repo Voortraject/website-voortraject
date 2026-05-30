@@ -10,10 +10,10 @@ const principles = [
 ];
 
 const badgeStyles: Record<string, string> = {
-  green: "bg-[#FDF6E3] text-[#A07C1E] border border-[#E8B547]/40",
-  blue: "bg-[#FDF6E3] text-[#A07C1E] border border-[#E8B547]/40",
-  oker: "bg-[#FDF6E3] text-[#A07C1E] border border-[#E8B547]/40",
-  gray: "bg-[#FDF6E3] text-[#A07C1E] border border-[#E8B547]/40",
+  green: "bg-[#FDF6E3] text-[#E8B547] border border-[#E8B547]/40",
+  blue: "bg-[#FDF6E3] text-[#E8B547] border border-[#E8B547]/40",
+  oker: "bg-[#FDF6E3] text-[#E8B547] border border-[#E8B547]/40",
+  gray: "bg-[#FDF6E3] text-[#E8B547] border border-[#E8B547]/40",
 };
 
 const measures = [

@@ -86,7 +86,7 @@ export const HowWeWork = () => {
             >
               <div
                 className="mb-6 text-sm font-bold uppercase tracking-wider"
-                style={{ color: "#A07C1E" }}
+                style={{ color: "#E8B547" }}
               >
                 Hoe wij het doen
               </div>
