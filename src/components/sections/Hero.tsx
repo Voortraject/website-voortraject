@@ -1,6 +1,6 @@
 import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import heroHouses from "@/assets/hero-houses.jpg";
+import heroHouses from "@/assets/hero-houses.png";
 
 export const Hero = () => {
   return (
