@@ -89,8 +89,21 @@ export const Header = () => {
               </a>
             );
           })}
-          <a href="/contact" aria-label="Contact">
-            <SubtleButton label="Contact" />
+          <a
+            href="/contact"
+            aria-label="Contact"
+            className="inline-flex items-center justify-center rounded-full py-3 px-6 text-base font-semibold text-white transition-all duration-300 ease-out hover:scale-105"
+            style={{ backgroundColor: "#C9A227" }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#D4AD35";
+              e.currentTarget.style.boxShadow = "0 10px 15px -3px rgba(251, 191, 36, 0.4), 0 4px 6px -4px rgba(251, 191, 36, 0.4)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "#C9A227";
+              e.currentTarget.style.boxShadow = "none";
+            }}
+          >
+            Plan een gesprek
           </a>
         </nav>
 
