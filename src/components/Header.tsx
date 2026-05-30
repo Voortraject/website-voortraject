@@ -92,8 +92,8 @@ export const Header = () => {
           <a
             href="/contact"
             aria-label="Contact"
-            className="relative overflow-hidden inline-flex items-center justify-center rounded-full py-3 px-6 text-base font-semibold text-white"
-            style={{ backgroundColor: "hsl(var(--accent))" }}
+            className="relative overflow-hidden inline-flex items-center justify-center rounded-full py-3 px-6 text-base font-semibold"
+            style={{ backgroundColor: "hsl(var(--accent))", color: "#152C4E" }}
           >
             <span className="relative z-10">Plan een gesprek</span>
             <span className="absolute inset-0 overflow-hidden rounded-full pointer-events-none">
