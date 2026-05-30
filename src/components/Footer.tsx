@@ -31,7 +31,7 @@ const navCols = [
 ];
 
 export const Footer = () => (
-  <footer className="text-white" style={{ backgroundColor: "#F9F7F4" }}>
+  <footer className="text-white" style={{ backgroundColor: "#152C4E" }}>
     <div className="container-content md:py-20 py-[40px]">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-10 lg:gap-12">
         <div>

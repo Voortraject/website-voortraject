@@ -4,7 +4,7 @@ import heroHouses from "@/assets/hero-houses.jpg";
 
 export const Hero = () => {
   return (
-    <section className="pt-10 pb-[56px] md:pt-16 md:pb-[80px]" style={{ backgroundColor: "#F9F7F4" }} aria-labelledby="hero-title">
+    <section className="bg-background pt-10 pb-[56px] md:pt-16 md:pb-[80px]" aria-labelledby="hero-title">
       <div className="container-content">
         <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-[5%]">
           <div className="lg:basis-[58%] lg:shrink-0 min-w-0 text-left">
