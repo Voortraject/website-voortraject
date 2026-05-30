@@ -7,7 +7,7 @@ export const Hero = () => {
     <section className="bg-background pt-10 pb-[56px] md:pt-16 md:pb-[80px]" aria-labelledby="hero-title">
       <div className="container-content">
         <div className="flex flex-col lg:flex-row lg:items-center gap-8 lg:gap-[5%]">
-          <div className="lg:basis-[58%] lg:shrink-0 min-w-0 text-left">
+          <div className="lg:basis-[48%] lg:shrink-0 min-w-0 text-left">
             <div className="animate-fade-up">
               <h1
                 id="hero-title"
