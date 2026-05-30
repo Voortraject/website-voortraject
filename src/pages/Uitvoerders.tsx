@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Check, Inbox, FileText, Bell, X, PhoneCall, MessageCircle, FileCheck, ShieldCheck, FolderOpen, AlertCircle, ChevronDown } from "lucide-react";
+import { AnimatedGradientBorder } from "@/components/ui/animated-gradient-border";
 
 const withoutItems = [
   "Bewoners bellen en appen dezelfde vragen, keer op keer",
