@@ -21,7 +21,7 @@ export const Hero = () => {
               >
                 <span style={{ color: "#1a1a1a", fontWeight: 700 }}>Verduurzamen.</span>
                 <br />
-                <span style={{ color: "#C9A227", fontWeight: 700 }}>Zonder zorgen.</span>
+                <span style={{ color: "hsl(var(--accent))", fontWeight: 700 }}>Zonder zorgen.</span>
               </h1>
 
               <p
