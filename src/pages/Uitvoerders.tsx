@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Check, Inbox, FileText, Bell, X, PhoneCall, MessageCircle, FileCheck, ShieldCheck, FolderOpen, AlertCircle, ChevronDown } from "lucide-react";
+import { AnimatedGradientBorder } from "@/components/ui/animated-gradient-border";
 
 const withoutItems = [
   "Bewoners bellen en appen dezelfde vragen, keer op keer",
@@ -114,14 +115,10 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
   const featured = !!p.featured;
   const delays = [0.05, 0.12, 0.19];
 
-  const cardBg = featured ? "rgba(232, 181, 71, 0.18)" : "#FFFFFF";
-  const cardBorder = featured ? "1.5px solid #E8B547" : "1px solid #E5E2DB";
-  const baseShadow = featured
-    ? "0 16px 48px rgba(232, 181, 71, 0.25)"
-    : "0 1px 2px rgba(21,44,78,0.04)";
-  const hoverShadow = featured
-    ? "0 22px 56px rgba(232, 181, 71, 0.32)"
-    : "0 12px 32px rgba(21,44,78,0.10)";
+  const cardBg = "#FFFFFF";
+  const cardBorder = featured ? "none" : "1px solid #E5E2DB";
+  const baseShadow = "0 1px 2px rgba(21,44,78,0.04)";
+  const hoverShadow = "0 12px 32px rgba(21,44,78,0.10)";
 
   const baseTransform = "translateY(0)";
   const hoverTransform = "translateY(-2px)";
@@ -175,6 +172,8 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
         </div>
       </div>
 
+      {(() => {
+        const cardEl = (
       <article
         className="flex flex-col flex-1"
         style={{
@@ -450,6 +449,21 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
           </a>
         </div>
       </article>
+        );
+        return featured ? (
+          <AnimatedGradientBorder
+            animationMode="auto-rotate"
+            animationSpeed={4}
+            gradientColors={{ primary: "#92701a", secondary: "#c9a227", accent: "#f5d176" }}
+            backgroundColor="#ffffff"
+            borderWidth={2}
+            borderRadius={12}
+            style={{ display: "flex", flex: 1 }}
+          >
+            {cardEl}
+          </AnimatedGradientBorder>
+        ) : cardEl;
+      })()}
     </div>
   );
 };
