@@ -99,7 +99,7 @@ export const Header = () => {
             <span className="absolute inset-0 overflow-hidden rounded-full pointer-events-none">
               <span
                 className="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent"
-                style={{ animation: 'sheen 2.5s ease-in-out infinite' }}
+                style={{ animation: 'sheen 5s ease-in-out infinite' }}
               />
             </span>
           </a>
