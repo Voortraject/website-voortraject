@@ -3,7 +3,7 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import { NavLink } from "./NavLink";
 import { Button } from "./Button";
 import logoVoortraject from "@/assets/logo-voortraject.png";
-import SubtleButton from "@/components/ui/subtle-button";
+
 
 const subsidiesItems = [
   { href: "/subsidies/nij-begun", label: "Nij Begun" },
