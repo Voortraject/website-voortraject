@@ -92,18 +92,16 @@ export const Header = () => {
           <a
             href="/contact"
             aria-label="Contact"
-            className="inline-flex items-center justify-center rounded-full py-3 px-6 text-base font-semibold text-white transition-all duration-300 ease-out hover:scale-105"
+            className="relative overflow-hidden inline-flex items-center justify-center rounded-full py-3 px-6 text-base font-semibold text-white"
             style={{ backgroundColor: "#C9A227" }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "#D4AD35";
-              e.currentTarget.style.boxShadow = "0 10px 15px -3px rgba(251, 191, 36, 0.4), 0 4px 6px -4px rgba(251, 191, 36, 0.4)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "#C9A227";
-              e.currentTarget.style.boxShadow = "none";
-            }}
           >
-            Plan een gesprek
+            <span className="relative z-10">Plan een gesprek</span>
+            <span className="absolute inset-0 overflow-hidden rounded-full pointer-events-none">
+              <span
+                className="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                style={{ animation: 'sheen 2.5s ease-in-out infinite' }}
+              />
+            </span>
           </a>
         </nav>
 
