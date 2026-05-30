@@ -72,36 +72,41 @@ export const HowWeWork = () => {
             </ul>
           </div>
 
-          {/* HOE WIJ HET DOEN */}
-          <div
-            className="rounded-2xl p-6 shadow-sm md:border-l md:border-l-[#E5E2DB]"
-            style={{
-              backgroundColor: "#FDF9EE",
-              border: "1px solid rgba(232, 181, 71, 0.3)",
-            }}
+          <BorderRotate
+            animationMode="auto-rotate"
+            animationSpeed={4}
+            gradientColors={{ primary: '#92701a', secondary: '#c9a227', accent: '#f5d176' }}
+            backgroundColor="#ffffff"
+            borderWidth={2}
+            borderRadius={12}
           >
             <div
-              className="mb-6 text-sm font-bold uppercase tracking-wider"
-              style={{ color: "#A07C1E" }}
+              className="p-6"
+              style={{ backgroundColor: "#FFFFFF", borderRadius: 10 }}
             >
-              Hoe wij het doen
+              <div
+                className="mb-6 text-sm font-bold uppercase tracking-wider"
+                style={{ color: "#A07C1E" }}
+              >
+                Hoe wij het doen
+              </div>
+              <ul className="flex flex-col gap-4">
+                {welItems.map((t, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <Check
+                      size={18}
+                      className="mt-1 shrink-0"
+                      style={{ color: ACCENT }}
+                      aria-hidden="true"
+                    />
+                    <span style={{ fontSize: 16, lineHeight: 1.5, color: "#2B2B2B", fontWeight: 500 }}>
+                      {t}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className="flex flex-col gap-4">
-              {welItems.map((t, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <Check
-                    size={18}
-                    className="mt-1 shrink-0"
-                    style={{ color: ACCENT }}
-                    aria-hidden="true"
-                  />
-                  <span style={{ fontSize: 16, lineHeight: 1.5, color: "#2B2B2B", fontWeight: 500 }}>
-                    {t}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          </BorderRotate>
         </div>
       </div>
     </section>
