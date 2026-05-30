@@ -114,14 +114,10 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
   const featured = !!p.featured;
   const delays = [0.05, 0.12, 0.19];
 
-  const cardBg = featured ? "rgba(232, 181, 71, 0.18)" : "#FFFFFF";
-  const cardBorder = featured ? "1.5px solid #E8B547" : "1px solid #E5E2DB";
-  const baseShadow = featured
-    ? "0 16px 48px rgba(232, 181, 71, 0.25)"
-    : "0 1px 2px rgba(21,44,78,0.04)";
-  const hoverShadow = featured
-    ? "0 22px 56px rgba(232, 181, 71, 0.32)"
-    : "0 12px 32px rgba(21,44,78,0.10)";
+  const cardBg = "#FFFFFF";
+  const cardBorder = featured ? "none" : "1px solid #E5E2DB";
+  const baseShadow = "0 1px 2px rgba(21,44,78,0.04)";
+  const hoverShadow = "0 12px 32px rgba(21,44,78,0.10)";
 
   const baseTransform = "translateY(0)";
   const hoverTransform = "translateY(-2px)";
