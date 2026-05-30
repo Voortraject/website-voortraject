@@ -19,7 +19,9 @@ export const Hero = () => {
                   maxWidth: "none",
                 }}
               >
-                <span style={{ color: "hsl(var(--accent))" }}>Verduurzamen</span>. Zonder zorgen.
+                <span style={{ color: "hsl(var(--accent))" }}>Verduurzamen.</span>
+                <br />
+                Zonder zorgen.
               </h1>
 
               <p
