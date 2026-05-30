@@ -449,6 +449,21 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
           </a>
         </div>
       </article>
+        );
+        return featured ? (
+          <AnimatedGradientBorder
+            animationMode="auto-rotate"
+            animationSpeed={4}
+            gradientColors={{ primary: "#92701a", secondary: "#c9a227", accent: "#f5d176" }}
+            backgroundColor="#ffffff"
+            borderWidth={2}
+            borderRadius={12}
+            style={{ display: "flex", flex: 1 }}
+          >
+            {cardEl}
+          </AnimatedGradientBorder>
+        ) : cardEl;
+      })()}
     </div>
   );
 };
