@@ -3,6 +3,7 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import { NavLink } from "./NavLink";
 import { Button } from "./Button";
 import logoVoortraject from "@/assets/logo-voortraject.png";
+import { Component as GlowingButton } from "@/components/ui/glowing-button";
 
 const subsidiesItems = [
   { href: "/subsidies/nij-begun", label: "Nij Begun" },
@@ -88,17 +89,9 @@ export const Header = () => {
               </a>
             );
           })}
-          {(() => {
-            const contactActive = typeof window !== "undefined" && window.location.pathname === "/contact";
-            return (
-              <a
-                href="/contact"
-                className={`inline-flex items-center justify-center rounded-full text-accent-foreground transition-all duration-150 ease-out hover:scale-[1.02] px-4 lg:px-5 py-2.5 text-[14px] lg:text-[15px] font-medium ${contactActive ? "bg-[#D9A538]" : "bg-accent hover:bg-accent-hover"}`}
-              >
-                Contact
-              </a>
-            );
-          })()}
+          <a href="/contact" aria-label="Contact">
+            <GlowingButton glowColor="#c9a227">Contact</GlowingButton>
+          </a>
         </nav>
 
         <button
