@@ -1,4 +1,5 @@
 import { Check, X } from "lucide-react";
+import { BorderRotate } from "@/components/ui/animated-gradient-border";
 
 const nietItems = [
   "Adviseurs met een verborgen verkoopbelang",
