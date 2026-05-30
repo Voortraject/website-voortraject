@@ -21,11 +21,10 @@ let propertyRegistered = false;
 function ensureAngleProperty() {
   if (propertyRegistered) return;
   if (typeof window === "undefined") return;
-  // @ts-expect-error CSS.registerProperty is not fully typed
-  if (typeof CSS !== "undefined" && CSS.registerProperty) {
+  const CSSAny = (window as unknown as { CSS?: { registerProperty?: (d: unknown) => void } }).CSS;
+  if (CSSAny?.registerProperty) {
     try {
-      // @ts-expect-error registerProperty
-      CSS.registerProperty({
+      CSSAny.registerProperty({
         name: "--gradient-angle",
         syntax: "<angle>",
         inherits: false,
