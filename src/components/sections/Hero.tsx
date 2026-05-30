@@ -94,7 +94,7 @@ export const Hero = () => {
             </div>
           </div>
 
-          <div className="lg:basis-[47%] lg:shrink-0 min-w-0">
+          <div className="lg:basis-[42%] lg:shrink-0 min-w-0">
             <img
               src={heroHouses}
               alt="Nederlandse rijtjeshuizen met zonnepanelen op het dak"
