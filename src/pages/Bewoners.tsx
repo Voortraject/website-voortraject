@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Check, CheckCircle, ChevronDown, HelpCircle, Compass, LayoutList, BookOpen, Zap, Handshake, MessageSquare, Clock, ShieldQuestion, CircleDollarSign } from "lucide-react";
 import { Header } from "@/components/Header";
+import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 import heroBewoners from "@/assets/bewoners-hero.jpg";
 
@@ -201,6 +202,11 @@ const Bewoners = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <Seo
+        title="Voor bewoners | Voortraject"
+        description="Onafhankelijke begeleiding voor bewoners bij verduurzaming: één vast aanspreekpunt, duidelijke planning en hulp met subsidies."
+        path="/bewoners"
+      />
       <Header />
       <main className="flex-1">
         {/* 1. HERO */}

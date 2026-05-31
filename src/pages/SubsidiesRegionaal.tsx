@@ -21,6 +21,7 @@ import {
   Scale,
 } from "lucide-react";
 import { Header } from "@/components/Header";
+import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 
 // Page-scoped palette (identical to Nij Begun & Landelijk)
@@ -310,6 +311,11 @@ const SubsidiesRegionaal = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: C.bg, color: C.text }}>
+      <Seo
+        title="Regionale subsidies verduurzaming | Voortraject"
+        description="Overzicht van regionale en gemeentelijke subsidies voor woningverduurzaming, gestapeld met landelijke regelingen voor maximaal voordeel."
+        path="/subsidies/regionaal"
+      />
       <Header />
 
       {/* 1. HERO — cream */}

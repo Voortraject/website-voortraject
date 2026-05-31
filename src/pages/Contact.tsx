@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, FormEvent, ChangeEvent } from "react";
 import { CheckCircle, Mail, Phone, MapPin, Loader2 } from "lucide-react";
 import { Header } from "@/components/Header";
+import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
 
@@ -363,6 +364,11 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="Contact | Voortraject"
+        description="Plan een vrijblijvende kennismaking met Voortraject. We reageren binnen 24 uur en helpen je verder met je verduurzamingsvraag."
+        path="/contact"
+      />
       <Header />
 
       {/* Hero */}
