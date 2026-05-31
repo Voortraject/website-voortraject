@@ -26,6 +26,7 @@ import {
   Scale,
 } from "lucide-react";
 import { Header } from "@/components/Header";
+import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 
 // Page-scoped palette (identical to Nij Begun page)
@@ -408,6 +409,11 @@ const SubsidiesLandelijk = () => {
 
   return (
     <div style={{ backgroundColor: C.bg }}>
+      <Seo
+        title="Landelijke subsidies verduurzaming | Voortraject"
+        description="Overzicht van landelijke subsidies en regelingen voor woningverduurzaming, waaronder ISDE en het Nationaal Warmtefonds."
+        path="/subsidies/landelijk"
+      />
       <Header />
       <main style={{ color: C.text }}>
         {/* SECTIE 1: HERO — cream */}

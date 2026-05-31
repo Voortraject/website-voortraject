@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Home, Wind, Sun, Thermometer, Battery, ChevronDown, Shield, Zap, ArrowRight, ArrowDown } from "lucide-react";
 import { Header } from "@/components/Header";
+import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 
 const principles = [
@@ -76,6 +77,11 @@ const Maatregelen = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <Seo
+        title="Verduurzamingsmaatregelen | Voortraject"
+        description="Overzicht van verduurzamingsmaatregelen: isolatie, ventilatie, zonnepanelen, warmtepomp en batterij — in de juiste volgorde, met onafhankelijk advies."
+        path="/maatregelen"
+      />
       <Header />
       <main className="flex-1">
         {/* HERO */}

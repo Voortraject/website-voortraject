@@ -1,5 +1,6 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { Seo } from "@/components/Seo";
 import michael from "@/assets/team-michael.png";
 import tim from "@/assets/team-tim.png";
 import wouter from "@/assets/team-wouter.png";
@@ -72,6 +73,11 @@ const howWeWork = [
 const OverOns = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <Seo
+        title="Over ons | Voortraject"
+        description="Maak kennis met het team van Voortraject. Een klein, vast team dat het hele verduurzamingstraject voor uitvoerders en bewoners overziet."
+        path="/over-ons"
+      />
       <Header />
       <main className="flex-1">
         {/* Origin story */}

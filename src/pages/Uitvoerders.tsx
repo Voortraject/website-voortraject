@@ -20,6 +20,7 @@ const withItems = [
   "Jullie houden de volledige focus op planning, uitvoering en groei.",
 ];
 import { Header } from "@/components/Header";
+import { Seo } from "@/components/Seo";
 import { Why } from "@/components/sections/Why";
 import { Footer } from "@/components/Footer";
 import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
@@ -474,6 +475,11 @@ const ctaButton =
 const Uitvoerders = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <Seo
+        title="Voor uitvoerders | Voortraject"
+        description="Voortraject ontzorgt verduurzamingsbedrijven in het voortraject: wij vangen bewonersvragen op, bereiden dossiers voor en bewaken opvolging."
+        path="/uitvoerders"
+      />
       <Header />
       <main className="flex-1">
         {/* HERO */}

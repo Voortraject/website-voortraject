@@ -22,6 +22,7 @@ import {
   Lightbulb,
 } from "lucide-react";
 import { Header } from "@/components/Header";
+import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 import logoVoortrajectBlauw from "@/assets/logo-voortraject-blauw.png";
 import logoNijBegun from "@/assets/logo-nij-begun.png";
@@ -342,6 +343,11 @@ const SubsidiesNijBegun = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: C.bg, color: C.text }}>
+      <Seo
+        title="Subsidie Nij Begun | Voortraject"
+        description="Alles over de Nij Begun-regeling voor woningverduurzaming in het Groningse aardbevingsgebied: voorwaarden, bedragen en aanvraag."
+        path="/subsidies/nij-begun"
+      />
       <Header />
 
       {/* 1. HERO */}
