@@ -98,7 +98,8 @@ export const Hero = () => {
             <img
               src={heroHouses}
               alt="Nederlandse rijtjeshuizen met zonnepanelen op het dak"
-              loading="lazy"
+              fetchPriority="high"
+              decoding="async"
               className="w-full rounded-2xl object-cover h-[240px] sm:h-[320px] md:h-[400px] lg:h-[480px]"
               style={{ boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)", objectPosition: "right center" }}
             />
