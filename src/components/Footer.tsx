@@ -24,7 +24,7 @@ const navCols = [
     items: [
       { href: "mailto:info@voortraject.nl", label: "info@voortraject.nl" },
       { href: "tel:+31640248371", label: "+31 6 40248371" },
-      { href: "#", label: "Groningen, Nederland" },
+      { href: "#", label: "Viaductstraat 3-15, Groningen" },
       { href: "#", label: "KVK 42066892" },
     ],
   },
