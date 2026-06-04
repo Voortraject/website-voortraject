@@ -43,7 +43,7 @@ const contactIntros: Record<Mode, string> = {
 const contactRows = [
   { icon: Mail, value: "info@voortraject.nl", href: "mailto:info@voortraject.nl" },
   { icon: Phone, value: "+31 6 40248371", href: "tel:+31640248371" },
-  { icon: MapPin, value: "Groningen, Nederland" },
+  { icon: MapPin, value: "Viaductstraat 3-15, Groningen" },
 ];
 
 const belVoorkeurOpties = [
