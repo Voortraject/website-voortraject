@@ -13,6 +13,7 @@ import Contact from "./pages/Contact.tsx";
 import SubsidiesNijBegun from "./pages/SubsidiesNijBegun.tsx";
 import SubsidiesLandelijk from "./pages/SubsidiesLandelijk.tsx";
 import SubsidiesRegionaal from "./pages/SubsidiesRegionaal.tsx";
+import Privacy from "./pages/Privacy.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/subsidies/nij-begun" element={<SubsidiesNijBegun />} />
             <Route path="/subsidies/landelijk" element={<SubsidiesLandelijk />} />
             <Route path="/subsidies/regionaal" element={<SubsidiesRegionaal />} />
+            <Route path="/privacy" element={<Privacy />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

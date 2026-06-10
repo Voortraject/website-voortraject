@@ -66,12 +66,20 @@ export const Footer = () => (
         <p className="text-xs text-white/60">
           © 2026 Voortraject. Alle rechten voorbehouden.
         </p>
-        <a
-          href="javascript:openAxeptioCookies()"
-          className="text-sm text-white/80 hover:text-accent transition-colors"
-        >
-          Cookievoorkeuren
-        </a>
+        <div className="flex items-center gap-4">
+          <a
+            href="/privacy"
+            className="text-sm text-white/80 hover:text-accent transition-colors"
+          >
+            Privacyverklaring
+          </a>
+          <a
+            href="javascript:openAxeptioCookies()"
+            className="text-sm text-white/80 hover:text-accent transition-colors"
+          >
+            Cookievoorkeuren
+          </a>
+        </div>
       </div>
     </div>
   </footer>
