@@ -74,6 +74,12 @@ export const Footer = () => (
             Privacyverklaring
           </a>
           <a
+            href="/cookieverklaring"
+            className="text-sm text-white/80 hover:text-accent transition-colors"
+          >
+            Cookieverklaring
+          </a>
+          <a
             href="javascript:openAxeptioCookies()"
             className="text-sm text-white/80 hover:text-accent transition-colors"
           >
