@@ -10,7 +10,6 @@ import { UserCheck, ShieldCheck, Zap, FolderCheck } from "lucide-react";
 const team = [
   {
     name: "Michael",
-    role: "Partner",
     specialty: "Verduurzamingsspecialist",
     img: michael,
     quote:
@@ -18,7 +17,6 @@ const team = [
   },
   {
     name: "Tim",
-    role: "Partner",
     specialty: "Bewonersbegeleider",
     img: tim,
     quote:
@@ -26,7 +24,6 @@ const team = [
   },
   {
     name: "Wouter",
-    role: "Partner",
     specialty: "Bewonersbegeleider",
     img: wouter,
     quote:
@@ -34,7 +31,6 @@ const team = [
   },
   {
     name: "Christian",
-    role: "Partner",
     specialty: "Verduurzamingsspecialist",
     img: christian,
     quote:
