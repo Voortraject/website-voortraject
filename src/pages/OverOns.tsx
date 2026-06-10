@@ -125,9 +125,6 @@ const OverOns = () => {
                     <h3 className="font-display font-bold text-primary text-[20px] tracking-[-0.01em] leading-tight">
                       {p.name}
                     </h3>
-                    <p className="text-primary text-[15px] leading-tight" style={{ fontWeight: 500, marginTop: 6 }}>
-                      {p.role}
-                    </p>
                     <p className="text-muted-foreground text-[14px] leading-tight" style={{ marginTop: 4 }}>
                       {p.specialty}
                     </p>
