@@ -10,7 +10,6 @@ import { UserCheck, ShieldCheck, Zap, FolderCheck } from "lucide-react";
 const team = [
   {
     name: "Michael",
-    role: "Partner",
     specialty: "Verduurzamingsspecialist",
     img: michael,
     quote:
@@ -18,7 +17,6 @@ const team = [
   },
   {
     name: "Tim",
-    role: "Partner",
     specialty: "Bewonersbegeleider",
     img: tim,
     quote:
@@ -26,7 +24,6 @@ const team = [
   },
   {
     name: "Wouter",
-    role: "Partner",
     specialty: "Bewonersbegeleider",
     img: wouter,
     quote:
@@ -34,7 +31,6 @@ const team = [
   },
   {
     name: "Christian",
-    role: "Partner",
     specialty: "Verduurzamingsspecialist",
     img: christian,
     quote:
@@ -129,9 +125,6 @@ const OverOns = () => {
                     <h3 className="font-display font-bold text-primary text-[20px] tracking-[-0.01em] leading-tight">
                       {p.name}
                     </h3>
-                    <p className="text-primary text-[15px] leading-tight" style={{ fontWeight: 500, marginTop: 6 }}>
-                      {p.role}
-                    </p>
                     <p className="text-muted-foreground text-[14px] leading-tight" style={{ marginTop: 4 }}>
                       {p.specialty}
                     </p>
