@@ -88,7 +88,7 @@ Voor websiteanalyse en e-mail maken wij gebruik van diensten van Amerikaanse par
 • Projectdossiers (waaronder contact-, woning- en dossiergegevens): tot 10 jaar na afronding van het traject, mede met het oog op mogelijke aansprakelijkheid en de daarvoor geldende verjaringstermijnen. Beeldmateriaal van de woningopname bewaren wij niet langer dan nodig voor de uitvoering en eventuele garantie- of aansprakelijkheidsvragen;
 • Administratieve en financiële gegevens: 7 jaar, op grond van de fiscale bewaarplicht;
 • Inkomensverklaring met BSN: uitsluitend gedurende de aanvraagprocedure; wij verwijderen het document met het BSN direct nadat de subsidieaanvraag is ingediend (zie paragraaf 5);
-• Websitegegevens: maximaal 14 maanden.`,
+• Websitegegevens: maximaal 2 jaar.`,
   },
   {
     title: "10. Beveiliging",

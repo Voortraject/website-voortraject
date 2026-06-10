@@ -14,6 +14,7 @@ import SubsidiesNijBegun from "./pages/SubsidiesNijBegun.tsx";
 import SubsidiesLandelijk from "./pages/SubsidiesLandelijk.tsx";
 import SubsidiesRegionaal from "./pages/SubsidiesRegionaal.tsx";
 import Privacy from "./pages/Privacy.tsx";
+import Cookie from "./pages/Cookie.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/subsidies/landelijk" element={<SubsidiesLandelijk />} />
             <Route path="/subsidies/regionaal" element={<SubsidiesRegionaal />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/cookieverklaring" element={<Cookie />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
