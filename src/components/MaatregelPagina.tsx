@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Check, ChevronDown, Plus } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronDown, Plus, ShieldCheck } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -16,6 +16,13 @@ export interface MaatregelFaq {
   a: string;
 }
 
+export interface KeurmerkenBlock {
+  kop?: string;
+  intro: string;
+  items: string[];
+  voetregel?: string;
+}
+
 export interface MaatregelPaginaProps {
   slug: string;
   icon: LucideIcon;
@@ -25,11 +32,14 @@ export interface MaatregelPaginaProps {
   seoDescription: string;
 
   // Sectie 1
+  /** Wrap accent words in [[...]] to render them in gold. */
   heroTitle: string;
   heroSub: string;
   heroIntro: string;
   heroCtaLabel?: string;
   heroCtaHref?: string;
+  heroImageSrc?: string;
+  heroImageAlt?: string;
 
   // Sectie 2
   voorWieKop?: string;
@@ -51,6 +61,7 @@ export interface MaatregelPaginaProps {
 
   // Sectie 5
   aandachtspunten: string[];
+  keurmerken?: KeurmerkenBlock;
   subsidiesIntro: string;
   subsidiesItems: string[];
   subsidiesLinkHref?: string;
@@ -65,6 +76,7 @@ export interface MaatregelPaginaProps {
 }
 
 const NAVY = "#152C4E";
+const INK = "#111111";
 const SAND = "#FBFAF7";
 const GOLD = "#E8B547";
 const SOFT = "#F0E4D0";
@@ -72,6 +84,22 @@ const CREAM = "#FDF6E3";
 const BORDER = "#E5E2DB";
 const MUTED = "#6B6B6B";
 const TEXT = "#2B2B2B";
+
+/** Splits a string with [[accent]] markers into JSX with gold spans. */
+const renderAccented = (text: string) => {
+  const parts = text.split(/(\[\[[^\]]+\]\])/g);
+  return parts.map((part, i) => {
+    const m = part.match(/^\[\[([^\]]+)\]\]$/);
+    if (m) {
+      return (
+        <span key={i} style={{ color: GOLD }}>
+          {m[1]}
+        </span>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
+};
 
 export const MaatregelPagina = ({
   slug,
@@ -84,10 +112,12 @@ export const MaatregelPagina = ({
   heroIntro,
   heroCtaLabel = "Plan een gratis gesprek",
   heroCtaHref = "/contact",
-  voorWieKop = "Is dit iets voor jou?",
+  heroImageSrc,
+  heroImageAlt,
+  voorWieKop = "Is dit [[iets voor jou]]?",
   pastBij,
   minderUrgent,
-  watValtEronderKop = "Wat valt eronder?",
+  watValtEronderKop = "Wat valt [[eronder]]?",
   watValtEronder,
   routeStep,
   routeTekst,
@@ -97,6 +127,7 @@ export const MaatregelPagina = ({
   zachteCtaLabel = "Plan een gesprek",
   zachteCtaHref = "/contact",
   aandachtspunten,
+  keurmerken,
   subsidiesIntro,
   subsidiesItems,
   subsidiesLinkHref = "/subsidies",
@@ -127,85 +158,106 @@ export const MaatregelPagina = ({
               <ArrowLeft size={16} /> Terug naar overzicht
             </a>
 
-            <div className="mt-6 flex items-start gap-4 md:gap-6">
-              <div
-                className="flex items-center justify-center rounded-full shrink-0"
-                style={{ width: 64, height: 64, backgroundColor: SOFT }}
-              >
-                <Icon size={28} color={NAVY} strokeWidth={2.25} aria-hidden="true" />
-              </div>
-              <div className="min-w-0">
-                {badge && (
-                  <span
-                    className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+            <div
+              className={`mt-6 grid grid-cols-1 gap-8 md:gap-12 items-center ${
+                heroImageSrc ? "lg:grid-cols-[1.1fr_1fr]" : ""
+              }`}
+            >
+              <div className="flex items-start gap-4 md:gap-6">
+                <div
+                  className="flex items-center justify-center rounded-full shrink-0"
+                  style={{ width: 64, height: 64, backgroundColor: SOFT }}
+                >
+                  <Icon size={28} color={NAVY} strokeWidth={2.25} aria-hidden="true" />
+                </div>
+                <div className="min-w-0">
+                  {badge && (
+                    <span
+                      className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                      style={{
+                        backgroundColor: CREAM,
+                        color: GOLD,
+                        border: "1px solid rgba(232,181,71,0.4)",
+                      }}
+                    >
+                      {badge}
+                    </span>
+                  )}
+                  <h1
+                    id="m-title"
+                    className="font-display mt-3"
                     style={{
-                      backgroundColor: CREAM,
-                      color: GOLD,
-                      border: "1px solid rgba(232,181,71,0.4)",
+                      fontWeight: 700,
+                      fontSize: "clamp(32px, 4.6vw, 50px)",
+                      color: INK,
+                      letterSpacing: "-0.02em",
+                      lineHeight: 1.1,
                     }}
                   >
-                    {badge}
-                  </span>
-                )}
-                <h1
-                  id="m-title"
-                  className="font-display mt-3"
-                  style={{
-                    fontWeight: 700,
-                    fontSize: "clamp(32px, 4.6vw, 50px)",
-                    color: NAVY,
-                    letterSpacing: "-0.02em",
-                    lineHeight: 1.1,
-                  }}
-                >
-                  {heroTitle}
-                </h1>
-                <p
-                  className="mt-4 max-w-2xl"
-                  style={{ fontSize: 18, color: NAVY, opacity: 0.85, lineHeight: 1.55, fontWeight: 500 }}
-                >
-                  {heroSub}
-                </p>
-                <p
-                  className="mt-4 max-w-2xl"
-                  style={{ fontSize: 16, color: MUTED, lineHeight: 1.7 }}
-                >
-                  {heroIntro}
-                </p>
-                <a
-                  href={heroCtaHref}
-                  className="mt-7 inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
-                  style={{
-                    backgroundColor: GOLD,
-                    color: NAVY,
-                    padding: "13px 24px",
-                    fontSize: 15,
-                  }}
-                >
-                  {heroCtaLabel}
-                </a>
+                    {renderAccented(heroTitle)}
+                  </h1>
+                  <p
+                    className="mt-4 max-w-2xl"
+                    style={{ fontSize: 18, color: INK, opacity: 0.85, lineHeight: 1.55, fontWeight: 500 }}
+                  >
+                    {heroSub}
+                  </p>
+                  <p className="mt-4 max-w-2xl" style={{ fontSize: 16, color: MUTED, lineHeight: 1.7 }}>
+                    {heroIntro}
+                  </p>
+                  <a
+                    href={heroCtaHref}
+                    className="mt-7 inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
+                    style={{
+                      backgroundColor: GOLD,
+                      color: NAVY,
+                      padding: "13px 24px",
+                      fontSize: 15,
+                    }}
+                  >
+                    {heroCtaLabel}
+                  </a>
+                </div>
               </div>
+
+              {heroImageSrc && (
+                <div
+                  className="w-full overflow-hidden"
+                  style={{
+                    borderRadius: 20,
+                    border: `1px solid ${BORDER}`,
+                    aspectRatio: "4 / 3",
+                    backgroundColor: "#EFEAE0",
+                  }}
+                >
+                  <img
+                    src={heroImageSrc}
+                    alt={heroImageAlt ?? ""}
+                    width={1024}
+                    height={768}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </section>
 
-        {/* SECTIE 2 — VOOR WIE + WAT VALT ERONDER */}
+        {/* SECTIE 2 */}
         <Section bg="#FFFFFF">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
             <div>
-              <SectionTitle>{voorWieKop}</SectionTitle>
-
+              <SectionTitle text={voorWieKop} />
               <SubKop>Past bij jou als</SubKop>
               <CheckList items={pastBij} variant="check" />
-
               <div className="mt-8">
-                <SubKop muted>Minder urgent als</SubKop>
+                <SubKop muted>Minder logisch als</SubKop>
                 <CheckList items={minderUrgent} variant="dash" />
               </div>
             </div>
 
             <div>
-              <SectionTitle>{watValtEronderKop}</SectionTitle>
+              <SectionTitle text={watValtEronderKop} />
               <ul style={{ listStyle: "none", padding: 0, margin: 0 }} className="flex flex-col gap-3">
                 {watValtEronder.map((item) => (
                   <li
@@ -235,21 +287,18 @@ export const MaatregelPagina = ({
           </div>
         </Section>
 
-        {/* SECTIE 3 — WANNEER IS HET SLIM */}
+        {/* SECTIE 3 */}
         <Section bg={SAND}>
-          <SectionTitle>Wanneer is het slim?</SectionTitle>
+          <SectionTitle text="Wanneer is het [[slim]]?" />
           <RouteBar active={routeStep} />
-          <p
-            className="mt-8 max-w-3xl"
-            style={{ fontSize: 16, color: TEXT, lineHeight: 1.75 }}
-          >
+          <p className="mt-8 max-w-3xl" style={{ fontSize: 16, color: TEXT, lineHeight: 1.75 }}>
             {routeTekst}
           </p>
         </Section>
 
-        {/* SECTIE 4 — KOSTEN EN OPBRENGST */}
+        {/* SECTIE 4 */}
         <Section bg="#FFFFFF">
-          <SectionTitle>Kosten en opbrengst</SectionTitle>
+          <SectionTitle text="Kosten en [[opbrengst]]" />
           <p
             className="max-w-3xl"
             style={{ fontSize: 15, color: MUTED, lineHeight: 1.7, marginTop: -8, marginBottom: 24 }}
@@ -263,10 +312,7 @@ export const MaatregelPagina = ({
             ))}
           </div>
 
-          <p
-            className="mt-8 max-w-3xl"
-            style={{ fontSize: 15, color: MUTED, lineHeight: 1.7 }}
-          >
+          <p className="mt-8 max-w-3xl" style={{ fontSize: 15, color: MUTED, lineHeight: 1.7 }}>
             {kostenFooter}
           </p>
 
@@ -280,23 +326,18 @@ export const MaatregelPagina = ({
             <a
               href={zachteCtaHref}
               className="inline-flex items-center gap-2 rounded-full font-semibold shrink-0"
-              style={{
-                backgroundColor: NAVY,
-                color: "#FFFFFF",
-                padding: "11px 20px",
-                fontSize: 14,
-              }}
+              style={{ backgroundColor: NAVY, color: "#FFFFFF", padding: "11px 20px", fontSize: 14 }}
             >
               {zachteCtaLabel} <ArrowRight size={14} />
             </a>
           </div>
         </Section>
 
-        {/* SECTIE 5 — AANDACHTSPUNTEN, SUBSIDIES, FAQ */}
+        {/* SECTIE 5 */}
         <Section bg={SAND}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
             <div>
-              <SectionTitle>Waar je op moet letten</SectionTitle>
+              <SectionTitle text="Waar je op moet [[letten]]" />
               <ul style={{ listStyle: "none", padding: 0, margin: 0 }} className="flex flex-col gap-4">
                 {aandachtspunten.map((p) => (
                   <li
@@ -315,7 +356,7 @@ export const MaatregelPagina = ({
             </div>
 
             <div>
-              <SectionTitle>Subsidies</SectionTitle>
+              <SectionTitle text="[[Subsidies]]" />
               <p style={{ fontSize: 16, color: TEXT, lineHeight: 1.7, marginBottom: 16 }}>
                 {subsidiesIntro}
               </p>
@@ -348,8 +389,45 @@ export const MaatregelPagina = ({
             </div>
           </div>
 
+          {keurmerken && (
+            <div className="mt-16 max-w-4xl">
+              <SectionTitle text={keurmerken.kop ?? "Let op [[keurmerken]] en certificeringen"} />
+              <p style={{ fontSize: 16, color: TEXT, lineHeight: 1.7, marginBottom: 18 }}>
+                {keurmerken.intro}
+              </p>
+              <ul
+                style={{ listStyle: "none", padding: 0, margin: 0 }}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+              >
+                {keurmerken.items.map((k) => (
+                  <li
+                    key={k}
+                    className="flex items-start gap-3"
+                    style={{
+                      fontSize: 15,
+                      color: TEXT,
+                      lineHeight: 1.55,
+                      padding: "14px 16px",
+                      backgroundColor: "#FFFFFF",
+                      border: `1px solid ${BORDER}`,
+                      borderRadius: 12,
+                    }}
+                  >
+                    <ShieldCheck size={18} color={GOLD} className="mt-[2px] shrink-0" />
+                    <span>{k}</span>
+                  </li>
+                ))}
+              </ul>
+              {keurmerken.voetregel && (
+                <p style={{ fontSize: 14, color: MUTED, lineHeight: 1.6, marginTop: 14 }}>
+                  {keurmerken.voetregel}
+                </p>
+              )}
+            </div>
+          )}
+
           <div className="mt-16">
-            <SectionTitle>Veelgestelde vragen</SectionTitle>
+            <SectionTitle text="Veelgestelde [[vragen]]" />
             <div
               className="max-w-3xl"
               style={{
@@ -366,7 +444,7 @@ export const MaatregelPagina = ({
           </div>
         </Section>
 
-        {/* SECTIE 6 — FINAL CTA */}
+        {/* SECTIE 6 */}
         <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: NAVY }}>
           <div className="container-content">
             <div className="max-w-2xl mx-auto text-center">
@@ -380,16 +458,11 @@ export const MaatregelPagina = ({
                   lineHeight: 1.15,
                 }}
               >
-                {finalCtaKop}
+                {renderAccented(finalCtaKop)}
               </h2>
               <p
                 className="mt-5"
-                style={{
-                  fontSize: 17,
-                  color: "#FFFFFF",
-                  opacity: 0.85,
-                  lineHeight: 1.7,
-                }}
+                style={{ fontSize: 17, color: "#FFFFFF", opacity: 0.85, lineHeight: 1.7 }}
               >
                 {finalCtaTekst}
               </p>
@@ -422,7 +495,7 @@ const Section = ({ bg, children }: { bg: string; children: React.ReactNode }) =>
   </section>
 );
 
-const SectionTitle = ({ children }: { children: React.ReactNode }) => (
+const SectionTitle = ({ text }: { text: string }) => (
   <h2
     className="font-display"
     style={{
@@ -434,7 +507,7 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
       marginBottom: 24,
     }}
   >
-    {children}
+    {renderAccented(text)}
   </h2>
 );
 
@@ -545,15 +618,7 @@ const Collapsible = ({ title, body }: { title: string; body: string }) => (
       className="flex items-center gap-4 cursor-pointer list-none"
       style={{ padding: "16px 20px" }}
     >
-      <span
-        style={{
-          flex: 1,
-          fontSize: 16,
-          fontWeight: 600,
-          color: NAVY,
-          lineHeight: 1.4,
-        }}
-      >
+      <span style={{ flex: 1, fontSize: 16, fontWeight: 600, color: NAVY, lineHeight: 1.4 }}>
         {title}
       </span>
       <ChevronDown
@@ -563,37 +628,19 @@ const Collapsible = ({ title, body }: { title: string; body: string }) => (
         aria-hidden="true"
       />
     </summary>
-    <div
-      style={{
-        padding: "0 20px 18px 20px",
-        fontSize: 15,
-        color: MUTED,
-        lineHeight: 1.7,
-      }}
-    >
+    <div style={{ padding: "0 20px 18px 20px", fontSize: 15, color: MUTED, lineHeight: 1.7 }}>
       {body}
     </div>
   </details>
 );
 
 const FaqRow = ({ item, last }: { item: MaatregelFaq; last: boolean }) => (
-  <details
-    className="group"
-    style={{ borderBottom: last ? "none" : `1px solid ${BORDER}` }}
-  >
+  <details className="group" style={{ borderBottom: last ? "none" : `1px solid ${BORDER}` }}>
     <summary
       className="flex items-center gap-4 cursor-pointer list-none"
       style={{ padding: "18px 22px" }}
     >
-      <span
-        style={{
-          flex: 1,
-          fontSize: 16,
-          fontWeight: 500,
-          color: NAVY,
-          lineHeight: 1.4,
-        }}
-      >
+      <span style={{ flex: 1, fontSize: 16, fontWeight: 500, color: NAVY, lineHeight: 1.4 }}>
         {item.q}
       </span>
       <ChevronDown
