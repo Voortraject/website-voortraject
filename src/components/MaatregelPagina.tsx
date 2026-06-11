@@ -205,6 +205,8 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
     minderUrgent,
     kostenItems,
     kostenFooter,
+    kostenMode = "opties",
+    kostenSinglePills,
     prijsPeil = "juni 2026",
     procesKop = "Zo pakken wij het voor je [[op]]",
     procesStappen = DEFAULT_PROCES,
