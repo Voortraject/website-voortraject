@@ -16,6 +16,7 @@ const verduurzamenItems = [
 ];
 
 const subsidiesItems = [
+  { href: "/subsidies/stapelen", label: "Subsidies stapelen" },
   { href: "/subsidies/nij-begun", label: "Nij Begun" },
   { href: "/subsidies/landelijk", label: "Landelijke subsidies" },
   { href: "/subsidies/regionaal", label: "Regionale subsidies" },

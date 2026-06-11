@@ -343,14 +343,7 @@ const SubsidiesRegionaal = () => {
                 <a href="/contact" style={goldBtn}>
                   Ja ik wil gratis advies
                 </a>
-                <a
-                  href="#stapelen"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById("stapelen")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                  }}
-                  style={outlineBtn}
-                >
+                <a href="/subsidies/stapelen" style={outlineBtn}>
                   Zo werkt stapelen
                 </a>
               </div>
@@ -396,99 +389,6 @@ const SubsidiesRegionaal = () => {
         </div>
       </section>
 
-      {/* 3. ZO WERKT STAPELEN — cream */}
-      <section id="stapelen" style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
-        <div className="container-content">
-          <div className="max-w-3xl">
-            <H2>
-              Stapelen levert je <Gold>honderden tot duizenden</Gold> euro's extra op
-            </H2>
-            <p style={{ marginTop: 20, fontSize: 17, lineHeight: 1.7, color: C.text }}>
-              Veel bewoners denken dat ze één subsidie kiezen. Maar in veel gevallen kun je drie regelingen tegelijk gebruiken, mits ze elkaar niet uitsluiten. Wij rekenen voor jouw woning uit wat samengaat en wat niet.
-            </p>
-          </div>
-
-          <div className="mt-10 flex flex-col md:flex-row md:items-stretch gap-4 md:gap-3">
-            {[
-              {
-                Icon: Globe,
-                tag: "LANDELIJK",
-                titel: "ISDE",
-                tekst: "Vaste bedragen voor warmtepomp, isolatie, zonneboiler en meer. Achteraf aanvragen bij RVO.",
-                bedrag: "tot duizenden euro's",
-              },
-              {
-                Icon: MapIcon,
-                tag: "GRONINGEN & NOORD-DRENTHE",
-                titel: "Nij Begun",
-                tekst: "50% of 100% subsidie voor isolatie. Vooraf aanvragen bij SNN. Alleen voor bewoners in het werkgebied.",
-                bedrag: "tot €40.000",
-              },
-              {
-                Icon: Building2,
-                tag: "PER GEMEENTE",
-                titel: "Lokale regelingen",
-                tekst: "Verschilt per gemeente. Vaak isolatiepremie, lening of gratis energiecoach. Wij weten wat actueel is.",
-                bedrag: "vaak honderden tot duizenden euro's",
-              },
-            ].map((c, i, arr) => (
-              <Fragment key={i}>
-                <div style={{ ...cardOnCream, padding: 24, display: "flex", flexDirection: "column", gap: 12, flex: 1 }}>
-                  <div className="flex items-center gap-3">
-                    <IconCircle Icon={c.Icon} size={22} />
-                    <h3 style={{ fontSize: 22, fontWeight: 700, color: C.primary, margin: 0 }}>{c.titel}</h3>
-                  </div>
-                  <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", color: C.accent }}>
-                    {c.tag}
-                  </span>
-                  <p style={{ fontSize: 15, color: C.text, lineHeight: 1.6, margin: 0 }}>{c.tekst}</p>
-                  <span style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>{c.bedrag}</span>
-                </div>
-                {i < arr.length - 1 && (
-                  <div
-                    aria-hidden="true"
-                    className="flex items-center justify-center"
-                    style={{ color: C.accent, fontSize: 32, fontWeight: 700, lineHeight: 1, padding: "4px 0" }}
-                  >
-                    +
-                  </div>
-                )}
-              </Fragment>
-            ))}
-          </div>
-
-          {/* Banner */}
-          <div
-            style={{
-              ...cardOnCream,
-              marginTop: 32,
-              padding: "32px 28px",
-              textAlign: "center",
-              borderColor: C.accent,
-              borderWidth: 2,
-              borderStyle: "solid",
-            }}
-          >
-            <div className="flex items-center justify-center gap-4 md:gap-6 mb-4 flex-wrap">
-              <IconCircle Icon={Plus} size={22} />
-              <IconCircle Icon={Plus} size={22} />
-              <IconCircle Icon={Equal} size={22} />
-              <IconCircle Icon={CheckCircle2} size={22} />
-            </div>
-            <p style={{ fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 700, color: C.primary, margin: 0 }}>
-              Samen levert dat vaak <Gold>duizenden euro's</Gold> op
-            </p>
-            <p style={{ fontSize: 15, color: C.muted, marginTop: 10 }}>
-              Wij rekenen voor jouw woning precies uit hoe ver je kunt komen.
-            </p>
-            <div style={{ marginTop: 22 }}>
-              <a href="/contact" style={outlineBtn}>
-                Reken het voor mijn woning uit
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* 4. WELKE REGELINGEN — wit */}
       <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-24">
