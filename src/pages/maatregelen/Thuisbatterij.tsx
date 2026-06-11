@@ -32,23 +32,17 @@ const Thuisbatterij = () => (
     ]}
     routeStep="slim"
     routeTekst="Een thuisbatterij is meestal een latere stap. Hij rendeert pas als je al zonnepanelen hebt en meer wilt halen uit wat je opwekt. Zonder zonnepanelen is een batterij zelden zinvol. Daarom komt opslag in de route na het opwekken. Het is de stap waarmee je je eigen energie slim gebruikt in plaats van terug te leveren."
+    kostenMode="single"
     kostenItems={[
       {
-        title: "Je jaarlijks en dagelijks stroomverbruik",
-        body: "Hoe meer je verbruikt, hoe meer je kunt besparen door eigen opwek op te slaan. Een klein huishouden heeft minder nodig dan een groot.",
+        title: "Thuisbatterij",
+        body: "Een batterij wordt vooral interessant in combinatie met zonnepanelen, dynamische contracten of terugleverkosten. De winst zit in meer eigen verbruik en minder afhankelijkheid van het net.",
       },
-      {
-        title: "De opbrengst van je zonnepanelen",
-        body: "Zonder panelen is een batterij zelden zinvol. Hoe meer je overdag opwekt en niet direct gebruikt, hoe groter het voordeel.",
-      },
-      {
-        title: "De gewenste capaciteit",
-        body: "Een kleiner systeem volstaat voor een klein huishouden. Bij hoog verbruik of toekomstige uitbreiding kies je een grotere capaciteit.",
-      },
-      {
-        title: "Je energiecontract en de terugleverkosten",
-        body: "Dynamische contracten en terugleverkosten maken opslag interessanter. Bij een standaardcontract is de winst vaak beperkter.",
-      },
+    ]}
+    kostenSinglePills={[
+      { dim: "Investering", value: "Hoog" },
+      { dim: "Terugverdientijd", value: "Lang" },
+      { dim: "Onafhankelijkheid", value: "Hoog" },
     ]}
     kostenFooter="De businesscase voor een thuisbatterij is voor veel huishoudens op dit moment nog beperkt. Wij rekenen het eerlijk voor je door, ook als blijkt dat wachten of een andere maatregel nu slimmer is."
     zachteCtaTekst="Benieuwd of een thuisbatterij voor jou loont? Plan een gesprek"

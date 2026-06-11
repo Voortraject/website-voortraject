@@ -7,9 +7,23 @@ import { Seo } from "@/components/Seo";
 
 export type RouteStep = "beperk" | "opwekken" | "slim";
 
+export type KostenDimension =
+  | "Investering"
+  | "Terugverdientijd"
+  | "Comfortwinst"
+  | "Besparing"
+  | "Onafhankelijkheid"
+  | "Gebruiksgemak";
+
+export interface KostenPill {
+  dim: KostenDimension | string;
+  value: string;
+}
+
 export interface CollapsibleItem {
   title: string;
   body: string;
+  pills?: KostenPill[];
 }
 
 export interface MaatregelFaq {
@@ -69,6 +83,10 @@ export interface MaatregelPaginaProps {
   // Kosten en opbrengst (waarde-kaartjes)
   kostenItems: CollapsibleItem[];
   kostenFooter?: string;
+  /** "opties" = grid van kaarten; "single" = één blok over volle breedte. */
+  kostenMode?: "opties" | "single";
+  /** Pills voor de "single"-modus. */
+  kostenSinglePills?: KostenPill[];
   /** Maand en jaar van de indicatie, bv. "juni 2026". */
   prijsPeil?: string;
 
@@ -187,6 +205,8 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
     minderUrgent,
     kostenItems,
     kostenFooter,
+    kostenMode = "opties",
+    kostenSinglePills,
     prijsPeil = "juni 2026",
     procesKop = "Zo pakken wij het voor je [[op]]",
     procesStappen = DEFAULT_PROCES,
@@ -352,24 +372,49 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
         {/* 3 — WAT HET KOST EN OPLEVERT */}
         <SectionBlock bg={WARM}>
           <SectionTitle>{renderAccented("Wat het [[kost]] en oplevert")}</SectionTitle>
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {kostenItems.map((item) => (
-              <Card key={item.title}>
-                <h3
-                  className="text-lg font-medium"
-                  style={{ color: NAVY, margin: 0, lineHeight: 1.35 }}
-                >
-                  {item.title}
-                </h3>
-                <p
-                  className="mt-3 text-base leading-relaxed"
-                  style={{ color: NAVY, opacity: 0.78, margin: "12px 0 0 0" }}
-                >
-                  {item.body}
-                </p>
+
+          {kostenMode === "single" ? (
+            <div className="mt-10">
+              <Card>
+                {kostenItems[0]?.body && (
+                  <p
+                    className="text-base leading-relaxed"
+                    style={{ color: NAVY, opacity: 0.78, margin: 0, marginBottom: 20 }}
+                  >
+                    {kostenItems[0].body}
+                  </p>
+                )}
+                <PillTiles pills={kostenSinglePills ?? kostenItems[0]?.pills ?? []} />
               </Card>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {kostenItems.map((item) => (
+                <Card key={item.title}>
+                  <h3
+                    className="text-lg font-medium"
+                    style={{ color: NAVY, margin: 0, lineHeight: 1.35 }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p
+                    className="mt-3 text-base leading-relaxed"
+                    style={{ color: NAVY, opacity: 0.78, margin: "12px 0 0 0" }}
+                  >
+                    {item.body}
+                  </p>
+                  {item.pills && item.pills.length > 0 && (
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {item.pills.map((p, i) => (
+                        <Pill key={i} pill={p} />
+                      ))}
+                    </div>
+                  )}
+                </Card>
+              ))}
+            </div>
+          )}
+
           <p
             className="mt-8 text-sm max-w-[760px]"
             style={{ color: NAVY, opacity: 0.6 }}
@@ -612,6 +657,72 @@ const Card = ({ children, bg, border }: { children: React.ReactNode; bg?: string
     {children}
   </div>
 );
+
+/** Bepaalt de toon (gunstigheid) van een pill op basis van dimensie + waarde. */
+const pillTone = (dim: string, value: string): "good" | "neutral" | "bad" => {
+  const v = value.toLowerCase();
+  if (dim === "Investering") {
+    if (v === "laag") return "good";
+    if (v === "midden" || v === "middel" || v === "gemiddeld") return "neutral";
+    return "bad";
+  }
+  if (dim === "Terugverdientijd") {
+    if (v === "kort") return "good";
+    if (v === "middel" || v === "midden" || v === "gemiddeld") return "neutral";
+    return "bad";
+  }
+  // Comfortwinst / Besparing / Onafhankelijkheid / Gebruiksgemak
+  if (v.startsWith("hoog")) return "good";
+  if (v === "gemiddeld" || v === "middel" || v === "midden") return "neutral";
+  return "bad";
+};
+
+const PILL_TONES: Record<"good" | "neutral" | "bad", { bg: string; fg: string; border: string }> = {
+  good:    { bg: "#ECFDF5", fg: "#15803D", border: "#A7F3D0" },
+  neutral: { bg: "#FEF6E0", fg: "#92701A", border: "#F0D78A" },
+  bad:     { bg: "#FEF2F2", fg: "#B91C1C", border: "#FECACA" },
+};
+
+const Pill = ({ pill }: { pill: KostenPill }) => {
+  const tone = pillTone(pill.dim, pill.value);
+  const c = PILL_TONES[tone];
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
+      style={{ backgroundColor: c.bg, color: c.fg, border: `1px solid ${c.border}` }}
+    >
+      <span style={{ opacity: 0.75, fontWeight: 500 }}>{pill.dim}</span>
+      <span style={{ fontWeight: 700 }}>{pill.value}</span>
+    </span>
+  );
+};
+
+const PillTiles = ({ pills }: { pills: KostenPill[] }) => (
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+    {pills.map((p, i) => {
+      const tone = pillTone(p.dim, p.value);
+      const c = PILL_TONES[tone];
+      return (
+        <div
+          key={i}
+          className="rounded-xl px-4 py-4 flex flex-col items-center text-center"
+          style={{ backgroundColor: c.bg, border: `1px solid ${c.border}` }}
+        >
+          <span
+            className="text-xs font-semibold uppercase tracking-wider"
+            style={{ color: c.fg, opacity: 0.8 }}
+          >
+            {p.dim}
+          </span>
+          <span className="mt-1 text-lg font-bold" style={{ color: c.fg }}>
+            {p.value}
+          </span>
+        </div>
+      );
+    })}
+  </div>
+);
+
 
 const CardLabel = ({
   children,

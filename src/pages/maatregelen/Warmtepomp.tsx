@@ -34,14 +34,20 @@ const Warmtepomp = () => (
       {
         title: "Hybride warmtepomp",
         body: "Lagere investering en geschikt voor veel bestaande woningen. Werkt samen met je cv-ketel, waardoor je een deel van je gasverbruik vervangt door elektriciteit. Een goede tussenstap richting volledig gasloos.",
+        pills: [
+          { dim: "Investering", value: "Midden" },
+          { dim: "Terugverdientijd", value: "Middel" },
+          { dim: "Comfortwinst", value: "Hoog" },
+        ],
       },
       {
         title: "Volledig elektrische warmtepomp",
         body: "Hogere investering, maar de grootste besparing op de lange termijn en geen gas meer nodig. Vraagt om een goed geïsoleerde woning en bij voorkeur lagetemperatuurverwarming om efficiënt te draaien.",
-      },
-      {
-        title: "Lagetemperatuurverwarming",
-        body: "Extra investering bovenop de warmtepomp zelf, maar vaak nodig voor optimale efficiëntie. Denk aan vloerverwarming of grotere radiatoren die de warmte beter afgeven bij lagere aanvoertemperaturen.",
+        pills: [
+          { dim: "Investering", value: "Hoog" },
+          { dim: "Terugverdientijd", value: "Lang" },
+          { dim: "Comfortwinst", value: "Hoog" },
+        ],
       },
     ]}
     kostenFooter="Wat het beïnvloedt zijn de isolatiegraad, het type verwarming, de grootte van de woning en de energieprijzen."

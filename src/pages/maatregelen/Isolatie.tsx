@@ -37,22 +37,47 @@ const Isolatie = () => (
       {
         title: "Spouwmuurisolatie",
         body: "Lage investering en korte terugverdientijd. Vaak één van de eerste maatregelen die zichzelf snel terugverdient bij woningen van voor 1990.",
+        pills: [
+          { dim: "Investering", value: "Laag" },
+          { dim: "Terugverdientijd", value: "Kort" },
+          { dim: "Comfortwinst", value: "Gemiddeld" },
+        ],
       },
       {
         title: "Dakisolatie",
         body: "Hogere investering, maar een grote besparing op je stookkosten. Doordat warmte vooral via het dak verdwijnt, is de terugverdientijd toch kort.",
+        pills: [
+          { dim: "Investering", value: "Midden" },
+          { dim: "Terugverdientijd", value: "Kort" },
+          { dim: "Comfortwinst", value: "Hoog" },
+        ],
       },
       {
         title: "Vloerisolatie",
         body: "Beperkte investering met een merkbaar comfortverschil. Vooral koude voeten en tochtgevoel verminderen sterk.",
+        pills: [
+          { dim: "Investering", value: "Laag" },
+          { dim: "Terugverdientijd", value: "Middel" },
+          { dim: "Comfortwinst", value: "Gemiddeld" },
+        ],
       },
       {
         title: "HR++ of triple glas",
         body: "Hogere investering en langere terugverdientijd. De grootste winst zit hier in comfort en geluidsdemping, en in de stap richting een warmtepomp.",
+        pills: [
+          { dim: "Investering", value: "Hoog" },
+          { dim: "Terugverdientijd", value: "Lang" },
+          { dim: "Comfortwinst", value: "Hoog" },
+        ],
       },
       {
         title: "Ventilatie met warmteterugwinning (WTW)",
         body: "De meest energiezuinige vorm van ventileren, maar ook de duurste optie. Past goed bij een luchtdichte, goed geïsoleerde woning.",
+        pills: [
+          { dim: "Investering", value: "Hoog" },
+          { dim: "Terugverdientijd", value: "Lang" },
+          { dim: "Comfortwinst", value: "Hoog" },
+        ],
       },
     ]}
     kostenFooter="Wat het beïnvloedt zijn bouwjaar, huidige isolatiewaarden, woningtype en de combinatie die je kiest."

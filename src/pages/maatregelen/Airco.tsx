@@ -31,23 +31,17 @@ const Airco = () => (
     ]}
     wanneerKop="Wanneer is dit relevant?"
     routeTekst="Een airco is vooral slim als bijverwarming of voor losse ruimtes die je niet continu hoeft te verwarmen. In een goed geisoleerde woning kun je er ruimtes mee koelen en verwarmen zonder gas. Wil je je hele woning gasloos verwarmen, dan is een warmtepomp meestal de logischere keuze, en kan een airco daar een aanvulling op zijn. Net als bij andere maatregelen geldt: hoe beter je woning geisoleerd is, hoe minder de airco hoeft te werken."
+    kostenMode="single"
     kostenItems={[
       {
-        title: "Benodigde vermogen",
-        body: "Afgestemd op de ruimte. Een te klein systeem presteert onvoldoende, een te groot systeem verbruikt onnodig veel.",
+        title: "Airco",
+        body: "Een airco met warmtepomptechniek koelt in de zomer en verwarmt zuinig in de winter. Het rendement hangt af van het juiste vermogen, de isolatie en hoeveel ruimtes je voorziet.",
       },
-      {
-        title: "Isolatie van de woning",
-        body: "Hoe beter de isolatie, hoe minder de airco hoeft te werken en hoe lager het verbruik.",
-      },
-      {
-        title: "Aantal binnenunits",
-        body: "Meer units betekenen hogere kosten, maar ook meer comfort in verschillende ruimtes.",
-      },
-      {
-        title: "Aanschafprijs versus verbruik",
-        body: "Een zuiniger model kost meer aanvankelijk, maar verdient zich terug door lager verbruik.",
-      },
+    ]}
+    kostenSinglePills={[
+      { dim: "Investering", value: "Midden" },
+      { dim: "Terugverdientijd", value: "Middel" },
+      { dim: "Comfortwinst", value: "Hoog" },
     ]}
     kostenFooter="Een te klein systeem presteert onvoldoende, een te groot systeem verbruikt onnodig veel. De juiste maat bepaalt het rendement."
     zachteCtaTekst="Benieuwd welke airco bij jouw ruimte past? Plan een gesprek"
