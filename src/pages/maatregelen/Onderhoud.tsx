@@ -35,8 +35,8 @@ const Section = ({ bg, children }: { bg: string; children: React.ReactNode }) =>
   </section>
 );
 
-const SectionHeader = ({ title, sub }: { title: string; sub?: string }) => (
-  <div className="max-w-3xl">
+const SectionHeader = ({ title, sub, center = false }: { title: string; sub?: string; center?: boolean }) => (
+  <div className={center ? "max-w-3xl mx-auto text-center" : "max-w-3xl"}>
     <h2
       className="font-display"
       style={{
@@ -95,8 +95,8 @@ const Onderhoud = () => (
         aria-labelledby="o-title"
       >
         <div className="container-content">
-          <div className="grid grid-cols-1 gap-10 md:gap-14 items-center lg:grid-cols-[1.1fr_1fr]">
-            <div>
+          <div className="flex flex-col items-center gap-10 md:gap-14 text-center">
+            <div className="max-w-3xl">
               <h1
                 id="o-title"
                 className="font-display"
@@ -110,13 +110,13 @@ const Onderhoud = () => (
               >
                 {renderAccented("Onderhoud, zodat alles blijft [[presteren]]")}
               </h1>
-              <p className="mt-5 max-w-2xl" style={{ fontSize: 17, color: INK, opacity: 0.85, lineHeight: 1.7 }}>
+              <p className="mt-5 mx-auto max-w-2xl" style={{ fontSize: 17, color: INK, opacity: 0.85, lineHeight: 1.7 }}>
                 Verduurzamen stopt niet na de installatie. Een warmtepomp, airco of thuisbatterij blijft het beste werken met regelmatig onderhoud: efficiënter, langere levensduur en minder onverwachte storingen.
               </p>
             </div>
 
             <div
-              className="w-full overflow-hidden"
+              className="w-full max-w-3xl overflow-hidden"
               style={{
                 borderRadius: 20,
                 border: `1px solid ${BORDER}`,
@@ -126,7 +126,7 @@ const Onderhoud = () => (
             >
               <img
                 src={onderhoudImage}
-                alt="Monteur controleert een installatie in een woning"
+                alt="Monteur controleert een installatie binnenshuis"
                 width={1024}
                 height={768}
                 className="w-full h-full object-cover"
@@ -141,6 +141,7 @@ const Onderhoud = () => (
         <SectionHeader
           title="Waarom onderhoud [[belangrijk]] is"
           sub="Regelmatig onderhoud levert meer op dan je denkt. Dit zijn de belangrijkste voordelen."
+          center
         />
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
           {[
