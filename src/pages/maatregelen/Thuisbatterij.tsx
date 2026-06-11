@@ -69,24 +69,28 @@ const Thuisbatterij = () => (
     subsidiesLinkLabel="Bekijk hoe je subsidies stapelt"
     faqs={[
       {
+        q: "Heeft een thuisbatterij in mijn situatie zin?",
+        a: "Dat hangt sterk af van je verbruik, je zonnepanelen en je energiecontract. Voor de ene woning is het een slimme stap, voor de andere nog niet, en daar zijn we eerlijk over.",
+      },
+      {
+        q: "Verdien ik mijn thuisbatterij snel terug?",
+        a: "Voor veel huishoudens is de terugverdientijd op dit moment nog lang en sterk afhankelijk van de situatie. Door de afbouw van de saldering wordt zelf verbruiken interessanter, maar we rekenen het liever eerlijk voor je door dan je iets aan te praten.",
+      },
+      {
         q: "Kan ik mijn zonnepanelen koppelen aan een thuisbatterij?",
-        a: "Ja, dat is juist de kern. Stroom die je overdag opwekt en niet direct gebruikt, sla je op om later te gebruiken in plaats van terug te leveren aan het net.",
+        a: "Ja, dat is juist de meest logische combinatie. Je slaat overdag opgewekte stroom op en gebruikt die 's avonds, in plaats van terug te leveren.",
       },
       {
-        q: "Is een thuisbatterij rendabel?",
-        a: "Dat verschilt sterk per situatie en is voor veel huishoudens op dit moment nog beperkt. Het hangt af van je verbruik, je zonnepanelen, je energiecontract en de terugleverkosten. Wij rekenen het eerlijk voor je door, ook als de uitkomst is dat het nu nog niet loont.",
+        q: "Werkt een thuisbatterij ook bij stroomuitval?",
+        a: "Niet elke thuisbatterij doet dat automatisch, daarvoor is een speciale voorziening nodig. Als noodstroom voor jou belangrijk is, houden we daar rekening mee in het advies.",
       },
       {
-        q: "Hoe groot moet mijn thuisbatterij zijn?",
-        a: "Dat hangt af van je jaarverbruik, je dagverbruik, de opbrengst van je panelen en je toekomstplannen zoals een warmtepomp of elektrisch rijden. Een grotere batterij is niet automatisch beter, het gaat om de juiste maat voor jouw situatie.",
+        q: "Kan ik later uitbreiden in capaciteit?",
+        a: "Bij veel systemen kan dat. Het is verstandig vooraf te bepalen welke capaciteit bij je verbruik past, zodat je niet te klein of onnodig groot koopt.",
       },
       {
-        q: "Werkt een thuisbatterij bij stroomuitval?",
-        a: "Niet elke batterij doet dit. Sommige systemen hebben een back-upfunctie waarmee je bij stroomuitval bepaalde groepen kunt blijven voeden, andere niet. Wil je dit, geef het dan vooraf aan.",
-      },
-      {
-        q: "Hoe lang gaat een thuisbatterij mee?",
-        a: "De meeste systemen gaan zo'n tien tot vijftien jaar mee, afhankelijk van het type en het gebruik. Moderne batterijen worden continu gemonitord en zijn onderhoudsarm.",
+        q: "Is een thuisbatterij veilig in huis?",
+        a: "Moderne thuisbatterijen voldoen aan strenge veiligheidseisen en worden door een gecertificeerde uitvoerder geïnstalleerd. Met de juiste plaatsing is het veilig.",
       },
     ]}
     finalCtaKop="Benieuwd of een thuisbatterij voor jou [[loont]]?"
