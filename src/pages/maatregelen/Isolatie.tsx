@@ -8,7 +8,7 @@ const Isolatie = () => (
     badge="Vaak eerste stap"
     seoTitle="Isolatie & ventilatie | Voortraject"
     seoDescription="Isolatie en ventilatie vormen de basis van elke verduurzaming. Wat valt eronder, wanneer is het slim en welke subsidies passen erbij."
-    heroTitle="Isolatie & ventilatie, de basis van elke verduurzaming"
+    heroTitle="Isolatie & ventilatie, de [[basis]] van elke verduurzaming"
     heroSub="Minder warmteverlies, meer comfort en lagere energiekosten. Vrijwel altijd de slimste eerste stap."
     heroIntro="Een goed geïsoleerde woning verbruikt minder energie en is comfortabeler in de winter en de zomer. Het is de basis waarop alle volgende stappen, zoals zonnepanelen, een warmtepomp of opslag, pas echt renderen. Goed isoleren vraagt wel om goed ventileren, anders ontstaan vocht en gezondheidsproblemen."
     pastBij={[
@@ -83,7 +83,7 @@ const Isolatie = () => (
         a: "Juist dan is isoleren de logische eerste stap. Een goed geïsoleerde woning maakt de overstap naar een warmtepomp haalbaar en betaalbaar. Zonder isolatie werkt een warmtepomp inefficiënt. Wie van het gas af wil, begint bij de schil van de woning.",
       },
     ]}
-    finalCtaKop="Niet zeker waar je moet beginnen?"
+    finalCtaKop="Niet zeker waar je moet [[beginnen]]?"
     finalCtaTekst="In een gratis gesprek kijken we naar jouw woning en vertellen we eerlijk welke isolatiestap nu het meeste oplevert. Wij verkopen geen materiaal en hebben geen installateur te slijten. Ons advies is onafhankelijk."
   />
 );
