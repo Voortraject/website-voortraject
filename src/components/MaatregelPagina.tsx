@@ -43,12 +43,6 @@ export interface ProcesStap {
   body: string;
 }
 
-export interface AdviseurTip {
-  quote: string;
-  naam: string;
-  rol?: string;
-  foto?: string;
-}
 
 export interface MaatregelPaginaProps {
   slug: string;
