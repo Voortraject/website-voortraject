@@ -49,7 +49,8 @@ export interface MaatregelPaginaProps {
   watValtEronder: string[];
 
   // Sectie 3
-  routeStep: RouteStep;
+  wanneerKop?: string;
+  routeStep?: RouteStep;
   routeTekst: string;
 
   // Sectie 4
@@ -62,10 +63,16 @@ export interface MaatregelPaginaProps {
   // Sectie 5
   aandachtspunten: string[];
   keurmerken?: KeurmerkenBlock;
-  subsidiesIntro: string;
-  subsidiesItems: string[];
+  subsidiesIntro?: string;
+  subsidiesItems?: string[];
   subsidiesLinkHref?: string;
   subsidiesLinkLabel?: string;
+  onderhoud?: {
+    kop: string;
+    tekst: string;
+    linkHref: string;
+    linkLabel: string;
+  };
   faqs: MaatregelFaq[];
 
   // Sectie 6
@@ -120,6 +127,7 @@ export const MaatregelPagina = ({
   minderUrgent,
   watValtEronderKop = "Wat valt [[eronder]]?",
   watValtEronder,
+  wanneerKop = "Wanneer is het [[slim]]?",
   routeStep,
   routeTekst,
   kostenItems,
@@ -133,6 +141,7 @@ export const MaatregelPagina = ({
   subsidiesItems,
   subsidiesLinkHref = "/subsidies",
   subsidiesLinkLabel = "Bekijk hoe je subsidies stapelt",
+  onderhoud,
   faqs,
   finalCtaKop,
   finalCtaTekst,
@@ -293,10 +302,12 @@ export const MaatregelPagina = ({
 
         {/* SECTIE 4 — Wanneer is het slim (route) */}
         <Section bg="#FFFFFF">
-          <SectionHeader title="Wanneer is het [[slim]]?" />
-          <div className="mt-10">
-            <RouteBar active={routeStep} />
-          </div>
+          <SectionHeader title={wanneerKop} />
+          {routeStep && (
+            <div className="mt-10">
+              <RouteBar active={routeStep} />
+            </div>
+          )}
           <p
             className="mt-10 max-w-3xl"
             style={{ fontSize: 17, color: TEXT, lineHeight: 1.75 }}
@@ -367,7 +378,7 @@ export const MaatregelPagina = ({
 
         {/* SECTIE 6 — Aandachtspunten + Subsidies */}
         <Section bg="#FFFFFF">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+          <div className={`grid grid-cols-1 ${subsidiesItems && subsidiesItems.length > 0 ? "lg:grid-cols-2" : ""} gap-12 lg:gap-16`}>
             <div>
               <SectionHeader title="Waar je op moet [[letten]]" />
               <ul
@@ -390,43 +401,45 @@ export const MaatregelPagina = ({
               </ul>
             </div>
 
-            <div>
-              <SectionHeader title="[[Subsidies]]" />
-              <p
-                style={{ fontSize: 16, color: TEXT, lineHeight: 1.7, marginTop: 24, marginBottom: 18 }}
-              >
-                {subsidiesIntro}
-              </p>
-              <ul
-                style={{ listStyle: "none", padding: 0, margin: 0 }}
-                className="flex flex-col gap-2"
-              >
-                {subsidiesItems.map((s) => (
-                  <li
-                    key={s}
-                    className="flex items-start gap-3"
-                    style={{ fontSize: 15, color: TEXT, lineHeight: 1.6 }}
-                  >
-                    <Check size={18} color={GOLD} className="mt-[2px] shrink-0" />
-                    <span>{s}</span>
-                  </li>
-                ))}
-              </ul>
-              <a
-                href={subsidiesLinkHref}
-                className="mt-6 inline-flex items-center gap-2 group"
-                style={{
-                  color: NAVY,
-                  fontWeight: 500,
-                  fontSize: 15,
-                  borderBottom: `1px solid ${GOLD}`,
-                  paddingBottom: 2,
-                }}
-              >
-                {subsidiesLinkLabel}
-                <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-              </a>
-            </div>
+            {subsidiesItems && subsidiesItems.length > 0 && (
+              <div>
+                <SectionHeader title="[[Subsidies]]" />
+                <p
+                  style={{ fontSize: 16, color: TEXT, lineHeight: 1.7, marginTop: 24, marginBottom: 18 }}
+                >
+                  {subsidiesIntro}
+                </p>
+                <ul
+                  style={{ listStyle: "none", padding: 0, margin: 0 }}
+                  className="flex flex-col gap-2"
+                >
+                  {subsidiesItems.map((s) => (
+                    <li
+                      key={s}
+                      className="flex items-start gap-3"
+                      style={{ fontSize: 15, color: TEXT, lineHeight: 1.6 }}
+                    >
+                      <Check size={18} color={GOLD} className="mt-[2px] shrink-0" />
+                      <span>{s}</span>
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href={subsidiesLinkHref}
+                  className="mt-6 inline-flex items-center gap-2 group"
+                  style={{
+                    color: NAVY,
+                    fontWeight: 500,
+                    fontSize: 15,
+                    borderBottom: `1px solid ${GOLD}`,
+                    paddingBottom: 2,
+                  }}
+                >
+                  {subsidiesLinkLabel}
+                  <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+                </a>
+              </div>
+            )}
           </div>
         </Section>
 
@@ -467,6 +480,33 @@ export const MaatregelPagina = ({
                 {keurmerken.voetregel}
               </p>
             )}
+          </Section>
+        )}
+
+        {/* SECTIE 7b — Onderhoud (optioneel) */}
+        {onderhoud && (
+          <Section bg="#FFFFFF">
+            <SectionHeader title={onderhoud.kop} />
+            <p
+              className="mt-6 max-w-3xl"
+              style={{ fontSize: 16, color: TEXT, lineHeight: 1.7 }}
+            >
+              {onderhoud.tekst}
+            </p>
+            <a
+              href={onderhoud.linkHref}
+              className="mt-5 inline-flex items-center gap-2 group"
+              style={{
+                color: NAVY,
+                fontWeight: 500,
+                fontSize: 15,
+                borderBottom: `1px solid ${GOLD}`,
+                paddingBottom: 2,
+              }}
+            >
+              {onderhoud.linkLabel}
+              <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+            </a>
           </Section>
         )}
 
