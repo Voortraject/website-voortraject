@@ -505,19 +505,19 @@ const SectionBlock = ({
   children: React.ReactNode;
 }) => (
   <section className="w-full py-16 md:py-20" style={{ backgroundColor: bg }}>
-    <div className="px-6">{children}</div>
+    <div className="mx-auto max-w-[1180px] px-6">{children}</div>
   </section>
 );
 
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
   <h2
-    className="font-display text-center mx-auto text-3xl md:text-4xl font-semibold"
+    className="font-display text-left text-3xl md:text-4xl font-semibold"
     style={{
       color: NAVY,
       letterSpacing: "-0.02em",
       lineHeight: 1.15,
       margin: 0,
-      maxWidth: 760,
+
     }}
   >
     {children}
