@@ -35,8 +35,8 @@ const Section = ({ bg, children }: { bg: string; children: React.ReactNode }) =>
   </section>
 );
 
-const SectionHeader = ({ title, sub }: { title: string; sub?: string }) => (
-  <div className="max-w-3xl">
+const SectionHeader = ({ title, sub, center = false }: { title: string; sub?: string; center?: boolean }) => (
+  <div className={center ? "max-w-3xl mx-auto text-center" : "max-w-3xl"}>
     <h2
       className="font-display"
       style={{
