@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronDown, Check, Minus, ShieldCheck } from "lucide-react";
+import { ArrowRight, ChevronDown, Check, Minus, ShieldCheck, X } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -181,7 +181,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
     heroCtaHref = "/contact",
     heroImageSrc,
     heroImageAlt,
-    voorWieKop = "Is dit [[iets voor jou]]?",
+    voorWieKop = "Past dit bij jouw woning?",
     pastBij,
     minderUrgent,
     kostenItems,
@@ -271,17 +271,25 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
           </div>
         </section>
 
-        {/* 2 — IS DIT IETS VOOR JOU */}
+        {/* 2 — PAST DIT BIJ JOUW WONING? */}
         <SectionBlock bg={WHITE}>
-          <SectionTitle>{renderAccented(voorWieKop)}</SectionTitle>
+          <div className="text-center">
+            <SectionTitle center>{renderAccented(voorWieKop)}</SectionTitle>
+            <p
+              className="mt-3 text-base leading-relaxed mx-auto"
+              style={{ color: NAVY, opacity: 0.75, maxWidth: 560 }}
+            >
+              We zijn er eerlijk over wanneer dit wel en niet bij jouw woning past.
+            </p>
+          </div>
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Card>
-              <CardLabel>Past bij jou</CardLabel>
+            <Card border={`2px solid ${GOLD}`}>
+              <CardLabel>Wel</CardLabel>
               <BulletList items={pastBij} variant="check" />
             </Card>
-            <Card>
-              <CardLabel muted>Minder logisch</CardLabel>
-              <BulletList items={minderUrgent} variant="dash" />
+            <Card bg={WARM}>
+              <CardLabel muted>Niet</CardLabel>
+              <BulletList items={minderUrgent} variant="cross" />
             </Card>
           </div>
         </SectionBlock>
@@ -524,27 +532,26 @@ const SectionBlock = ({
   </section>
 );
 
-const SectionTitle = ({ children }: { children: React.ReactNode }) => (
+const SectionTitle = ({ children, center }: { children: React.ReactNode; center?: boolean }) => (
   <h2
-    className="font-display text-left text-3xl md:text-4xl font-semibold"
+    className={`font-display text-3xl md:text-4xl font-semibold ${center ? "text-center" : "text-left"}`}
     style={{
       color: NAVY,
       letterSpacing: "-0.02em",
       lineHeight: 1.15,
       margin: 0,
-
     }}
   >
     {children}
   </h2>
 );
 
-const Card = ({ children }: { children: React.ReactNode }) => (
+const Card = ({ children, bg, border }: { children: React.ReactNode; bg?: string; border?: string }) => (
   <div
     className="rounded-2xl p-6 h-full"
     style={{
-      backgroundColor: WHITE,
-      border: `1px solid ${NAVY}1A`,
+      backgroundColor: bg ?? WHITE,
+      border: border ?? `1px solid ${NAVY}1A`,
     }}
   >
     {children}
@@ -571,27 +578,27 @@ const BulletList = ({
   variant,
 }: {
   items: string[];
-  variant: "check" | "dash";
+  variant: "check" | "cross";
 }) => (
   <ul style={{ listStyle: "none", padding: 0, margin: 0 }} className="flex flex-col gap-3">
     {items.map((item) => (
       <li
         key={item}
         className="flex items-start gap-3 text-base leading-relaxed"
-        style={{ color: variant === "dash" ? `${NAVY}B3` : NAVY }}
+        style={{ color: variant === "cross" ? `${NAVY}B3` : NAVY }}
       >
         <span
           className="mt-[3px] shrink-0 rounded-full flex items-center justify-center"
           style={{
             width: 20,
             height: 20,
-            backgroundColor: variant === "check" ? WARM : `${NAVY}0D`,
+            backgroundColor: variant === "check" ? "#dcfce7" : "#fee2e2",
           }}
         >
           {variant === "check" ? (
-            <Check size={12} color={NAVY} strokeWidth={3} />
+            <Check size={12} color="#16a34a" strokeWidth={3} />
           ) : (
-            <Minus size={12} color={`${NAVY}99`} strokeWidth={3} />
+            <X size={12} color="#dc2626" strokeWidth={3} />
           )}
         </span>
         <span>{item}</span>
