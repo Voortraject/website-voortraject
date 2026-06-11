@@ -179,7 +179,7 @@ const toBadge = (s: string) => {
 export const MaatregelPagina = (props: MaatregelPaginaProps) => {
   const {
     slug,
-    icon: Icon,
+    icon: _Icon,
     seoTitle,
     seoDescription,
     heroTitle,
