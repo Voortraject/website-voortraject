@@ -22,6 +22,7 @@ const Laadpaal = () => (
     minderUrgent={[
       "Je geen eigen parkeerplek op eigen terrein hebt",
       "Je nauwelijks rijdt en openbaar laden voor jou volstaat",
+      "Je binnenkort verhuist en de laadpaal niet meeneemt",
     ]}
     watValtEronder={[
       "1-fase laadpaal voor een eenvoudige aansluiting",

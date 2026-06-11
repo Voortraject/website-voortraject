@@ -22,7 +22,8 @@ const Isolatie = () => (
     ]}
     minderUrgent={[
       "Je woning al recent en goed is geïsoleerd (na ongeveer 2015)",
-      "Je op korte termijn verhuist",
+      "Je binnenkort verhuist en de investering niet meer terugverdient",
+      "Je een monument hebt; dan gelden strikte regels en kijken we eerst naar wat mag",
     ]}
     watValtEronder={[
       "Dakisolatie, vaak de kortste terugverdientijd",

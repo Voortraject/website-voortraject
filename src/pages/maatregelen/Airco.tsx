@@ -15,13 +15,14 @@ const Airco = () => (
     heroImageAlt="Airco binnenunit aan een muur in een woonkamer"
     pastBij={[
       "Je in de zomer last hebt van warmte in huis",
-      "Je losse ruimtes wilt verwarmen, zoals een thuiskantoor, slaapkamer, zolder of aanbouw",
+      "Je losse ruimtes wilt koelen of verwarmen, zoals een thuiskantoor, slaapkamer of zolder",
       "Je een zuinig alternatief voor gas zoekt voor bepaalde ruimtes",
-      "Je woning redelijk tot goed geisoleerd is",
+      "Je woning redelijk tot goed geïsoleerd is",
     ]}
     minderUrgent={[
-      "Je een hele woning gasloos wilt verwarmen, kijk dan eerst naar een warmtepomp",
+      "Je je hele woning gasloos wilt verwarmen; kijk dan eerst naar een warmtepomp",
       "Je geen ruimte hebt voor een buitenunit binnen de geluidsnormen",
+      "Je maar een enkele warme dag per jaar hebt en met ventilatie of zonwering uitkomt",
     ]}
     watValtEronder={[
       "Split airco met een binnenunit",
