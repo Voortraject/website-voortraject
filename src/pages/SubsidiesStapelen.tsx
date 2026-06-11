@@ -27,7 +27,7 @@ const C = {
   muted: "#6B7280",
 };
 
-const LAATST_BIJGEWERKT = "mei 2026";
+const LAATST_BIJGEWERKT = "juni 2026";
 
 const faqs: { q: string; a: string }[] = [
   {
@@ -141,18 +141,18 @@ const SubsidiesStapelen = () => {
   const bouwstenen = [
     {
       Icon: Globe,
-      tag: "LANDELIJK",
-      titel: "ISDE",
+      tag: "ISDE",
+      titel: "Landelijk",
       tekst:
         "Vaste bedragen per maatregel voor isolatie, een warmtepomp, zonneboiler en meer. Aanvragen bij RVO.",
       footer: "geldt in heel Nederland",
     },
     {
       Icon: MapIcon,
-      tag: "GRONINGEN & NOORD-DRENTHE",
-      titel: "Nij Begun",
+      tag: "NIJ BEGUN",
+      titel: "Regionaal",
       tekst:
-        "Subsidie om je woning te isoleren tot de isolatiestandaard. Vooraf aanvragen bij SNN, vóór je begint.",
+        "Subsidie om je woning in Groningen en Noord-Drenthe te isoleren tot de isolatiestandaard. Vooraf aanvragen bij SNN, vóór je begint.",
       footer: "alleen in het werkgebied",
     },
     {
@@ -327,9 +327,6 @@ const SubsidiesStapelen = () => {
             </div>
             <p style={{ fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 700, color: C.primary, margin: 0 }}>
               Wat de juiste <Gold>combinatie</Gold> oplevert, rekenen we voor jou uit
-            </p>
-            <p style={{ fontSize: 15, color: C.muted, marginTop: 10 }}>
-              Welke regelingen voor jouw woning samengaan, en in welke volgorde, zoeken wij gratis voor je uit.
             </p>
             <div style={{ marginTop: 22 }}>
               <a href="/contact" style={goldBtn}>
