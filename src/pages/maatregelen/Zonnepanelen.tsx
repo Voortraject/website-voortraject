@@ -31,23 +31,17 @@ const Zonnepanelen = () => (
     ]}
     routeStep="opwekken"
     routeTekst="Zonnepanelen werken het beste in een al goed geisoleerde woning. Dan verbruik je minder dan je opwekt, in plaats van andersom. Daarom komt opwekken in de route na het beperken van je verbruik. Wil je nog meer uit je panelen halen, dan volgt slim gebruik, bijvoorbeeld met een thuisbatterij of door je verbruik te verschuiven naar momenten dat de zon schijnt."
+    kostenMode="single"
     kostenItems={[
       {
-        title: "Dakrichting en hellingshoek",
-        body: "Een dak op het zuiden met een hellingshoek van ongeveer 30 graden levert het meeste op. Oost en west werken vaak ook prima, maar noord is minder gunstig. De exacte opbrengst hangt af van jouw situatie.",
+        title: "Zonnepanelen",
+        body: "De opbrengst hangt af van dakrichting, hellingshoek, schaduw en hoeveel van je opwek je zelf gebruikt. Voor de meeste woningen blijft het, in de juiste volgorde, een rendabele keuze.",
       },
-      {
-        title: "Schaduw van bomen of schoorstenen",
-        body: "Schaduw kan de opbrengst flink verminderen. Met optimizers of micro-omvormers kun je dit deels opvangen, maar volledig schaduwvrij is altijd beter. Wij kijken mee of jouw dak geschikt is.",
-      },
-      {
-        title: "Je eigen verbruik en hoeveel je zelf gebruikt",
-        body: "Hoe meer van je eigen opwek je zelf gebruikt, hoe sneller de panelen zich terugverdienen. Zelf verbruiken wordt steeds belangrijker door de afbouw van de salderingsregeling.",
-      },
-      {
-        title: "Het aantal panelen en de kwaliteit",
-        body: "Meer panelen en betere kwaliteit geven meer opbrengst. Het is verstandig om niet alleen naar nu te kijken, maar ook naar je verwachte verbruik over een paar jaar.",
-      },
+    ]}
+    kostenSinglePills={[
+      { dim: "Investering", value: "Midden" },
+      { dim: "Terugverdientijd", value: "Middel" },
+      { dim: "Besparing", value: "Hoog" },
     ]}
     kostenFooter="Hoe meer van je eigen opwek je zelf gebruikt, hoe sneller de panelen zich terugverdienen. De terugverdientijd ligt gebruikelijk enkele jaren tot rond de zeven jaar, afhankelijk van je situatie."
     zachteCtaTekst="Benieuwd wat jouw dak kan opleveren? Plan een gesprek"
