@@ -371,10 +371,10 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
 
         {/* 3 — WAT HET KOST EN OPLEVERT */}
         <SectionBlock bg={WARM}>
-          <SectionTitle>{renderAccented("Wat het [[kost]] en oplevert")}</SectionTitle>
+          <SectionTitle center>{renderAccented("Wat het [[kost]] en oplevert")}</SectionTitle>
 
           {kostenMode === "single" ? (
-            <div className="mt-10">
+            <div className="mt-10 max-w-[820px] mx-auto">
               <Card>
                 {kostenItems[0]?.body && (
                   <p
@@ -416,7 +416,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
           )}
 
           <p
-            className="mt-8 text-sm max-w-[760px]"
+            className="mt-8 text-sm max-w-[760px] mx-auto text-center"
             style={{ color: NAVY, opacity: 0.6 }}
           >
             Bedragen en terugverdientijden zijn indicatief en kunnen wijzigen. Peildatum: {prijsPeil}.
