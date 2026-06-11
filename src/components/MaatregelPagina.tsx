@@ -80,6 +80,11 @@ export interface MaatregelPaginaProps {
     linkHref: string;
     linkLabel: string;
   };
+  combineren?: {
+    kop: string;
+    tekst: string;
+    links: { label: string; href: string }[];
+  };
   faqs: MaatregelFaq[];
 
   // Sectie 6
@@ -151,6 +156,7 @@ export const MaatregelPagina = ({
   subsidiesLinkLabel = "Bekijk hoe je subsidies stapelt",
   extraInfo,
   onderhoud,
+  combineren,
   faqs,
   finalCtaKop,
   finalCtaTekst,
@@ -601,6 +607,38 @@ export const MaatregelPagina = ({
               {onderhoud.linkLabel}
               <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
             </a>
+          </Section>
+        )}
+
+        {/* SECTIE 7c — Combineren met andere maatregelen (optioneel) */}
+        {combineren && (
+          <Section bg="#FFFFFF">
+            <SectionHeader title={combineren.kop} />
+            <p
+              className="mt-6 max-w-3xl"
+              style={{ fontSize: 16, color: TEXT, lineHeight: 1.7 }}
+            >
+              {combineren.tekst}
+            </p>
+            <div className="mt-5 flex flex-col sm:flex-row gap-4">
+              {combineren.links.map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  className="inline-flex items-center gap-2 group"
+                  style={{
+                    color: NAVY,
+                    fontWeight: 500,
+                    fontSize: 15,
+                    borderBottom: `1px solid ${GOLD}`,
+                    paddingBottom: 2,
+                  }}
+                >
+                  {l.label}
+                  <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+                </a>
+              ))}
+            </div>
           </Section>
         )}
 
