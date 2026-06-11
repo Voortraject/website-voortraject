@@ -1,4 +1,5 @@
-import { Home, Sun, Thermometer, Battery, Snowflake, Plug, Wrench, ArrowRight, ArrowDown, Shield, Zap } from "lucide-react";
+import { Home, Sun, Thermometer, Battery, Snowflake, Plug, ArrowRight, ArrowDown, Shield, Zap } from "lucide-react";
+import routeHeroImage from "@/assets/route-hero.jpg";
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
@@ -65,12 +66,6 @@ const maatregelen = [
     intro: "Thuis laden van een elektrische auto, het liefst gekoppeld aan je eigen zon en verbruik.",
     icon: Plug,
   },
-  {
-    slug: "onderhoud",
-    title: "Onderhoud",
-    intro: "Periodieke controle van installaties zodat ze blijven leveren wat ze beloven.",
-    icon: Wrench,
-  },
 ];
 
 const Verduurzamen = () => {
@@ -115,9 +110,27 @@ const Verduurzamen = () => {
                 }}
               >
                 Van isolatie tot opwek, verwarming en opslag. Wij begeleiden je stap voor stap door het
-                hele verduurzamingstraject — eerst beperken wat je verbruikt, daarna slimmer opwekken en
+                hele verduurzamingstraject, eerst beperken wat je verbruikt, daarna slimmer opwekken en
                 gebruiken.
               </p>
+            </div>
+            <div
+              className="mt-10 mx-auto w-full overflow-hidden"
+              style={{
+                borderRadius: 20,
+                border: "1px solid #E5E2DB",
+                aspectRatio: "16 / 9",
+                maxWidth: 1100,
+                backgroundColor: "#EFEAE0",
+              }}
+            >
+              <img
+                src={routeHeroImage}
+                alt="De verduurzamingsroute van isolatie tot opwek en slim gebruik"
+                width={1100}
+                height={619}
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
         </section>

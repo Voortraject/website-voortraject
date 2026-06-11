@@ -1,5 +1,6 @@
 import { Home } from "lucide-react";
 import { MaatregelPagina } from "@/components/MaatregelPagina";
+import isolatieImage from "@/assets/maatregel-isolatie.jpg";
 
 const Isolatie = () => (
   <MaatregelPagina
@@ -11,6 +12,8 @@ const Isolatie = () => (
     heroTitle="Isolatie & ventilatie, de [[basis]] van elke verduurzaming"
     heroSub="Minder warmteverlies, meer comfort en lagere energiekosten. Vrijwel altijd de slimste eerste stap."
     heroIntro="Een goed geïsoleerde woning verbruikt minder energie en is comfortabeler in de winter en de zomer. Het is de basis waarop alle volgende stappen, zoals zonnepanelen, een warmtepomp of opslag, pas echt renderen. Goed isoleren vraagt wel om goed ventileren, anders ontstaan vocht en gezondheidsproblemen."
+    heroImageSrc={isolatieImage}
+    heroImageAlt="Isolatiewerkzaamheden aan een woning"
     pastBij={[
       "Je woning van voor 1990 is of merkbaar tocht",
       "Je vertrekken traag warm worden of snel afkoelen",
