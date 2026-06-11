@@ -390,8 +390,8 @@ const SubsidiesRegionaal = () => {
       </section>
 
 
-      {/* 4. WELKE REGELINGEN — wit */}
-      <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-24">
+      {/* 3. WELKE REGELINGEN — cream */}
+      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
         <div className="container-content">
           <div className="max-w-3xl">
             <H2>
