@@ -463,10 +463,10 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
                     {i < procesStappen.length - 1 && (
                       <div
                         aria-hidden="true"
-                        className="hidden md:flex absolute top-1/2 -right-4 -translate-y-1/2 items-center justify-center"
-                        style={{ width: 24, height: 24 }}
+                        className="hidden md:flex absolute top-1/2 -translate-y-1/2 items-center justify-center"
+                        style={{ right: -56, width: 48, height: 48 }}
                       >
-                        <ArrowRight size={20} color={GOLD} strokeWidth={2.25} />
+                        <ArrowRight size={36} color={GOLD} strokeWidth={2.5} />
                       </div>
                     )}
                   </li>
