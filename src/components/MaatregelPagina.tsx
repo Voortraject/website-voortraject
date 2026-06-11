@@ -203,63 +203,56 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
       <main className="flex-1">
         {/* 1 — HERO */}
         <section className="w-full py-16 md:py-20" style={{ backgroundColor: SAND }}>
-          <div className="mx-auto max-w-[760px] px-6 text-center">
-            <div
-              className="mx-auto mb-6 flex items-center justify-center rounded-full"
-              style={{ width: 56, height: 56, backgroundColor: WARM }}
-            >
-              <Icon size={26} color={NAVY} strokeWidth={2.25} aria-hidden="true" />
-            </div>
-            <h1
-              className="font-display"
-              style={{
-                color: NAVY,
-                fontWeight: 700,
-                fontSize: "clamp(32px, 4.4vw, 48px)",
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
-                margin: 0,
-              }}
-            >
-              {renderAccented(heroTitle)}
-            </h1>
-            <p
-              className="mx-auto mt-5 text-base md:text-lg leading-relaxed"
-              style={{ color: NAVY, opacity: 0.85, maxWidth: 620 }}
-            >
-              {heroSub} {heroIntro}
-            </p>
-            <div className="mt-8 flex justify-center">
-              <PrimaryButton href={heroCtaHref}>{heroCtaLabel}</PrimaryButton>
-            </div>
-            {heroImageSrc && (
-              <div
-                className="mx-auto mt-12 overflow-hidden rounded-2xl"
-                style={{
-                  border: `1px solid ${NAVY}1A`,
-                  maxWidth: 1100,
-                  aspectRatio: "16 / 9",
-                }}
-              >
-                <img
-                  src={heroImageSrc}
-                  alt={heroImageAlt ?? ""}
-                  className="w-full h-full object-cover"
-                  width={1600}
-                  height={900}
-                />
+          <div className="mx-auto max-w-[1180px] px-6">
+            <div className="flex flex-col md:flex-row md:items-center gap-10 md:gap-12">
+              <div className="md:flex-1 min-w-0">
+                <div
+                  className="mb-6 inline-flex items-center justify-center rounded-full"
+                  style={{ width: 56, height: 56, backgroundColor: WARM }}
+                >
+                  <Icon size={26} color={NAVY} strokeWidth={2.25} aria-hidden="true" />
+                </div>
+                <h1
+                  className="font-display"
+                  style={{
+                    color: NAVY,
+                    fontWeight: 700,
+                    fontSize: "clamp(32px, 4.4vw, 48px)",
+                    lineHeight: 1.1,
+                    letterSpacing: "-0.02em",
+                    margin: 0,
+                  }}
+                >
+                  {renderAccented(heroTitle)}
+                </h1>
+                <p
+                  className="mt-5 text-base md:text-lg leading-relaxed"
+                  style={{ color: NAVY, opacity: 0.85, maxWidth: 560 }}
+                >
+                  {heroSub} {heroIntro}
+                </p>
+                <div className="mt-8">
+                  <PrimaryButton href={heroCtaHref}>{heroCtaLabel}</PrimaryButton>
+                </div>
               </div>
-            )}
-            <div
-              className="mx-auto mt-12"
-              style={{
-                width: 64,
-                height: 2,
-                backgroundColor: GOLD,
-                opacity: 0.6,
-              }}
-              aria-hidden="true"
-            />
+              {heroImageSrc && (
+                <div
+                  className="md:flex-1 overflow-hidden rounded-2xl"
+                  style={{
+                    border: `1px solid ${NAVY}1A`,
+                    aspectRatio: "4 / 3",
+                  }}
+                >
+                  <img
+                    src={heroImageSrc}
+                    alt={heroImageAlt ?? ""}
+                    className="w-full h-full object-cover"
+                    width={1200}
+                    height={900}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </section>
 
