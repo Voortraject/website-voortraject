@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Check, ChevronDown, Plus, ShieldCheck, Minus } from "lucide-react";
+import { ArrowRight, ChevronDown, Check, Minus, ShieldCheck } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -23,6 +23,18 @@ export interface KeurmerkenBlock {
   voetregel?: string;
 }
 
+export interface ProcesStap {
+  title: string;
+  body: string;
+}
+
+export interface AdviseurTip {
+  quote: string;
+  naam: string;
+  rol?: string;
+  foto?: string;
+}
+
 export interface MaatregelPaginaProps {
   slug: string;
   icon: LucideIcon;
@@ -31,7 +43,7 @@ export interface MaatregelPaginaProps {
   seoTitle: string;
   seoDescription: string;
 
-  // Sectie 1
+  // Hero
   /** Wrap accent words in [[...]] to render them in gold. */
   heroTitle: string;
   heroSub: string;
@@ -41,29 +53,39 @@ export interface MaatregelPaginaProps {
   heroImageSrc?: string;
   heroImageAlt?: string;
 
-  // Sectie 2
+  // Is dit iets voor jou
   voorWieKop?: string;
   pastBij: string[];
   minderUrgent: string[];
-  watValtEronderKop?: string;
-  watValtEronder: string[];
 
-  // Sectie 3
+  // (Behouden voor compatibiliteit — niet meer apart gerenderd)
+  watValtEronderKop?: string;
+  watValtEronder?: string[];
   wanneerKop?: string;
   routeStep?: RouteStep;
-  routeTekst: string;
+  routeTekst?: string;
 
-  // Sectie 4
+  // Kosten en opbrengst (waarde-kaartjes)
   kostenItems: CollapsibleItem[];
-  kostenFooter: string;
+  kostenFooter?: string;
+  /** Maand en jaar van de indicatie, bv. "juni 2026". */
+  prijsPeil?: string;
+
+  // (Behouden voor compatibiliteit)
   zachteCtaTekst?: string;
   zachteCtaLabel?: string;
   zachteCtaHref?: string;
+  aandachtspunten?: string[];
 
-  // Sectie 5
-  aandachtspunten: string[];
+  // Zo pakken wij het op
+  procesKop?: string;
+  procesStappen?: ProcesStap[];
+  certificeringen?: string[];
+  tip?: AdviseurTip;
+
+  // Optionele, behouden subsidie-info (compatibiliteit)
   keurmerken?: KeurmerkenBlock;
-  subsidiesPosition?: 'side' | 'below';
+  subsidiesPosition?: "side" | "below";
   subsidiesIntro?: string;
   subsidiesItems?: string[];
   subsidiesLinkHref?: string;
@@ -85,9 +107,11 @@ export interface MaatregelPaginaProps {
     tekst: string;
     links: { label: string; href: string }[];
   };
+
+  // FAQ
   faqs: MaatregelFaq[];
 
-  // Sectie 6
+  // Afsluitende CTA-band
   finalCtaKop: string;
   finalCtaTekst: string;
   finalCtaLabel?: string;
@@ -95,15 +119,10 @@ export interface MaatregelPaginaProps {
 }
 
 const NAVY = "#152C4E";
-const INK = "#111111";
-const SAND = "#FBFAF7";
-const WARM = "#F6EFE2";
 const GOLD = "#E8B547";
-const SOFT = "#F0E4D0";
-const CREAM = "#FDF6E3";
-const BORDER = "#E5E2DB";
-const MUTED = "#6B6B6B";
-const TEXT = "#2B2B2B";
+const SAND = "#FBFAF7";
+const WARM = "#F6EFE0";
+const WHITE = "#FFFFFF";
 
 /** Splits a string with [[accent]] markers into JSX with gold spans. */
 const renderAccented = (text: string) => {
@@ -121,570 +140,351 @@ const renderAccented = (text: string) => {
   });
 };
 
-export const MaatregelPagina = ({
-  slug,
-  icon: Icon,
-  badge,
-  seoTitle,
-  seoDescription,
-  heroTitle,
-  heroSub,
-  heroIntro,
-  heroCtaLabel = "Plan een gratis gesprek",
-  heroCtaHref = "/contact",
-  heroImageSrc,
-  heroImageAlt,
-  voorWieKop = "Is dit [[iets voor jou]]?",
-  pastBij,
-  minderUrgent,
-  watValtEronderKop = "Wat valt [[eronder]]?",
-  watValtEronder,
-  wanneerKop = "Wanneer is het [[slim]]?",
-  routeStep,
-  routeTekst,
-  kostenItems,
-  kostenFooter,
-  zachteCtaTekst = "Benieuwd wat voor jouw woning de meeste winst oplevert?",
-  zachteCtaLabel = "Plan een gesprek",
-  zachteCtaHref = "/contact",
-  aandachtspunten,
-  keurmerken,
-  subsidiesPosition = "side",
-  subsidiesIntro,
-  subsidiesItems,
-  subsidiesLinkHref = "/subsidies",
-  subsidiesLinkLabel = "Bekijk hoe je subsidies stapelt",
-  extraInfo,
-  onderhoud,
-  combineren,
-  faqs,
-  finalCtaKop,
-  finalCtaTekst,
-  finalCtaLabel = "Plan een gratis gesprek",
-  finalCtaHref = "/contact",
-}: MaatregelPaginaProps) => {
+const DEFAULT_PROCES: ProcesStap[] = [
+  {
+    title: "Intakegesprek",
+    body: "We luisteren naar je situatie, je woning en wat je wilt bereiken.",
+  },
+  {
+    title: "Onafhankelijk advies",
+    body: "Een eerlijke afweging, zonder verkoopbelang of voorkeursleverancier.",
+  },
+  {
+    title: "Koppeling met uitvoerder",
+    body: "Wij brengen je in contact met een gecertificeerde, betrouwbare partij.",
+  },
+];
+
+/** Maakt een korte badge-label uit een lange keurmerk-zin. */
+const toBadge = (s: string) => {
+  const first = s.split(/[,:.]/)[0].trim();
+  return first.length > 28 ? first.slice(0, 27) + "…" : first;
+};
+
+export const MaatregelPagina = (props: MaatregelPaginaProps) => {
+  const {
+    slug,
+    icon: Icon,
+    seoTitle,
+    seoDescription,
+    heroTitle,
+    heroSub,
+    heroIntro,
+    heroCtaLabel = "Plan een gratis gesprek",
+    heroCtaHref = "/contact",
+    heroImageSrc,
+    heroImageAlt,
+    voorWieKop = "Is dit [[iets voor jou]]?",
+    pastBij,
+    minderUrgent,
+    kostenItems,
+    kostenFooter,
+    prijsPeil = "juni 2026",
+    procesKop = "Zo pakken wij het voor je [[op]]",
+    procesStappen = DEFAULT_PROCES,
+    certificeringen,
+    tip,
+    keurmerken,
+    faqs,
+    finalCtaKop,
+    finalCtaTekst,
+    finalCtaLabel = "Leg het ons voor",
+    finalCtaHref = "/contact",
+  } = props;
+
+  const badges =
+    certificeringen ??
+    (keurmerken?.items ? keurmerken.items.map(toBadge) : []);
+
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: SAND }}>
       <Seo title={seoTitle} description={seoDescription} path={`/verduurzamen/${slug}`} />
       <Header />
       <main className="flex-1">
-        {/* SECTIE 1 — HERO */}
-        <section
-          className="pb-[64px] md:pb-[112px]"
-          style={{ backgroundColor: SAND, paddingTop: "clamp(40px, 6vw, 80px)" }}
-          aria-labelledby="m-title"
-        >
-          <div className="container-content">
-            <a
-              href="/verduurzamen"
-              className="inline-flex items-center gap-2 text-sm transition-opacity hover:opacity-100"
-              style={{ color: NAVY, opacity: 0.7 }}
-            >
-              <ArrowLeft size={16} /> Terug naar overzicht
-            </a>
-
+        {/* 1 — HERO */}
+        <section className="w-full py-16 md:py-20" style={{ backgroundColor: SAND }}>
+          <div className="mx-auto max-w-[760px] px-6 text-center">
             <div
-              className={`mt-8 grid grid-cols-1 gap-10 md:gap-14 items-center ${
-                heroImageSrc ? "lg:grid-cols-[1.1fr_1fr]" : ""
-              }`}
+              className="mx-auto mb-6 flex items-center justify-center rounded-full"
+              style={{ width: 56, height: 56, backgroundColor: WARM }}
             >
-              <div className="flex items-start gap-4 md:gap-6">
-                <div
-                  className="flex items-center justify-center rounded-full shrink-0"
-                  style={{ width: 64, height: 64, backgroundColor: SOFT }}
-                >
-                  <Icon size={28} color={NAVY} strokeWidth={2.25} aria-hidden="true" />
-                </div>
-                <div className="min-w-0">
-                  {badge && (
-                    <span
-                      className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
-                      style={{
-                        backgroundColor: CREAM,
-                        color: GOLD,
-                        border: "1px solid rgba(232,181,71,0.4)",
-                      }}
-                    >
-                      {badge}
-                    </span>
-                  )}
-                  <h1
-                    id="m-title"
-                    className="font-display mt-3"
-                    style={{
-                      fontWeight: 700,
-                      fontSize: "clamp(36px, 5vw, 56px)",
-                      color: INK,
-                      letterSpacing: "-0.02em",
-                      lineHeight: 1.05,
-                    }}
-                  >
-                    {renderAccented(heroTitle)}
-                  </h1>
-                  <p
-                    className="mt-5 max-w-2xl"
-                    style={{ fontSize: 19, color: INK, opacity: 0.85, lineHeight: 1.55, fontWeight: 500 }}
-                  >
-                    {heroSub}
-                  </p>
-                  <p className="mt-4 max-w-2xl" style={{ fontSize: 16, color: MUTED, lineHeight: 1.7 }}>
-                    {heroIntro}
-                  </p>
-                  <a
-                    href={heroCtaHref}
-                    className="mt-8 inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
-                    style={{
-                      backgroundColor: GOLD,
-                      color: NAVY,
-                      padding: "14px 26px",
-                      fontSize: 15,
-                    }}
-                  >
-                    {heroCtaLabel}
-                  </a>
-                </div>
-              </div>
-
-              {heroImageSrc && (
-                <div
-                  className="w-full overflow-hidden"
-                  style={{
-                    borderRadius: 20,
-                    border: `1px solid ${BORDER}`,
-                    aspectRatio: "4 / 3",
-                    backgroundColor: "#EFEAE0",
-                  }}
-                >
-                  <img
-                    src={heroImageSrc}
-                    alt={heroImageAlt ?? ""}
-                    width={1024}
-                    height={768}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
+              <Icon size={26} color={NAVY} strokeWidth={2.25} aria-hidden="true" />
             </div>
+            <h1
+              className="font-display"
+              style={{
+                color: NAVY,
+                fontWeight: 700,
+                fontSize: "clamp(32px, 4.4vw, 48px)",
+                lineHeight: 1.1,
+                letterSpacing: "-0.02em",
+                margin: 0,
+              }}
+            >
+              {renderAccented(heroTitle)}
+            </h1>
+            <p
+              className="mx-auto mt-5 text-base md:text-lg leading-relaxed"
+              style={{ color: NAVY, opacity: 0.85, maxWidth: 620 }}
+            >
+              {heroSub} {heroIntro}
+            </p>
+            <div className="mt-8 flex justify-center">
+              <PrimaryButton href={heroCtaHref}>{heroCtaLabel}</PrimaryButton>
+            </div>
+            {heroImageSrc && (
+              <div
+                className="mx-auto mt-12 overflow-hidden rounded-2xl"
+                style={{
+                  border: `1px solid ${NAVY}1A`,
+                  maxWidth: 1100,
+                  aspectRatio: "16 / 9",
+                }}
+              >
+                <img
+                  src={heroImageSrc}
+                  alt={heroImageAlt ?? ""}
+                  className="w-full h-full object-cover"
+                  width={1600}
+                  height={900}
+                />
+              </div>
+            )}
+            <div
+              className="mx-auto mt-12"
+              style={{
+                width: 64,
+                height: 2,
+                backgroundColor: GOLD,
+                opacity: 0.6,
+              }}
+              aria-hidden="true"
+            />
           </div>
         </section>
 
-        {/* SECTIE 2 — Is dit iets voor jou */}
-        <Section bg="#FFFFFF">
-          <SectionHeader title={voorWieKop} />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mt-10">
-            <Panel tone="light">
-              <SubKop>Past bij jou als</SubKop>
-              <CheckList items={pastBij} variant="check" />
-            </Panel>
-            <Panel tone="muted">
-              <SubKop muted>Minder logisch als</SubKop>
-              <CheckList items={minderUrgent} variant="dash" />
-            </Panel>
+        {/* 2 — IS DIT IETS VOOR JOU */}
+        <SectionBlock bg={WHITE}>
+          <SectionTitle>{renderAccented(voorWieKop)}</SectionTitle>
+          <div className="mx-auto mt-10 grid grid-cols-1 md:grid-cols-2 gap-5 max-w-[1100px]">
+            <Card>
+              <CardLabel>Past bij jou</CardLabel>
+              <BulletList items={pastBij} variant="check" />
+            </Card>
+            <Card>
+              <CardLabel muted>Minder logisch</CardLabel>
+              <BulletList items={minderUrgent} variant="dash" />
+            </Card>
           </div>
-        </Section>
+        </SectionBlock>
 
-        {/* SECTIE 3 — Wat valt eronder (kaarten) */}
-        <Section bg={WARM}>
-          <SectionHeader title={watValtEronderKop} />
-          <ul
-            style={{ listStyle: "none", padding: 0, margin: 0 }}
-            className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
-          >
-            {watValtEronder.map((item) => (
-              <li
-                key={item}
-                style={{
-                  fontSize: 16,
-                  color: TEXT,
-                  lineHeight: 1.6,
-                  padding: "22px 22px",
-                  backgroundColor: "#FFFFFF",
-                  border: `1px solid ${BORDER}`,
-                  borderRadius: 16,
-                }}
-              >
-                <span
-                  className="mb-3 inline-flex items-center justify-center rounded-full"
-                  style={{ width: 36, height: 36, backgroundColor: SOFT }}
-                >
-                  <Plus size={16} color={NAVY} strokeWidth={2.5} />
-                </span>
-                <p style={{ margin: 0 }}>{item}</p>
-              </li>
-            ))}
-          </ul>
-        </Section>
-
-        {/* SECTIE 4 — Wanneer is het slim (route) */}
-        <Section bg="#FFFFFF">
-          <SectionHeader title={wanneerKop} />
-          {routeStep && (
-            <div className="mt-10">
-              <RouteBar active={routeStep} />
-            </div>
-          )}
-          <p
-            className="mt-10 max-w-3xl"
-            style={{ fontSize: 17, color: TEXT, lineHeight: 1.75 }}
-          >
-            {routeTekst}
-          </p>
-        </Section>
-
-        {/* SECTIE 5 — Kosten en opbrengst (kaarten) */}
-        <Section bg={WARM}>
-          <SectionHeader
-            title="Kosten en [[opbrengst]]"
-            sub="We houden cijfers indicatief. Wat het uiteindelijk kost en oplevert hangt af van jouw woning."
-          />
-
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+        {/* 3 — WAT HET KOST EN OPLEVERT */}
+        <SectionBlock bg={WARM}>
+          <SectionTitle>Wat het [[kost]] en oplevert</SectionTitle>
+          <div className="mx-auto mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-[1100px]">
             {kostenItems.map((item) => (
-              <div
-                key={item.title}
-                style={{
-                  backgroundColor: "#FFFFFF",
-                  border: `1px solid ${BORDER}`,
-                  borderRadius: 16,
-                  padding: "22px 22px",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 10,
-                }}
-              >
+              <Card key={item.title}>
                 <h3
-                  style={{
-                    fontSize: 17,
-                    fontWeight: 600,
-                    color: NAVY,
-                    lineHeight: 1.35,
-                    margin: 0,
-                  }}
+                  className="text-lg font-medium"
+                  style={{ color: NAVY, margin: 0, lineHeight: 1.35 }}
                 >
                   {item.title}
                 </h3>
-                <p style={{ fontSize: 15, color: MUTED, lineHeight: 1.7, margin: 0 }}>
+                <p
+                  className="mt-3 text-base leading-relaxed"
+                  style={{ color: NAVY, opacity: 0.78, margin: "12px 0 0 0" }}
+                >
                   {item.body}
                 </p>
-              </div>
+              </Card>
             ))}
           </div>
-
-          <p className="mt-10 max-w-3xl" style={{ fontSize: 15, color: MUTED, lineHeight: 1.7 }}>
-            {kostenFooter}
+          <p
+            className="mx-auto mt-8 text-sm text-center max-w-[760px]"
+            style={{ color: NAVY, opacity: 0.6 }}
+          >
+            Bedragen en terugverdientijden zijn indicatief en kunnen wijzigen. Peildatum: {prijsPeil}.
+            {kostenFooter ? ` ${kostenFooter}` : ""}
           </p>
+        </SectionBlock>
 
-          <div
-            className="mt-10 max-w-3xl flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl"
-            style={{ backgroundColor: "#FFFFFF", border: `1px solid ${BORDER}`, padding: "20px 24px" }}
-          >
-            <p style={{ fontSize: 15, color: NAVY, lineHeight: 1.5, margin: 0, flex: 1 }}>
-              {zachteCtaTekst}
-            </p>
-            <a
-              href={zachteCtaHref}
-              className="inline-flex items-center gap-2 rounded-full font-semibold shrink-0"
-              style={{ backgroundColor: NAVY, color: "#FFFFFF", padding: "11px 20px", fontSize: 14 }}
+        {/* 4 — ZO PAKKEN WIJ HET VOOR JE OP */}
+        <SectionBlock bg={WHITE}>
+          <SectionTitle>{renderAccented(procesKop)}</SectionTitle>
+
+          {/* Stappen */}
+          <div className="mx-auto mt-10 max-w-[1100px]">
+            <ol
+              className="grid grid-cols-1 md:grid-cols-3 gap-5 relative"
+              style={{ listStyle: "none", padding: 0, margin: 0 }}
             >
-              {zachteCtaLabel} <ArrowRight size={14} />
-            </a>
-          </div>
-        </Section>
-
-        {/* SECTIE 6 — Aandachtspunten + Subsidies */}
-        <Section bg="#FFFFFF">
-          <div className={`grid grid-cols-1 ${subsidiesPosition === 'side' && subsidiesItems && subsidiesItems.length > 0 ? "lg:grid-cols-2" : ""} gap-12 lg:gap-16`}>
-            <div>
-              <SectionHeader title="Waar je op moet [[letten]]" />
-              <ul
-                style={{ listStyle: "none", padding: 0, margin: 0 }}
-                className="mt-8 flex flex-col gap-4"
-              >
-                {aandachtspunten.map((p) => (
-                  <li
-                    key={p}
-                    className="flex items-start gap-3"
-                    style={{ fontSize: 16, color: TEXT, lineHeight: 1.65 }}
-                  >
-                    <span
-                      className="mt-[8px] shrink-0 rounded-full"
-                      style={{ width: 8, height: 8, backgroundColor: GOLD }}
-                    />
-                    <span>{p}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {subsidiesPosition === 'side' && subsidiesItems && subsidiesItems.length > 0 && (
-              <div>
-                <SectionHeader title="[[Subsidies]]" />
-                <p
-                  style={{ fontSize: 16, color: TEXT, lineHeight: 1.7, marginTop: 24, marginBottom: 18 }}
-                >
-                  {subsidiesIntro}
-                </p>
-                <ul
-                  style={{ listStyle: "none", padding: 0, margin: 0 }}
-                  className="flex flex-col gap-2"
-                >
-                  {subsidiesItems.map((s) => (
-                    <li
-                      key={s}
-                      className="flex items-start gap-3"
-                      style={{ fontSize: 15, color: TEXT, lineHeight: 1.6 }}
+              {procesStappen.map((stap, i) => (
+                <li key={stap.title} className="relative">
+                  <Card>
+                    <div className="flex items-center gap-3">
+                      <span
+                        className="flex items-center justify-center rounded-full font-semibold"
+                        style={{
+                          width: 36,
+                          height: 36,
+                          backgroundColor: NAVY,
+                          color: WHITE,
+                          fontSize: 15,
+                        }}
+                      >
+                        {i + 1}
+                      </span>
+                      <h3
+                        className="text-lg font-medium"
+                        style={{ color: NAVY, margin: 0 }}
+                      >
+                        {stap.title}
+                      </h3>
+                    </div>
+                    <p
+                      className="mt-3 text-base leading-relaxed"
+                      style={{ color: NAVY, opacity: 0.78, margin: "12px 0 0 0" }}
                     >
-                      <Check size={18} color={GOLD} className="mt-[2px] shrink-0" />
-                      <span>{s}</span>
-                    </li>
-                  ))}
-                </ul>
-                <a
-                  href={subsidiesLinkHref}
-                  className="mt-6 inline-flex items-center gap-2 group"
-                  style={{
-                    color: NAVY,
-                    fontWeight: 500,
-                    fontSize: 15,
-                    borderBottom: `1px solid ${GOLD}`,
-                    paddingBottom: 2,
-                  }}
+                      {stap.body}
+                    </p>
+                  </Card>
+                  {i < procesStappen.length - 1 && (
+                    <div
+                      aria-hidden="true"
+                      className="hidden md:block absolute top-1/2 -right-3 -translate-y-1/2"
+                      style={{
+                        width: 12,
+                        height: 2,
+                        backgroundColor: GOLD,
+                        opacity: 0.5,
+                      }}
+                    />
+                  )}
+                </li>
+              ))}
+            </ol>
+
+            {/* Vertrouwensregel met certificeringen-badges */}
+            {badges.length > 0 && (
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+                <span
+                  className="inline-flex items-center gap-2 text-sm"
+                  style={{ color: NAVY, opacity: 0.75 }}
                 >
-                  {subsidiesLinkLabel}
-                  <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-                </a>
+                  <ShieldCheck size={16} color={GOLD} aria-hidden="true" />
+                  Gecertificeerde uitvoerders:
+                </span>
+                {badges.map((b) => (
+                  <span
+                    key={b}
+                    className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+                    style={{
+                      backgroundColor: WHITE,
+                      color: NAVY,
+                      border: `1px solid ${NAVY}1A`,
+                    }}
+                  >
+                    {b}
+                  </span>
+                ))}
               </div>
             )}
-          </div>
-        </Section>
 
-        {/* SECTIE 6b — Extra info (optioneel) */}
-        {extraInfo && (
-          <Section bg={WARM}>
-            <SectionHeader title={extraInfo.kop} />
-            {extraInfo.intro && (
-              <p
-                className="mt-6 max-w-3xl"
-                style={{ fontSize: 16, color: TEXT, lineHeight: 1.7 }}
-              >
-                {extraInfo.intro}
-              </p>
-            )}
-            <ul
-              style={{ listStyle: "none", padding: 0, margin: 0 }}
-              className="mt-8 flex flex-col gap-4"
-            >
-              {extraInfo.items.map((p) => (
-                <li
-                  key={p}
-                  className="flex items-start gap-3"
-                  style={{ fontSize: 16, color: TEXT, lineHeight: 1.65 }}
-                >
-                  <span
-                    className="mt-[8px] shrink-0 rounded-full"
-                    style={{ width: 8, height: 8, backgroundColor: GOLD }}
-                  />
-                  <span>{p}</span>
-                </li>
-              ))}
-            </ul>
-            {extraInfo.voetregel && (
-              <p
-                className="mt-6 max-w-3xl"
-                style={{ fontSize: 15, color: MUTED, lineHeight: 1.7 }}
-              >
-                {extraInfo.voetregel}
-              </p>
-            )}
-          </Section>
-        )}
-
-        {/* SECTIE 6c — Subsidies standalone (optioneel) */}
-        {subsidiesPosition === 'below' && subsidiesIntro && (
-          <Section bg="#FFFFFF">
-            <SectionHeader title="[[Subsidies]]" />
-            <p
-              className="mt-6 max-w-3xl"
-              style={{ fontSize: 16, color: TEXT, lineHeight: 1.7 }}
-            >
-              {subsidiesIntro}
-            </p>
-            {subsidiesItems && subsidiesItems.length > 0 && (
-              <ul
-                style={{ listStyle: "none", padding: 0, margin: 0 }}
-                className="mt-8 flex flex-col gap-2"
-              >
-                {subsidiesItems.map((s) => (
-                  <li
-                    key={s}
-                    className="flex items-start gap-3"
-                    style={{ fontSize: 15, color: TEXT, lineHeight: 1.6 }}
-                  >
-                    <Check size={18} color={GOLD} className="mt-[2px] shrink-0" />
-                    <span>{s}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-            <a
-              href={subsidiesLinkHref}
-              className="mt-6 inline-flex items-center gap-2 group"
-              style={{
-                color: NAVY,
-                fontWeight: 500,
-                fontSize: 15,
-                borderBottom: `1px solid ${GOLD}`,
-                paddingBottom: 2,
-              }}
-            >
-              {subsidiesLinkLabel}
-              <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-            </a>
-          </Section>
-        )}
-
-        {/* SECTIE 7 — Keurmerken (optioneel) */}
-        {keurmerken && (
-          <Section bg={WARM}>
-            <SectionHeader
-              title={keurmerken.kop ?? "Let op [[keurmerken]] en certificeringen"}
-              sub={keurmerken.intro}
-            />
-            <ul
-              style={{ listStyle: "none", padding: 0, margin: 0 }}
-              className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
-            >
-              {keurmerken.items.map((k) => (
-                <li
-                  key={k}
-                  className="flex items-start gap-3"
-                  style={{
-                    fontSize: 15,
-                    color: TEXT,
-                    lineHeight: 1.55,
-                    padding: "18px 20px",
-                    backgroundColor: "#FFFFFF",
-                    border: `1px solid ${BORDER}`,
-                    borderRadius: 14,
-                  }}
-                >
-                  <ShieldCheck size={18} color={GOLD} className="mt-[2px] shrink-0" />
-                  <span>{k}</span>
-                </li>
-              ))}
-            </ul>
-            {keurmerken.voetregel && (
-              <p
-                style={{ fontSize: 14, color: MUTED, lineHeight: 1.6, marginTop: 18, maxWidth: 720 }}
-              >
-                {keurmerken.voetregel}
-              </p>
-            )}
-          </Section>
-        )}
-
-        {/* SECTIE 7b — Onderhoud (optioneel) */}
-        {onderhoud && (
-          <Section bg="#FFFFFF">
-            <SectionHeader title={onderhoud.kop} />
-            <p
-              className="mt-6 max-w-3xl"
-              style={{ fontSize: 16, color: TEXT, lineHeight: 1.7 }}
-            >
-              {onderhoud.tekst}
-            </p>
-            <a
-              href={onderhoud.linkHref}
-              className="mt-5 inline-flex items-center gap-2 group"
-              style={{
-                color: NAVY,
-                fontWeight: 500,
-                fontSize: 15,
-                borderBottom: `1px solid ${GOLD}`,
-                paddingBottom: 2,
-              }}
-            >
-              {onderhoud.linkLabel}
-              <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-            </a>
-          </Section>
-        )}
-
-        {/* SECTIE 7c — Combineren met andere maatregelen (optioneel) */}
-        {combineren && (
-          <Section bg="#FFFFFF">
-            <SectionHeader title={combineren.kop} />
-            <p
-              className="mt-6 max-w-3xl"
-              style={{ fontSize: 16, color: TEXT, lineHeight: 1.7 }}
-            >
-              {combineren.tekst}
-            </p>
-            <div className="mt-5 flex flex-col sm:flex-row gap-4">
-              {combineren.links.map((l) => (
-                <a
-                  key={l.href}
-                  href={l.href}
-                  className="inline-flex items-center gap-2 group"
-                  style={{
-                    color: NAVY,
-                    fontWeight: 500,
-                    fontSize: 15,
-                    borderBottom: `1px solid ${GOLD}`,
-                    paddingBottom: 2,
-                  }}
-                >
-                  {l.label}
-                  <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-                </a>
-              ))}
-            </div>
-          </Section>
-        )}
-
-        {/* SECTIE 8 — FAQ (enige accordeon) */}
-        <Section bg="#FFFFFF">
-          <SectionHeader title="Veelgestelde [[vragen]]" />
-          <div
-            className="mt-10 max-w-3xl mx-auto"
-            style={{
-              backgroundColor: "#FFFFFF",
-              border: `1px solid ${BORDER}`,
-              borderRadius: 16,
-              overflow: "hidden",
-            }}
-          >
-            {faqs.map((f, i) => (
-              <FaqRow key={f.q} item={f} last={i === faqs.length - 1} />
-            ))}
-          </div>
-        </Section>
-
-        {/* SECTIE 9 — Final CTA */}
-        <section className="py-[72px] md:py-[112px]" style={{ backgroundColor: NAVY }}>
-          <div className="container-content">
-            <div className="max-w-2xl mx-auto text-center">
-              <h2
-                className="font-display"
+            {/* Tip van onze adviseur */}
+            {tip && (
+              <div
+                className="mx-auto mt-8 max-w-[760px] rounded-2xl p-6 flex items-start gap-4"
                 style={{
-                  fontSize: "clamp(28px, 3.6vw, 42px)",
-                  fontWeight: 700,
-                  color: "#FFFFFF",
-                  letterSpacing: "-0.02em",
-                  lineHeight: 1.15,
+                  backgroundColor: WARM,
+                  border: `1px solid ${GOLD}55`,
                 }}
               >
-                {renderAccented(finalCtaKop)}
-              </h2>
-              <p
-                className="mt-5"
-                style={{ fontSize: 17, color: "#FFFFFF", opacity: 0.85, lineHeight: 1.7 }}
-              >
-                {finalCtaTekst}
-              </p>
+                {tip.foto ? (
+                  <img
+                    src={tip.foto}
+                    alt={tip.naam}
+                    className="rounded-full object-cover shrink-0"
+                    style={{ width: 52, height: 52 }}
+                  />
+                ) : (
+                  <span
+                    className="flex items-center justify-center rounded-full shrink-0 font-semibold"
+                    style={{
+                      width: 52,
+                      height: 52,
+                      backgroundColor: NAVY,
+                      color: WHITE,
+                      fontSize: 18,
+                    }}
+                  >
+                    {tip.naam.charAt(0)}
+                  </span>
+                )}
+                <div className="min-w-0">
+                  <p
+                    className="text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: GOLD, margin: 0 }}
+                  >
+                    Tip van onze adviseur
+                  </p>
+                  <p
+                    className="mt-2 text-base leading-relaxed"
+                    style={{ color: NAVY, margin: 0 }}
+                  >
+                    "{tip.quote}"
+                  </p>
+                  <p
+                    className="mt-2 text-sm"
+                    style={{ color: NAVY, opacity: 0.65, margin: 0 }}
+                  >
+                    — {tip.naam}
+                    {tip.rol ? `, ${tip.rol}` : ""}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </SectionBlock>
+
+        {/* 5 — VEELGESTELDE VRAGEN */}
+        <SectionBlock bg={WARM}>
+          <SectionTitle>Veelgestelde [[vragen]]</SectionTitle>
+          <div
+            className="mx-auto mt-10 max-w-[760px] rounded-2xl overflow-hidden"
+            style={{ backgroundColor: WHITE, border: `1px solid ${NAVY}1A` }}
+          >
+            {faqs.slice(0, 5).map((f, i, arr) => (
+              <FaqRow key={f.q} item={f} last={i === arr.length - 1} />
+            ))}
+          </div>
+        </SectionBlock>
+
+        {/* 6 — AFSLUITENDE CTA-BAND */}
+        <section className="w-full py-16 md:py-20" style={{ backgroundColor: NAVY }}>
+          <div className="mx-auto max-w-[760px] px-6 text-center">
+            <h2
+              className="font-display"
+              style={{
+                color: WHITE,
+                fontWeight: 700,
+                fontSize: "clamp(26px, 3.2vw, 36px)",
+                lineHeight: 1.2,
+                letterSpacing: "-0.02em",
+                margin: 0,
+              }}
+            >
+              {renderAccented(finalCtaKop)}
+            </h2>
+            <p
+              className="mt-4 text-base md:text-lg leading-relaxed"
+              style={{ color: WHITE, opacity: 0.85 }}
+            >
+              {finalCtaTekst}
+            </p>
+            <div className="mt-8 flex justify-center">
               <a
                 href={finalCtaHref}
-                className="mt-8 inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
+                className="inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
                 style={{
                   backgroundColor: GOLD,
                   color: NAVY,
@@ -705,179 +505,129 @@ export const MaatregelPagina = ({
 
 /* ---------- helpers ---------- */
 
-const Section = ({ bg, children }: { bg: string; children: React.ReactNode }) => (
-  <section className="py-[72px] md:py-[120px]" style={{ backgroundColor: bg }}>
-    <div className="container-content">{children}</div>
+const SectionBlock = ({
+  bg,
+  children,
+}: {
+  bg: string;
+  children: React.ReactNode;
+}) => (
+  <section className="w-full py-16 md:py-20" style={{ backgroundColor: bg }}>
+    <div className="px-6">{children}</div>
   </section>
 );
 
-const SectionHeader = ({ title, sub }: { title: string; sub?: string }) => (
-  <div className="max-w-3xl">
-    <h2
-      className="font-display"
-      style={{
-        fontSize: "clamp(28px, 3.4vw, 40px)",
-        fontWeight: 700,
-        color: NAVY,
-        letterSpacing: "-0.02em",
-        lineHeight: 1.15,
-        margin: 0,
-      }}
-    >
-      {renderAccented(title)}
-    </h2>
-    {sub && (
-      <p
-        style={{
-          fontSize: 16,
-          color: MUTED,
-          lineHeight: 1.7,
-          marginTop: 14,
-          marginBottom: 0,
-        }}
-      >
-        {sub}
-      </p>
-    )}
+const SectionTitle = ({ children }: { children: React.ReactNode }) => (
+  <h2
+    className="font-display text-center mx-auto text-3xl md:text-4xl font-semibold"
+    style={{
+      color: NAVY,
+      letterSpacing: "-0.02em",
+      lineHeight: 1.15,
+      margin: 0,
+      maxWidth: 760,
+    }}
+  >
+    {children}
+  </h2>
+);
+
+const Card = ({ children }: { children: React.ReactNode }) => (
+  <div
+    className="rounded-2xl p-6 h-full"
+    style={{
+      backgroundColor: WHITE,
+      border: `1px solid ${NAVY}1A`,
+    }}
+  >
+    {children}
   </div>
 );
 
-const SubKop = ({ children, muted = false }: { children: React.ReactNode; muted?: boolean }) => (
+const CardLabel = ({
+  children,
+  muted = false,
+}: {
+  children: React.ReactNode;
+  muted?: boolean;
+}) => (
   <h3
-    style={{
-      fontSize: 13,
-      fontWeight: 700,
-      textTransform: "uppercase",
-      letterSpacing: "0.1em",
-      color: muted ? MUTED : NAVY,
-      marginBottom: 18,
-      marginTop: 0,
-    }}
+    className="text-xs font-semibold uppercase tracking-wider mb-4"
+    style={{ color: muted ? `${NAVY}99` : NAVY, margin: 0, marginBottom: 16 }}
   >
     {children}
   </h3>
 );
 
-const Panel = ({
-  children,
-  tone,
+const BulletList = ({
+  items,
+  variant,
 }: {
-  children: React.ReactNode;
-  tone: "light" | "muted";
+  items: string[];
+  variant: "check" | "dash";
 }) => (
-  <div
-    style={{
-      backgroundColor: tone === "light" ? SAND : "#FFFFFF",
-      border: `1px solid ${BORDER}`,
-      borderRadius: 18,
-      padding: "28px 28px",
-    }}
-  >
-    {children}
-  </div>
-);
-
-const CheckList = ({ items, variant }: { items: string[]; variant: "check" | "dash" }) => (
   <ul style={{ listStyle: "none", padding: 0, margin: 0 }} className="flex flex-col gap-3">
     {items.map((item) => (
       <li
         key={item}
-        className="flex items-start gap-3"
-        style={{ fontSize: 16, color: variant === "dash" ? MUTED : TEXT, lineHeight: 1.6 }}
+        className="flex items-start gap-3 text-base leading-relaxed"
+        style={{ color: variant === "dash" ? `${NAVY}B3` : NAVY }}
       >
-        {variant === "check" ? (
-          <span
-            className="mt-[2px] shrink-0 rounded-full flex items-center justify-center"
-            style={{ width: 22, height: 22, backgroundColor: SOFT }}
-          >
-            <Check size={13} color={NAVY} strokeWidth={3} />
-          </span>
-        ) : (
-          <span
-            className="mt-[2px] shrink-0 rounded-full flex items-center justify-center"
-            style={{ width: 22, height: 22, backgroundColor: "#EFEAE0" }}
-          >
-            <Minus size={13} color={MUTED} strokeWidth={3} />
-          </span>
-        )}
+        <span
+          className="mt-[3px] shrink-0 rounded-full flex items-center justify-center"
+          style={{
+            width: 20,
+            height: 20,
+            backgroundColor: variant === "check" ? WARM : `${NAVY}0D`,
+          }}
+        >
+          {variant === "check" ? (
+            <Check size={12} color={NAVY} strokeWidth={3} />
+          ) : (
+            <Minus size={12} color={`${NAVY}99`} strokeWidth={3} />
+          )}
+        </span>
         <span>{item}</span>
       </li>
     ))}
   </ul>
 );
 
-const RouteBar = ({ active }: { active: RouteStep }) => {
-  const steps: { id: RouteStep; label: string }[] = [
-    { id: "beperk", label: "Beperk" },
-    { id: "opwekken", label: "Wek op" },
-    { id: "slim", label: "Gebruik slim" },
-  ];
-  return (
-    <div
-      className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-0"
-      role="list"
-      aria-label="Verduurzamingsroute"
-    >
-      {steps.map((s, i) => {
-        const isActive = s.id === active;
-        return (
-          <div key={s.id} className="flex items-center flex-1 sm:flex-1">
-            <div
-              role="listitem"
-              aria-current={isActive ? "step" : undefined}
-              className="flex items-center gap-3 w-full"
-              style={{
-                backgroundColor: isActive ? NAVY : "#FFFFFF",
-                color: isActive ? "#FFFFFF" : NAVY,
-                border: `1px solid ${isActive ? NAVY : BORDER}`,
-                borderRadius: 14,
-                padding: "16px 20px",
-                fontSize: 15,
-                fontWeight: 600,
-                boxShadow: isActive ? "0 6px 22px -10px rgba(21,44,78,0.35)" : "none",
-              }}
-            >
-              <span
-                className="rounded-full flex items-center justify-center shrink-0"
-                style={{
-                  width: 28,
-                  height: 28,
-                  backgroundColor: isActive ? GOLD : SOFT,
-                  color: NAVY,
-                  fontSize: 13,
-                  fontWeight: 700,
-                }}
-              >
-                {i + 1}
-              </span>
-              <span>{s.label}</span>
-            </div>
-            {i < steps.length - 1 && (
-              <div
-                aria-hidden="true"
-                className="hidden sm:block"
-                style={{
-                  height: 2,
-                  width: 28,
-                  backgroundColor: BORDER,
-                  flexShrink: 0,
-                }}
-              />
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-};
+const PrimaryButton = ({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) => (
+  <a
+    href={href}
+    className="inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
+    style={{
+      backgroundColor: NAVY,
+      color: WHITE,
+      padding: "14px 28px",
+      fontSize: 15,
+    }}
+  >
+    {children}
+    <ArrowRight size={16} className="ml-2" />
+  </a>
+);
 
 const FaqRow = ({ item, last }: { item: MaatregelFaq; last: boolean }) => (
-  <details className="group" style={{ borderBottom: last ? "none" : `1px solid ${BORDER}` }}>
+  <details
+    className="group"
+    style={{ borderBottom: last ? "none" : `1px solid ${NAVY}14` }}
+  >
     <summary
       className="flex items-center gap-4 cursor-pointer list-none"
       style={{ padding: "20px 24px" }}
     >
-      <span style={{ flex: 1, fontSize: 16, fontWeight: 500, color: NAVY, lineHeight: 1.4 }}>
+      <span
+        className="flex-1 text-base font-medium leading-snug"
+        style={{ color: NAVY }}
+      >
         {item.q}
       </span>
       <ChevronDown
@@ -888,12 +638,11 @@ const FaqRow = ({ item, last }: { item: MaatregelFaq; last: boolean }) => (
       />
     </summary>
     <p
+      className="text-base leading-relaxed"
       style={{
         margin: 0,
         padding: "0 24px 22px 24px",
-        fontSize: 15,
-        color: MUTED,
-        lineHeight: 1.7,
+        color: `${NAVY}B3`,
       }}
     >
       {item.a}
