@@ -9,9 +9,9 @@ const Zonnepanelen = () => (
     badge="Vaak vervolgstap"
     seoTitle="Zonnepanelen | Voortraject"
     seoDescription="Zelf stroom opwekken met zonnepanelen. Wanneer is het slim, waar moet je op letten en welke regelingen zijn er rond salderen en terugleveren?"
-    heroTitle="Zonnepanelen, zelf stroom opwekken die [[loont]]"
-    heroSub="Ook nu nog een verstandige investering, zeker in de juiste volgorde."
-    heroIntro="De prijzen van zonnepanelen zijn de afgelopen jaren flink gedaald, terwijl de opbrengst per paneel juist is gestegen. Voor de meeste woningen blijven ze een rendabele keuze. Het meeste haal je eruit als je eerst je woning hebt geisoleerd en je verbruik kent, en je ze slim combineert met opslag of een warmtepomp."
+    heroTitle="Zonnepanelen, stroom die [[loont]]"
+    heroSub="Ook nu nog een rendabele keuze voor de meeste woningen, zeker in de juiste volgorde. Je haalt er het meeste uit na isolatie en in slimme combinatie met opslag of een warmtepomp."
+    heroIntro=""
     heroImageSrc={zonnepanelenImage}
     heroImageAlt="Zonnepanelen op een schuin dak"
     pastBij={[

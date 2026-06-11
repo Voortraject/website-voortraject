@@ -8,9 +8,9 @@ const Warmtepomp = () => (
     icon={Thermometer}
     seoTitle="Warmtepomp | Voortraject"
     seoDescription="Gasloos en comfortabel verwarmen met een warmtepomp. Wanneer is je woning er klaar voor, wat kost het en welke certificeringen zijn belangrijk?"
-    heroTitle="Warmtepomp, gasloos en [[comfortabel]] verwarmen"
-    heroSub="Een efficiënte manier om je woning te verwarmen zonder gas, mits je woning er klaar voor is."
-    heroIntro="Een warmtepomp haalt warmte uit de buitenlucht of de bodem en verwarmt daarmee je woning. In een goed geïsoleerde woning is dit een efficiënte en duurzame manier om van het gas af te gaan. De keuze tussen hybride en volledig elektrisch hangt af van je woning en je einddoel."
+    heroTitle="Warmtepomp, [[comfort]] zonder gas"
+    heroSub="Verwarmen zonder gas, mits je woning er klaar voor is. In een goed geïsoleerde woning is een warmtepomp een efficiënte stap, en de keuze tussen hybride en volledig elektrisch hangt af van je woning en einddoel."
+    heroIntro=""
     heroImageSrc={warmtepompImage}
     heroImageAlt="Warmtepomp buitenunit naast een woning"
     pastBij={[
