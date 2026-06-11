@@ -283,16 +283,70 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
               We zijn er eerlijk over wanneer dit wel en niet bij jouw woning past.
             </p>
           </div>
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Card border={`2px solid ${GOLD}`}>
-              <CardLabel>Wel</CardLabel>
-              <BulletList items={pastBij} variant="check" />
-            </Card>
-            <Card bg={WARM}>
-              <CardLabel muted>Niet</CardLabel>
-              <BulletList items={minderUrgent} variant="cross" />
-            </Card>
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+            {/* WEL (links) */}
+            <BorderRotate
+              animationMode="auto-rotate"
+              animationSpeed={4}
+              gradientColors={{ primary: '#92701a', secondary: '#c9a227', accent: '#f5d176' }}
+              backgroundColor="#ffffff"
+              borderWidth={2}
+              borderRadius={12}
+            >
+              <div className="p-6 h-full" style={{ backgroundColor: WHITE, borderRadius: 10 }}>
+                <div
+                  className="mb-6 text-sm font-bold uppercase tracking-wider"
+                  style={{ color: GOLD }}
+                >
+                  Wel
+                </div>
+                <ul className="flex flex-col gap-4">
+                  {pastBij.map((t, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <Check
+                        size={18}
+                        className="mt-1 shrink-0"
+                        style={{ color: GOLD }}
+                        aria-hidden="true"
+                      />
+                      <span style={{ fontSize: 16, lineHeight: 1.5, color: "#2B2B2B", fontWeight: 500 }}>
+                        {t}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </BorderRotate>
+
+            {/* NIET (rechts) */}
+            <div
+              className="rounded-2xl p-6 shadow-sm border border-red-100 h-full"
+              style={{ backgroundColor: "#FEF7F7" }}
+            >
+              <div
+                className="mb-6 text-sm font-bold uppercase tracking-wider"
+                style={{ color: "#C0392B" }}
+              >
+                Niet
+              </div>
+              <ul className="flex flex-col gap-4">
+                {minderUrgent.map((t, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <X
+                      size={18}
+                      className="mt-1 shrink-0"
+                      style={{ color: "#C0392B" }}
+                      aria-hidden="true"
+                    />
+                    <span style={{ fontSize: 16, lineHeight: 1.5, color: "#2B2B2B", fontWeight: 400 }}>
+                      {t}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
+
         </SectionBlock>
 
         {/* 3 — WAT HET KOST EN OPLEVERT */}
