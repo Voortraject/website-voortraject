@@ -208,8 +208,57 @@ const OverOns = () => {
 
 
 
+        {/* Verdienmodel */}
+        <section className="py-16 md:py-20" style={{ backgroundColor: "#FFFFFF" }}>
+          <div className="container-content">
+            <div className="mx-auto max-w-3xl">
+              <h2
+                className="text-center"
+                style={{
+                  fontFamily: "'Inter Tight', sans-serif",
+                  fontWeight: 700,
+                  color: "#152C4E",
+                  fontSize: "clamp(28px, 4vw, 40px)",
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1.2,
+                  marginBottom: 24,
+                }}
+              >
+                Hoe verdienen wij <span style={accent}>geld</span>?
+              </h2>
+              <div
+                style={{
+                  color: "#4B4B4B",
+                  fontSize: 17,
+                  lineHeight: 1.7,
+                  fontWeight: 400,
+                  textAlign: "left",
+                }}
+              >
+                <p className="mb-4">
+                  Wij verkopen geen producten. Geen warmtepompen, geen zonnepanelen, geen isolatiemateriaal.
+                  Daardoor heeft ons advies geen commercieel belang in welk merk, welk systeem of welke
+                  installateur jij kiest.
+                </p>
+                <p className="mb-4">
+                  Bewoners betalen ons niet rechtstreeks voor advies. Uitvoerders betalen ons per dossier
+                  of per pakket voor het werk dat wij voor hen uit handen nemen — intake, dossiervoorbereiding,
+                  subsidies en nazorg. Zo blijft het advies voor bewoners onafhankelijk, en houdt de uitvoerder
+                  tijd over voor wat hij het beste doet: bouwen.
+                </p>
+                <p>
+                  We werken niet met commissies van leveranciers of fabrikanten. Als wij je doorverwijzen
+                  naar een uitvoerder is dat omdat we weten dat hij goed werk levert in jouw regio — niet
+                  omdat hij daarvoor heeft betaald.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
 
         {/* CTA */}
+
         <section className="py-[60px]" style={{ backgroundColor: "#152C4E" }}>
           <div className="container-content text-center flex flex-col items-center">
             <h2
