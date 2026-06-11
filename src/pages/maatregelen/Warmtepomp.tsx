@@ -35,8 +35,8 @@ const Warmtepomp = () => (
         title: "Hybride warmtepomp",
         body: "Lagere investering en geschikt voor veel bestaande woningen. Werkt samen met je cv-ketel, waardoor je een deel van je gasverbruik vervangt door elektriciteit. Een goede tussenstap richting volledig gasloos.",
         pills: [
-          { dim: "Investering", value: "Midden" },
-          { dim: "Terugverdientijd", value: "Middel" },
+          { dim: "Investering", value: "Gemiddeld" },
+          { dim: "Terugverdientijd", value: "Gemiddeld" },
           { dim: "Comfortwinst", value: "Hoog" },
         ],
       },

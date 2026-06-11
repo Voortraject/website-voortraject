@@ -40,7 +40,7 @@ const Laadpaal = () => (
     ]}
     kostenSinglePills={[
       { dim: "Investering", value: "Laag" },
-      { dim: "Terugverdientijd", value: "Middel" },
+      { dim: "Terugverdientijd", value: "Gemiddeld" },
       { dim: "Gebruiksgemak", value: "Hoog" },
     ]}
     kostenFooter="Thuisladen tegen je eigen tarief is meestal goedkoper dan openbaar laden, en met zonnepanelen laad je een deel op je eigen stroom."

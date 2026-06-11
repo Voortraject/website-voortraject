@@ -43,12 +43,6 @@ export interface ProcesStap {
   body: string;
 }
 
-export interface AdviseurTip {
-  quote: string;
-  naam: string;
-  rol?: string;
-  foto?: string;
-}
 
 export interface MaatregelPaginaProps {
   slug: string;
@@ -100,7 +94,7 @@ export interface MaatregelPaginaProps {
   procesKop?: string;
   procesStappen?: ProcesStap[];
   certificeringen?: string[];
-  tip?: AdviseurTip;
+  
 
   // Optionele, behouden subsidie-info (compatibiliteit)
   keurmerken?: KeurmerkenBlock;
@@ -174,12 +168,6 @@ const DEFAULT_PROCES: ProcesStap[] = [
   },
 ];
 
-const DEFAULT_TIP: AdviseurTip = {
-  quote:
-    "We kijken altijd eerst naar je woning, je gebruik en je budget. Pas dan adviseren we wat echt past — geen standaardpakket.",
-  naam: "Onze adviseur",
-  rol: "Onafhankelijk verduurzamingsadvies",
-};
 
 /** Maakt een korte badge-label uit een lange keurmerk-zin. */
 const toBadge = (s: string) => {
@@ -211,7 +199,6 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
     procesKop = "Zo pakken wij het voor je [[op]]",
     procesStappen = DEFAULT_PROCES,
     certificeringen,
-    tip,
     keurmerken,
     faqs,
     finalCtaKop,
@@ -371,10 +358,10 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
 
         {/* 3 — WAT HET KOST EN OPLEVERT */}
         <SectionBlock bg={WARM}>
-          <SectionTitle>{renderAccented("Wat het [[kost]] en oplevert")}</SectionTitle>
+          <SectionTitle center>{renderAccented("Wat het [[kost]] en oplevert")}</SectionTitle>
 
           {kostenMode === "single" ? (
-            <div className="mt-10">
+            <div className="mt-10 max-w-[820px] mx-auto">
               <Card>
                 {kostenItems[0]?.body && (
                   <p
@@ -416,7 +403,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
           )}
 
           <p
-            className="mt-8 text-sm max-w-[760px]"
+            className="mt-8 text-sm max-w-[760px] mx-auto text-center"
             style={{ color: NAVY, opacity: 0.6 }}
           >
             Bedragen en terugverdientijden zijn indicatief en kunnen wijzigen. Peildatum: {prijsPeil}.
@@ -426,7 +413,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
 
         {/* 4 — ZO PAKKEN WIJ HET VOOR JE OP */}
         <SectionBlock bg={WHITE}>
-          <SectionTitle>{renderAccented(procesKop)}</SectionTitle>
+          <SectionTitle center>{renderAccented(procesKop)}</SectionTitle>
 
           <ol
             className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-5 relative"
@@ -480,7 +467,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
 
           {/* Vertrouwensregel met certificeringen-badges */}
           {badges.length > 0 && (
-            <div className="mt-8 flex flex-wrap items-center gap-2">
+            <div className="mt-8 flex flex-wrap items-center gap-2 justify-center">
               <span
                 className="inline-flex items-center gap-2 text-sm"
                 style={{ color: NAVY, opacity: 0.75 }}
@@ -503,70 +490,13 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
               ))}
             </div>
           )}
-
-          {/* Tip van onze adviseur */}
-          {(tip ?? DEFAULT_TIP) && (() => {
-            const t = tip ?? DEFAULT_TIP;
-            return (
-              <div
-                className="mt-8 rounded-2xl p-6 flex items-start gap-4 max-w-[760px]"
-                style={{
-                  backgroundColor: WARM,
-                  border: `1px solid ${GOLD}55`,
-                }}
-              >
-                {t.foto ? (
-                  <img
-                    src={t.foto}
-                    alt={t.naam}
-                    className="rounded-full object-cover shrink-0"
-                    style={{ width: 52, height: 52 }}
-                  />
-                ) : (
-                  <span
-                    className="flex items-center justify-center rounded-full shrink-0 font-semibold"
-                    style={{
-                      width: 52,
-                      height: 52,
-                      backgroundColor: NAVY,
-                      color: WHITE,
-                      fontSize: 18,
-                    }}
-                  >
-                    {t.naam.charAt(0)}
-                  </span>
-                )}
-                <div className="min-w-0">
-                  <p
-                    className="text-xs font-semibold uppercase tracking-wider"
-                    style={{ color: GOLD, margin: 0 }}
-                  >
-                    Tip van onze adviseur
-                  </p>
-                  <p
-                    className="mt-2 text-base leading-relaxed"
-                    style={{ color: NAVY, margin: 0 }}
-                  >
-                    "{t.quote}"
-                  </p>
-                  <p
-                    className="mt-2 text-sm"
-                    style={{ color: NAVY, opacity: 0.65, margin: 0 }}
-                  >
-                    — {t.naam}
-                    {t.rol ? `, ${t.rol}` : ""}
-                  </p>
-                </div>
-              </div>
-            );
-          })()}
         </SectionBlock>
 
         {/* 5 — VEELGESTELDE VRAGEN */}
         <SectionBlock bg={WARM}>
-          <SectionTitle>{renderAccented("Veelgestelde [[vragen]]")}</SectionTitle>
+          <SectionTitle center>{renderAccented("Veelgestelde [[vragen]]")}</SectionTitle>
           <div
-            className="mt-10 max-w-[820px] rounded-2xl overflow-hidden"
+            className="mt-10 max-w-[820px] mx-auto rounded-2xl overflow-hidden"
             style={{ backgroundColor: WHITE, border: `1px solid ${NAVY}1A` }}
           >
             {faqs.slice(0, 5).map((f, i, arr) => (
