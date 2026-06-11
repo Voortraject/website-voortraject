@@ -141,6 +141,7 @@ const Onderhoud = () => (
         <SectionHeader
           title="Waarom onderhoud [[belangrijk]] is"
           sub="Regelmatig onderhoud levert meer op dan je denkt. Dit zijn de belangrijkste voordelen."
+          center
         />
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
           {[
