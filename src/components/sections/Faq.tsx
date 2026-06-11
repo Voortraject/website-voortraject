@@ -22,6 +22,10 @@ const faqs = [
     q: "Hoe snel kunnen jullie schakelen?",
     a: "Meestal kunnen we binnen een paar werkdagen een eerste gesprek inplannen. Geen wachttijden van weken of maanden zoals bij sommige bestaande loketten.",
   },
+  {
+    q: "Hoe verdienen wij geld?",
+    a: "Wij verkopen geen producten en ontvangen geen commissie van fabrikanten of leveranciers. Daardoor zit er in ons advies geen belang om je een bepaald merk, systeem of product aan te praten. Wij worden betaald door de uitvoerders, voor het voorwerk dat we voor hen uit handen nemen: intake, dossiervoorbereiding, subsidies en nazorg. We koppelen je alleen aan uitvoerders waarvan we weten dat ze goed werk leveren in jouw regio.",
+  },
 ];
 
 export const Faq = () => {
