@@ -39,8 +39,8 @@ const Airco = () => (
       },
     ]}
     kostenSinglePills={[
-      { dim: "Investering", value: "Midden" },
-      { dim: "Terugverdientijd", value: "Middel" },
+      { dim: "Investering", value: "Gemiddeld" },
+      { dim: "Terugverdientijd", value: "Gemiddeld" },
       { dim: "Comfortwinst", value: "Hoog" },
     ]}
     kostenFooter="Een te klein systeem presteert onvoldoende, een te groot systeem verbruikt onnodig veel. De juiste maat bepaalt het rendement."

@@ -39,8 +39,8 @@ const Zonnepanelen = () => (
       },
     ]}
     kostenSinglePills={[
-      { dim: "Investering", value: "Midden" },
-      { dim: "Terugverdientijd", value: "Middel" },
+      { dim: "Investering", value: "Gemiddeld" },
+      { dim: "Terugverdientijd", value: "Gemiddeld" },
       { dim: "Besparing", value: "Hoog" },
     ]}
     kostenFooter="Hoe meer van je eigen opwek je zelf gebruikt, hoe sneller de panelen zich terugverdienen. De terugverdientijd ligt gebruikelijk enkele jaren tot rond de zeven jaar, afhankelijk van je situatie."

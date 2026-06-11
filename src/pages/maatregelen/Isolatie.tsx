@@ -47,7 +47,7 @@ const Isolatie = () => (
         title: "Dakisolatie",
         body: "Hogere investering, maar een grote besparing op je stookkosten. Doordat warmte vooral via het dak verdwijnt, is de terugverdientijd toch kort.",
         pills: [
-          { dim: "Investering", value: "Midden" },
+          { dim: "Investering", value: "Gemiddeld" },
           { dim: "Terugverdientijd", value: "Kort" },
           { dim: "Comfortwinst", value: "Hoog" },
         ],
@@ -57,7 +57,7 @@ const Isolatie = () => (
         body: "Beperkte investering met een merkbaar comfortverschil. Vooral koude voeten en tochtgevoel verminderen sterk.",
         pills: [
           { dim: "Investering", value: "Laag" },
-          { dim: "Terugverdientijd", value: "Middel" },
+          { dim: "Terugverdientijd", value: "Gemiddeld" },
           { dim: "Comfortwinst", value: "Gemiddeld" },
         ],
       },
