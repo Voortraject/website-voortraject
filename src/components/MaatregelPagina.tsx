@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Check, ChevronDown, Plus, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronDown, Plus, ShieldCheck, Minus } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -78,6 +78,7 @@ export interface MaatregelPaginaProps {
 const NAVY = "#152C4E";
 const INK = "#111111";
 const SAND = "#FBFAF7";
+const WARM = "#F6EFE2";
 const GOLD = "#E8B547";
 const SOFT = "#F0E4D0";
 const CREAM = "#FDF6E3";
@@ -145,8 +146,8 @@ export const MaatregelPagina = ({
       <main className="flex-1">
         {/* SECTIE 1 — HERO */}
         <section
-          className="pb-[48px] md:pb-[80px]"
-          style={{ backgroundColor: SAND, paddingTop: "clamp(40px, 6vw, 72px)" }}
+          className="pb-[64px] md:pb-[112px]"
+          style={{ backgroundColor: SAND, paddingTop: "clamp(40px, 6vw, 80px)" }}
           aria-labelledby="m-title"
         >
           <div className="container-content">
@@ -159,7 +160,7 @@ export const MaatregelPagina = ({
             </a>
 
             <div
-              className={`mt-6 grid grid-cols-1 gap-8 md:gap-12 items-center ${
+              className={`mt-8 grid grid-cols-1 gap-10 md:gap-14 items-center ${
                 heroImageSrc ? "lg:grid-cols-[1.1fr_1fr]" : ""
               }`}
             >
@@ -188,17 +189,17 @@ export const MaatregelPagina = ({
                     className="font-display mt-3"
                     style={{
                       fontWeight: 700,
-                      fontSize: "clamp(32px, 4.6vw, 50px)",
+                      fontSize: "clamp(36px, 5vw, 56px)",
                       color: INK,
                       letterSpacing: "-0.02em",
-                      lineHeight: 1.1,
+                      lineHeight: 1.05,
                     }}
                   >
                     {renderAccented(heroTitle)}
                   </h1>
                   <p
-                    className="mt-4 max-w-2xl"
-                    style={{ fontSize: 18, color: INK, opacity: 0.85, lineHeight: 1.55, fontWeight: 500 }}
+                    className="mt-5 max-w-2xl"
+                    style={{ fontSize: 19, color: INK, opacity: 0.85, lineHeight: 1.55, fontWeight: 500 }}
                   >
                     {heroSub}
                   </p>
@@ -207,11 +208,11 @@ export const MaatregelPagina = ({
                   </p>
                   <a
                     href={heroCtaHref}
-                    className="mt-7 inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
+                    className="mt-8 inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
                     style={{
                       backgroundColor: GOLD,
                       color: NAVY,
-                      padding: "13px 24px",
+                      padding: "14px 26px",
                       fontSize: 15,
                     }}
                   >
@@ -243,82 +244,113 @@ export const MaatregelPagina = ({
           </div>
         </section>
 
-        {/* SECTIE 2 */}
+        {/* SECTIE 2 — Is dit iets voor jou */}
         <Section bg="#FFFFFF">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
-            <div>
-              <SectionTitle text={voorWieKop} />
+          <SectionHeader title={voorWieKop} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mt-10">
+            <Panel tone="light">
               <SubKop>Past bij jou als</SubKop>
               <CheckList items={pastBij} variant="check" />
-              <div className="mt-8">
-                <SubKop muted>Minder logisch als</SubKop>
-                <CheckList items={minderUrgent} variant="dash" />
-              </div>
-            </div>
-
-            <div>
-              <SectionTitle text={watValtEronderKop} />
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }} className="flex flex-col gap-3">
-                {watValtEronder.map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-start gap-3"
-                    style={{
-                      fontSize: 16,
-                      color: TEXT,
-                      lineHeight: 1.6,
-                      padding: "14px 16px",
-                      backgroundColor: SAND,
-                      border: `1px solid ${BORDER}`,
-                      borderRadius: 12,
-                    }}
-                  >
-                    <span
-                      className="mt-1 shrink-0 rounded-full flex items-center justify-center"
-                      style={{ width: 20, height: 20, backgroundColor: SOFT }}
-                    >
-                      <Plus size={12} color={NAVY} strokeWidth={2.5} />
-                    </span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            </Panel>
+            <Panel tone="muted">
+              <SubKop muted>Minder logisch als</SubKop>
+              <CheckList items={minderUrgent} variant="dash" />
+            </Panel>
           </div>
         </Section>
 
-        {/* SECTIE 3 */}
-        <Section bg={SAND}>
-          <SectionTitle text="Wanneer is het [[slim]]?" />
-          <RouteBar active={routeStep} />
-          <p className="mt-8 max-w-3xl" style={{ fontSize: 16, color: TEXT, lineHeight: 1.75 }}>
+        {/* SECTIE 3 — Wat valt eronder (kaarten) */}
+        <Section bg={WARM}>
+          <SectionHeader title={watValtEronderKop} />
+          <ul
+            style={{ listStyle: "none", padding: 0, margin: 0 }}
+            className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
+          >
+            {watValtEronder.map((item) => (
+              <li
+                key={item}
+                style={{
+                  fontSize: 16,
+                  color: TEXT,
+                  lineHeight: 1.6,
+                  padding: "22px 22px",
+                  backgroundColor: "#FFFFFF",
+                  border: `1px solid ${BORDER}`,
+                  borderRadius: 16,
+                }}
+              >
+                <span
+                  className="mb-3 inline-flex items-center justify-center rounded-full"
+                  style={{ width: 36, height: 36, backgroundColor: SOFT }}
+                >
+                  <Plus size={16} color={NAVY} strokeWidth={2.5} />
+                </span>
+                <p style={{ margin: 0 }}>{item}</p>
+              </li>
+            ))}
+          </ul>
+        </Section>
+
+        {/* SECTIE 4 — Wanneer is het slim (route) */}
+        <Section bg="#FFFFFF">
+          <SectionHeader title="Wanneer is het [[slim]]?" />
+          <div className="mt-10">
+            <RouteBar active={routeStep} />
+          </div>
+          <p
+            className="mt-10 max-w-3xl"
+            style={{ fontSize: 17, color: TEXT, lineHeight: 1.75 }}
+          >
             {routeTekst}
           </p>
         </Section>
 
-        {/* SECTIE 4 */}
-        <Section bg="#FFFFFF">
-          <SectionTitle text="Kosten en [[opbrengst]]" />
-          <p
-            className="max-w-3xl"
-            style={{ fontSize: 15, color: MUTED, lineHeight: 1.7, marginTop: -8, marginBottom: 24 }}
-          >
-            We houden cijfers indicatief. Wat het uiteindelijk kost en oplevert hangt af van jouw woning.
-          </p>
+        {/* SECTIE 5 — Kosten en opbrengst (kaarten) */}
+        <Section bg={WARM}>
+          <SectionHeader
+            title="Kosten en [[opbrengst]]"
+            sub="We houden cijfers indicatief. Wat het uiteindelijk kost en oplevert hangt af van jouw woning."
+          />
 
-          <div className="flex flex-col gap-3 max-w-3xl">
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
             {kostenItems.map((item) => (
-              <Collapsible key={item.title} title={item.title} body={item.body} />
+              <div
+                key={item.title}
+                style={{
+                  backgroundColor: "#FFFFFF",
+                  border: `1px solid ${BORDER}`,
+                  borderRadius: 16,
+                  padding: "22px 22px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 10,
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: 17,
+                    fontWeight: 600,
+                    color: NAVY,
+                    lineHeight: 1.35,
+                    margin: 0,
+                  }}
+                >
+                  {item.title}
+                </h3>
+                <p style={{ fontSize: 15, color: MUTED, lineHeight: 1.7, margin: 0 }}>
+                  {item.body}
+                </p>
+              </div>
             ))}
           </div>
 
-          <p className="mt-8 max-w-3xl" style={{ fontSize: 15, color: MUTED, lineHeight: 1.7 }}>
+          <p className="mt-10 max-w-3xl" style={{ fontSize: 15, color: MUTED, lineHeight: 1.7 }}>
             {kostenFooter}
           </p>
 
           <div
             className="mt-10 max-w-3xl flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl"
-            style={{ backgroundColor: SAND, border: `1px solid ${BORDER}`, padding: "18px 22px" }}
+            style={{ backgroundColor: "#FFFFFF", border: `1px solid ${BORDER}`, padding: "20px 24px" }}
           >
             <p style={{ fontSize: 15, color: NAVY, lineHeight: 1.5, margin: 0, flex: 1 }}>
               {zachteCtaTekst}
@@ -333,12 +365,15 @@ export const MaatregelPagina = ({
           </div>
         </Section>
 
-        {/* SECTIE 5 */}
-        <Section bg={SAND}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
+        {/* SECTIE 6 — Aandachtspunten + Subsidies */}
+        <Section bg="#FFFFFF">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
             <div>
-              <SectionTitle text="Waar je op moet [[letten]]" />
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }} className="flex flex-col gap-4">
+              <SectionHeader title="Waar je op moet [[letten]]" />
+              <ul
+                style={{ listStyle: "none", padding: 0, margin: 0 }}
+                className="mt-8 flex flex-col gap-4"
+              >
                 {aandachtspunten.map((p) => (
                   <li
                     key={p}
@@ -346,7 +381,7 @@ export const MaatregelPagina = ({
                     style={{ fontSize: 16, color: TEXT, lineHeight: 1.65 }}
                   >
                     <span
-                      className="mt-[6px] shrink-0 rounded-full"
+                      className="mt-[8px] shrink-0 rounded-full"
                       style={{ width: 8, height: 8, backgroundColor: GOLD }}
                     />
                     <span>{p}</span>
@@ -356,11 +391,16 @@ export const MaatregelPagina = ({
             </div>
 
             <div>
-              <SectionTitle text="[[Subsidies]]" />
-              <p style={{ fontSize: 16, color: TEXT, lineHeight: 1.7, marginBottom: 16 }}>
+              <SectionHeader title="[[Subsidies]]" />
+              <p
+                style={{ fontSize: 16, color: TEXT, lineHeight: 1.7, marginTop: 24, marginBottom: 18 }}
+              >
                 {subsidiesIntro}
               </p>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }} className="flex flex-col gap-2">
+              <ul
+                style={{ listStyle: "none", padding: 0, margin: 0 }}
+                className="flex flex-col gap-2"
+              >
                 {subsidiesItems.map((s) => (
                   <li
                     key={s}
@@ -374,7 +414,7 @@ export const MaatregelPagina = ({
               </ul>
               <a
                 href={subsidiesLinkHref}
-                className="mt-5 inline-flex items-center gap-2 group"
+                className="mt-6 inline-flex items-center gap-2 group"
                 style={{
                   color: NAVY,
                   fontWeight: 500,
@@ -388,70 +428,74 @@ export const MaatregelPagina = ({
               </a>
             </div>
           </div>
+        </Section>
 
-          {keurmerken && (
-            <div className="mt-16 max-w-4xl">
-              <SectionTitle text={keurmerken.kop ?? "Let op [[keurmerken]] en certificeringen"} />
-              <p style={{ fontSize: 16, color: TEXT, lineHeight: 1.7, marginBottom: 18 }}>
-                {keurmerken.intro}
-              </p>
-              <ul
-                style={{ listStyle: "none", padding: 0, margin: 0 }}
-                className="grid grid-cols-1 sm:grid-cols-2 gap-3"
-              >
-                {keurmerken.items.map((k) => (
-                  <li
-                    key={k}
-                    className="flex items-start gap-3"
-                    style={{
-                      fontSize: 15,
-                      color: TEXT,
-                      lineHeight: 1.55,
-                      padding: "14px 16px",
-                      backgroundColor: "#FFFFFF",
-                      border: `1px solid ${BORDER}`,
-                      borderRadius: 12,
-                    }}
-                  >
-                    <ShieldCheck size={18} color={GOLD} className="mt-[2px] shrink-0" />
-                    <span>{k}</span>
-                  </li>
-                ))}
-              </ul>
-              {keurmerken.voetregel && (
-                <p style={{ fontSize: 14, color: MUTED, lineHeight: 1.6, marginTop: 14 }}>
-                  {keurmerken.voetregel}
-                </p>
-              )}
-            </div>
-          )}
-
-          <div className="mt-16">
-            <SectionTitle text="Veelgestelde [[vragen]]" />
-            <div
-              className="max-w-3xl"
-              style={{
-                backgroundColor: "#FFFFFF",
-                border: `1px solid ${BORDER}`,
-                borderRadius: 16,
-                overflow: "hidden",
-              }}
+        {/* SECTIE 7 — Keurmerken (optioneel) */}
+        {keurmerken && (
+          <Section bg={WARM}>
+            <SectionHeader
+              title={keurmerken.kop ?? "Let op [[keurmerken]] en certificeringen"}
+              sub={keurmerken.intro}
+            />
+            <ul
+              style={{ listStyle: "none", padding: 0, margin: 0 }}
+              className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
             >
-              {faqs.map((f, i) => (
-                <FaqRow key={f.q} item={f} last={i === faqs.length - 1} />
+              {keurmerken.items.map((k) => (
+                <li
+                  key={k}
+                  className="flex items-start gap-3"
+                  style={{
+                    fontSize: 15,
+                    color: TEXT,
+                    lineHeight: 1.55,
+                    padding: "18px 20px",
+                    backgroundColor: "#FFFFFF",
+                    border: `1px solid ${BORDER}`,
+                    borderRadius: 14,
+                  }}
+                >
+                  <ShieldCheck size={18} color={GOLD} className="mt-[2px] shrink-0" />
+                  <span>{k}</span>
+                </li>
               ))}
-            </div>
+            </ul>
+            {keurmerken.voetregel && (
+              <p
+                style={{ fontSize: 14, color: MUTED, lineHeight: 1.6, marginTop: 18, maxWidth: 720 }}
+              >
+                {keurmerken.voetregel}
+              </p>
+            )}
+          </Section>
+        )}
+
+        {/* SECTIE 8 — FAQ (enige accordeon) */}
+        <Section bg="#FFFFFF">
+          <SectionHeader title="Veelgestelde [[vragen]]" />
+          <div
+            className="mt-10 max-w-3xl mx-auto"
+            style={{
+              backgroundColor: "#FFFFFF",
+              border: `1px solid ${BORDER}`,
+              borderRadius: 16,
+              overflow: "hidden",
+            }}
+          >
+            {faqs.map((f, i) => (
+              <FaqRow key={f.q} item={f} last={i === faqs.length - 1} />
+            ))}
           </div>
         </Section>
 
-        {/* SECTIE 6 */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: NAVY }}>
+        {/* SECTIE 9 — Final CTA */}
+        <section className="py-[72px] md:py-[112px]" style={{ backgroundColor: NAVY }}>
           <div className="container-content">
             <div className="max-w-2xl mx-auto text-center">
               <h2
                 className="font-display"
                 style={{
-                  fontSize: "clamp(28px, 3.6vw, 40px)",
+                  fontSize: "clamp(28px, 3.6vw, 42px)",
                   fontWeight: 700,
                   color: "#FFFFFF",
                   letterSpacing: "-0.02em",
@@ -490,40 +534,75 @@ export const MaatregelPagina = ({
 /* ---------- helpers ---------- */
 
 const Section = ({ bg, children }: { bg: string; children: React.ReactNode }) => (
-  <section className="py-[56px] md:py-[88px]" style={{ backgroundColor: bg }}>
+  <section className="py-[72px] md:py-[120px]" style={{ backgroundColor: bg }}>
     <div className="container-content">{children}</div>
   </section>
 );
 
-const SectionTitle = ({ text }: { text: string }) => (
-  <h2
-    className="font-display"
-    style={{
-      fontSize: "clamp(24px, 2.6vw, 32px)",
-      fontWeight: 600,
-      color: NAVY,
-      letterSpacing: "-0.015em",
-      lineHeight: 1.2,
-      marginBottom: 24,
-    }}
-  >
-    {renderAccented(text)}
-  </h2>
+const SectionHeader = ({ title, sub }: { title: string; sub?: string }) => (
+  <div className="max-w-3xl">
+    <h2
+      className="font-display"
+      style={{
+        fontSize: "clamp(28px, 3.4vw, 40px)",
+        fontWeight: 700,
+        color: NAVY,
+        letterSpacing: "-0.02em",
+        lineHeight: 1.15,
+        margin: 0,
+      }}
+    >
+      {renderAccented(title)}
+    </h2>
+    {sub && (
+      <p
+        style={{
+          fontSize: 16,
+          color: MUTED,
+          lineHeight: 1.7,
+          marginTop: 14,
+          marginBottom: 0,
+        }}
+      >
+        {sub}
+      </p>
+    )}
+  </div>
 );
 
 const SubKop = ({ children, muted = false }: { children: React.ReactNode; muted?: boolean }) => (
   <h3
     style={{
-      fontSize: 14,
-      fontWeight: 600,
+      fontSize: 13,
+      fontWeight: 700,
       textTransform: "uppercase",
-      letterSpacing: "0.08em",
+      letterSpacing: "0.1em",
       color: muted ? MUTED : NAVY,
-      marginBottom: 14,
+      marginBottom: 18,
+      marginTop: 0,
     }}
   >
     {children}
   </h3>
+);
+
+const Panel = ({
+  children,
+  tone,
+}: {
+  children: React.ReactNode;
+  tone: "light" | "muted";
+}) => (
+  <div
+    style={{
+      backgroundColor: tone === "light" ? SAND : "#FFFFFF",
+      border: `1px solid ${BORDER}`,
+      borderRadius: 18,
+      padding: "28px 28px",
+    }}
+  >
+    {children}
+  </div>
 );
 
 const CheckList = ({ items, variant }: { items: string[]; variant: "check" | "dash" }) => (
@@ -532,7 +611,7 @@ const CheckList = ({ items, variant }: { items: string[]; variant: "check" | "da
       <li
         key={item}
         className="flex items-start gap-3"
-        style={{ fontSize: 16, color: TEXT, lineHeight: 1.6 }}
+        style={{ fontSize: 16, color: variant === "dash" ? MUTED : TEXT, lineHeight: 1.6 }}
       >
         {variant === "check" ? (
           <span
@@ -543,11 +622,13 @@ const CheckList = ({ items, variant }: { items: string[]; variant: "check" | "da
           </span>
         ) : (
           <span
-            className="mt-[12px] shrink-0"
-            style={{ width: 14, height: 2, backgroundColor: MUTED, opacity: 0.5, borderRadius: 2 }}
-          />
+            className="mt-[2px] shrink-0 rounded-full flex items-center justify-center"
+            style={{ width: 22, height: 22, backgroundColor: "#EFEAE0" }}
+          >
+            <Minus size={13} color={MUTED} strokeWidth={3} />
+          </span>
         )}
-        <span style={{ color: variant === "dash" ? MUTED : TEXT }}>{item}</span>
+        <span>{item}</span>
       </li>
     ))}
   </ul>
@@ -561,42 +642,56 @@ const RouteBar = ({ active }: { active: RouteStep }) => {
   ];
   return (
     <div
-      className="flex flex-col sm:flex-row items-stretch gap-2 sm:gap-3 max-w-2xl"
+      className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-0"
       role="list"
       aria-label="Verduurzamingsroute"
     >
       {steps.map((s, i) => {
         const isActive = s.id === active;
         return (
-          <div
-            key={s.id}
-            role="listitem"
-            aria-current={isActive ? "step" : undefined}
-            className="flex items-center gap-3 flex-1"
-            style={{
-              backgroundColor: isActive ? NAVY : "#FFFFFF",
-              color: isActive ? "#FFFFFF" : NAVY,
-              border: `1px solid ${isActive ? NAVY : BORDER}`,
-              borderRadius: 999,
-              padding: "12px 18px",
-              fontSize: 14,
-              fontWeight: 600,
-            }}
-          >
-            <span
-              className="rounded-full flex items-center justify-center shrink-0"
+          <div key={s.id} className="flex items-center flex-1 sm:flex-1">
+            <div
+              role="listitem"
+              aria-current={isActive ? "step" : undefined}
+              className="flex items-center gap-3 w-full"
               style={{
-                width: 24,
-                height: 24,
-                backgroundColor: isActive ? GOLD : SOFT,
-                color: NAVY,
-                fontSize: 12,
-                fontWeight: 700,
+                backgroundColor: isActive ? NAVY : "#FFFFFF",
+                color: isActive ? "#FFFFFF" : NAVY,
+                border: `1px solid ${isActive ? NAVY : BORDER}`,
+                borderRadius: 14,
+                padding: "16px 20px",
+                fontSize: 15,
+                fontWeight: 600,
+                boxShadow: isActive ? "0 6px 22px -10px rgba(21,44,78,0.35)" : "none",
               }}
             >
-              {i + 1}
-            </span>
-            <span>{s.label}</span>
+              <span
+                className="rounded-full flex items-center justify-center shrink-0"
+                style={{
+                  width: 28,
+                  height: 28,
+                  backgroundColor: isActive ? GOLD : SOFT,
+                  color: NAVY,
+                  fontSize: 13,
+                  fontWeight: 700,
+                }}
+              >
+                {i + 1}
+              </span>
+              <span>{s.label}</span>
+            </div>
+            {i < steps.length - 1 && (
+              <div
+                aria-hidden="true"
+                className="hidden sm:block"
+                style={{
+                  height: 2,
+                  width: 28,
+                  backgroundColor: BORDER,
+                  flexShrink: 0,
+                }}
+              />
+            )}
           </div>
         );
       })}
@@ -604,41 +699,11 @@ const RouteBar = ({ active }: { active: RouteStep }) => {
   );
 };
 
-const Collapsible = ({ title, body }: { title: string; body: string }) => (
-  <details
-    className="group"
-    style={{
-      backgroundColor: "#FFFFFF",
-      border: `1px solid ${BORDER}`,
-      borderRadius: 12,
-      overflow: "hidden",
-    }}
-  >
-    <summary
-      className="flex items-center gap-4 cursor-pointer list-none"
-      style={{ padding: "16px 20px" }}
-    >
-      <span style={{ flex: 1, fontSize: 16, fontWeight: 600, color: NAVY, lineHeight: 1.4 }}>
-        {title}
-      </span>
-      <ChevronDown
-        size={18}
-        color={GOLD}
-        className="transition-transform group-open:rotate-180 shrink-0"
-        aria-hidden="true"
-      />
-    </summary>
-    <div style={{ padding: "0 20px 18px 20px", fontSize: 15, color: MUTED, lineHeight: 1.7 }}>
-      {body}
-    </div>
-  </details>
-);
-
 const FaqRow = ({ item, last }: { item: MaatregelFaq; last: boolean }) => (
   <details className="group" style={{ borderBottom: last ? "none" : `1px solid ${BORDER}` }}>
     <summary
       className="flex items-center gap-4 cursor-pointer list-none"
-      style={{ padding: "18px 22px" }}
+      style={{ padding: "20px 24px" }}
     >
       <span style={{ flex: 1, fontSize: 16, fontWeight: 500, color: NAVY, lineHeight: 1.4 }}>
         {item.q}
@@ -653,7 +718,7 @@ const FaqRow = ({ item, last }: { item: MaatregelFaq; last: boolean }) => (
     <p
       style={{
         margin: 0,
-        padding: "0 22px 20px 22px",
+        padding: "0 24px 22px 24px",
         fontSize: 15,
         color: MUTED,
         lineHeight: 1.7,
