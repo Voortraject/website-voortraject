@@ -78,20 +78,28 @@ const Warmtepomp = () => (
     ]}
     faqs={[
       {
-        q: "Werkt een warmtepomp ook in een oudere woning?",
-        a: "Dat hangt af van de isolatie. In een goed geïsoleerde woning werkt een volledig elektrische warmtepomp efficiënt. Is je woning matig geïsoleerd, dan is een hybride warmtepomp vaak een verstandige tussenstap, omdat die samenwerkt met je bestaande cv-ketel.",
+        q: "Is mijn woning geschikt voor een warmtepomp?",
+        a: "Dat hangt vooral af van je isolatie en je type verwarming. In een goed geïsoleerde woning met lagetemperatuurverwarming werkt een warmtepomp het best; is je woning daar nog niet klaar voor, dan kan een hybride een logische tussenstap zijn.",
       },
       {
         q: "Wat is het verschil tussen een hybride en een volledig elektrische warmtepomp?",
-        a: "Een hybride warmtepomp combineert een warmtepomp met je cv-ketel en is geschikt voor veel bestaande woningen. Een volledig elektrische warmtepomp verwarmt het hele huis zonder gas, maar vraagt om een goed geïsoleerde woning en bij voorkeur lagetemperatuurverwarming.",
+        a: "Een hybride werkt samen met je cv-ketel en vervangt een deel van je gasverbruik. Een volledig elektrische warmtepomp maakt je woning gasloos, vraagt een hogere investering, maar levert op lange termijn de grootste besparing.",
       },
       {
-        q: "Heb ik vloerverwarming nodig voor een warmtepomp?",
-        a: "Niet per se, maar het helpt. Warmtepompen werken het beste met lagetemperatuurverwarming, zoals vloerverwarming of grotere radiatoren. In een goed geïsoleerde woning kan het ook met aangepaste radiatoren.",
+        q: "Maken warmtepompen veel geluid?",
+        a: "Moderne warmtepompen zijn een stuk stiller en moeten voldoen aan wettelijke geluidsnormen op de perceelgrens. Met de juiste plaatsing van de buitenunit valt overlast voor jou en de buren in de praktijk mee.",
       },
       {
-        q: "Maakt een warmtepomp veel geluid?",
-        a: "Moderne warmtepompen zijn relatief stil, maar de buitenunit produceert geluid. Er gelden geluidsnormen voor de erfgrens. Een goede installateur houdt daar rekening mee bij de plaatsing.",
+        q: "Heb ik een vergunning nodig voor de buitenunit?",
+        a: "Meestal niet, maar er gelden regels rond geluid en plaatsing die per gemeente verschillen. We zorgen dat de uitvoerder daar rekening mee houdt en checken het bij twijfel voor jouw situatie.",
+      },
+      {
+        q: "Kom ik in aanmerking voor subsidie of Nij Begun?",
+        a: "Vaak wel. Voor een warmtepomp bestaat landelijke ISDE-subsidie, en in Groningen en Noord-Drenthe kan Nij Begun daar bovenop komen. Wat je precies krijgt hangt af van je woning en gebied; dat zoeken we voor je uit.",
+      },
+      {
+        q: "Zit ik vast aan een bepaald merk?",
+        a: "Nee. Wij zijn onafhankelijk en niet gebonden aan één merk of leverancier. We kijken puur naar wat het beste bij jouw woning en budget past.",
       },
     ]}
     finalCtaKop="Is jouw woning klaar voor een [[warmtepomp]]?"

@@ -72,24 +72,24 @@ const Laadpaal = () => (
     }}
     faqs={[
       {
-        q: "Is thuisladen voordeliger dan een openbare laadpaal?",
-        a: "Meestal wel. Thuis laad je tegen je eigen stroomtarief, wat doorgaans goedkoper is dan een openbaar laadpunt. Heb je zonnepanelen, dan kun je voor een deel op je eigen opgewekte stroom laden, wat het nog gunstiger maakt.",
+        q: "Is een laadpaal bij huis voordelig en veilig?",
+        a: "Ja. Thuis laden is meestal goedkoper dan openbaar laden, en een vaste laadpaal is veiliger dan een gewoon stopcontact omdat hij gemaakt is voor langdurig hoog vermogen.",
       },
       {
         q: "Kan ik mijn laadpaal koppelen aan zonnepanelen?",
-        a: "Ja. Met slim laden kan de laadpaal voorrang geven aan je eigen zonne-energie, zodat je de auto zoveel mogelijk op eigen opwek laadt in plaats van op stroom van het net.",
+        a: "Ja. Met zonnepanelen laad je je auto deels op je eigen opgewekte stroom. Sommige laadpalen laden zelfs automatisch bij als je panelen overschot hebben.",
       },
       {
-        q: "Wat is het verschil tussen een 1-fase en een 3-fase laadpaal?",
-        a: "Een 1-fase laadpaal laadt langzamer en past bij een eenvoudige aansluiting. Een 3-fase laadpaal laadt sneller en is geschikter bij hoger vermogen of als je de auto snel vol wilt hebben. Wat past, hangt af van je meterkast en je auto.",
+        q: "Wat is het verschil tussen een 1-fase en 3-fase laadpaal?",
+        a: "Een 3-fase laadpaal laadt sneller, maar vraagt een driefasenaansluiting in je meterkast. Welke voor jou logisch is, hangt af van je aansluiting en je auto.",
       },
       {
-        q: "Is een laadpaal veilig?",
-        a: "Ja. Een vaste laadpaal is veiliger dan een gewoon stopcontact, omdat hij de belasting bewaakt en bij oververhitting automatisch stopt. Belangrijk is een installatie volgens de NEN-normen door een gecertificeerde monteur.",
+        q: "Heb ik een eigen oprit of parkeerplaats nodig?",
+        a: "Een laadpaal aan huis is alleen logisch met eigen terrein, zoals een oprit, garage of eigen parkeerplaats. Heb je dat niet, dan is openbaar laden vaak praktischer.",
       },
       {
-        q: "Wat is load balancing?",
-        a: "Load balancing verdeelt het beschikbare vermogen slim over je huis en de laadpaal, zodat je niet boven de capaciteit van je aansluiting komt. Zo voorkom je dat de zekeringen eruit vliegen als er veel tegelijk aan staat.",
+        q: "Heb ik een zwaardere meterkast nodig?",
+        a: "Soms wel, afhankelijk van je aansluiting en of je snel wilt laden. Met load balancing verdeelt de laadpaal het vermogen, zodat je aansluiting niet overbelast raakt.",
       },
     ]}
     finalCtaKop="Benieuwd welke laadpaal bij jou [[past]]?"

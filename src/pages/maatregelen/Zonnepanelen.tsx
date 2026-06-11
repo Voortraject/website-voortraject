@@ -59,20 +59,24 @@ const Zonnepanelen = () => (
     ]}
     faqs={[
       {
-        q: "Zijn zonnepanelen nu nog wel rendabel?",
-        a: "Ja. De prijzen zijn de afgelopen jaren flink gedaald en de opbrengst per paneel is juist gestegen. Voor de meeste woningen blijven zonnepanelen een verstandige investering, zeker als je ze combineert met de juiste isolatie en je verbruik.",
+        q: "Is mijn dak geschikt voor zonnepanelen?",
+        a: "Richting, hellingshoek, schaduw en ruimte bepalen of en hoeveel panelen er kunnen. Een dak op het zuiden is ideaal, maar ook oost-west levert prima op. We beoordelen het voor jouw dak.",
       },
       {
-        q: "Wat gebeurt er met de salderingsregeling?",
-        a: "Met saldering mag je de stroom die je teruglevert verrekenen met je verbruik. Deze regeling verandert in de komende jaren stapsgewijs. Daarom wordt het slimmer om opgewekte stroom zoveel mogelijk zelf te gebruiken, bijvoorbeeld met een thuisbatterij of door je verbruik te verschuiven.",
+        q: "Wat brengen zonnepanelen gemiddeld op?",
+        a: "Dat verschilt per woning, dak en verbruik. Voor de meeste woningen blijven ze een rendabele keuze; in een gratis gesprek rekenen we het voor jouw situatie door.",
       },
       {
-        q: "Hoeveel panelen heb ik nodig?",
-        a: "Dat hangt af van je jaarverbruik, je dak en je toekomstplannen zoals een warmtepomp of elektrisch rijden. Het is verstandig niet alleen naar nu te kijken, maar ook naar je verwachte verbruik over een paar jaar.",
+        q: "Wat betekent de afbouw van de salderingsregeling voor mij?",
+        a: "Saldering wordt de komende jaren afgebouwd, waardoor terugleveren minder oplevert. Daardoor wordt het slimmer om je eigen stroom direct te gebruiken, bijvoorbeeld met een thuisbatterij of warmtepomp.",
       },
       {
-        q: "Werkt mijn dak voor zonnepanelen?",
-        a: "De opbrengst hangt af van de richting, de hellingshoek en schaduw van bomen of schoorstenen. Een dak op het zuiden levert het meeste op, maar oost en west werken vaak ook prima. Wij kijken mee of jouw dak geschikt is.",
+        q: "Wat is het verschil tussen een string-omvormer en micro-omvormers?",
+        a: "Een string-omvormer zet de stroom van meerdere panelen samen om, micro-omvormers doen dat per paneel. Micro-omvormers presteren beter bij schaduw of een verdeeld dak; wat in jouw situatie het slimst is, bekijken we samen.",
+      },
+      {
+        q: "Heb ik een vergunning nodig voor zonnepanelen?",
+        a: "Voor de meeste woningen niet. Bij monumenten of een beschermd stadsgezicht gelden soms uitzonderingen; dat checken we voor je.",
       },
     ]}
     finalCtaKop="Benieuwd wat jouw dak kan [[opleveren]]?"

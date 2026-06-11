@@ -71,24 +71,28 @@ const Airco = () => (
     }}
     faqs={[
       {
+        q: "Kan een airco ook verwarmen, of alleen koelen?",
+        a: "Veel moderne airco's met warmtepomptechniek doen allebei: koelen in de zomer en zuinig verwarmen in de winter. Vooral voor losse ruimtes is dat een handige oplossing.",
+      },
+      {
         q: "Hoeveel stroom verbruikt een airco?",
-        a: "Dat hangt af van het type, het vermogen en hoe vaak je hem gebruikt. Moderne airco's met een hoog energielabel zijn zuinig en verbruiken vaak minder dan mensen denken. Gebruik je de airco ook om te verwarmen, dan is hij meestal efficienter dan elektrische kachels.",
+        a: "Dat hangt af van het type, het vermogen en hoe vaak je hem gebruikt. Moderne airco's met een hoog energielabel zijn zuinig en verbruiken vaak minder dan gedacht.",
       },
       {
-        q: "Kan ik een airco het hele jaar gebruiken?",
-        a: "Ja. De meeste moderne airco's koelen in de zomer en verwarmen in de winter met warmtepomptechniek. Daardoor is het comfortabel in elk seizoen.",
+        q: "Is een airco slecht voor de gezondheid?",
+        a: "Niet als hij goed onderhouden wordt. Regelmatig de filters reinigen en periodiek onderhoud houdt de lucht schoon.",
       },
       {
-        q: "Kan een airco mijn cv-ketel vervangen?",
-        a: "In een goed geisoleerde woning of voor losse ruimtes kan een airco een groot deel van je verwarming overnemen. Voor een hele woning is meestal een combinatie met andere verwarming verstandig. Wij kijken wat bij jouw situatie past.",
+        q: "Hoe lang gaat een airco mee?",
+        a: "Met goed onderhoud gaat een kwaliteitsairco doorgaans vele jaren mee. Periodiek onderhoud verlengt de levensduur en houdt het rendement op peil.",
       },
       {
         q: "Heb ik een vergunning nodig voor een airco?",
-        a: "Vaak niet, maar er gelden wel geluidsnormen op de erfgrens en soms regels van de gemeente of VvE. Een goede installateur houdt daar rekening mee.",
+        a: "Voor de buitenunit gelden regels rond geluid en plaatsing, die per gemeente kunnen verschillen. Meestal is geen vergunning nodig, maar we houden er rekening mee.",
       },
       {
-        q: "Maakt een airco veel geluid?",
-        a: "Moderne airco's zijn stil, maar de buitenunit produceert geluid. Een goede plaatsing binnen de geluidsnormen voorkomt overlast.",
+        q: "Zijn de uitvoerders gecertificeerd?",
+        a: "Ja. We koppelen je alleen aan erkende, gecertificeerde vakbedrijven met de juiste keurmerken voor kwaliteit, vakmanschap en veiligheid.",
       },
     ]}
     finalCtaKop="Benieuwd welke airco bij jouw woning [[past]]?"
