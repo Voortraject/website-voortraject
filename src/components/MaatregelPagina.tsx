@@ -372,24 +372,49 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
         {/* 3 — WAT HET KOST EN OPLEVERT */}
         <SectionBlock bg={WARM}>
           <SectionTitle>{renderAccented("Wat het [[kost]] en oplevert")}</SectionTitle>
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {kostenItems.map((item) => (
-              <Card key={item.title}>
-                <h3
-                  className="text-lg font-medium"
-                  style={{ color: NAVY, margin: 0, lineHeight: 1.35 }}
-                >
-                  {item.title}
-                </h3>
-                <p
-                  className="mt-3 text-base leading-relaxed"
-                  style={{ color: NAVY, opacity: 0.78, margin: "12px 0 0 0" }}
-                >
-                  {item.body}
-                </p>
+
+          {kostenMode === "single" ? (
+            <div className="mt-10">
+              <Card>
+                {kostenItems[0]?.body && (
+                  <p
+                    className="text-base leading-relaxed"
+                    style={{ color: NAVY, opacity: 0.78, margin: 0, marginBottom: 20 }}
+                  >
+                    {kostenItems[0].body}
+                  </p>
+                )}
+                <PillTiles pills={kostenSinglePills ?? kostenItems[0]?.pills ?? []} />
               </Card>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {kostenItems.map((item) => (
+                <Card key={item.title}>
+                  <h3
+                    className="text-lg font-medium"
+                    style={{ color: NAVY, margin: 0, lineHeight: 1.35 }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p
+                    className="mt-3 text-base leading-relaxed"
+                    style={{ color: NAVY, opacity: 0.78, margin: "12px 0 0 0" }}
+                  >
+                    {item.body}
+                  </p>
+                  {item.pills && item.pills.length > 0 && (
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {item.pills.map((p, i) => (
+                        <Pill key={i} pill={p} />
+                      ))}
+                    </div>
+                  )}
+                </Card>
+              ))}
+            </div>
+          )}
+
           <p
             className="mt-8 text-sm max-w-[760px]"
             style={{ color: NAVY, opacity: 0.6 }}
