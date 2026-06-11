@@ -1,4 +1,5 @@
-import { ArrowRight, ChevronDown, Check, Minus, ShieldCheck, X } from "lucide-react";
+import { ArrowRight, ChevronDown, Check, Info, Minus, ShieldCheck, X } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { BorderRotate } from "@/components/ui/animated-gradient-border";
 import type { LucideIcon } from "lucide-react";
 import { Header } from "@/components/Header";
