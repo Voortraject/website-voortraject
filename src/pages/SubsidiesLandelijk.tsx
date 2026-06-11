@@ -510,7 +510,7 @@ const SubsidiesLandelijk = () => {
                   Wat is <Gold>ISDE</Gold> precies?
                 </H2>
                 <p style={{ marginTop: 20, fontSize: 17, lineHeight: 1.7 }}>
-                  ISDE staat voor Investeringssubsidie Duurzame Energie en Klimaattransitie. Het is de landelijke subsidie van de Rijksoverheid voor woningeigenaren die hun huis verduurzamen. De regeling wordt uitgevoerd door RVO en loopt door tot 2031.
+                  ISDE staat voor Investeringssubsidie duurzame energie en energiebesparing. Het is de landelijke subsidie van de Rijksoverheid voor woningeigenaren die hun huis verduurzamen. De regeling wordt uitgevoerd door RVO en loopt door tot 2031.
                 </p>
                 <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.7 }}>
                   Anders dan Nij Begun werkt ISDE met vaste bedragen per maatregel. Voor isolatie krijg je een bedrag per vierkante meter. Voor een warmtepomp of zonneboiler een vast bedrag per apparaat. En als je twee of meer maatregelen combineert, verdubbelt de subsidie per vierkante meter voor isolatie.

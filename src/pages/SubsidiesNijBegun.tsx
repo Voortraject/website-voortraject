@@ -366,10 +366,10 @@ const SubsidiesNijBegun = () => {
                   marginBottom: 20,
                 }}
               >
-                Tot <Gold>€40.000 subsidie</Gold> voor het isoleren van jouw huis
+                Laat je woning isoleren met <Gold>subsidie</Gold> via Nij Begun
               </h1>
               <p style={{ fontSize: 18, lineHeight: 1.6, color: C.muted, marginBottom: 28, maxWidth: 620 }}>
-                Woon je in Groningen of Noord-Drenthe? Dan kun je je woning gratis of voor de helft laten isoleren via Nij Begun. Wij regelen het hele traject voor je, van advies tot oplevering.
+                Woon je in Groningen of Noord-Drenthe? Dan kun je je woning laten isoleren tot de isolatiestandaard met subsidie via Nij Begun. Hoeveel je krijgt hangt af van je woning en je gemeente, en dat zoeken wij voor je uit.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <a href="/contact" style={goldBtn}>
