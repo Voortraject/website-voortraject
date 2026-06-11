@@ -189,7 +189,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
     heroCtaHref = "/contact",
     heroImageSrc,
     heroImageAlt,
-    voorWieKop = "Past dit bij jouw woning?",
+    voorWieKop = "Past dit bij [[jouw]] woning?",
     pastBij,
     minderUrgent,
     kostenItems,

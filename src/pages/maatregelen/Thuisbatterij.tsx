@@ -17,12 +17,13 @@ const Thuisbatterij = () => (
     pastBij={[
       "Je al zonnepanelen hebt en meer wilt halen uit je eigen opwek",
       "Je een dynamisch energiecontract hebt of overweegt",
-      "Je verwacht meer stroom te gaan gebruiken, bijvoorbeeld door een warmtepomp of elektrisch rijden",
+      "Je meer stroom gaat gebruiken, bijvoorbeeld door een warmtepomp of elektrisch rijden",
       "Je minder afhankelijk wilt zijn van teruglevering aan het net",
     ]}
     minderUrgent={[
-      "Je nog geen zonnepanelen hebt, begin daar dan eerst mee",
-      "Je verbruik laag is, dan is de terugverdientijd vaak lang",
+      "Je nog geen zonnepanelen hebt; begin daar dan eerst mee",
+      "Je verbruik laag is, waardoor de terugverdientijd lang wordt",
+      "Je vooral op een korte terugverdientijd let; die is op dit moment nog onzeker",
     ]}
     watValtEronder={[
       "Thuisbatterij of accu voor opslag van eigen stroom",

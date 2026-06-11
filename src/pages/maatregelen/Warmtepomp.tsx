@@ -20,8 +20,10 @@ const Warmtepomp = () => (
       "Je cv-ketel binnenkort moet worden vervangen",
     ]}
     minderUrgent={[
-      "Je woning slecht geïsoleerd is, isoleer dan eerst",
+      "Je woning slecht geïsoleerd is; isoleer dan eerst",
       "Je geen ruimte hebt voor een buitenunit binnen de geluidsnormen",
+      "Je hoge aanvoertemperaturen nodig hebt met oude radiatoren en die niet wilt aanpassen",
+      "Je binnenkort verhuist",
     ]}
     watValtEronder={[
       "Hybride warmtepomp, werkt samen met je bestaande cv-ketel",
