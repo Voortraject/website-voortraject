@@ -16,9 +16,44 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://voortraject.nl/maatregelen</loc>
+    <loc>https://voortraject.nl/verduurzamen</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://voortraject.nl/verduurzamen/isolatie</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://voortraject.nl/verduurzamen/zonnepanelen</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://voortraject.nl/verduurzamen/warmtepomp</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://voortraject.nl/verduurzamen/thuisbatterij</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://voortraject.nl/verduurzamen/airco</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://voortraject.nl/verduurzamen/laadpaal</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://voortraject.nl/verduurzamen/onderhoud</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://voortraject.nl/subsidies/nij-begun</loc>
