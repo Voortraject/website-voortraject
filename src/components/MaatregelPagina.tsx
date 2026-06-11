@@ -376,29 +376,31 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
               </Card>
             </div>
           ) : (
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="mt-10 flex flex-wrap justify-center gap-5">
               {kostenItems.map((item) => (
-                <Card key={item.title}>
-                  <h3
-                    className="text-lg font-medium"
-                    style={{ color: NAVY, margin: 0, lineHeight: 1.35 }}
-                  >
-                    {item.title}
-                  </h3>
-                  <p
-                    className="mt-3 text-base leading-relaxed"
-                    style={{ color: NAVY, opacity: 0.78, margin: "12px 0 0 0" }}
-                  >
-                    {item.body}
-                  </p>
-                  {item.pills && item.pills.length > 0 && (
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {item.pills.map((p, i) => (
-                        <Pill key={i} pill={p} />
-                      ))}
-                    </div>
-                  )}
-                </Card>
+                <div key={item.title} className="w-full sm:w-[320px] lg:w-[340px] flex">
+                  <Card>
+                    <h3
+                      className="text-lg font-medium"
+                      style={{ color: NAVY, margin: 0, lineHeight: 1.35 }}
+                    >
+                      {item.title}
+                    </h3>
+                    <p
+                      className="mt-3 text-base leading-relaxed"
+                      style={{ color: NAVY, opacity: 0.78, margin: "12px 0 0 0" }}
+                    >
+                      {item.body}
+                    </p>
+                    {item.pills && item.pills.length > 0 && (
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {item.pills.map((p, i) => (
+                          <Pill key={i} pill={p} />
+                        ))}
+                      </div>
+                    )}
+                  </Card>
+                </div>
               ))}
             </div>
           )}
