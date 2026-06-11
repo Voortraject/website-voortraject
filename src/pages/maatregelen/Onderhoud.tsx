@@ -83,7 +83,7 @@ const Onderhoud = () => (
   <div className="min-h-screen bg-background flex flex-col">
     <Seo
       title="Onderhoud | Voortraject"
-      seoDescription="Goed onderhoud houdt je verduurzamingsinstallaties efficient, veilig en duurzaam. Wat kun je zelf doen en wat laat je over aan een specialist?"
+      description="Goed onderhoud houdt je verduurzamingsinstallaties efficient, veilig en duurzaam. Wat kun je zelf doen en wat laat je over aan een specialist?"
       path="/verduurzamen/onderhoud"
     />
     <Header />
