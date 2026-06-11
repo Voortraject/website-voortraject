@@ -406,7 +406,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
 
           <TooltipProvider delayDuration={150}>
             <ol
-              className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-5 relative"
+              className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16 relative"
               style={{ listStyle: "none", padding: 0, margin: 0, marginTop: 64 }}
             >
               {procesStappen.map((stap, i) => {
