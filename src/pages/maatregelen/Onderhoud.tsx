@@ -95,8 +95,8 @@ const Onderhoud = () => (
         aria-labelledby="o-title"
       >
         <div className="container-content">
-          <div className="flex flex-col items-center gap-10 md:gap-14 text-center">
-            <div className="max-w-3xl">
+          <div className="flex flex-col md:flex-row md:items-center gap-10 md:gap-12">
+            <div className="md:flex-1 min-w-0">
               <h1
                 id="o-title"
                 className="font-display"
@@ -110,13 +110,27 @@ const Onderhoud = () => (
               >
                 {renderAccented("Onderhoud, zodat alles blijft [[presteren]]")}
               </h1>
-              <p className="mt-5 mx-auto max-w-2xl" style={{ fontSize: 17, color: INK, opacity: 0.85, lineHeight: 1.7 }}>
+              <p className="mt-5 text-base md:text-lg leading-relaxed" style={{ color: INK, opacity: 0.85, maxWidth: 560 }}>
                 Verduurzamen stopt niet na de installatie. Een warmtepomp, airco of thuisbatterij blijft het beste werken met regelmatig onderhoud: efficiënter, langere levensduur en minder onverwachte storingen.
               </p>
+              <div className="mt-8">
+                <a
+                  href="/contact"
+                  className="inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
+                  style={{
+                    backgroundColor: NAVY,
+                    color: "#FFFFFF",
+                    padding: "14px 28px",
+                    fontSize: 15,
+                  }}
+                >
+                  Plan een gratis gesprek
+                </a>
+              </div>
             </div>
 
             <div
-              className="w-full max-w-3xl overflow-hidden"
+              className="md:flex-1 overflow-hidden"
               style={{
                 borderRadius: 20,
                 border: `1px solid ${BORDER}`,
