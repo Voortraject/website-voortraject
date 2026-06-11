@@ -34,7 +34,8 @@ const team = [
     specialty: "Verduurzamingsspecialist",
     img: christian,
     quote:
-      "Een woning goed isoleren begint bij de juiste voorbereiding. Ik zorg dat er niets over het hoofd wordt gezien voor de uitvoering.",
+      "Een woning goed verduurzamen begint bij de juiste voorbereiding. Ik zorg dat er niets over het hoofd wordt gezien voor de uitvoering.",
+
   },
 ];
 
