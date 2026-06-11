@@ -31,23 +31,17 @@ const Laadpaal = () => (
     ]}
     wanneerKop="Wanneer is dit relevant?"
     routeTekst="Een laadpaal is relevant zodra je elektrisch gaat rijden en een eigen plek hebt om te laden. Hij staat los van de verduurzamingsroute van je woning, maar werkt er wel goed mee samen. Heb je zonnepanelen, dan kun je je auto deels op eigen opwek laden. Heb je ook een thuisbatterij, dan kun je laden en opslag slim op elkaar afstemmen. Zo haal je meer uit je eigen energie."
+    kostenMode="single"
     kostenItems={[
       {
-        title: "Het type laadpaal",
-        body: "1-fase is geschikt voor een eenvoudige aansluiting, 3-fase laadt sneller en vraagt meer vermogen.",
+        title: "Laadpaal",
+        body: "Een eigen laadpaal is relatief snel terugverdiend ten opzichte van openbaar laden, zeker in combinatie met zonnepanelen en slim laden. Kosten hangen vooral af van type, kabelafstand en meterkast.",
       },
-      {
-        title: "De afstand tussen meterkast en laadplek",
-        body: "Een grotere afstand betekent meer kabel en arbeid. Soms is een andere route door de tuin of langs de gevel mogelijk.",
-      },
-      {
-        title: "Eventuele aanpassingen in de meterkast",
-        body: "Bij 3-fase of load balancing kan je meterkast extra ruimte of een zwaardere aansluiting nodig hebben.",
-      },
-      {
-        title: "Slim laden of load balancing",
-        body: "Slim laden koppelt je laadpaal aan je zonnepanelen. Load balancing verdeelt het vermogen veilig over huis en auto.",
-      },
+    ]}
+    kostenSinglePills={[
+      { dim: "Investering", value: "Laag" },
+      { dim: "Terugverdientijd", value: "Middel" },
+      { dim: "Gebruiksgemak", value: "Hoog" },
     ]}
     kostenFooter="Thuisladen tegen je eigen tarief is meestal goedkoper dan openbaar laden, en met zonnepanelen laad je een deel op je eigen stroom."
     zachteCtaTekst="Benieuwd welke laadpaal bij jouw situatie past? Plan een gesprek"
