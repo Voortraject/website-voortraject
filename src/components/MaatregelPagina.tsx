@@ -259,7 +259,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
         {/* 2 — IS DIT IETS VOOR JOU */}
         <SectionBlock bg={WHITE}>
           <SectionTitle>{renderAccented(voorWieKop)}</SectionTitle>
-          <div className="mx-auto mt-10 grid grid-cols-1 md:grid-cols-2 gap-5 max-w-[1100px]">
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-5">
             <Card>
               <CardLabel>Past bij jou</CardLabel>
               <BulletList items={pastBij} variant="check" />
@@ -273,8 +273,8 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
 
         {/* 3 — WAT HET KOST EN OPLEVERT */}
         <SectionBlock bg={WARM}>
-          <SectionTitle>Wat het [[kost]] en oplevert</SectionTitle>
-          <div className="mx-auto mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-[1100px]">
+          <SectionTitle>{renderAccented("Wat het [[kost]] en oplevert")}</SectionTitle>
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {kostenItems.map((item) => (
               <Card key={item.title}>
                 <h3
@@ -293,7 +293,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
             ))}
           </div>
           <p
-            className="mx-auto mt-8 text-sm text-center max-w-[760px]"
+            className="mt-8 text-sm max-w-[760px]"
             style={{ color: NAVY, opacity: 0.6 }}
           >
             Bedragen en terugverdientijden zijn indicatief en kunnen wijzigen. Peildatum: {prijsPeil}.
@@ -305,97 +305,97 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
         <SectionBlock bg={WHITE}>
           <SectionTitle>{renderAccented(procesKop)}</SectionTitle>
 
-          {/* Stappen */}
-          <div className="mx-auto mt-10 max-w-[1100px]">
-            <ol
-              className="grid grid-cols-1 md:grid-cols-3 gap-5 relative"
-              style={{ listStyle: "none", padding: 0, margin: 0 }}
-            >
-              {procesStappen.map((stap, i) => (
-                <li key={stap.title} className="relative">
-                  <Card>
-                    <div className="flex items-center gap-3">
-                      <span
-                        className="flex items-center justify-center rounded-full font-semibold"
-                        style={{
-                          width: 36,
-                          height: 36,
-                          backgroundColor: NAVY,
-                          color: WHITE,
-                          fontSize: 15,
-                        }}
-                      >
-                        {i + 1}
-                      </span>
-                      <h3
-                        className="text-lg font-medium"
-                        style={{ color: NAVY, margin: 0 }}
-                      >
-                        {stap.title}
-                      </h3>
-                    </div>
-                    <p
-                      className="mt-3 text-base leading-relaxed"
-                      style={{ color: NAVY, opacity: 0.78, margin: "12px 0 0 0" }}
-                    >
-                      {stap.body}
-                    </p>
-                  </Card>
-                  {i < procesStappen.length - 1 && (
-                    <div
-                      aria-hidden="true"
-                      className="hidden md:block absolute top-1/2 -right-3 -translate-y-1/2"
+          <ol
+            className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-5 relative"
+            style={{ listStyle: "none", padding: 0, margin: 0 }}
+          >
+            {procesStappen.map((stap, i) => (
+              <li key={stap.title} className="relative">
+                <Card>
+                  <div className="flex items-center gap-3">
+                    <span
+                      className="flex items-center justify-center rounded-full font-semibold shrink-0"
                       style={{
-                        width: 12,
-                        height: 2,
-                        backgroundColor: GOLD,
-                        opacity: 0.5,
+                        width: 36,
+                        height: 36,
+                        backgroundColor: NAVY,
+                        color: WHITE,
+                        fontSize: 15,
                       }}
-                    />
-                  )}
-                </li>
-              ))}
-            </ol>
-
-            {/* Vertrouwensregel met certificeringen-badges */}
-            {badges.length > 0 && (
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
-                <span
-                  className="inline-flex items-center gap-2 text-sm"
-                  style={{ color: NAVY, opacity: 0.75 }}
-                >
-                  <ShieldCheck size={16} color={GOLD} aria-hidden="true" />
-                  Gecertificeerde uitvoerders:
-                </span>
-                {badges.map((b) => (
-                  <span
-                    key={b}
-                    className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
-                    style={{
-                      backgroundColor: WHITE,
-                      color: NAVY,
-                      border: `1px solid ${NAVY}1A`,
-                    }}
+                    >
+                      {i + 1}
+                    </span>
+                    <h3
+                      className="text-lg font-medium"
+                      style={{ color: NAVY, margin: 0 }}
+                    >
+                      {stap.title}
+                    </h3>
+                  </div>
+                  <p
+                    className="mt-3 text-base leading-relaxed"
+                    style={{ color: NAVY, opacity: 0.78, margin: "12px 0 0 0" }}
                   >
-                    {b}
-                  </span>
-                ))}
-              </div>
-            )}
+                    {stap.body}
+                  </p>
+                </Card>
+                {i < procesStappen.length - 1 && (
+                  <div
+                    aria-hidden="true"
+                    className="hidden md:block absolute top-1/2 -right-3 -translate-y-1/2"
+                    style={{
+                      width: 12,
+                      height: 2,
+                      backgroundColor: GOLD,
+                      opacity: 0.5,
+                    }}
+                  />
+                )}
+              </li>
+            ))}
+          </ol>
 
-            {/* Tip van onze adviseur */}
-            {tip && (
+          {/* Vertrouwensregel met certificeringen-badges */}
+          {badges.length > 0 && (
+            <div className="mt-8 flex flex-wrap items-center gap-2">
+              <span
+                className="inline-flex items-center gap-2 text-sm"
+                style={{ color: NAVY, opacity: 0.75 }}
+              >
+                <ShieldCheck size={16} color={GOLD} aria-hidden="true" />
+                Gecertificeerde uitvoerders:
+              </span>
+              {badges.map((b) => (
+                <span
+                  key={b}
+                  className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+                  style={{
+                    backgroundColor: WHITE,
+                    color: NAVY,
+                    border: `1px solid ${NAVY}1A`,
+                  }}
+                >
+                  {b}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Tip van onze adviseur */}
+          {(tip ?? DEFAULT_TIP) && (() => {
+            const t = tip ?? DEFAULT_TIP;
+            return (
               <div
-                className="mx-auto mt-8 max-w-[760px] rounded-2xl p-6 flex items-start gap-4"
+                className="mt-8 rounded-2xl p-6 flex items-start gap-4 max-w-[760px]"
                 style={{
                   backgroundColor: WARM,
                   border: `1px solid ${GOLD}55`,
                 }}
               >
-                {tip.foto ? (
+                {t.foto ? (
                   <img
-                    src={tip.foto}
-                    alt={tip.naam}
+                    src={t.foto}
+                    alt={t.naam}
                     className="rounded-full object-cover shrink-0"
                     style={{ width: 52, height: 52 }}
                   />
@@ -410,7 +410,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
                       fontSize: 18,
                     }}
                   >
-                    {tip.naam.charAt(0)}
+                    {t.naam.charAt(0)}
                   </span>
                 )}
                 <div className="min-w-0">
@@ -424,26 +424,26 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
                     className="mt-2 text-base leading-relaxed"
                     style={{ color: NAVY, margin: 0 }}
                   >
-                    "{tip.quote}"
+                    "{t.quote}"
                   </p>
                   <p
                     className="mt-2 text-sm"
                     style={{ color: NAVY, opacity: 0.65, margin: 0 }}
                   >
-                    — {tip.naam}
-                    {tip.rol ? `, ${tip.rol}` : ""}
+                    — {t.naam}
+                    {t.rol ? `, ${t.rol}` : ""}
                   </p>
                 </div>
               </div>
-            )}
-          </div>
+            );
+          })()}
         </SectionBlock>
 
         {/* 5 — VEELGESTELDE VRAGEN */}
         <SectionBlock bg={WARM}>
-          <SectionTitle>Veelgestelde [[vragen]]</SectionTitle>
+          <SectionTitle>{renderAccented("Veelgestelde [[vragen]]")}</SectionTitle>
           <div
-            className="mx-auto mt-10 max-w-[760px] rounded-2xl overflow-hidden"
+            className="mt-10 max-w-[820px] rounded-2xl overflow-hidden"
             style={{ backgroundColor: WHITE, border: `1px solid ${NAVY}1A` }}
           >
             {faqs.slice(0, 5).map((f, i, arr) => (
@@ -452,7 +452,6 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
           </div>
         </SectionBlock>
 
-        {/* 6 — AFSLUITENDE CTA-BAND */}
         <section className="w-full py-16 md:py-20" style={{ backgroundColor: NAVY }}>
           <div className="mx-auto max-w-[760px] px-6 text-center">
             <h2
