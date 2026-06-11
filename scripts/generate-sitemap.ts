@@ -15,13 +15,21 @@ const entries: SitemapEntry[] = [
   { path: "/", changefreq: "weekly", priority: "1.0" },
   { path: "/uitvoerders", changefreq: "monthly", priority: "0.9" },
   { path: "/bewoners", changefreq: "monthly", priority: "0.9" },
-  { path: "/maatregelen", changefreq: "monthly", priority: "0.8" },
+  { path: "/verduurzamen", changefreq: "monthly", priority: "0.9" },
+  { path: "/verduurzamen/isolatie", changefreq: "monthly", priority: "0.8" },
+  { path: "/verduurzamen/zonnepanelen", changefreq: "monthly", priority: "0.8" },
+  { path: "/verduurzamen/warmtepomp", changefreq: "monthly", priority: "0.8" },
+  { path: "/verduurzamen/thuisbatterij", changefreq: "monthly", priority: "0.8" },
+  { path: "/verduurzamen/airco", changefreq: "monthly", priority: "0.7" },
+  { path: "/verduurzamen/laadpaal", changefreq: "monthly", priority: "0.7" },
+  { path: "/verduurzamen/onderhoud", changefreq: "monthly", priority: "0.7" },
   { path: "/subsidies/nij-begun", changefreq: "monthly", priority: "0.8" },
   { path: "/subsidies/landelijk", changefreq: "monthly", priority: "0.8" },
   { path: "/subsidies/regionaal", changefreq: "monthly", priority: "0.8" },
   { path: "/over-ons", changefreq: "monthly", priority: "0.7" },
   { path: "/contact", changefreq: "monthly", priority: "0.7" },
 ];
+
 
 function generateSitemap(entries: SitemapEntry[]) {
   const urls = entries.map((e) =>

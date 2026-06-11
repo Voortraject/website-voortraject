@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,7 +7,14 @@ import { AudienceProvider } from "@/contexts/AudienceContext";
 import Index from "./pages/Index.tsx";
 import Uitvoerders from "./pages/Uitvoerders.tsx";
 import Bewoners from "./pages/Bewoners.tsx";
-import Maatregelen from "./pages/Maatregelen.tsx";
+import Verduurzamen from "./pages/Verduurzamen.tsx";
+import Isolatie from "./pages/maatregelen/Isolatie.tsx";
+import Warmtepomp from "./pages/maatregelen/Warmtepomp.tsx";
+import Airco from "./pages/maatregelen/Airco.tsx";
+import Thuisbatterij from "./pages/maatregelen/Thuisbatterij.tsx";
+import Zonnepanelen from "./pages/maatregelen/Zonnepanelen.tsx";
+import Laadpaal from "./pages/maatregelen/Laadpaal.tsx";
+import Onderhoud from "./pages/maatregelen/Onderhoud.tsx";
 import OverOns from "./pages/OverOns.tsx";
 import Contact from "./pages/Contact.tsx";
 import SubsidiesNijBegun from "./pages/SubsidiesNijBegun.tsx";
@@ -16,6 +23,7 @@ import SubsidiesRegionaal from "./pages/SubsidiesRegionaal.tsx";
 import Privacy from "./pages/Privacy.tsx";
 import Cookie from "./pages/Cookie.tsx";
 import NotFound from "./pages/NotFound.tsx";
+
 
 const queryClient = new QueryClient();
 
@@ -30,8 +38,17 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/uitvoerders" element={<Uitvoerders />} />
             <Route path="/bewoners" element={<Bewoners />} />
-            <Route path="/maatregelen" element={<Maatregelen />} />
+            <Route path="/verduurzamen" element={<Verduurzamen />} />
+            <Route path="/verduurzamen/isolatie" element={<Isolatie />} />
+            <Route path="/verduurzamen/warmtepomp" element={<Warmtepomp />} />
+            <Route path="/verduurzamen/airco" element={<Airco />} />
+            <Route path="/verduurzamen/thuisbatterij" element={<Thuisbatterij />} />
+            <Route path="/verduurzamen/zonnepanelen" element={<Zonnepanelen />} />
+            <Route path="/verduurzamen/laadpaal" element={<Laadpaal />} />
+            <Route path="/verduurzamen/onderhoud" element={<Onderhoud />} />
+            <Route path="/maatregelen" element={<Navigate to="/verduurzamen" replace />} />
             <Route path="/over-ons" element={<OverOns />} />
+
             <Route path="/contact" element={<Contact />} />
             <Route path="/subsidies/nij-begun" element={<SubsidiesNijBegun />} />
             <Route path="/subsidies/landelijk" element={<SubsidiesLandelijk />} />

@@ -5,6 +5,17 @@ import { Button } from "./Button";
 import logoVoortraject from "@/assets/logo-voortraject.png";
 
 
+const verduurzamenItems = [
+  { href: "/verduurzamen", label: "De route (overzicht)" },
+  { href: "/verduurzamen/isolatie", label: "Isolatie & ventilatie" },
+  { href: "/verduurzamen/warmtepomp", label: "Warmtepomp" },
+  { href: "/verduurzamen/airco", label: "Airco" },
+  { href: "/verduurzamen/thuisbatterij", label: "Thuisbatterij & opslag" },
+  { href: "/verduurzamen/zonnepanelen", label: "Zonnepanelen" },
+  { href: "/verduurzamen/laadpaal", label: "Laadpaal" },
+  { href: "/verduurzamen/onderhoud", label: "Onderhoud" },
+];
+
 const subsidiesItems = [
   { href: "/subsidies/nij-begun", label: "Nij Begun" },
   { href: "/subsidies/landelijk", label: "Landelijke subsidies" },
@@ -14,10 +25,11 @@ const subsidiesItems = [
 const links: { href: string; label: string; dropdown?: typeof subsidiesItems }[] = [
   { href: "/bewoners", label: "Bewoners" },
   { href: "/uitvoerders", label: "Uitvoerders" },
-  { href: "/maatregelen", label: "Maatregelen" },
+  { href: "/verduurzamen", label: "Verduurzamen", dropdown: verduurzamenItems },
   { href: "/subsidies", label: "Subsidies", dropdown: subsidiesItems },
   { href: "/over-ons", label: "Over ons" },
 ];
+
 
 export const Header = () => {
   const [open, setOpen] = useState(false);

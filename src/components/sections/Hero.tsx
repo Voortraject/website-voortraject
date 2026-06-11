@@ -28,8 +28,10 @@ export const Hero = () => {
                 className="mt-6 md:mt-8 mb-6 md:mb-8 text-[16px] md:text-[19px] leading-[1.6] max-w-xl"
                 style={{ color: "hsl(var(--primary) / 0.8)" }}
               >
-                Voor bewoners en uitvoerders. Wij brengen overzicht in een vaak chaotisch verduurzamingstraject.
+                Van isolatie tot opwek, verwarming en opslag. Wij begeleiden bewoners stap voor stap en
+                nemen uitvoerders het voortraject uit handen — onafhankelijk, zonder verkooppraatjes.
               </p>
+
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <a
