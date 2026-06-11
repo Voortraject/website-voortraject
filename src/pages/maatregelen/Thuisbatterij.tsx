@@ -9,9 +9,9 @@ const Thuisbatterij = () => (
     badge="Meestal latere stap"
     seoTitle="Thuisbatterij & opslag | Voortraject"
     seoDescription="Een thuisbatterij slaat je eigen stroom op voor later gebruik. Wanneer is het slim, wat kost het en waar moet je op letten?"
-    heroTitle="Thuisbatterij, je eigen stroom [[slim]] opslaan"
-    heroSub="Gebruik je opgewekte stroom wanneer het jou uitkomt, in plaats van hem terug te leveren."
-    heroIntro="Een thuisbatterij slaat de stroom op die je zelf opwekt, zodat je die later kunt gebruiken als de zon niet schijnt. Daarmee gebruik je meer van je eigen energie en speel je in op veranderingen zoals de afbouw van de salderingsregeling. Of het nu loont, hangt sterk af van je situatie, en daar zijn wij eerlijk over."
+    heroTitle="Thuisbatterij, je stroom [[slim]] opslaan"
+    heroSub="Gebruik je eigen stroom wanneer het jou uitkomt in plaats van terug te leveren, handig met het oog op de afbouw van de saldering. Of het loont hangt sterk af van je situatie, en daar zijn wij eerlijk over."
+    heroIntro=""
     heroImageSrc={thuisbatterijImage}
     heroImageAlt="Thuisbatterij aan een muur in een bijkeuken"
     pastBij={[

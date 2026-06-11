@@ -9,8 +9,8 @@ const Airco = () => (
     seoTitle="Airco | Voortraject"
     seoDescription="Een airco koelt in de zomer en verwarmt zuinig in de winter. Wanneer is het slim, wat kost het en waar moet je op letten?"
     heroTitle="Airco, koelen en verwarmen in [[één]]"
-    heroSub="Aangename temperatuur in de zomer en een zuinig alternatief voor gas in de winter."
-    heroIntro="Een airco zorgt voor verkoeling op warme dagen, maar kan met warmtepomptechniek ook ruimtes snel en zuinig verwarmen. Moderne airco's zijn een stuk energiezuiniger dan vroeger en passen goed in een duurzame woning. Vooral voor losse ruimtes of als bijverwarming is het een handige oplossing."
+    heroSub="Aangename verkoeling in de zomer en, met warmtepomptechniek, zuinig verwarmen in de winter. Vooral voor losse ruimtes of als bijverwarming een handige, energiezuinige oplossing."
+    heroIntro=""
     heroImageSrc={aircoImage}
     heroImageAlt="Airco binnenunit aan een muur in een woonkamer"
     pastBij={[

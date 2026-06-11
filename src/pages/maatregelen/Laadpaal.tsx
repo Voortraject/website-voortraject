@@ -8,9 +8,9 @@ const Laadpaal = () => (
     icon={Plug}
     seoTitle="Laadpaal | Voortraject"
     seoDescription="Een eigen laadpaal thuis is voordeliger en veiliger dan openbaar laden. Welke past bij jouw situatie en hoe combineer je hem met zonnepanelen?"
-    heroTitle="Laadpaal, thuis laden op je [[eigen]] terrein"
-    heroSub="Voordeliger en veiliger dan een openbaar laadpunt, zeker in combinatie met zonnepanelen."
-    heroIntro="Met een eigen laadpaal laad je je elektrische auto thuis tegen je eigen stroomtarief, wat meestal goedkoper is dan openbaar laden. Heb je zonnepanelen, dan kun je voor een deel op je eigen opgewekte stroom laden. Een vaste laadpaal is bovendien veiliger dan een gewoon stopcontact."
+    heroTitle="Laadpaal, voordelig [[thuis]] laden"
+    heroSub="Voordeliger en veiliger dan een openbaar laadpunt of een gewoon stopcontact. Met zonnepanelen laad je je auto deels op je eigen opgewekte stroom, tegen je eigen tarief."
+    heroIntro=""
     heroImageSrc={laadpaalImage}
     heroImageAlt="Laadpaal naast een elektrische auto op een oprit"
     pastBij={[

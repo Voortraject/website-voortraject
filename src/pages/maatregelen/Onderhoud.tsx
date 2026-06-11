@@ -95,15 +95,7 @@ const Onderhoud = () => (
         aria-labelledby="o-title"
       >
         <div className="container-content">
-          <a
-            href="/verduurzamen"
-            className="inline-flex items-center gap-2 text-sm transition-opacity hover:opacity-100"
-            style={{ color: NAVY, opacity: 0.7 }}
-          >
-            <ArrowLeft size={16} /> Terug naar overzicht
-          </a>
-
-          <div className="mt-8 grid grid-cols-1 gap-10 md:gap-14 items-center lg:grid-cols-[1.1fr_1fr]">
+          <div className="grid grid-cols-1 gap-10 md:gap-14 items-center lg:grid-cols-[1.1fr_1fr]">
             <div>
               <h1
                 id="o-title"
@@ -116,16 +108,10 @@ const Onderhoud = () => (
                   lineHeight: 1.05,
                 }}
               >
-                {renderAccented("Onderhoud, zodat je installaties [[blijven]] presteren")}
+                {renderAccented("Onderhoud, zodat alles blijft [[presteren]]")}
               </h1>
-              <p
-                className="mt-5 max-w-2xl"
-                style={{ fontSize: 19, color: INK, opacity: 0.85, lineHeight: 1.55, fontWeight: 500 }}
-              >
-                Goed onderhoud houdt je woning zuinig, veilig en comfortabel.
-              </p>
-              <p className="mt-4 max-w-2xl" style={{ fontSize: 16, color: MUTED, lineHeight: 1.7 }}>
-                Verduurzamen stopt niet na de installatie. Een warmtepomp, airco, zonnepanelen of thuisbatterij blijven het beste werken met regelmatig onderhoud. Het houdt je systemen efficient, verlengt de levensduur en voorkomt onverwachte storingen.
+              <p className="mt-5 max-w-2xl" style={{ fontSize: 17, color: INK, opacity: 0.85, lineHeight: 1.7 }}>
+                Verduurzamen stopt niet na de installatie. Een warmtepomp, airco of thuisbatterij blijft het beste werken met regelmatig onderhoud: efficiënter, langere levensduur en minder onverwachte storingen.
               </p>
             </div>
 

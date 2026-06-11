@@ -9,9 +9,9 @@ const Isolatie = () => (
     badge="Vaak eerste stap"
     seoTitle="Isolatie & ventilatie | Voortraject"
     seoDescription="Isolatie en ventilatie vormen de basis van elke verduurzaming. Wat valt eronder, wanneer is het slim en welke subsidies passen erbij."
-    heroTitle="Isolatie & ventilatie, de [[basis]] van elke verduurzaming"
-    heroSub="Minder warmteverlies, meer comfort en lagere energiekosten. Vrijwel altijd de slimste eerste stap."
-    heroIntro="Een goed geïsoleerde woning verbruikt minder energie en is comfortabeler in de winter en de zomer. Het is de basis waarop alle volgende stappen, zoals zonnepanelen, een warmtepomp of opslag, pas echt renderen. Goed isoleren vraagt wel om goed ventileren, anders ontstaan vocht en gezondheidsproblemen."
+    heroTitle="Isolatie & ventilatie, de [[basis]]"
+    heroSub="Minder warmteverlies, meer comfort en lagere energiekosten, vrijwel altijd de slimste eerste stap. Het is de basis waarop een warmtepomp of zonnepanelen pas echt renderen, en goed isoleren vraagt om goed ventileren."
+    heroIntro=""
     heroImageSrc={isolatieImage}
     heroImageAlt="Isolatiewerkzaamheden aan een woning"
     pastBij={[
