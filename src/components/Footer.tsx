@@ -6,9 +6,20 @@ const navCols = [
     items: [
       { href: "/uitvoerders", label: "Uitvoerders" },
       { href: "/bewoners", label: "Bewoners" },
-      
       { href: "/over-ons", label: "Over ons" },
       { href: "/contact", label: "Contact" },
+    ],
+  },
+  {
+    label: "Verduurzamen",
+    items: [
+      { href: "/verduurzamen/isolatie", label: "Isolatie & ventilatie" },
+      { href: "/verduurzamen/warmtepomp", label: "Warmtepomp" },
+      { href: "/verduurzamen/airco", label: "Airco" },
+      { href: "/verduurzamen/thuisbatterij", label: "Thuisbatterij & opslag" },
+      { href: "/verduurzamen/zonnepanelen", label: "Zonnepanelen" },
+      { href: "/verduurzamen/laadpaal", label: "Laadpaal" },
+      { href: "/verduurzamen/onderhoud", label: "Onderhoud" },
     ],
   },
   {
@@ -20,7 +31,7 @@ const navCols = [
       { href: "/subsidies/stapelen", label: "Subsidies stapelen" },
     ],
   },
-      {
+  {
     label: "Contact",
     items: [
       { href: "mailto:info@voortraject.nl", label: "info@voortraject.nl" },
@@ -34,7 +45,7 @@ const navCols = [
 export const Footer = () => (
   <footer className="text-white" style={{ backgroundColor: "#152C4E" }}>
     <div className="container-content md:py-20 py-[40px]">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-10 lg:gap-12">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-10 lg:gap-12">
         <div>
           <img src={logoVoortraject} alt="Voortraject" className="h-8 w-auto" />
           <p className="mt-4 text-sm leading-relaxed text-white/80 max-w-xs">
