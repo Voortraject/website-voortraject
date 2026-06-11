@@ -658,6 +658,72 @@ const Card = ({ children, bg, border }: { children: React.ReactNode; bg?: string
   </div>
 );
 
+/** Bepaalt de toon (gunstigheid) van een pill op basis van dimensie + waarde. */
+const pillTone = (dim: string, value: string): "good" | "neutral" | "bad" => {
+  const v = value.toLowerCase();
+  if (dim === "Investering") {
+    if (v === "laag") return "good";
+    if (v === "midden" || v === "middel" || v === "gemiddeld") return "neutral";
+    return "bad";
+  }
+  if (dim === "Terugverdientijd") {
+    if (v === "kort") return "good";
+    if (v === "middel" || v === "midden" || v === "gemiddeld") return "neutral";
+    return "bad";
+  }
+  // Comfortwinst / Besparing / Onafhankelijkheid / Gebruiksgemak
+  if (v.startsWith("hoog")) return "good";
+  if (v === "gemiddeld" || v === "middel" || v === "midden") return "neutral";
+  return "bad";
+};
+
+const PILL_TONES: Record<"good" | "neutral" | "bad", { bg: string; fg: string; border: string }> = {
+  good:    { bg: "#ECFDF5", fg: "#15803D", border: "#A7F3D0" },
+  neutral: { bg: "#FEF6E0", fg: "#92701A", border: "#F0D78A" },
+  bad:     { bg: "#FEF2F2", fg: "#B91C1C", border: "#FECACA" },
+};
+
+const Pill = ({ pill }: { pill: KostenPill }) => {
+  const tone = pillTone(pill.dim, pill.value);
+  const c = PILL_TONES[tone];
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
+      style={{ backgroundColor: c.bg, color: c.fg, border: `1px solid ${c.border}` }}
+    >
+      <span style={{ opacity: 0.75, fontWeight: 500 }}>{pill.dim}</span>
+      <span style={{ fontWeight: 700 }}>{pill.value}</span>
+    </span>
+  );
+};
+
+const PillTiles = ({ pills }: { pills: KostenPill[] }) => (
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+    {pills.map((p, i) => {
+      const tone = pillTone(p.dim, p.value);
+      const c = PILL_TONES[tone];
+      return (
+        <div
+          key={i}
+          className="rounded-xl px-4 py-4 flex flex-col items-center text-center"
+          style={{ backgroundColor: c.bg, border: `1px solid ${c.border}` }}
+        >
+          <span
+            className="text-xs font-semibold uppercase tracking-wider"
+            style={{ color: c.fg, opacity: 0.8 }}
+          >
+            {p.dim}
+          </span>
+          <span className="mt-1 text-lg font-bold" style={{ color: c.fg }}>
+            {p.value}
+          </span>
+        </div>
+      );
+    })}
+  </div>
+);
+
+
 const CardLabel = ({
   children,
   muted = false,
