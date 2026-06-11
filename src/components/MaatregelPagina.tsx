@@ -155,6 +155,13 @@ const DEFAULT_PROCES: ProcesStap[] = [
   },
 ];
 
+const DEFAULT_TIP: AdviseurTip = {
+  quote:
+    "We kijken altijd eerst naar je woning, je gebruik en je budget. Pas dan adviseren we wat echt past — geen standaardpakket.",
+  naam: "Onze adviseur",
+  rol: "Onafhankelijk verduurzamingsadvies",
+};
+
 /** Maakt een korte badge-label uit een lange keurmerk-zin. */
 const toBadge = (s: string) => {
   const first = s.split(/[,:.]/)[0].trim();
