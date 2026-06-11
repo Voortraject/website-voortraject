@@ -409,8 +409,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
             className="mt-8 text-sm max-w-[760px] mx-auto text-center"
             style={{ color: NAVY, opacity: 0.6 }}
           >
-            Bedragen en terugverdientijden zijn indicatief en kunnen wijzigen. Peildatum: {prijsPeil}.
-            {kostenFooter ? ` ${kostenFooter}` : ""}
+            Deze inschatting klopt in veel gevallen, maar verschilt per woning. Bouwjaar, woningtype, huidige isolatie en de combinatie van maatregelen die je kiest, bepalen wat het bij jou oplevert.
           </p>
         </SectionBlock>
 
