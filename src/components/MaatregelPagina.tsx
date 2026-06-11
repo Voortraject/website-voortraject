@@ -83,6 +83,10 @@ export interface MaatregelPaginaProps {
   // Kosten en opbrengst (waarde-kaartjes)
   kostenItems: CollapsibleItem[];
   kostenFooter?: string;
+  /** "opties" = grid van kaarten; "single" = één blok over volle breedte. */
+  kostenMode?: "opties" | "single";
+  /** Pills voor de "single"-modus. */
+  kostenSinglePills?: KostenPill[];
   /** Maand en jaar van de indicatie, bv. "juni 2026". */
   prijsPeil?: string;
 
