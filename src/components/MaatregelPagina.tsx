@@ -349,7 +349,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
           <SectionTitle center>{renderAccented("Wat je investering [[oplevert]]")}</SectionTitle>
 
           {kostenMode === "single" ? (
-            <div className="mt-10 max-w-[820px] mx-auto">
+            <div className="mt-10">
               <Card>
                 {kostenItems[0]?.body && (
                   <p
@@ -365,7 +365,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
           ) : (
             <div className="mt-10 flex flex-wrap justify-center gap-5">
               {kostenItems.map((item) => (
-                <div key={item.title} className="w-full sm:w-[320px] lg:w-[340px] flex">
+                <div key={item.title} className="flex flex-1 basis-[280px] min-w-[280px]">
                   <Card>
                     <h3
                       className="text-lg font-medium"
