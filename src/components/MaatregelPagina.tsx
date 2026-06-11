@@ -359,7 +359,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
 
         {/* 3 — WAT HET KOST EN OPLEVERT */}
         <SectionBlock bg={WARM}>
-          <SectionTitle center>{renderAccented("Wat het [[kost]] en oplevert")}</SectionTitle>
+          <SectionTitle center>{renderAccented("Wat je investering [[oplevert]]")}</SectionTitle>
 
           {kostenMode === "single" ? (
             <div className="mt-10 max-w-[820px] mx-auto">
