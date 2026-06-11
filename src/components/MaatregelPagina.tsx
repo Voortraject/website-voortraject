@@ -179,7 +179,7 @@ const toBadge = (s: string) => {
 export const MaatregelPagina = (props: MaatregelPaginaProps) => {
   const {
     slug,
-    icon: Icon,
+    icon: _Icon,
     seoTitle,
     seoDescription,
     heroTitle,
@@ -222,32 +222,19 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
           <div className="mx-auto max-w-[1180px] px-6">
             <div className="flex flex-col md:flex-row md:items-center gap-10 md:gap-12">
               <div className="md:flex-1 min-w-0">
-                <div className="flex items-start gap-4">
-                  <span
-                    className="inline-flex items-center justify-center rounded-full shrink-0"
-                    style={{
-                      width: 56,
-                      height: 56,
-                      backgroundColor: WARM,
-                      marginTop: 2,
-                    }}
-                  >
-                    <Icon size={26} color={NAVY} strokeWidth={2.25} aria-hidden="true" />
-                  </span>
-                  <h1
-                    className="font-display"
-                    style={{
-                      color: NAVY,
-                      fontWeight: 700,
-                      fontSize: "clamp(32px, 4.4vw, 48px)",
-                      lineHeight: 1.1,
-                      letterSpacing: "-0.02em",
-                      margin: 0,
-                    }}
-                  >
-                    {renderAccented(heroTitle)}
-                  </h1>
-                </div>
+                <h1
+                  className="font-display"
+                  style={{
+                    color: NAVY,
+                    fontWeight: 700,
+                    fontSize: "clamp(32px, 4.4vw, 48px)",
+                    lineHeight: 1.1,
+                    letterSpacing: "-0.02em",
+                    margin: 0,
+                  }}
+                >
+                  {renderAccented(heroTitle)}
+                </h1>
                 <p
                   className="mt-5 text-base md:text-lg leading-relaxed"
                   style={{ color: NAVY, opacity: 0.85, maxWidth: 560 }}
@@ -362,7 +349,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
           <SectionTitle center>{renderAccented("Wat je investering [[oplevert]]")}</SectionTitle>
 
           {kostenMode === "single" ? (
-            <div className="mt-10 max-w-[820px] mx-auto">
+            <div className="mt-10">
               <Card>
                 {kostenItems[0]?.body && (
                   <p
@@ -378,7 +365,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
           ) : (
             <div className="mt-10 flex flex-wrap justify-center gap-5">
               {kostenItems.map((item) => (
-                <div key={item.title} className="w-full sm:w-[320px] lg:w-[340px] flex">
+                <div key={item.title} className="flex flex-1 basis-[280px] min-w-[280px]">
                   <Card>
                     <h3
                       className="text-lg font-medium"
@@ -419,7 +406,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
 
           <TooltipProvider delayDuration={150}>
             <ol
-              className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-5 relative"
+              className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16 relative"
               style={{ listStyle: "none", padding: 0, margin: 0, marginTop: 64 }}
             >
               {procesStappen.map((stap, i) => {
@@ -476,10 +463,10 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
                     {i < procesStappen.length - 1 && (
                       <div
                         aria-hidden="true"
-                        className="hidden md:flex absolute top-1/2 -right-4 -translate-y-1/2 items-center justify-center"
-                        style={{ width: 24, height: 24 }}
+                        className="hidden md:flex absolute top-1/2 -translate-y-1/2 items-center justify-center"
+                        style={{ right: -56, width: 48, height: 48 }}
                       >
-                        <ArrowRight size={20} color={GOLD} strokeWidth={2.25} />
+                        <ArrowRight size={36} color={GOLD} strokeWidth={2.5} />
                       </div>
                     )}
                   </li>
