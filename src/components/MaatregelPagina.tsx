@@ -1,4 +1,5 @@
-import { ArrowRight, ChevronDown, Check, Minus, ShieldCheck, X } from "lucide-react";
+import { ArrowRight, ChevronDown, Check, Info, Minus, ShieldCheck, X } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { BorderRotate } from "@/components/ui/animated-gradient-border";
 import type { LucideIcon } from "lucide-react";
 import { Header } from "@/components/Header";
@@ -358,7 +359,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
 
         {/* 3 — WAT HET KOST EN OPLEVERT */}
         <SectionBlock bg={WARM}>
-          <SectionTitle center>{renderAccented("Wat het [[kost]] en oplevert")}</SectionTitle>
+          <SectionTitle center>{renderAccented("Wat je investering [[oplevert]]")}</SectionTitle>
 
           {kostenMode === "single" ? (
             <div className="mt-10 max-w-[820px] mx-auto">
@@ -375,29 +376,31 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
               </Card>
             </div>
           ) : (
-            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="mt-10 flex flex-wrap justify-center gap-5">
               {kostenItems.map((item) => (
-                <Card key={item.title}>
-                  <h3
-                    className="text-lg font-medium"
-                    style={{ color: NAVY, margin: 0, lineHeight: 1.35 }}
-                  >
-                    {item.title}
-                  </h3>
-                  <p
-                    className="mt-3 text-base leading-relaxed"
-                    style={{ color: NAVY, opacity: 0.78, margin: "12px 0 0 0" }}
-                  >
-                    {item.body}
-                  </p>
-                  {item.pills && item.pills.length > 0 && (
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {item.pills.map((p, i) => (
-                        <Pill key={i} pill={p} />
-                      ))}
-                    </div>
-                  )}
-                </Card>
+                <div key={item.title} className="w-full sm:w-[320px] lg:w-[340px] flex">
+                  <Card>
+                    <h3
+                      className="text-lg font-medium"
+                      style={{ color: NAVY, margin: 0, lineHeight: 1.35 }}
+                    >
+                      {item.title}
+                    </h3>
+                    <p
+                      className="mt-3 text-base leading-relaxed"
+                      style={{ color: NAVY, opacity: 0.78, margin: "12px 0 0 0" }}
+                    >
+                      {item.body}
+                    </p>
+                    {item.pills && item.pills.length > 0 && (
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {item.pills.map((p, i) => (
+                          <Pill key={i} pill={p} />
+                        ))}
+                      </div>
+                    )}
+                  </Card>
+                </div>
               ))}
             </div>
           )}
@@ -415,81 +418,80 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
         <SectionBlock bg={WHITE}>
           <SectionTitle center>{renderAccented(procesKop)}</SectionTitle>
 
-          <ol
-            className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-5 relative"
-            style={{ listStyle: "none", padding: 0, margin: 0 }}
-          >
-            {procesStappen.map((stap, i) => (
-              <li key={stap.title} className="relative">
-                <Card>
-                  <div className="flex items-center gap-3">
-                    <span
-                      className="flex items-center justify-center rounded-full font-semibold shrink-0"
-                      style={{
-                        width: 36,
-                        height: 36,
-                        backgroundColor: NAVY,
-                        color: WHITE,
-                        fontSize: 15,
-                      }}
-                    >
-                      {i + 1}
-                    </span>
-                    <h3
-                      className="text-lg font-medium"
-                      style={{ color: NAVY, margin: 0 }}
-                    >
-                      {stap.title}
-                    </h3>
-                  </div>
-                  <p
-                    className="mt-3 text-base leading-relaxed"
-                    style={{ color: NAVY, opacity: 0.78, margin: "12px 0 0 0" }}
-                  >
-                    {stap.body}
-                  </p>
-                </Card>
-                {i < procesStappen.length - 1 && (
-                  <div
-                    aria-hidden="true"
-                    className="hidden md:block absolute top-1/2 -right-3 -translate-y-1/2"
-                    style={{
-                      width: 12,
-                      height: 2,
-                      backgroundColor: GOLD,
-                      opacity: 0.5,
-                    }}
-                  />
-                )}
-              </li>
-            ))}
-          </ol>
-
-          {/* Vertrouwensregel met certificeringen-badges */}
-          {badges.length > 0 && (
-            <div className="mt-8 flex flex-wrap items-center gap-2 justify-center">
-              <span
-                className="inline-flex items-center gap-2 text-sm"
-                style={{ color: NAVY, opacity: 0.75 }}
-              >
-                <ShieldCheck size={16} color={GOLD} aria-hidden="true" />
-                Gecertificeerde uitvoerders:
-              </span>
-              {badges.map((b) => (
-                <span
-                  key={b}
-                  className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
-                  style={{
-                    backgroundColor: WHITE,
-                    color: NAVY,
-                    border: `1px solid ${NAVY}1A`,
-                  }}
-                >
-                  {b}
-                </span>
-              ))}
-            </div>
-          )}
+          <TooltipProvider delayDuration={150}>
+            <ol
+              className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-5 relative"
+              style={{ listStyle: "none", padding: 0, margin: 0, marginTop: 64 }}
+            >
+              {procesStappen.map((stap, i) => {
+                const isKoppeling = /koppeling/i.test(stap.title);
+                return (
+                  <li key={stap.title} className="relative">
+                    <Card>
+                      <div className="flex items-center gap-3">
+                        <span
+                          className="flex items-center justify-center rounded-full font-semibold shrink-0"
+                          style={{
+                            width: 36,
+                            height: 36,
+                            backgroundColor: NAVY,
+                            color: WHITE,
+                            fontSize: 15,
+                          }}
+                        >
+                          {i + 1}
+                        </span>
+                        <h3
+                          className="text-lg font-medium flex items-center gap-2"
+                          style={{ color: NAVY, margin: 0 }}
+                        >
+                          {stap.title}
+                          {isKoppeling && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button
+                                  type="button"
+                                  aria-label="Bekijk certificeringen"
+                                  className="inline-flex items-center justify-center rounded-full"
+                                  style={{ color: GOLD }}
+                                >
+                                  <Info size={16} aria-hidden="true" />
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="max-w-[260px]">
+                                <div className="text-xs font-semibold mb-1">Certificeringen</div>
+                                <ul className="text-xs leading-relaxed list-disc pl-4 space-y-0.5">
+                                  <li>BRL 6000-21</li>
+                                  <li>BRL 100 en BRL 200</li>
+                                  <li>STEK</li>
+                                  <li>F-gassen vakbekwaamheid</li>
+                                </ul>
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
+                        </h3>
+                      </div>
+                      <p
+                        className="mt-3 text-base leading-relaxed"
+                        style={{ color: NAVY, opacity: 0.78, margin: "12px 0 0 0" }}
+                      >
+                        {stap.body}
+                      </p>
+                    </Card>
+                    {i < procesStappen.length - 1 && (
+                      <div
+                        aria-hidden="true"
+                        className="hidden md:flex absolute top-1/2 -right-4 -translate-y-1/2 items-center justify-center"
+                        style={{ width: 24, height: 24 }}
+                      >
+                        <ArrowRight size={20} color={GOLD} strokeWidth={2.25} />
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ol>
+          </TooltipProvider>
         </SectionBlock>
 
         {/* 5 — VEELGESTELDE VRAGEN */}
