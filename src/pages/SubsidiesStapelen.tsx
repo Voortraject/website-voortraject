@@ -271,12 +271,12 @@ const SubsidiesStapelen = () => {
       {/* 3. DE BOUWSTENEN — cream */}
       <section id="stapelen" style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
         <div className="container-content">
-          <div className="max-w-3xl">
+          <div className="max-w-3xl text-center mx-auto">
             <H2>
               De bouwstenen die je kunt <Gold>combineren</Gold>
             </H2>
             <p style={{ marginTop: 20, fontSize: 17, lineHeight: 1.7, color: C.text }}>
-              Drie typen regelingen kunnen elkaar versterken. Wij weten welke combinaties werken voor jouw woning en gebied.
+              Er zijn meerdere regelingen die je kunt combineren. Welke voor jou gelden hangt af van je woning en je gebied; je hebt ze niet allemaal nodig om voordeel te halen. Wij zoeken uit welke combinatie voor jou het meeste oplevert.
             </p>
           </div>
 
@@ -326,7 +326,7 @@ const SubsidiesStapelen = () => {
               <IconCircle Icon={CheckCircle2} size={22} />
             </div>
             <p style={{ fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 700, color: C.primary, margin: 0 }}>
-              Wat het <Gold>samen</Gold> oplevert, rekenen we voor jou uit
+              Wat de juiste <Gold>combinatie</Gold> oplevert, rekenen we voor jou uit
             </p>
             <p style={{ fontSize: 15, color: C.muted, marginTop: 10 }}>
               Welke regelingen voor jouw woning samengaan, en in welke volgorde, zoeken wij gratis voor je uit.
