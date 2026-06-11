@@ -213,30 +213,38 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
           <div className="mx-auto max-w-[1180px] px-6">
             <div className="flex flex-col md:flex-row md:items-center gap-10 md:gap-12">
               <div className="md:flex-1 min-w-0">
-                <div
-                  className="mb-6 inline-flex items-center justify-center rounded-full"
-                  style={{ width: 56, height: 56, backgroundColor: WARM }}
-                >
-                  <Icon size={26} color={NAVY} strokeWidth={2.25} aria-hidden="true" />
+                <div className="flex items-start gap-4">
+                  <span
+                    className="inline-flex items-center justify-center rounded-full shrink-0"
+                    style={{
+                      width: 56,
+                      height: 56,
+                      backgroundColor: WARM,
+                      marginTop: 2,
+                    }}
+                  >
+                    <Icon size={26} color={NAVY} strokeWidth={2.25} aria-hidden="true" />
+                  </span>
+                  <h1
+                    className="font-display"
+                    style={{
+                      color: NAVY,
+                      fontWeight: 700,
+                      fontSize: "clamp(32px, 4.4vw, 48px)",
+                      lineHeight: 1.1,
+                      letterSpacing: "-0.02em",
+                      margin: 0,
+                    }}
+                  >
+                    {renderAccented(heroTitle)}
+                  </h1>
                 </div>
-                <h1
-                  className="font-display"
-                  style={{
-                    color: NAVY,
-                    fontWeight: 700,
-                    fontSize: "clamp(32px, 4.4vw, 48px)",
-                    lineHeight: 1.1,
-                    letterSpacing: "-0.02em",
-                    margin: 0,
-                  }}
-                >
-                  {renderAccented(heroTitle)}
-                </h1>
                 <p
                   className="mt-5 text-base md:text-lg leading-relaxed"
                   style={{ color: NAVY, opacity: 0.85, maxWidth: 560 }}
                 >
-                  {heroSub} {heroIntro}
+                  {heroSub}
+                  {heroIntro ? ` ${heroIntro}` : ""}
                 </p>
                 <div className="mt-8">
                   <PrimaryButton href={heroCtaHref}>{heroCtaLabel}</PrimaryButton>

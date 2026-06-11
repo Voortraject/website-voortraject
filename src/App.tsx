@@ -7,7 +7,7 @@ import { AudienceProvider } from "@/contexts/AudienceContext";
 import Index from "./pages/Index.tsx";
 import Uitvoerders from "./pages/Uitvoerders.tsx";
 import Bewoners from "./pages/Bewoners.tsx";
-import Verduurzamen from "./pages/Verduurzamen.tsx";
+
 import Isolatie from "./pages/maatregelen/Isolatie.tsx";
 import Warmtepomp from "./pages/maatregelen/Warmtepomp.tsx";
 import Airco from "./pages/maatregelen/Airco.tsx";
@@ -38,7 +38,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/uitvoerders" element={<Uitvoerders />} />
             <Route path="/bewoners" element={<Bewoners />} />
-            <Route path="/verduurzamen" element={<Verduurzamen />} />
+            <Route path="/verduurzamen" element={<Navigate to="/" replace />} />
             <Route path="/verduurzamen/isolatie" element={<Isolatie />} />
             <Route path="/verduurzamen/warmtepomp" element={<Warmtepomp />} />
             <Route path="/verduurzamen/airco" element={<Airco />} />
@@ -46,7 +46,7 @@ const App = () => (
             <Route path="/verduurzamen/zonnepanelen" element={<Zonnepanelen />} />
             <Route path="/verduurzamen/laadpaal" element={<Laadpaal />} />
             <Route path="/verduurzamen/onderhoud" element={<Onderhoud />} />
-            <Route path="/maatregelen" element={<Navigate to="/verduurzamen" replace />} />
+            <Route path="/maatregelen" element={<Navigate to="/" replace />} />
             <Route path="/over-ons" element={<OverOns />} />
 
             <Route path="/contact" element={<Contact />} />

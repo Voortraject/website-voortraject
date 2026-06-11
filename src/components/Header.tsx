@@ -6,7 +6,6 @@ import logoVoortraject from "@/assets/logo-voortraject.png";
 
 
 const verduurzamenItems = [
-  { href: "/verduurzamen", label: "De route (overzicht)" },
   { href: "/verduurzamen/isolatie", label: "Isolatie & ventilatie" },
   { href: "/verduurzamen/warmtepomp", label: "Warmtepomp" },
   { href: "/verduurzamen/airco", label: "Airco" },
@@ -25,7 +24,7 @@ const subsidiesItems = [
 const links: { href: string; label: string; dropdown?: typeof subsidiesItems }[] = [
   { href: "/bewoners", label: "Bewoners" },
   { href: "/uitvoerders", label: "Uitvoerders" },
-  { href: "/verduurzamen", label: "Verduurzamen", dropdown: verduurzamenItems },
+  { href: "/verduurzamen/isolatie", label: "Verduurzamen", dropdown: verduurzamenItems },
   { href: "/subsidies", label: "Subsidies", dropdown: subsidiesItems },
   { href: "/over-ons", label: "Over ons" },
 ];
