@@ -17,13 +17,14 @@ const navCols = [
       { href: "/subsidies/nij-begun", label: "Nij Begun" },
       { href: "/subsidies/landelijk", label: "Landelijke subsidies" },
       { href: "/subsidies/regionaal", label: "Regionale subsidies" },
+      { href: "/subsidies/stapelen", label: "Subsidies stapelen" },
     ],
   },
-  {
+      {
     label: "Contact",
     items: [
       { href: "mailto:info@voortraject.nl", label: "info@voortraject.nl" },
-      { href: "tel:+31640248371", label: "+31 6 40248371" },
+      { href: "tel:+31502112689", label: "050 211 2689" },
       { href: "#", label: "Viaductstraat 3-15, Groningen" },
       { href: "#", label: "KVK 42066892" },
     ],
