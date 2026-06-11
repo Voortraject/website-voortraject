@@ -390,8 +390,8 @@ const SubsidiesRegionaal = () => {
       </section>
 
 
-      {/* 3. WELKE REGELINGEN — cream */}
-      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
+      {/* 3. WELKE REGELINGEN — warm tint */}
+      <section style={{ backgroundColor: "#F6EFE0" }} className="py-16 md:py-24">
         <div className="container-content">
           <div className="max-w-3xl">
             <H2>
@@ -424,8 +424,8 @@ const SubsidiesRegionaal = () => {
         </div>
       </section>
 
-      {/* 6. STAPPENPLAN — cream */}
-      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
+      {/* 6. STAPPENPLAN — wit */}
+      <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-24">
         <div className="container-content">
           <div className="max-w-3xl">
             <H2>
