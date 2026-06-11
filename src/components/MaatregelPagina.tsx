@@ -63,10 +63,17 @@ export interface MaatregelPaginaProps {
   // Sectie 5
   aandachtspunten: string[];
   keurmerken?: KeurmerkenBlock;
+  subsidiesPosition?: 'side' | 'below';
   subsidiesIntro?: string;
   subsidiesItems?: string[];
   subsidiesLinkHref?: string;
   subsidiesLinkLabel?: string;
+  extraInfo?: {
+    kop: string;
+    intro?: string;
+    items: string[];
+    voetregel?: string;
+  };
   onderhoud?: {
     kop: string;
     tekst: string;
@@ -137,10 +144,12 @@ export const MaatregelPagina = ({
   zachteCtaHref = "/contact",
   aandachtspunten,
   keurmerken,
+  subsidiesPosition = "side",
   subsidiesIntro,
   subsidiesItems,
   subsidiesLinkHref = "/subsidies",
   subsidiesLinkLabel = "Bekijk hoe je subsidies stapelt",
+  extraInfo,
   onderhoud,
   faqs,
   finalCtaKop,
@@ -378,7 +387,7 @@ export const MaatregelPagina = ({
 
         {/* SECTIE 6 — Aandachtspunten + Subsidies */}
         <Section bg="#FFFFFF">
-          <div className={`grid grid-cols-1 ${subsidiesItems && subsidiesItems.length > 0 ? "lg:grid-cols-2" : ""} gap-12 lg:gap-16`}>
+          <div className={`grid grid-cols-1 ${subsidiesPosition === 'side' && subsidiesItems && subsidiesItems.length > 0 ? "lg:grid-cols-2" : ""} gap-12 lg:gap-16`}>
             <div>
               <SectionHeader title="Waar je op moet [[letten]]" />
               <ul
@@ -401,7 +410,7 @@ export const MaatregelPagina = ({
               </ul>
             </div>
 
-            {subsidiesItems && subsidiesItems.length > 0 && (
+            {subsidiesPosition === 'side' && subsidiesItems && subsidiesItems.length > 0 && (
               <div>
                 <SectionHeader title="[[Subsidies]]" />
                 <p
@@ -442,6 +451,91 @@ export const MaatregelPagina = ({
             )}
           </div>
         </Section>
+
+        {/* SECTIE 6b — Extra info (optioneel) */}
+        {extraInfo && (
+          <Section bg={WARM}>
+            <SectionHeader title={extraInfo.kop} />
+            {extraInfo.intro && (
+              <p
+                className="mt-6 max-w-3xl"
+                style={{ fontSize: 16, color: TEXT, lineHeight: 1.7 }}
+              >
+                {extraInfo.intro}
+              </p>
+            )}
+            <ul
+              style={{ listStyle: "none", padding: 0, margin: 0 }}
+              className="mt-8 flex flex-col gap-4"
+            >
+              {extraInfo.items.map((p) => (
+                <li
+                  key={p}
+                  className="flex items-start gap-3"
+                  style={{ fontSize: 16, color: TEXT, lineHeight: 1.65 }}
+                >
+                  <span
+                    className="mt-[8px] shrink-0 rounded-full"
+                    style={{ width: 8, height: 8, backgroundColor: GOLD }}
+                  />
+                  <span>{p}</span>
+                </li>
+              ))}
+            </ul>
+            {extraInfo.voetregel && (
+              <p
+                className="mt-6 max-w-3xl"
+                style={{ fontSize: 15, color: MUTED, lineHeight: 1.7 }}
+              >
+                {extraInfo.voetregel}
+              </p>
+            )}
+          </Section>
+        )}
+
+        {/* SECTIE 6c — Subsidies standalone (optioneel) */}
+        {subsidiesPosition === 'below' && subsidiesIntro && (
+          <Section bg="#FFFFFF">
+            <SectionHeader title="[[Subsidies]]" />
+            <p
+              className="mt-6 max-w-3xl"
+              style={{ fontSize: 16, color: TEXT, lineHeight: 1.7 }}
+            >
+              {subsidiesIntro}
+            </p>
+            {subsidiesItems && subsidiesItems.length > 0 && (
+              <ul
+                style={{ listStyle: "none", padding: 0, margin: 0 }}
+                className="mt-8 flex flex-col gap-2"
+              >
+                {subsidiesItems.map((s) => (
+                  <li
+                    key={s}
+                    className="flex items-start gap-3"
+                    style={{ fontSize: 15, color: TEXT, lineHeight: 1.6 }}
+                  >
+                    <Check size={18} color={GOLD} className="mt-[2px] shrink-0" />
+                    <span>{s}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <a
+              href={subsidiesLinkHref}
+              className="mt-6 inline-flex items-center gap-2 group"
+              style={{
+                color: NAVY,
+                fontWeight: 500,
+                fontSize: 15,
+                borderBottom: `1px solid ${GOLD}`,
+                paddingBottom: 2,
+              }}
+            >
+              {subsidiesLinkLabel}
+              <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+            </a>
+          </Section>
+        )}
 
         {/* SECTIE 7 — Keurmerken (optioneel) */}
         {keurmerken && (
