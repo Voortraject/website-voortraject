@@ -1,32 +1,90 @@
 import { Home } from "lucide-react";
-import { MaatregelTemplate } from "@/components/MaatregelTemplate";
+import { MaatregelPagina } from "@/components/MaatregelPagina";
 
 const Isolatie = () => (
-  <MaatregelTemplate
+  <MaatregelPagina
     slug="isolatie"
-    title="Isolatie & ventilatie"
     icon={Home}
     badge="Vaak eerste stap"
     seoTitle="Isolatie & ventilatie | Voortraject"
-    seoDescription="Isolatie en ventilatie zijn de basis van elk verduurzamingstraject. Wat valt eronder, wanneer is het slim en welke subsidies horen erbij?"
-    intro="Een goed geïsoleerde woning is bijna altijd de eerste stap. Het verlaagt je energieverbruik direct en maakt elke volgende maatregel — opwek, warmtepomp, batterij — effectiever en goedkoper."
+    seoDescription="Isolatie en ventilatie vormen de basis van elke verduurzaming. Wat valt eronder, wanneer is het slim en welke subsidies passen erbij."
+    heroTitle="Isolatie & ventilatie, de basis van elke verduurzaming"
+    heroSub="Minder warmteverlies, meer comfort en lagere energiekosten. Vrijwel altijd de slimste eerste stap."
+    heroIntro="Een goed geïsoleerde woning verbruikt minder energie en is comfortabeler in de winter en de zomer. Het is de basis waarop alle volgende stappen, zoals zonnepanelen, een warmtepomp of opslag, pas echt renderen. Goed isoleren vraagt wel om goed ventileren, anders ontstaan vocht en gezondheidsproblemen."
+    pastBij={[
+      "Je woning van voor 1990 is of merkbaar tocht",
+      "Je vertrekken traag warm worden of snel afkoelen",
+      "Je een warmtepomp of zonnepanelen overweegt",
+      "Je energierekening hoger is dan je zou willen",
+    ]}
+    minderUrgent={[
+      "Je woning al recent en goed is geïsoleerd (na ongeveer 2015)",
+      "Je op korte termijn verhuist",
+    ]}
     watValtEronder={[
-      "Dakisolatie",
-      "Vloer- en bodemisolatie",
-      "Spouwmuur- of binnenisolatie",
-      "HR++ of triple glas en goede kozijnen",
-      "Kierdichting",
-      "Mechanische of balansventilatie met warmteterugwinning (WTW)",
+      "Dakisolatie, vaak de kortste terugverdientijd",
+      "Vloer- of bodemisolatie",
+      "Spouwmuurisolatie, relatief goedkoop en snel terugverdiend",
+      "HR++ of triple glas met goede kozijnen",
+      "Ventilatie: natuurlijk, mechanisch, of balansventilatie met warmteterugwinning (WTW)",
     ]}
-    voorWie="Vrijwel elke bewoner van een woning gebouwd vóór 2000 heeft hier nog winst te halen. Ook nieuwere woningen zijn niet altijd optimaal geïsoleerd of geventileerd."
-    wanneerSlim="Bijna altijd als eerste stap. Isolatie verlaagt direct je verbruik en bepaalt of latere maatregelen (zoals een warmtepomp of zonnepanelen) hun rendement halen. Goed isoleren zonder goed ventileren geeft vocht- en gezondheidsproblemen, dus die twee horen bij elkaar."
-    terugverdientijd="Dakisolatie en spouwmuurisolatie verdienen zich vaak binnen 5 tot 10 jaar terug. Vloerisolatie en glasvervanging hebben een langere terugverdientijd, maar leveren veel comfort op."
-    waarOpLetten="Controleer eerst wat er al aanwezig is voor je opnieuw investeert. Laat ook de staat van de kozijnen meenemen. Een geïsoleerde woning is luchtdicht en heeft bewuste ventilatie nodig — zorg dat een WTW-systeem ook goed wordt ingeregeld na installatie."
-    subsidies={[
-      { href: "/subsidies/landelijk", label: "ISDE — landelijke subsidie isolatiemaatregelen" },
-      { href: "/subsidies/nij-begun", label: "Nij Begun — Groningen en Noord-Drenthe" },
-      { href: "/subsidies/regionaal", label: "Regionale en gemeentelijke regelingen" },
+    routeStep="beperk"
+    routeTekst="Isolatie is bijna altijd de eerste stap. Het verlaagt je energieverbruik direct en maakt elke volgende maatregel effectiever. Een warmtepomp in een slecht geïsoleerde woning werkt inefficiënt en duur. Zonnepanelen leveren minder op als je verbruik onnodig hoog blijft. Daarom eerst beperken wat je verbruikt, dan pas opwekken en slim gebruiken. Ventilatie hoort direct bij of vlak na het isoleren, want een luchtdichte woning heeft gezonde luchtverversing nodig."
+    kostenItems={[
+      {
+        title: "Spouwmuurisolatie",
+        body: "Lage investering en korte terugverdientijd. Vaak één van de eerste maatregelen die zichzelf snel terugverdient bij woningen van voor 1990.",
+      },
+      {
+        title: "Dakisolatie",
+        body: "Hogere investering, maar een grote besparing op je stookkosten. Doordat warmte vooral via het dak verdwijnt, is de terugverdientijd toch kort.",
+      },
+      {
+        title: "Vloerisolatie",
+        body: "Beperkte investering met een merkbaar comfortverschil. Vooral koude voeten en tochtgevoel verminderen sterk.",
+      },
+      {
+        title: "HR++ of triple glas",
+        body: "Hogere investering en langere terugverdientijd. De grootste winst zit hier in comfort en geluidsdemping, en in de stap richting een warmtepomp.",
+      },
+      {
+        title: "Ventilatie met warmteterugwinning (WTW)",
+        body: "De meest energiezuinige vorm van ventileren, maar ook de duurste optie. Past goed bij een luchtdichte, goed geïsoleerde woning.",
+      },
     ]}
+    kostenFooter="Wat het beïnvloedt zijn bouwjaar, huidige isolatiewaarden, woningtype en de combinatie die je kiest."
+    zachteCtaTekst="Benieuwd wat voor jouw woning de meeste winst oplevert?"
+    aandachtspunten={[
+      "Goed isoleren zonder goed ventileren geeft vocht en schimmel. Behandel ze altijd samen.",
+      "Begin bij de maatregel met de kortste terugverdientijd, vaak dak of spouw, niet bij de duurste.",
+      "De kwaliteit van uitvoering bepaalt het resultaat. Een goed product, slecht aangebracht, levert weinig op.",
+    ]}
+    subsidiesIntro="Isolatie is een van de best gesubsidieerde maatregelen en vaak combineerbaar:"
+    subsidiesItems={[
+      "ISDE (landelijk), verdubbelt bij twee of meer maatregelen",
+      "Nij Begun, tot 100 procent vergoed voor eigenaar-bewoners in Groningen en Noord-Drenthe",
+      "Gemeentelijke regelingen, stapelbaar bovenop bovenstaande",
+    ]}
+    faqs={[
+      {
+        q: "Moet ik alles tegelijk isoleren of mag het in fases?",
+        a: "In fases mag prima. Veel bewoners beginnen bij de maatregel met de kortste terugverdientijd, vaak dakisolatie of spouwmuurisolatie, en pakken de rest later op. Neem ventilatie wel meteen mee zodra de woning luchtdichter wordt.",
+      },
+      {
+        q: "Heb ik na isolatie nog mechanische ventilatie nodig?",
+        a: "Vaak wel. Hoe beter je isoleert, hoe luchtdichter de woning wordt, en dan is bewuste luchtverversing nodig om vocht en schimmel te voorkomen. Welke vorm past hangt af van je woning. Soms volstaat natuurlijke ventilatie, soms is mechanische of balansventilatie met warmteterugwinning verstandiger.",
+      },
+      {
+        q: "Wat is het verschil tussen HR++ en triple glas, en is triple de meerprijs waard?",
+        a: "HR++ glas isoleert goed en is geschikt voor de meeste woningen. Triple glas isoleert nog beter, maar is duurder en vraagt vaak zwaardere kozijnen. Triple loont vooral als je naar een volledig gasloze woning met lage temperatuurverwarming toewerkt. In andere gevallen is HR++ meestal de slimmere keuze.",
+      },
+      {
+        q: "Kan ik isoleren als ik later van het gas af wil?",
+        a: "Juist dan is isoleren de logische eerste stap. Een goed geïsoleerde woning maakt de overstap naar een warmtepomp haalbaar en betaalbaar. Zonder isolatie werkt een warmtepomp inefficiënt. Wie van het gas af wil, begint bij de schil van de woning.",
+      },
+    ]}
+    finalCtaKop="Niet zeker waar je moet beginnen?"
+    finalCtaTekst="In een gratis gesprek kijken we naar jouw woning en vertellen we eerlijk welke isolatiestap nu het meeste oplevert. Wij verkopen geen materiaal en hebben geen installateur te slijten. Ons advies is onafhankelijk."
   />
 );
 
