@@ -7,9 +7,23 @@ import { Seo } from "@/components/Seo";
 
 export type RouteStep = "beperk" | "opwekken" | "slim";
 
+export type KostenDimension =
+  | "Investering"
+  | "Terugverdientijd"
+  | "Comfortwinst"
+  | "Besparing"
+  | "Onafhankelijkheid"
+  | "Gebruiksgemak";
+
+export interface KostenPill {
+  dim: KostenDimension | string;
+  value: string;
+}
+
 export interface CollapsibleItem {
   title: string;
   body: string;
+  pills?: KostenPill[];
 }
 
 export interface MaatregelFaq {
