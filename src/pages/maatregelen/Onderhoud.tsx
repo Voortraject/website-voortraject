@@ -1,4 +1,4 @@
-import { ArrowLeft, Check, ArrowRight } from "lucide-react";
+import { Check } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
