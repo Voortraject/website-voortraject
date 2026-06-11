@@ -409,8 +409,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
             className="mt-8 text-sm max-w-[760px] mx-auto text-center"
             style={{ color: NAVY, opacity: 0.6 }}
           >
-            Bedragen en terugverdientijden zijn indicatief en kunnen wijzigen. Peildatum: {prijsPeil}.
-            {kostenFooter ? ` ${kostenFooter}` : ""}
+            Deze inschatting klopt in veel gevallen, maar verschilt per woning. Bouwjaar, woningtype, huidige isolatie en de combinatie van maatregelen die je kiest, bepalen wat het bij jou oplevert.
           </p>
         </SectionBlock>
 
@@ -458,14 +457,10 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
                                   <Info size={16} aria-hidden="true" />
                                 </button>
                               </TooltipTrigger>
-                              <TooltipContent side="top" className="max-w-[260px]">
-                                <div className="text-xs font-semibold mb-1">Certificeringen</div>
-                                <ul className="text-xs leading-relaxed list-disc pl-4 space-y-0.5">
-                                  <li>BRL 6000-21</li>
-                                  <li>BRL 100 en BRL 200</li>
-                                  <li>STEK</li>
-                                  <li>F-gassen vakbekwaamheid</li>
-                                </ul>
+                              <TooltipContent side="top" className="max-w-[280px]">
+                                <p className="text-xs leading-relaxed">
+                                  Wij werken alleen met erkende, gecertificeerde vakbedrijven. Hun keurmerken en erkenningen staan voor kwaliteit, vakmanschap en veiligheid, zodat jouw project in vertrouwde handen is.
+                                </p>
                               </TooltipContent>
                             </Tooltip>
                           )}
