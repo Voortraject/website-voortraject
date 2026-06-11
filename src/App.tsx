@@ -20,6 +20,7 @@ import Contact from "./pages/Contact.tsx";
 import SubsidiesNijBegun from "./pages/SubsidiesNijBegun.tsx";
 import SubsidiesLandelijk from "./pages/SubsidiesLandelijk.tsx";
 import SubsidiesRegionaal from "./pages/SubsidiesRegionaal.tsx";
+import SubsidiesStapelen from "./pages/SubsidiesStapelen.tsx";
 import Privacy from "./pages/Privacy.tsx";
 import Cookie from "./pages/Cookie.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -53,6 +54,7 @@ const App = () => (
             <Route path="/subsidies/nij-begun" element={<SubsidiesNijBegun />} />
             <Route path="/subsidies/landelijk" element={<SubsidiesLandelijk />} />
             <Route path="/subsidies/regionaal" element={<SubsidiesRegionaal />} />
+            <Route path="/subsidies/stapelen" element={<SubsidiesStapelen />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/cookieverklaring" element={<Cookie />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
