@@ -55,7 +55,7 @@ export const Header = () => {
           className="shrink-0 hover:opacity-90 transition-opacity"
           aria-label="Voortraject home"
         >
-          <img src={logoVoortraject} alt="Voortraject" className="h-7 w-auto" />
+          <img src={logoVoortraject} alt="Voortraject" className="h-9 w-auto" />
         </a>
 
         <nav className="hidden md:flex items-center gap-5 lg:gap-8 shrink-0 ml-auto" aria-label="Hoofdnavigatie">
