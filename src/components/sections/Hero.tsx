@@ -28,8 +28,8 @@ export const Hero = () => {
                 className="mt-6 md:mt-8 mb-6 md:mb-8 text-[16px] md:text-[19px] leading-[1.6] max-w-xl"
                 style={{ color: "hsl(var(--primary) / 0.8)" }}
               >
-                Van isolatie tot opwek, verwarming en opslag. Wij begeleiden bewoners stap voor stap en
-                nemen uitvoerders het voortraject uit handen — onafhankelijk, zonder verkooppraatjes.
+                Eén vast aanspreekpunt dat je hele verduurzamingstraject regelt en het overzicht bewaakt.
+                Snel, persoonlijk en met de kennis om al je vragen meteen te beantwoorden.
               </p>
 
 
