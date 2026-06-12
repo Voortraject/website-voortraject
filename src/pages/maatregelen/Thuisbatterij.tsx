@@ -10,7 +10,7 @@ const Thuisbatterij = () => (
     seoTitle="Thuisbatterij & opslag | Voortraject"
     seoDescription="Een thuisbatterij slaat je eigen stroom op voor later gebruik. Wanneer is het slim, wat kost het en waar moet je op letten?"
     heroTitle="Thuisbatterij, je stroom [[slim]] opslaan"
-    heroSub="Gebruik je eigen stroom wanneer het jou uitkomt in plaats van terug te leveren, handig met het oog op de afbouw van de saldering. Of het loont hangt sterk af van je situatie, en daar zijn wij eerlijk over."
+    heroSub="Gebruik je eigen stroom wanneer het jou uitkomt in plaats van terug te leveren, handig met het oog op het stoppen van de saldering per 2027. Of het loont hangt sterk af van je situatie, en daar zijn wij eerlijk over."
     heroIntro=""
     heroImageSrc={thuisbatterijImage}
     heroImageAlt="Thuisbatterij aan een muur in een bijkeuken"
