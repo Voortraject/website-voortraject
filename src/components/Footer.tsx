@@ -47,7 +47,7 @@ export const Footer = () => (
     <div className="container-content md:py-20 py-[40px]">
       <div className="grid grid-cols-1 md:grid-cols-5 gap-10 lg:gap-12">
         <div>
-          <img src={logoVoortraject} alt="Voortraject" className="h-10 w-auto" />
+          <img src={logoVoortraject} alt="Voortraject" className="h-14 w-auto" />
           <p className="mt-4 text-sm leading-relaxed text-white/80 max-w-xs">
             Ondersteuning in het verduurzamingstraject
           </p>
