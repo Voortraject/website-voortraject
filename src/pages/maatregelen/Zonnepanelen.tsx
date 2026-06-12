@@ -21,7 +21,7 @@ const Zonnepanelen = () => (
       "Je woning al redelijk geisoleerd is",
     ]}
     minderUrgent={[
-      "Je woning slecht geïsoleerd is; isoleer dan eerst zodat je verbruik niet onnodig hoog is",
+      "Je dak binnen enkele jaren vervangen moet worden; combineer de plaatsing dan met die vervanging",
       "Je dak veel schaduw heeft of ongunstig ligt",
       "Je binnenkort verhuist en de panelen niet meeneemt",
     ]}

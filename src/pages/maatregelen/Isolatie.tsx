@@ -15,14 +15,14 @@ const Isolatie = () => (
     heroImageSrc={isolatieImage}
     heroImageAlt="Isolatiewerkzaamheden aan een woning"
     pastBij={[
-      "Je woning van voor 1990 is of merkbaar tocht",
-      "Je vertrekken traag warm worden of snel afkoelen",
+      "Je woning nog enkel glas of een ongeïsoleerd dak, vloer of spouwmuur heeft",
+      "Je vertrekken traag warm worden, snel afkoelen of het merkbaar tocht",
       "Je een warmtepomp of zonnepanelen overweegt",
       "Je energierekening hoger is dan je zou willen",
     ]}
     minderUrgent={[
-      "Je woning al recent en goed is geïsoleerd (na ongeveer 2015)",
-      "Je binnenkort verhuist en de investering niet meer terugverdient",
+      "Je woning al goed is geïsoleerd, met bijvoorbeeld HR++ of triple glas en een geïsoleerde gevel, vloer en dak",
+      "Je op zeer korte termijn verhuist",
       "Je een monument hebt; dan gelden strikte regels en kijken we eerst naar wat mag",
     ]}
     watValtEronder={[

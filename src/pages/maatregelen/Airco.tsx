@@ -17,7 +17,7 @@ const Airco = () => (
       "Je in de zomer last hebt van warmte in huis",
       "Je losse ruimtes wilt koelen of verwarmen, zoals een thuiskantoor, slaapkamer of zolder",
       "Je een zuinig alternatief voor gas zoekt voor bepaalde ruimtes",
-      "Je woning redelijk tot goed geïsoleerd is",
+      "Je een oplossing zonder grote verbouwing zoekt; een airco is relatief eenvoudig te plaatsen",
     ]}
     minderUrgent={[
       "Je je hele woning gasloos wilt verwarmen; kijk dan eerst naar een warmtepomp",

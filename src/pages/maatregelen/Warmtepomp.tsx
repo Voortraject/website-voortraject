@@ -14,16 +14,16 @@ const Warmtepomp = () => (
     heroImageSrc={warmtepompImage}
     heroImageAlt="Warmtepomp buitenunit naast een woning"
     pastBij={[
-      "Je woning al redelijk tot goed geïsoleerd is",
-      "Je stap voor stap of in één keer van het gas af wilt",
-      "Je lagetemperatuurverwarming hebt of wilt, zoals vloerverwarming",
-      "Je cv-ketel binnenkort moet worden vervangen",
+      "Je van het gas af wilt, stap voor stap met een hybride of in één keer volledig elektrisch",
+      "Je woning al redelijk geïsoleerd is, of je nog isoleert en met een hybride wilt starten",
+      "Je lagetemperatuurverwarming hebt of wilt, zoals vloerverwarming; vooral van belang bij volledig elektrisch",
+      "Je cv-ketel binnenkort aan vervanging toe is",
     ]}
     minderUrgent={[
-      "Je woning slecht geïsoleerd is; isoleer dan eerst",
       "Je geen ruimte hebt voor een buitenunit binnen de geluidsnormen",
-      "Je hoge aanvoertemperaturen nodig hebt met oude radiatoren en die niet wilt aanpassen",
-      "Je binnenkort verhuist",
+      "Je woning nog slecht geïsoleerd is en je in één keer volledig elektrisch wilt; isoleer dan eerst of begin met een hybride",
+      "Je oude radiatoren met hoge aanvoertemperaturen niet wilt aanpassen; volledig elektrisch past dan niet, een hybride vaak wel",
+      "Je op zeer korte termijn verhuist",
     ]}
     watValtEronder={[
       "Hybride warmtepomp, werkt samen met je bestaande cv-ketel",
