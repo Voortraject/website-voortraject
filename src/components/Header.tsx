@@ -31,6 +31,97 @@ const links: { href: string; label: string; dropdown?: typeof subsidiesItems }[]
 ];
 
 
+const MobileMenu = ({ onClose }: { onClose: () => void }) => {
+  const [openSection, setOpenSection] = useState<string | null>(null);
+  return (
+    <div
+      className="fixed inset-0 z-50 md:hidden flex flex-col animate-fade-up"
+      onClick={onClose}
+    >
+      <div
+        className="flex flex-col max-h-full overflow-y-auto"
+        style={{ backgroundColor: "rgba(21, 44, 78, 0.95)", backdropFilter: "blur(8px)" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="container-content flex items-center justify-between h-[72px] border-b border-white/10">
+          <img src={logoVoortraject} alt="Voortraject" className="h-10 w-auto" />
+          <button
+            className="p-2 -mr-2 text-white"
+            aria-label="Menu sluiten"
+            onClick={onClose}
+          >
+            <X size={24} />
+          </button>
+        </div>
+        <nav className="container-content flex flex-col gap-1 pt-6 pb-8" aria-label="Mobiele navigatie">
+          {links.map((l) =>
+            l.dropdown ? (
+              <div key={l.href} className="border-b border-white/10">
+                <button
+                  type="button"
+                  className="w-full flex items-center justify-between py-4 text-2xl font-display font-semibold tracking-tight text-white"
+                  onClick={() =>
+                    setOpenSection(openSection === l.href ? null : l.href)
+                  }
+                  aria-expanded={openSection === l.href}
+                >
+                  {l.label}
+                  <ChevronDown
+                    size={22}
+                    className={`transition-transform ${openSection === l.href ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {openSection === l.href && (
+                  <div className="pb-4 pl-2 flex flex-col gap-2">
+                    {l.dropdown.map((s) => (
+                      <a
+                        key={s.href}
+                        href={s.href}
+                        onClick={onClose}
+                        className="py-2 text-lg text-white/80 hover:text-accent"
+                      >
+                        {s.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <a
+                key={l.href}
+                href={l.href}
+                onClick={onClose}
+                className="py-4 text-2xl font-display font-semibold tracking-tight text-white border-b border-white/10"
+              >
+                {l.label}
+              </a>
+            )
+          )}
+          <div className="mt-5 flex items-center gap-3">
+            <a
+              href="/contact"
+              onClick={onClose}
+              className="flex-1 inline-flex items-center justify-center rounded-full px-5 py-3 text-base font-semibold"
+              style={{ backgroundColor: "hsl(var(--accent))", color: "#152C4E" }}
+            >
+              Contact
+            </a>
+            <a
+              href="tel:+31502112689"
+              aria-label="Bel ons: 050 211 2689"
+              className="flex-1 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold"
+              style={{ backgroundColor: "#E5E7EB", color: "#152C4E" }}
+            >
+              <Phone size={18} strokeWidth={2} />
+              <span>050 211 2689</span>
+            </a>
+          </div>
+        </nav>
+      </div>
+    </div>
+  );
+};
+
 export const Header = () => {
   const [open, setOpen] = useState(false);
 
@@ -136,70 +227,7 @@ export const Header = () => {
         </button>
       </div>
 
-      {open && (
-        <div className="fixed inset-0 z-50 bg-background md:hidden flex flex-col animate-fade-up overflow-y-auto">
-          <div className="container-content flex items-center justify-between h-[72px] border-b border-border">
-            <span className="font-display font-semibold text-primary text-[20px]">
-              Voortraject
-            </span>
-            <button
-              className="p-2 -mr-2 text-primary"
-              aria-label="Menu sluiten"
-              onClick={() => setOpen(false)}
-            >
-              <X size={24} />
-            </button>
-          </div>
-          <nav className="container-content flex flex-col gap-2 pt-10" aria-label="Mobiele navigatie">
-            {links.map((l) =>
-              l.dropdown ? (
-                <div key={l.href} className="border-b border-border">
-                  <div className="py-4 text-2xl font-display font-semibold tracking-tight text-foreground">
-                    {l.label}
-                  </div>
-                  <div className="pb-4 pl-2 flex flex-col gap-2">
-                    {l.dropdown.map((s) => (
-                      <a
-                        key={s.href}
-                        href={s.href}
-                        onClick={() => setOpen(false)}
-                        className="py-2 text-lg text-foreground/80"
-                      >
-                        {s.label}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <a
-                  key={l.href}
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  className="py-4 text-2xl font-display font-semibold tracking-tight text-foreground border-b border-border"
-                >
-                  {l.label}
-                </a>
-              )
-            )}
-            <div className="mt-4">
-              <Button href="/contact" variant="primary" className="w-full">
-                Contact
-              </Button>
-            </div>
-            <div className="mt-3">
-              <a
-                href="tel:+31502112689"
-                aria-label="Bel ons: 050 211 2689"
-                className="w-full inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-base font-semibold transition-colors"
-                style={{ backgroundColor: "#E5E7EB", color: "#152C4E" }}
-              >
-                <Phone size={18} strokeWidth={2} />
-                <span>050 211 2689</span>
-              </a>
-            </div>
-          </nav>
-        </div>
-      )}
+      {open && <MobileMenu onClose={() => setOpen(false)} />}
     </header>
   );
 };
