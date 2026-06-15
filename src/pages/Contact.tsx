@@ -371,10 +371,10 @@ const Contact = () => {
       />
       <Header />
 
-      {/* Hero */}
-      <section style={{ backgroundColor: "#FBFAF7" }}>
+      {/* Hero + Form (samengevoegd) */}
+      <section style={{ backgroundColor: "#F5F2EC" }} className="pt-6 md:pt-10 pb-12 md:pb-16">
         <div className="mx-auto px-6 md:px-12" style={{ maxWidth: 1200 }}>
-          <div className="mx-auto text-center py-8 md:py-12" style={{ maxWidth: 900 }}>
+          <div className="mx-auto text-center" style={{ maxWidth: 900 }}>
             <h1
               className="font-display"
               style={{
@@ -389,14 +389,14 @@ const Contact = () => {
             </h1>
             <p
               className="mx-auto font-sans"
-              style={{ marginTop: 16, maxWidth: 760, fontSize: 16, color: "#6B6B6B", lineHeight: 1.5 }}
+              style={{ marginTop: 12, maxWidth: 760, fontSize: 16, color: "#6B6B6B", lineHeight: 1.5 }}
             >
               Vertel ons waar je op zoek naar bent. We nemen binnen 24 uur contact op.
             </p>
 
             <div
               className="flex sm:inline-flex w-full sm:w-auto"
-              style={{ marginTop: 24, backgroundColor: "#E5E2DB", padding: 4, borderRadius: 999 }}
+              style={{ marginTop: 20, backgroundColor: "#E5E2DB", padding: 4, borderRadius: 999 }}
             >
               {(["bewoner", "uitvoerder"] as Mode[]).map((m) => {
                 const active = mode === m;
@@ -433,10 +433,8 @@ const Contact = () => {
             </div>
           </div>
         </div>
-      </section>
 
-      <section style={{ backgroundColor: "#F5F2EC" }} className="py-12 md:py-16">
-        <div className="mx-auto px-6 md:px-12" style={{ maxWidth: 1200 }}>
+        <div className="mx-auto px-6 md:px-12 mt-8 md:mt-10" style={{ maxWidth: 1200 }}>
           <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 md:gap-10 lg:gap-12 items-start">
             <div
               style={{

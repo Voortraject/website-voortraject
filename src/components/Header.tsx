@@ -204,7 +204,7 @@ export const Header = () => {
             className="relative overflow-hidden inline-flex items-center justify-center rounded-full py-3 px-6 text-base font-semibold"
             style={{ backgroundColor: "hsl(var(--accent))", color: "#152C4E" }}
           >
-            <span className="relative z-10">Plan een gesprek</span>
+            <span className="relative z-10">Plan een gratis gesprek</span>
             <span className="absolute inset-0 overflow-hidden rounded-full pointer-events-none">
               <span
                 className="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent"

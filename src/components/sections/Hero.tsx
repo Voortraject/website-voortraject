@@ -1,6 +1,6 @@
 import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { OfBelOnsCta } from "@/components/OfBelOnsCta";
+
 import heroHouses from "@/assets/hero-houses.webp";
 
 export const Hero = () => {
@@ -57,7 +57,7 @@ export const Hero = () => {
                 >
                   Ik ben een uitvoerder
                 </a>
-                <OfBelOnsCta />
+                
               </div>
 
               <div
