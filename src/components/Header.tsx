@@ -110,6 +110,7 @@ export const Header = () => {
             <Phone size={16} strokeWidth={2} />
             <span>050 211 2689</span>
           </a>
+          <a
             href="/contact"
             aria-label="Contact"
             className="relative overflow-hidden inline-flex items-center justify-center rounded-full py-3 px-6 text-base font-semibold"
