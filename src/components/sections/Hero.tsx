@@ -1,5 +1,6 @@
 import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { OfBelOnsCta } from "@/components/OfBelOnsCta";
 import heroHouses from "@/assets/hero-houses.webp";
 
 export const Hero = () => {
@@ -34,7 +35,7 @@ export const Hero = () => {
               </p>
 
 
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-5">
                 <a
                   href="/bewoners"
                   className="inline-flex items-center justify-center rounded-full px-7 py-3.5 text-[15px] font-semibold transition-all duration-150 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
@@ -56,6 +57,7 @@ export const Hero = () => {
                 >
                   Ik ben een uitvoerder
                 </a>
+                <OfBelOnsCta />
               </div>
 
               <div

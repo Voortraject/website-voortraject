@@ -5,6 +5,7 @@ import type { LucideIcon } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
+import { OfBelOnsCta } from "@/components/OfBelOnsCta";
 
 export type RouteStep = "beperk" | "opwekken" | "slim";
 
@@ -242,8 +243,9 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
                   {heroSub}
                   {heroIntro ? ` ${heroIntro}` : ""}
                 </p>
-                <div className="mt-8">
+                <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
                   <PrimaryButton href={heroCtaHref}>{heroCtaLabel}</PrimaryButton>
+                  <OfBelOnsCta />
                 </div>
               </div>
               {heroImageSrc && (
@@ -510,7 +512,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
             >
               {finalCtaTekst}
             </p>
-            <div className="mt-8 flex justify-center">
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
               <a
                 href={finalCtaHref}
                 className="inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
@@ -523,6 +525,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
               >
                 {finalCtaLabel}
               </a>
+              <OfBelOnsCta color="#FFFFFF" align="center" />
             </div>
           </div>
         </section>

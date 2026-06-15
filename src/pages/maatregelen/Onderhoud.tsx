@@ -2,6 +2,7 @@ import { Check } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
+import { OfBelOnsCta } from "@/components/OfBelOnsCta";
 import onderhoudImage from "@/assets/maatregel-onderhoud.jpg";
 
 const NAVY = "#152C4E";
@@ -113,7 +114,7 @@ const Onderhoud = () => (
               <p className="mt-5 text-base md:text-lg leading-relaxed" style={{ color: INK, opacity: 0.85, maxWidth: 560 }}>
                 Verduurzamen stopt niet na de installatie. Een warmtepomp, airco of thuisbatterij blijft het beste werken met regelmatig onderhoud: efficiënter, langere levensduur en minder onverwachte storingen.
               </p>
-              <div className="mt-8">
+              <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
                 <a
                   href="/contact"
                   className="inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
@@ -126,6 +127,7 @@ const Onderhoud = () => (
                 >
                   Plan een gratis gesprek
                 </a>
+                <OfBelOnsCta />
               </div>
             </div>
 
@@ -354,18 +356,21 @@ const Onderhoud = () => (
             >
               Wij houden overzicht op het onderhoud van je installaties en koppelen je aan vakkundige, gecertificeerde uitvoerders. Zo hoef je zelf niet bij te houden wanneer wat aan de beurt is, en blijft je woning zuinig en veilig. Wij verkopen geen onderhoudscontracten, ons advies is onafhankelijk.
             </p>
-            <a
-              href="/contact"
-              className="mt-8 inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
-              style={{
-                backgroundColor: GOLD,
-                color: NAVY,
-                padding: "14px 28px",
-                fontSize: 15,
-              }}
-            >
-              Plan een gratis gesprek
-            </a>
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
+              <a
+                href="/contact"
+                className="inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
+                style={{
+                  backgroundColor: GOLD,
+                  color: NAVY,
+                  padding: "14px 28px",
+                  fontSize: 15,
+                }}
+              >
+                Plan een gratis gesprek
+              </a>
+              <OfBelOnsCta color="#FFFFFF" align="center" />
+            </div>
           </div>
         </div>
       </section>
