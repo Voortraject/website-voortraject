@@ -20,6 +20,7 @@ interface OfBelOnsCtaProps {
  */
 export const OfBelOnsCta = ({ align = "start", color = "#152C4E", className = "" }: OfBelOnsCtaProps) => {
   const alignClass = align === "center" ? "items-center text-center" : "items-start text-left";
+  const dividerColor = color === "#FFFFFF" ? "rgba(255,255,255,0.25)" : "rgba(21,44,78,0.18)";
   return (
     <div
       className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 ${className}`}
@@ -28,13 +29,14 @@ export const OfBelOnsCta = ({ align = "start", color = "#152C4E", className = ""
       <span
         aria-hidden="true"
         className="hidden sm:block"
-        style={{ width: 1, height: 40, backgroundColor: "rgba(21,44,78,0.18)" }}
+        style={{ width: 1, height: 40, backgroundColor: dividerColor }}
       />
       <span
         aria-hidden="true"
         className="sm:hidden"
-        style={{ height: 1, width: "100%", maxWidth: 80, backgroundColor: "rgba(21,44,78,0.18)" }}
+        style={{ height: 1, width: "100%", maxWidth: 80, backgroundColor: dividerColor }}
       />
+
       <a
         href="tel:+31502112689"
         aria-label="Bel ons: 050 211 2689"
