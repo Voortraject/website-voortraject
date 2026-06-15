@@ -181,10 +181,21 @@ export const Header = () => {
                 </a>
               )
             )}
-            <div className="mt-8">
+            <div className="mt-4">
               <Button href="/contact" variant="primary" className="w-full">
                 Contact
               </Button>
+            </div>
+            <div className="mt-3">
+              <a
+                href="tel:+31502112689"
+                aria-label="Bel ons: 050 211 2689"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-base font-semibold transition-colors"
+                style={{ backgroundColor: "#E5E7EB", color: "#152C4E" }}
+              >
+                <Phone size={18} strokeWidth={2} />
+                <span>050 211 2689</span>
+              </a>
             </div>
           </nav>
         </div>
