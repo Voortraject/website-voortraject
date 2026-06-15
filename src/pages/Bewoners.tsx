@@ -3,6 +3,7 @@ import { Check, CheckCircle, ChevronDown, HelpCircle, Compass, LayoutList, BookO
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
+import { OfBelOnsCta } from "@/components/OfBelOnsCta";
 import heroBewoners from "@/assets/bewoners-hero.jpg";
 
 const recognitions = [
@@ -232,7 +233,7 @@ const Bewoners = () => {
                 >
                   Veel bewoners willen wel verduurzamen, maar lopen vast in tegenstrijdige adviezen, lange wachttijden en onduidelijkheid over wat slim is voor hun woning. Wij kijken onafhankelijk mee en helpen je sneller verder naar een duidelijke, uitvoerbare volgende stap.
                 </p>
-                <div className="mt-10">
+                <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
                   <a
                     href="/contact"
                     className={`${ctaButton} w-full sm:w-auto`}
@@ -248,6 +249,7 @@ const Bewoners = () => {
                   >
                     Plan een vrijblijvend gesprek
                   </a>
+                  <OfBelOnsCta />
                 </div>
               </div>
               <div>
@@ -765,20 +767,23 @@ const Bewoners = () => {
             >
               In een gratis gesprek brengen we samen in kaart wat er voor jouw woning mogelijk is, welke regelingen relevant zijn en welke vervolgstap nu logisch is. Geen verplichtingen, geen verkooppraatje.
             </p>
-            <a
-              href="/contact"
-              className={ctaButton}
-              style={{
-                backgroundColor: "#E8B547",
-                color: "#2B2B2B",
-                padding: "14px 32px",
-                borderRadius: 8,
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
-            >
-              Plan een vrijblijvend gesprek
-            </a>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
+              <a
+                href="/contact"
+                className={ctaButton}
+                style={{
+                  backgroundColor: "#E8B547",
+                  color: "#2B2B2B",
+                  padding: "14px 32px",
+                  borderRadius: 8,
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
+              >
+                Plan een vrijblijvend gesprek
+              </a>
+              <OfBelOnsCta color="#FFFFFF" align="center" />
+            </div>
           </div>
         </section>
       </main>

@@ -23,6 +23,7 @@ import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Why } from "@/components/sections/Why";
 import { Footer } from "@/components/Footer";
+import { OfBelOnsCta } from "@/components/OfBelOnsCta";
 import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
 import type { LucideIcon } from "lucide-react";
 
@@ -513,7 +514,7 @@ const Uitvoerders = () => {
                 >
                   Wij nemen bewonerscontact, offerte-opvolging, akkoordtrajecten en nazorg uit handen, zodat jullie minder tijd verliezen aan kantoorwerk en meer focus houden op de uitvoering.
                 </p>
-                <div className="mt-10" style={{ textAlign: "left" }}>
+                <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5" style={{ textAlign: "left" }}>
                   <a
                     href="/contact"
                     className={`${ctaButton} w-full sm:w-auto`}
@@ -529,6 +530,7 @@ const Uitvoerders = () => {
                   >
                     Plan een kennismaking
                   </a>
+                  <OfBelOnsCta />
                 </div>
               </div>
               <div>
@@ -841,20 +843,23 @@ const Uitvoerders = () => {
             >
               Wij nemen het voortraject uit handen. Jullie houden de focus op bouwen.
             </p>
-            <a
-              href="/contact"
-              className={ctaButton}
-              style={{
-                backgroundColor: "#E8B547",
-                color: "#2B2B2B",
-                padding: "14px 32px",
-                borderRadius: 8,
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
-            >
-              Plan een kennismaking
-            </a>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
+              <a
+                href="/contact"
+                className={ctaButton}
+                style={{
+                  backgroundColor: "#E8B547",
+                  color: "#2B2B2B",
+                  padding: "14px 32px",
+                  borderRadius: 8,
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
+              >
+                Plan een kennismaking
+              </a>
+              <OfBelOnsCta color="#FFFFFF" align="center" />
+            </div>
           </div>
         </section>
       </main>
