@@ -43,7 +43,7 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
         style={{ backgroundColor: "rgba(21, 44, 78, 0.95)", backdropFilter: "blur(8px)" }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="container-content flex items-center justify-end h-[72px] border-b border-white/10">
+        <div className="container-content flex items-center justify-end h-[44px]">
           <button
             className="p-2 -mr-2 text-white"
             aria-label="Menu sluiten"
@@ -52,7 +52,7 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
             <X size={24} />
           </button>
         </div>
-        <nav className="container-content flex flex-col gap-1 pt-6 pb-8" aria-label="Mobiele navigatie">
+        <nav className="container-content flex flex-col gap-1 pt-2 pb-6" aria-label="Mobiele navigatie">
           {links.map((l) =>
             l.dropdown ? (
               <div key={l.href} className="border-b border-white/10">
