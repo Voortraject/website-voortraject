@@ -43,8 +43,7 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
         style={{ backgroundColor: "rgba(21, 44, 78, 0.95)", backdropFilter: "blur(8px)" }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="container-content flex items-center justify-between h-[72px] border-b border-white/10">
-          <img src={logoVoortraject} alt="Voortraject" className="h-10 w-auto" />
+        <div className="container-content flex items-center justify-end h-[72px] border-b border-white/10">
           <button
             className="p-2 -mr-2 text-white"
             aria-label="Menu sluiten"
