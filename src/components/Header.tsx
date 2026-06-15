@@ -136,70 +136,7 @@ export const Header = () => {
         </button>
       </div>
 
-      {open && (
-        <div className="fixed inset-0 z-50 bg-background md:hidden flex flex-col animate-fade-up overflow-y-auto">
-          <div className="container-content flex items-center justify-between h-[72px] border-b border-border">
-            <span className="font-display font-semibold text-primary text-[20px]">
-              Voortraject
-            </span>
-            <button
-              className="p-2 -mr-2 text-primary"
-              aria-label="Menu sluiten"
-              onClick={() => setOpen(false)}
-            >
-              <X size={24} />
-            </button>
-          </div>
-          <nav className="container-content flex flex-col gap-2 pt-10" aria-label="Mobiele navigatie">
-            {links.map((l) =>
-              l.dropdown ? (
-                <div key={l.href} className="border-b border-border">
-                  <div className="py-4 text-2xl font-display font-semibold tracking-tight text-foreground">
-                    {l.label}
-                  </div>
-                  <div className="pb-4 pl-2 flex flex-col gap-2">
-                    {l.dropdown.map((s) => (
-                      <a
-                        key={s.href}
-                        href={s.href}
-                        onClick={() => setOpen(false)}
-                        className="py-2 text-lg text-foreground/80"
-                      >
-                        {s.label}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <a
-                  key={l.href}
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  className="py-4 text-2xl font-display font-semibold tracking-tight text-foreground border-b border-border"
-                >
-                  {l.label}
-                </a>
-              )
-            )}
-            <div className="mt-4">
-              <Button href="/contact" variant="primary" className="w-full">
-                Contact
-              </Button>
-            </div>
-            <div className="mt-3">
-              <a
-                href="tel:+31502112689"
-                aria-label="Bel ons: 050 211 2689"
-                className="w-full inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-base font-semibold transition-colors"
-                style={{ backgroundColor: "#E5E7EB", color: "#152C4E" }}
-              >
-                <Phone size={18} strokeWidth={2} />
-                <span>050 211 2689</span>
-              </a>
-            </div>
-          </nav>
-        </div>
-      )}
+      {open && <MobileMenu onClose={() => setOpen(false)} />}
     </header>
   );
 };
