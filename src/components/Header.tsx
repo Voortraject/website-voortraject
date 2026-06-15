@@ -35,7 +35,7 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
   const [openSection, setOpenSection] = useState<string | null>(null);
   return (
     <div
-      className="fixed inset-0 z-50 md:hidden flex flex-col animate-fade-up"
+      className="fixed inset-0 z-50 lg:hidden flex flex-col animate-fade-up"
       onClick={onClose}
     >
       <div
@@ -146,7 +146,7 @@ export const Header = () => {
           <img src={logoVoortraject} alt="Voortraject" className="h-12 w-auto" />
         </a>
 
-        <nav className="hidden md:flex items-center gap-5 lg:gap-8 shrink-0 ml-auto" aria-label="Hoofdnavigatie">
+        <nav className="hidden lg:flex items-center gap-5 lg:gap-8 shrink-0 ml-auto" aria-label="Hoofdnavigatie">
           {links.map((l) => {
             const pathname = typeof window !== "undefined" ? window.location.pathname : "";
             const active = l.dropdown
@@ -215,7 +215,7 @@ export const Header = () => {
         </nav>
 
         <button
-          className="md:hidden p-2 -mr-2 text-white min-w-[44px] min-h-[44px] flex items-center justify-center"
+          className="lg:hidden p-2 -mr-2 text-white min-w-[44px] min-h-[44px] flex items-center justify-center"
           aria-label="Menu openen"
           aria-expanded={open}
           onClick={() => setOpen(true)}
