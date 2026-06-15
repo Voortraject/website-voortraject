@@ -530,7 +530,7 @@ const Uitvoerders = () => {
                   >
                     Plan een kennismaking
                   </a>
-                  <OfBelOnsCta />
+                  
                 </div>
               </div>
               <div>

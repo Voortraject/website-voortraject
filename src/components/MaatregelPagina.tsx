@@ -245,7 +245,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
                   <PrimaryButton href={heroCtaHref}>{heroCtaLabel}</PrimaryButton>
-                  <OfBelOnsCta />
+                  
                 </div>
               </div>
               {heroImageSrc && (

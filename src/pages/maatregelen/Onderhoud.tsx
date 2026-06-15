@@ -127,7 +127,7 @@ const Onderhoud = () => (
                 >
                   Plan een gratis gesprek
                 </a>
-                <OfBelOnsCta />
+                
               </div>
             </div>
 

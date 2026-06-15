@@ -249,7 +249,7 @@ const Bewoners = () => {
                   >
                     Plan een vrijblijvend gesprek
                   </a>
-                  <OfBelOnsCta />
+                  
                 </div>
               </div>
               <div>
