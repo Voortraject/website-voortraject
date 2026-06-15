@@ -435,7 +435,6 @@ const Contact = () => {
         </div>
 
         <div className="mx-auto px-6 md:px-12 mt-8 md:mt-10" style={{ maxWidth: 1200 }}>
-        <div className="mx-auto px-6 md:px-12" style={{ maxWidth: 1200 }}>
           <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 md:gap-10 lg:gap-12 items-start">
             <div
               style={{
