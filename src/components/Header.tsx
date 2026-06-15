@@ -39,20 +39,18 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
       onClick={onClose}
     >
       <div
-        className="flex flex-col max-h-full overflow-y-auto"
+        className="relative flex flex-col max-h-full overflow-y-auto"
         style={{ backgroundColor: "rgba(21, 44, 78, 0.95)", backdropFilter: "blur(8px)" }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="container-content flex items-center justify-end h-[72px] border-b border-white/10">
-          <button
-            className="p-2 -mr-2 text-white"
-            aria-label="Menu sluiten"
-            onClick={onClose}
-          >
-            <X size={24} />
-          </button>
-        </div>
-        <nav className="container-content flex flex-col gap-1 pt-6 pb-8" aria-label="Mobiele navigatie">
+        <button
+          className="absolute top-3 right-3 p-2 text-white z-10"
+          aria-label="Menu sluiten"
+          onClick={onClose}
+        >
+          <X size={24} />
+        </button>
+        <nav className="container-content flex flex-col gap-1 pt-3 pb-6" aria-label="Mobiele navigatie">
           {links.map((l) =>
             l.dropdown ? (
               <div key={l.href} className="border-b border-white/10">
