@@ -86,13 +86,13 @@ export const Subsidies = () => {
 
         <div
           ref={gridRef}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 subsidies-grid"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 subsidies-grid sm:[&>*:last-child:nth-child(odd)]:col-span-2 sm:[&>*:last-child:nth-child(odd)]:max-w-[calc(50%-0.75rem)] sm:[&>*:last-child:nth-child(odd)]:mx-auto lg:[&>*:last-child:nth-child(odd)]:col-span-1 lg:[&>*:last-child:nth-child(odd)]:max-w-none"
         >
           {cards.map((c, i) => (
             <a
               key={c.naam}
               href={c.href}
-              className="subsidy-card group rounded-2xl p-10 md:p-12 flex flex-col"
+              className="subsidy-card group rounded-2xl p-8 md:p-10 lg:p-12 flex flex-col"
               style={{
                 backgroundColor: "#FFFFFF",
                 border: "1px solid rgba(229, 201, 103, 0.5)",

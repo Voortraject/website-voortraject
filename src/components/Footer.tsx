@@ -45,7 +45,7 @@ const navCols = [
 export const Footer = () => (
   <footer className="text-white" style={{ backgroundColor: "#152C4E" }}>
     <div className="container-content md:py-20 py-[40px]">
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-10 lg:gap-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
         <div>
           <img src={logoVoortraject} alt="Voortraject" className="h-14 w-auto" />
           <p className="mt-4 text-sm leading-relaxed text-white/80 max-w-xs">
@@ -74,11 +74,11 @@ export const Footer = () => (
         ))}
       </div>
 
-      <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
         <p className="text-xs text-white/60">
           © 2026 Voortraject. Alle rechten voorbehouden.
         </p>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
           <a
             href="/privacy"
             className="text-sm text-white/80 hover:text-accent transition-colors"
