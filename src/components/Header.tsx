@@ -102,6 +102,14 @@ export const Header = () => {
             );
           })}
           <a
+            href="tel:+31502112689"
+            aria-label="Bel ons: 050 211 2689"
+            className="hidden lg:inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[14px] font-semibold transition-colors hover:bg-white/90"
+            style={{ backgroundColor: "#E5E7EB", color: "#152C4E" }}
+          >
+            <Phone size={16} strokeWidth={2} />
+            <span>050 211 2689</span>
+          </a>
             href="/contact"
             aria-label="Contact"
             className="relative overflow-hidden inline-flex items-center justify-center rounded-full py-3 px-6 text-base font-semibold"
