@@ -1,3 +1,5 @@
+import teamAsset from "@/assets/team-transparent.png.asset.json";
+
 export const AboutTeam = () => {
   return (
     <section style={{ backgroundColor: "#FBFAF7", padding: "80px 0" }}>
@@ -12,7 +14,7 @@ export const AboutTeam = () => {
           {/* Left: image */}
           <div className="w-full md:w-1/2">
             <img
-              src="/team.jpg"
+              src={teamAsset.url}
               alt="Team Voortraject"
               className="w-full"
               style={{
