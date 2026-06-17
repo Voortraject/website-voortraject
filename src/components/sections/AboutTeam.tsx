@@ -1,4 +1,4 @@
-import teamAsset from "@/assets/team-transparent.png.asset.json";
+import teamAsset from "@/assets/team-transparent.webp.asset.json";
 
 export const AboutTeam = () => {
   return (
