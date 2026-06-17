@@ -1,4 +1,5 @@
-import teamAsset from "@/assets/team-transparent.webp.asset.json";
+const TEAM_IMAGE_URL =
+  "https://lfelnfukbrxznkevnevr.supabase.co/storage/v1/object/public/Personen/Groepsfoto%20Voortraject%20transparant.webp";
 
 export const AboutTeam = () => {
   return (
@@ -14,7 +15,7 @@ export const AboutTeam = () => {
           {/* Left: image */}
           <div className="w-full md:w-1/2">
             <img
-              src={teamAsset.url}
+              src={TEAM_IMAGE_URL}
               alt="Team Voortraject"
               className="w-full h-auto"
               style={{
