@@ -16,7 +16,7 @@ export const AboutTeam = () => {
             <img
               src={teamAsset.url}
               alt="Team Voortraject"
-              className="w-full"
+              className="w-full h-auto"
               style={{
                 borderRadius: 12,
                 display: "block",
