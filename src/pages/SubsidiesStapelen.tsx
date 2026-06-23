@@ -410,36 +410,38 @@ const SubsidiesStapelen = () => {
         </div>
       </section>
 
-      {/* 5. FOOTER-CTA — donkerblauw */}
-      <section style={{ backgroundColor: C.primary }} className="py-20">
-        <div className="container-content" style={{ maxWidth: 600, textAlign: "center" }}>
-          <h2
-            className="font-display"
-            style={{
-              color: "#FFFFFF",
-              fontWeight: 700,
-              fontSize: "clamp(26px, 3.6vw, 36px)",
-              letterSpacing: "-0.02em",
-              lineHeight: 1.2,
-            }}
-          >
-            Benieuwd wat jij kunt stapelen?
-          </h2>
-          <p style={{ color: "rgba(255,255,255,0.8)", fontSize: 16, lineHeight: 1.65, marginTop: 18 }}>
-            In een gratis gesprek zoeken we uit welke regelingen je voor jouw woning kunt combineren.
-          </p>
-          <div style={{ marginTop: 26 }}>
-            <a href="/contact" style={goldBtn}>
-              Plan een gratis adviesgesprek
-            </a>
-          </div>
-          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, marginTop: 28 }}>
-            Laatst bijgewerkt: {LAATST_BIJGEWERKT}
-          </p>
-        </div>
-      </section>
-
-      <Footer />
+      <Footer
+        cta={
+          /* 5. FOOTER-CTA — donkerblauw */
+          <section className="py-20">
+            <div className="container-content" style={{ maxWidth: 600, textAlign: "center" }}>
+              <h2
+                className="font-display"
+                style={{
+                  color: "#FFFFFF",
+                  fontWeight: 700,
+                  fontSize: "clamp(26px, 3.6vw, 36px)",
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1.2,
+                }}
+              >
+                Benieuwd wat jij kunt stapelen?
+              </h2>
+              <p style={{ color: "rgba(255,255,255,0.8)", fontSize: 16, lineHeight: 1.65, marginTop: 18 }}>
+                In een gratis gesprek zoeken we uit welke regelingen je voor jouw woning kunt combineren.
+              </p>
+              <div style={{ marginTop: 26 }}>
+                <a href="/contact" style={goldBtn}>
+                  Plan een gratis adviesgesprek
+                </a>
+              </div>
+              <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, marginTop: 28 }}>
+                Laatst bijgewerkt: {LAATST_BIJGEWERKT}
+              </p>
+            </div>
+          </section>
+        }
+      />
     </div>
   );
 };

@@ -956,28 +956,31 @@ const SubsidiesLandelijk = () => {
           </div>
         </section>
 
-        {/* SECTIE 9: FOOTER CTA — donkerblauw, compact */}
-        <section style={{ backgroundColor: C.primary }} className="py-16 md:py-20">
-          <div className="mx-auto px-6 text-center" style={{ maxWidth: 600 }}>
-            <h2
-              className="font-display"
-              style={{ color: "#fff", fontWeight: 700, fontSize: "clamp(26px, 3.5vw, 36px)", lineHeight: 1.2 }}
-            >
-              Wil je sneller verder met je verduurzaming?
-            </h2>
-            <p style={{ marginTop: 16, color: "rgba(255,255,255,0.8)", fontSize: 16, lineHeight: 1.6 }}>
-              Neem contact op. Wij rekenen voor jouw woning uit wat je via ISDE kunt krijgen, en hoe je optimaal combineert. Geen verplichtingen, geen verkooppraatje.
-            </p>
-            <div className="mt-8">
-              <PrimaryBtn href="/contact">Neem contact op</PrimaryBtn>
-            </div>
-            <p style={{ marginTop: 24, color: "rgba(255,255,255,0.5)", fontSize: 12 }}>
-              Laatst bijgewerkt: {LAATST_BIJGEWERKT}
-            </p>
-          </div>
-        </section>
       </main>
-      <Footer />
+      <Footer
+        cta={
+          /* SECTIE 9: FOOTER CTA — donkerblauw, compact */
+          <section className="py-16 md:py-20">
+            <div className="mx-auto px-6 text-center" style={{ maxWidth: 600 }}>
+              <h2
+                className="font-display"
+                style={{ color: "#fff", fontWeight: 700, fontSize: "clamp(26px, 3.5vw, 36px)", lineHeight: 1.2 }}
+              >
+                Wil je sneller verder met je verduurzaming?
+              </h2>
+              <p style={{ marginTop: 16, color: "rgba(255,255,255,0.8)", fontSize: 16, lineHeight: 1.6 }}>
+                Neem contact op. Wij rekenen voor jouw woning uit wat je via ISDE kunt krijgen, en hoe je optimaal combineert. Geen verplichtingen, geen verkooppraatje.
+              </p>
+              <div className="mt-8">
+                <PrimaryBtn href="/contact">Neem contact op</PrimaryBtn>
+              </div>
+              <p style={{ marginTop: 24, color: "rgba(255,255,255,0.5)", fontSize: 12 }}>
+                Laatst bijgewerkt: {LAATST_BIJGEWERKT}
+              </p>
+            </div>
+          </section>
+        }
+      />
     </div>
   );
 };

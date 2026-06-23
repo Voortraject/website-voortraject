@@ -190,6 +190,55 @@
   }
 }
 
+/* Ambient oker glow — one large, soft warm wash that slowly drifts across the
+   dark closing/footer panel (hotspot orbits the area), the way De Duurzame
+   Jongens' footer gradient moves. Two big overlapping layers keep it organic.
+   Rendered once behind the closing CTA + Footer so they read as one whole. */
+.ambient-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  /* Screen blend so the oker adds light (like a lamp) instead of muddy-mixing
+     with the navy — keeps the colour vivid (fel) rather than greyish. */
+  mix-blend-mode: screen;
+}
+
+/* A few large, soft blooms anchored at different spots across the whole panel
+   (top-right, mid-left, lower-centre — partly past the edges so the light comes
+   in from the corners). Each fades up and away on a staggered timer, so the
+   glow appears in one place, disappears, then re-appears somewhere else — using
+   the full width instead of pulsing from the middle. Only one or two are lit at
+   a time, so large areas stay pure deep navy (matching the header). */
+.ambient-glow span {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, hsl(44 98% 60% / 0.55), transparent 100%);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.85);
+  will-change: opacity, transform;
+  animation: ambient-bloom 21s ease-in-out infinite;
+}
+
+.ambient-glow span:nth-child(1) { width: 48%; height: 70%; left: 92%;  top: 6%;   animation-delay: 0s;  }
+.ambient-glow span:nth-child(2) { width: 44%; height: 64%; left: 6%;   top: 54%;  animation-delay: 7s;  }
+.ambient-glow span:nth-child(3) { width: 50%; height: 72%; left: 62%;  top: 104%; animation-delay: 14s; }
+
+@keyframes ambient-bloom {
+  0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+  33%      { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+  48%      { opacity: 0; transform: translate(-50%, -50%) scale(1.18); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-glow span {
+    animation: none;
+    opacity: 0.28;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
 /* Card-grid hover effect (desktop only, with hover-capable pointer) */
 @media (hover: hover) and (pointer: fine) {
   .card-grid .card {

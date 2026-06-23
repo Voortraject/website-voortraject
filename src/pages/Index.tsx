@@ -27,9 +27,8 @@ const Index = () => {
         <AboutTeam />
         <Subsidies />
         <Faq />
-        <ClosingCta />
       </main>
-      <Footer />
+      <Footer cta={<ClosingCta />} />
     </div>
   );
 };

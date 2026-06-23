@@ -208,55 +208,57 @@ const OverOns = () => {
 
 
 
-        {/* CTA */}
-
-        <section className="py-[60px]" style={{ backgroundColor: "#152C4E" }}>
-          <div className="container-content text-center flex flex-col items-center">
-            <h2
-              className="font-display"
-              style={{
-                fontWeight: 600,
-                fontSize: "clamp(28px, 4.5vw, 40px)",
-                color: "#FFFFFF",
-                letterSpacing: "-0.02em",
-                lineHeight: 1.2,
-                marginBottom: 16,
-              }}
-            >
-              Wil je weten wie je aan de lijn krijgt?
-            </h2>
-            <p
-              style={{
-                color: "#FFFFFF",
-                opacity: 0.8,
-                fontSize: 17,
-                lineHeight: 1.6,
-                maxWidth: 640,
-                marginBottom: 32,
-              }}
-            >
-              Plan een vrijblijvende kennismaking. We vertellen je precies wie wat doet en hoe een traject eruitziet.
-            </p>
-            <a
-              href="/contact"
-              className="font-sans font-semibold transition-colors text-center w-full sm:w-auto inline-flex items-center justify-center"
-              style={{
-                backgroundColor: "#E8B547",
-                color: "#2B2B2B",
-                padding: "14px 32px",
-                borderRadius: 8,
-                fontSize: 15,
-                minHeight: 44,
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
-            >
-              Plan een kennismaking
-            </a>
-          </div>
-        </section>
       </main>
-      <Footer />
+      <Footer
+        cta={
+          /* CTA */
+          <section className="py-[60px] text-primary-foreground">
+            <div className="container-content text-center flex flex-col items-center">
+              <h2
+                className="font-display"
+                style={{
+                  fontWeight: 600,
+                  fontSize: "clamp(28px, 4.5vw, 40px)",
+                  color: "#FFFFFF",
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1.2,
+                  marginBottom: 16,
+                }}
+              >
+                Wil je weten wie je aan de lijn krijgt?
+              </h2>
+              <p
+                style={{
+                  color: "#FFFFFF",
+                  opacity: 0.8,
+                  fontSize: 17,
+                  lineHeight: 1.6,
+                  maxWidth: 640,
+                  marginBottom: 32,
+                }}
+              >
+                Plan een vrijblijvende kennismaking. We vertellen je precies wie wat doet en hoe een traject eruitziet.
+              </p>
+              <a
+                href="/contact"
+                className="font-sans font-semibold transition-colors text-center w-full sm:w-auto inline-flex items-center justify-center"
+                style={{
+                  backgroundColor: "#E8B547",
+                  color: "#2B2B2B",
+                  padding: "14px 32px",
+                  borderRadius: 8,
+                  fontSize: 15,
+                  minHeight: 44,
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
+              >
+                Plan een kennismaking
+              </a>
+            </div>
+          </section>
+        }
+      />
     </div>
   );
 };
