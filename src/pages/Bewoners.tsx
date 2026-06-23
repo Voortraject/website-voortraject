@@ -735,59 +735,59 @@ const Bewoners = () => {
           </div>
         </section>
 
-        {/* 9. SLUIT-CTA */}
-        <section
-          className="text-primary-foreground py-[56px] md:py-[80px]"
-          style={{ backgroundColor: "#152C4E" }}
-        >
-          <div className="container-content text-center flex flex-col items-center">
-            <h2
-              className="font-display"
-              style={{
-                fontWeight: 600,
-                fontSize: "clamp(32px, 5vw, 44px)",
-                color: "#FFFFFF",
-                letterSpacing: "-0.02em",
-                lineHeight: 1.2,
-                maxWidth: 820,
-                marginBottom: 20,
-              }}
-            >
-              Snel duidelijkheid voor jouw woning
-            </h2>
-            <p
-              style={{
-                color: "#FFFFFF",
-                opacity: 0.9,
-                fontSize: 17,
-                lineHeight: 1.6,
-                maxWidth: 760,
-                marginBottom: 36,
-              }}
-            >
-              In een gratis gesprek brengen we samen in kaart wat er voor jouw woning mogelijk is, welke regelingen relevant zijn en welke vervolgstap nu logisch is. Geen verplichtingen, geen verkooppraatje.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
-              <a
-                href="/contact"
-                className={ctaButton}
-                style={{
-                  backgroundColor: "#E8B547",
-                  color: "#2B2B2B",
-                  padding: "14px 32px",
-                  borderRadius: 8,
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
-              >
-                Plan een vrijblijvend gesprek
-              </a>
-              <OfBelOnsCta color="#FFFFFF" align="center" />
-            </div>
-          </div>
-        </section>
       </main>
-      <Footer />
+      <Footer
+        cta={
+          /* 9. SLUIT-CTA */
+          <section className="text-primary-foreground py-[56px] md:py-[80px]">
+            <div className="container-content text-center flex flex-col items-center">
+              <h2
+                className="font-display"
+                style={{
+                  fontWeight: 600,
+                  fontSize: "clamp(32px, 5vw, 44px)",
+                  color: "#FFFFFF",
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1.2,
+                  maxWidth: 820,
+                  marginBottom: 20,
+                }}
+              >
+                Snel duidelijkheid voor jouw woning
+              </h2>
+              <p
+                style={{
+                  color: "#FFFFFF",
+                  opacity: 0.9,
+                  fontSize: 17,
+                  lineHeight: 1.6,
+                  maxWidth: 760,
+                  marginBottom: 36,
+                }}
+              >
+                In een gratis gesprek brengen we samen in kaart wat er voor jouw woning mogelijk is, welke regelingen relevant zijn en welke vervolgstap nu logisch is. Geen verplichtingen, geen verkooppraatje.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
+                <a
+                  href="/contact"
+                  className={ctaButton}
+                  style={{
+                    backgroundColor: "#E8B547",
+                    color: "#2B2B2B",
+                    padding: "14px 32px",
+                    borderRadius: 8,
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
+                >
+                  Plan een vrijblijvend gesprek
+                </a>
+                <OfBelOnsCta color="#FFFFFF" align="center" />
+              </div>
+            </div>
+          </section>
+        }
+      />
     </div>
   );
 };

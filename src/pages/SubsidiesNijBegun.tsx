@@ -1001,36 +1001,38 @@ const SubsidiesNijBegun = () => {
         </div>
       </section>
 
-      {/* 9. FOOTER-CTA */}
-      <section style={{ backgroundColor: C.primary }} className="py-20">
-        <div className="container-content">
-          <div className="text-center mx-auto" style={{ maxWidth: 600 }}>
-            <h2
-              className="font-display"
-              style={{
-                fontWeight: 700,
-                fontSize: "clamp(28px, 4vw, 40px)",
-                letterSpacing: "-0.02em",
-                lineHeight: 1.15,
-                color: "#fff",
-              }}
-            >
-              Ontdek welke stap voor jou logisch is.
-            </h2>
-            <p style={{ fontSize: 17, lineHeight: 1.6, marginTop: 16, color: "rgba(255,255,255,0.8)" }}>
-              Neem contact op. Een lokale adviseur komt persoonlijk langs binnen een week. Geen verplichtingen, geen verkooppraatje.
-            </p>
-            <a href="/contact" style={{ ...goldBtn, marginTop: 24 }}>
-              Ik wil gebeld worden
-            </a>
-          </div>
-          <p className="text-center mt-12" style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
-            Laatst bijgewerkt: {LAATST_BIJGEWERKT}
-          </p>
-        </div>
-      </section>
-
-      <Footer />
+      <Footer
+        cta={
+          /* 9. FOOTER-CTA */
+          <section className="py-20">
+            <div className="container-content">
+              <div className="text-center mx-auto" style={{ maxWidth: 600 }}>
+                <h2
+                  className="font-display"
+                  style={{
+                    fontWeight: 700,
+                    fontSize: "clamp(28px, 4vw, 40px)",
+                    letterSpacing: "-0.02em",
+                    lineHeight: 1.15,
+                    color: "#fff",
+                  }}
+                >
+                  Ontdek welke stap voor jou logisch is.
+                </h2>
+                <p style={{ fontSize: 17, lineHeight: 1.6, marginTop: 16, color: "rgba(255,255,255,0.8)" }}>
+                  Neem contact op. Een lokale adviseur komt persoonlijk langs binnen een week. Geen verplichtingen, geen verkooppraatje.
+                </p>
+                <a href="/contact" style={{ ...goldBtn, marginTop: 24 }}>
+                  Ik wil gebeld worden
+                </a>
+              </div>
+              <p className="text-center mt-12" style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
+                Laatst bijgewerkt: {LAATST_BIJGEWERKT}
+              </p>
+            </div>
+          </section>
+        }
+      />
     </div>
   );
 };

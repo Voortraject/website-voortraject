@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import logoVoortraject from "@/assets/logo-voortraject.png";
 
 const navCols = [
@@ -42,9 +43,23 @@ const navCols = [
   },
 ];
 
-export const Footer = () => (
-  <footer className="text-white" style={{ backgroundColor: "#152C4E" }}>
-    <div className="container-content md:py-20 py-[40px]">
+/**
+ * Site footer with the ambient oker glow behind it.
+ *
+ * Pass a page's closing CTA via `cta` so it renders *inside* the same dark,
+ * glowing container as the footer — the CTA and footer then read as one
+ * continuous whole (no seam). The CTA content should be background-less; the
+ * dark `bg-primary` + glow comes from here.
+ */
+export const Footer = ({ cta }: { cta?: ReactNode }) => (
+  <footer className="relative overflow-hidden bg-primary text-white">
+    <div className="ambient-glow" aria-hidden="true">
+      <span />
+      <span />
+      <span />
+    </div>
+    {cta && <div className="relative z-10">{cta}</div>}
+    <div className="container-content md:py-20 py-[40px] relative z-10">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
         <div>
           <img src={logoVoortraject} alt="Voortraject" className="h-14 w-auto" />

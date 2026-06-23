@@ -41,11 +41,28 @@
 - **Analytics / consent (live on the site):** Google Tag Manager (`GTM-P6W5MNN4`),
   Axeptio cookie consent, Microsoft Clarity (loaded only after consent via Google Consent
   Mode). Respect consent gating — do not load trackers before the user's choice.
-- **Design:** "Institutional B2B" house style — calm, trustworthy. Colors are **HSL design
-  tokens** in `src/index.css`, mapped in `tailwind.config.ts`. Core palette: `--primary`
-  deep ink blue `#152C4E`, `--accent` mustard `#E8B547`, `--background` off-white `#FBFAF7`,
-  `--secondary` sand `#F0E4D0`, `--foreground` near-black `#2B2B2B`. Always use these tokens;
-  **never hardcode hex colors.** Fonts: Inter / Inter Tight / Manrope / JetBrains Mono.
+- **Design ("huisstijl"):** "Institutional B2B" house style — calm, trustworthy. Colors are
+  **HSL design tokens** in `src/index.css`, mapped in `tailwind.config.ts`. Always use these
+  tokens; **never hardcode hex colors.** Full palette:
+  - **Primary / brand**
+    - `--primary` deep ink blue `#152C4E` → headings, header, buttons
+    - `--accent` mustard/oker `#E8B547` → highlights, CTAs, accents
+    - `--accent-hover` oker hover `#D9A538`
+  - **Background & neutral**
+    - `--background` off-white `#FBFAF7` → page background
+    - `--secondary` sand `#F0E4D0` → subtle surfaces
+    - `--card` white `#FFFFFF` → cards
+    - `--card-soft` cream `#FAF5EC` → soft card background
+    - `--border` `#E5E2DB` → lines and borders
+  - **Text**
+    - `--foreground` near-black `#2B2B2B` → body text
+    - `--muted-foreground` muted `~#6B6B6B` → subtle text
+  - **Fonts** (loaded in `index.html` from Google Fonts):
+    - **Manrope** (300–800) → default for almost everything: body, buttons, labels, nav
+      (set as `font-sans` / `font-display`, default in `src/index.css` + Tailwind)
+    - **Inter Tight** (Inter as fallback) → large headings/heroes only:
+      `.h1-hero`, `.h2-section`, `.h3-block`
+    - **JetBrains Mono** (400/500) → monospace; loaded but barely used (code samples)
 - **Routing & SEO:** `react-router-dom` (multi-route SPA), `react-helmet-async` for per-page
   meta, and a generated `sitemap.xml` (`scripts/generate-sitemap.ts`, runs on dev/build).
 - **Forms:** `react-hook-form` + `zod` validation.

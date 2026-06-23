@@ -491,46 +491,49 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
           </div>
         </SectionBlock>
 
-        <section className="w-full py-16 md:py-20" style={{ backgroundColor: NAVY }}>
-          <div className="mx-auto max-w-[760px] px-6 text-center">
-            <h2
-              className="font-display"
-              style={{
-                color: WHITE,
-                fontWeight: 700,
-                fontSize: "clamp(26px, 3.2vw, 36px)",
-                lineHeight: 1.2,
-                letterSpacing: "-0.02em",
-                margin: 0,
-              }}
-            >
-              {renderAccented(finalCtaKop)}
-            </h2>
-            <p
-              className="mt-4 text-base md:text-lg leading-relaxed"
-              style={{ color: WHITE, opacity: 0.85 }}
-            >
-              {finalCtaTekst}
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
-              <a
-                href={finalCtaHref}
-                className="inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
+      </main>
+      <Footer
+        cta={
+          <section className="w-full py-16 md:py-20">
+            <div className="mx-auto max-w-[760px] px-6 text-center">
+              <h2
+                className="font-display"
                 style={{
-                  backgroundColor: GOLD,
-                  color: NAVY,
-                  padding: "14px 28px",
-                  fontSize: 15,
+                  color: WHITE,
+                  fontWeight: 700,
+                  fontSize: "clamp(26px, 3.2vw, 36px)",
+                  lineHeight: 1.2,
+                  letterSpacing: "-0.02em",
+                  margin: 0,
                 }}
               >
-                {finalCtaLabel}
-              </a>
-              <OfBelOnsCta color="#FFFFFF" align="center" />
+                {renderAccented(finalCtaKop)}
+              </h2>
+              <p
+                className="mt-4 text-base md:text-lg leading-relaxed"
+                style={{ color: WHITE, opacity: 0.85 }}
+              >
+                {finalCtaTekst}
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
+                <a
+                  href={finalCtaHref}
+                  className="inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
+                  style={{
+                    backgroundColor: GOLD,
+                    color: NAVY,
+                    padding: "14px 28px",
+                    fontSize: 15,
+                  }}
+                >
+                  {finalCtaLabel}
+                </a>
+                <OfBelOnsCta color="#FFFFFF" align="center" />
+              </div>
             </div>
-          </div>
-        </section>
-      </main>
-      <Footer />
+          </section>
+        }
+      />
     </div>
   );
 };

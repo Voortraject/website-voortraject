@@ -812,58 +812,58 @@ const Uitvoerders = () => {
           </div>
         </section>
 
-        {/* SLUIT-CTA */}
-        <section
-          className="text-primary-foreground py-[56px] md:py-[80px]"
-          style={{ backgroundColor: "#152C4E" }}
-        >
-          <div className="container-content text-center flex flex-col items-center">
-            <h2
-              className="font-display"
-              style={{
-                fontWeight: 600,
-                fontSize: "clamp(28px, 4.5vw, 44px)",
-                color: "#FFFFFF",
-                letterSpacing: "-0.02em",
-                lineHeight: 1.2,
-                maxWidth: 900,
-                marginBottom: 20,
-              }}
-            >
-              Wil je sneller van aanvraag naar uitvoering, zonder extra kantoorlast?
-            </h2>
-            <p
-              style={{
-                color: "rgba(255,255,255,0.85)",
-                fontSize: 17,
-                lineHeight: 1.6,
-                maxWidth: 760,
-                marginBottom: 32,
-              }}
-            >
-              Wij nemen het voortraject uit handen. Jullie houden de focus op bouwen.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
-              <a
-                href="/contact"
-                className={ctaButton}
-                style={{
-                  backgroundColor: "#E8B547",
-                  color: "#2B2B2B",
-                  padding: "14px 32px",
-                  borderRadius: 8,
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
-              >
-                Plan een kennismaking
-              </a>
-              <OfBelOnsCta color="#FFFFFF" align="center" />
-            </div>
-          </div>
-        </section>
       </main>
-      <Footer />
+      <Footer
+        cta={
+          /* SLUIT-CTA */
+          <section className="text-primary-foreground py-[56px] md:py-[80px]">
+            <div className="container-content text-center flex flex-col items-center">
+              <h2
+                className="font-display"
+                style={{
+                  fontWeight: 600,
+                  fontSize: "clamp(28px, 4.5vw, 44px)",
+                  color: "#FFFFFF",
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1.2,
+                  maxWidth: 900,
+                  marginBottom: 20,
+                }}
+              >
+                Wil je sneller van aanvraag naar uitvoering, zonder extra kantoorlast?
+              </h2>
+              <p
+                style={{
+                  color: "rgba(255,255,255,0.85)",
+                  fontSize: 17,
+                  lineHeight: 1.6,
+                  maxWidth: 760,
+                  marginBottom: 32,
+                }}
+              >
+                Wij nemen het voortraject uit handen. Jullie houden de focus op bouwen.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
+                <a
+                  href="/contact"
+                  className={ctaButton}
+                  style={{
+                    backgroundColor: "#E8B547",
+                    color: "#2B2B2B",
+                    padding: "14px 32px",
+                    borderRadius: 8,
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
+                >
+                  Plan een kennismaking
+                </a>
+                <OfBelOnsCta color="#FFFFFF" align="center" />
+              </div>
+            </div>
+          </section>
+        }
+      />
     </div>
   );
 };
