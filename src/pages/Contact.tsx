@@ -47,10 +47,10 @@ const contactRows = [
 ];
 
 const belVoorkeurOpties = [
-  "Ochtend (9:00 – 12:00)",
-  "Middag (12:00 – 17:00)",
-  "Avond (17:00 – 20:00)",
-  "Geen voorkeur",
+  "Per e-mail",
+  "Telefonisch: Ochtend",
+  "Telefonisch: Middag",
+  "Telefonisch: Avond",
 ];
 
 const initialBewoner = {
@@ -288,8 +288,8 @@ const Contact = () => {
         const beltijd = bewoner.bel_voorkeur.trim();
         const opmerkingen = escapeHtml(bewoner.vragen.trim());
         let notities: string | null = null;
-        if (beltijd && opmerkingen) notities = `Voorkeur beltijd: ${beltijd}\n${opmerkingen}`;
-        else if (beltijd) notities = `Voorkeur beltijd: ${beltijd}`;
+        if (beltijd && opmerkingen) notities = `Voorkeur voor contact: ${beltijd}\n${opmerkingen}`;
+        else if (beltijd) notities = `Voorkeur voor contact: ${beltijd}`;
         else if (opmerkingen) notities = opmerkingen;
 
         const { error } = await supabase.from("leads_bewoners").insert({
@@ -542,41 +542,43 @@ const Contact = () => {
                           />
                           <FieldError name="naam_contactpersoon" />
                         </div>
-                        <div className={fieldWrap}>
-                          <label htmlFor="f-email-u" className={labelClass}>E-mailadres{required}</label>
-                          <input
-                            id="f-email-u"
-                            name="email"
-                            type="email"
-                            aria-required="true"
-                            aria-invalid={!!errors.email}
-                            aria-describedby={errors.email ? errId("email") : emailWarning ? "email-tip" : undefined}
-                            className={inputCls("email")}
-                            value={uitvoerder.email}
-                            onChange={onChangeUit("email")}
-                            maxLength={255}
-                          />
-                          <FieldError name="email" />
-                          {!errors.email && emailWarning && (
-                            <p id="email-tip" className="font-sans mt-1.5 text-[13px]" style={{ color: "#92400e" }}>
-                              {emailWarning}
-                            </p>
-                          )}
-                        </div>
-                        <div className={fieldWrap}>
-                          <label htmlFor="f-tel-u" className={labelClass}>Telefoonnummer{required}</label>
-                          <input
-                            id="f-tel-u"
-                            name="telefoonnummer"
-                            type="tel"
-                            aria-required="true"
-                            aria-invalid={!!errors.telefoonnummer}
-                            aria-describedby={errors.telefoonnummer ? errId("telefoonnummer") : undefined}
-                            className={inputCls("telefoonnummer")}
-                            value={uitvoerder.telefoonnummer}
-                            onChange={onChangeUit("telefoonnummer")}
-                          />
-                          <FieldError name="telefoonnummer" />
+                        <div className={cx("grid grid-cols-1 sm:grid-cols-2 gap-4", fieldWrap)}>
+                          <div>
+                            <label htmlFor="f-email-u" className={labelClass}>E-mailadres{required}</label>
+                            <input
+                              id="f-email-u"
+                              name="email"
+                              type="email"
+                              aria-required="true"
+                              aria-invalid={!!errors.email}
+                              aria-describedby={errors.email ? errId("email") : emailWarning ? "email-tip" : undefined}
+                              className={inputCls("email")}
+                              value={uitvoerder.email}
+                              onChange={onChangeUit("email")}
+                              maxLength={255}
+                            />
+                            <FieldError name="email" />
+                            {!errors.email && emailWarning && (
+                              <p id="email-tip" className="font-sans mt-1.5 text-[13px]" style={{ color: "#92400e" }}>
+                                {emailWarning}
+                              </p>
+                            )}
+                          </div>
+                          <div>
+                            <label htmlFor="f-tel-u" className={labelClass}>Telefoonnummer{required}</label>
+                            <input
+                              id="f-tel-u"
+                              name="telefoonnummer"
+                              type="tel"
+                              aria-required="true"
+                              aria-invalid={!!errors.telefoonnummer}
+                              aria-describedby={errors.telefoonnummer ? errId("telefoonnummer") : undefined}
+                              className={inputCls("telefoonnummer")}
+                              value={uitvoerder.telefoonnummer}
+                              onChange={onChangeUit("telefoonnummer")}
+                            />
+                            <FieldError name="telefoonnummer" />
+                          </div>
                         </div>
                         <div className={fieldWrap}>
                           <label htmlFor="f-vragen-u" className={labelClass}>Vragen of opmerkingen{optional}</label>
@@ -620,36 +622,38 @@ const Contact = () => {
                           />
                           <FieldError name="naam" />
                         </div>
-                        <div className={fieldWrap}>
-                          <label htmlFor="f-email-b" className={labelClass}>E-mailadres{required}</label>
-                          <input
-                            id="f-email-b"
-                            name="email"
-                            type="email"
-                            aria-required="true"
-                            aria-invalid={!!errors.email}
-                            aria-describedby={errors.email ? errId("email") : undefined}
-                            className={inputCls("email")}
-                            value={bewoner.email}
-                            onChange={onChangeBew("email")}
-                            maxLength={255}
-                          />
-                          <FieldError name="email" />
-                        </div>
-                        <div className={fieldWrap}>
-                          <label htmlFor="f-tel-b" className={labelClass}>Telefoonnummer{required}</label>
-                          <input
-                            id="f-tel-b"
-                            name="telefoonnummer"
-                            type="tel"
-                            aria-required="true"
-                            aria-invalid={!!errors.telefoonnummer}
-                            aria-describedby={errors.telefoonnummer ? errId("telefoonnummer") : undefined}
-                            className={inputCls("telefoonnummer")}
-                            value={bewoner.telefoonnummer}
-                            onChange={onChangeBew("telefoonnummer")}
-                          />
-                          <FieldError name="telefoonnummer" />
+                        <div className={cx("grid grid-cols-1 sm:grid-cols-2 gap-4", fieldWrap)}>
+                          <div>
+                            <label htmlFor="f-email-b" className={labelClass}>E-mailadres{required}</label>
+                            <input
+                              id="f-email-b"
+                              name="email"
+                              type="email"
+                              aria-required="true"
+                              aria-invalid={!!errors.email}
+                              aria-describedby={errors.email ? errId("email") : undefined}
+                              className={inputCls("email")}
+                              value={bewoner.email}
+                              onChange={onChangeBew("email")}
+                              maxLength={255}
+                            />
+                            <FieldError name="email" />
+                          </div>
+                          <div>
+                            <label htmlFor="f-tel-b" className={labelClass}>Telefoonnummer{required}</label>
+                            <input
+                              id="f-tel-b"
+                              name="telefoonnummer"
+                              type="tel"
+                              aria-required="true"
+                              aria-invalid={!!errors.telefoonnummer}
+                              aria-describedby={errors.telefoonnummer ? errId("telefoonnummer") : undefined}
+                              className={inputCls("telefoonnummer")}
+                              value={bewoner.telefoonnummer}
+                              onChange={onChangeBew("telefoonnummer")}
+                            />
+                            <FieldError name="telefoonnummer" />
+                          </div>
                         </div>
 
                         <div className={fieldWrap}>
@@ -773,7 +777,7 @@ const Contact = () => {
                         </div>
 
                         <div className={fieldWrap}>
-                          <label htmlFor="f-bel" className={labelClass}>Wanneer word je het liefst gebeld?{optional}</label>
+                          <label htmlFor="f-bel" className={labelClass}>Voorkeur voor contact{optional}</label>
                           <select
                             id="f-bel"
                             name="bel_voorkeur"
