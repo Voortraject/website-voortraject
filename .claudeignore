@@ -1,0 +1,13 @@
+# Secrets — never send to the cloud
+.env
+.env.*
+credentials.json
+*.pem
+*.key
+secrets.*
+
+# Dependencies & build output (noise, not secrets)
+node_modules/
+dist/
+build/
+.vite/
