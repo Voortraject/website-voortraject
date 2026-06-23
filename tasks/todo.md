@@ -13,9 +13,10 @@ Planning & progress tracking for the Voortraject website. One section per task/c
         CRM `lfelnfukbrxznkevnevr` (`external-client.ts`, `supabaseExternal`)
   - [x] File paths: `src/integrations/supabase/{client,external-client,types}.ts`
   - [x] Color palette from `src/index.css` (ink blue / mustard / off-white / sand)
-- [ ] Commit the scaffold (`CLAUDE.md`, `.claudeignore`, `tasks/`) via a branch + PR
-- [ ] **Decide on the committed `.env`** (see Review note) — values are public anon/
-      publishable keys, but `.env` should be gitignored going forward
+- [x] Commit the scaffold (`CLAUDE.md`, `.claudeignore`, `tasks/`) via a branch + PR
+      — done in PR #1 (commit `8fdf868`)
+- [x] **Decide on the committed `.env`** (see Review note) — done in PR #2
+      (commit `078f49b`): stopped tracking `.env`, added `.env.example`, `.env` now gitignored
 
 ### Review (2026-06-23)
 - GitHub is connected via clone into `c:\dev\website-voortraject`; working on `main`.
