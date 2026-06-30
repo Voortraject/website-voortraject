@@ -62,11 +62,12 @@ export const AboutTeam = () => {
                 lineHeight: 1.65,
               }}
             >
-              Wij zijn Michael, Tim, Wouter en Christian. Vier Groningers die
-              zagen dat bewoners duizenden euro's aan subsidie mislopen,
-              simpelweg omdat niemand ze de weg wees. Geen stapels papierwerk,
-              geen onduidelijke beloftes. Gewoon eerlijk advies en een helder
-              traject, van eerste gesprek tot opgeleverd werk.
+              Wij zijn Michael, Tim, Wouter en Christian. Vier noorderlingen
+              die zagen dat bewoners in heel Noord-Nederland duizenden euro's
+              aan subsidie mislopen, simpelweg omdat niemand ze de weg wees.
+              Geen stapels papierwerk, geen onduidelijke beloftes. Gewoon
+              eerlijk advies en een helder traject, van eerste gesprek tot
+              opgeleverd werk.
             </p>
 
             <a
