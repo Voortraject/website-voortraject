@@ -49,7 +49,7 @@ export const AboutTeam = () => {
                 letterSpacing: "-0.02em",
               }}
             >
-              <span style={{ color: "#152C4E" }}>Vier Groningers,</span>
+              <span style={{ color: "#152C4E" }}>Vier noorderlingen,</span>
               <br />
               <span style={{ color: "#E8B547" }}>één missie</span>
             </h2>
