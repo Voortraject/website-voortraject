@@ -49,7 +49,7 @@ export const AboutTeam = () => {
                 letterSpacing: "-0.02em",
               }}
             >
-              <span style={{ color: "#152C4E" }}>Vier Groningers,</span>
+              <span style={{ color: "#152C4E" }}>Vier noorderlingen,</span>
               <br />
               <span style={{ color: "#E8B547" }}>één missie</span>
             </h2>
@@ -62,11 +62,12 @@ export const AboutTeam = () => {
                 lineHeight: 1.65,
               }}
             >
-              Wij zijn Michael, Tim, Wouter en Christian. Vier Groningers die
-              zagen dat bewoners duizenden euro's aan subsidie mislopen,
-              simpelweg omdat niemand ze de weg wees. Geen stapels papierwerk,
-              geen onduidelijke beloftes. Gewoon eerlijk advies en een helder
-              traject, van eerste gesprek tot opgeleverd werk.
+              Wij zijn Michael, Tim, Wouter en Christian. Vier noorderlingen
+              die zagen dat bewoners in heel Noord-Nederland duizenden euro's
+              aan subsidie mislopen, simpelweg omdat niemand ze de weg wees.
+              Geen stapels papierwerk, geen onduidelijke beloftes. Gewoon
+              eerlijk advies en een helder traject, van eerste gesprek tot
+              opgeleverd werk.
             </p>
 
             <a

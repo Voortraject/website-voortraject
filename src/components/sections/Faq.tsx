@@ -16,7 +16,7 @@ const faqs = [
   },
   {
     q: "In welk gebied werken jullie?",
-    a: "Primair in de provincies Groningen en Noord-Drenthe, met focus op gemeenten waar Nij Begun loopt. Voor andere regio's kun je contact opnemen, dan kijken we wat mogelijk is.",
+    a: "Wij werken door heel Noord-Nederland: Groningen, Friesland en Drenthe. In gemeenten waar Nij Begun loopt hebben we extra ervaring, maar bewoners en uitvoerders uit de hele regio kunnen bij ons terecht.",
   },
   {
     q: "Hoe snel kunnen jullie schakelen?",
