@@ -16,18 +16,32 @@ Bronnen: V3-handboek (identiteit/toon), CRO-rapport (diagnose), "Volledige websi
 
 Fases (elk: eigen branch vanaf `main` → PR):
 
-- [ ] **Fase 1 — Homepage bewonersgericht** (`feat/home-bewoners`)
-  - [ ] Hero: nieuwe H1 + subtitel (V3-getoetst), primaire CTA "Plan een gratis gesprek",
-        secundair belnummer, microtekst ("Vrijblijvend · Binnen 24 uur reactie · Niets voorbereiden")
-  - [ ] Trust-bar onder hero (onafhankelijk/geen commissie · lokaal · subsidiekennis · snel gesprek)
-  - [ ] Sectie probleemherkenning (4 kaarten "Herkenbaar?")
-  - [ ] Sectie "Van twijfel naar een helder plan" (vervangt `ForWhom`; uitvoerders van home af)
-  - [ ] Subsidie-blok — feitelijk/behulpzaam geformuleerd (stapelen uitleggen, geen geld-FOMO)
-  - [ ] "Zo simpel werkt het" (3 stappen, herschreven `HowWeWork`)
-  - [ ] "Waarom bewoners voor ons kiezen" (6 blokken, incl. onafhankelijkheidsbelofte uit FAQ naar voren)
-  - [ ] Team-sectie + instantielogo's + FAQ herschrijven (je-vorm, nieuwe copy)
-  - [ ] Eind-CTA + kleine partnerverwijzing onderaan
-  - [ ] SEO: title/description homepage bijwerken
+- [x] **Fase 1 — Homepage bewonersgericht** (`feat/home-bewoners`) — KLAAR, nog niet gemerged
+  - [x] Header omgebouwd naar zwevende "pill"-stijl (DDJ-model): losse witte pills voor
+        logo (blauwe variant), nav, telefoon + oker CTA; hero loopt er transparant achter door
+  - [x] Hero: full-bleed foto-achtergrond + donkere gradient, witte H1 op twee regels
+        ("Gratis advies over / verduurzamen en subsidies"), 3 korte vinkjes-claims
+        (Lokaal adviesteam · Kennis van alle subsidieregelingen · Begeleiding tot de
+        uitvoering klaar is), CTA "Plan een gratis gesprek" + belknop
+  - [x] Sectie "Waar moet je beginnen?" (probleemherkenning, 4 tegels + foto + brugzin)
+        → vervangt oude `ForWhom` (verwijderd)
+  - [x] Sectie "Van twijfel naar een helder plan" (5 punten + foto)
+  - [x] Subsidie-blok "Welke subsidies gelden er voor jouw woning?" — V3-getoetst (geen
+        geld-FOMO), foto links + tekst rechts, stapel-highlight, CTA. De 3 regeling-kaarten
+        zijn eruit; regelingpagina's blijven via het menu bereikbaar. Op `bg-secondary`.
+  - [x] Sectie "Waarom bewoners voor ons kiezen" — onafhankelijkheidsbelofte uit FAQ naar
+        voren (accent-rand), 4 redenen + begeleidingsregel + foto (handdruk) + CTA
+  - [x] Instantie-logo's (`LogoCarousel`) behouden (opdrachtgever wil deze houden)
+  - [x] "Hoe wij te werk gaan" (`HowWeWork`) VERWIJDERD (op verzoek)
+  - [x] "Over ons"/team-sectie (`AboutTeam`) VERWIJDERD (externe CRM-groepsfoto; op verzoek)
+  - [ ] **Nog te doen in Fase 1:** eind-CTA (`ClosingCta`) V3/bewoner-proof maken +
+        kleine partnerverwijzing onderaan; FAQ-teksten naar je-vorm/bewoner; SEO title +
+        description van de home bijwerken; daarna PR openen (ready-for-review, niet mergen)
+  - Homepage-volgorde nu: Hero → Herkenning → HelderPlan → Subsidies → WaaromKiezen →
+    LogoCarousel → Faq → eind-CTA(Footer)
+  - **Openstaand:** opdrachtgever wil nog **1 extra logo** toevoegen aan de instantie-
+    carrousel — bestand komt in `public/images/instanties/`, daarna registreren in
+    `defaultLogos` in `LogoCarousel.tsx`.
 - [ ] **Fase 2 — Uitvoerders → Partners** (`feat/partners-rename`)
   - [ ] Route `/partners` + redirect `/uitvoerders` → `/partners` (ook Cloudflare `_redirects` voor echte 301)
   - [ ] Header/footer/nav: label + volgorde (Bewoners · Verduurzamen · Subsidies · Over ons · Partners)
@@ -50,6 +64,28 @@ Implementatienotities:
   dit her en der; bij herschrijven meteen netjes doen, niet buiten scope refactoren).
 - Footer-glow-patroon respecteren: closing CTA's gaan via de `Footer cta={...}` prop
   (zie lessons 2026-06-24).
+
+Foto-workflow (Fase 1):
+- Originele HEIC's staan in `voortraject-fotos/` (gitignored). Converteren naar WebP in
+  `src/assets/` met ImageMagick: `& 'C:\Program Files\ImageMagick-7.1.2-Q16\magick.exe'
+  <src>.heic -auto-orient -resize <breedte>x -quality <70-80> <dest>.webp`.
+  (Windows/WIC kan HEIC niet zelf lezen; ImageMagick Q16 is via winget geïnstalleerd.)
+- Portret-headshots team-*.png in `src/assets` zijn echte, nette headshots (lichte
+  achtergrond) — bruikbaar. Groepsfoto stond op externe CRM-Supabase-opslag (verwijderd).
+- Regel: geen foto twee keer op dezelfde pagina. Homepage-inzet (HEIC → asset):
+  - Hero: IMG_4868 → `hero-adviesgesprek.webp` (full-bleed)
+  - Herkenning: IMG_4556 → `herkenning-voortuin.webp`
+  - Helder plan: IMG_4845 → `hero-keukentafel.webp`
+  - Subsidies: IMG_4779 → `subsidies-uitzoeken.webp` (liggend, bureau)
+  - Waarom kiezen: IMG_4837 → `waarom-vertrouwen.webp` (handdruk voordeur)
+  - Let op: op sommige foto's staan vreemde merklogo's op de polo's (King Legend / Brand
+    Solutions) en op meterkast-flyers "€ 10.500" — die niet prominent gebruiken.
+
+Praktische gotcha's:
+- Dev server draait al (`bun run dev`) op http://localhost:8080/ (achtergrondtaak).
+- Git-commits met accolade-heredoc in PowerShell: GEEN apostroffen of dubbele quotes in
+  de boodschap zetten (breekt de here-string parsing). Houd commit messages quote-vrij.
+- Header en Footer zijn site-breed; wijzigingen daar raken alle pagina's — even doorklikken.
 
 ## Project bootstrap (2026-06-23)
 
