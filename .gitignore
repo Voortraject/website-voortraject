@@ -17,6 +17,9 @@ dist-ssr
 .env.*
 !.env.example
 
+# MCP config — contains a local access token, must stay out of git
+.mcp.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
