@@ -10,14 +10,14 @@ const claims = [
 
 export const Hero = () => {
   return (
-    <section className="relative overflow-hidden" aria-labelledby="hero-title">
+    <section className="relative overflow-hidden -mt-20" aria-labelledby="hero-title">
       <img
         src={heroAdviesgesprek}
         alt="Adviseur van Voortraject bekijkt samen met een bewoner de mogelijkheden voor zijn woning aan de eettafel"
         fetchPriority="high"
         decoding="async"
         className="absolute inset-0 h-full w-full object-cover"
-        style={{ objectPosition: "center 30%" }}
+        style={{ objectPosition: "center 35%" }}
       />
       <div
         className="absolute inset-0"
@@ -28,7 +28,7 @@ export const Hero = () => {
         aria-hidden="true"
       />
 
-      <div className="relative container-content flex items-center min-h-[520px] md:min-h-[620px] lg:min-h-[70vh] py-16 md:py-24">
+      <div className="relative container-content flex items-center min-h-[600px] md:min-h-[700px] lg:min-h-[84vh] pt-36 pb-16 md:pt-44 md:pb-24">
         <div className="animate-fade-up max-w-4xl">
           <h1
             id="hero-title"
