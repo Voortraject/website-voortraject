@@ -51,11 +51,11 @@ export const Herkenning = () => (
         </div>
 
         <div className="lg:col-span-7 flex flex-col">
-          <div className="grid sm:grid-cols-2 gap-5">
+          <div className="grid sm:grid-cols-2 gap-5 lg:flex-1 lg:auto-rows-fr">
             {twijfels.map(({ icon: Icon, title, body }) => (
               <article
                 key={title}
-                className="bg-card rounded-2xl border border-border p-5 md:p-6 transition-all duration-200 ease-out hover:-translate-y-0.5"
+                className="bg-card rounded-2xl border border-border p-5 md:p-6 flex flex-col justify-center transition-all duration-200 ease-out hover:-translate-y-0.5"
                 style={{ boxShadow: "0 4px 24px hsl(var(--primary) / 0.06)" }}
               >
                 <div className="flex items-center gap-3">
@@ -71,7 +71,7 @@ export const Herkenning = () => (
             ))}
           </div>
 
-          <p className="mt-8 lg:mt-auto lg:pt-8 text-[24px] md:text-[30px] font-display font-semibold leading-[1.2] text-primary">
+          <p className="mt-8 text-[24px] md:text-[30px] font-display font-semibold leading-[1.2] text-primary">
             Precies daarom bestaat <span className="text-accent">Voortraject</span>.
           </p>
         </div>

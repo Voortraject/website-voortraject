@@ -24,8 +24,8 @@ const Index = () => {
         <Herkenning />
         <HelderPlan />
         <Subsidies />
-        <WaaromKiezen />
         <LogoCarousel />
+        <WaaromKiezen />
         <Faq />
       </main>
       <Footer cta={<ClosingCta />} />
