@@ -120,6 +120,16 @@ Fases (elk: eigen branch vanaf `main` → PR):
   - **Bonus beschikbaar:** `Downloads/Verbeterde AI foto's/` bevat 3 AI-bewerkte advies-
         foto's waar het "KING LEGEND"-polologo vervangen is door **voortraject** — bruikbaar om
         de Why-sectie (Partners) alsnog te swappen of King-Legend-shots te vervangen.
+- [x] **UI-verfijningen** (`feat/bg-alternatie-fotofix`, vanaf `main`)
+  - [x] **Homepage achtergrond-alternatie:** dark hero → crème → wit → crème → wit → …
+        Max 2 kleuren: crème `#F4EEE0` + wit `#FFFFFF`. Start met crème ná de donkere hero
+        (minder contrast). Secties: Herkenning=crème, HelderPlan=wit, Subsidies=crème,
+        LogoCarousel=wit, WaaromKiezen=crème, Faq=wit. (was 4+ verschillende bg's.)
+  - [x] **Contact:** "Liever direct contact?"-kaart weg (+ ongebruikte consts/icon-imports
+        opgeruimd). Sidebar: foto vult de kolom (`md:flex-1`), "Wat kun je verwachten?" lijnt
+        onderaan uit met het formulier (grid `items-stretch`).
+  - [x] **Onderhoud-hero:** van 4:5 terug naar 4:3 (kleiner), `object-position center top`
+        zodat de leidingen/buizen goed zichtbaar blijven.
 - [ ] **Later / geblokkeerd**
   - [ ] Reviews-sectie (wacht op echte reviews met naam/plaats/resultaat)
   - [ ] Over ons: eigen teamfoto's + eind-CTA (fotoshoot is er nu — kan opgepakt worden)

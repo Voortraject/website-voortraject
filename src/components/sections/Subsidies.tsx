@@ -2,7 +2,7 @@ import subsidiesUitzoeken from "@/assets/subsidies-uitzoeken.webp";
 
 export const Subsidies = () => {
   return (
-    <section className="section-pad bg-secondary">
+    <section className="section-pad" style={{ backgroundColor: "#F4EEE0" }}>
       <div className="container-content">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           <div className="order-2 lg:order-1">

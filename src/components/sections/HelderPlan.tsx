@@ -33,7 +33,7 @@ const punten = [
 export const HelderPlan = () => (
   <section
     className="py-16 md:py-24"
-    style={{ backgroundColor: "var(--card-soft)" }}
+    style={{ backgroundColor: "#FFFFFF" }}
     aria-labelledby="helder-plan-title"
   >
     <div className="container-content">

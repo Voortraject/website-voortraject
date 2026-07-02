@@ -26,7 +26,7 @@ const twijfels = [
 ];
 
 export const Herkenning = () => (
-  <section className="py-16 md:py-24 bg-background" aria-labelledby="herkenning-title">
+  <section className="py-16 md:py-24" style={{ backgroundColor: "#F4EEE0" }} aria-labelledby="herkenning-title">
     <div className="container-content">
       <div className="max-w-3xl">
         <h2 id="herkenning-title" className="h2-section">
