@@ -13,8 +13,8 @@ const Zonnepanelen = () => (
     heroSub="Ook nu nog een rendabele keuze voor de meeste woningen, zeker in de juiste volgorde. Je haalt er het meeste uit na isolatie en in slimme combinatie met opslag of een warmtepomp."
     heroIntro=""
     heroImageSrc={zonnepanelenImage}
-    heroImageAlt="Adviseur van Voortraject bekijkt de zonnepanelen op het dak van een woning"
-    heroImagePosition="center 30%"
+    heroImageAlt="Adviseur van Voortraject controleert de zonnepanelen op het dak van een woning"
+    heroImagePosition="center"
     pastBij={[
       "Je een geschikt dak hebt met voldoende ruimte",
       "Je je energierekening structureel wilt verlagen",

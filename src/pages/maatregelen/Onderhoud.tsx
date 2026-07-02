@@ -142,11 +142,11 @@ const Onderhoud = () => (
             >
               <img
                 src={onderhoudImage}
-                alt="Adviseur van Voortraject controleert samen met een bewoner de installaties in de meterkast"
+                alt="Adviseur van Voortraject controleert de leidingen en ventilatie binnenshuis"
                 width={1024}
                 height={768}
                 className="w-full h-full object-cover"
-                style={{ objectPosition: "center 30%" }}
+                style={{ objectPosition: "center 28%" }}
               />
             </div>
           </div>

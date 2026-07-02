@@ -105,10 +105,15 @@ Fases (elk: eigen branch vanaf `main` → PR):
   - [x] Logo **Natuur Vriendelijk Isoleren** toegevoegd aan `public/images/instanties/`
         (`natuurvriendelijk-isoleren.png`) + geregistreerd in `defaultLogos` (LogoCarousel).
   - [x] Echte shoot-foto's op de 5 maatregelpagina's (bron: `voortraject-fotos/`):
-        Zonnepanelen ← IMG_4712, Airco ← IMG_4631, Isolatie ← IMG_4752 (kruipruimte),
-        Warmtepomp ← IMG_4612 (binnenunit), Onderhoud ← IMG_4589 (meterkast). Portret-shots;
+        Zonnepanelen ← **IMG_4735**, Airco ← IMG_4631, Isolatie ← IMG_4752 (kruipruimte),
+        Warmtepomp ← IMG_4612 (binnenunit), Onderhoud ← **IMG_4674** (leidingen/ventilatie).
+        (Opdrachtgever koos IMG_4735 + IMG_4674 expliciet; eerdere IMG_4712/IMG_4589 vervangen.)
         `MaatregelPagina` kreeg een optionele `heroImagePosition`-prop om de 4:3-crop te sturen
         (Onderhoud is een custom pagina → inline `objectPosition`). Oude stock-jpg's verwijderd.
+  - [x] **Contactpagina:** subtiele adviseur-foto (headset, IMG_4792 → `contact-adviseur.webp`)
+        boven in de rechter kolom; face-focused crop (object-position center 22%) → gezicht =
+        vertrouwen/conversie, en de "KING LEGEND"-polotekst valt onder de crop weg. Niet
+        afleidend t.o.v. het formulier.
   - **Opmerking:** één hero per pagina (template heeft geen gallery). Extra bruikbare shots
         ongebruikt (zonnepanelen: IMG_4699/4735/4736; meterkast: IMG_4583/4593) — optioneel
         later een fotostrip/gallery per maatregel.

@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
+import contactAdviseur from "@/assets/contact-adviseur.webp";
 
 type Mode = "uitvoerder" | "bewoner";
 
@@ -858,6 +859,19 @@ const Contact = () => {
             </div>
 
             <div className="flex flex-col" style={{ gap: 32 }}>
+              <div
+                className="overflow-hidden rounded-2xl"
+                style={{ border: "1px solid #E5E2DB", boxShadow: "0 4px 24px rgba(21,44,78,0.06)" }}
+              >
+                <img
+                  src={contactAdviseur}
+                  alt="Adviseur van Voortraject helpt je persoonlijk verder"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full object-cover"
+                  style={{ height: 200, objectPosition: "center 22%" }}
+                />
+              </div>
               <div>
                 <h3
                   className="font-display"
