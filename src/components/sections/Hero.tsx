@@ -17,7 +17,7 @@ export const Hero = () => {
         fetchPriority="high"
         decoding="async"
         className="absolute inset-0 h-full w-full object-cover"
-        style={{ objectPosition: "center 30%" }}
+        style={{ objectPosition: "center 45%" }}
       />
       <div
         className="absolute inset-0"
@@ -28,7 +28,7 @@ export const Hero = () => {
         aria-hidden="true"
       />
 
-      <div className="relative container-content flex items-center min-h-[520px] md:min-h-[620px] lg:min-h-[70vh] py-16 md:py-24">
+      <div className="relative container-content flex items-center min-h-[540px] md:min-h-[660px] lg:min-h-[82vh] py-16 md:py-24">
         <div className="animate-fade-up max-w-4xl">
           <h1
             id="hero-title"
