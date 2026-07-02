@@ -24,10 +24,10 @@ const Index = () => {
         <Hero />
         <Herkenning />
         <HelderPlan />
+        <Subsidies />
         <HowWeWork />
         <LogoCarousel />
         <AboutTeam />
-        <Subsidies />
         <Faq />
       </main>
       <Footer cta={<ClosingCta />} />
