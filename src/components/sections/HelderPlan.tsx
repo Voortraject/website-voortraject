@@ -37,8 +37,8 @@ export const HelderPlan = () => (
     aria-labelledby="helder-plan-title"
   >
     <div className="container-content">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-        <div className="lg:col-span-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+        <div className="lg:col-span-7">
           <h2 id="helder-plan-title" className="h2-section">
             Van twijfel naar een <span className="text-accent">helder plan</span>
           </h2>
@@ -65,7 +65,7 @@ export const HelderPlan = () => (
           </ul>
         </div>
 
-        <div className="lg:col-span-6">
+        <div className="lg:col-span-5">
           <img
             src={planKeukentafel}
             alt="Adviseur van Voortraject bekijkt samen met een bewoner het plan voor haar woning aan de keukentafel"
