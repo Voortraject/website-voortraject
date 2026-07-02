@@ -74,13 +74,13 @@ export const WaaromKiezen = () => (
           </a>
         </div>
 
-        <div className="order-2">
+        <div className="order-2 relative">
           <img
             src={waaromVertrouwen}
             alt="Adviseur van Voortraject schudt de hand van een tevreden bewoner bij de voordeur"
             loading="lazy"
             decoding="async"
-            className="w-full h-72 sm:h-96 lg:h-full lg:min-h-[520px] rounded-2xl object-cover"
+            className="w-full h-72 sm:h-96 lg:absolute lg:inset-0 lg:h-full rounded-2xl object-cover"
             style={{ objectPosition: "center 30%", boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
           />
         </div>

@@ -70,16 +70,42 @@ Fases (elk: eigen branch vanaf `main` → PR):
         `leads_uitvoerders` (Contact-form insert) en `AudienceContext`-type
         `"uitvoerders" | "bewoners"`; prose-vermeldingen van "uitvoerders" op subsidie-/
         maatregel-/Privacy-pagina's; dode `Audiences.tsx` (nergens geïmporteerd).
-- [ ] **Fase 3 — Bewoners-pagina verscherpen** (`feat/bewoners-copy`)
-  - [ ] Nieuwe H1/subtitel; secties behouden; eind-CTA met risicoreductie
-- [ ] **Fase 4 — Uniforme CTA-blokken** (`feat/uniform-cta`)
-  - [ ] Maatregelpagina's: standaard CTA-blok "Benieuwd of dit slim is voor jóuw woning?"
-  - [ ] Subsidiepagina's: verzamel-CTA "Ontdek welke subsidies voor jóuw woning gelden"
-- [ ] **Fase 5 — Contact-kop** (`feat/contact-kop` of meenemen in lopende contact-branch)
-  - [ ] H1 "Ontdek gratis wat mogelijk is voor jouw woning" + subtitel; formulier staat al op bewoner
+- [x] **Fase 3 t/m 5 + foto-refresh** (`feat/fase-3-5-fotos`, gestackt op
+      `feat/partners-rename`) — KLAAR, nog niet gemerged. Bevat ook een homepage-fix
+      (WaaromKiezen-foto lijnde niet uit met de tekst).
+  - [x] **Homepage-fix WaaromKiezen:** portret-foto ballonde uit via `lg:h-full` en
+        werd hoger dan de tekst. Nu absoluut gepositioneerd binnen `order-2 relative`
+        (`lg:absolute lg:inset-0`), zodat de foto de kolomhoogte van de tekst vult en
+        nooit langer wordt. Boven/onder uitgelijnd met de tekst. (Visueel bevestigd.)
+  - [x] **Fase 3 — Bewoners:** H1 "Onafhankelijk advies over verduurzamen en subsidies,
+        zonder wachtrijen"; subtitel V3 ("rust en overzicht … Gratis."); risico-microtekst
+        onder hero-CTA én eind-CTA (Vrijblijvend · Binnen 24 uur · niets voorbereiden).
+  - [x] **Fase 4 — maatregel:** vaste CTA-label → "Plan een gratis gesprek" (default in
+        `MaatregelPagina`, dekt 6 pagina's). Tailored `finalCtaKop/Tekst` per maatregel
+        BEHOUDEN (beter dan generiek; al V3-getoetst). Onderhoud gebruikt geen template
+        maar had het label al goed.
+  - [x] **Fase 4 — subsidie:** 4 closing-CTA's geüniformeerd naar de verzamel-CTA
+        ("Ontdek welke subsidies voor jouw woning gelden" + "Wij zoeken het voor jouw adres
+        uit … Eén gesprek, geen loketten. Vrijblijvend en gratis." + knop "Plan een gratis
+        gesprek"). "Laatst bijgewerkt"-regels behouden.
+  - [x] **Fase 5 — Contact:** H1 "Ontdek gratis wat mogelijk is voor jouw woning" +
+        subtitel. Formulier stond al standaard op bewoner (geen wijziging nodig).
+  - [x] **Foto's toegevoegd (HEIC→WebP, echte shoot):** Bewoners-hero → `bewoners-
+        keukentafel.webp` (IMG_4857); Partners-hero → `partners-overleg.webp` (IMG_4872).
+        Contact heeft geen foto-slot (geen swap). Why-sectie (Partners) niet geswapt: beste
+        kandidaten hadden "KING LEGEND"-polobranding — bewust vermeden.
+  - [x] **Oude foto's verwijderd:** `bewoners-hero.jpg`, `uitvoerders-hero.jpg` (vervangen)
+        + wees-bestanden `bewoners-1/2.jpg`, `route-hero.jpg`, `hero-houses.jpg/.webp`
+        (+ stale preload uit `index.html`). Maatregel-productfoto's behouden (topicaal;
+        geen consistente echte set). `why-photo.jpg` + dode `Process.tsx`/`process-photo*`
+        blijven (buiten scope).
+  - **Foto-caveat:** de goede team-/headset-shots (IMG_4770/4779/4785/4792/4809) dragen
+        het "KING LEGEND"-polologo prominent → niet gebruiken op nieuwe plekken.
 - [ ] **Later / geblokkeerd**
   - [ ] Reviews-sectie (wacht op echte reviews met naam/plaats/resultaat)
   - [ ] Over ons: eigen teamfoto's + eind-CTA (wacht op fotoshoot)
+  - [ ] Optioneel: echte airco/zonnepanelen-foto's (IMG_4631 airco, IMG_4712 zonnepanelen)
+        op de maatregelpagina's — beschikbaar, nog niet toegepast (consistentie-afweging).
 
 Implementatienotities:
 - Alle nieuwe copy langs de V3-toets: geen "claim/direct profiteren/laatste kans"; bij

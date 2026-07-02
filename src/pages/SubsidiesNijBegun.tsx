@@ -1017,13 +1017,13 @@ const SubsidiesNijBegun = () => {
                     color: "#fff",
                   }}
                 >
-                  Ontdek welke stap voor jou logisch is.
+                  Ontdek welke subsidies voor jouw woning gelden
                 </h2>
                 <p style={{ fontSize: 17, lineHeight: 1.6, marginTop: 16, color: "rgba(255,255,255,0.8)" }}>
-                  Neem contact op. Een lokale adviseur komt persoonlijk langs binnen een week. Geen verplichtingen, geen verkooppraatje.
+                  Wij zoeken het voor jouw adres uit en stapelen alles wat kan. Eén gesprek, geen loketten. Vrijblijvend en gratis.
                 </p>
                 <a href="/contact" style={{ ...goldBtn, marginTop: 24 }}>
-                  Ik wil gebeld worden
+                  Plan een gratis gesprek
                 </a>
               </div>
               <p className="text-center mt-12" style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>

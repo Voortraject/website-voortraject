@@ -4,7 +4,7 @@ import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 import { OfBelOnsCta } from "@/components/OfBelOnsCta";
-import heroBewoners from "@/assets/bewoners-hero.jpg";
+import heroBewoners from "@/assets/bewoners-keukentafel.webp";
 
 const recognitions = [
   {
@@ -222,16 +222,18 @@ const Bewoners = () => {
                 <h1
                   id="bew-hero-title"
                   className="h1-hero text-5xl"
-                  style={{ color: "#2B2B2B", wordBreak: "keep-all", overflowWrap: "normal" }}
+                  style={{ color: "#2B2B2B" }}
                 >
-                  <span style={{ color: "hsl(var(--accent))" }}>Onafhankelijk</span>{" "}
-                  advies,<br />zonder wachtrijen
+                  <span style={{ color: "hsl(var(--accent))" }}>Onafhankelijk advies</span>{" "}
+                  over verduurzamen en subsidies,<br />zonder wachtrijen
                 </h1>
                 <p
                   className="mt-8 text-[16px] md:text-[18px]"
-                  style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 540 }}
+                  style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 560 }}
                 >
-                  Veel bewoners willen wel verduurzamen, maar lopen vast in tegenstrijdige adviezen, lange wachttijden en onduidelijkheid over wat slim is voor hun woning. Wij kijken onafhankelijk mee en helpen je sneller verder naar een duidelijke, uitvoerbare volgende stap.
+                  Veel bewoners willen wel verduurzamen, maar lopen vast in tegenstrijdige
+                  adviezen, lange wachttijden en onduidelijke regelingen. Wij brengen rust en
+                  overzicht, en helpen je naar een duidelijke, uitvoerbare volgende stap. Gratis.
                 </p>
                 <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
                   <a
@@ -249,13 +251,15 @@ const Bewoners = () => {
                   >
                     Plan een vrijblijvend gesprek
                   </a>
-                  
                 </div>
+                <p className="mt-4 font-sans" style={{ fontSize: 13, color: "#8B8680" }}>
+                  Vrijblijvend · Binnen 24 uur reactie · Je hoeft niets voor te bereiden
+                </p>
               </div>
               <div>
                 <img
                   src={heroBewoners}
-                  alt="Karakteristieke Nederlandse woning met rode dakpannen"
+                  alt="Adviseur van Voortraject bespreekt de mogelijkheden met een bewoner aan de keukentafel"
                   loading="lazy"
                   className="w-full object-cover"
                   style={{
@@ -784,6 +788,9 @@ const Bewoners = () => {
                 </a>
                 <OfBelOnsCta color="#FFFFFF" align="center" />
               </div>
+              <p className="mt-6 font-sans" style={{ fontSize: 13, color: "rgba(255,255,255,0.6)" }}>
+                Vrijblijvend · Binnen 24 uur reactie · Je hoeft niets voor te bereiden
+              </p>
             </div>
           </section>
         }
