@@ -17,7 +17,7 @@ export const Hero = () => {
         fetchPriority="high"
         decoding="async"
         className="absolute inset-0 h-full w-full object-cover"
-        style={{ objectPosition: "center 62%" }}
+        style={{ objectPosition: "center 30%" }}
       />
       <div
         className="absolute inset-0"
