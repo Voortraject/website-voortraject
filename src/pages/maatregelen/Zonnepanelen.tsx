@@ -1,6 +1,6 @@
 import { Sun } from "lucide-react";
 import { MaatregelPagina } from "@/components/MaatregelPagina";
-import zonnepanelenImage from "@/assets/maatregel-zonnepanelen.jpg";
+import zonnepanelenImage from "@/assets/maatregel-zonnepanelen.webp";
 
 const Zonnepanelen = () => (
   <MaatregelPagina
@@ -13,7 +13,8 @@ const Zonnepanelen = () => (
     heroSub="Ook nu nog een rendabele keuze voor de meeste woningen, zeker in de juiste volgorde. Je haalt er het meeste uit na isolatie en in slimme combinatie met opslag of een warmtepomp."
     heroIntro=""
     heroImageSrc={zonnepanelenImage}
-    heroImageAlt="Zonnepanelen op een schuin dak"
+    heroImageAlt="Adviseur van Voortraject controleert de zonnepanelen op het dak van een woning"
+    heroImagePosition="center"
     pastBij={[
       "Je een geschikt dak hebt met voldoende ruimte",
       "Je je energierekening structureel wilt verlagen",

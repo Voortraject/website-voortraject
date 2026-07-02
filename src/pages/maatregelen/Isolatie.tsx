@@ -1,6 +1,6 @@
 import { Home } from "lucide-react";
 import { MaatregelPagina } from "@/components/MaatregelPagina";
-import isolatieImage from "@/assets/maatregel-isolatie.jpg";
+import isolatieImage from "@/assets/maatregel-isolatie.webp";
 
 const Isolatie = () => (
   <MaatregelPagina
@@ -13,7 +13,8 @@ const Isolatie = () => (
     heroSub="Minder warmteverlies, meer comfort en lagere energiekosten, vrijwel altijd de slimste eerste stap. Het is de basis waarop een warmtepomp of zonnepanelen pas echt renderen, en goed isoleren vraagt om goed ventileren."
     heroIntro=""
     heroImageSrc={isolatieImage}
-    heroImageAlt="Isolatiewerkzaamheden aan een woning"
+    heroImageAlt="Adviseur van Voortraject bekijkt de kruipruimte via een vloerluik"
+    heroImagePosition="center 40%"
     pastBij={[
       "Je woning nog enkel glas of een ongeïsoleerd dak, vloer of spouwmuur heeft",
       "Je vertrekken traag warm worden, snel afkoelen of het merkbaar tocht",

@@ -101,11 +101,28 @@ Fases (elk: eigen branch vanaf `main` → PR):
         blijven (buiten scope).
   - **Foto-caveat:** de goede team-/headset-shots (IMG_4770/4779/4785/4792/4809) dragen
         het "KING LEGEND"-polologo prominent → niet gebruiken op nieuwe plekken.
+- [x] **Instantie-logo + maatregelfoto's** (`feat/instantie-en-maatregelfotos`, vanaf `main`)
+  - [x] Logo **Natuur Vriendelijk Isoleren** toegevoegd aan `public/images/instanties/`
+        (`natuurvriendelijk-isoleren.png`) + geregistreerd in `defaultLogos` (LogoCarousel).
+  - [x] Echte shoot-foto's op de 5 maatregelpagina's (bron: `voortraject-fotos/`):
+        Zonnepanelen ← **IMG_4735**, Airco ← IMG_4631, Isolatie ← IMG_4752 (kruipruimte),
+        Warmtepomp ← IMG_4612 (binnenunit), Onderhoud ← **IMG_4674** (leidingen/ventilatie).
+        (Opdrachtgever koos IMG_4735 + IMG_4674 expliciet; eerdere IMG_4712/IMG_4589 vervangen.)
+        `MaatregelPagina` kreeg een optionele `heroImagePosition`-prop om de 4:3-crop te sturen
+        (Onderhoud is een custom pagina → inline `objectPosition`). Oude stock-jpg's verwijderd.
+  - [x] **Contactpagina:** subtiele adviseur-foto (headset, IMG_4792 → `contact-adviseur.webp`)
+        boven in de rechter kolom; face-focused crop (object-position center 22%) → gezicht =
+        vertrouwen/conversie, en de "KING LEGEND"-polotekst valt onder de crop weg. Niet
+        afleidend t.o.v. het formulier.
+  - **Opmerking:** één hero per pagina (template heeft geen gallery). Extra bruikbare shots
+        ongebruikt (zonnepanelen: IMG_4699/4735/4736; meterkast: IMG_4583/4593) — optioneel
+        later een fotostrip/gallery per maatregel.
+  - **Bonus beschikbaar:** `Downloads/Verbeterde AI foto's/` bevat 3 AI-bewerkte advies-
+        foto's waar het "KING LEGEND"-polologo vervangen is door **voortraject** — bruikbaar om
+        de Why-sectie (Partners) alsnog te swappen of King-Legend-shots te vervangen.
 - [ ] **Later / geblokkeerd**
   - [ ] Reviews-sectie (wacht op echte reviews met naam/plaats/resultaat)
-  - [ ] Over ons: eigen teamfoto's + eind-CTA (wacht op fotoshoot)
-  - [ ] Optioneel: echte airco/zonnepanelen-foto's (IMG_4631 airco, IMG_4712 zonnepanelen)
-        op de maatregelpagina's — beschikbaar, nog niet toegepast (consistentie-afweging).
+  - [ ] Over ons: eigen teamfoto's + eind-CTA (fotoshoot is er nu — kan opgepakt worden)
 
 Implementatienotities:
 - Alle nieuwe copy langs de V3-toets: geen "claim/direct profiteren/laatste kans"; bij

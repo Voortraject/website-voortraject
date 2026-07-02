@@ -63,6 +63,8 @@ export interface MaatregelPaginaProps {
   heroCtaHref?: string;
   heroImageSrc?: string;
   heroImageAlt?: string;
+  /** CSS object-position voor de hero-afbeelding (bijv. "center 30%"). Default "center". */
+  heroImagePosition?: string;
 
   // Is dit iets voor jou
   voorWieKop?: string;
@@ -190,6 +192,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
     heroCtaHref = "/contact",
     heroImageSrc,
     heroImageAlt,
+    heroImagePosition = "center",
     voorWieKop = "Past dit bij [[jouw]] woning?",
     pastBij,
     minderUrgent,
@@ -260,6 +263,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
                     src={heroImageSrc}
                     alt={heroImageAlt ?? ""}
                     className="w-full h-full object-cover"
+                    style={{ objectPosition: heroImagePosition }}
                     width={1200}
                     height={900}
                   />

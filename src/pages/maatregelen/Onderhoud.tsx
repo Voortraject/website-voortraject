@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
 import { OfBelOnsCta } from "@/components/OfBelOnsCta";
-import onderhoudImage from "@/assets/maatregel-onderhoud.jpg";
+import onderhoudImage from "@/assets/maatregel-onderhoud.webp";
 
 const NAVY = "#152C4E";
 const INK = "#111111";
@@ -136,16 +136,17 @@ const Onderhoud = () => (
               style={{
                 borderRadius: 20,
                 border: `1px solid ${BORDER}`,
-                aspectRatio: "4 / 3",
+                aspectRatio: "4 / 5",
                 backgroundColor: "#EFEAE0",
               }}
             >
               <img
                 src={onderhoudImage}
-                alt="Monteur controleert een installatie binnenshuis"
+                alt="Adviseur van Voortraject controleert de leidingen en ventilatie binnenshuis"
                 width={1024}
-                height={768}
+                height={1280}
                 className="w-full h-full object-cover"
+                style={{ objectPosition: "center" }}
               />
             </div>
           </div>
