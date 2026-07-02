@@ -1,10 +1,10 @@
 import { Check } from "lucide-react";
 
 const items = [
-  "Onafhankelijk, geen commissie",
-  "Lokaal team in Noord-Nederland",
-  "Ervaren in alle subsidieregelingen",
-  "Binnen dagen een gesprek",
+  "Geen commissie van fabrikanten of leveranciers",
+  "Lokaal team, actief in Groningen, Friesland en Drenthe",
+  "Kennis van ISDE, Nij Begun en gemeentelijke subsidies",
+  "Begeleiding tot de uitvoering klaar is",
 ];
 
 export const TrustBar = () => (
