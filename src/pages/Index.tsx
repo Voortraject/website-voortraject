@@ -6,7 +6,6 @@ import { LogoCarousel } from "@/components/sections/LogoCarousel";
 import { Herkenning } from "@/components/sections/Herkenning";
 import { HelderPlan } from "@/components/sections/HelderPlan";
 import { WaaromKiezen } from "@/components/sections/WaaromKiezen";
-import { AboutTeam } from "@/components/sections/AboutTeam";
 import { Subsidies } from "@/components/sections/Subsidies";
 import { Faq } from "@/components/sections/Faq";
 import { ClosingCta } from "@/components/sections/ClosingCta";
@@ -27,7 +26,6 @@ const Index = () => {
         <Subsidies />
         <WaaromKiezen />
         <LogoCarousel />
-        <AboutTeam />
         <Faq />
       </main>
       <Footer cta={<ClosingCta />} />
