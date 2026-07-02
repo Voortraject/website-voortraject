@@ -121,10 +121,12 @@ Fases (elk: eigen branch vanaf `main` → PR):
         foto's waar het "KING LEGEND"-polologo vervangen is door **voortraject** — bruikbaar om
         de Why-sectie (Partners) alsnog te swappen of King-Legend-shots te vervangen.
 - [x] **UI-verfijningen** (`feat/bg-alternatie-fotofix`, vanaf `main`)
-  - [x] **Homepage achtergrond-alternatie:** dark hero → crème → wit → crème → wit → …
-        Max 2 kleuren: crème `#F4EEE0` + wit `#FFFFFF`. Start met crème ná de donkere hero
-        (minder contrast). Secties: Herkenning=crème, HelderPlan=wit, Subsidies=crème,
-        LogoCarousel=wit, WaaromKiezen=crème, Faq=wit. (was 4+ verschillende bg's.)
+  - [x] **Homepage achtergrond-alternatie:** dark hero → off-white → wit → off-white → wit → …
+        Max 2 kleuren: off-white `#F5F3ED` + wit `#FFFFFF`. Start met off-white ná de donkere
+        hero (minder contrast). Secties: Herkenning=off-white, HelderPlan=wit, Subsidies=
+        off-white, LogoCarousel=wit, WaaromKiezen=off-white, Faq=wit. (was 4+ bg's; eerste
+        crème `#F4EEE0` was te beige/"smerig" → schoner `#F5F3ED`.)
+  - [x] Herkenning-sectietitel: "Waar moet je beginnen?" → **"Herken je dit?"**
   - [x] **Contact:** "Liever direct contact?"-kaart weg (+ ongebruikte consts/icon-imports
         opgeruimd). Sidebar: foto vult de kolom (`md:flex-1`), "Wat kun je verwachten?" lijnt
         onderaan uit met het formulier (grid `items-stretch`).

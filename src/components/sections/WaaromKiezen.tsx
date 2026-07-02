@@ -26,7 +26,7 @@ const redenen = [
 ];
 
 export const WaaromKiezen = () => (
-  <section className="section-pad" style={{ backgroundColor: "#F4EEE0" }} aria-labelledby="waarom-title">
+  <section className="section-pad" style={{ backgroundColor: "#F5F3ED" }} aria-labelledby="waarom-title">
     <div className="container-content">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-stretch">
         <div className="order-1">

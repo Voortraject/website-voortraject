@@ -26,11 +26,11 @@ const twijfels = [
 ];
 
 export const Herkenning = () => (
-  <section className="py-16 md:py-24" style={{ backgroundColor: "#F4EEE0" }} aria-labelledby="herkenning-title">
+  <section className="py-16 md:py-24" style={{ backgroundColor: "#F5F3ED" }} aria-labelledby="herkenning-title">
     <div className="container-content">
       <div className="max-w-3xl">
         <h2 id="herkenning-title" className="h2-section">
-          Waar moet je <span className="text-accent">beginnen?</span>
+          Herken je <span className="text-accent">dit?</span>
         </h2>
         <p className="mt-4 text-[16px] md:text-[18px] leading-[1.6] text-muted-foreground">
           Je wilt wel verduurzamen, maar zodra je je erin verdiept loop je tegen dezelfde muur
