@@ -16,7 +16,7 @@ const defaultLogos: Logo[] = [
   { src: "/images/instanties/natuurvriendelijk-isoleren.png", alt: "Natuur Vriendelijk Isoleren" },
 ];
 
-const BG = "#F5F2EC";
+const BG = "#FFFFFF";
 
 export const LogoCarousel = ({
   title = "De subsidies en instanties waarmee wij werken",

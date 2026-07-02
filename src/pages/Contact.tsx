@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, FormEvent, ChangeEvent } from "react";
-import { CheckCircle, Mail, Phone, MapPin, Loader2 } from "lucide-react";
+import { CheckCircle, Loader2 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
@@ -35,17 +35,6 @@ const expectations: Record<Mode, string[]> = {
     "Je hoeft niets voor te bereiden",
   ],
 };
-
-const contactIntros: Record<Mode, string> = {
-  uitvoerder: "Liever eerst even bellen of mailen? Je kunt ons altijd direct bereiken.",
-  bewoner: "Liever even bellen voor een eerste vraag? Dat kan natuurlijk ook.",
-};
-
-const contactRows = [
-  { icon: Mail, value: "info@voortraject.nl", href: "mailto:info@voortraject.nl" },
-  { icon: Phone, value: "050 211 2689", href: "tel:+31502112689" },
-  { icon: MapPin, value: "Viaductstraat 3-15, Groningen" },
-];
 
 const belVoorkeurOpties = [
   "Per e-mail",
@@ -436,7 +425,7 @@ const Contact = () => {
         </div>
 
         <div className="mx-auto px-6 md:px-12 mt-8 md:mt-10" style={{ maxWidth: 1200 }}>
-          <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 md:gap-10 lg:gap-12 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 md:gap-10 lg:gap-12 items-stretch">
             <div
               style={{
                 backgroundColor: "#FFFFFF",
@@ -858,13 +847,12 @@ const Contact = () => {
               )}
             </div>
 
-            <div className="flex flex-col" style={{ gap: 32 }}>
+            <div className="flex flex-col gap-8">
               <div
-                className="overflow-hidden rounded-2xl"
+                className="overflow-hidden rounded-2xl aspect-[4/5] md:aspect-auto md:flex-1 md:min-h-0"
                 style={{
                   border: "1px solid #E5E2DB",
                   boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
-                  aspectRatio: "4 / 5",
                 }}
               >
                 <img
@@ -873,7 +861,7 @@ const Contact = () => {
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover"
-                  style={{ objectPosition: "center" }}
+                  style={{ objectPosition: "center 20%" }}
                 />
               </div>
               <div>
@@ -896,56 +884,6 @@ const Contact = () => {
                       </span>
                     </li>
                   ))}
-                </ul>
-              </div>
-
-              <div
-                style={{
-                  backgroundColor: "#FFFFFF",
-                  borderRadius: 12,
-                  border: "1px solid #E5E2DB",
-                  padding: 28,
-                }}
-              >
-                <h3 className="font-display" style={{ fontSize: 18, fontWeight: 600, color: "#152C4E", marginBottom: 8 }}>
-                  Liever direct contact?
-                </h3>
-                <p className="font-sans" style={{ fontSize: 14, color: "#6B6B6B", lineHeight: 1.5, marginBottom: 24 }}>
-                  {contactIntros[mode]}
-                </p>
-
-                <ul>
-                  {contactRows.map((row, idx) => {
-                    const Icon = row.icon;
-                    const isLast = idx === contactRows.length - 1;
-                    return (
-                      <li
-                        key={row.value}
-                        className="flex items-center"
-                        style={{
-                          gap: 12,
-                          paddingTop: 10,
-                          paddingBottom: 10,
-                          borderBottom: isLast ? "none" : "1px solid #E5E2DB",
-                        }}
-                      >
-                        <Icon size={18} color="#152C4E" className="shrink-0" />
-                        {row.href ? (
-                          <a
-                            href={row.href}
-                            className="font-sans hover:text-[#E8B547] transition-colors"
-                            style={{ fontSize: 15, fontWeight: 500, color: "#2B2B2B" }}
-                          >
-                            {row.value}
-                          </a>
-                        ) : (
-                          <span className="font-sans" style={{ fontSize: 15, fontWeight: 500, color: "#2B2B2B" }}>
-                            {row.value}
-                          </span>
-                        )}
-                      </li>
-                    );
-                  })}
                 </ul>
               </div>
             </div>
