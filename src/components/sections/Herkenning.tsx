@@ -30,11 +30,11 @@ export const Herkenning = () => (
     <div className="container-content">
       <div className="max-w-3xl">
         <h2 id="herkenning-title" className="h2-section">
-          Verduurzamen? De meeste mensen weten niet{" "}
-          <span className="text-accent">waar ze moeten beginnen</span>
+          Waar moet je <span className="text-accent">beginnen?</span>
         </h2>
         <p className="mt-4 text-[16px] md:text-[18px] leading-[1.6] text-muted-foreground">
-          Je wilt wel, maar zodra je je erin verdiept loop je tegen dezelfde muur aan. Herkenbaar?
+          Je wilt wel verduurzamen, maar zodra je je erin verdiept loop je tegen dezelfde muur
+          aan. Herkenbaar?
         </p>
       </div>
 
@@ -54,16 +54,18 @@ export const Herkenning = () => (
           {twijfels.map(({ icon: Icon, title, body }) => (
             <article
               key={title}
-              className="bg-card rounded-2xl border border-border p-7 transition-all duration-200 ease-out hover:-translate-y-0.5"
+              className="bg-card rounded-2xl border border-border p-5 md:p-6 transition-all duration-200 ease-out hover:-translate-y-0.5"
               style={{ boxShadow: "0 4px 24px hsl(var(--primary) / 0.06)" }}
             >
-              <span className="inline-flex w-11 h-11 items-center justify-center rounded-full bg-secondary">
-                <Icon size={22} className="text-primary" aria-hidden="true" />
-              </span>
-              <h3 className="font-display font-semibold text-primary mt-4 text-[20px] leading-[1.25] tracking-[-0.01em]">
-                {title}
-              </h3>
-              <p className="mt-2.5 text-[15px] leading-[1.6] text-muted-foreground">{body}</p>
+              <div className="flex items-center gap-3">
+                <span className="inline-flex shrink-0 w-10 h-10 items-center justify-center rounded-full bg-secondary">
+                  <Icon size={20} className="text-primary" aria-hidden="true" />
+                </span>
+                <h3 className="font-display font-semibold text-primary text-[18px] leading-[1.2] tracking-[-0.01em]">
+                  {title}
+                </h3>
+              </div>
+              <p className="mt-3 text-[15px] leading-[1.6] text-muted-foreground">{body}</p>
             </article>
           ))}
         </div>

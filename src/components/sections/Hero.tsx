@@ -28,7 +28,7 @@ export const Hero = () => {
         aria-hidden="true"
       />
 
-      <div className="relative container-content flex items-center min-h-[600px] md:min-h-[700px] lg:min-h-[84vh] pt-28 pb-24 md:pt-32 md:pb-36">
+      <div className="relative container-content flex items-center min-h-[600px] md:min-h-[700px] lg:min-h-[84vh] pt-32 pb-20 md:pt-48 md:pb-20">
         <div className="animate-fade-up max-w-4xl">
           <h1
             id="hero-title"
