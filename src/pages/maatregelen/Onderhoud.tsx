@@ -136,7 +136,7 @@ const Onderhoud = () => (
               style={{
                 borderRadius: 20,
                 border: `1px solid ${BORDER}`,
-                aspectRatio: "4 / 3",
+                aspectRatio: "4 / 5",
                 backgroundColor: "#EFEAE0",
               }}
             >
@@ -144,9 +144,9 @@ const Onderhoud = () => (
                 src={onderhoudImage}
                 alt="Adviseur van Voortraject controleert de leidingen en ventilatie binnenshuis"
                 width={1024}
-                height={768}
+                height={1280}
                 className="w-full h-full object-cover"
-                style={{ objectPosition: "center 28%" }}
+                style={{ objectPosition: "center" }}
               />
             </div>
           </div>

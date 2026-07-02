@@ -861,15 +861,19 @@ const Contact = () => {
             <div className="flex flex-col" style={{ gap: 32 }}>
               <div
                 className="overflow-hidden rounded-2xl"
-                style={{ border: "1px solid #E5E2DB", boxShadow: "0 4px 24px rgba(21,44,78,0.06)" }}
+                style={{
+                  border: "1px solid #E5E2DB",
+                  boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
+                  aspectRatio: "4 / 5",
+                }}
               >
                 <img
                   src={contactAdviseur}
                   alt="Adviseur van Voortraject helpt je persoonlijk verder"
                   loading="lazy"
                   decoding="async"
-                  className="w-full object-cover"
-                  style={{ height: 200, objectPosition: "center 22%" }}
+                  className="w-full h-full object-cover"
+                  style={{ objectPosition: "center" }}
                 />
               </div>
               <div>
