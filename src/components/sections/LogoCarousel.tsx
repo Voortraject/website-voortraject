@@ -13,6 +13,7 @@ const defaultLogos: Logo[] = [
   { src: "/images/instanties/nij-begun.svg", alt: "Nij Begun" },
   { src: "/images/instanties/isde.png", alt: "ISDE" },
   { src: "/images/instanties/nationaal-warmtefonds.png", alt: "Nationaal Warmtefonds" },
+  { src: "/images/instanties/natuurvriendelijk-isoleren.png", alt: "Natuur Vriendelijk Isoleren" },
 ];
 
 const BG = "#F5F2EC";
