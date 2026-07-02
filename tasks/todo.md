@@ -52,10 +52,24 @@ Fases (elk: eigen branch vanaf `main` → PR):
   - **Openstaand:** opdrachtgever wil nog **1 extra logo** toevoegen aan de instantie-
     carrousel — bestand komt in `public/images/instanties/`, daarna registreren in
     `defaultLogos` in `LogoCarousel.tsx`.
-- [ ] **Fase 2 — Uitvoerders → Partners** (`feat/partners-rename`)
-  - [ ] Route `/partners` + redirect `/uitvoerders` → `/partners` (ook Cloudflare `_redirects` voor echte 301)
-  - [ ] Header/footer/nav: label + volgorde (Bewoners · Verduurzamen · Subsidies · Over ons · Partners)
-  - [ ] Pagina-copy: nieuwe H1/subtitel, B2B-toon behouden; interne links + sitemap-script bijwerken
+- [x] **Fase 2 — Uitvoerders → Partners** (`feat/partners-rename`, gestackt op
+      `feat/home-bewoners` omdat die de nieuwe Header/Footer bevat; PR-base =
+      feat/home-bewoners, retarget naar main zodra PR #6 gemerged is) — KLAAR, nog niet gemerged
+  - [x] `src/pages/Uitvoerders.tsx` → `Partners.tsx` (git mv; component + `export default`
+        hernoemd), Seo `path="/partners"`, H1 "…zodat jij kunt bouwen" + subtitel je-vorm
+        ("jouw team"). B2B-body verder ongewijzigd; het woord "uitvoerders" blijft als
+        vakterm (dat is de doelgroep), alleen de paginanaam/URL/nav-label wordt Partners.
+  - [x] Route `/partners` + client-side redirect `/uitvoerders` → `<Navigate to="/partners">`
+        (voor dev + SPA-fallback) én echte 301 in Cloudflare `public/_redirects`
+        (`/uitvoerders /partners 301`).
+  - [x] Header + Footer: label Uitvoerders → Partners; nav-volgorde Bewoners · Verduurzamen ·
+        Subsidies · Over ons · Partners (footer: Bewoners · Partners · Over ons · Contact).
+  - [x] Interne links: partnerverwijzing in `ClosingCta` → `/partners`; sitemap-script +
+        `public/sitemap.xml` (regenerated, 15 entries) → `/partners`.
+  - **Bewust NIET aangeraakt (data-integriteit / vaktaal):** Supabase-tabel
+        `leads_uitvoerders` (Contact-form insert) en `AudienceContext`-type
+        `"uitvoerders" | "bewoners"`; prose-vermeldingen van "uitvoerders" op subsidie-/
+        maatregel-/Privacy-pagina's; dode `Audiences.tsx` (nergens geïmporteerd).
 - [ ] **Fase 3 — Bewoners-pagina verscherpen** (`feat/bewoners-copy`)
   - [ ] Nieuwe H1/subtitel; secties behouden; eind-CTA met risicoreductie
 - [ ] **Fase 4 — Uniforme CTA-blokken** (`feat/uniform-cta`)

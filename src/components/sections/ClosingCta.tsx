@@ -53,7 +53,7 @@ export const ClosingCta = () => (
       <p className="mt-10 text-[14px] text-white/55">
         Ben je uitvoerder en zoek je ontzorging in het voortraject?{" "}
         <a
-          href="/uitvoerders"
+          href="/partners"
           className="font-medium text-white/85 underline underline-offset-4 hover:text-white transition-colors"
         >
           Bekijk onze partnerpagina

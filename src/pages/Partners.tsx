@@ -473,13 +473,13 @@ const PackageCard = ({ p, index }: { p: Package; index: number }) => {
 const ctaButton =
   "inline-flex items-center justify-center font-sans font-semibold text-[15px] transition-colors";
 
-const Uitvoerders = () => {
+const Partners = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Seo
         title="Voor uitvoerders | Voortraject"
         description="Voortraject ontzorgt verduurzamingsbedrijven in het voortraject: wij vangen bewonersvragen op, bereiden dossiers voor en bewaken opvolging."
-        path="/uitvoerders"
+        path="/partners"
       />
       <Header />
       <main className="flex-1">
@@ -506,13 +506,13 @@ const Uitvoerders = () => {
                 >
                   Wij vangen het{" "}
                   <span style={{ color: "hsl(var(--accent))" }}>voortraject</span>{" "}
-                  op, zodat jullie kunnen bouwen
+                  op, zodat jij kunt bouwen
                 </h1>
                 <p
                   className="mt-8"
                   style={{ color: "#6B6B6B", fontSize: 18, fontWeight: 400, lineHeight: 1.6, maxWidth: 560, textAlign: "left" }}
                 >
-                  Wij nemen bewonerscontact, offerte-opvolging, akkoordtrajecten en nazorg uit handen, zodat jullie minder tijd verliezen aan kantoorwerk en meer focus houden op de uitvoering.
+                  Wij nemen bewonerscontact, offerte-opvolging, akkoordtrajecten en nazorg uit handen, zodat jouw team zich volledig richt op planning en uitvoering.
                 </p>
                 <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5" style={{ textAlign: "left" }}>
                   <a
@@ -868,4 +868,4 @@ const Uitvoerders = () => {
   );
 };
 
-export default Uitvoerders;
+export default Partners;
