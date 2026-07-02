@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/sections/Hero";
 import { LogoCarousel } from "@/components/sections/LogoCarousel";
 import { Herkenning } from "@/components/sections/Herkenning";
+import { HelderPlan } from "@/components/sections/HelderPlan";
 import { HowWeWork } from "@/components/sections/HowWeWork";
 import { AboutTeam } from "@/components/sections/AboutTeam";
 import { Subsidies } from "@/components/sections/Subsidies";
@@ -22,6 +23,7 @@ const Index = () => {
       <main className="flex-1">
         <Hero />
         <Herkenning />
+        <HelderPlan />
         <HowWeWork />
         <LogoCarousel />
         <AboutTeam />
