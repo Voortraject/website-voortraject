@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AudienceProvider } from "@/contexts/AudienceContext";
 import Index from "./pages/Index.tsx";
-import Uitvoerders from "./pages/Uitvoerders.tsx";
+import Partners from "./pages/Partners.tsx";
 import Bewoners from "./pages/Bewoners.tsx";
 
 import Isolatie from "./pages/maatregelen/Isolatie.tsx";
@@ -37,7 +37,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/uitvoerders" element={<Uitvoerders />} />
+            <Route path="/partners" element={<Partners />} />
+            <Route path="/uitvoerders" element={<Navigate to="/partners" replace />} />
             <Route path="/bewoners" element={<Bewoners />} />
             <Route path="/verduurzamen" element={<Navigate to="/" replace />} />
             <Route path="/verduurzamen/isolatie" element={<Isolatie />} />
