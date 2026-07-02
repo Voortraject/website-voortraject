@@ -1,6 +1,6 @@
 import { Thermometer } from "lucide-react";
 import { MaatregelPagina } from "@/components/MaatregelPagina";
-import warmtepompImage from "@/assets/maatregel-warmtepomp.jpg";
+import warmtepompImage from "@/assets/maatregel-warmtepomp.webp";
 
 const Warmtepomp = () => (
   <MaatregelPagina
@@ -12,7 +12,8 @@ const Warmtepomp = () => (
     heroSub="Verwarmen zonder gas, mits je woning er klaar voor is. In een goed geïsoleerde woning is een warmtepomp een efficiënte stap, en de keuze tussen hybride en volledig elektrisch hangt af van je woning en einddoel."
     heroIntro=""
     heroImageSrc={warmtepompImage}
-    heroImageAlt="Warmtepomp buitenunit naast een woning"
+    heroImageAlt="Adviseur van Voortraject bekijkt de installatie en instellingen binnenshuis"
+    heroImagePosition="center 30%"
     pastBij={[
       "Je van het gas af wilt, stap voor stap met een hybride of in één keer volledig elektrisch",
       "Je woning al redelijk geïsoleerd is, of je nog isoleert en met een hybride wilt starten",

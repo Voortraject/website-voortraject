@@ -1,6 +1,6 @@
 import { Snowflake } from "lucide-react";
 import { MaatregelPagina } from "@/components/MaatregelPagina";
-import aircoImage from "@/assets/maatregel-airco.jpg";
+import aircoImage from "@/assets/maatregel-airco.webp";
 
 const Airco = () => (
   <MaatregelPagina
@@ -12,7 +12,8 @@ const Airco = () => (
     heroSub="Aangename verkoeling in de zomer en, met warmtepomptechniek, zuinig verwarmen in de winter. Vooral voor losse ruimtes of als bijverwarming een handige, energiezuinige oplossing."
     heroIntro=""
     heroImageSrc={aircoImage}
-    heroImageAlt="Airco binnenunit aan een muur in een woonkamer"
+    heroImageAlt="Adviseur van Voortraject bekijkt een airco-binnenunit aan de muur"
+    heroImagePosition="center 25%"
     pastBij={[
       "Je in de zomer last hebt van warmte in huis",
       "Je losse ruimtes wilt koelen of verwarmen, zoals een thuiskantoor, slaapkamer of zolder",
