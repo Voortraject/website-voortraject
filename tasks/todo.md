@@ -34,9 +34,19 @@ Fases (elk: eigen branch vanaf `main` → PR):
   - [x] Instantie-logo's (`LogoCarousel`) behouden (opdrachtgever wil deze houden)
   - [x] "Hoe wij te werk gaan" (`HowWeWork`) VERWIJDERD (op verzoek)
   - [x] "Over ons"/team-sectie (`AboutTeam`) VERWIJDERD (externe CRM-groepsfoto; op verzoek)
-  - [ ] **Nog te doen in Fase 1:** eind-CTA (`ClosingCta`) V3/bewoner-proof maken +
-        kleine partnerverwijzing onderaan; FAQ-teksten naar je-vorm/bewoner; SEO title +
-        description van de home bijwerken; daarna PR openen (ready-for-review, niet mergen)
+  - [x] **Fase 1 afgerond:** eind-CTA (`ClosingCta`) herschreven → bewoner-first + V3-toon
+        ("Snel duidelijkheid voor jouw woning", regie-zin "je bepaalt zelf wat je ermee
+        doet"), risico-verlagende microtekst (Vrijblijvend · Binnen 24 uur reactie · niets
+        voorbereiden) en kleine partnerverwijzing onderaan (link → `/uitvoerders`, wordt in
+        Fase 2 `/partners`). Knop nu vaste CTA "Plan een gratis gesprek" (was "Plan een
+        kennismaking"), token-classes i.p.v. inline hex.
+  - [x] FAQ (`Faq.tsx`) → bewoner-first + je-vorm: dubbele-doelgroep-vraag ("Voor wie
+        werken jullie?") eruit; nu Wat doet Voortraject / Wat kost het mij / Hoe verdienen
+        jullie dan geld / Werkgebied / Hoe snel een gesprek / Verschil met energiecoach.
+  - [x] SEO home bijgewerkt: title "Gratis advies over verduurzamen en subsidies |
+        Voortraject" + bewoner-first description — in `Index.tsx` (helmet) én `index.html`
+        (title/description/og/twitter + JSON-LD org description). og:image + stale
+        hero-houses.webp-preload bewust NIET aangeraakt (buiten scope — zie review).
   - Homepage-volgorde nu: Hero → Herkenning → HelderPlan → Subsidies → WaaromKiezen →
     LogoCarousel → Faq → eind-CTA(Footer)
   - **Openstaand:** opdrachtgever wil nog **1 extra logo** toevoegen aan de instantie-

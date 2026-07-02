@@ -14,8 +14,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Seo
-        title="Voortraject | Ondersteuning in het verduurzamingstraject"
-        description="Voortraject begeleidt het hele verduurzamingstraject: uitvoerders houden focus op planning en uitvoering, bewoners krijgen rust en duidelijkheid."
+        title="Gratis advies over verduurzamen en subsidies | Voortraject"
+        description="Wij zoeken gratis uit welke maatregelen slim zijn voor jouw woning en welke subsidies je kunt krijgen. Onafhankelijk advies voor bewoners in Noord-Nederland."
         path="/"
       />
       <Header />

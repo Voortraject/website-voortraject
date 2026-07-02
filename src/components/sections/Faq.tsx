@@ -4,27 +4,27 @@ import { ChevronDown } from "lucide-react";
 const faqs = [
   {
     q: "Wat doet Voortraject precies?",
-    a: "Wij pakken het voortraject op rondom verduurzamen: bewonersbegeleiding, advies, dossiervorming en uitleg over regelingen. Bewoners krijgen sneller duidelijkheid en uitvoerders kunnen zich richten op de uitvoering.",
+    a: "Wij geven gratis en onafhankelijk advies over verduurzamen en subsidies. We kijken eerst naar jouw woning en situatie, vertellen wat slim is en in welke volgorde, zoeken uit welke subsidies je kunt krijgen en begeleiden je naar een betrouwbare uitvoerder als je verder wilt.",
   },
   {
-    q: "Voor wie werken jullie?",
-    a: "Voor uitvoerders die het voortraject buiten de deur willen zetten en zich willen richten op planning en uitvoering. En voor bewoners die willen verduurzamen, maar vastlopen in keuzes, regelingen of wachttijden.",
+    q: "Wat kost het mij?",
+    a: "Ons advies is gratis en vrijblijvend. Je zit nergens aan vast en bepaalt zelf of en wanneer je een vervolgstap zet.",
   },
   {
-    q: "Wat is het verschil met een isolatieadviseur of energiecoach?",
-    a: "Een isolatieadviseur maakt een isolatieplan en een energiecoach geeft advies over energiegedrag. Wij begeleiden het hele traject van eerste vraag tot uitvoering, inclusief regelingen, dossier en koppeling met een betrouwbare uitvoerder.",
+    q: "Hoe verdienen jullie dan geld?",
+    a: "We verkopen zelf geen producten en krijgen geen commissie van fabrikanten of leveranciers. Daardoor zit er in ons advies geen belang om je een bepaald merk of systeem aan te praten. We worden betaald door de uitvoerders, voor het voorwerk dat we voor hen uit handen nemen: intake, dossier, subsidies en nazorg. We koppelen je alleen aan uitvoerders waarvan we weten dat ze goed werk leveren in jouw regio.",
   },
   {
     q: "In welk gebied werken jullie?",
-    a: "Wij werken door heel Noord-Nederland: Groningen, Friesland en Drenthe. In gemeenten waar Nij Begun loopt hebben we extra ervaring, maar bewoners en uitvoerders uit de hele regio kunnen bij ons terecht.",
+    a: "Door heel Noord-Nederland: Groningen, Friesland en Drenthe. In gemeenten waar Nij Begun loopt kennen we de regeling van binnen en buiten.",
   },
   {
-    q: "Hoe snel kunnen jullie schakelen?",
-    a: "Meestal kunnen we binnen een paar werkdagen een eerste gesprek inplannen. Geen wachttijden van weken of maanden zoals bij sommige bestaande loketten.",
+    q: "Hoe snel kan ik een gesprek?",
+    a: "Meestal binnen een paar werkdagen. Geen wachttijden van weken of maanden zoals bij sommige loketten — je kiest een moment dat jou uitkomt.",
   },
   {
-    q: "Hoe verdienen wij geld?",
-    a: "Wij verkopen geen producten en ontvangen geen commissie van fabrikanten of leveranciers. Daardoor zit er in ons advies geen belang om je een bepaald merk, systeem of product aan te praten. Wij worden betaald door de uitvoerders, voor het voorwerk dat we voor hen uit handen nemen: intake, dossiervoorbereiding, subsidies en nazorg. We koppelen je alleen aan uitvoerders waarvan we weten dat ze goed werk leveren in jouw regio.",
+    q: "Wat is het verschil met een energiecoach?",
+    a: "Een energiecoach adviseert vooral over energiegedrag. Wij overzien het hele traject: welke maatregelen slim zijn voor jouw woning, in welke volgorde, welke subsidies erbij passen én de begeleiding naar de uitvoering.",
   },
 ];
 
