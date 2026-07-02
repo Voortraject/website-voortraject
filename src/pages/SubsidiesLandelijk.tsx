@@ -966,13 +966,13 @@ const SubsidiesLandelijk = () => {
                 className="font-display"
                 style={{ color: "#fff", fontWeight: 700, fontSize: "clamp(26px, 3.5vw, 36px)", lineHeight: 1.2 }}
               >
-                Wil je sneller verder met je verduurzaming?
+                Ontdek welke subsidies voor jouw woning gelden
               </h2>
               <p style={{ marginTop: 16, color: "rgba(255,255,255,0.8)", fontSize: 16, lineHeight: 1.6 }}>
-                Neem contact op. Wij rekenen voor jouw woning uit wat je via ISDE kunt krijgen, en hoe je optimaal combineert. Geen verplichtingen, geen verkooppraatje.
+                Wij zoeken het voor jouw adres uit en stapelen alles wat kan. Eén gesprek, geen loketten. Vrijblijvend en gratis.
               </p>
               <div className="mt-8">
-                <PrimaryBtn href="/contact">Neem contact op</PrimaryBtn>
+                <PrimaryBtn href="/contact">Plan een gratis gesprek</PrimaryBtn>
               </div>
               <p style={{ marginTop: 24, color: "rgba(255,255,255,0.5)", fontSize: 12 }}>
                 Laatst bijgewerkt: {LAATST_BIJGEWERKT}

@@ -24,7 +24,7 @@ import { Seo } from "@/components/Seo";
 import { Why } from "@/components/sections/Why";
 import { Footer } from "@/components/Footer";
 import { OfBelOnsCta } from "@/components/OfBelOnsCta";
-import heroUitvoerders from "@/assets/uitvoerders-hero.jpg";
+import heroUitvoerders from "@/assets/partners-overleg.webp";
 import type { LucideIcon } from "lucide-react";
 
 type Bullet = { label: string; text: string };
@@ -536,7 +536,7 @@ const Partners = () => {
               <div>
                 <img
                   src={heroUitvoerders}
-                  alt="Uitvoerder en adviseur bespreken plannen bij zonnepanelen"
+                  alt="Adviseur van Voortraject neemt het adviesgesprek met een bewoner uit handen aan de keukentafel"
                   loading="lazy"
                   className="w-full object-cover"
                   style={{

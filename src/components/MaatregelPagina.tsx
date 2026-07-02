@@ -205,7 +205,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
     faqs,
     finalCtaKop,
     finalCtaTekst,
-    finalCtaLabel = "Plan een gratis adviesgesprek",
+    finalCtaLabel = "Plan een gratis gesprek",
     finalCtaHref = "/contact",
   } = props;
 

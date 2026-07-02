@@ -385,13 +385,13 @@ const Contact = () => {
                 color: "#2B2B2B",
               }}
             >
-              Laten we <span style={{ color: "#E8B547" }}>kennismaken</span>
+              Ontdek gratis wat mogelijk is voor <span style={{ color: "#E8B547" }}>jouw woning</span>
             </h1>
             <p
               className="mx-auto font-sans"
               style={{ marginTop: 12, maxWidth: 760, fontSize: 16, color: "#6B6B6B", lineHeight: 1.5 }}
             >
-              Vertel ons waar je op zoek naar bent. We nemen binnen 24 uur contact op.
+              Vertel ons kort over je situatie. We nemen binnen 24 uur contact op voor een vrijblijvend gesprek.
             </p>
 
             <div

@@ -425,14 +425,14 @@ const SubsidiesStapelen = () => {
                   lineHeight: 1.2,
                 }}
               >
-                Benieuwd wat jij kunt stapelen?
+                Ontdek welke subsidies voor jouw woning gelden
               </h2>
               <p style={{ color: "rgba(255,255,255,0.8)", fontSize: 16, lineHeight: 1.65, marginTop: 18 }}>
-                In een gratis gesprek zoeken we uit welke regelingen je voor jouw woning kunt combineren.
+                Wij zoeken het voor jouw adres uit en stapelen alles wat kan. Eén gesprek, geen loketten. Vrijblijvend en gratis.
               </p>
               <div style={{ marginTop: 26 }}>
                 <a href="/contact" style={goldBtn}>
-                  Plan een gratis adviesgesprek
+                  Plan een gratis gesprek
                 </a>
               </div>
               <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, marginTop: 28 }}>

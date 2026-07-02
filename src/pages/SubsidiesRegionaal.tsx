@@ -642,14 +642,14 @@ const SubsidiesRegionaal = () => {
                   lineHeight: 1.2,
                 }}
               >
-                Welke regelingen liggen open in jouw gemeente?
+                Ontdek welke subsidies voor jouw woning gelden
               </h2>
               <p style={{ color: "rgba(255,255,255,0.8)", fontSize: 16, lineHeight: 1.65, marginTop: 18 }}>
-                Wij zoeken het voor jouw woning uit en stapelen alles bovenop ISDE en Nij Begun. Geen drie loketten, één gesprek. Vrijblijvend en gratis.
+                Wij zoeken het voor jouw adres uit en stapelen alles wat kan. Eén gesprek, geen loketten. Vrijblijvend en gratis.
               </p>
               <div style={{ marginTop: 26 }}>
                 <a href="/contact" style={goldBtn}>
-                  Neem contact op
+                  Plan een gratis gesprek
                 </a>
               </div>
               <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, marginTop: 28 }}>
