@@ -34,7 +34,7 @@ export const Herkenning = () => (
         {twijfels.map(({ icon: Icon, title, body }) => (
           <article
             key={title}
-            className="w-[80%] sm:w-[46%] md:w-auto shrink-0 snap-start bg-card rounded-2xl border p-6 md:p-7 flex flex-col transition-all duration-200 ease-out hover:-translate-y-0.5"
+            className="w-[80%] sm:w-[46%] md:w-auto shrink-0 snap-start bg-card rounded-2xl border p-6 md:p-7 flex flex-col transition-all duration-200 ease-out md:hover:-translate-y-0.5"
             style={{
               boxShadow: "0 4px 24px hsl(var(--primary) / 0.06)",
               borderColor: "hsl(var(--accent) / 0.8)",
