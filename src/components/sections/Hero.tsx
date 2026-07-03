@@ -10,17 +10,21 @@ const claims = [
 
 export const Hero = () => {
   return (
-    <section className="relative overflow-hidden -mt-20" aria-labelledby="hero-title">
+    <section
+      className="relative overflow-hidden -mt-20"
+      style={{ backgroundColor: "#F5F3ED" }}
+      aria-labelledby="hero-title"
+    >
       <img
         src={heroAdviesgesprek}
         alt="Adviseur van Voortraject bekijkt samen met een bewoner de mogelijkheden voor zijn woning aan de eettafel"
         fetchPriority="high"
         decoding="async"
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover rounded-b-[2rem] md:rounded-b-[3rem]"
         style={{ objectPosition: "center 28%" }}
       />
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 rounded-b-[2rem] md:rounded-b-[3rem]"
         style={{
           background:
             "linear-gradient(90deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.3) 55%, rgba(0, 0, 0, 0.18) 100%)",
@@ -28,12 +32,12 @@ export const Hero = () => {
         aria-hidden="true"
       />
 
-      <div className="relative container-content flex items-center min-h-[600px] md:min-h-[700px] lg:min-h-[84vh] pt-32 pb-20 md:pt-48 md:pb-20">
-        <div className="animate-fade-up max-w-4xl">
+      <div className="relative container-content flex items-center min-h-[600px] md:min-h-[700px] lg:min-h-[84vh] pt-32 pb-20 md:pt-[12.5rem] md:pb-20">
+        <div className="animate-fade-up max-w-5xl">
           <h1
             id="hero-title"
             className="h1-hero text-white leading-[1.06]"
-            style={{ fontSize: "clamp(1.75rem, 5vw, 4.25rem)" }}
+            style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)" }}
           >
             <span className="block">Gratis advies over</span>
             <span className="block text-accent">verduurzamen en subsidies</span>
