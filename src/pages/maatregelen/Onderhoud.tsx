@@ -136,7 +136,7 @@ const Onderhoud = () => (
               style={{
                 borderRadius: 20,
                 border: `1px solid ${BORDER}`,
-                aspectRatio: "4 / 3",
+                aspectRatio: "1 / 1",
                 backgroundColor: "#EFEAE0",
               }}
             >
