@@ -188,6 +188,25 @@ Fases (elk: eigen branch vanaf `main` → PR):
         onderaan uit met het formulier (grid `items-stretch`).
   - [x] **Onderhoud-hero:** van 4:5 terug naar 4:3 (kleiner), `object-position center top`
         zodat de leidingen/buizen goed zichtbaar blijven.
+- [x] **Feedbackronde: /bewoners weg + homepage-links + subsidie-randjes**
+      (`feat/bewoners-verwijderen-homepage-links`, vanaf `main`) — KLAAR, PR open
+  - [x] **/bewoners-pagina verwijderd:** `src/pages/Bewoners.tsx` gedeletet; de route is nu een
+        client-redirect `<Navigate to="/" replace />` (zelfde patroon als /uitvoerders →
+        /partners; beter voor SEO dan een 404 op een eerder-gesitemapte URL). Nav-item weg uit
+        Header **én** Footer; sitemap-entry weg (script + `public/sitemap.xml` geregen → 14
+        entries). Asset `bewoners-keukentafel.webp` behouden (nog in gebruik door HelderPlan).
+        Dode `Audiences.tsx` (nergens geïmporteerd) bewust ongemoeid (buiten scope).
+  - [x] **WaarWeBijHelpen:** alle 3 tegels nu hetzelfde tekstlink-patroon als de installatie-
+        tegel (geen hele-tegel-link/pijl meer — kan niet met geneste `<a>`). Isolatie-tegel
+        kreeg link "Isolatie & ventilatie"; subsidie-tegel de 4 subsidiepagina's (Nij Begun,
+        Landelijke/Regionale subsidies, Subsidies stapelen). Gedeelde `TegelLinks`-helper.
+  - [x] **Subsidies-stapelen-kaarten:** subtiel oker randje via token
+        `borderColor: hsl(var(--accent) / 0.5)` (i.p.v. `border-border`). NB: de class-opacity-
+        modifier `/50` werkt hier niet (tokens missen de `<alpha-value>`-placeholder) → inline
+        via de CSS-var, zoals `index.css` het accent al met alpha gebruikt.
+  - Geverifieerd: `bun run lint` (geen nieuwe errors — alle bestaande), `tsc --noEmit` (clean),
+        `bun run build` (ok), + headless CDP-screenshots (nav zonder Bewoners; 10 helpen-links;
+        3 kaarten met `borderColor rgba(230,182,71,.5)`).
 - [ ] **Later / geblokkeerd**
   - [ ] Reviews-sectie (wacht op echte reviews met naam/plaats/resultaat)
   - [ ] Over ons: eigen teamfoto's + eind-CTA (fotoshoot is er nu — kan opgepakt worden)

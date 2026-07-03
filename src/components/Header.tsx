@@ -28,7 +28,6 @@ const subsidiesItems = [
 ];
 
 const links: { href: string; label: string; dropdown?: typeof subsidiesItems }[] = [
-  { href: "/bewoners", label: "Bewoners" },
   { href: "/verduurzamen/isolatie", label: "Verduurzamen", dropdown: verduurzamenItems },
   { href: "/subsidies", label: "Subsidies", dropdown: subsidiesItems },
   { href: "/over-ons", label: "Over ons" },
