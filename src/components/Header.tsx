@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown, Phone } from "lucide-react";
 import logoVoortrajectBlauw from "@/assets/logo-voortraject-blauw.png";
 
-const pillShadow = { boxShadow: "0 2px 14px hsl(var(--primary) / 0.12)" };
+const pillShadow = {
+  boxShadow:
+    "0 8px 32px -8px hsl(var(--primary) / 0.22), 0 2px 8px -2px hsl(var(--primary) / 0.14)",
+};
+
+// Premium "frosted glass" surface used across the header pills.
+const glassPill = "bg-white/50 backdrop-blur-xl";
 
 const verduurzamenItems = [
   { href: "/verduurzamen/isolatie", label: "Isolatie & ventilatie" },
@@ -131,7 +137,7 @@ export const Header = () => {
       <div className="container-content flex items-center justify-between gap-3 h-20">
         <a
           href="/"
-          className="shrink-0 inline-flex items-center bg-white rounded-full px-5 py-2.5 hover:opacity-95 transition-opacity"
+          className={`shrink-0 inline-flex items-center ${glassPill} rounded-full px-5 py-2.5 hover:bg-white/80 transition-colors`}
           style={pillShadow}
           aria-label="Voortraject home"
         >
@@ -139,7 +145,7 @@ export const Header = () => {
         </a>
 
         <nav
-          className="hidden lg:flex items-center gap-1 bg-white rounded-full px-2 py-1.5"
+          className={`hidden lg:flex items-center gap-1 ${glassPill} rounded-full px-2 py-1.5`}
           style={pillShadow}
           aria-label="Hoofdnavigatie"
         >
@@ -153,7 +159,7 @@ export const Header = () => {
                 <div key={l.href} className="relative group">
                   <button
                     type="button"
-                    className={`inline-flex items-center gap-1 rounded-full px-3.5 py-2 text-[15px] font-medium transition-colors ${active ? "text-primary font-semibold" : "text-primary/70 hover:text-primary"}`}
+                    className={`inline-flex items-center gap-1 rounded-full px-3.5 py-2 text-[15px] font-medium transition-colors ${active ? "text-primary font-semibold" : "text-primary/90 hover:text-primary"}`}
                   >
                     {l.label}
                     <ChevronDown size={14} className="transition-transform group-hover:rotate-180" />
@@ -178,7 +184,7 @@ export const Header = () => {
               <a
                 key={l.href}
                 href={l.href}
-                className={`rounded-full px-3.5 py-2 text-[15px] font-medium transition-colors ${active ? "text-primary font-semibold" : "text-primary/70 hover:text-primary"}`}
+                className={`rounded-full px-3.5 py-2 text-[15px] font-medium transition-colors ${active ? "text-primary font-semibold" : "text-primary/90 hover:text-primary"}`}
               >
                 {l.label}
               </a>
@@ -190,7 +196,7 @@ export const Header = () => {
           <a
             href="tel:+31502112689"
             aria-label="Bel ons: 050 211 2689"
-            className="inline-flex items-center gap-2 bg-white rounded-full px-5 py-3 text-[14px] font-semibold text-primary transition-colors hover:bg-white/90"
+            className={`inline-flex items-center gap-2 ${glassPill} rounded-full px-5 py-3 text-[14px] font-semibold text-primary transition-colors hover:bg-white/80`}
             style={pillShadow}
           >
             <Phone size={16} strokeWidth={2} />
@@ -213,7 +219,7 @@ export const Header = () => {
         </div>
 
         <button
-          className="lg:hidden w-12 h-12 flex items-center justify-center bg-white rounded-full text-primary"
+          className={`lg:hidden w-12 h-12 flex items-center justify-center ${glassPill} rounded-full text-primary`}
           style={pillShadow}
           aria-label="Menu openen"
           aria-expanded={open}

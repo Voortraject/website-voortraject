@@ -14,7 +14,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Seo
-        title="Gratis advies over verduurzamen en subsidies | Voortraject"
+        title="Voortraject | Gratis advies over verduurzamen en subsidies"
         description="Wij zoeken gratis uit welke maatregelen slim zijn voor jouw woning en welke subsidies je kunt krijgen. Onafhankelijk advies voor bewoners in Noord-Nederland."
         path="/"
       />
