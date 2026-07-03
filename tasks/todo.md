@@ -200,11 +200,11 @@ Fases (elk: eigen branch vanaf `main` → PR):
         tegel (geen hele-tegel-link/pijl meer — kan niet met geneste `<a>`). Isolatie-tegel
         kreeg link "Isolatie & ventilatie"; subsidie-tegel de 4 subsidiepagina's (Nij Begun,
         Landelijke/Regionale subsidies, Subsidies stapelen). Gedeelde `TegelLinks`-helper.
-  - [x] **Subsidies-stapelen-kaarten:** subtiel oker randje via token
+  - [x] **Oker randje op kaarten (Subsidies-stapelen + Herkenning):** oker randje via token
         `borderColor: hsl(var(--accent) / 0.8)` (i.p.v. `border-border`). NB: de class-opacity-
         modifier `/50` werkt hier niet (tokens missen de `<alpha-value>`-placeholder) → inline
-        via de CSS-var, zoals `index.css` het accent al met alpha gebruikt. (In 2 rondes
-        opgevoerd 0.5 → 0.65 → 0.8 op verzoek.)
+        via de CSS-var, zoals `index.css` het accent al met alpha gebruikt. (In rondes opgevoerd
+        0.5 → 0.65 → 0.8; daarna hetzelfde randje ook op de Herkenning-kaarten toegepast.)
   - [x] **Header-dropdowns (Verduurzamen + Subsidies):** frosted-glass in lijn met de header-
         pills — eigen `glassPanel` (`bg-white/90 backdrop-blur-xl`) + `pillShadow` +
         `overflow-hidden`. Bewust hogere witdekking dan de pills (`/70`): de dropdown hangt over
