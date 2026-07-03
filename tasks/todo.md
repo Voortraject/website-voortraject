@@ -204,6 +204,10 @@ Fases (elk: eigen branch vanaf `main` → PR):
         `borderColor: hsl(var(--accent) / 0.65)` (i.p.v. `border-border`). NB: de class-opacity-
         modifier `/50` werkt hier niet (tokens missen de `<alpha-value>`-placeholder) → inline
         via de CSS-var, zoals `index.css` het accent al met alpha gebruikt.
+  - [x] **Header-dropdowns (Verduurzamen + Subsidies):** zelfde glassmorphism als de header-
+        pills — `glassPill` (`bg-white/70 backdrop-blur-xl`) + `pillShadow`, i.p.v. massief wit
+        met `shadow-lg`/`border-border`. `overflow-hidden` zodat hover-rijen de ronding volgen.
+        (Computed bevestigd: `rgba(255,255,255,.7)` + `blur(24px)` + primary-getinte pillShadow.)
   - Geverifieerd: `bun run lint` (geen nieuwe errors — alle bestaande), `tsc --noEmit` (clean),
         `bun run build` (ok), + headless CDP-screenshots (nav zonder Bewoners; 10 helpen-links;
         3 kaarten met `borderColor rgba(230,182,71,.5)`).

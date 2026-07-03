@@ -164,7 +164,7 @@ export const Header = () => {
                     <ChevronDown size={14} className="transition-transform group-hover:rotate-180" />
                   </button>
                   <div className="absolute left-1/2 -translate-x-1/2 top-full pt-3 hidden group-hover:block">
-                    <div className="bg-white rounded-lg shadow-lg border border-border py-2 min-w-[220px]">
+                    <div className={`${glassPill} rounded-lg overflow-hidden py-2 min-w-[220px]`} style={pillShadow}>
                       {l.dropdown.map((s) => (
                         <a
                           key={s.href}
