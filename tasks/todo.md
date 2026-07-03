@@ -201,7 +201,7 @@ Fases (elk: eigen branch vanaf `main` → PR):
         kreeg link "Isolatie & ventilatie"; subsidie-tegel de 4 subsidiepagina's (Nij Begun,
         Landelijke/Regionale subsidies, Subsidies stapelen). Gedeelde `TegelLinks`-helper.
   - [x] **Subsidies-stapelen-kaarten:** subtiel oker randje via token
-        `borderColor: hsl(var(--accent) / 0.5)` (i.p.v. `border-border`). NB: de class-opacity-
+        `borderColor: hsl(var(--accent) / 0.65)` (i.p.v. `border-border`). NB: de class-opacity-
         modifier `/50` werkt hier niet (tokens missen de `<alpha-value>`-placeholder) → inline
         via de CSS-var, zoals `index.css` het accent al met alpha gebruikt.
   - Geverifieerd: `bun run lint` (geen nieuwe errors — alle bestaande), `tsc --noEmit` (clean),

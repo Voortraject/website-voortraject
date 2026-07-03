@@ -55,7 +55,7 @@ export const Subsidies = () => (
               className="bg-card rounded-2xl border p-6 flex flex-col"
               style={{
                 boxShadow: "0 4px 24px hsl(var(--primary) / 0.06)",
-                borderColor: "hsl(var(--accent) / 0.5)",
+                borderColor: "hsl(var(--accent) / 0.65)",
               }}
             >
               <div className="flex items-center gap-3.5">
