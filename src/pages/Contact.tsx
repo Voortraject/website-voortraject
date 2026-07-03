@@ -4,7 +4,7 @@ import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
-import contactAdviseur from "@/assets/contact-adviseur.webp";
+import contactAdviseur from "@/assets/christian-koptelefoon.webp";
 
 type Mode = "uitvoerder" | "bewoner";
 
@@ -861,7 +861,7 @@ const Contact = () => {
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover"
-                  style={{ objectPosition: "center 20%" }}
+                  style={{ objectPosition: "center 30%" }}
                 />
               </div>
               <div>

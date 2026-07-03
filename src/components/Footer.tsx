@@ -44,22 +44,20 @@ const navCols = [
 ];
 
 /**
- * Site footer with the ambient oker glow behind it.
+ * Site footer. Het donkere paneel heeft afgeronde bovenhoeken (spiegelt de
+ * afgeronde onderkant van de hero); de buitenste `bg-white` laat die hoeken
+ * puur wit doorlopen met de sectie erboven.
  *
- * Pass a page's closing CTA via `cta` so it renders *inside* the same dark,
- * glowing container as the footer — the CTA and footer then read as one
- * continuous whole (no seam). The CTA content should be background-less; the
- * dark `bg-primary` + glow comes from here.
+ * Pass a page's closing CTA via `cta` so it renders *inside* the same dark
+ * container as the footer — the CTA and footer then read as one continuous
+ * whole (no seam). The CTA content should be background-less; the dark
+ * `bg-primary` comes from here.
  */
 export const Footer = ({ cta }: { cta?: ReactNode }) => (
-  <footer className="relative overflow-hidden bg-primary text-white">
-    <div className="ambient-glow" aria-hidden="true">
-      <span />
-      <span />
-      <span />
-    </div>
-    {cta && <div className="relative z-10">{cta}</div>}
-    <div className="container-content md:py-20 py-[40px] relative z-10">
+  <footer className="bg-white">
+    <div className="relative overflow-hidden bg-primary text-white rounded-t-[2rem] md:rounded-t-[3rem]">
+      {cta && <div className="relative z-10">{cta}</div>}
+      <div className="container-content md:py-20 py-[40px] relative z-10">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
         <div>
           <img src={logoVoortraject} alt="Voortraject" className="h-14 w-auto" />
@@ -89,29 +87,30 @@ export const Footer = ({ cta }: { cta?: ReactNode }) => (
         ))}
       </div>
 
-      <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
-        <p className="text-xs text-white/60">
-          © 2026 Voortraject. Alle rechten voorbehouden.
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-          <a
-            href="/privacy"
-            className="text-sm text-white/80 hover:text-accent transition-colors"
-          >
-            Privacyverklaring
-          </a>
-          <a
-            href="/cookieverklaring"
-            className="text-sm text-white/80 hover:text-accent transition-colors"
-          >
-            Cookieverklaring
-          </a>
-          <a
-            href="javascript:openAxeptioCookies()"
-            className="text-sm text-white/80 hover:text-accent transition-colors"
-          >
-            Cookievoorkeuren
-          </a>
+        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
+          <p className="text-xs text-white/60">
+            © 2026 Voortraject. Alle rechten voorbehouden.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+            <a
+              href="/privacy"
+              className="text-sm text-white/80 hover:text-accent transition-colors"
+            >
+              Privacyverklaring
+            </a>
+            <a
+              href="/cookieverklaring"
+              className="text-sm text-white/80 hover:text-accent transition-colors"
+            >
+              Cookieverklaring
+            </a>
+            <a
+              href="javascript:openAxeptioCookies()"
+              className="text-sm text-white/80 hover:text-accent transition-colors"
+            >
+              Cookievoorkeuren
+            </a>
+          </div>
         </div>
       </div>
     </div>

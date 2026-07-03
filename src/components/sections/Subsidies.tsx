@@ -1,68 +1,91 @@
-import subsidiesUitzoeken from "@/assets/subsidies-uitzoeken.webp";
+import { Fragment } from "react";
+import { ArrowRight, Building2, Globe, Map, Plus } from "lucide-react";
 
-export const Subsidies = () => {
-  return (
-    <section className="section-pad" style={{ backgroundColor: "#F5F3ED" }}>
-      <div className="container-content">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-          <div className="order-2 lg:order-1">
-            <img
-              src={subsidiesUitzoeken}
-              alt="Twee adviseurs van Voortraject zoeken achter hun laptops uit welke subsidies voor een woning gelden"
-              loading="lazy"
-              decoding="async"
-              className="w-full h-64 sm:h-96 lg:h-[480px] rounded-2xl object-cover"
-              style={{ boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
-            />
-          </div>
+const niveaus = [
+  {
+    icon: Globe,
+    title: "Landelijke subsidies",
+    body: "Zoals ISDE: een landelijke regeling die gewoon bovenop andere regelingen komt.",
+    linkLabel: "Meer over landelijke subsidies",
+    linkHref: "/subsidies/landelijk",
+  },
+  {
+    icon: Map,
+    title: "Provinciale subsidies",
+    body: "Zoals Nij Begun: vergoedt isolatie voor eigenaar-bewoners in Groningen en Noord-Drenthe.",
+    linkLabel: "Meer over regionale subsidies",
+    linkHref: "/subsidies/regionaal",
+  },
+  {
+    icon: Building2,
+    title: "Gemeentelijke subsidies",
+    body: "Veel gemeenten hebben daarnaast een eigen bijdrageregeling.",
+    linkLabel: "Meer over regionale subsidies",
+    linkHref: "/subsidies/regionaal",
+  },
+];
 
-          <div className="order-1 lg:order-2">
-            <h2 className="h2-section">
-              Welke subsidies gelden er voor{" "}
-              <span style={{ color: "hsl(var(--accent))" }}>jouw woning?</span>
-            </h2>
-            <p
-              className="mt-5"
-              style={{ fontSize: 18, color: "hsl(var(--primary) / 0.8)", lineHeight: 1.6 }}
-            >
-              Landelijk, provinciaal én gemeentelijk: er zijn meer regelingen dan de meeste
-              mensen weten, en vaak zijn ze te combineren. Wij kennen het hele landschap,
-              bewaken de termijnen en zoeken gratis voor je uit wat er voor jouw adres kan.
-              Jij hoeft geen subsidie-expert te zijn.
-            </p>
+const PlusTeken = () => (
+  <div className="flex items-center justify-center self-center" aria-hidden="true">
+    <span className="inline-flex w-9 h-9 items-center justify-center rounded-full bg-primary">
+      <Plus size={20} strokeWidth={2.75} className="text-accent" />
+    </span>
+  </div>
+);
 
-            <div
-              className="mt-6 flex items-start gap-3 rounded-xl p-4"
-              style={{ backgroundColor: "#FFFFFF", border: "1px solid rgba(229, 201, 103, 0.5)" }}
-            >
-              <span
-                className="mt-0.5 shrink-0 font-semibold"
-                style={{ color: "hsl(var(--accent))" }}
-                aria-hidden="true"
-              >
-                +
-              </span>
-              <p style={{ fontSize: 15, color: "hsl(var(--primary))", lineHeight: 1.55 }}>
-                <strong className="font-semibold">Subsidies zijn vaak stapelbaar.</strong>{" "}
-                Landelijk, regionaal en gemeentelijk samen vergoeden soms een groot deel van
-                je investering. Wij zoeken uit hoe je ze combineert zonder er één te missen.
-              </p>
-            </div>
-
-            <a
-              href="/contact"
-              className="mt-7 inline-flex items-center justify-center rounded-full px-7 py-3.5 font-sans font-semibold transition-all duration-150 hover:scale-[1.02]"
-              style={{
-                backgroundColor: "hsl(var(--accent))",
-                color: "hsl(var(--primary))",
-                fontSize: 15,
-              }}
-            >
-              Plan een gratis gesprek
-            </a>
-          </div>
-        </div>
+export const Subsidies = () => (
+  <section className="section-pad-home" style={{ backgroundColor: "#FFFFFF" }} aria-labelledby="subsidies-title">
+    <div className="container-home">
+      <div className="max-w-3xl">
+        <h2 id="subsidies-title" className="h2-section">
+          Wist je dat je subsidies kunt <span className="text-accent">stapelen</span>?
+        </h2>
+        <p className="mt-4 text-[18px] md:text-[20px] leading-[1.6] text-muted-foreground">
+          Landelijk, provinciaal en gemeentelijk: er zijn meer regelingen dan de meeste mensen
+          weten, en vaak zijn ze te combineren. Wij zoeken gratis uit wat er voor jouw adres
+          geldt.
+        </p>
       </div>
-    </section>
-  );
-};
+
+      {/* De stapel: drie niveaus met plustekens ertussen */}
+      <div className="mt-8 md:mt-10 grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] gap-4 md:gap-5 items-stretch">
+        {niveaus.map(({ icon: Icon, title, body, linkLabel, linkHref }, i) => (
+          <Fragment key={title}>
+            <article
+              className="bg-card rounded-2xl border border-border p-6 flex flex-col"
+              style={{ boxShadow: "0 4px 24px hsl(var(--primary) / 0.06)" }}
+            >
+              <div className="flex items-center gap-3.5">
+                <span className="inline-flex shrink-0 w-11 h-11 items-center justify-center rounded-full bg-accent">
+                  <Icon size={20} className="text-primary" aria-hidden="true" />
+                </span>
+                <h3 className="font-display font-semibold text-primary text-[18px] leading-[1.25]">
+                  {title}
+                </h3>
+              </div>
+              <p className="mt-3 text-[15px] leading-[1.6] text-muted-foreground">{body}</p>
+              <a
+                href={linkHref}
+                className="mt-auto pt-4 inline-flex items-center gap-1.5 text-[14px] font-semibold text-primary underline underline-offset-4 decoration-border hover:decoration-accent hover:text-accent-hover transition-colors"
+              >
+                {linkLabel}
+                <ArrowRight size={15} aria-hidden="true" />
+              </a>
+            </article>
+            {i < niveaus.length - 1 && <PlusTeken />}
+          </Fragment>
+        ))}
+      </div>
+
+      <div className="mt-12">
+        <a
+          href="/subsidies/stapelen"
+          className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-semibold border border-primary text-primary transition-colors duration-150 hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        >
+          Meer over subsidies stapelen
+          <ArrowRight size={16} aria-hidden="true" />
+        </a>
+      </div>
+    </div>
+  </section>
+);

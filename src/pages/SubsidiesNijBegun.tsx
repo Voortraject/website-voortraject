@@ -24,6 +24,7 @@ import {
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
+import { CtaButton } from "@/components/CtaButton";
 import logoVoortrajectBlauw from "@/assets/logo-voortraject-blauw.png";
 import logoNijBegun from "@/assets/logo-nij-begun.png";
 
@@ -226,19 +227,6 @@ const cardSoftBase: React.CSSProperties = {
   backgroundColor: C.cardSoft,
 };
 
-const goldBtn: React.CSSProperties = {
-  backgroundColor: C.accent,
-  color: C.primary,
-  fontWeight: 700,
-  borderRadius: 9999,
-  padding: "14px 28px",
-  fontSize: 15,
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  transition: "background-color 150ms ease",
-};
-
 const outlineBtn: React.CSSProperties = {
   backgroundColor: "transparent",
   color: C.primary,
@@ -372,9 +360,7 @@ const SubsidiesNijBegun = () => {
                 Woon je in Groningen of Noord-Drenthe? Dan kun je je woning laten isoleren tot de isolatiestandaard met subsidie via Nij Begun. Hoeveel je krijgt hangt af van je woning en je gemeente, en dat zoeken wij voor je uit.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <a href="/contact" style={goldBtn}>
-                  Ja ik wil gratis advies
-                </a>
+                <CtaButton href="/contact">Ja ik wil gratis advies</CtaButton>
                 <a href="#bedragen" style={outlineBtn}>
                   Bekijk wat jij krijgt
                 </a>
@@ -632,10 +618,10 @@ const SubsidiesNijBegun = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 max-w-5xl mx-auto">
-            <div style={{ ...cardSoftBase, padding: 28 }}>
+            <div style={{ ...cardSoftBase, backgroundColor: C.card, padding: 28 }}>
               <span
                 className="inline-flex items-center justify-center"
-                style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: C.card, color: C.accent }}
+                style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: C.bg, color: C.accent }}
               >
                 <Building2 size={18} aria-hidden />
               </span>
@@ -658,10 +644,10 @@ const SubsidiesNijBegun = () => {
               </ul>
             </div>
 
-            <div style={{ ...cardSoftBase, padding: 28 }}>
+            <div style={{ ...cardSoftBase, backgroundColor: C.card, padding: 28 }}>
               <span
                 className="inline-flex items-center justify-center"
-                style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: C.card, color: C.accent }}
+                style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: C.bg, color: C.accent }}
               >
                 <Trees size={18} aria-hidden />
               </span>
@@ -700,8 +686,8 @@ const SubsidiesNijBegun = () => {
             </p>
           </div>
 
-          <div className="relative max-w-4xl mx-auto mt-12">
-            <ol className="flex flex-col gap-12 md:gap-16 relative">
+          <div className="relative max-w-4xl mx-auto mt-10">
+            <ol className="flex flex-col gap-5 md:gap-6 relative">
             {[
                 {
                   n: "01",
@@ -805,15 +791,16 @@ const SubsidiesNijBegun = () => {
                       </div>
                     ) : (
                       <div className="p-6 md:p-8">
-                        <div className="flex items-center gap-3 mb-3">
+                        <div className="flex items-center gap-4 mb-2">
                           <span
                             className="font-display"
                             style={{
-                              fontSize: 56,
+                              fontSize: 44,
                               fontWeight: 800,
                               color: C.accent,
                               lineHeight: 1,
-                              letterSpacing: "-0.02em",
+                              letterSpacing: "-0.03em",
+                              flexShrink: 0,
                             }}
                           >
                             {s.n}
@@ -826,24 +813,26 @@ const SubsidiesNijBegun = () => {
                               borderRadius: 9999,
                               backgroundColor: C.accent,
                               color: C.primary,
+                              flexShrink: 0,
                             }}
                           >
                             <s.icon size={18} aria-hidden />
                           </span>
+                          <h3
+                            className="font-display flex-1 min-w-0"
+                            style={{
+                              fontSize: 22,
+                              fontWeight: 700,
+                              color: C.primary,
+                              letterSpacing: "-0.01em",
+                              margin: 0,
+                              lineHeight: 1.2,
+                            }}
+                          >
+                            {s.t}
+                          </h3>
                         </div>
-                        <h3
-                          className="font-display"
-                          style={{
-                            fontSize: 22,
-                            fontWeight: 700,
-                            color: C.primary,
-                            letterSpacing: "-0.01em",
-                            marginBottom: 8,
-                          }}
-                        >
-                          {s.t}
-                        </h3>
-                        <p style={{ fontSize: 16, color: C.text, lineHeight: 1.6, margin: 0 }}>{s.d}</p>
+                        <p style={{ fontSize: 16, color: C.text, lineHeight: 1.6, margin: "12px 0 0" }}>{s.d}</p>
                       </div>
                     )}
                   </li>
@@ -871,15 +860,13 @@ const SubsidiesNijBegun = () => {
             <p style={{ fontSize: 15, color: C.muted, marginTop: 10, maxWidth: 520, marginLeft: "auto", marginRight: "auto", lineHeight: 1.6 }}>
               Neem contact op. Een lokale adviseur uit jouw regio belt of komt langs binnen een week.
             </p>
-            <a href="/contact" style={{ ...goldBtn, marginTop: 20 }}>
-              Ik wil gebeld worden
-            </a>
+            <CtaButton href="/contact" className="mt-5">Ik wil gebeld worden</CtaButton>
           </div>
         </div>
       </section>
 
       {/* 7. FAQ */}
-      <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F5F2EC" }}>
+      <section className="py-[48px] md:py-[72px]" style={{ backgroundColor: "#F5F2EC" }}>
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="h2-section text-center" style={{ color: "#152C4E", fontWeight: 600 }}>
             Veelgestelde <span style={{ color: "hsl(var(--accent))" }}>vragen</span>
@@ -1022,9 +1009,7 @@ const SubsidiesNijBegun = () => {
                 <p style={{ fontSize: 17, lineHeight: 1.6, marginTop: 16, color: "rgba(255,255,255,0.8)" }}>
                   Wij zoeken het voor jouw adres uit en stapelen alles wat kan. Eén gesprek, geen loketten. Vrijblijvend en gratis.
                 </p>
-                <a href="/contact" style={{ ...goldBtn, marginTop: 24 }}>
-                  Plan een gratis gesprek
-                </a>
+                <CtaButton href="/contact" className="mt-6">Plan een gratis gesprek</CtaButton>
               </div>
               <p className="text-center mt-12" style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
                 Laatst bijgewerkt: {LAATST_BIJGEWERKT}

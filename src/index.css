@@ -8,6 +8,14 @@
   100% { opacity: 0; }
 }
 
+/* Zwevende glans over de CTA-knoppen (zie CtaButton). */
+.btn-sheen {
+  animation: sheen 5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-sheen { animation: none; }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -115,13 +123,24 @@
     max-width: 1400px;
   }
 
+  /* Homepage-secties: vaste contentbreedte van 1200px (sectieplan) */
+  .container-home {
+    @apply mx-auto w-full px-6 md:px-12;
+    max-width: 1200px;
+  }
+
   .container-text {
     @apply w-full;
     max-width: 720px;
   }
 
   .section-pad {
-    @apply py-[64px] md:py-[96px];
+    @apply py-[48px] md:py-[72px];
+  }
+
+  /* Homepage-secties: iets compacter verticaal ritme dan .section-pad */
+  .section-pad-home {
+    @apply py-[48px] md:py-[72px];
   }
 
   .h1-hero {

@@ -23,6 +23,7 @@ import {
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
+import { CtaButton } from "@/components/CtaButton";
 
 // Page-scoped palette (identical to Nij Begun & Landelijk)
 const C = {
@@ -162,19 +163,6 @@ const H2 = ({ children }: { children: React.ReactNode }) => (
 const Gold = ({ children }: { children: React.ReactNode }) => (
   <span style={{ color: C.accent }}>{children}</span>
 );
-
-const goldBtn: React.CSSProperties = {
-  backgroundColor: C.accent,
-  color: C.primary,
-  fontWeight: 700,
-  borderRadius: 9999,
-  padding: "14px 28px",
-  fontSize: 15,
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  transition: "transform 150ms ease",
-};
 
 const outlineBtn: React.CSSProperties = {
   backgroundColor: "transparent",
@@ -340,9 +328,7 @@ const SubsidiesRegionaal = () => {
                 Boven op ISDE en Nij Begun bieden veel gemeenten eigen regelingen voor isolatie, ventilatie en verduurzaming. Veel bewoners weten dat niet, of weten niet welke nog actief zijn. Wij houden de actuele gemeentelijke subsidies bij en stapelen ze voor je.
               </p>
               <div className="flex flex-wrap gap-3">
-                <a href="/contact" style={goldBtn}>
-                  Ja ik wil gratis advies
-                </a>
+                <CtaButton href="/contact">Ja ik wil gratis advies</CtaButton>
                 <a href="/subsidies/stapelen" style={outlineBtn}>
                   Zo werkt stapelen
                 </a>
@@ -436,7 +422,7 @@ const SubsidiesRegionaal = () => {
             </p>
           </div>
 
-          <ol className="mt-12 flex flex-col gap-12 md:gap-16" style={{ listStyle: "none", padding: 0 }}>
+          <ol className="mt-10 flex flex-col gap-5 md:gap-6" style={{ listStyle: "none", padding: 0 }}>
             {stappen.map((s, i) => {
               const visible = visibleSteps.has(i);
               const Icon = s.icon;
@@ -447,32 +433,31 @@ const SubsidiesRegionaal = () => {
                   data-step-index={i}
                   style={{
                     ...cardOnCream,
-                    padding: "28px 28px",
+                    padding: "24px 28px",
                     opacity: visible ? 1 : 0,
                     transform: visible ? "translateY(0)" : "translateY(20px)",
                     transition: "opacity 500ms ease, transform 500ms ease",
                   }}
                 >
-                  <div className="flex items-start gap-5">
+                  <div className="flex items-center gap-4">
                     <span
                       style={{
-                        fontSize: "clamp(48px, 7vw, 80px)",
+                        fontSize: "clamp(40px, 5vw, 56px)",
                         fontWeight: 800,
                         color: C.accent,
                         lineHeight: 1,
                         letterSpacing: "-0.04em",
+                        flexShrink: 0,
                       }}
                     >
                       {s.num}
                     </span>
-                    <div style={{ paddingTop: 8 }}>
-                      <IconCircle Icon={Icon} size={20} />
-                    </div>
+                    <IconCircle Icon={Icon} size={20} />
+                    <h3 className="flex-1 min-w-0" style={{ fontSize: 22, fontWeight: 700, color: C.primary, margin: 0, lineHeight: 1.2 }}>
+                      {s.titel}
+                    </h3>
                   </div>
-                  <h3 style={{ fontSize: 22, fontWeight: 700, color: C.primary, margin: "16px 0 8px" }}>
-                    {s.titel}
-                  </h3>
-                  <p style={{ fontSize: 16, color: C.text, lineHeight: 1.65, margin: 0 }}>{s.tekst}</p>
+                  <p style={{ fontSize: 16, color: C.text, lineHeight: 1.65, margin: "12px 0 0" }}>{s.tekst}</p>
                 </li>
               );
             })}
@@ -481,6 +466,7 @@ const SubsidiesRegionaal = () => {
           <div
             style={{
               ...cardOnCream,
+              backgroundColor: C.bg,
               marginTop: 48,
               padding: "32px 28px",
               textAlign: "center",
@@ -493,16 +479,14 @@ const SubsidiesRegionaal = () => {
               Wij doen ISDE bij RVO, Nij Begun bij SNN en de gemeentelijke aanvraag bij jouw gemeente. Allemaal in één traject.
             </p>
             <div style={{ marginTop: 20 }}>
-              <a href="/contact" style={goldBtn}>
-                Neem contact op
-              </a>
+              <CtaButton href="/contact">Neem contact op</CtaButton>
             </div>
           </div>
         </div>
       </section>
 
       {/* 7. FAQ */}
-      <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
+      <section className="py-[48px] md:py-[72px]" style={{ backgroundColor: "#FFFFFF" }}>
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="h2-section text-center" style={{ color: "#152C4E", fontWeight: 600 }}>
             Veelgestelde <span style={{ color: "hsl(var(--accent))" }}>vragen</span>
@@ -648,9 +632,7 @@ const SubsidiesRegionaal = () => {
                 Wij zoeken het voor jouw adres uit en stapelen alles wat kan. Eén gesprek, geen loketten. Vrijblijvend en gratis.
               </p>
               <div style={{ marginTop: 26 }}>
-                <a href="/contact" style={goldBtn}>
-                  Plan een gratis gesprek
-                </a>
+                <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
               </div>
               <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, marginTop: 28 }}>
                 Laatst bijgewerkt: {LAATST_BIJGEWERKT}

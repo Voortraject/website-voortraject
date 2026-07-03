@@ -2,6 +2,62 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Homepage-herbouw volgens sectieplan (2026-07-03)
+
+Branch: `feat/homepage-herbouw`. Bron: gedetailleerd sectieplan van de opdrachtgever
+(11 secties, vaste ritmiek). Systeemregels: sectiepadding exact 96px desktop / 64px mobiel
+(= bestaande `.section-pad`), contentbreedte max 1200px (nieuwe `.container-home`),
+achtergrondritme hero → wit → licht → wit → licht → wit → navy → wit → licht → wit → navy,
+één CTA-stijl (goud, "Plan een gratis gesprek"), iconen in gouden cirkel, nergens de
+formulering "geen commissie".
+
+Foto-mapping: FOTO-HERO=`hero-adviesgesprek.webp` · FOTO-KEUKEN=`bewoners-keukentafel.webp`
+· FOTO-HANDDRUK=`waarom-vertrouwen.webp` · FOTO-POLOS=`subsidies-uitzoeken.webp` ·
+FOTO-SERRE=`hero-keukentafel.webp` en FOTO-TUIN=`herkenning-voortuin.webp` vervallen op home.
+
+Linkbeslissingen (geen bestaande overzichtspagina's): tegel "Duurzame installaties" → geen
+tegel-link maar 5 tekstlinks (spec-fallback); "Subsidies"-tegel en "Bekijk alle regelingen"
+→ `/subsidies/stapelen`.
+
+- [x] 0. `index.css`: `.container-home` (max 1200px) toevoegen
+- [x] 1. Hero — ongewijzigd behouden (check: geen reviewclaim)
+- [x] 2. Trustbar — `LogoCarousel` compact (±48px padding, één regel kleine tekst
+      "Wij werken met alle officiële regelingen", grijstinten → kleur op hover)
+- [x] 3. Probleemherkenning — `Herkenning.tsx` herschrijven: 3 kaarten, geen foto,
+      kop "Verduurzamen zou niet zo ingewikkeld moeten zijn"
+- [x] 4. Zo werkt het — `HelderPlan.tsx` herschrijven: FOTO-KEUKEN links, tijdlijn
+      01/02/03 in goud, afsluitregel + CTA
+- [x] 5. Waar we bij helpen — nieuw `WaarWeBijHelpen.tsx`: 3 tegels (Isolatie /
+      Duurzame installaties / Subsidies), Onderhoud bewust niet
+- [x] 6. Waarom Voortraject — `WaaromKiezen.tsx` herschrijven: 4 punten + FOTO-HANDDRUK,
+      verdienmodel transparant (uitvoerder betaalt), "geen commissie"-claim eruit
+- [x] 7. Reviews — nieuw `Reviews.tsx`: navy, 3 witte kaarten, Julian afgekapt met
+      in-place "Lees meer", gelijke ingeklapte hoogte
+- [x] 8. Subsidies stapelen — `Subsidies.tsx` herschrijven: kader met gouden accentrand,
+      3 vinkjes, tekstlink + CTA
+- [x] 9. Ons team — nieuw `Team.tsx`: FOTO-POLOS links, 3 zinnen, geen CTA
+- [x] 10. FAQ — `Faq.tsx`: volgorde aanpassen, antwoord vraag 2 herformuleren
+      (verdienmodel zonder "geen commissie"), vraag 4 check Groningen/Drenthe/Friesland
+- [x] 11. Slot-CTA — ongewijzigd behouden
+- [x] `Index.tsx`: nieuwe sectievolgorde
+- [x] Eindcheck (headless Chrome tegen dev-server, 1440px + 375px): padding exact
+      96/64/48, achtergrondritme conform spec, kaarthoogtes gelijk per rij
+      (247/297/250), Julian-kaart 250→355 zonder vervorming van de andere twee,
+      CTA-computed-styles identiek, FAQ-volgorde + nieuw antwoord gerenderd, geen
+      horizontale overflow op 375px, alle interne links naar bestaande routes;
+      vitest + vite build groen; lint alleen bestaande fouten in niet-aangeraakte
+      bestanden
+- [x] PR openen
+
+### Review (2026-07-03)
+- Alle 11 secties conform sectieplan; hero en slot-CTA onaangeraakt.
+- "geen commissie" komt sitewide niet meer voor (was alleen homepage).
+- FOTO-SERRE (`hero-keukentafel.webp`) en FOTO-TUIN (`herkenning-voortuin.webp`)
+  nu ongebruikt op home, bewust in assets gelaten voor subpagina's.
+- Linkkeuze: subsidie-overzicht bestaat niet als pagina → tegel + "Bekijk alle
+  regelingen" wijzen naar `/subsidies/stapelen`. Verduurzamen-overzicht bestaat
+  niet → tegel 2 niet klikbaar, 5 tekstlinks (spec-fallback).
+
 ## Bewonersgerichte website-ombouw (2026-07-02)
 
 Bronnen: V3-handboek (identiteit/toon), CRO-rapport (diagnose), "Volledige website copy"

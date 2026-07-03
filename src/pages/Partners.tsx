@@ -552,7 +552,7 @@ const Partners = () => {
         </section>
 
         {/* INLEIDING PAKKETTEN (Vastlopen) */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F9F9F7" }}>
+        <section className="py-[48px] md:py-[72px]" style={{ backgroundColor: "#F9F9F7" }}>
           <div className="container-content">
             <div className="mx-auto" style={{ maxWidth: 820 }}>
               <h2
@@ -639,7 +639,7 @@ const Partners = () => {
         <Why />
 
         {/* VOORTRAJECT VERGELIJKING */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#F9F9F7" }}>
+        <section className="py-[48px] md:py-[72px]" style={{ backgroundColor: "#F9F9F7" }}>
           <div className="container-content">
             <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E", maxWidth: 900 }}>
               Voor en <span style={{ color: "hsl(var(--accent))" }}>na</span>
@@ -736,7 +736,7 @@ const Partners = () => {
         </section>
 
         {/* WAAROM DIT WERKT */}
-        <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
+        <section className="py-[48px] md:py-[72px]" style={{ backgroundColor: "#FFFFFF" }}>
           <div className="container-content">
             <div className="text-center mx-auto" style={{ maxWidth: 820 }}>
               <h2 className="h2-section" style={{ color: "#152C4E", marginBottom: 16 }}>
@@ -792,7 +792,7 @@ const Partners = () => {
         </section>
 
         {/* PAKKETTEN */}
-        <section id="pakketten" className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FBFAF7" }}>
+        <section id="pakketten" className="py-[48px] md:py-[72px]" style={{ backgroundColor: "#FBFAF7" }}>
           <div className="mx-auto w-full px-6 md:px-12" style={{ maxWidth: 1440 }}>
             <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E" }}>
               <span style={{ color: "hsl(var(--accent))" }}>Kies</span> wat past bij jullie

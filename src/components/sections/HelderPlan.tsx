@@ -1,79 +1,81 @@
-import { CalendarClock, Euro, Handshake, ListOrdered, ShieldCheck } from "lucide-react";
+import { CtaButton } from "@/components/CtaButton";
 
-import planKeukentafel from "@/assets/hero-keukentafel.webp";
+import planKeukentafel from "@/assets/bewoners-keukentafel.webp";
 
-const punten = [
+const stappen = [
   {
-    icon: ShieldCheck,
-    title: "Onafhankelijk advies",
-    body: "Wij verkopen geen warmtepompen, panelen of isolatie. Alleen wat voor jouw woning logisch is.",
+    nummer: "01",
+    title: "Gratis gesprek",
+    body: "Bij jou thuis of telefonisch. We kijken naar jouw woning, situatie en wensen. Duurt 30 tot 45 minuten.",
   },
   {
-    icon: ListOrdered,
-    title: "De slimste volgorde",
-    body: "Welke maatregel eerst en welke later, zodat je niet twee keer betaalt of kansen misloopt.",
+    nummer: "02",
+    title: "Helder plan",
+    body: "Je hoort welke maatregelen slim zijn, in welke volgorde, en welke subsidies erbij horen. Alles op papier.",
   },
   {
-    icon: Euro,
-    title: "Alle subsidies op een rij",
-    body: "Landelijk, provinciaal én gemeentelijk, precies voor jouw adres.",
-  },
-  {
-    icon: CalendarClock,
-    title: "Geen wachtlijsten",
-    body: "Geen maanden wachten zoals bij loketten: we plannen snel een gesprek op een moment dat jou uitkomt.",
-  },
-  {
-    icon: Handshake,
-    title: "Begeleiding tot het af is",
-    body: "We koppelen je aan een passende uitvoerder en laten je niet los na het advies. Zelf kiezen mag natuurlijk ook.",
+    nummer: "03",
+    title: "Uitvoering geregeld",
+    body: "Wij koppelen je aan een uitvoerder uit de regio waarvan we weten dat hij goed werk levert, en blijven betrokken tot het af is.",
   },
 ];
 
 export const HelderPlan = () => (
-  <section
-    className="py-16 md:py-24"
-    style={{ backgroundColor: "#FFFFFF" }}
-    aria-labelledby="helder-plan-title"
-  >
-    <div className="container-content">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-        <div className="lg:col-span-7">
-          <h2 id="helder-plan-title" className="h2-section">
-            Van twijfel naar een <span className="text-accent">helder plan</span>
-          </h2>
-          <p className="mt-4 text-[16px] md:text-[18px] leading-[1.6] text-muted-foreground">
-            Geen verkooppraatje, geen standaardverhaal. We kijken eerst naar jouw woning,
-            situatie en wens. Daarna weet je precies wat slim is, in welke volgorde, en welke
-            subsidies je krijgt. Gratis.
-          </p>
+  <section className="section-pad-home" style={{ backgroundColor: "#FFFFFF" }} aria-labelledby="helder-plan-title">
+    <div className="container-home">
+      <div className="max-w-3xl">
+        <h2 id="helder-plan-title" className="h2-section">
+          Van twijfel naar een <span className="text-accent">helder plan</span>
+        </h2>
+        <p className="mt-4 text-[18px] md:text-[20px] leading-[1.6] text-muted-foreground">
+          Verduurzamen is een route, geen losse stap. Wie in de juiste volgorde denkt, betaalt
+          niet dubbel en mist geen kansen.
+        </p>
+      </div>
 
-          <ul className="mt-8 space-y-5">
-            {punten.map(({ icon: Icon, title, body }) => (
-              <li key={title} className="flex items-start gap-4">
-                <span className="inline-flex shrink-0 w-10 h-10 items-center justify-center rounded-full bg-secondary">
-                  <Icon size={20} className="text-primary" aria-hidden="true" />
-                </span>
-                <div>
-                  <h3 className="font-display font-semibold text-primary text-[17px] leading-[1.25]">
+      <div className="mt-8 md:mt-10 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+        <div>
+          <img
+            src={planKeukentafel}
+            alt="Adviseur van Voortraject in gesprek met een bewoner aan de keukentafel"
+            loading="lazy"
+            decoding="async"
+            className="w-full h-64 sm:h-96 lg:h-[520px] rounded-2xl object-cover"
+            style={{ boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
+          />
+        </div>
+
+        <div>
+          <ol className="space-y-0">
+            {stappen.map(({ nummer, title, body }, i) => (
+              <li key={nummer} className="relative flex gap-5 md:gap-6">
+                {/* Tijdlijn: nummer + verticale lijn naar de volgende stap */}
+                <div className="flex flex-col items-center w-12 md:w-16 shrink-0">
+                  <span
+                    className="font-display font-bold text-accent text-[32px] md:text-[42px] leading-none tracking-[-0.03em]"
+                    aria-hidden="true"
+                  >
+                    {nummer}
+                  </span>
+                  {i < stappen.length - 1 && (
+                    <span className="w-px flex-1 my-3 bg-border" aria-hidden="true" />
+                  )}
+                </div>
+                <div className={i < stappen.length - 1 ? "pb-8 pt-1 md:pt-1.5" : "pt-1 md:pt-1.5"}>
+                  <h3 className="font-display font-semibold text-primary text-[19px] md:text-[22px] leading-[1.2] tracking-[-0.01em]">
                     {title}
                   </h3>
-                  <p className="mt-1 text-[15px] leading-[1.55] text-muted-foreground">{body}</p>
+                  <p className="mt-2 text-[15px] md:text-[16px] leading-[1.6] text-muted-foreground">
+                    {body}
+                  </p>
                 </div>
               </li>
             ))}
-          </ul>
-        </div>
+          </ol>
 
-        <div className="lg:col-span-5">
-          <img
-            src={planKeukentafel}
-            alt="Adviseur van Voortraject bekijkt samen met een bewoner het plan voor haar woning aan de keukentafel"
-            loading="lazy"
-            decoding="async"
-            className="w-full h-64 sm:h-96 lg:h-[560px] rounded-2xl object-cover"
-            style={{ boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
-          />
+          <CtaButton href="/contact" className="mt-12">
+            Plan een gratis gesprek
+          </CtaButton>
         </div>
       </div>
     </div>

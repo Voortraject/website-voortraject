@@ -5,6 +5,7 @@ import type { LucideIcon } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
+import { CtaButton } from "@/components/CtaButton";
 import { OfBelOnsCta } from "@/components/OfBelOnsCta";
 
 export type RouteStep = "beperk" | "opwekken" | "slim";
@@ -222,7 +223,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
       <Header />
       <main className="flex-1">
         {/* 1 — HERO */}
-        <section className="w-full py-16 md:py-20" style={{ backgroundColor: SAND }}>
+        <section className="w-full py-12 md:py-[72px]" style={{ backgroundColor: SAND }}>
           <div className="mx-auto max-w-[1180px] px-6">
             <div className="flex flex-col md:flex-row md:items-center gap-10 md:gap-12">
               <div className="md:flex-1 min-w-0">
@@ -498,7 +499,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
       </main>
       <Footer
         cta={
-          <section className="w-full py-16 md:py-20">
+          <section className="w-full py-12 md:py-[72px]">
             <div className="mx-auto max-w-[760px] px-6 text-center">
               <h2
                 className="font-display"
@@ -551,7 +552,7 @@ const SectionBlock = ({
   bg: string;
   children: React.ReactNode;
 }) => (
-  <section className="w-full py-16 md:py-20" style={{ backgroundColor: bg }}>
+  <section className="w-full py-12 md:py-[72px]" style={{ backgroundColor: bg }}>
     <div className="mx-auto max-w-[1180px] px-6">{children}</div>
   </section>
 );
@@ -704,19 +705,10 @@ const PrimaryButton = ({
   href: string;
   children: React.ReactNode;
 }) => (
-  <a
-    href={href}
-    className="inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
-    style={{
-      backgroundColor: NAVY,
-      color: WHITE,
-      padding: "14px 28px",
-      fontSize: 15,
-    }}
-  >
+  <CtaButton href={href} variant="primary">
     {children}
-    <ArrowRight size={16} className="ml-2" />
-  </a>
+    <ArrowRight size={16} />
+  </CtaButton>
 );
 
 const FaqRow = ({ item, last }: { item: MaatregelFaq; last: boolean }) => (

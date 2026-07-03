@@ -1,4 +1,4 @@
-import whyPhoto from "@/assets/why-photo.jpg";
+import whyPhoto from "@/assets/christian-bellen2.webp";
 
 const points = [
   "Bewoners blijven bellen voor uitleg",
@@ -20,14 +20,14 @@ export const Why = () => (
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-center">
         <div>
           <img
             src={whyPhoto}
-            alt="Adviseur in gesprek met bewoners aan tafel"
+            alt="Adviseur van Voortraject staat bewoners telefonisch te woord met een headset"
             loading="lazy"
-            className="w-full h-auto md:h-full object-cover rounded-2xl"
-            style={{ boxShadow: "0 4px 24px rgba(21,44,78,0.06)" }}
+            className="w-full h-64 md:h-[440px] object-cover rounded-2xl"
+            style={{ boxShadow: "0 4px 24px rgba(21,44,78,0.06)", objectPosition: "center 68%" }}
           />
         </div>
 

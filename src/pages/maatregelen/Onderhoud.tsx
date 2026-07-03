@@ -2,6 +2,7 @@ import { Check } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
+import { CtaButton } from "@/components/CtaButton";
 import { OfBelOnsCta } from "@/components/OfBelOnsCta";
 import onderhoudImage from "@/assets/maatregel-onderhoud.webp";
 
@@ -115,28 +116,19 @@ const Onderhoud = () => (
                 Verduurzamen stopt niet na de installatie. Een warmtepomp, airco of thuisbatterij blijft het beste werken met regelmatig onderhoud: efficiënter, langere levensduur en minder onverwachte storingen.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
-                <a
-                  href="/contact"
-                  className="inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
-                  style={{
-                    backgroundColor: NAVY,
-                    color: "#FFFFFF",
-                    padding: "14px 28px",
-                    fontSize: 15,
-                  }}
-                >
+                <CtaButton href="/contact" variant="primary">
                   Plan een gratis gesprek
-                </a>
-                
+                </CtaButton>
+
               </div>
             </div>
 
             <div
-              className="md:flex-1 overflow-hidden"
+              className="md:flex-1 self-center w-full max-w-[460px] overflow-hidden"
               style={{
                 borderRadius: 20,
                 border: `1px solid ${BORDER}`,
-                aspectRatio: "1 / 1",
+                aspectRatio: "4 / 3",
                 backgroundColor: "#EFEAE0",
               }}
             >
@@ -146,7 +138,7 @@ const Onderhoud = () => (
                 width={1024}
                 height={768}
                 className="w-full h-full object-cover"
-                style={{ objectPosition: "center top" }}
+                style={{ objectPosition: "center 35%" }}
               />
             </div>
           </div>
@@ -358,18 +350,7 @@ const Onderhoud = () => (
               Wij houden overzicht op het onderhoud van je installaties en koppelen je aan vakkundige, gecertificeerde uitvoerders. Zo hoef je zelf niet bij te houden wanneer wat aan de beurt is, en blijft je woning zuinig en veilig. Wij verkopen geen onderhoudscontracten, ons advies is onafhankelijk.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
-              <a
-                href="/contact"
-                className="inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
-                style={{
-                  backgroundColor: GOLD,
-                  color: NAVY,
-                  padding: "14px 28px",
-                  fontSize: 15,
-                }}
-              >
-                Plan een gratis gesprek
-              </a>
+              <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
               <OfBelOnsCta color="#FFFFFF" align="center" />
             </div>
           </div>

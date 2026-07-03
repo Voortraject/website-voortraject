@@ -14,6 +14,8 @@ import {
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
+import { CtaButton } from "@/components/CtaButton";
+import timUitleg from "@/assets/tim-uitleg.webp";
 
 // Page-scoped palette (identical to other subsidie pages)
 const C = {
@@ -66,19 +68,6 @@ const H2 = ({ children }: { children: React.ReactNode }) => (
 const Gold = ({ children }: { children: React.ReactNode }) => (
   <span style={{ color: C.accent }}>{children}</span>
 );
-
-const goldBtn: React.CSSProperties = {
-  backgroundColor: C.accent,
-  color: C.primary,
-  fontWeight: 700,
-  borderRadius: 9999,
-  padding: "14px 28px",
-  fontSize: 15,
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  transition: "transform 150ms ease",
-};
 
 const outlineBtn: React.CSSProperties = {
   backgroundColor: "transparent",
@@ -196,9 +185,7 @@ const SubsidiesStapelen = () => {
                 Veel huishoudens laten geld liggen omdat ze niet weten dat subsidies vaak te combineren zijn. Een landelijke regeling, een regionale regeling zoals Nij Begun, een gemeentelijk potje en voordelige financiering kunnen samen je kosten flink drukken. Wij zoeken voor jou uit wat je kunt stapelen en begeleiden de aanvraag. Gratis.
               </p>
               <div className="flex flex-wrap gap-3">
-                <a href="/contact" style={goldBtn}>
-                  Ja ik wil gratis advies
-                </a>
+                <CtaButton href="/contact">Ja ik wil gratis advies</CtaButton>
                 <a
                   href="#stapelen"
                   onClick={(e) => {
@@ -251,25 +238,39 @@ const SubsidiesStapelen = () => {
         </div>
       </section>
 
-      {/* 2. WAT IS SUBSIDIES STAPELEN — wit */}
-      <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-24">
-        <div className="container-content max-w-3xl">
-          <H2>
-            Wat is subsidies <Gold>stapelen</Gold>?
-          </H2>
-          <div style={{ marginTop: 24, fontSize: 17, lineHeight: 1.7, color: C.text }}>
-            <p style={{ marginBottom: 18 }}>
-              Verduurzamen wordt vaak met meerdere regelingen tegelijk ondersteund: een landelijke subsidie, een regionale regeling en soms voordelige financiering. Die kun je in veel gevallen combineren, oftewel stapelen, waardoor je netto minder betaalt dan met één regeling alleen.
-            </p>
-            <p>
-              De kunst zit in weten welke regelingen samengaan, in welke volgorde je ze aanvraagt en welke voor jouw woning en gebied gelden. Dat verandert regelmatig, en daar laten veel mensen geld liggen.
-            </p>
+      {/* 2. WAT IS SUBSIDIES STAPELEN — wit, foto links */}
+      <section style={{ backgroundColor: "#FFFFFF" }} className="py-[48px] md:py-[72px]">
+        <div className="container-content">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+            <div className="order-2 lg:order-1">
+              <img
+                src={timUitleg}
+                alt="Adviseur van Voortraject legt een bewoner uit hoe subsidies te combineren zijn"
+                loading="lazy"
+                decoding="async"
+                className="w-full h-64 sm:h-80 lg:h-[440px] rounded-2xl object-cover"
+                style={{ boxShadow: "0 4px 20px rgba(21,44,78,0.08)" }}
+              />
+            </div>
+            <div className="order-1 lg:order-2">
+              <H2>
+                Wat is subsidies <Gold>stapelen</Gold>?
+              </H2>
+              <div style={{ marginTop: 24, fontSize: 17, lineHeight: 1.7, color: C.text }}>
+                <p style={{ marginBottom: 18 }}>
+                  Verduurzamen wordt vaak met meerdere regelingen tegelijk ondersteund: een landelijke subsidie, een regionale regeling en soms voordelige financiering. Die kun je in veel gevallen combineren, oftewel stapelen, waardoor je netto minder betaalt dan met één regeling alleen.
+                </p>
+                <p>
+                  De kunst zit in weten welke regelingen samengaan, in welke volgorde je ze aanvraagt en welke voor jouw woning en gebied gelden. Dat verandert regelmatig, en daar laten veel mensen geld liggen.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* 3. DE BOUWSTENEN — cream */}
-      <section id="stapelen" style={{ backgroundColor: C.bg }} className="py-16 md:py-24">
+      <section id="stapelen" style={{ backgroundColor: C.bg }} className="py-[48px] md:py-[72px]">
         <div className="container-content">
           <div className="max-w-3xl text-center mx-auto">
             <H2>
@@ -329,9 +330,7 @@ const SubsidiesStapelen = () => {
               Wat de juiste <Gold>combinatie</Gold> oplevert, rekenen we voor jou uit
             </p>
             <div style={{ marginTop: 22 }}>
-              <a href="/contact" style={goldBtn}>
-                Plan een gratis adviesgesprek
-              </a>
+              <CtaButton href="/contact">Plan een gratis adviesgesprek</CtaButton>
             </div>
           </div>
         </div>
@@ -431,9 +430,7 @@ const SubsidiesStapelen = () => {
                 Wij zoeken het voor jouw adres uit en stapelen alles wat kan. Eén gesprek, geen loketten. Vrijblijvend en gratis.
               </p>
               <div style={{ marginTop: 26 }}>
-                <a href="/contact" style={goldBtn}>
-                  Plan een gratis gesprek
-                </a>
+                <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
               </div>
               <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, marginTop: 28 }}>
                 Laatst bijgewerkt: {LAATST_BIJGEWERKT}
