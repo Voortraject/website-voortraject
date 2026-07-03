@@ -19,19 +19,19 @@ const stappen = [
 ];
 
 export const HelderPlan = () => (
-  <section className="section-pad" style={{ backgroundColor: "#FFFFFF" }} aria-labelledby="helder-plan-title">
+  <section className="section-pad-home" style={{ backgroundColor: "#FFFFFF" }} aria-labelledby="helder-plan-title">
     <div className="container-home">
       <div className="max-w-3xl">
         <h2 id="helder-plan-title" className="h2-section">
           Van twijfel naar een <span className="text-accent">helder plan</span>
         </h2>
-        <p className="mt-4 text-[16px] md:text-[18px] leading-[1.6] text-muted-foreground">
+        <p className="mt-4 text-[18px] md:text-[20px] leading-[1.6] text-muted-foreground">
           Verduurzamen is een route, geen losse stap. Wie in de juiste volgorde denkt, betaalt
           niet dubbel en mist geen kansen.
         </p>
       </div>
 
-      <div className="mt-10 md:mt-14 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+      <div className="mt-8 md:mt-10 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
         <div>
           <img
             src={planKeukentafel}
@@ -46,11 +46,11 @@ export const HelderPlan = () => (
         <div>
           <ol className="space-y-0">
             {stappen.map(({ nummer, title, body }, i) => (
-              <li key={nummer} className="relative flex gap-5 md:gap-6">
+              <li key={nummer} className="relative flex gap-5 md:gap-7">
                 {/* Tijdlijn: nummer + verticale lijn naar de volgende stap */}
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center w-16 md:w-20 shrink-0">
                   <span
-                    className="font-display font-bold text-accent text-[26px] md:text-[30px] leading-none tracking-[-0.02em]"
+                    className="font-display font-bold text-accent text-[40px] md:text-[52px] leading-none tracking-[-0.03em]"
                     aria-hidden="true"
                   >
                     {nummer}
@@ -59,8 +59,8 @@ export const HelderPlan = () => (
                     <span className="w-px flex-1 my-3 bg-border" aria-hidden="true" />
                   )}
                 </div>
-                <div className={i < stappen.length - 1 ? "pb-8" : ""}>
-                  <h3 className="font-display font-semibold text-primary text-[19px] md:text-[20px] leading-[1.25]">
+                <div className={i < stappen.length - 1 ? "pb-9 pt-1.5 md:pt-2.5" : "pt-1.5 md:pt-2.5"}>
+                  <h3 className="font-display font-semibold text-primary text-[22px] md:text-[26px] leading-[1.2] tracking-[-0.01em]">
                     {title}
                   </h3>
                   <p className="mt-2 text-[15px] md:text-[16px] leading-[1.6] text-muted-foreground">
@@ -70,10 +70,6 @@ export const HelderPlan = () => (
               </li>
             ))}
           </ol>
-
-          <p className="mt-8 border-l-4 border-accent pl-4 text-[15px] md:text-[16px] italic text-primary">
-            Jij beslist na elke stap zelf of je verder wilt.
-          </p>
 
           <a
             href="/contact"

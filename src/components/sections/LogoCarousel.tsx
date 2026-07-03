@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef } from "react";
 type Logo = { src: string; alt: string };
 
 interface LogoCarouselProps {
-  title?: string;
   logos?: Logo[];
 }
 
@@ -20,13 +19,10 @@ const COPIES = 4; // aantal kopieën van de logo-set voor een naadloze lus
 const SPEED = 30; // autoscroll-snelheid in px per seconde
 
 /**
- * Trustbar: compacte witte balk met één regel kleine tekst en de instantie-logo's
- * als rustige marquee. Logo's staan in grijstinten en krijgen kleur op hover.
+ * Trustbar: compacte witte balk met korte titel en de instantie-logo's
+ * als rustige marquee in kleur.
  */
-export const LogoCarousel = ({
-  title = "Wij werken met alle officiële regelingen",
-  logos = defaultLogos,
-}: LogoCarouselProps) => {
+export const LogoCarousel = ({ logos = defaultLogos }: LogoCarouselProps) => {
   const loop = Array.from({ length: COPIES }, () => logos).flat();
 
   const trackRef = useRef<HTMLDivElement>(null);
@@ -122,23 +118,16 @@ export const LogoCarousel = ({
           -webkit-mask-image: linear-gradient(to right, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
                   mask-image: linear-gradient(to right, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
         }
-        .logo-marquee img {
-          filter: grayscale(1);
-          opacity: 0.6;
-          transition: filter 200ms ease, opacity 200ms ease;
-        }
-        .logo-marquee div:hover > img {
-          filter: grayscale(0);
-          opacity: 1;
-        }
       `}</style>
 
       <div className="container-home">
-        <p className="text-center text-[14px] font-medium text-muted-foreground">{title}</p>
+        <h2 className="text-center font-display font-semibold text-primary text-[22px] md:text-[28px] leading-[1.2] tracking-[-0.02em]">
+          Wij werken met alle officiële <span className="text-accent">regelingen</span>
+        </h2>
       </div>
 
       <div
-        className="logo-marquee logo-marquee-mask relative overflow-hidden select-none mt-7"
+        className="logo-marquee logo-marquee-mask relative overflow-hidden select-none mt-8"
         style={{ touchAction: "pan-y", cursor: "grab" }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}

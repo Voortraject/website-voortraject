@@ -130,6 +130,11 @@
     @apply py-[64px] md:py-[96px];
   }
 
+  /* Homepage-secties: iets compacter verticaal ritme dan .section-pad */
+  .section-pad-home {
+    @apply py-[48px] md:py-[72px];
+  }
+
   .h1-hero {
     font-family: 'Inter Tight', 'Inter', sans-serif;
     font-weight: 700;
