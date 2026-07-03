@@ -201,13 +201,15 @@ Fases (elk: eigen branch vanaf `main` → PR):
         kreeg link "Isolatie & ventilatie"; subsidie-tegel de 4 subsidiepagina's (Nij Begun,
         Landelijke/Regionale subsidies, Subsidies stapelen). Gedeelde `TegelLinks`-helper.
   - [x] **Subsidies-stapelen-kaarten:** subtiel oker randje via token
-        `borderColor: hsl(var(--accent) / 0.65)` (i.p.v. `border-border`). NB: de class-opacity-
+        `borderColor: hsl(var(--accent) / 0.8)` (i.p.v. `border-border`). NB: de class-opacity-
         modifier `/50` werkt hier niet (tokens missen de `<alpha-value>`-placeholder) → inline
-        via de CSS-var, zoals `index.css` het accent al met alpha gebruikt.
-  - [x] **Header-dropdowns (Verduurzamen + Subsidies):** zelfde glassmorphism als de header-
-        pills — `glassPill` (`bg-white/70 backdrop-blur-xl`) + `pillShadow`, i.p.v. massief wit
-        met `shadow-lg`/`border-border`. `overflow-hidden` zodat hover-rijen de ronding volgen.
-        (Computed bevestigd: `rgba(255,255,255,.7)` + `blur(24px)` + primary-getinte pillShadow.)
+        via de CSS-var, zoals `index.css` het accent al met alpha gebruikt. (In 2 rondes
+        opgevoerd 0.5 → 0.65 → 0.8 op verzoek.)
+  - [x] **Header-dropdowns (Verduurzamen + Subsidies):** frosted-glass in lijn met de header-
+        pills — eigen `glassPanel` (`bg-white/90 backdrop-blur-xl`) + `pillShadow` +
+        `overflow-hidden`. Bewust hogere witdekking dan de pills (`/70`): de dropdown hangt over
+        een donkerder deel van de hero én zit genest in de nav-`backdrop-filter` (blurt zwakker),
+        dus `/70` oogde daar te transparant; bij `/90` leest 'ie net zo mat als de pills.
   - Geverifieerd: `bun run lint` (geen nieuwe errors — alle bestaande), `tsc --noEmit` (clean),
         `bun run build` (ok), + headless CDP-screenshots (nav zonder Bewoners; 10 helpen-links;
         3 kaarten met `borderColor rgba(230,182,71,.5)`).

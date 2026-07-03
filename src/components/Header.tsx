@@ -10,6 +10,11 @@ const pillShadow = {
 // Premium "frosted glass" surface used across the header pills.
 const glassPill = "bg-white/70 backdrop-blur-xl";
 
+// Dropdown panels hang over a busier/darker part of the hero than the slim header
+// bar (and, being nested inside the nav's own backdrop-filter, blur weaker), so they
+// need a higher white opacity to read as the *same* frosted surface as the pills.
+const glassPanel = "bg-white/90 backdrop-blur-xl";
+
 const verduurzamenItems = [
   { href: "/verduurzamen/isolatie", label: "Isolatie & ventilatie" },
   { href: "/verduurzamen/warmtepomp", label: "Warmtepomp" },
@@ -164,7 +169,7 @@ export const Header = () => {
                     <ChevronDown size={14} className="transition-transform group-hover:rotate-180" />
                   </button>
                   <div className="absolute left-1/2 -translate-x-1/2 top-full pt-3 hidden group-hover:block">
-                    <div className={`${glassPill} rounded-lg overflow-hidden py-2 min-w-[220px]`} style={pillShadow}>
+                    <div className={`${glassPanel} rounded-lg overflow-hidden py-2 min-w-[220px]`} style={pillShadow}>
                       {l.dropdown.map((s) => (
                         <a
                           key={s.href}
