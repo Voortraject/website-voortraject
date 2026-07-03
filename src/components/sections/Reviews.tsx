@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star } from "lucide-react";
+import { ChevronRight, Star } from "lucide-react";
 
 import fotoJulian from "@/assets/review-julian.webp";
 import fotoTibbe from "@/assets/review-tibbe.webp";
@@ -106,14 +106,15 @@ export const Reviews = () => {
           </p>
         </div>
 
-        {/* items-start: het uitklappen van één kaart mag de andere niet oprekken */}
-        <div className="mt-8 md:mt-10 grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 items-start">
+        {/* items-start: het uitklappen van één kaart mag de andere niet oprekken.
+            Mobiel: horizontaal swipebare rij i.p.v. gestapeld. */}
+        <div className="mt-8 md:mt-10 flex md:grid md:grid-cols-3 gap-5 md:gap-6 items-start overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar">
           {reviews.map(({ naam, initiaal, avatarKleur, foto, quote, vervolg }) => {
             const open = !vervolg || uitgeklapt;
             return (
               <article
                 key={naam}
-                className="relative bg-card rounded-2xl border border-border p-6 flex flex-col"
+                className="w-[80%] sm:w-[46%] md:w-auto shrink-0 snap-start relative bg-card rounded-2xl border border-border p-6 flex flex-col"
                 style={{ boxShadow: "0 4px 24px hsl(var(--primary) / 0.2)" }}
               >
                 {/* Google-logo in de hoek van de tegel */}
@@ -153,6 +154,15 @@ export const Reviews = () => {
               </article>
             );
           })}
+        </div>
+
+        {/* Swipe-hint: alleen mobiel, onder de eerste kaart */}
+        <div
+          className="md:hidden mt-3.5 flex items-center gap-1.5 text-white/70 animate-swipe-hint motion-reduce:animate-none"
+          aria-hidden="true"
+        >
+          <span className="text-[13px] font-medium">Veeg</span>
+          <ChevronRight size={16} />
         </div>
       </div>
     </section>

@@ -1,4 +1,4 @@
-import { Coins, MessagesSquare, Scale } from "lucide-react";
+import { ChevronRight, Coins, MessagesSquare, Scale } from "lucide-react";
 
 const twijfels = [
   {
@@ -30,11 +30,11 @@ export const Herkenning = () => (
         </p>
       </div>
 
-      <div className="mt-8 md:mt-10 grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6 items-stretch">
+      <div className="mt-8 md:mt-10 flex md:grid md:grid-cols-3 gap-5 md:gap-6 items-stretch overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar">
         {twijfels.map(({ icon: Icon, title, body }) => (
           <article
             key={title}
-            className="bg-card rounded-2xl border p-6 md:p-7 flex flex-col transition-all duration-200 ease-out hover:-translate-y-0.5"
+            className="w-[80%] sm:w-[46%] md:w-auto shrink-0 snap-start bg-card rounded-2xl border p-6 md:p-7 flex flex-col transition-all duration-200 ease-out hover:-translate-y-0.5"
             style={{
               boxShadow: "0 4px 24px hsl(var(--primary) / 0.06)",
               borderColor: "hsl(var(--accent) / 0.8)",
@@ -51,6 +51,15 @@ export const Herkenning = () => (
             <p className="mt-3 text-[15px] leading-[1.6] text-muted-foreground">{body}</p>
           </article>
         ))}
+      </div>
+
+      {/* Swipe-hint: alleen mobiel, onder de eerste kaart */}
+      <div
+        className="md:hidden mt-3.5 flex items-center gap-1.5 text-muted-foreground animate-swipe-hint motion-reduce:animate-none"
+        aria-hidden="true"
+      >
+        <span className="text-[13px] font-medium">Veeg</span>
+        <ChevronRight size={16} />
       </div>
     </div>
   </section>
