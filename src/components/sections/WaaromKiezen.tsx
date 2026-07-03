@@ -1,6 +1,6 @@
 import { CalendarClock, HandCoins, Layers, ShieldCheck } from "lucide-react";
 
-import waaromVertrouwen from "@/assets/waarom-vertrouwen.webp";
+import waaromVertrouwen from "@/assets/waarom-vertrouwen2.webp";
 
 const redenen = [
   {

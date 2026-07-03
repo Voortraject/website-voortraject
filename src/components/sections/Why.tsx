@@ -27,7 +27,7 @@ export const Why = () => (
             alt="Adviseur van Voortraject staat bewoners telefonisch te woord met een headset"
             loading="lazy"
             className="w-full h-64 md:h-[440px] object-cover rounded-2xl"
-            style={{ boxShadow: "0 4px 24px rgba(21,44,78,0.06)", objectPosition: "center 32%" }}
+            style={{ boxShadow: "0 4px 24px rgba(21,44,78,0.06)", objectPosition: "center 68%" }}
           />
         </div>
 
