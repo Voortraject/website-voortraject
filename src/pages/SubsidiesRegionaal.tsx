@@ -422,7 +422,7 @@ const SubsidiesRegionaal = () => {
             </p>
           </div>
 
-          <ol className="mt-12 flex flex-col gap-12 md:gap-16" style={{ listStyle: "none", padding: 0 }}>
+          <ol className="mt-10 flex flex-col gap-5 md:gap-6" style={{ listStyle: "none", padding: 0 }}>
             {stappen.map((s, i) => {
               const visible = visibleSteps.has(i);
               const Icon = s.icon;
@@ -433,32 +433,31 @@ const SubsidiesRegionaal = () => {
                   data-step-index={i}
                   style={{
                     ...cardOnCream,
-                    padding: "28px 28px",
+                    padding: "24px 28px",
                     opacity: visible ? 1 : 0,
                     transform: visible ? "translateY(0)" : "translateY(20px)",
                     transition: "opacity 500ms ease, transform 500ms ease",
                   }}
                 >
-                  <div className="flex items-start gap-5">
+                  <div className="flex items-center gap-4">
                     <span
                       style={{
-                        fontSize: "clamp(48px, 7vw, 80px)",
+                        fontSize: "clamp(40px, 5vw, 56px)",
                         fontWeight: 800,
                         color: C.accent,
                         lineHeight: 1,
                         letterSpacing: "-0.04em",
+                        flexShrink: 0,
                       }}
                     >
                       {s.num}
                     </span>
-                    <div style={{ paddingTop: 8 }}>
-                      <IconCircle Icon={Icon} size={20} />
-                    </div>
+                    <IconCircle Icon={Icon} size={20} />
+                    <h3 className="flex-1 min-w-0" style={{ fontSize: 22, fontWeight: 700, color: C.primary, margin: 0, lineHeight: 1.2 }}>
+                      {s.titel}
+                    </h3>
                   </div>
-                  <h3 style={{ fontSize: 22, fontWeight: 700, color: C.primary, margin: "16px 0 8px" }}>
-                    {s.titel}
-                  </h3>
-                  <p style={{ fontSize: 16, color: C.text, lineHeight: 1.65, margin: 0 }}>{s.tekst}</p>
+                  <p style={{ fontSize: 16, color: C.text, lineHeight: 1.65, margin: "12px 0 0" }}>{s.tekst}</p>
                 </li>
               );
             })}
@@ -486,7 +485,7 @@ const SubsidiesRegionaal = () => {
       </section>
 
       {/* 7. FAQ */}
-      <section className="py-[64px] md:py-[96px]" style={{ backgroundColor: "#FFFFFF" }}>
+      <section className="py-[48px] md:py-[72px]" style={{ backgroundColor: "#FFFFFF" }}>
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="h2-section text-center" style={{ color: "#152C4E", fontWeight: 600 }}>
             Veelgestelde <span style={{ color: "hsl(var(--accent))" }}>vragen</span>

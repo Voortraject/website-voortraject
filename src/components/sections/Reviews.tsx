@@ -113,16 +113,18 @@ export const Reviews = () => {
             return (
               <article
                 key={naam}
-                className="bg-card rounded-2xl border border-border p-6 flex flex-col"
+                className="relative bg-card rounded-2xl border border-border p-6 flex flex-col"
                 style={{ boxShadow: "0 4px 24px hsl(var(--primary) / 0.2)" }}
               >
-                {/* Kop: profielfoto + naam links, Google-logo rechts */}
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <Avatar naam={naam} initiaal={initiaal} kleur={avatarKleur} foto={foto} />
-                    <span className="text-[15px] font-semibold text-primary truncate">{naam}</span>
-                  </div>
+                {/* Google-logo in de hoek van de tegel */}
+                <span className="absolute top-4 right-4">
                   <GoogleG />
+                </span>
+
+                {/* Kop: profielfoto + naam */}
+                <div className="flex items-center gap-3 min-w-0 pr-8">
+                  <Avatar naam={naam} initiaal={initiaal} kleur={avatarKleur} foto={foto} />
+                  <span className="text-[15px] font-semibold text-primary truncate">{naam}</span>
                 </div>
 
                 <div className="mt-4">

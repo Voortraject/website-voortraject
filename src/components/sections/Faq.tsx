@@ -54,7 +54,7 @@ export const Faq = () => {
           className="mx-auto"
           style={{
             maxWidth: 820,
-            backgroundColor: "#FFFFFF",
+            backgroundColor: "#F5F3ED",
             border: "1px solid #E5E2DB",
             borderRadius: 16,
             overflow: "hidden",

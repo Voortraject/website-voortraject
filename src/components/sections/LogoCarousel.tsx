@@ -122,7 +122,7 @@ export const LogoCarousel = ({ logos = defaultLogos }: LogoCarouselProps) => {
 
       <div className="container-home">
         <h2 className="text-center font-display font-semibold text-primary text-[22px] md:text-[28px] leading-[1.2] tracking-[-0.02em]">
-          Wij werken met alle officiële <span className="text-accent">regelingen</span>
+          We werken met alle officiële <span className="text-accent">regelingen</span>
         </h2>
       </div>
 

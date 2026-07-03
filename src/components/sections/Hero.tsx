@@ -13,7 +13,7 @@ export const Hero = () => {
   return (
     <section
       className="relative overflow-hidden -mt-20"
-      style={{ backgroundColor: "#F5F3ED" }}
+      style={{ backgroundColor: "#FFFFFF" }}
       aria-labelledby="hero-title"
     >
       <img

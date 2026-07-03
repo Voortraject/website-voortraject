@@ -1,8 +1,6 @@
 import { Fragment } from "react";
 import { ArrowRight, Building2, Globe, Map, Plus } from "lucide-react";
 
-import { CtaButton } from "@/components/CtaButton";
-
 const niveaus = [
   {
     icon: Globe,
@@ -30,7 +28,7 @@ const niveaus = [
 const PlusTeken = () => (
   <div className="flex items-center justify-center self-center" aria-hidden="true">
     <span className="inline-flex w-9 h-9 items-center justify-center rounded-full bg-primary">
-      <Plus size={20} strokeWidth={2.75} className="text-white" />
+      <Plus size={20} strokeWidth={2.75} className="text-accent" />
     </span>
   </div>
 );
@@ -79,11 +77,14 @@ export const Subsidies = () => (
         ))}
       </div>
 
-      <div className="mt-8">
-        <CtaButton href="/subsidies/stapelen" variant="primary">
-          Leer meer over subsidies stapelen
+      <div className="mt-12">
+        <a
+          href="/subsidies/stapelen"
+          className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-semibold border border-primary text-primary transition-colors duration-150 hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        >
+          Meer over subsidies stapelen
           <ArrowRight size={16} aria-hidden="true" />
-        </CtaButton>
+        </a>
       </div>
     </div>
   </section>

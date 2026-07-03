@@ -124,11 +124,11 @@ const Onderhoud = () => (
             </div>
 
             <div
-              className="md:flex-1 overflow-hidden"
+              className="md:flex-1 self-center w-full max-w-[460px] overflow-hidden"
               style={{
                 borderRadius: 20,
                 border: `1px solid ${BORDER}`,
-                aspectRatio: "1 / 1",
+                aspectRatio: "4 / 3",
                 backgroundColor: "#EFEAE0",
               }}
             >
@@ -138,7 +138,7 @@ const Onderhoud = () => (
                 width={1024}
                 height={768}
                 className="w-full h-full object-cover"
-                style={{ objectPosition: "center top" }}
+                style={{ objectPosition: "center 35%" }}
               />
             </div>
           </div>

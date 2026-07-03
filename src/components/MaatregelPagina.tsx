@@ -223,7 +223,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
       <Header />
       <main className="flex-1">
         {/* 1 — HERO */}
-        <section className="w-full py-16 md:py-20" style={{ backgroundColor: SAND }}>
+        <section className="w-full py-12 md:py-[72px]" style={{ backgroundColor: SAND }}>
           <div className="mx-auto max-w-[1180px] px-6">
             <div className="flex flex-col md:flex-row md:items-center gap-10 md:gap-12">
               <div className="md:flex-1 min-w-0">
@@ -499,7 +499,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
       </main>
       <Footer
         cta={
-          <section className="w-full py-16 md:py-20">
+          <section className="w-full py-12 md:py-[72px]">
             <div className="mx-auto max-w-[760px] px-6 text-center">
               <h2
                 className="font-display"
@@ -552,7 +552,7 @@ const SectionBlock = ({
   bg: string;
   children: React.ReactNode;
 }) => (
-  <section className="w-full py-16 md:py-20" style={{ backgroundColor: bg }}>
+  <section className="w-full py-12 md:py-[72px]" style={{ backgroundColor: bg }}>
     <div className="mx-auto max-w-[1180px] px-6">{children}</div>
   </section>
 );

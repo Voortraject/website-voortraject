@@ -149,7 +149,7 @@ const OverOns = () => {
         </section>
 
         {/* Hoe wij werken */}
-        <section className="py-16 md:py-20" style={{ backgroundColor: "#F5F2EC" }}>
+        <section className="py-12 md:py-[72px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
             <div className="text-center mb-12">
               <h2

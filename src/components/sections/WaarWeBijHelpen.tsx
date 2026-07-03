@@ -1,8 +1,8 @@
 import { ArrowUpRight } from "lucide-react";
 
-import fotoIsolatie from "@/assets/maatregel-isolatie.webp";
+import fotoIsolatie from "@/assets/helpen-isolatie.webp";
 import fotoInstallaties from "@/assets/maatregel-zonnepanelen.webp";
-import fotoSubsidies from "@/assets/contact-adviseur.webp";
+import fotoSubsidies from "@/assets/helpen-subsidies.webp";
 
 const installatieLinks = [
   { href: "/verduurzamen/warmtepomp", label: "Warmtepomp" },
@@ -52,11 +52,11 @@ export const WaarWeBijHelpen = () => (
         <a href="/verduurzamen/isolatie" className="group block">
           <TegelFoto
             src={fotoIsolatie}
-            alt="Adviseur van Voortraject inspecteert de kruipruimte voor isolatie"
+            alt="Adviseur van Voortraject meet de gevel op voor isolatie"
             metPijl
           />
           <h3 className="mt-4 font-display font-semibold text-primary text-[20px] md:text-[22px] leading-[1.25]">
-            Isolatie
+            Advies over isolatie
           </h3>
           <p className="mt-1.5 text-[15px] leading-[1.6] text-muted-foreground">
             Van spouwmuur tot dak en glas: de basis van elke slimme verduurzaming.
@@ -70,7 +70,7 @@ export const WaarWeBijHelpen = () => (
             alt="Adviseur van Voortraject bekijkt zonnepanelen op een dak"
           />
           <h3 className="mt-4 font-display font-semibold text-primary text-[20px] md:text-[22px] leading-[1.25]">
-            Duurzame installaties
+            Advies over duurzame installaties
           </h3>
           <p className="mt-1.5 text-[15px] leading-[1.6] text-muted-foreground">
             Warmtepomp, zonnepanelen, thuisbatterij, airco of laadpaal: wat past bij jouw
@@ -94,12 +94,12 @@ export const WaarWeBijHelpen = () => (
         <a href="/subsidies/stapelen" className="group block">
           <TegelFoto
             src={fotoSubsidies}
-            alt="Adviseur van Voortraject zoekt achter de laptop uit welke subsidies gelden"
+            alt="Adviseur van Voortraject bespreekt de subsidiemogelijkheden met een bewoner aan tafel"
             metPijl
-            objectPosition="center 30%"
+            objectPosition="center 35%"
           />
           <h3 className="mt-4 font-display font-semibold text-primary text-[20px] md:text-[22px] leading-[1.25]">
-            Subsidies
+            Advies en hulp bij subsidies
           </h3>
           <p className="mt-1.5 text-[15px] leading-[1.6] text-muted-foreground">
             Landelijk, provinciaal en gemeentelijk: wij weten wat er voor jouw adres geldt.

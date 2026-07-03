@@ -73,7 +73,7 @@ export const HelderPlan = () => (
             ))}
           </ol>
 
-          <CtaButton href="/contact" className="mt-8">
+          <CtaButton href="/contact" className="mt-12">
             Plan een gratis gesprek
           </CtaButton>
         </div>
