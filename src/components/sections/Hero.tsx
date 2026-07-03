@@ -38,7 +38,7 @@ export const Hero = () => {
           <h1
             id="hero-title"
             className="h1-hero text-white leading-[1.06]"
-            style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)" }}
+            style={{ fontSize: "clamp(2.25rem, 5vw, 4.5rem)" }}
           >
             <span className="block">Gratis advies over</span>
             <span className="block text-accent">verduurzamen en subsidies</span>
