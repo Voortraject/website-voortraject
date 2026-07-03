@@ -194,6 +194,18 @@
     line-height: 1.6;
 }
 
+@layer utilities {
+  /* Verbergt de scrollbar bij horizontaal-swipebare rijen (mobiel) zonder
+     scroll-functionaliteit te blokkeren. */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @property --gradient-angle {
   syntax: "<angle>";
   initial-value: 0deg;
