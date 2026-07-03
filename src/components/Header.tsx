@@ -8,7 +8,7 @@ const pillShadow = {
 };
 
 // Premium "frosted glass" surface used across the header pills.
-const glassPill = "bg-white/50 backdrop-blur-xl";
+const glassPill = "bg-white/70 backdrop-blur-xl";
 
 const verduurzamenItems = [
   { href: "/verduurzamen/isolatie", label: "Isolatie & ventilatie" },
