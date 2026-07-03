@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
 
+import fotoJulian from "@/assets/review-julian.webp";
+import fotoTibbe from "@/assets/review-tibbe.webp";
+
 // Letterlijke citaten — teksten niet aanpassen.
 // foto: pad naar profielfoto; zonder foto valt de kaart terug op een
 // Google-stijl letter-avatar in avatarKleur (Eefjes echte Google-avatar is de roze E).
@@ -16,6 +19,7 @@ const reviews: Array<{
     naam: "Julian Kok",
     initiaal: "J",
     avatarKleur: "#546E7A",
+    foto: fotoJulian,
     quote:
       "Ik had geen idee hoe ik moest beginnen met het verduurzamen van mijn huis. Voortraject heeft me daarmee geholpen.",
     vervolg:
@@ -25,6 +29,7 @@ const reviews: Array<{
     naam: "Tibbe Froma",
     initiaal: "T",
     avatarKleur: "#00897B",
+    foto: fotoTibbe,
     quote:
       "Goed geholpen door Michael. Hij heeft alles voor mij geregeld en komen ze binnenkort nieuwe kozijnen plaatsen.",
   },
