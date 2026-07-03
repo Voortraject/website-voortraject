@@ -783,7 +783,7 @@ const SubsidiesLandelijk = () => {
               </p>
             </div>
 
-            <div className="mt-10 flex flex-col gap-8 md:gap-10">
+            <div className="mt-10 flex flex-col gap-5 md:gap-6">
               {steps.map((s, i) => {
                 const visible = visibleSteps.has(i);
                 return (
@@ -799,15 +799,16 @@ const SubsidiesLandelijk = () => {
                       transition: "opacity 400ms ease-out, transform 400ms ease-out",
                     }}
                   >
-                    <div className="flex items-center gap-5">
+                    <div className="flex items-center gap-4">
                       <span
                         className="font-display"
                         style={{
                           color: C.accent,
                           fontWeight: 800,
-                          fontSize: "clamp(48px, 7vw, 80px)",
+                          fontSize: "clamp(40px, 5vw, 56px)",
                           lineHeight: 1,
                           letterSpacing: "-0.04em",
+                          flexShrink: 0,
                         }}
                       >
                         {s.n}
@@ -818,14 +819,14 @@ const SubsidiesLandelijk = () => {
                       >
                         <s.icon size={20} />
                       </span>
+                      <h3
+                        className="font-display flex-1 min-w-0"
+                        style={{ color: C.primary, fontWeight: 700, fontSize: 22, margin: 0, lineHeight: 1.2 }}
+                      >
+                        {s.t}
+                      </h3>
                     </div>
-                    <h3
-                      className="font-display"
-                      style={{ marginTop: 12, color: C.primary, fontWeight: 700, fontSize: 22 }}
-                    >
-                      {s.t}
-                    </h3>
-                    <p style={{ marginTop: 10, fontSize: 16, lineHeight: 1.65 }}>{s.d}</p>
+                    <p style={{ marginTop: 12, fontSize: 16, lineHeight: 1.65 }}>{s.d}</p>
                   </div>
                 );
               })}

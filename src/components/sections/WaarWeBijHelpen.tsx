@@ -96,7 +96,7 @@ export const WaarWeBijHelpen = () => (
             src={fotoSubsidies}
             alt="Adviseur van Voortraject bespreekt de subsidiemogelijkheden met een bewoner aan tafel"
             metPijl
-            objectPosition="center 35%"
+            objectPosition="center 58%"
           />
           <h3 className="mt-4 font-display font-semibold text-primary text-[20px] md:text-[22px] leading-[1.25]">
             Advies en hulp bij subsidies

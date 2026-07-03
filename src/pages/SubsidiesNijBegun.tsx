@@ -618,10 +618,10 @@ const SubsidiesNijBegun = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 max-w-5xl mx-auto">
-            <div style={{ ...cardSoftBase, padding: 28 }}>
+            <div style={{ ...cardSoftBase, backgroundColor: C.card, padding: 28 }}>
               <span
                 className="inline-flex items-center justify-center"
-                style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: C.card, color: C.accent }}
+                style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: C.bg, color: C.accent }}
               >
                 <Building2 size={18} aria-hidden />
               </span>
@@ -644,10 +644,10 @@ const SubsidiesNijBegun = () => {
               </ul>
             </div>
 
-            <div style={{ ...cardSoftBase, padding: 28 }}>
+            <div style={{ ...cardSoftBase, backgroundColor: C.card, padding: 28 }}>
               <span
                 className="inline-flex items-center justify-center"
-                style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: C.card, color: C.accent }}
+                style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: C.bg, color: C.accent }}
               >
                 <Trees size={18} aria-hidden />
               </span>
@@ -686,8 +686,8 @@ const SubsidiesNijBegun = () => {
             </p>
           </div>
 
-          <div className="relative max-w-4xl mx-auto mt-12">
-            <ol className="flex flex-col gap-12 md:gap-16 relative">
+          <div className="relative max-w-4xl mx-auto mt-10">
+            <ol className="flex flex-col gap-5 md:gap-6 relative">
             {[
                 {
                   n: "01",
@@ -791,15 +791,16 @@ const SubsidiesNijBegun = () => {
                       </div>
                     ) : (
                       <div className="p-6 md:p-8">
-                        <div className="flex items-center gap-3 mb-3">
+                        <div className="flex items-center gap-4 mb-2">
                           <span
                             className="font-display"
                             style={{
-                              fontSize: 56,
+                              fontSize: 44,
                               fontWeight: 800,
                               color: C.accent,
                               lineHeight: 1,
-                              letterSpacing: "-0.02em",
+                              letterSpacing: "-0.03em",
+                              flexShrink: 0,
                             }}
                           >
                             {s.n}
@@ -812,24 +813,26 @@ const SubsidiesNijBegun = () => {
                               borderRadius: 9999,
                               backgroundColor: C.accent,
                               color: C.primary,
+                              flexShrink: 0,
                             }}
                           >
                             <s.icon size={18} aria-hidden />
                           </span>
+                          <h3
+                            className="font-display flex-1 min-w-0"
+                            style={{
+                              fontSize: 22,
+                              fontWeight: 700,
+                              color: C.primary,
+                              letterSpacing: "-0.01em",
+                              margin: 0,
+                              lineHeight: 1.2,
+                            }}
+                          >
+                            {s.t}
+                          </h3>
                         </div>
-                        <h3
-                          className="font-display"
-                          style={{
-                            fontSize: 22,
-                            fontWeight: 700,
-                            color: C.primary,
-                            letterSpacing: "-0.01em",
-                            marginBottom: 8,
-                          }}
-                        >
-                          {s.t}
-                        </h3>
-                        <p style={{ fontSize: 16, color: C.text, lineHeight: 1.6, margin: 0 }}>{s.d}</p>
+                        <p style={{ fontSize: 16, color: C.text, lineHeight: 1.6, margin: "12px 0 0" }}>{s.d}</p>
                       </div>
                     )}
                   </li>
