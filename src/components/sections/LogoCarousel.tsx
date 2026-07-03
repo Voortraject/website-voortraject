@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 type Logo = { src: string; alt: string };
 
@@ -16,17 +16,18 @@ const defaultLogos: Logo[] = [
   { src: "/images/instanties/natuurvriendelijk-isoleren.png", alt: "Natuur Vriendelijk Isoleren" },
 ];
 
-const BG = "#FFFFFF";
 const COPIES = 4; // aantal kopieën van de logo-set voor een naadloze lus
-const SPEED = 40; // autoscroll-snelheid in px per seconde
+const SPEED = 30; // autoscroll-snelheid in px per seconde
 
+/**
+ * Trustbar: compacte witte balk met één regel kleine tekst en de instantie-logo's
+ * als rustige marquee. Logo's staan in grijstinten en krijgen kleur op hover.
+ */
 export const LogoCarousel = ({
-  title = "De subsidies en instanties waarmee wij werken",
+  title = "Wij werken met alle officiële regelingen",
   logos = defaultLogos,
 }: LogoCarouselProps) => {
   const loop = Array.from({ length: COPIES }, () => logos).flat();
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const [visible, setVisible] = useState(false);
 
   const trackRef = useRef<HTMLDivElement>(null);
   const offset = useRef(0); // huidige scroll-offset in px
@@ -35,29 +36,6 @@ export const LogoCarousel = ({
   const startX = useRef(0);
   const startOffset = useRef(0);
   const reduced = useRef(false);
-
-  // Titel-onthulling zodra de sectie in beeld komt (ongewijzigd gedrag)
-  useEffect(() => {
-    const el = titleRef.current;
-    if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setVisible(true);
-      return;
-    }
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            setVisible(true);
-            obs.disconnect();
-          }
-        });
-      },
-      { threshold: 0.2 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
 
   const applyTransform = useCallback(() => {
     const track = trackRef.current;
@@ -135,34 +113,32 @@ export const LogoCarousel = ({
 
   return (
     <section
-      aria-label="Subsidies en instanties waarmee wij werken"
-      className="py-10 md:py-12 relative"
-      style={{ backgroundColor: BG }}
+      aria-label="Regelingen en instanties waarmee wij werken"
+      className="py-[48px]"
+      style={{ backgroundColor: "#FFFFFF" }}
     >
       <style>{`
         .logo-marquee-mask {
           -webkit-mask-image: linear-gradient(to right, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
                   mask-image: linear-gradient(to right, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
         }
+        .logo-marquee img {
+          filter: grayscale(1);
+          opacity: 0.6;
+          transition: filter 200ms ease, opacity 200ms ease;
+        }
+        .logo-marquee div:hover > img {
+          filter: grayscale(0);
+          opacity: 1;
+        }
       `}</style>
 
-      <div className="container-content">
-        <h2
-          ref={titleRef}
-          className="h2-section text-center mb-12 md:mb-16"
-          style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateY(0)" : "translateY(20px)",
-            transition: "opacity 500ms ease-out, transform 500ms ease-out",
-          }}
-        >
-          De subsidies en instanties waarmee wij{" "}
-          <span style={{ color: "hsl(var(--accent))" }}>werken</span>
-        </h2>
+      <div className="container-home">
+        <p className="text-center text-[14px] font-medium text-muted-foreground">{title}</p>
       </div>
 
       <div
-        className="logo-marquee-mask relative overflow-hidden select-none"
+        className="logo-marquee logo-marquee-mask relative overflow-hidden select-none mt-7"
         style={{ touchAction: "pan-y", cursor: "grab" }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -188,7 +164,7 @@ export const LogoCarousel = ({
                 draggable={false}
                 className="object-contain pointer-events-none"
                 style={{
-                  height: "clamp(52px, 6vw, 72px)",
+                  height: "clamp(40px, 5vw, 56px)",
                   width: "auto",
                 }}
               />
@@ -196,16 +172,6 @@ export const LogoCarousel = ({
           ))}
         </div>
       </div>
-
-      <div
-        aria-hidden="true"
-        className="absolute w-full"
-        style={{
-          bottom: 0,
-          height: 1,
-          backgroundColor: "rgba(212, 175, 61, 0.3)",
-        }}
-      />
     </section>
   );
 };

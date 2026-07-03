@@ -5,8 +5,11 @@ import { Hero } from "@/components/sections/Hero";
 import { LogoCarousel } from "@/components/sections/LogoCarousel";
 import { Herkenning } from "@/components/sections/Herkenning";
 import { HelderPlan } from "@/components/sections/HelderPlan";
+import { WaarWeBijHelpen } from "@/components/sections/WaarWeBijHelpen";
 import { WaaromKiezen } from "@/components/sections/WaaromKiezen";
+import { Reviews } from "@/components/sections/Reviews";
 import { Subsidies } from "@/components/sections/Subsidies";
+import { Team } from "@/components/sections/Team";
 import { Faq } from "@/components/sections/Faq";
 import { ClosingCta } from "@/components/sections/ClosingCta";
 
@@ -21,11 +24,14 @@ const Index = () => {
       <Header />
       <main className="flex-1">
         <Hero />
+        <LogoCarousel />
         <Herkenning />
         <HelderPlan />
-        <Subsidies />
-        <LogoCarousel />
+        <WaarWeBijHelpen />
         <WaaromKiezen />
+        <Reviews />
+        <Subsidies />
+        <Team />
         <Faq />
       </main>
       <Footer cta={<ClosingCta />} />

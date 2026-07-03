@@ -3,20 +3,20 @@ import { ChevronDown } from "lucide-react";
 
 const faqs = [
   {
-    q: "Wat doet Voortraject precies?",
-    a: "Wij geven gratis en onafhankelijk advies over verduurzamen en subsidies. We kijken eerst naar jouw woning en situatie, vertellen wat slim is en in welke volgorde, zoeken uit welke subsidies je kunt krijgen en begeleiden je naar een betrouwbare uitvoerder als je verder wilt.",
-  },
-  {
     q: "Wat kost het mij?",
     a: "Ons advies is gratis en vrijblijvend. Je zit nergens aan vast en bepaalt zelf of en wanneer je een vervolgstap zet.",
   },
   {
     q: "Hoe verdienen jullie dan geld?",
-    a: "We verkopen zelf geen producten en krijgen geen commissie van fabrikanten of leveranciers. Daardoor zit er in ons advies geen belang om je een bepaald merk of systeem aan te praten. We worden betaald door de uitvoerders, voor het voorwerk dat we voor hen uit handen nemen: intake, dossier, subsidies en nazorg. We koppelen je alleen aan uitvoerders waarvan we weten dat ze goed werk leveren in jouw regio.",
+    a: "Heel simpel: de uitvoerder betaalt ons bij een geslaagde opdracht, voor het voorwerk dat we uit handen nemen — intake, dossier, subsidies en nazorg. Jij betaalt niets, en we vertellen je gewoon hoe dat zit. We verkopen zelf geen producten, dus in ons advies zit geen belang om je een bepaald merk of systeem aan te praten. We koppelen je alleen aan uitvoerders waarvan we weten dat ze goed werk leveren in jouw regio.",
+  },
+  {
+    q: "Wat doet Voortraject precies?",
+    a: "Wij geven gratis en onafhankelijk advies over verduurzamen en subsidies. We kijken eerst naar jouw woning en situatie, vertellen wat slim is en in welke volgorde, zoeken uit welke subsidies je kunt krijgen en begeleiden je naar een betrouwbare uitvoerder als je verder wilt.",
   },
   {
     q: "In welk gebied werken jullie?",
-    a: "Door heel Noord-Nederland: Groningen, Friesland en Drenthe. In gemeenten waar Nij Begun loopt kennen we de regeling van binnen en buiten.",
+    a: "Door heel Noord-Nederland: Groningen, Drenthe en Friesland. In gemeenten waar Nij Begun loopt kennen we de regeling van binnen en buiten.",
   },
   {
     q: "Hoe snel kan ik een gesprek?",

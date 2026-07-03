@@ -115,6 +115,12 @@
     max-width: 1400px;
   }
 
+  /* Homepage-secties: vaste contentbreedte van 1200px (sectieplan) */
+  .container-home {
+    @apply mx-auto w-full px-6 md:px-12;
+    max-width: 1200px;
+  }
+
   .container-text {
     @apply w-full;
     max-width: 720px;

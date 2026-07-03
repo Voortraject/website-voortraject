@@ -1,68 +1,55 @@
-import subsidiesUitzoeken from "@/assets/subsidies-uitzoeken.webp";
+import { ArrowRight, Check } from "lucide-react";
 
-export const Subsidies = () => {
-  return (
-    <section className="section-pad" style={{ backgroundColor: "#F5F3ED" }}>
-      <div className="container-content">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-          <div className="order-2 lg:order-1">
-            <img
-              src={subsidiesUitzoeken}
-              alt="Twee adviseurs van Voortraject zoeken achter hun laptops uit welke subsidies voor een woning gelden"
-              loading="lazy"
-              decoding="async"
-              className="w-full h-64 sm:h-96 lg:h-[480px] rounded-2xl object-cover"
-              style={{ boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
-            />
-          </div>
+const feiten = [
+  "Nij Begun vergoedt isolatie voor eigenaar-bewoners in Groningen en Noord-Drenthe",
+  "ISDE is een landelijke regeling die daar gewoon bovenop komt",
+  "Veel gemeenten hebben daarnaast een eigen bijdrageregeling",
+];
 
-          <div className="order-1 lg:order-2">
-            <h2 className="h2-section">
-              Welke subsidies gelden er voor{" "}
-              <span style={{ color: "hsl(var(--accent))" }}>jouw woning?</span>
-            </h2>
-            <p
-              className="mt-5"
-              style={{ fontSize: 18, color: "hsl(var(--primary) / 0.8)", lineHeight: 1.6 }}
-            >
-              Landelijk, provinciaal én gemeentelijk: er zijn meer regelingen dan de meeste
-              mensen weten, en vaak zijn ze te combineren. Wij kennen het hele landschap,
-              bewaken de termijnen en zoeken gratis voor je uit wat er voor jouw adres kan.
-              Jij hoeft geen subsidie-expert te zijn.
-            </p>
-
-            <div
-              className="mt-6 flex items-start gap-3 rounded-xl p-4"
-              style={{ backgroundColor: "#FFFFFF", border: "1px solid rgba(229, 201, 103, 0.5)" }}
-            >
-              <span
-                className="mt-0.5 shrink-0 font-semibold"
-                style={{ color: "hsl(var(--accent))" }}
-                aria-hidden="true"
-              >
-                +
-              </span>
-              <p style={{ fontSize: 15, color: "hsl(var(--primary))", lineHeight: 1.55 }}>
-                <strong className="font-semibold">Subsidies zijn vaak stapelbaar.</strong>{" "}
-                Landelijk, regionaal en gemeentelijk samen vergoeden soms een groot deel van
-                je investering. Wij zoeken uit hoe je ze combineert zonder er één te missen.
-              </p>
-            </div>
-
-            <a
-              href="/contact"
-              className="mt-7 inline-flex items-center justify-center rounded-full px-7 py-3.5 font-sans font-semibold transition-all duration-150 hover:scale-[1.02]"
-              style={{
-                backgroundColor: "hsl(var(--accent))",
-                color: "hsl(var(--primary))",
-                fontSize: 15,
-              }}
-            >
-              Plan een gratis gesprek
-            </a>
-          </div>
-        </div>
+export const Subsidies = () => (
+  <section className="section-pad" style={{ backgroundColor: "#FFFFFF" }} aria-labelledby="subsidies-title">
+    <div className="container-home">
+      <div className="max-w-3xl">
+        <h2 id="subsidies-title" className="h2-section">
+          Wist je dat je subsidies kunt <span className="text-accent">stapelen</span>?
+        </h2>
+        <p className="mt-4 text-[16px] md:text-[18px] leading-[1.6] text-muted-foreground">
+          Landelijk, provinciaal en gemeentelijk: er zijn meer regelingen dan de meeste mensen
+          weten, en vaak zijn ze te combineren. Wij zoeken gratis uit wat er voor jouw adres
+          geldt.
+        </p>
       </div>
-    </section>
-  );
-};
+
+      <div
+        className="mt-8 md:mt-10 max-w-3xl rounded-2xl border-l-4 border-accent p-6 md:p-7"
+        style={{ backgroundColor: "#F5F3ED" }}
+      >
+        <ul className="space-y-3.5">
+          {feiten.map((feit) => (
+            <li key={feit} className="flex items-start gap-3">
+              <Check size={18} strokeWidth={2.5} className="mt-0.5 shrink-0 text-accent" aria-hidden="true" />
+              <span className="text-[15px] md:text-[16px] leading-[1.6] text-primary">{feit}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <a
+        href="/subsidies/stapelen"
+        className="mt-6 inline-flex items-center gap-1.5 text-[15px] font-semibold text-primary underline underline-offset-4 decoration-border hover:decoration-accent hover:text-accent-hover transition-colors"
+      >
+        Bekijk alle regelingen
+        <ArrowRight size={16} aria-hidden="true" />
+      </a>
+
+      <div className="mt-8">
+        <a
+          href="/contact"
+          className="inline-flex items-center justify-center rounded-full px-7 py-3.5 text-[15px] font-semibold bg-accent text-primary transition-all duration-150 hover:scale-[1.02] hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        >
+          Plan een gratis gesprek
+        </a>
+      </div>
+    </div>
+  </section>
+);
