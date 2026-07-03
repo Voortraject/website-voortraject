@@ -1,5 +1,6 @@
 import { Check, Phone } from "lucide-react";
 
+import { CtaButton } from "@/components/CtaButton";
 import heroAdviesgesprek from "@/assets/hero-adviesgesprek.webp";
 
 const claims = [
@@ -56,12 +57,7 @@ export const Hero = () => {
           </ul>
 
           <div className="mt-8 md:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-            <a
-              href="/contact"
-              className="inline-flex items-center justify-center rounded-full px-7 py-3.5 text-[15px] font-semibold bg-accent text-primary transition-all duration-150 hover:scale-[1.02] hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-            >
-              Plan een gratis gesprek
-            </a>
+            <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
             <a
               href="tel:+31502112689"
               className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-medium border border-white/80 text-white transition-all duration-150 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"

@@ -5,6 +5,7 @@ import type { LucideIcon } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
+import { CtaButton } from "@/components/CtaButton";
 import { OfBelOnsCta } from "@/components/OfBelOnsCta";
 
 export type RouteStep = "beperk" | "opwekken" | "slim";
@@ -704,19 +705,10 @@ const PrimaryButton = ({
   href: string;
   children: React.ReactNode;
 }) => (
-  <a
-    href={href}
-    className="inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
-    style={{
-      backgroundColor: NAVY,
-      color: WHITE,
-      padding: "14px 28px",
-      fontSize: 15,
-    }}
-  >
+  <CtaButton href={href} variant="primary">
     {children}
-    <ArrowRight size={16} className="ml-2" />
-  </a>
+    <ArrowRight size={16} />
+  </CtaButton>
 );
 
 const FaqRow = ({ item, last }: { item: MaatregelFaq; last: boolean }) => (

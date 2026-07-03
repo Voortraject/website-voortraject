@@ -1,3 +1,4 @@
+import { CtaButton } from "@/components/CtaButton";
 import { OfBelOnsCta } from "@/components/OfBelOnsCta";
 
 export const ClosingCta = () => (
@@ -35,12 +36,9 @@ export const ClosingCta = () => (
       </p>
 
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5 w-full sm:w-auto">
-        <a
-          href="/contact"
-          className="inline-flex items-center justify-center rounded-full px-8 py-3.5 text-[15px] font-semibold bg-accent text-primary transition-all duration-150 hover:scale-[1.02] hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 w-full sm:w-auto"
-        >
+        <CtaButton href="/contact" className="px-8 w-full sm:w-auto">
           Plan een gratis gesprek
-        </a>
+        </CtaButton>
         <OfBelOnsCta color="#FFFFFF" align="center" />
       </div>
 

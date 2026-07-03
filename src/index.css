@@ -8,6 +8,14 @@
   100% { opacity: 0; }
 }
 
+/* Zwevende glans over de CTA-knoppen (zie CtaButton). */
+.btn-sheen {
+  animation: sheen 5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-sheen { animation: none; }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -28,6 +28,7 @@ import {
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
+import { CtaButton } from "@/components/CtaButton";
 
 // Page-scoped palette (identical to Nij Begun page)
 const C = {
@@ -109,18 +110,7 @@ const Gold = ({ children }: { children: React.ReactNode }) => (
 );
 
 const PrimaryBtn = ({ href, children }: { href: string; children: React.ReactNode }) => (
-  <a
-    href={href}
-    className="inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
-    style={{
-      backgroundColor: C.accent,
-      color: C.primary,
-      padding: "14px 24px",
-      fontSize: 15,
-    }}
-  >
-    {children}
-  </a>
+  <CtaButton href={href}>{children}</CtaButton>
 );
 
 const OutlineBtn = ({ href, children, onClick }: { href?: string; children: React.ReactNode; onClick?: () => void }) => {

@@ -1,28 +1,36 @@
 import { Fragment } from "react";
-import { ArrowRight, Building2, Equal, Globe, Map, Plus } from "lucide-react";
+import { ArrowRight, Building2, Globe, Map, Plus } from "lucide-react";
+
+import { CtaButton } from "@/components/CtaButton";
 
 const niveaus = [
   {
     icon: Globe,
     title: "Landelijke subsidies",
     body: "Zoals ISDE: een landelijke regeling die gewoon bovenop andere regelingen komt.",
+    linkLabel: "Meer over landelijke subsidies",
+    linkHref: "/subsidies/landelijk",
   },
   {
     icon: Map,
     title: "Provinciale subsidies",
     body: "Zoals Nij Begun: vergoedt isolatie voor eigenaar-bewoners in Groningen en Noord-Drenthe.",
+    linkLabel: "Meer over regionale subsidies",
+    linkHref: "/subsidies/regionaal",
   },
   {
     icon: Building2,
     title: "Gemeentelijke subsidies",
     body: "Veel gemeenten hebben daarnaast een eigen bijdrageregeling.",
+    linkLabel: "Meer over regionale subsidies",
+    linkHref: "/subsidies/regionaal",
   },
 ];
 
 const PlusTeken = () => (
   <div className="flex items-center justify-center self-center" aria-hidden="true">
-    <span className="inline-flex w-9 h-9 items-center justify-center rounded-full bg-accent">
-      <Plus size={20} strokeWidth={2.75} className="text-primary" />
+    <span className="inline-flex w-9 h-9 items-center justify-center rounded-full bg-primary">
+      <Plus size={20} strokeWidth={2.75} className="text-white" />
     </span>
   </div>
 );
@@ -41,9 +49,9 @@ export const Subsidies = () => (
         </p>
       </div>
 
-      {/* De stapel: drie niveaus + plustekens, met de optelsom eronder */}
+      {/* De stapel: drie niveaus met plustekens ertussen */}
       <div className="mt-8 md:mt-10 grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] gap-4 md:gap-5 items-stretch">
-        {niveaus.map(({ icon: Icon, title, body }, i) => (
+        {niveaus.map(({ icon: Icon, title, body, linkLabel, linkHref }, i) => (
           <Fragment key={title}>
             <article
               className="bg-card rounded-2xl border border-border p-6 flex flex-col"
@@ -58,47 +66,24 @@ export const Subsidies = () => (
                 </h3>
               </div>
               <p className="mt-3 text-[15px] leading-[1.6] text-muted-foreground">{body}</p>
+              <a
+                href={linkHref}
+                className="mt-auto pt-4 inline-flex items-center gap-1.5 text-[14px] font-semibold text-primary underline underline-offset-4 decoration-border hover:decoration-accent hover:text-accent-hover transition-colors"
+              >
+                {linkLabel}
+                <ArrowRight size={15} aria-hidden="true" />
+              </a>
             </article>
             {i < niveaus.length - 1 && <PlusTeken />}
           </Fragment>
         ))}
       </div>
 
-      <div className="mt-4 md:mt-5 flex flex-col md:flex-row items-center gap-3 md:gap-5">
-        <span
-          className="inline-flex w-9 h-9 shrink-0 items-center justify-center rounded-full bg-primary"
-          aria-hidden="true"
-        >
-          <Equal size={20} strokeWidth={2.75} className="text-accent" />
-        </span>
-        <div
-          className="flex-1 w-full rounded-2xl border-l-4 border-accent p-5 md:p-6"
-          style={{ backgroundColor: "#F5F3ED" }}
-        >
-          <p className="text-[16px] md:text-[18px] leading-[1.5] font-semibold text-primary">
-            Samen vergoeden ze soms een groot deel van je investering.
-          </p>
-          <p className="mt-1 text-[15px] leading-[1.6] text-muted-foreground">
-            Wij zoeken uit hoe je ze combineert zonder er één te missen.
-          </p>
-        </div>
-      </div>
-
-      <a
-        href="/subsidies/stapelen"
-        className="mt-7 inline-flex items-center gap-1.5 text-[15px] font-semibold text-primary underline underline-offset-4 decoration-border hover:decoration-accent hover:text-accent-hover transition-colors"
-      >
-        Bekijk alle regelingen
-        <ArrowRight size={16} aria-hidden="true" />
-      </a>
-
-      <div className="mt-7">
-        <a
-          href="/contact"
-          className="inline-flex items-center justify-center rounded-full px-7 py-3.5 text-[15px] font-semibold bg-accent text-primary transition-all duration-150 hover:scale-[1.02] hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-        >
-          Plan een gratis gesprek
-        </a>
+      <div className="mt-8">
+        <CtaButton href="/subsidies/stapelen" variant="primary">
+          Leer meer over subsidies stapelen
+          <ArrowRight size={16} aria-hidden="true" />
+        </CtaButton>
       </div>
     </div>
   </section>

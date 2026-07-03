@@ -23,6 +23,7 @@ import {
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
+import { CtaButton } from "@/components/CtaButton";
 
 // Page-scoped palette (identical to Nij Begun & Landelijk)
 const C = {
@@ -162,19 +163,6 @@ const H2 = ({ children }: { children: React.ReactNode }) => (
 const Gold = ({ children }: { children: React.ReactNode }) => (
   <span style={{ color: C.accent }}>{children}</span>
 );
-
-const goldBtn: React.CSSProperties = {
-  backgroundColor: C.accent,
-  color: C.primary,
-  fontWeight: 700,
-  borderRadius: 9999,
-  padding: "14px 28px",
-  fontSize: 15,
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  transition: "transform 150ms ease",
-};
 
 const outlineBtn: React.CSSProperties = {
   backgroundColor: "transparent",
@@ -340,9 +328,7 @@ const SubsidiesRegionaal = () => {
                 Boven op ISDE en Nij Begun bieden veel gemeenten eigen regelingen voor isolatie, ventilatie en verduurzaming. Veel bewoners weten dat niet, of weten niet welke nog actief zijn. Wij houden de actuele gemeentelijke subsidies bij en stapelen ze voor je.
               </p>
               <div className="flex flex-wrap gap-3">
-                <a href="/contact" style={goldBtn}>
-                  Ja ik wil gratis advies
-                </a>
+                <CtaButton href="/contact">Ja ik wil gratis advies</CtaButton>
                 <a href="/subsidies/stapelen" style={outlineBtn}>
                   Zo werkt stapelen
                 </a>
@@ -493,9 +479,7 @@ const SubsidiesRegionaal = () => {
               Wij doen ISDE bij RVO, Nij Begun bij SNN en de gemeentelijke aanvraag bij jouw gemeente. Allemaal in één traject.
             </p>
             <div style={{ marginTop: 20 }}>
-              <a href="/contact" style={goldBtn}>
-                Neem contact op
-              </a>
+              <CtaButton href="/contact">Neem contact op</CtaButton>
             </div>
           </div>
         </div>
@@ -648,9 +632,7 @@ const SubsidiesRegionaal = () => {
                 Wij zoeken het voor jouw adres uit en stapelen alles wat kan. Eén gesprek, geen loketten. Vrijblijvend en gratis.
               </p>
               <div style={{ marginTop: 26 }}>
-                <a href="/contact" style={goldBtn}>
-                  Plan een gratis gesprek
-                </a>
+                <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
               </div>
               <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, marginTop: 28 }}>
                 Laatst bijgewerkt: {LAATST_BIJGEWERKT}

@@ -24,6 +24,7 @@ import {
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
+import { CtaButton } from "@/components/CtaButton";
 import logoVoortrajectBlauw from "@/assets/logo-voortraject-blauw.png";
 import logoNijBegun from "@/assets/logo-nij-begun.png";
 
@@ -226,19 +227,6 @@ const cardSoftBase: React.CSSProperties = {
   backgroundColor: C.cardSoft,
 };
 
-const goldBtn: React.CSSProperties = {
-  backgroundColor: C.accent,
-  color: C.primary,
-  fontWeight: 700,
-  borderRadius: 9999,
-  padding: "14px 28px",
-  fontSize: 15,
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  transition: "background-color 150ms ease",
-};
-
 const outlineBtn: React.CSSProperties = {
   backgroundColor: "transparent",
   color: C.primary,
@@ -372,9 +360,7 @@ const SubsidiesNijBegun = () => {
                 Woon je in Groningen of Noord-Drenthe? Dan kun je je woning laten isoleren tot de isolatiestandaard met subsidie via Nij Begun. Hoeveel je krijgt hangt af van je woning en je gemeente, en dat zoeken wij voor je uit.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
-                <a href="/contact" style={goldBtn}>
-                  Ja ik wil gratis advies
-                </a>
+                <CtaButton href="/contact">Ja ik wil gratis advies</CtaButton>
                 <a href="#bedragen" style={outlineBtn}>
                   Bekijk wat jij krijgt
                 </a>
@@ -871,9 +857,7 @@ const SubsidiesNijBegun = () => {
             <p style={{ fontSize: 15, color: C.muted, marginTop: 10, maxWidth: 520, marginLeft: "auto", marginRight: "auto", lineHeight: 1.6 }}>
               Neem contact op. Een lokale adviseur uit jouw regio belt of komt langs binnen een week.
             </p>
-            <a href="/contact" style={{ ...goldBtn, marginTop: 20 }}>
-              Ik wil gebeld worden
-            </a>
+            <CtaButton href="/contact" className="mt-5">Ik wil gebeld worden</CtaButton>
           </div>
         </div>
       </section>
@@ -1022,9 +1006,7 @@ const SubsidiesNijBegun = () => {
                 <p style={{ fontSize: 17, lineHeight: 1.6, marginTop: 16, color: "rgba(255,255,255,0.8)" }}>
                   Wij zoeken het voor jouw adres uit en stapelen alles wat kan. Eén gesprek, geen loketten. Vrijblijvend en gratis.
                 </p>
-                <a href="/contact" style={{ ...goldBtn, marginTop: 24 }}>
-                  Plan een gratis gesprek
-                </a>
+                <CtaButton href="/contact" className="mt-6">Plan een gratis gesprek</CtaButton>
               </div>
               <p className="text-center mt-12" style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
                 Laatst bijgewerkt: {LAATST_BIJGEWERKT}

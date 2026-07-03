@@ -14,6 +14,7 @@ import {
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
+import { CtaButton } from "@/components/CtaButton";
 
 // Page-scoped palette (identical to other subsidie pages)
 const C = {
@@ -66,19 +67,6 @@ const H2 = ({ children }: { children: React.ReactNode }) => (
 const Gold = ({ children }: { children: React.ReactNode }) => (
   <span style={{ color: C.accent }}>{children}</span>
 );
-
-const goldBtn: React.CSSProperties = {
-  backgroundColor: C.accent,
-  color: C.primary,
-  fontWeight: 700,
-  borderRadius: 9999,
-  padding: "14px 28px",
-  fontSize: 15,
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  transition: "transform 150ms ease",
-};
 
 const outlineBtn: React.CSSProperties = {
   backgroundColor: "transparent",
@@ -196,9 +184,7 @@ const SubsidiesStapelen = () => {
                 Veel huishoudens laten geld liggen omdat ze niet weten dat subsidies vaak te combineren zijn. Een landelijke regeling, een regionale regeling zoals Nij Begun, een gemeentelijk potje en voordelige financiering kunnen samen je kosten flink drukken. Wij zoeken voor jou uit wat je kunt stapelen en begeleiden de aanvraag. Gratis.
               </p>
               <div className="flex flex-wrap gap-3">
-                <a href="/contact" style={goldBtn}>
-                  Ja ik wil gratis advies
-                </a>
+                <CtaButton href="/contact">Ja ik wil gratis advies</CtaButton>
                 <a
                   href="#stapelen"
                   onClick={(e) => {
@@ -329,9 +315,7 @@ const SubsidiesStapelen = () => {
               Wat de juiste <Gold>combinatie</Gold> oplevert, rekenen we voor jou uit
             </p>
             <div style={{ marginTop: 22 }}>
-              <a href="/contact" style={goldBtn}>
-                Plan een gratis adviesgesprek
-              </a>
+              <CtaButton href="/contact">Plan een gratis adviesgesprek</CtaButton>
             </div>
           </div>
         </div>
@@ -431,9 +415,7 @@ const SubsidiesStapelen = () => {
                 Wij zoeken het voor jouw adres uit en stapelen alles wat kan. Eén gesprek, geen loketten. Vrijblijvend en gratis.
               </p>
               <div style={{ marginTop: 26 }}>
-                <a href="/contact" style={goldBtn}>
-                  Plan een gratis gesprek
-                </a>
+                <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
               </div>
               <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, marginTop: 28 }}>
                 Laatst bijgewerkt: {LAATST_BIJGEWERKT}
