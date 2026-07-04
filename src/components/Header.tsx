@@ -48,12 +48,12 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
       onClick={onClose}
     >
       <div
-        className="relative flex flex-col max-h-full overflow-y-auto"
+        className="relative flex flex-col max-h-full overflow-y-auto pt-[env(safe-area-inset-top)]"
         style={{ backgroundColor: "hsl(var(--primary) / 0.95)", backdropFilter: "blur(8px)" }}
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          className="absolute top-3 right-3 p-2 text-white z-10"
+          className="absolute top-[calc(0.75rem_+_env(safe-area-inset-top))] right-3 p-2 text-white z-10"
           aria-label="Menu sluiten"
           onClick={onClose}
         >
@@ -137,7 +137,7 @@ export const Header = () => {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50">
+    <header className="sticky top-0 z-50 pt-[env(safe-area-inset-top)]">
       <div className="container-content flex items-center justify-between gap-3 h-20">
         <a
           href="/"
