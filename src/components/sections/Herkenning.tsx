@@ -46,7 +46,7 @@ export const Herkenning = () => (
           </ul>
         </div>
 
-        <div>
+        <div className="hidden lg:block">
           <img
             src={herkenningVoortuin}
             alt="Adviseur van Voortraject in gesprek met twee bewoners in hun voortuin"
