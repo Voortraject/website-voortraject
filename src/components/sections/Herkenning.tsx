@@ -1,6 +1,7 @@
 import { Coins, MessagesSquare, Scale } from "lucide-react";
 
 import herkenningVoortuin from "@/assets/herkenning-voortuin2.webp";
+import { TrustCardList } from "./TrustCardList";
 
 const twijfels = [
   {
@@ -29,21 +30,7 @@ export const Herkenning = () => (
             <span className="text-accent">Herken</span> je dit?
           </h2>
 
-          <ul className="mt-8 space-y-8">
-            {twijfels.map(({ icon: Icon, title, body }) => (
-              <li key={title} className="flex items-start gap-4">
-                <span className="inline-flex shrink-0 w-11 h-11 items-center justify-center rounded-full bg-accent">
-                  <Icon size={20} className="text-primary" aria-hidden="true" />
-                </span>
-                <div>
-                  <h3 className="font-display font-semibold text-primary text-[19px] md:text-[22px] leading-[1.2] tracking-[-0.01em]">
-                    {title}
-                  </h3>
-                  <p className="mt-2 text-[15px] leading-[1.6] text-muted-foreground">{body}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <TrustCardList items={twijfels} />
         </div>
 
         <div className="hidden lg:block">
