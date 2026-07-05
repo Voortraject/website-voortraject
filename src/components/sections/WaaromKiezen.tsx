@@ -1,27 +1,25 @@
-import { CalendarClock, HandCoins, Layers, ShieldCheck } from "lucide-react";
+import { BadgeCheck, Compass, HandCoins } from "lucide-react";
 
 import waaromVertrouwen from "@/assets/waarom-vertrouwen2.webp";
 
+// Drie trust-pijlers, elk een andere vertrouwenslever en bewust géén herhaling van
+// wat eerder op de pagina staat: eerlijkheid (verdienmodel), autonomie (geen
+// verplichting) en risico-overname (wij toetsen de uitvoerders vooraf).
 const redenen = [
   {
-    icon: ShieldCheck,
-    title: "Onafhankelijk advies",
-    body: "Wij verkopen geen producten. Ons advies heeft geen commercieel belang; alleen wat voor jouw woning logisch is.",
-  },
-  {
     icon: HandCoins,
-    title: "Transparant over hoe wij verdienen",
-    body: "De uitvoerder betaalt ons bij een geslaagde opdracht. Jij betaalt niets, en we vertellen je gewoon hoe dat zit.",
+    title: "Je weet precies hoe wij verdienen",
+    body: "De uitvoerder betaalt ons voor het voortraject en de bewonersbegeleiding die wij overnemen. Voor jou is ons advies daarom gratis.",
   },
   {
-    icon: Layers,
-    title: "Alle subsidies op een rij",
-    body: "Landelijk, provinciaal en gemeentelijk, inclusief hoe je ze slim combineert.",
+    icon: Compass,
+    title: "Je zit nergens aan vast",
+    body: "Advies zonder verplichting. Jij bepaalt wat je doet en in welk tempo. Wil je niet verder, dan stopt het, zonder gedoe.",
   },
   {
-    icon: CalendarClock,
-    title: "Binnen dagen een gesprek",
-    body: "Geen wachtlijsten van weken zoals bij loketten. Je kiest een moment dat jou uitkomt.",
+    icon: BadgeCheck,
+    title: "We koppelen je alleen aan getoetste uitvoerders",
+    body: "Niet elke aannemer komt op onze lijst. We toetsen uitvoerders uit de regio op vakwerk, eerlijke prijzen en afspraken nakomen.",
   },
 ];
 
