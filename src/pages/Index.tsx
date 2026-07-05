@@ -28,9 +28,9 @@ const Index = () => {
         <Herkenning />
         <HelderPlan />
         <WaarWeBijHelpen />
+        <Subsidies />
         <WaaromKiezen />
         <Reviews />
-        <Subsidies />
         <Team />
         <Faq />
       </main>
