@@ -54,7 +54,10 @@ const navCols = [
  */
 export const Footer = ({ cta }: { cta?: ReactNode }) => (
   <footer className="bg-white">
-    <div className="relative overflow-hidden bg-primary text-white rounded-t-[2rem] md:rounded-t-[3rem]">
+    <div
+      className="relative overflow-hidden bg-primary text-white rounded-t-[2rem] md:rounded-t-[3rem]"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+    >
       {cta && <div className="relative z-10">{cta}</div>}
       <div className="container-content md:py-20 py-[40px] relative z-10">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
