@@ -9,7 +9,7 @@ const redenen = [
   {
     icon: HandCoins,
     title: "Je weet precies hoe wij verdienen",
-    body: "De uitvoerder betaalt ons voor het voortraject en de bewonersbegeleiding die wij overnemen. Voor jou is ons advies daarom gratis.",
+    body: "De uitvoerder betaalt ons voor het voorwerk dat we overnemen. Voor jou is het advies gratis.",
   },
   {
     icon: Compass,
@@ -18,7 +18,7 @@ const redenen = [
   },
   {
     icon: BadgeCheck,
-    title: "We koppelen je alleen aan getoetste uitvoerders",
+    title: "We koppelen je aan getoetste uitvoerders",
     body: "Niet elke aannemer komt op onze lijst. We toetsen uitvoerders uit de regio op vakwerk, eerlijke prijzen en afspraken nakomen.",
   },
 ];
