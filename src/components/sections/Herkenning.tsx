@@ -1,65 +1,61 @@
-import { ChevronRight, Coins, MessagesSquare, Scale } from "lucide-react";
+import { Coins, MessagesSquare, Scale } from "lucide-react";
+
+import herkenningVoortuin from "@/assets/herkenning-voortuin2.webp";
 
 const twijfels = [
   {
     icon: MessagesSquare,
-    title: "Iedereen zegt iets anders",
-    body: "De installateur adviseert een warmtepomp, de buurman zegt eerst isoleren, online lees je: wacht nog even. Wie heeft er gelijk?",
+    title: "Ik weet niet wie ik moet geloven",
+    body: "De installateur zegt warmtepomp, de buurman eerst isoleren, online lees je: nog even wachten. Wie heeft er nou gelijk?",
   },
   {
     icon: Scale,
     title: "Ik wil geen verkooppraatje",
-    body: "Elk “gratis advies” blijkt een offerte voor het product dat ze toevallig verkopen. Je zoekt iemand zonder eigen belang.",
+    body: "Elk “gratis advies” eindigt bij een offerte voor wat ze zelf verkopen. Waar vind je nog iemand zonder eigen belang?",
   },
   {
     icon: Coins,
-    title: "Bang om geld te laten liggen",
-    body: "Er zijn meer regelingen dan je denkt en sommige kun je stapelen. Niemand wil achteraf horen dat hij duizenden euro’s heeft gemist.",
+    title: "Ik wil geen geld laten liggen",
+    body: "Er zijn meer regelingen dan je denkt, en sommige kun je stapelen. Maar hoe weet je zeker dat je niets misloopt?",
   },
 ];
 
 export const Herkenning = () => (
   <section className="section-pad-home" style={{ backgroundColor: "#F5F3ED" }} aria-labelledby="herkenning-title">
     <div className="container-home">
-      <div className="max-w-3xl">
-        <h2 id="herkenning-title" className="h2-section">
-          Verduurzamen zou niet zo <span className="text-accent">ingewikkeld</span> moeten zijn
-        </h2>
-        <p className="mt-4 text-[18px] md:text-[20px] leading-[1.6] text-muted-foreground">
-          Je wilt wel, maar zodra je je erin verdiept loop je tegen dezelfde muren aan.
-        </p>
-      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+        <div>
+          <h2 id="herkenning-title" className="h2-section">
+            Herken je deze <span className="text-accent">twijfels</span>?
+          </h2>
 
-      <div className="mt-8 md:mt-10 flex md:grid md:grid-cols-3 gap-5 md:gap-6 items-stretch overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar">
-        {twijfels.map(({ icon: Icon, title, body }) => (
-          <article
-            key={title}
-            className="w-[80%] sm:w-[46%] md:w-auto shrink-0 snap-start bg-card rounded-2xl border p-6 md:p-7 flex flex-col transition-all duration-200 ease-out md:hover:-translate-y-0.5"
-            style={{
-              boxShadow: "0 4px 24px hsl(var(--primary) / 0.06)",
-              borderColor: "hsl(var(--accent) / 0.8)",
-            }}
-          >
-            <div className="flex items-center gap-3.5">
-              <span className="inline-flex shrink-0 w-11 h-11 items-center justify-center rounded-full bg-accent">
-                <Icon size={20} className="text-primary" aria-hidden="true" />
-              </span>
-              <h3 className="font-display font-semibold text-primary text-[18px] leading-[1.25] tracking-[-0.01em]">
-                {title}
-              </h3>
-            </div>
-            <p className="mt-3 text-[15px] leading-[1.6] text-muted-foreground">{body}</p>
-          </article>
-        ))}
-      </div>
+          <ul className="mt-8 space-y-8">
+            {twijfels.map(({ icon: Icon, title, body }) => (
+              <li key={title} className="flex items-start gap-4">
+                <span className="inline-flex shrink-0 w-11 h-11 items-center justify-center rounded-full bg-accent">
+                  <Icon size={20} className="text-primary" aria-hidden="true" />
+                </span>
+                <div>
+                  <h3 className="font-display font-semibold text-primary text-[19px] md:text-[22px] leading-[1.2] tracking-[-0.01em]">
+                    {title}
+                  </h3>
+                  <p className="mt-1 text-[15px] leading-[1.6] text-muted-foreground">{body}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-      {/* Swipe-hint: alleen mobiel, onder de eerste kaart */}
-      <div
-        className="md:hidden mt-3.5 flex items-center gap-1.5 text-muted-foreground animate-swipe-hint motion-reduce:animate-none"
-        aria-hidden="true"
-      >
-        <span className="text-[13px] font-medium">Veeg</span>
-        <ChevronRight size={16} />
+        <div>
+          <img
+            src={herkenningVoortuin}
+            alt="Adviseur van Voortraject in gesprek met twee bewoners in hun voortuin"
+            loading="lazy"
+            decoding="async"
+            className="w-full h-64 sm:h-80 lg:h-[400px] rounded-2xl object-cover"
+            style={{ objectPosition: "center 70%", boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
+          />
+        </div>
       </div>
     </div>
   </section>

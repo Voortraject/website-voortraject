@@ -1,5 +1,3 @@
-import { CtaButton } from "@/components/CtaButton";
-
 import planKeukentafel from "@/assets/bewoners-keukentafel.webp";
 
 const stappen = [
@@ -16,37 +14,31 @@ const stappen = [
   {
     nummer: "03",
     title: "Uitvoering geregeld",
-    body: "Wij koppelen je aan een uitvoerder uit de regio waarvan we weten dat hij goed werk levert, en blijven betrokken tot het af is.",
+    body: "Wij koppelen je aan een getoetste uitvoerder uit de regio en blijven betrokken tot het klaar is.",
   },
 ];
 
 export const HelderPlan = () => (
   <section className="section-pad-home" style={{ backgroundColor: "#FFFFFF" }} aria-labelledby="helder-plan-title">
     <div className="container-home">
-      <div className="max-w-3xl">
-        <h2 id="helder-plan-title" className="h2-section">
-          Van twijfel naar een <span className="text-accent">helder plan</span>
-        </h2>
-        <p className="mt-4 text-[18px] md:text-[20px] leading-[1.6] text-muted-foreground">
-          Verduurzamen is een route, geen losse stap. Wie in de juiste volgorde denkt, betaalt
-          niet dubbel en mist geen kansen.
-        </p>
-      </div>
-
-      <div className="mt-8 md:mt-10 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
         <div>
           <img
             src={planKeukentafel}
             alt="Adviseur van Voortraject in gesprek met een bewoner aan de keukentafel"
             loading="lazy"
             decoding="async"
-            className="w-full h-64 sm:h-96 lg:h-[520px] rounded-2xl object-cover"
+            className="w-full h-64 sm:h-80 lg:h-[400px] rounded-2xl object-cover"
             style={{ boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
           />
         </div>
 
         <div>
-          <ol className="space-y-0">
+          <h2 id="helder-plan-title" className="h2-section">
+            Van twijfel naar een <span className="text-accent">compleet</span> plan
+          </h2>
+
+          <ol className="mt-8 space-y-0">
             {stappen.map(({ nummer, title, body }, i) => (
               <li key={nummer} className="relative flex gap-5 md:gap-6">
                 {/* Tijdlijn: nummer + verticale lijn naar de volgende stap */}
@@ -72,10 +64,6 @@ export const HelderPlan = () => (
               </li>
             ))}
           </ol>
-
-          <CtaButton href="/contact" className="mt-12">
-            Plan een gratis gesprek
-          </CtaButton>
         </div>
       </div>
     </div>
