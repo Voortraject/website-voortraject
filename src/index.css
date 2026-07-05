@@ -99,6 +99,9 @@
   html {
     scroll-behavior: smooth;
     overflow-x: clip;
+    /* Navy backstop: overscroll/rubber-band boven en onder (en de safe-area-
+       stroken op mobiel) tonen de footerkleur i.p.v. wit. */
+    background-color: hsl(var(--primary));
   }
 
   body {
