@@ -1,4 +1,4 @@
-import { Check, Phone } from "lucide-react";
+import { Check, Phone, Star } from "lucide-react";
 
 import { CtaButton } from "@/components/CtaButton";
 import heroAdviesgesprek from "@/assets/hero-adviesgesprek.webp";
@@ -66,6 +66,18 @@ export const Hero = () => {
               <span>Of bel direct: 050 211 2689</span>
             </a>
           </div>
+
+          <p
+            className="mt-6 inline-flex items-center gap-2.5 text-[15px] font-medium text-white/90"
+            aria-label="Beoordeeld met 5,0 van 5 op Google"
+          >
+            <span className="inline-flex items-center gap-0.5">
+              {Array.from({ length: 5 }, (_, i) => (
+                <Star key={i} size={16} className="text-accent fill-accent" aria-hidden="true" />
+              ))}
+            </span>
+            <span aria-hidden="true">5,0 op Google</span>
+          </p>
         </div>
       </div>
     </section>
