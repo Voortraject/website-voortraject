@@ -1,6 +1,7 @@
 import { Check, Phone, Star } from "lucide-react";
 
 import { CtaButton } from "@/components/CtaButton";
+import { GoogleG } from "@/components/GoogleG";
 import heroAdviesgesprek from "@/assets/hero-adviesgesprek.webp";
 
 const claims = [
@@ -77,6 +78,7 @@ export const Hero = () => {
               ))}
             </span>
             <span aria-hidden="true">5,0 op Google</span>
+            <GoogleG size={18} />
           </p>
         </div>
       </div>
