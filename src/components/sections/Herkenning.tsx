@@ -39,7 +39,7 @@ export const Herkenning = () => (
                   <h3 className="font-display font-semibold text-primary text-[19px] md:text-[22px] leading-[1.2] tracking-[-0.01em]">
                     {title}
                   </h3>
-                  <p className="mt-1 text-[15px] leading-[1.6] text-muted-foreground">{body}</p>
+                  <p className="mt-2 text-[15px] leading-[1.6] text-muted-foreground">{body}</p>
                 </div>
               </li>
             ))}
