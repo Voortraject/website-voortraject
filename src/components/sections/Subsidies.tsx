@@ -42,8 +42,7 @@ export const Subsidies = () => (
         </h2>
         <p className="mt-4 text-[18px] md:text-[20px] leading-[1.6] text-muted-foreground">
           Landelijk, provinciaal en gemeentelijk: er zijn meer regelingen dan de meeste mensen
-          weten, en vaak zijn ze te combineren. Wij zoeken gratis uit wat er voor jouw adres
-          geldt.
+          weten, en vaak zijn ze te combineren.
         </p>
       </div>
 
