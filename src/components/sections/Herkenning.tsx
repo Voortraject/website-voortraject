@@ -29,14 +29,14 @@ export const Herkenning = () => (
             Herken je deze <span className="text-accent">twijfels</span>?
           </h2>
 
-          <ul className="mt-8 space-y-6">
+          <ul className="mt-8 space-y-8">
             {twijfels.map(({ icon: Icon, title, body }) => (
               <li key={title} className="flex items-start gap-4">
                 <span className="inline-flex shrink-0 w-11 h-11 items-center justify-center rounded-full bg-accent">
                   <Icon size={20} className="text-primary" aria-hidden="true" />
                 </span>
                 <div>
-                  <h3 className="font-display font-semibold text-primary text-[17px] leading-[1.3]">
+                  <h3 className="font-display font-semibold text-primary text-[19px] md:text-[22px] leading-[1.2] tracking-[-0.01em]">
                     {title}
                   </h3>
                   <p className="mt-1 text-[15px] leading-[1.6] text-muted-foreground">{body}</p>
@@ -52,8 +52,8 @@ export const Herkenning = () => (
             alt="Adviseur van Voortraject in gesprek met twee bewoners in hun voortuin"
             loading="lazy"
             decoding="async"
-            className="w-full h-64 sm:h-80 lg:h-[440px] rounded-2xl object-cover"
-            style={{ objectPosition: "center 74%", boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
+            className="w-full h-64 sm:h-80 lg:h-[400px] rounded-2xl object-cover"
+            style={{ objectPosition: "center 70%", boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
           />
         </div>
       </div>

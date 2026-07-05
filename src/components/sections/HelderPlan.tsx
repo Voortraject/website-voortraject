@@ -28,7 +28,7 @@ export const HelderPlan = () => (
             alt="Adviseur van Voortraject in gesprek met een bewoner aan de keukentafel"
             loading="lazy"
             decoding="async"
-            className="w-full h-64 sm:h-96 lg:h-[520px] rounded-2xl object-cover"
+            className="w-full h-64 sm:h-80 lg:h-[400px] rounded-2xl object-cover"
             style={{ boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
           />
         </div>
