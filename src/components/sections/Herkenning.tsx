@@ -26,7 +26,7 @@ export const Herkenning = () => (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
         <div>
           <h2 id="herkenning-title" className="h2-section">
-            Herken je deze <span className="text-accent">twijfels</span>?
+            Herken je <span className="text-accent">dit</span>?
           </h2>
 
           <ul className="mt-8 space-y-8">
