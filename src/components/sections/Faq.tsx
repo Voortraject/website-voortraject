@@ -32,7 +32,7 @@ export const Faq = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-[48px] md:py-[72px]" style={{ backgroundColor: "#FFFFFF" }}>
+    <section className="py-[48px] md:py-[72px]" style={{ backgroundColor: "#F5F3ED" }}>
       <div className="max-w-4xl mx-auto px-6">
         <h2 className="h2-section text-center" style={{ color: "#152C4E", fontWeight: 600 }}>
           Veelgestelde <span style={{ color: "hsl(var(--accent))" }}>vragen</span>
@@ -54,7 +54,7 @@ export const Faq = () => {
           className="mx-auto"
           style={{
             maxWidth: 820,
-            backgroundColor: "#F5F3ED",
+            backgroundColor: "#FFFFFF",
             border: "1px solid #E5E2DB",
             borderRadius: 16,
             overflow: "hidden",

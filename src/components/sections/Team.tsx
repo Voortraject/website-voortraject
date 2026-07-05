@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import teamPolos from "@/assets/subsidies-uitzoeken.webp";
 
 export const Team = () => (
-  <section className="section-pad-home" style={{ backgroundColor: "#F5F3ED" }} aria-labelledby="team-title">
+  <section className="section-pad-home" style={{ backgroundColor: "#FFFFFF" }} aria-labelledby="team-title">
     <div className="container-home">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
         <div>
