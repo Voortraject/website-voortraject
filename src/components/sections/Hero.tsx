@@ -77,7 +77,7 @@ export const Hero = () => {
                 <Star key={i} size={16} className="text-accent fill-accent" aria-hidden="true" />
               ))}
             </span>
-            <span aria-hidden="true">5,0 op Google</span>
+            <span aria-hidden="true">5,0</span>
             <GoogleG size={18} />
           </p>
         </div>
