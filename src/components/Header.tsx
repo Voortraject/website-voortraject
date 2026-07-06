@@ -137,7 +137,17 @@ export const Header = () => {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 pt-[env(safe-area-inset-top)]">
+    <>
+      {/* In-flow navy vulling achter de statusbalk (safe-area boven). BEWUST
+          in-flow — géén fixed/absolute — zodat hij MEE-scrollt: bij rust navy
+          achter de statusbalk, bij naar beneden scrollen schuift hij weg en
+          vult de pagina-content de zone (zoals gevraagd). In-flow elementen
+          worden niet weggeknipt door de `overflow-x: clip` op html/body — dat
+          was juist de valkuil van de eerdere absolute strook op iOS. De sticky
+          header plakt daarom net onder de statusbalk (top = safe-area-inset-top)
+          i.p.v. bovenaan. Hoogte 0 zonder safe-area ⇒ geen effect op desktop. */}
+      <div aria-hidden className="bg-primary" style={{ height: "env(safe-area-inset-top)" }} />
+      <header className="sticky top-[env(safe-area-inset-top)] z-50">
       <div className="container-content flex items-center justify-between gap-3 h-20">
         <a
           href="/"
@@ -234,6 +244,7 @@ export const Header = () => {
       </div>
 
       {open && <MobileMenu onClose={() => setOpen(false)} />}
-    </header>
+      </header>
+    </>
   );
 };

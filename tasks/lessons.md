@@ -18,9 +18,15 @@ nette navy balk op {0,0,390,47}), maar op de iPhone bleef de zone wit.
 **Lesson:**
 - **Vertrouw niet op een `position: absolute`-element dat aan de initial containing block hangt
   binnen een root met `overflow-x: clip`.** WebKit/iOS clipt zulke elementen weg (Blink niet) —
-  dé valkuil die "in de code klopt maar op de iPhone faalt". Gebruik **`position: fixed`**: dat
-  hangt aan de viewport, wordt niet geclipt door ancestor-`overflow`, en is de techniek die
-  coca-cola.com / bol.com ook gebruiken voor de gekleurde balk achter de statusbalk.
+  dé valkuil die "in de code klopt maar op de iPhone faalt". Twee robuuste alternatieven:
+  - **Vaste balk achter de statusbalk** (blijft staan, zoals coca-cola.com): `position: fixed`
+    (hangt aan de viewport, niet geclipt door ancestor-`overflow`).
+  - **Content moet dóór de zone scrollen** (uiteindelijke wens hier): gebruik een **in-flow**
+    navy strook als eerste element (geen fixed/absolute → scrollt mee én wordt niet geclipt), en
+    laat de sticky header net onder de statusbalk plakken met `sticky top-[env(safe-area-inset-top)]`
+    (i.p.v. `top-0` + `pt-[env(...)]`). Zo vult de pagina-content de zone bij het scrollen. Dit
+    zit in `Header.tsx` en geldt zo voor elke pagina; de content-positie blijft identiek want
+    spacer(safe)+header(80) == oude pt-safe(safe)+h-20(80).
 - **Overscroll/rubber-band-kleur op iOS komt van de `body`-achtergrond, niet altijd van `html`.**
   Zet `body { @apply bg-primary }` (naast `html`) navy. Veilig omdat elke pagina een eigen
   dekkende wrapper (`min-h-screen bg-background`/sand/etc.) heeft; body-navy is alleen zichtbaar

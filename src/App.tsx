@@ -33,21 +33,9 @@ const App = () => (
       <Toaster />
       <Sonner />
       <AudienceProvider>
-        {/*
-          Navy vulling achter de iOS-statusbalk (safe-area boven). BEWUST
-          position: fixed i.p.v. absolute: een fixed element hangt aan de
-          viewport, niet aan de initial containing block, en wordt daardoor NIET
-          geclipt door de `overflow-x: clip` op html/body. WebKit/iOS clipt zulke
-          absolute ICB-elementen wél weg — dáárop strandde de vorige poging
-          (in Chrome oogde het correct, op de iPhone bleef de zone wit). Net als
-          bij coca-cola.com is dit een vaste navy balk achter de statusbalk.
-          pointer-events-none + alleen de statusbalk-zone (hoogte 0 zonder
-          safe-area, dus geen effect op desktop) → dekt geen interactieve content. */}
-        <div
-          aria-hidden
-          className="pointer-events-none fixed inset-x-0 top-0 z-[100] bg-primary"
-          style={{ height: "env(safe-area-inset-top)" }}
-        />
+        {/* De navy safe-area-vulling achter de statusbalk zit nu in <Header/>:
+            een in-flow strook die mee-scrollt, zodat de pagina-content de zone
+            vult bij het scrollen (i.p.v. een vaste balk). */}
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
