@@ -33,19 +33,9 @@ const App = () => (
       <Toaster />
       <Sonner />
       <AudienceProvider>
-        {/*
-          Navy safe-area-strook bovenaan het document. Absolute (niet fixed) zodat
-          hij mét de pagina meescrollt: bij rust vult hij de statusbalk-zone boven
-          de header met de footerkleur, bij naar beneden scrollen schuift de content
-          eroverheen en vult zo de bovenkant van het scherm. Zit achter de sticky
-          header (z-50) en boven de off-white pagina-achtergrond. Hoogte is 0 op
-          apparaten zonder notch/safe-area, dus geen effect op desktop.
-        */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 bg-primary"
-          style={{ height: "env(safe-area-inset-top)" }}
-        />
+        {/* De navy safe-area-vulling achter de statusbalk zit nu in <Header/>:
+            een in-flow strook die mee-scrollt, zodat de pagina-content de zone
+            vult bij het scrollen (i.p.v. een vaste balk). */}
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
