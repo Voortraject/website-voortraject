@@ -52,6 +52,12 @@ nette navy balk op {0,0,390,47}), maar op de iPhone bleef de zone wit.
   `Input.synthesizeScrollGesture`. Headless-`captureScreenshot` desynct ná compositor-scroll
   (toont dan de body-kleur) — verifieer scroll-gedrag daarom via `elementFromPoint`, niet de
   screenshot.
+- **EINDKEUZE (door gebruiker):** menu MOET altijd zichtbaar blijven → dus **sticky header +
+  vaste navy statusbalk** (bol.com-stijl). "Content door de statusbalk laten scrollen" én een
+  vast menu kan niet samen op iOS 26 — het is het één of het ander. Definitieve staat: sticky
+  header (`sticky top-[env(safe-area-inset-top)]`) + in-flow navy strook + `body` navy + footer
+  `padding-bottom: env(safe-area-inset-bottom)` + `viewport-fit=cover`. Onderrand scrollt netjes
+  mee (geen sticky element daar); bovenrand is een vaste navy balk (sticky header triggert de tint).
 - **Windows/geen iPhone = geen echte iOS-Safari-verificatie mogelijk.** Bevestig safe-area-fixes
   altijd nog op een fysiek toestel; wees daar eerlijk over richting de gebruiker.
 
