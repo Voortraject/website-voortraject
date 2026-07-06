@@ -105,7 +105,12 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    /* Navy achtergrond i.p.v. off-white: op iOS Safari toont de overscroll-/
+       rubber-band-zone (boven én onder) de BODY-achtergrond, niet altijd die
+       van html. Navy hier voorkomt de witte stroken definitief. De zichtbare
+       pagina zelf staat op een eigen dekkende wrapper (bg-background), dus
+       body-navy is alleen te zien in de safe-area/overscroll-randen. */
+    @apply bg-primary text-foreground font-sans antialiased;
     font-feature-settings: "ss01", "cv11";
     overflow-x: clip;
   }

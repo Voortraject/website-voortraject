@@ -34,16 +34,18 @@ const App = () => (
       <Sonner />
       <AudienceProvider>
         {/*
-          Navy safe-area-strook bovenaan het document. Absolute (niet fixed) zodat
-          hij mét de pagina meescrollt: bij rust vult hij de statusbalk-zone boven
-          de header met de footerkleur, bij naar beneden scrollen schuift de content
-          eroverheen en vult zo de bovenkant van het scherm. Zit achter de sticky
-          header (z-50) en boven de off-white pagina-achtergrond. Hoogte is 0 op
-          apparaten zonder notch/safe-area, dus geen effect op desktop.
-        */}
+          Navy vulling achter de iOS-statusbalk (safe-area boven). BEWUST
+          position: fixed i.p.v. absolute: een fixed element hangt aan de
+          viewport, niet aan de initial containing block, en wordt daardoor NIET
+          geclipt door de `overflow-x: clip` op html/body. WebKit/iOS clipt zulke
+          absolute ICB-elementen wél weg — dáárop strandde de vorige poging
+          (in Chrome oogde het correct, op de iPhone bleef de zone wit). Net als
+          bij coca-cola.com is dit een vaste navy balk achter de statusbalk.
+          pointer-events-none + alleen de statusbalk-zone (hoogte 0 zonder
+          safe-area, dus geen effect op desktop) → dekt geen interactieve content. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 bg-primary"
+          className="pointer-events-none fixed inset-x-0 top-0 z-[100] bg-primary"
           style={{ height: "env(safe-area-inset-top)" }}
         />
         <BrowserRouter>
