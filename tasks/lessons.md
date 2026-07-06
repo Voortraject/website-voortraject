@@ -18,19 +18,23 @@ nette navy balk op {0,0,390,47}), maar op de iPhone bleef de zone wit.
 **Lesson:**
 - **Vertrouw niet op een `position: absolute`-element dat aan de initial containing block hangt
   binnen een root met `overflow-x: clip`.** WebKit/iOS clipt zulke elementen weg (Blink niet) —
-  dé valkuil die "in de code klopt maar op de iPhone faalt". Twee robuuste alternatieven:
-  - **Vaste balk achter de statusbalk** (blijft staan, zoals coca-cola.com): `position: fixed`
-    (hangt aan de viewport, niet geclipt door ancestor-`overflow`).
-- **iOS 26 (Safari "Liquid Glass") kan géén ruwe content dóór de statusbalk laten scrollen.**
-  Vanaf iOS 26 tekent Safari de status-/toolbar altijd als een *getinte* balk en bepaalt de kleur
-  door te samplen: eerst `position: fixed`/`sticky` elementen bij de schermrand (background-color +
-  backdrop-filter), anders de `html`/`body` achtergrondkleur. **`theme-color` wordt genegeerd.**
-  Gevolg: "content zichtbaar door de statusbalk scrollen" (zoals de gebruiker vroeg, bol/coca-cola-
-  stijl) is niet meer mogelijk — bol/coca-cola hebben op iOS 26 óók een vaste getinte balk. Een
-  in-flow strook die "wegscrollt" heeft dus geen zin op iOS 26; je ziet altijd de getinte balk.
-  **Oplossing die werkt op alle iOS-versies:** een `position: fixed` navy strook in de safe-area-
-  top-zone (Safari 26 sampelt die → navy tint; oudere iOS toont een echte navy balk) + `body` navy
-  als fallback/overscroll. Bronnen: benfrain.com/ios26-safari-theme-color…, 1ar.io/updates/safari-26-liquid-glass-web.
+  dé valkuil die "in de code klopt maar op de iPhone faalt".
+- **iOS 26 (Safari "Liquid Glass") kan géén ruwe content dóór de statusbalk laten scrollen, en is
+  allergisch voor `position: fixed`.** Vanaf iOS 26 tekent Safari de status-/toolbar altijd als een
+  *getinte* balk en bepaalt de kleur door te samplen: eerst `position: fixed`/`sticky` elementen bij
+  de schermrand (background-color + backdrop-filter), anders de `html`/`body` achtergrondkleur.
+  **`theme-color` wordt genegeerd.** Gevolgen die we live hebben gezien:
+  - "Content zichtbaar door de statusbalk scrollen" (zoals gevraagd, bol/coca-cola-stijl) kan niet
+    meer — bol/coca-cola hebben op iOS 26 óók een vaste getinte balk. De statische navy bovenbalk
+    is dus onvermijdelijk; accepteer dat.
+  - **Een `fixed` navy strook bovenaan brak de ÓNDERrand:** met een fixed element gaat iOS 26 dat
+    element gebruiken om zowel forehead (boven) als chin (onder) te tinten en pakt onder de
+    verkeerde/witte kleur → wit vlak onder de footer. Wég ermee.
+  - **Werkende aanpak (alle iOS-versies): GEEN fixed element.** Navy top = een **in-flow** strook
+    als eerste element in `Header.tsx` (hoogte `env(safe-area-inset-top)`) + sticky header op
+    `top-[env(safe-area-inset-top)]`; `body` navy. Zonder fixed element valt iOS 26 voor BEIDE
+    randen terug op de body-kleur → boven én onder navy. Bronnen:
+    benfrain.com/ios26-safari-theme-color…, 1ar.io/updates/safari-26-liquid-glass-web.
 - **Overscroll/rubber-band-kleur op iOS komt van de `body`-achtergrond, niet altijd van `html`.**
   Zet `body { @apply bg-primary }` (naast `html`) navy. Veilig omdat elke pagina een eigen
   dekkende wrapper (`min-h-screen bg-background`/sand/etc.) heeft; body-navy is alleen zichtbaar
