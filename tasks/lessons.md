@@ -30,10 +30,18 @@ nette navy balk op {0,0,390,47}), maar op de iPhone bleef de zone wit.
   - **Een `fixed` navy strook bovenaan brak de ÓNDERrand:** met een fixed element gaat iOS 26 dat
     element gebruiken om zowel forehead (boven) als chin (onder) te tinten en pakt onder de
     verkeerde/witte kleur → wit vlak onder de footer. Wég ermee.
-  - **Werkende aanpak (alle iOS-versies): GEEN fixed element.** Navy top = een **in-flow** strook
-    als eerste element in `Header.tsx` (hoogte `env(safe-area-inset-top)`) + sticky header op
-    `top-[env(safe-area-inset-top)]`; `body` navy. Zonder fixed element valt iOS 26 voor BEIDE
-    randen terug op de body-kleur → boven én onder navy. Bronnen:
+  - **Werkende aanpak: GEEN fixed element** — navy top = een **in-flow** strook als eerste
+    element in `Header.tsx` (hoogte `env(safe-area-inset-top)`) + `body` navy.
+  - **Óók een `sticky` element bij de bovenrand triggert de statische tint.** Bewijs uit onze
+    eigen site: de ONDERkant (geen sticky/fixed element) scrollt netjes mee (content door de
+    home-indicator), de BOVENkant met een sticky header bleef statisch — zelfde `body`-navy,
+    zelfde `viewport-fit=cover`. Fix: header op **mobiel niet-sticky** (`relative lg:sticky
+    lg:top-0`). Zonder sticky/fixed trigger scrollt de content gewoon door achter de statusbalk
+    (net als de onderkant). Nadeel: mobiel menu scrollt mee weg. Desktop blijft sticky.
+  - **Alternatief zónder sticky op te geven: laat `viewport-fit=cover` weg** (zoals destadskerk.nl,
+    een WordPress-site die dit "content door de statusbalk"-effect gewoon heeft). Zonder cover
+    sampelt iOS de bovenste content-kleur voor de statusbalk en updatet dat bij scrollen. Nadeel:
+    verandert óók het onderrand-gedrag (env() wordt 0). Bronnen:
     benfrain.com/ios26-safari-theme-color…, 1ar.io/updates/safari-26-liquid-glass-web.
 - **Overscroll/rubber-band-kleur op iOS komt van de `body`-achtergrond, niet altijd van `html`.**
   Zet `body { @apply bg-primary }` (naast `html`) navy. Veilig omdat elke pagina een eigen
