@@ -15,7 +15,7 @@ import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 import { CtaButton } from "@/components/CtaButton";
-import heroKeukentafel from "@/assets/hero-keukentafel.webp";
+import bewonersKeukentafel from "@/assets/bewoners-keukentafel.webp";
 
 // Page-scoped palette (identical to other subsidie pages)
 const C = {
@@ -244,11 +244,11 @@ const SubsidiesStapelen = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
             <div className="order-2 lg:order-1">
               <img
-                src={heroKeukentafel}
+                src={bewonersKeukentafel}
                 alt="Adviseur van Voortraject legt een bewoner aan de keukentafel uit hoe subsidies te combineren zijn"
                 loading="lazy"
                 decoding="async"
-                className="w-full h-64 sm:h-80 lg:h-[440px] rounded-2xl object-cover"
+                className="w-full h-64 sm:h-80 lg:h-[400px] rounded-2xl object-cover"
                 style={{ boxShadow: "0 4px 20px rgba(21,44,78,0.08)" }}
               />
             </div>

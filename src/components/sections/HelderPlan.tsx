@@ -1,4 +1,4 @@
-import planKeukentafel from "@/assets/bewoners-keukentafel.webp";
+import heroKeukentafel from "@/assets/hero-keukentafel.webp";
 
 const stappen = [
   {
@@ -24,8 +24,8 @@ export const HelderPlan = () => (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
         <div>
           <img
-            src={planKeukentafel}
-            alt="Adviseur van Voortraject in gesprek met een bewoner aan de keukentafel"
+            src={heroKeukentafel}
+            alt="Adviseur van Voortraject in gesprek met een bewoner aan tafel"
             loading="lazy"
             decoding="async"
             className="w-full h-64 sm:h-80 lg:h-[400px] rounded-2xl object-cover"
