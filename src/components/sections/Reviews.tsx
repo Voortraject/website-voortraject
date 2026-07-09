@@ -278,19 +278,19 @@ export const Reviews = () => {
             het stukje van de volgende kaart signaleert dat al. Met loop is
             doorklikken oneindig. */}
         <div
-          className="relative mt-8 md:mt-10 sm:px-16"
+          className="relative mt-8 md:mt-10"
           onMouseEnter={() => setGepauzeerd(true)}
           onMouseLeave={() => setGepauzeerd(false)}
           onTouchStart={() => setGepauzeerd(true)}
         >
-          <Carousel setApi={setApi} opts={{ loop: true, align: "start" }}>
-            {/* basis net onder 1/3 → een randje van de volgende kaart gluurt mee
-                (signaleert dat er meer is). cursor-grab biedt slepen aan. */}
+          <Carousel setApi={setApi} opts={{ loop: true, align: "center" }}>
+            {/* align center + basis onder 1/3 → aan beide zijden gluurt een kaart
+                mee (symmetrisch). cursor-grab biedt slepen aan. */}
             <CarouselContent className="-ml-5 md:-ml-6 items-start cursor-grab active:cursor-grabbing">
               {kaarten.map((k) => (
                 <CarouselItem
                   key={k.id}
-                  className="pl-5 md:pl-6 basis-[85%] sm:basis-[46%] lg:basis-[31%]"
+                  className="pl-5 md:pl-6 basis-[85%] sm:basis-[46%] lg:basis-[30%]"
                 >
                   <ReviewKaart {...k} />
                 </CarouselItem>
@@ -298,15 +298,21 @@ export const Reviews = () => {
             </CarouselContent>
           </Carousel>
 
+          {/* Navy fade aan beide zijden: kaarten verschijnen/verdwijnen achter de
+              gradient (van de content-rand naar binnen). pointer-events-none zodat
+              swipen eronderdoor blijft werken; de pijlen staan er met z-20 boven. */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-primary to-transparent sm:w-24 lg:w-32" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-primary to-transparent sm:w-24 lg:w-32" />
+
           <NavKnop
             richting="vorige"
             onClick={() => api?.scrollPrev()}
-            className="hidden sm:inline-flex absolute left-2 top-1/2 z-10 -translate-y-1/2"
+            className="hidden sm:inline-flex absolute left-2 top-1/2 z-20 -translate-y-1/2 md:left-3"
           />
           <NavKnop
             richting="volgende"
             onClick={() => api?.scrollNext()}
-            className="hidden sm:inline-flex absolute right-2 top-1/2 z-10 -translate-y-1/2"
+            className="hidden sm:inline-flex absolute right-2 top-1/2 z-20 -translate-y-1/2 md:right-3"
           />
         </div>
 
