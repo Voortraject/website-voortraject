@@ -2,6 +2,66 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Google Reviews auto-sync op de home (2026-07-09)
+
+Branch: `feat/google-reviews-sync`. Vervangt de handmatige review-array door een
+automatische sync met onze Google-reviews. Huisstijl blijft 100% identiek.
+
+### Aanpak (na sparren met de opdrachtgever)
+- **Bron:** Google **Places API (New)** — Place Details (max 5 reviews, Google-gekozen).
+  Business Profile API (OAuth + Google-goedkeuring) is **niet** nodig: het ontwerp is
+  "toon 5 mooie + doorklikken naar Google", dus de 5-limiet is geen probleem, ook niet
+  bij 100+ reviews later.
+- **Fetch loskoppelen van render:** een **Supabase Edge Function** haalt op (API-key blijft
+  server-side), **filtert >= 4 sterren**, sorteert nieuwste, schrijft naar Supabase. De
+  frontend leest uit Supabase → geen third-party script client-side (consent/perf/SEO/AVG
+  blijven schoon).
+- **Dagelijkse cron** (~30 calls/mnd → ruim binnen gratis tier; quota-cap als harde garantie).
+- **Fallback:** zolang de backend niet geactiveerd is (of bij fout / < 2 reviews) toont het
+  component de huidige hardcoded reviews. De site kan dus niet breken.
+- **"Alle reviews op Google"-knop** → doorklikken naar de volledige reviewpagina.
+
+### Taken
+- [x] SQL-migratie: `google_reviews` + `google_place_stats` (RLS: alleen publiek lezen)
+- [x] Edge Function `sync-google-reviews` (Places API New, filter >=4, upsert + prune)
+- [x] `config.toml` functie-entry (`verify_jwt = false`) + `.env.example` publieke URL
+- [x] Hook `useGoogleReviews` (leest Supabase, stil terugvallen bij fout)
+- [x] `Reviews.tsx` data-driven maken met fallback + Google-knop
+- [x] Typecheck + lint + build groen
+- [ ] Commit, push, PR met activatie-checklist
+
+### Activatie (handmatige stappen voor Voortraject — NA merge, buiten deze PR)
+1. Google Cloud Console: **quota-cap** op de Places API (bv. 100/dag) + **budget-alert (EUR 1)**.
+2. Supabase secrets: `GOOGLE_MAPS_API_KEY` + `GOOGLE_PLACE_ID` zetten.
+3. Migratie toepassen + Edge Function deployen; daarna **Supabase types regenereren**
+   (dan kunnen de `any`-casts in de hook weg).
+4. Dagelijkse cron op de functie inschakelen.
+5. `VITE_GOOGLE_REVIEWS_URL` in de omgeving zetten (publieke Google-reviewpagina).
+
+### Review (2026-07-09)
+- **Veiligheidsprincipe geborgd:** de frontend valt stil terug op de hardcoded
+  reviews zodra de query faalt (tabel bestaat nog niet, netwerk, < 2 reviews). Tot
+  activatie toont de site dus exact de huidige 3 reviews — merge kan niets breken.
+- **Nieuwe/gewijzigde bestanden:**
+  - `supabase/migrations/20260709120000_google_reviews.sql` — 2 tabellen, RLS
+    alleen-lezen voor anon (schrijven = service_role via de functie).
+  - `supabase/functions/sync-google-reviews/index.ts` — Places API (New), FieldMask
+    (kosten laag), filter >= 4, upsert op `google_review_id`, prune via `synced_at`.
+  - `supabase/config.toml` — functie-entry `verify_jwt = false`.
+  - `.env.example` — publieke `VITE_GOOGLE_REVIEWS_URL` (knop; geen secret).
+  - `src/hooks/useGoogleReviews.ts` — leest Supabase, stil falen.
+  - `src/components/sections/Reviews.tsx` — data-driven; huisstijl identiek.
+- **Bewuste keuzes:**
+  - Sterren tonen nu het **echte** aantal (4 of 5), niet altijd 5 — eerlijk.
+  - Avatar heeft een **onError-vangnet**: breekt een Google-foto-URL, dan letter-avatar.
+  - "Lees meer" is generiek per kaart (line-clamp-5) i.p.v. de oude vaste
+    quote/vervolg-splitsing, omdat live reviewtekst variabele lengte heeft.
+  - `any`-casts in de hook (tabellen staan nog niet in `types.ts`) — met
+    `eslint-disable` per regel; verdwijnen zodra types na de migratie geregenereerd zijn.
+- **Geverifieerd:** `tsc --noEmit` clean · `eslint` op gewijzigde files clean ·
+  `bun run build` ok · `bun run test` groen. Live-pad (echte Google-data) pas te
+  verifiëren na activatie (secrets + deploy); daarvoor is de activatie-checklist.
+
 ## Homepage-herbouw volgens sectieplan (2026-07-03)
 
 Branch: `feat/homepage-herbouw`. Bron: gedetailleerd sectieplan van de opdrachtgever
