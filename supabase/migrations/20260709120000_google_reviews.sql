@@ -1,6 +1,10 @@
 -- Google reviews, gesynchroniseerd vanuit de Places API (New) door de
 -- edge function `sync-google-reviews`. Alleen die functie (service_role)
 -- schrijft; de publieke site mag uitsluitend lezen.
+--
+-- LET OP: deze tabellen leven in het CRM-Supabaseproject (lfelnfukbrxznkevnevr),
+-- niet in het oude website-project. De frontend leest ze via `supabaseExternal`.
+-- (Bewuste keuze: dat CRM-project is het enige actieve Supabaseproject.)
 
 create table public.google_reviews (
   id                 uuid primary key default gen_random_uuid(),

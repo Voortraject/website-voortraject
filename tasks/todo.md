@@ -39,6 +39,12 @@ automatische sync met onze Google-reviews. Huisstijl blijft 100% identiek.
 5. `VITE_GOOGLE_REVIEWS_URL` in de omgeving zetten (publieke Google-reviewpagina).
 
 ### Review (2026-07-09)
+- **Projectkeuze (belangrijk):** de reviews leven in het **CRM-project**
+  (`lfelnfukbrxznkevnevr`) via `supabaseExternal`, NIET in het oude Lovable-website-
+  project (`zvsmazjcfzjyvnjrlnma`) dat de opdrachtgever niet meer gebruikt. Expliciet
+  akkoord gegeven op 2026-07-09 om (alleen-lezen) reviewtabellen in CRM te zetten.
+  De hook is daarom omgezet van `supabase` → `supabaseExternal`; casts vervielen
+  (die client is ongetypeerd).
 - **Veiligheidsprincipe geborgd:** de frontend valt stil terug op de hardcoded
   reviews zodra de query faalt (tabel bestaat nog niet, netwerk, < 2 reviews). Tot
   activatie toont de site dus exact de huidige 3 reviews — merge kan niets breken.

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { supabase } from "@/integrations/supabase/client";
+import { supabaseExternal } from "@/integrations/supabase/external-client";
 
 export type GoogleReview = {
   id: string;
@@ -21,12 +21,11 @@ type UseGoogleReviews = {
   stats: GooglePlaceStats | null;
 };
 
-// Leest de gesynchroniseerde Google-reviews uit Supabase. Faalt de query
-// (tabel bestaat nog niet, netwerkfout, geen rijen), dan blijft `reviews` null
-// en toont het component zijn hardcoded fallback. Zo kan de sectie nooit breken.
-//
-// NB: de casts naar `never`/`any` verdwijnen zodra de Supabase-types na de
-// migratie zijn geregenereerd (dan kent `types.ts` deze tabellen).
+// Leest de gesynchroniseerde Google-reviews uit het CRM-Supabaseproject
+// (`supabaseExternal`) — hetzelfde project waar de website ook leads naartoe
+// schrijft. Faalt de query (tabel bestaat nog niet, netwerkfout, geen rijen),
+// dan blijft `reviews` null en toont het component zijn hardcoded fallback. Zo
+// kan de sectie nooit breken.
 export function useGoogleReviews(): UseGoogleReviews {
   const [reviews, setReviews] = useState<GoogleReview[] | null>(null);
   const [stats, setStats] = useState<GooglePlaceStats | null>(null);
@@ -36,16 +35,14 @@ export function useGoogleReviews(): UseGoogleReviews {
 
     (async () => {
       const [reviewsRes, statsRes] = await Promise.all([
-        supabase
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .from("google_reviews" as any)
+        supabaseExternal
+          .from("google_reviews")
           .select("id, author_name, profile_photo_url, rating, text, relative_time")
           .gte("rating", 4)
           .order("publish_time", { ascending: false })
           .limit(6),
-        supabase
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .from("google_place_stats" as any)
+        supabaseExternal
+          .from("google_place_stats")
           .select("rating, user_rating_count")
           .eq("id", 1)
           .maybeSingle(),
