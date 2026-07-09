@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -152,7 +152,7 @@ const ReviewKaart = ({ naam, foto, kleur, rating, tekst }: Kaart) => {
               type="button"
               onClick={() => setOpen(!open)}
               aria-expanded={open}
-              className="text-muted-foreground font-medium hover:underline underline-offset-2"
+              className="cursor-pointer text-muted-foreground font-medium hover:underline underline-offset-2"
             >
               {open ? "Lees minder" : "Lees meer"}
             </button>
@@ -179,7 +179,7 @@ const NavKnop = ({
     onClick={onClick}
     aria-label={richting === "vorige" ? "Vorige reviews" : "Volgende reviews"}
     className={cn(
-      "inline-flex h-10 w-10 items-center justify-center rounded-full bg-card text-primary shadow-lg ring-1 ring-primary/10 transition-colors hover:bg-secondary",
+      "inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-card text-primary shadow-lg ring-1 ring-primary/10 transition-colors hover:bg-secondary",
       className,
     )}
   >
@@ -190,6 +190,35 @@ const NavKnop = ({
 export const Reviews = () => {
   const { reviews, stats } = useGoogleReviews();
   const [api, setApi] = useState<CarouselApi>();
+  const [selected, setSelected] = useState(0);
+  const [snaps, setSnaps] = useState<number[]>([]);
+  const [gepauzeerd, setGepauzeerd] = useState(false);
+
+  // Dots: volg de huidige positie en het aantal snaps.
+  useEffect(() => {
+    if (!api) return;
+    const onSelect = () => setSelected(api.selectedScrollSnap());
+    const onReInit = () => {
+      setSnaps(api.scrollSnapList());
+      onSelect();
+    };
+    onReInit();
+    api.on("select", onSelect);
+    api.on("reInit", onReInit);
+    return () => {
+      api.off("select", onSelect);
+      api.off("reInit", onReInit);
+    };
+  }, [api]);
+
+  // Zachte autoplay (6s): pauzeert bij hover/aanraken en respecteert
+  // 'prefers-reduced-motion'.
+  useEffect(() => {
+    if (!api || gepauzeerd) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => api.scrollNext(), 6000);
+    return () => window.clearInterval(id);
+  }, [api, gepauzeerd]);
 
   // Live Google-reviews indien beschikbaar (>= 2 met tekst), anders de fallback.
   const live: Kaart[] | null = reviews
@@ -248,13 +277,20 @@ export const Reviews = () => {
             overlap, geen overflow). Op mobiel: pijlen verborgen, puur swipen —
             het stukje van de volgende kaart signaleert dat al. Met loop is
             doorklikken oneindig. */}
-        <div className="relative mt-8 md:mt-10 sm:px-16">
+        <div
+          className="relative mt-8 md:mt-10 sm:px-16"
+          onMouseEnter={() => setGepauzeerd(true)}
+          onMouseLeave={() => setGepauzeerd(false)}
+          onTouchStart={() => setGepauzeerd(true)}
+        >
           <Carousel setApi={setApi} opts={{ loop: true, align: "start" }}>
-            <CarouselContent className="-ml-5 md:-ml-6 items-start">
+            {/* basis net onder 1/3 → een randje van de volgende kaart gluurt mee
+                (signaleert dat er meer is). cursor-grab biedt slepen aan. */}
+            <CarouselContent className="-ml-5 md:-ml-6 items-start cursor-grab active:cursor-grabbing">
               {kaarten.map((k) => (
                 <CarouselItem
                   key={k.id}
-                  className="pl-5 md:pl-6 basis-[85%] sm:basis-1/2 lg:basis-1/3"
+                  className="pl-5 md:pl-6 basis-[85%] sm:basis-[46%] lg:basis-[31%]"
                 >
                   <ReviewKaart {...k} />
                 </CarouselItem>
@@ -273,6 +309,25 @@ export const Reviews = () => {
             className="hidden sm:inline-flex absolute right-2 top-1/2 z-10 -translate-y-1/2"
           />
         </div>
+
+        {/* Puntjes-indicator: positie + aantal, klikbaar. */}
+        {snaps.length > 1 && (
+          <div className="mt-6 flex items-center justify-center gap-2">
+            {snaps.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => api?.scrollTo(i)}
+                aria-label={`Ga naar review ${i + 1}`}
+                aria-current={i === selected}
+                className={cn(
+                  "h-2 cursor-pointer rounded-full transition-all",
+                  i === selected ? "w-6 bg-white" : "w-2 bg-white/40 hover:bg-white/60",
+                )}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
