@@ -8,7 +8,7 @@
  *
  * Positie rechtsonder botst niet met de Axeptio cookie-widget (linksonder).
  */
-const WHATSAPP_NUMBER = "316502112689"; // +31 6 50211 2689 (zonder + en zonder 0)
+const WHATSAPP_NUMBER = "31502112689"; // +31 50 211 2689 (zonder + en zonder 0)
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
 
 export const WhatsAppButton = () => {
