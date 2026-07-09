@@ -1,15 +1,23 @@
 /**
  * Vaste WhatsApp-knop rechtsonder, zichtbaar op elke pagina.
- * Klik opent direct een WhatsApp-chat met ons mobiele nummer.
+ * Klik opent direct een WhatsApp-chat met ons nummer.
  *
- * Let op: de WhatsApp-groen (#25D366) en het logo zijn een merk-asset van
- * WhatsApp en staan daarom bewust los van de huisstijl-tokens — herkenbaarheid
- * gaat hier voor. Voor al het andere gebruiken we de design tokens.
+ * Stijl: dezelfde frosted-glass "pill" als de header (bg-white/70 +
+ * backdrop-blur-xl + zachte navy-schaduw), zodat hij aansluit op het
+ * hamburgermenu en logo. Het WhatsApp-logo houdt zijn merk-groen (#25D366)
+ * voor herkenbaarheid — dat is een merk-asset en staat daarom bewust los van
+ * de huisstijl-tokens.
  *
  * Positie rechtsonder botst niet met de Axeptio cookie-widget (linksonder).
  */
 const WHATSAPP_NUMBER = "31502112689"; // +31 50 211 2689 (zonder + en zonder 0)
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
+
+// Zelfde zachte navy-schaduw als de header-pills (zie Header.tsx).
+const pillShadow = {
+  boxShadow:
+    "0 8px 32px -8px hsl(var(--primary) / 0.22), 0 2px 8px -2px hsl(var(--primary) / 0.14)",
+};
 
 export const WhatsAppButton = () => {
   return (
@@ -19,15 +27,15 @@ export const WhatsAppButton = () => {
       rel="noopener noreferrer"
       aria-label="Stuur ons een WhatsApp-bericht"
       title="Stuur ons een WhatsApp-bericht"
-      className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-transform duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:bottom-6 sm:right-6"
-      style={{ backgroundColor: "#25D366" }}
+      className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/70 backdrop-blur-xl transition-all duration-200 hover:bg-white/80 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:bottom-6 sm:right-6"
+      style={pillShadow}
     >
-      {/* Officieel WhatsApp-logo */}
+      {/* Officieel WhatsApp-logo in merk-groen */}
       <svg
         viewBox="0 0 24 24"
         width={30}
         height={30}
-        fill="#FFFFFF"
+        fill="#25D366"
         aria-hidden="true"
         focusable="false"
       >
