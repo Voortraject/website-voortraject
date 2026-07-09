@@ -1,1 +1,7 @@
 project_id = "zvsmazjcfzjyvnjrlnma"
+
+# Google-reviews sync. Geen JWT nodig: de functie draait via cron en gebruikt
+# intern de service_role. Zet de secrets GOOGLE_MAPS_API_KEY en GOOGLE_PLACE_ID
+# in de Supabase-dashboard (Edge Functions → Secrets), niet in dit bestand.
+[functions.sync-google-reviews]
+verify_jwt = false
