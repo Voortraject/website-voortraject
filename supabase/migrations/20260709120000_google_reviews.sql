@@ -31,6 +31,11 @@ create policy "Public can read google reviews"
   to anon, authenticated
   using (true);
 
+-- RLS bepaalt WELKE rijen zichtbaar zijn; een table-level GRANT is óók nodig
+-- zodat de anon-rol de tabel überhaupt mag lezen. (In dit CRM-project staan de
+-- default-grants op public niet aan, dus expliciet.)
+grant select on public.google_reviews to anon, authenticated;
+
 -- Aggregatie voor de kop ("5,0 op Google" + aantal). Eén rij (id = 1).
 create table public.google_place_stats (
   id                 smallint primary key default 1,
@@ -46,3 +51,5 @@ create policy "Public can read google place stats"
   on public.google_place_stats for select
   to anon, authenticated
   using (true);
+
+grant select on public.google_place_stats to anon, authenticated;
