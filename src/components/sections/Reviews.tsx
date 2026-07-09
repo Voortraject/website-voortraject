@@ -101,7 +101,7 @@ const Avatar = ({ naam, foto, kleur }: { naam: string; foto?: string; kleur?: st
   );
 };
 
-// Ingeklapte tekst reserveert deze hoogte (5 regels) → alle kaarten even hoog.
+// Ingeklapte tekst reserveert deze hoogte (4 regels) → alle kaarten even hoog.
 // "Lees meer" verschijnt alleen als de tekst daadwerkelijk wordt afgekapt.
 const REVIEW_KAART =
   "relative bg-card rounded-2xl border border-border p-6 flex flex-col h-full";
@@ -142,7 +142,7 @@ const ReviewKaart = ({ naam, foto, kleur, rating, tekst }: Kaart) => {
       </div>
 
       <blockquote className="mt-3 text-[15px] leading-[1.65] text-foreground">
-        <p ref={tekstRef} className={cn("min-h-[7.75rem]", !open && "line-clamp-5")}>
+        <p ref={tekstRef} className={cn("min-h-[6.25rem]", !open && "line-clamp-4")}>
           {tekst}
         </p>
         {/* Vaste regel zodat kaarten zonder knop even hoog blijven. */}
@@ -209,6 +209,9 @@ export const Reviews = () => {
     stats?.rating != null
       ? stats.rating.toLocaleString("nl-NL", { minimumFractionDigits: 1, maximumFractionDigits: 1 })
       : "5,0";
+  const aantal = stats?.user_rating_count ?? null;
+  const ratingLabel =
+    aantal != null ? `${ratingTekst} op Google · ${aantal} reviews` : `${ratingTekst} op Google`;
 
   const reviewsUrl = import.meta.env.VITE_GOOGLE_REVIEWS_URL as string | undefined;
 
@@ -219,17 +222,33 @@ export const Reviews = () => {
           <h2 id="reviews-title" className="h2-section !text-white">
             Wat bewoners <span className="text-accent">zeggen</span>
           </h2>
-          <p className="mt-4 inline-flex items-center gap-2.5 text-[16px] font-medium text-white/85">
-            <Sterren />
-            <span>{ratingTekst} op Google</span>
-          </p>
+          {/* Klikbaar naar het volledige Google-profiel (indien geconfigureerd);
+              toont het gemiddelde én het aantal reviews. */}
+          {reviewsUrl ? (
+            <a
+              href={reviewsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center gap-2.5 text-[16px] font-medium text-white/85 transition-colors hover:text-white"
+            >
+              <Sterren />
+              <span className="underline-offset-4 hover:underline">{ratingLabel}</span>
+            </a>
+          ) : (
+            <p className="mt-4 inline-flex items-center gap-2.5 text-[16px] font-medium text-white/85">
+              <Sterren />
+              <span>{ratingLabel}</span>
+            </p>
+          )}
         </div>
 
         {/* Oneindige, swipebare carrousel: mobiel 1 kaart, tablet 2, desktop 3.
             items-start zodat het uitklappen van één kaart de andere niet oprekt.
-            Pijlen flankeren de kaarten (half in de container-marge → geen overflow).
-            Navigatie werkt naast swipen; met loop is doorklikken oneindig. */}
-        <div className="relative mt-8 md:mt-10">
+            De sm:px-16 geeft de pijlen een eigen baan náást de kaarten (geen
+            overlap, geen overflow). Op mobiel: pijlen verborgen, puur swipen —
+            het stukje van de volgende kaart signaleert dat al. Met loop is
+            doorklikken oneindig. */}
+        <div className="relative mt-8 md:mt-10 sm:px-16">
           <Carousel setApi={setApi} opts={{ loop: true, align: "start" }}>
             <CarouselContent className="-ml-5 md:-ml-6 items-start">
               {kaarten.map((k) => (
@@ -246,30 +265,14 @@ export const Reviews = () => {
           <NavKnop
             richting="vorige"
             onClick={() => api?.scrollPrev()}
-            className="absolute left-0 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
+            className="hidden sm:inline-flex absolute left-2 top-1/2 z-10 -translate-y-1/2"
           />
           <NavKnop
             richting="volgende"
             onClick={() => api?.scrollNext()}
-            className="absolute right-0 top-1/2 z-10 translate-x-1/2 -translate-y-1/2"
+            className="hidden sm:inline-flex absolute right-2 top-1/2 z-10 -translate-y-1/2"
           />
         </div>
-
-        {/* Doorklik naar het volledige Google-profiel (indien geconfigureerd) */}
-        {reviewsUrl && (
-          <div className="mt-8 text-center">
-            <a
-              href={reviewsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 px-5 py-2.5 text-[15px] font-medium text-white transition-colors hover:bg-white/15"
-            >
-              <GoogleG size={18} />
-              Alle reviews op Google
-              <ChevronRight size={16} />
-            </a>
-          </div>
-        )}
       </div>
     </section>
   );
