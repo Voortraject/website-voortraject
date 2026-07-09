@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Star } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { Sterren } from "@/components/Sterren";
 import {
   Carousel,
   CarouselContent,
@@ -57,19 +57,6 @@ const AVATAR_KLEUREN = ["#546E7A", "#00897B", "#D81B60", "#3949AB", "#00838F", "
 const kleurVoor = (naam: string) =>
   AVATAR_KLEUREN[[...naam].reduce((som, c) => som + c.charCodeAt(0), 0) % AVATAR_KLEUREN.length];
 const initiaalVan = (naam: string) => naam.trim().charAt(0).toUpperCase() || "?";
-
-const Sterren = ({ aantal = 5, size = 16 }: { aantal?: number; size?: number }) => (
-  <span className="inline-flex items-center gap-1" aria-label={`${aantal} van 5 sterren`}>
-    {Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        size={size}
-        className={i < aantal ? "text-accent fill-accent" : "text-accent/30"}
-        aria-hidden="true"
-      />
-    ))}
-  </span>
-);
 
 // Profielfoto met vangnet: breekt de (Google-)foto-URL, dan valt 'ie terug op
 // de Google-stijl letter-avatar.
@@ -138,7 +125,7 @@ const ReviewKaart = ({ naam, foto, kleur, rating, tekst }: Kaart) => {
       </div>
 
       <div className="mt-4">
-        <Sterren aantal={rating} />
+        <Sterren waarde={rating} />
       </div>
 
       <blockquote className="mt-3 text-[15px] leading-[1.65] text-foreground">
@@ -236,12 +223,12 @@ export const Reviews = () => {
               rel="noopener noreferrer"
               className="mt-4 inline-flex items-center gap-2.5 text-[16px] font-medium text-white/85 transition-colors hover:text-white"
             >
-              <Sterren />
+              <Sterren waarde={stats?.rating ?? 5} />
               <span className="underline-offset-4 hover:underline">{ratingLabel}</span>
             </a>
           ) : (
             <p className="mt-4 inline-flex items-center gap-2.5 text-[16px] font-medium text-white/85">
-              <Sterren />
+              <Sterren waarde={stats?.rating ?? 5} />
               <span>{ratingLabel}</span>
             </p>
           )}

@@ -1,7 +1,9 @@
-import { Check, Phone, Star } from "lucide-react";
+import { Check, Phone } from "lucide-react";
 
 import { CtaButton } from "@/components/CtaButton";
 import { GoogleG } from "@/components/GoogleG";
+import { Sterren } from "@/components/Sterren";
+import { useGoogleReviews } from "@/hooks/useGoogleReviews";
 import heroAdviesgesprek from "@/assets/hero-adviesgesprek.webp";
 
 const claims = [
@@ -11,15 +13,16 @@ const claims = [
 ];
 
 export const Hero = () => {
+  const { stats } = useGoogleReviews();
   const reviewsUrl = import.meta.env.VITE_GOOGLE_REVIEWS_URL as string | undefined;
+  const ratingTekst =
+    stats?.rating != null
+      ? stats.rating.toLocaleString("nl-NL", { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+      : "5,0";
   const badgeInhoud = (
     <>
-      <span className="inline-flex items-center gap-0.5">
-        {Array.from({ length: 5 }, (_, i) => (
-          <Star key={i} size={16} className="text-accent fill-accent" aria-hidden="true" />
-        ))}
-      </span>
-      <span aria-hidden="true">5,0</span>
+      <Sterren waarde={stats?.rating ?? 5} />
+      <span aria-hidden="true">{ratingTekst}</span>
       <GoogleG size={18} />
     </>
   );
@@ -87,14 +90,14 @@ export const Hero = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="mt-6 inline-flex items-center gap-2.5 rounded-full text-[15px] font-medium text-white/90 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2"
-              aria-label="Bekijk onze beoordelingen op Google (5,0 van 5)"
+              aria-label={`Bekijk onze beoordelingen op Google (${ratingTekst} van 5)`}
             >
               {badgeInhoud}
             </a>
           ) : (
             <p
               className="mt-6 inline-flex items-center gap-2.5 text-[15px] font-medium text-white/90"
-              aria-label="Beoordeeld met 5,0 van 5 op Google"
+              aria-label={`Beoordeeld met ${ratingTekst} van 5 op Google`}
             >
               {badgeInhoud}
             </p>
