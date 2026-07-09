@@ -301,8 +301,8 @@ export const Reviews = () => {
           {/* Navy fade aan beide zijden: kaarten verschijnen/verdwijnen achter de
               gradient (van de content-rand naar binnen). pointer-events-none zodat
               swipen eronderdoor blijft werken; de pijlen staan er met z-20 boven. */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-primary to-transparent sm:w-16 lg:w-20" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-primary to-transparent sm:w-16 lg:w-20" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-[linear-gradient(to_right,hsl(var(--primary))_0%,hsl(var(--primary))_35%,transparent_100%)] sm:w-16 lg:w-24" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-[linear-gradient(to_left,hsl(var(--primary))_0%,hsl(var(--primary))_35%,transparent_100%)] sm:w-16 lg:w-24" />
 
           <NavKnop
             richting="vorige"
