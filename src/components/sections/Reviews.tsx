@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { Star } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import {
@@ -163,30 +163,6 @@ const ReviewKaart = ({ naam, foto, kleur, rating, tekst }: Kaart) => {
   );
 };
 
-// Zijpijl: wit met schaduw, zodat 'ie leesbaar blijft zowel op de navy
-// achtergrond als waar 'ie over een witte kaart valt.
-const NavKnop = ({
-  richting,
-  onClick,
-  className,
-}: {
-  richting: "vorige" | "volgende";
-  onClick: () => void;
-  className?: string;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    aria-label={richting === "vorige" ? "Vorige reviews" : "Volgende reviews"}
-    className={cn(
-      "inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-card text-primary shadow-lg ring-1 ring-primary/10 transition-colors hover:bg-secondary",
-      className,
-    )}
-  >
-    {richting === "vorige" ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-  </button>
-);
-
 export const Reviews = () => {
   const { reviews, stats } = useGoogleReviews();
   const [api, setApi] = useState<CarouselApi>();
@@ -303,17 +279,6 @@ export const Reviews = () => {
               swipen eronderdoor blijft werken; de pijlen staan er met z-20 boven. */}
           <div className="pointer-events-none absolute inset-y-0 -left-4 z-10 w-12 bg-gradient-to-r from-primary to-transparent sm:w-16 lg:w-20" />
           <div className="pointer-events-none absolute inset-y-0 -right-4 z-10 w-12 bg-gradient-to-l from-primary to-transparent sm:w-16 lg:w-20" />
-
-          <NavKnop
-            richting="vorige"
-            onClick={() => api?.scrollPrev()}
-            className="hidden sm:inline-flex absolute left-2 top-1/2 z-20 -translate-y-1/2 md:left-3"
-          />
-          <NavKnop
-            richting="volgende"
-            onClick={() => api?.scrollNext()}
-            className="hidden sm:inline-flex absolute right-2 top-1/2 z-20 -translate-y-1/2 md:right-3"
-          />
         </div>
 
         {/* Puntjes-indicator: positie + aantal, klikbaar. */}
