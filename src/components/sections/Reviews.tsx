@@ -163,18 +163,25 @@ const ReviewKaart = ({ naam, foto, kleur, rating, tekst }: Kaart) => {
   );
 };
 
+// Zijpijl: wit met schaduw, zodat 'ie leesbaar blijft zowel op de navy
+// achtergrond als waar 'ie over een witte kaart valt.
 const NavKnop = ({
   richting,
   onClick,
+  className,
 }: {
   richting: "vorige" | "volgende";
   onClick: () => void;
+  className?: string;
 }) => (
   <button
     type="button"
     onClick={onClick}
     aria-label={richting === "vorige" ? "Vorige reviews" : "Volgende reviews"}
-    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-colors hover:bg-white/20"
+    className={cn(
+      "inline-flex h-10 w-10 items-center justify-center rounded-full bg-card text-primary shadow-lg ring-1 ring-primary/10 transition-colors hover:bg-secondary",
+      className,
+    )}
   >
     {richting === "vorige" ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
   </button>
@@ -219,28 +226,33 @@ export const Reviews = () => {
         </div>
 
         {/* Oneindige, swipebare carrousel: mobiel 1 kaart, tablet 2, desktop 3.
-            items-start zodat het uitklappen van één kaart de andere niet oprekt. */}
-        <Carousel
-          setApi={setApi}
-          opts={{ loop: true, align: "start" }}
-          className="mt-8 md:mt-10"
-        >
-          <CarouselContent className="-ml-5 md:-ml-6 items-start">
-            {kaarten.map((k) => (
-              <CarouselItem
-                key={k.id}
-                className="pl-5 md:pl-6 basis-[85%] sm:basis-1/2 lg:basis-1/3"
-              >
-                <ReviewKaart {...k} />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
+            items-start zodat het uitklappen van één kaart de andere niet oprekt.
+            Pijlen flankeren de kaarten (half in de container-marge → geen overflow).
+            Navigatie werkt naast swipen; met loop is doorklikken oneindig. */}
+        <div className="relative mt-8 md:mt-10">
+          <Carousel setApi={setApi} opts={{ loop: true, align: "start" }}>
+            <CarouselContent className="-ml-5 md:-ml-6 items-start">
+              {kaarten.map((k) => (
+                <CarouselItem
+                  key={k.id}
+                  className="pl-5 md:pl-6 basis-[85%] sm:basis-1/2 lg:basis-1/3"
+                >
+                  <ReviewKaart {...k} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
 
-        {/* Navigatie: werkt naast swipen; met loop is doorklikken oneindig. */}
-        <div className="mt-6 flex items-center justify-center gap-3">
-          <NavKnop richting="vorige" onClick={() => api?.scrollPrev()} />
-          <NavKnop richting="volgende" onClick={() => api?.scrollNext()} />
+          <NavKnop
+            richting="vorige"
+            onClick={() => api?.scrollPrev()}
+            className="absolute left-0 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
+          />
+          <NavKnop
+            richting="volgende"
+            onClick={() => api?.scrollNext()}
+            className="absolute right-0 top-1/2 z-10 translate-x-1/2 -translate-y-1/2"
+          />
         </div>
 
         {/* Doorklik naar het volledige Google-profiel (indien geconfigureerd) */}
