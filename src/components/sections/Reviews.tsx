@@ -1,6 +1,13 @@
-import { useState } from "react";
-import { ChevronRight, Star } from "lucide-react";
+import { useLayoutEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 
+import { cn } from "@/lib/utils";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 import { GoogleG } from "@/components/GoogleG";
 import { useGoogleReviews } from "@/hooks/useGoogleReviews";
 import fotoJulian from "@/assets/review-julian.webp";
@@ -51,9 +58,6 @@ const kleurVoor = (naam: string) =>
   AVATAR_KLEUREN[[...naam].reduce((som, c) => som + c.charCodeAt(0), 0) % AVATAR_KLEUREN.length];
 const initiaalVan = (naam: string) => naam.trim().charAt(0).toUpperCase() || "?";
 
-// Tekst langer dan dit → inklapbaar met "Lees meer".
-const LANG_DREMPEL = 170;
-
 const Sterren = ({ aantal = 5, size = 16 }: { aantal?: number; size?: number }) => (
   <span className="inline-flex items-center gap-1" aria-label={`${aantal} van 5 sterren`}>
     {Array.from({ length: 5 }, (_, i) => (
@@ -97,17 +101,88 @@ const Avatar = ({ naam, foto, kleur }: { naam: string; foto?: string; kleur?: st
   );
 };
 
+// Ingeklapte tekst reserveert deze hoogte (5 regels) → alle kaarten even hoog.
+// "Lees meer" verschijnt alleen als de tekst daadwerkelijk wordt afgekapt.
+const REVIEW_KAART =
+  "relative bg-card rounded-2xl border border-border p-6 flex flex-col h-full";
+
+const ReviewKaart = ({ naam, foto, kleur, rating, tekst }: Kaart) => {
+  const tekstRef = useRef<HTMLParagraphElement>(null);
+  const [open, setOpen] = useState(false);
+  const [afkapbaar, setAfkapbaar] = useState(false);
+
+  // Meet in ingeklapte staat of de tekst wordt afgekapt (robuuster dan tellen
+  // op tekenaantal). Hermeet bij resize, want de kaartbreedte bepaalt het.
+  useLayoutEffect(() => {
+    if (open) return;
+    const meet = () => {
+      const el = tekstRef.current;
+      if (el) setAfkapbaar(el.scrollHeight > el.clientHeight + 1);
+    };
+    meet();
+    window.addEventListener("resize", meet);
+    return () => window.removeEventListener("resize", meet);
+  }, [tekst, open]);
+
+  return (
+    <article className={REVIEW_KAART} style={{ boxShadow: "0 4px 24px hsl(var(--primary) / 0.2)" }}>
+      {/* Google-logo in de hoek van de tegel */}
+      <span className="absolute top-4 right-4">
+        <GoogleG />
+      </span>
+
+      {/* Kop: profielfoto + naam */}
+      <div className="flex items-center gap-3 min-w-0 pr-8">
+        <Avatar naam={naam} foto={foto} kleur={kleur} />
+        <span className="text-[15px] font-semibold text-primary truncate">{naam}</span>
+      </div>
+
+      <div className="mt-4">
+        <Sterren aantal={rating} />
+      </div>
+
+      <blockquote className="mt-3 text-[15px] leading-[1.65] text-foreground">
+        <p ref={tekstRef} className={cn("min-h-[7.75rem]", !open && "line-clamp-5")}>
+          {tekst}
+        </p>
+        {/* Vaste regel zodat kaarten zonder knop even hoog blijven. */}
+        <div className="mt-1 min-h-[1.5rem]">
+          {(afkapbaar || open) && (
+            <button
+              type="button"
+              onClick={() => setOpen(!open)}
+              aria-expanded={open}
+              className="text-muted-foreground font-medium hover:underline underline-offset-2"
+            >
+              {open ? "Lees minder" : "Lees meer"}
+            </button>
+          )}
+        </div>
+      </blockquote>
+    </article>
+  );
+};
+
+const NavKnop = ({
+  richting,
+  onClick,
+}: {
+  richting: "vorige" | "volgende";
+  onClick: () => void;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    aria-label={richting === "vorige" ? "Vorige reviews" : "Volgende reviews"}
+    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-colors hover:bg-white/20"
+  >
+    {richting === "vorige" ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+  </button>
+);
+
 export const Reviews = () => {
   const { reviews, stats } = useGoogleReviews();
-  const [openIds, setOpenIds] = useState<Set<string>>(new Set());
-
-  const toggle = (id: string) =>
-    setOpenIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+  const [api, setApi] = useState<CarouselApi>();
 
   // Live Google-reviews indien beschikbaar (>= 2 met tekst), anders de fallback.
   const live: Kaart[] | null = reviews
@@ -143,63 +218,34 @@ export const Reviews = () => {
           </p>
         </div>
 
-        {/* items-start: het uitklappen van één kaart mag de andere niet oprekken.
-            Mobiel: horizontaal swipebare rij i.p.v. gestapeld. */}
-        <div className="mt-8 md:mt-10 flex md:grid md:grid-cols-3 gap-5 md:gap-6 items-start overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar">
-          {kaarten.map(({ id, naam, foto, kleur, rating, tekst }) => {
-            const lang = tekst.length > LANG_DREMPEL;
-            const open = !lang || openIds.has(id);
-            return (
-              <article
-                key={id}
-                className="w-[80%] sm:w-[46%] md:w-auto shrink-0 snap-start relative bg-card rounded-2xl border border-border p-6 flex flex-col"
-                style={{ boxShadow: "0 4px 24px hsl(var(--primary) / 0.2)" }}
-              >
-                {/* Google-logo in de hoek van de tegel */}
-                <span className="absolute top-4 right-4">
-                  <GoogleG />
-                </span>
-
-                {/* Kop: profielfoto + naam */}
-                <div className="flex items-center gap-3 min-w-0 pr-8">
-                  <Avatar naam={naam} foto={foto} kleur={kleur} />
-                  <span className="text-[15px] font-semibold text-primary truncate">{naam}</span>
-                </div>
-
-                <div className="mt-4">
-                  <Sterren aantal={rating} />
-                </div>
-
-                <blockquote className="mt-3 text-[15px] leading-[1.65] text-foreground">
-                  <p className={open ? undefined : "line-clamp-5"}>{tekst}</p>
-                  {lang && (
-                    <button
-                      type="button"
-                      onClick={() => toggle(id)}
-                      aria-expanded={open}
-                      className="mt-1 text-muted-foreground font-medium hover:underline underline-offset-2"
-                    >
-                      {open ? "Lees minder" : "Lees meer"}
-                    </button>
-                  )}
-                </blockquote>
-              </article>
-            );
-          })}
-        </div>
-
-        {/* Swipe-hint: alleen mobiel, onder de eerste kaart */}
-        <div
-          className="md:hidden mt-3.5 flex items-center gap-1.5 text-white/70 animate-swipe-hint motion-reduce:animate-none"
-          aria-hidden="true"
+        {/* Oneindige, swipebare carrousel: mobiel 1 kaart, tablet 2, desktop 3.
+            items-start zodat het uitklappen van één kaart de andere niet oprekt. */}
+        <Carousel
+          setApi={setApi}
+          opts={{ loop: true, align: "start" }}
+          className="mt-8 md:mt-10"
         >
-          <span className="text-[13px] font-medium">Veeg</span>
-          <ChevronRight size={16} />
+          <CarouselContent className="-ml-5 md:-ml-6 items-start">
+            {kaarten.map((k) => (
+              <CarouselItem
+                key={k.id}
+                className="pl-5 md:pl-6 basis-[85%] sm:basis-1/2 lg:basis-1/3"
+              >
+                <ReviewKaart {...k} />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+
+        {/* Navigatie: werkt naast swipen; met loop is doorklikken oneindig. */}
+        <div className="mt-6 flex items-center justify-center gap-3">
+          <NavKnop richting="vorige" onClick={() => api?.scrollPrev()} />
+          <NavKnop richting="volgende" onClick={() => api?.scrollNext()} />
         </div>
 
         {/* Doorklik naar het volledige Google-profiel (indien geconfigureerd) */}
         {reviewsUrl && (
-          <div className="mt-8 md:mt-10 text-center">
+          <div className="mt-8 text-center">
             <a
               href={reviewsUrl}
               target="_blank"
