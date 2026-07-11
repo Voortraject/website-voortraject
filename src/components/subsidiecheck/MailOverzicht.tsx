@@ -2,6 +2,7 @@ import { FormEvent, useRef, useState } from "react";
 import { CheckCircle, Loader2 } from "lucide-react";
 
 import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
+import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
 import { normalizePostcode } from "@/lib/pdok";
 import {
@@ -89,6 +90,8 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
         status: "nieuw",
       } as never);
       if (error) throw error;
+      // Geen naam/e-mail in het event — alleen dat er een lead is (privacy).
+      pushGtmEvent("subsidiecheck_lead", { aantal_regelingen: regelingen.length });
       setVerstuurd(true);
     } catch (err) {
       console.error("Subsidiecheck lead submit failed", err);

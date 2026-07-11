@@ -3,6 +3,7 @@ import { Check, Link2, Loader2 } from "lucide-react";
 
 import { CtaButton } from "@/components/CtaButton";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
+import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
 import { groepeerPerNiveau, NIVEAU_LABELS, type SubsidieCheckInput } from "@/lib/subsidies";
 
@@ -59,6 +60,19 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
 
   const groepen = useMemo(() => groepeerPerNiveau(regelingen ?? []), [regelingen]);
   const adresRegel = `${adres.straatnaam} ${input.huisnummer}, ${adres.woonplaatsnaam}`;
+
+  // Eén event per getoond resultaat (ook bij 0 regelingen — dat is óók funnel-data).
+  const resultaatGemeld = useRef(false);
+  useEffect(() => {
+    if (laden || isError || resultaatGemeld.current) return;
+    resultaatGemeld.current = true;
+    pushGtmEvent("subsidiecheck_voltooid", {
+      aantal_regelingen: regelingen?.length ?? 0,
+      bewonertype: input.bewonertype,
+      gemeente: input.gemeente ?? "",
+      provincie: input.provincie ?? "",
+    });
+  }, [laden, isError, regelingen, input]);
 
   if (isError) {
     return (

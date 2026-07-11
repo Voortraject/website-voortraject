@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Check, Loader2 } from "lucide-react";
 
+import { pushGtmEvent } from "@/lib/gtm";
 import { POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib/pdok";
 
 const inputClass =
@@ -55,6 +56,8 @@ export const StapAdres = ({ initPostcode, initHuisnummer, foutmelding, onBevesti
     }
 
     setGevonden(adres);
+    // Adres bevestigd = echte intentie; geen postcode/adres in het event (privacy).
+    pushGtmEvent("subsidiecheck_start", { gemeente: adres.gemeentenaam, provincie: adres.provincienaam });
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     // Korte beat zodat de bevestiging landt; met reduced motion direct door.
     doorTimer.current = setTimeout(() => onBevestigd(postcode.trim(), huisnummer.trim()), reduced ? 0 : 600);
