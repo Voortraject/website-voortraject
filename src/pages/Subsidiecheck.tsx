@@ -30,6 +30,9 @@ const Subsidiecheck = () => {
   const hn = searchParams.get("hn") ?? "";
   const typeParam = searchParams.get("type");
   const mParam = searchParams.get("m");
+  // edit=1: gebruiker wil het adres aanpassen — toon stap 1 mét voorgevulde
+  // velden en behoud van situatie/maatregelen, i.p.v. een lege reset.
+  const editParam = searchParams.get("edit") === "1";
 
   const paramsGeldig = POSTCODE_RE.test(pc) && /^[0-9]/.test(hn.trim());
   const bewonertype: Bewonertype | null = BEWONERTYPES.includes(typeParam as Bewonertype)
@@ -45,7 +48,15 @@ const Subsidiecheck = () => {
   const adresZoeken = paramsGeldig && adresQuery.isPending;
   const adresNietGevonden = paramsGeldig && !adresQuery.isPending && !adres;
 
-  const stap: 1 | 2 | 3 = !paramsGeldig || adresNietGevonden ? 1 : !bewonertype ? 2 : 3;
+  const stap: 1 | 2 | 3 = editParam || !paramsGeldig || adresNietGevonden ? 1 : !bewonertype ? 2 : 3;
+
+  // Bouwt de queryparams opnieuw op met behoud van situatie/maatregelen.
+  const paramsMetKeuzes = (nieuwPc: string, nieuwHn: string): Record<string, string> => {
+    const params: Record<string, string> = { pc: nieuwPc, hn: nieuwHn };
+    if (typeParam) params.type = typeParam;
+    if (mParam !== null) params.m = mParam;
+    return params;
+  };
 
   const checkInput: SubsidieCheckInput | null = useMemo(() => {
     if (!adres || !bewonertype) return null;
@@ -121,7 +132,7 @@ const Subsidiecheck = () => {
                   </span>
                   <button
                     type="button"
-                    onClick={() => setSearchParams({})}
+                    onClick={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
                     className="inline-flex items-center gap-1 text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
                   >
                     <Pencil size={12} aria-hidden="true" />
@@ -160,7 +171,9 @@ const Subsidiecheck = () => {
                         : null
                     }
                     onBevestigd={(nieuwPc, nieuwHn) =>
-                      setSearchParams({ pc: normalizePostcode(nieuwPc), hn: nieuwHn })
+                      // Behoud eerdere keuzes: wie via "wijzig" alleen het adres
+                      // aanpast, springt direct terug naar het resultaat.
+                      setSearchParams(paramsMetKeuzes(normalizePostcode(nieuwPc), nieuwHn))
                     }
                   />
                 ) : stap === 2 ? (

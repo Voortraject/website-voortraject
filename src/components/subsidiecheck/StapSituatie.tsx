@@ -56,34 +56,35 @@ interface StapSituatieProps {
 }
 
 // Stap 2: bewonertype als grote tapbare kaarten, maatregelen als chips.
-// Alles staat default áán — een bezoeker die meteen op "Bekijk mijn
-// subsidies" klikt krijgt gewoon het volledige overzicht. Afvinken is
-// verfijnen, geen verplicht werk.
+// Woningeigenaar staat voorgeselecteerd (veruit de grootste groep — zelfde
+// keuze als Verbeterjehuis), zodat er géén foutpad bestaat: doorklikken werkt
+// altijd. Maatregelen: "Alles" is de rustige standaard (lege selectie); pas
+// als iemand een chip aanklikt schakelt de stap naar gerichte selectie —
+// aanvinken wat je wél wil, in plaats van afvinken wat je niet wil.
 export const StapSituatie = ({ initBewonertype, initMaatregelen, onVerder }: StapSituatieProps) => {
-  const [bewonertype, setBewonertype] = useState<Bewonertype | null>(initBewonertype);
+  const [bewonertype, setBewonertype] = useState<Bewonertype>(initBewonertype ?? "woningeigenaar");
+  // Lege lijst = "alles" (volledige selectie wordt daar meteen toe genormaliseerd).
   const [maatregelen, setMaatregelen] = useState<Maatregel[]>(
-    initMaatregelen.length > 0 ? initMaatregelen : [...ALLE_MAATREGELEN],
+    initMaatregelen.length === ALLE_MAATREGELEN.length ? [] : initMaatregelen,
   );
-  const [typeFout, setTypeFout] = useState(false);
 
-  const allesGeselecteerd = maatregelen.length === ALLE_MAATREGELEN.length;
+  const allesModus = maatregelen.length === 0;
 
   const toggleMaatregel = (m: Maatregel) =>
-    setMaatregelen((prev) => (prev.includes(m) ? prev.filter((x) => x !== m) : [...prev, m]));
+    setMaatregelen((prev) => {
+      const volgende = prev.includes(m) ? prev.filter((x) => x !== m) : [...prev, m];
+      // Alles aangevinkt = terug naar de rustige "Alles"-modus.
+      return volgende.length === ALLE_MAATREGELEN.length ? [] : volgende;
+    });
 
   const handleVerder = () => {
-    if (!bewonertype) {
-      setTypeFout(true);
-      return;
-    }
-    // Niets aangevinkt = alles tonen (niemand bedoelt "toon mij nul subsidies").
-    onVerder(bewonertype, maatregelen.length > 0 ? maatregelen : [...ALLE_MAATREGELEN]);
+    onVerder(bewonertype, allesModus ? [...ALLE_MAATREGELEN] : maatregelen);
   };
 
   return (
     <div>
       <fieldset>
-        <legend className="block mb-3 text-[14px] font-semibold text-foreground">Wat is jouw situatie?</legend>
+        <legend className="block mb-3 text-[14px] font-semibold text-foreground">Ik ben…</legend>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label="Type bewoner">
           {(Object.keys(BEWONERTYPE_LABELS) as Bewonertype[]).map((type) => {
             const Icon = TYPE_ICONS[type];
@@ -94,12 +95,9 @@ export const StapSituatie = ({ initBewonertype, initMaatregelen, onVerder }: Sta
                 type="button"
                 role="radio"
                 aria-checked={actief}
-                onClick={() => {
-                  setBewonertype(type);
-                  setTypeFout(false);
-                }}
-                className={`relative flex items-start gap-3 rounded-lg border-2 bg-card p-4 text-left transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-                  actief ? "border-accent" : "border-border hover:border-primary/30"
+                onClick={() => setBewonertype(type)}
+                className={`relative flex items-start gap-3 rounded-lg border-2 p-4 text-left transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                  actief ? "border-accent bg-accent/10" : "border-border bg-card hover:border-primary/30"
                 }`}
               >
                 <Icon size={22} strokeWidth={1.75} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
@@ -123,11 +121,6 @@ export const StapSituatie = ({ initBewonertype, initMaatregelen, onVerder }: Sta
             );
           })}
         </div>
-        {typeFout && (
-          <p role="alert" className="mt-2 text-[14px] text-destructive">
-            Kies eerst wat jouw situatie is.
-          </p>
-        )}
       </fieldset>
 
       <fieldset className="mt-8">
@@ -135,15 +128,15 @@ export const StapSituatie = ({ initBewonertype, initMaatregelen, onVerder }: Sta
           Waar ben je in geïnteresseerd?
         </legend>
         <p className="mb-3 text-[13px] text-muted-foreground">
-          Alles staat aan — vink af wat je niet interessant vindt.
+          We tonen standaard alle regelingen — wil je gericht kijken, kies dan een of meer onderwerpen.
         </p>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            aria-pressed={allesGeselecteerd}
-            onClick={() => setMaatregelen(allesGeselecteerd ? [] : [...ALLE_MAATREGELEN])}
+            aria-pressed={allesModus}
+            onClick={() => setMaatregelen([])}
             className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2.5 text-[14px] font-semibold transition-colors min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-              allesGeselecteerd
+              allesModus
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-border bg-card text-primary hover:border-primary/40"
             }`}
