@@ -155,8 +155,8 @@ voortgangsindicator (afrondingspsychologie), mobile-first, tapdoelen ≥44px:
 - [ ] **Monument-vinkje** ("Mijn woning is een monument") — zij vragen het; afwijkende
       regels/regelingen. Meenemen in **Fase 5** als de API de parameter ondersteunt; tot
       die tijd adviseur-territorium.
-- [ ] Optioneel toevoeging-veld in stap 1 — **laag prioriteit** (verandert het resultaat
-      niet; alleen adresweergave + leaddata). Contactformulier heeft het veld al.
+- [x] Optioneel toevoeging-veld in stap 1 — gebouwd (2026-07-12): verfijnt de PDOK-match,
+      loopt mee in URL (`tv`), adres-pill, resultaatkop en de lead (`toevoeging`-kolom).
 - **Chips-lijst bevestigd (8)** na vergelijk met hun 18 filteropties: bewust weggelaten:
   kleine maatregelen, gasaansluiting verwijderen, energieadvies (concurreert met eigen
   gratis advies!), zonwering, vergroenen-tak, proces ondersteuning. Asbest verwijderen =

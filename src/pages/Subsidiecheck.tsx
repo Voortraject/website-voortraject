@@ -28,6 +28,7 @@ const Subsidiecheck = () => {
 
   const pc = searchParams.get("pc") ?? "";
   const hn = searchParams.get("hn") ?? "";
+  const tv = searchParams.get("tv") ?? "";
   const typeParam = searchParams.get("type");
   const mParam = searchParams.get("m");
   // edit=1: gebruiker wil het adres aanpassen — toon stap 1 mét voorgevulde
@@ -43,7 +44,7 @@ const Subsidiecheck = () => {
     return mParam.split(",").filter((m): m is Maatregel => ALLE_MAATREGELEN.includes(m as Maatregel));
   }, [mParam]);
 
-  const adresQuery = usePdokAdres(paramsGeldig ? pc : "", paramsGeldig ? hn : "");
+  const adresQuery = usePdokAdres(paramsGeldig ? pc : "", paramsGeldig ? hn : "", tv);
   const adres = paramsGeldig ? (adresQuery.data ?? null) : null;
   const adresZoeken = paramsGeldig && adresQuery.isPending;
   const adresNietGevonden = paramsGeldig && !adresQuery.isPending && !adres;
@@ -51,8 +52,9 @@ const Subsidiecheck = () => {
   const stap: 1 | 2 | 3 = editParam || !paramsGeldig || adresNietGevonden ? 1 : !bewonertype ? 2 : 3;
 
   // Bouwt de queryparams opnieuw op met behoud van situatie/maatregelen.
-  const paramsMetKeuzes = (nieuwPc: string, nieuwHn: string): Record<string, string> => {
+  const paramsMetKeuzes = (nieuwPc: string, nieuwHn: string, nieuwTv = tv): Record<string, string> => {
     const params: Record<string, string> = { pc: nieuwPc, hn: nieuwHn };
+    if (nieuwTv.trim()) params.tv = nieuwTv.trim();
     if (typeParam) params.type = typeParam;
     if (mParam !== null) params.m = mParam;
     return params;
@@ -63,12 +65,13 @@ const Subsidiecheck = () => {
     return {
       postcode: normalizePostcode(pc),
       huisnummer: hn.trim(),
+      toevoeging: tv.trim() || undefined,
       gemeente: adres.gemeentenaam,
       provincie: adres.provincienaam,
       bewonertype,
       maatregelen: maatregelen.length > 0 ? maatregelen : [...ALLE_MAATREGELEN],
     };
-  }, [adres, bewonertype, pc, hn, maatregelen]);
+  }, [adres, bewonertype, pc, hn, tv, maatregelen]);
 
   // Focus-management: bij elke stapwissel naar de kop, zodat toetsenbord- en
   // screenreadergebruikers niet zwevend achterblijven.
@@ -145,7 +148,8 @@ const Subsidiecheck = () => {
                   <p className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full border border-border bg-card px-4 py-2 text-[13.5px] text-foreground/80 shadow-subtle">
                     <span className="inline-flex items-center gap-1.5">
                       <MapPin size={13} className="text-muted-foreground" aria-hidden="true" />
-                      {adres.straatnaam} {hn.trim()}, {adres.woonplaatsnaam}
+                      {adres.straatnaam} {hn.trim()}
+                      {tv.trim() ? ` ${tv.trim()}` : ""}, {adres.woonplaatsnaam}
                     </span>
                     <button
                       type="button"
@@ -183,15 +187,16 @@ const Subsidiecheck = () => {
                   <StapAdres
                     initPostcode={pc}
                     initHuisnummer={hn}
+                    initToevoeging={tv}
                     foutmelding={
                       adresNietGevonden
                         ? "We konden dit adres niet vinden — check even je postcode en huisnummer."
                         : null
                     }
-                    onBevestigd={(nieuwPc, nieuwHn) =>
+                    onBevestigd={(nieuwPc, nieuwHn, nieuwTv) =>
                       // Behoud eerdere keuzes: wie via "wijzig" alleen het adres
                       // aanpast, springt direct terug naar het resultaat.
-                      setSearchParams(paramsMetKeuzes(normalizePostcode(nieuwPc), nieuwHn))
+                      setSearchParams(paramsMetKeuzes(normalizePostcode(nieuwPc), nieuwHn, nieuwTv))
                     }
                   />
                 ) : stap === 2 ? (

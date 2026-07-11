@@ -74,6 +74,8 @@ export type SubsidieCheckInput = {
   /** Genormaliseerd, bijv. "7823BR". */
   postcode: string;
   huisnummer: string;
+  /** Optioneel, bijv. "A" of "2" — alleen voor adresweergave en leaddata. */
+  toevoeging?: string;
   /** Uit de PDOK-lookup; regionale providers filteren hierop. */
   gemeente?: string;
   provincie?: string;

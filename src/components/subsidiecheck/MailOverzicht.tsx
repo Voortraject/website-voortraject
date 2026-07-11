@@ -82,7 +82,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
         telefoon: null,
         postcode: normalizePostcode(input.postcode),
         huisnummer: input.huisnummer,
-        toevoeging: null,
+        toevoeging: input.toevoeging?.trim() ? escapeHtml(input.toevoeging.trim()) : null,
         straat: escapeHtml(adres.straatnaam),
         stad: escapeHtml(adres.woonplaatsnaam),
         notities,

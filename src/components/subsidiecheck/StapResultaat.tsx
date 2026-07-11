@@ -59,7 +59,7 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
   };
 
   const groepen = useMemo(() => groepeerPerNiveau(regelingen ?? []), [regelingen]);
-  const adresRegel = `${adres.straatnaam} ${input.huisnummer}, ${adres.woonplaatsnaam}`;
+  const adresRegel = `${adres.straatnaam} ${input.huisnummer}${input.toevoeging ? ` ${input.toevoeging}` : ""}, ${adres.woonplaatsnaam}`;
 
   // Eén event per getoond resultaat (ook bij 0 regelingen — dat is óók funnel-data).
   const resultaatGemeld = useRef(false);

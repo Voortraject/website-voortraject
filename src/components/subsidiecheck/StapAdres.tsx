@@ -13,17 +13,19 @@ const formatPostcode = (v: string) => v.toUpperCase().replace(/[^0-9A-Z ]/g, "")
 interface StapAdresProps {
   initPostcode: string;
   initHuisnummer: string;
+  initToevoeging: string;
   /** Bijv. wanneer een deeplink-adres niet gevonden werd. */
   foutmelding?: string | null;
-  onBevestigd: (postcode: string, huisnummer: string) => void;
+  onBevestigd: (postcode: string, huisnummer: string, toevoeging: string) => void;
 }
 
 // Stap 1: postcode + huisnummer. Na een geslaagde PDOK-lookup tonen we het
 // gevonden adres kort ter bevestiging ("dit gaat echt over mijn huis") en
 // gaan we automatisch door.
-export const StapAdres = ({ initPostcode, initHuisnummer, foutmelding, onBevestigd }: StapAdresProps) => {
+export const StapAdres = ({ initPostcode, initHuisnummer, initToevoeging, foutmelding, onBevestigd }: StapAdresProps) => {
   const [postcode, setPostcode] = useState(displayPostcode(initPostcode));
   const [huisnummer, setHuisnummer] = useState(initHuisnummer);
+  const [toevoeging, setToevoeging] = useState(initToevoeging);
   const [bezig, setBezig] = useState(false);
   const [fout, setFout] = useState<string | null>(foutmelding ?? null);
   const [gevonden, setGevonden] = useState<PdokAdres | null>(null);
@@ -47,7 +49,7 @@ export const StapAdres = ({ initPostcode, initHuisnummer, foutmelding, onBevesti
     }
 
     setBezig(true);
-    const adres = await zoekAdres(postcode, huisnummer);
+    const adres = await zoekAdres(postcode, huisnummer, toevoeging);
     setBezig(false);
 
     if (!adres) {
@@ -60,12 +62,15 @@ export const StapAdres = ({ initPostcode, initHuisnummer, foutmelding, onBevesti
     pushGtmEvent("subsidiecheck_start", { gemeente: adres.gemeentenaam, provincie: adres.provincienaam });
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     // Korte beat zodat de bevestiging landt; met reduced motion direct door.
-    doorTimer.current = setTimeout(() => onBevestigd(postcode.trim(), huisnummer.trim()), reduced ? 0 : 600);
+    doorTimer.current = setTimeout(
+      () => onBevestigd(postcode.trim(), huisnummer.trim(), toevoeging.trim()),
+      reduced ? 0 : 600,
+    );
   };
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <div className="grid grid-cols-[3fr_2fr] gap-3">
+      <div className="grid grid-cols-[2fr_1.2fr_1fr] gap-3">
         <div>
           <label htmlFor="sc-postcode" className="block mb-2 text-[14px] font-semibold text-foreground">
             Postcode
@@ -111,6 +116,25 @@ export const StapAdres = ({ initPostcode, initHuisnummer, foutmelding, onBevesti
               setGevonden(null);
             }}
             maxLength={6}
+          />
+        </div>
+        <div>
+          <label htmlFor="sc-toevoeging" className="block mb-2 text-[14px] font-semibold text-foreground whitespace-nowrap">
+            Toevoeging <span className="hidden font-normal text-muted-foreground sm:inline">(optioneel)</span>
+          </label>
+          <input
+            id="sc-toevoeging"
+            name="toevoeging"
+            type="text"
+            placeholder="A"
+            className={inputClass}
+            value={toevoeging}
+            onChange={(e) => {
+              setToevoeging(e.target.value);
+              setFout(null);
+              setGevonden(null);
+            }}
+            maxLength={10}
           />
         </div>
       </div>

@@ -4,12 +4,12 @@ import { normalizePostcode, POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib
 
 // Adres-lookup met caching: bij herladen of terug-navigeren binnen de
 // subsidiecheck wordt hetzelfde adres niet opnieuw bij PDOK opgevraagd.
-export function usePdokAdres(postcode: string, huisnummer: string) {
+export function usePdokAdres(postcode: string, huisnummer: string, toevoeging = "") {
   const geldig = POSTCODE_RE.test(postcode) && /^[0-9]/.test(huisnummer.trim());
 
   return useQuery<PdokAdres | null>({
-    queryKey: ["pdok-adres", normalizePostcode(postcode), huisnummer.trim()],
-    queryFn: () => zoekAdres(postcode, huisnummer),
+    queryKey: ["pdok-adres", normalizePostcode(postcode), huisnummer.trim(), toevoeging.trim()],
+    queryFn: () => zoekAdres(postcode, huisnummer, toevoeging),
     enabled: geldig,
     staleTime: Infinity,
     retry: 1,

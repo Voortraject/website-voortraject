@@ -24,14 +24,21 @@ export type PdokAdres = {
  * Zoekt een adres op bij PDOK. Geeft `null` terug bij geen match of
  * netwerkfout — de aanroeper beslist hoe daarmee om te gaan (Contact laat de
  * gebruiker het adres handmatig invullen; de subsidiecheck toont een melding).
+ * `toevoeging` (bijv. "A" of "2") verfijnt de match voor appartementen.
  */
-export async function zoekAdres(postcode: string, huisnummer: string): Promise<PdokAdres | null> {
+export async function zoekAdres(
+  postcode: string,
+  huisnummer: string,
+  toevoeging?: string,
+): Promise<PdokAdres | null> {
   const pc = normalizePostcode(postcode);
   const hn = huisnummer.trim();
+  const tv = toevoeging?.trim() ?? "";
   if (!POSTCODE_RE.test(postcode) || !/^[0-9]/.test(hn)) return null;
 
   try {
-    const url = `https://api.pdok.nl/bzk/locatieserver/search/v3_1/free?q=${encodeURIComponent(pc)}+${encodeURIComponent(hn)}&fq=type:adres&fl=straatnaam,woonplaatsnaam,gemeentenaam,provincienaam&rows=1`;
+    const q = [pc, hn, tv].filter(Boolean).map(encodeURIComponent).join("+");
+    const url = `https://api.pdok.nl/bzk/locatieserver/search/v3_1/free?q=${q}&fq=type:adres&fl=straatnaam,woonplaatsnaam,gemeentenaam,provincienaam&rows=1`;
     const res = await fetch(url);
     if (!res.ok) return null;
     const data = await res.json();
