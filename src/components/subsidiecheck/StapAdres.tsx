@@ -6,6 +6,9 @@ import { POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib/pdok";
 const inputClass =
   "w-full rounded-lg border border-input bg-background px-4 py-3 text-[16px] lg:text-[15px] text-foreground outline-none transition min-h-[48px] focus:border-accent focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.18)]";
 
+// Typt mee met de gebruiker: hoofdletters, alleen geldige tekens.
+const formatPostcode = (v: string) => v.toUpperCase().replace(/[^0-9A-Z ]/g, "").slice(0, 7);
+
 interface StapAdresProps {
   initPostcode: string;
   initHuisnummer: string;
@@ -24,6 +27,7 @@ export const StapAdres = ({ initPostcode, initHuisnummer, foutmelding, onBevesti
   const [fout, setFout] = useState<string | null>(foutmelding ?? null);
   const [gevonden, setGevonden] = useState<PdokAdres | null>(null);
   const doorTimer = useRef<ReturnType<typeof setTimeout>>();
+  const huisnummerRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => () => clearTimeout(doorTimer.current), []);
 
@@ -73,9 +77,12 @@ export const StapAdres = ({ initPostcode, initHuisnummer, foutmelding, onBevesti
             className={inputClass}
             value={postcode}
             onChange={(e) => {
-              setPostcode(e.target.value);
+              const v = formatPostcode(e.target.value);
+              setPostcode(v);
               setFout(null);
               setGevonden(null);
+              // Volledige postcode getypt? Dan alvast door naar het huisnummer.
+              if (POSTCODE_RE.test(v)) huisnummerRef.current?.focus();
             }}
             aria-invalid={!!fout}
             aria-describedby={fout ? "sc-adres-fout" : undefined}
@@ -88,6 +95,7 @@ export const StapAdres = ({ initPostcode, initHuisnummer, foutmelding, onBevesti
           </label>
           <input
             id="sc-huisnummer"
+            ref={huisnummerRef}
             name="huisnummer"
             type="text"
             inputMode="numeric"

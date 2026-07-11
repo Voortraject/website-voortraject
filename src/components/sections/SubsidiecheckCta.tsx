@@ -1,8 +1,11 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
 import { normalizePostcode, POSTCODE_RE } from "@/lib/pdok";
+
+// Typt mee met de gebruiker: hoofdletters, alleen geldige tekens.
+const formatPostcode = (v: string) => v.toUpperCase().replace(/[^0-9A-Z ]/g, "").slice(0, 7);
 
 // Instappunt van de subsidiecheck op de homepage, direct onder de trustbar
 // ("We werken met alle officiële regelingen" — de check is het bewijs van die
@@ -13,6 +16,7 @@ export const SubsidiecheckCta = () => {
   const [postcode, setPostcode] = useState("");
   const [huisnummer, setHuisnummer] = useState("");
   const [fout, setFout] = useState<string | null>(null);
+  const huisnummerRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -42,6 +46,9 @@ export const SubsidiecheckCta = () => {
           </p>
 
           <form onSubmit={handleSubmit} noValidate className="mx-auto mt-7" style={{ maxWidth: 560 }}>
+            {/* Elke input een eigen subtiel vlak in de huiskleur van de
+                Herkenning-sectie (#F5F3ED), zodat postcode en huisnummer als
+                twee duidelijke velden lezen binnen de witte pill. */}
             <div className="flex flex-col gap-2 rounded-2xl bg-card p-2 shadow-card sm:flex-row sm:items-center sm:rounded-full">
               <label className="sr-only" htmlFor="home-sc-postcode">
                 Postcode
@@ -51,26 +58,29 @@ export const SubsidiecheckCta = () => {
                 type="text"
                 autoComplete="postal-code"
                 placeholder="Postcode"
-                className="min-h-[48px] flex-1 rounded-xl bg-transparent px-4 text-[16px] text-foreground outline-none placeholder:text-muted-foreground sm:rounded-full lg:text-[15px]"
+                className="min-h-[48px] w-full rounded-xl bg-[#F5F3ED] px-5 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:bg-white focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-40 sm:rounded-full lg:text-[15px]"
                 value={postcode}
                 onChange={(e) => {
-                  setPostcode(e.target.value);
+                  const v = formatPostcode(e.target.value);
+                  setPostcode(v);
                   setFout(null);
+                  // Volledige postcode getypt? Dan alvast door naar het huisnummer.
+                  if (POSTCODE_RE.test(v)) huisnummerRef.current?.focus();
                 }}
                 maxLength={7}
                 aria-invalid={!!fout}
                 aria-describedby={fout ? "home-sc-fout" : undefined}
               />
-              <span aria-hidden="true" className="hidden h-6 w-px bg-border sm:block" />
               <label className="sr-only" htmlFor="home-sc-huisnummer">
                 Huisnummer
               </label>
               <input
                 id="home-sc-huisnummer"
+                ref={huisnummerRef}
                 type="text"
                 inputMode="numeric"
                 placeholder="Huisnr."
-                className="min-h-[48px] w-full rounded-xl bg-transparent px-4 text-[16px] text-foreground outline-none placeholder:text-muted-foreground sm:w-24 sm:rounded-full lg:text-[15px]"
+                className="min-h-[48px] w-full rounded-xl bg-[#F5F3ED] px-4 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:bg-white focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-28 sm:rounded-full lg:text-[15px]"
                 value={huisnummer}
                 onChange={(e) => {
                   setHuisnummer(e.target.value);
@@ -80,7 +90,7 @@ export const SubsidiecheckCta = () => {
               />
               <button
                 type="submit"
-                className="inline-flex min-h-[48px] items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-accent px-6 py-3 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover sm:rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-accent px-6 py-3 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover sm:rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 Bekijk mijn subsidies
                 <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />

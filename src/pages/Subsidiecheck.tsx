@@ -115,7 +115,7 @@ const Subsidiecheck = () => {
 
               {/* Bevestigd adres boven stap 2 en 3, met wijzig-linkje. */}
               {stap > 1 && adres && (
-                <p className="mt-4 flex items-center justify-center gap-2 text-center text-[14px] text-foreground/80">
+                <p className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-[14px] text-foreground/80">
                   <span>
                     {adres.straatnaam} {hn.trim()}, {adres.woonplaatsnaam}
                   </span>
@@ -127,6 +127,20 @@ const Subsidiecheck = () => {
                     <Pencil size={12} aria-hidden="true" />
                     wijzig
                   </button>
+                  {stap === 3 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // Terug naar stap 2 mét behoud van adres en maatregelen.
+                        const params: Record<string, string> = { pc, hn };
+                        if (mParam !== null) params.m = mParam;
+                        setSearchParams(params);
+                      }}
+                      className="inline-flex items-center gap-1 text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
+                    >
+                      situatie aanpassen
+                    </button>
+                  )}
                 </p>
               )}
 
