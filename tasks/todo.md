@@ -2,6 +2,145 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Subsidiechecker — conversietool (2026-07-12)
+
+Branch: `feat/subsidiecheck` (langlopende feature-branch, meerdere dagen; regelmatig
+`main` erin mergen tegen drift). **Nog niet gebouwd — dit is het plan.**
+
+### Doel
+Een postcode-gedreven subsidiechecker die bezoekers naar de site trekt en omzet in leads.
+Bezoeker vult postcode (+ huisnummer) in → ziet in één rustig overzicht álle relevante
+verduurzamingssubsidies (landelijk + provinciaal + gemeentelijk) voor heel Noord-Nederland.
+
+**Leidend principe: value-first, conversie-tweede.** De tool verdient vertrouwen door écht
+nuttig te zijn; de CTA is "wij nemen het uitzoek- en aanvraagwerk van je over", nooit
+"koop nu". Kalme, betrouwbare huisstijl (institutional B2B) — geen hype, geen "GRATIS GELD".
+
+### Databron-strategie (belangrijk)
+- Data komt van een **externe, onderhouden bron** (voorkeur: Milieu Centraal /
+  Energiesubsidiewijzer API — gratis, CC-0, gezaghebbend; mail is verstuurd, wachten op
+  whitelist + docs). Bevestigd dat die bron voor een Emmen-adres rijk + provincie + gemeente
+  teruggeeft.
+- **We bouwen achter een adapter zodat de bron verwisselbaar is** en we NIET op de mail
+  hoeven te wachten. Alleen de laatste bekabeling (endpoint/auth/veldnamen) wacht.
+- Fallback-bronnen indien Milieu Centraal afwijst: Altum AI Subsidies API (betaald) of eigen
+  gecureerde DB (ruggengraat: landelijk + Nij Begun/SNN + provinciaal). Zie geheugen
+  `business-scope-noord-nederland` en `supabase-crm-only-active`.
+
+### Architectuur — adapterlaag (`src/lib/subsidies/`)
+- `types.ts` — `SubsidieNiveau = 'rijk' | 'provincie' | 'gemeente' | 'overig'`;
+  `SubsidieResultaat { id, titel, niveau, omschrijving, bedragIndicatie?, bronUrl, aanbieder }`;
+  `SubsidieCheckInput { postcode, huisnummer, bewonertype, maatregelen[] }`;
+  `Bewonertype = 'woningeigenaar' | 'huurder' | 'vve' | 'verhuurder'`.
+- `provider.ts` — interface `SubsidieProvider { check(input): Promise<SubsidieResultaat[]> }`.
+- `mockProvider.ts` — realistische mockdata in het Verbeterjehuis-formaat, met
+  postcode-afhankelijke variatie (Groningen→Nij Begun/SNN, Drenthe→provinciale/gemeentelijke,
+  landelijk altijd ISDE/Warmtefonds). Zodat de hele flow nu al echt werkt.
+- `milieuCentraalProvider.ts` — stub, in te vullen zodra docs binnen zijn.
+- `index.ts` — exporteert de actieve provider (één plek om te wisselen: mock → echt).
+- `useSubsidieCheck` hook (react-query) om provider te wrappen: caching, loading, error.
+
+### Herbruikbare bouwstenen (bestaan al)
+- **PDOK adres-lookup** staat al in `Contact.tsx` (`lookupAdres`, `POSTCODE_RE`,
+  `normalizePostcode`). → **Refactor naar `src/lib/pdok.ts` + `usePdokAdres` hook** en laat
+  zowel Contact als Subsidiecheck die delen (DRY, één implementatie).
+- **Lead-insert** gaat al naar `supabaseExternal.from("leads_bewoners").insert({...})` met
+  velden tenant_id, naam, email, telefoon, postcode, huisnummer, toevoeging, straat, stad,
+  notities, bron, status. → Hergebruiken met `bron: "Subsidiecheck"`; geselecteerde
+  maatregelen + gevonden subsidies in `notities`. **Exact dezelfde tabel/kolommen — niet
+  hernoemen** (data-integriteit, CLAUDE.md-regel 2).
+- `CtaButton`, `Seo`, sectiepatronen, design-tokens (`text-accent`, `text-primary`,
+  `bg-secondary`, `bg-card-soft`).
+
+### UX-flow (elk detail)
+**1. Homepage-instappunt — sectie direct ónder `LogoCarousel`** (nieuw
+`src/components/sections/SubsidiecheckCta.tsx`, ingevoegd in `Index.tsx` tussen
+`<LogoCarousel/>` en `<Herkenning/>`):
+- Rustige sectie (bijv. `bg-secondary` sand of `bg-card-soft` cream, contrast met witte strip).
+- Kop: "Ontdek welke subsidies er voor jouw woning zijn". Subregel: "Vul je postcode in en
+  zie in één overzicht alle regelingen — landelijk, provinciaal én van jouw gemeente."
+- **Inline postcode + huisnummer-veld direct in de sectie** + knop "Bekijk mijn subsidies →".
+  Start de flow al op de home; navigeert naar `/subsidiecheck?pc=…&hn=…` (voorinvullen).
+- Subtiele trust-cue: "Gratis · geen account nodig · klaar in 1 minuut". Klein, niet schreeuwerig.
+
+**2. Hero secundaire CTA** — op de plek van "Of bel direct: 050 211 2689" in `Hero.tsx` komt
+"Check jouw subsidies" (zelfde outline/secundaire stijl, concurreert niet met de gouden
+"Plan een gratis gesprek"). Telefoon blijft bereikbaar via de header-pill + WhatsApp-knop.
+→ *Beslispunt bevestigd met opdrachtgever: telefoon-CTA hier vervangen is akkoord.*
+
+**3. De tool — `/subsidiecheck` (nieuw `src/pages/Subsidiecheck.tsx`)**, lichte stapper met
+voortgangsindicator (afrondingspsychologie), mobile-first, tapdoelen ≥44px:
+- **Stap 1 — Adres:** postcode + huisnummer (voorgevuld vanaf home). PDOK bevestigt zichtbaar
+  ("Kerkstraat 12, Groningen ✓") → vertrouwen + minder fouten. Duidelijke, vriendelijke
+  foutmeldingen bij geen match.
+- **Stap 2 — Situatie (kort houden = hogere completion):**
+  - Type bewoner (woningeigenaar/huurder/VvE/verhuurder) als grote tapbare kaarten, geen dropdown.
+  - Maatregelen van interesse (isolatie, warmtepomp, zonnepanelen, ventilatie, …) als
+    multi-select chips. **Default "toon alles"** zodat een luie gebruiker tóch resultaat krijgt.
+  - Niet méér vragen dan de bron nodig heeft (Verbeterjehuis gebruikt enkel postcode +
+    bewonertype + maatregelfilters — geen bouwjaar/woningtype forceren).
+- **Stap 3 — Resultaat (de payoff):**
+  - Kopregel: "We vonden X regelingen voor jouw adres."
+  - Scanbare lijst, **gegroepeerd per niveau** (Rijksoverheid / Provincie / Gemeente / Overig)
+    met gekleurde labels zoals Verbeterjehuis. `SubsidieCard`: titel + niveau-tag + 1 regel
+    uitleg + indicatief bedrag (indien beschikbaar) + "Meer info" → officiële bron.
+  - Skeleton-loading tijdens ophalen; nette empty- en error-state.
+- **Conversie aan het eind (kalm, contextueel):**
+  - Primair: "Subsidies stapelen is ingewikkeld — wij regelen de aanvraag gratis voor je.
+    → Plan een gratis gesprek" (`CtaButton` naar `/contact`).
+  - Zacht (minst commercieel, hoogste opbrengst): **"Mail mij dit overzicht"** — vangt e-mail
+    + adres → `leads_bewoners` (`bron: "Subsidiecheck"`). Lage drempel, hoge waarde, voedt CRM.
+
+### Conversie zonder commercieel te ogen
+- Waarde vóórop (het overzicht), CTA als hulp geframed, niet als verkoop.
+- Twee conversieroutes: gesprek (warm) + e-mail-overzicht (zacht) — beide naar CRM met
+  onderscheidende `bron`.
+- Snelle resultaten, voortgangsbalk, grote tapdoelen, één kolom op mobiel.
+
+### Taken per fase
+**Fase 0 — Scaffolding**
+- [ ] Adapterlaag `src/lib/subsidies/` (types, provider-interface, mockProvider, index)
+- [ ] `useSubsidieCheck` hook (react-query)
+- [ ] Refactor PDOK naar `src/lib/pdok.ts` + `usePdokAdres`; Contact.tsx laten hergebruiken
+- [ ] Route `/subsidiecheck` in `App.tsx` + lege pagina-shell (Header/Seo/Footer)
+
+**Fase 1 — De flow (mockdata, volledig gestyled)**
+- [ ] Stapper + voortgangsindicator, focus-management tussen stappen
+- [ ] Stap 1 Adres (PDOK-bevestiging), Stap 2 Situatie (kaarten + chips), Stap 3 Resultaat
+- [ ] `SubsidieCard` + groepering per niveau + skeleton/empty/error-states
+
+**Fase 2 — Instappunten**
+- [ ] Homepage-sectie `SubsidiecheckCta` onder `LogoCarousel` (inline postcode → deeplink)
+- [ ] Hero secundaire CTA "Check jouw subsidies" i.p.v. "Of bel direct"
+- [ ] Nav: uitgelicht item in `Subsidies`-dropdown (icoon + "Tool"-label + divider) — desktop
+      én mobiel menu in `Header.tsx`
+
+**Fase 3 — Lead capture**
+- [ ] "Mail mij dit overzicht" → `leads_bewoners` (bron "Subsidiecheck", maatregelen+aantal in
+      notities), zelfde validatie/honeypot-patroon als Contact.tsx
+- [ ] Consent-aware GTM-event op voltooiing (alleen ná Axeptio-consent; geen tracker vóór keuze)
+
+**Fase 4 — Polish & verificatie**
+- [ ] A11y: semantische stappen, `aria-live` op resultaat, toetsenbordnav op kaarten/chips, labels
+- [ ] SEO: `/subsidiecheck` meta + opnemen in `scripts/generate-sitemap.ts`
+- [ ] Tests (vitest): adapter groepeert/filtert correct; postcode-validatie; basis render-flow
+- [ ] `prefers-reduced-motion`, responsive QA, headless visuele verificatie (zie geheugen)
+- [ ] `bun run lint` + typecheck + `bun run build` groen
+
+**Fase 5 — Echte bron inpluggen (wacht op Milieu Centraal)**
+- [ ] `milieuCentraalProvider` invullen (endpoint/auth/veldnamen), provider omwisselen in `index.ts`
+- [ ] Verifiëren tegen echte responses (postcodeniveau vs adresniveau bevestigen)
+
+### Open beslissingen / risico's
+- Granulariteit bron: Verbeterjehuis-URL gebruikt alleen `postalcode` (geen huisnummer) →
+  waarschijnlijk PC6-niveau. Huisnummer dan vooral voor adresbevestiging + lead. Bevestigen bij docs.
+- Geen ongesanctioneerde website-URL van Milieu Centraal als "achterdeur-API" in productie.
+- Data-integriteit: `leads_bewoners`-schema is een gedeelde CRM-tabel — kolommen exact
+  overnemen zoals in Contact.tsx (geverifieerd), geen nieuwe velden zonder bevestiging.
+
+### Review
+_(in te vullen na oplevering)_
+
 ## Google Reviews auto-sync op de home (2026-07-09)
 
 Branch: `feat/google-reviews-sync`. Vervangt de handmatige review-array door een
