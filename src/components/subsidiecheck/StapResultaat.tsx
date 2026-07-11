@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Check, Loader2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Check, Link2, Loader2 } from "lucide-react";
 
 import { CtaButton } from "@/components/CtaButton";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
@@ -40,6 +40,22 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
   const { data: regelingen, isPending, isError, refetch } = useSubsidieCheck(input);
   const fase = useLaadsequentie(!isPending);
   const laden = isPending || fase < 3;
+
+  // De URL bevat de volledige check-state, dus de link ís het overzicht —
+  // handig om te delen met partner of buren.
+  const [gekopieerd, setGekopieerd] = useState(false);
+  const kopieerTimer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => () => clearTimeout(kopieerTimer.current), []);
+  const kopieerLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setGekopieerd(true);
+      clearTimeout(kopieerTimer.current);
+      kopieerTimer.current = setTimeout(() => setGekopieerd(false), 2500);
+    } catch {
+      /* clipboard geweigerd → knop doet stil niets */
+    }
+  };
 
   const groepen = useMemo(() => groepeerPerNiveau(regelingen ?? []), [regelingen]);
   const adresRegel = `${adres.straatnaam} ${input.huisnummer}, ${adres.woonplaatsnaam}`;
@@ -140,7 +156,28 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         ))}
       </div>
 
-      <p className="mt-6 text-[12px] text-muted-foreground">
+      <div className="mt-5">
+        <button
+          type="button"
+          onClick={kopieerLink}
+          className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-[13px] font-medium text-primary transition-colors hover:border-primary/40 min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          aria-live="polite"
+        >
+          {gekopieerd ? (
+            <>
+              <Check size={14} strokeWidth={2.5} className="text-accent" aria-hidden="true" />
+              Link gekopieerd
+            </>
+          ) : (
+            <>
+              <Link2 size={14} strokeWidth={2} aria-hidden="true" />
+              Kopieer link naar dit overzicht
+            </>
+          )}
+        </button>
+      </div>
+
+      <p className="mt-4 text-[12px] text-muted-foreground">
         Indicatief overzicht op basis van je postcode — of een regeling openstaat hangt af van voorwaarden en
         beschikbaar budget. Aan dit overzicht kunnen geen rechten worden ontleend.
       </p>

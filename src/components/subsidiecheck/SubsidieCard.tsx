@@ -1,6 +1,12 @@
 import { ExternalLink } from "lucide-react";
 
-import { NIVEAU_LABELS, type SubsidieNiveau, type SubsidieRegeling } from "@/lib/subsidies";
+import {
+  ALLE_MAATREGELEN,
+  MAATREGEL_LABELS,
+  NIVEAU_LABELS,
+  type SubsidieNiveau,
+  type SubsidieRegeling,
+} from "@/lib/subsidies";
 
 // Gedempte niveau-badges binnen de huisstijl — bewust geen stoplichtkleuren.
 const BADGE_CLASSES: Record<SubsidieNiveau, string> = {
@@ -8,6 +14,16 @@ const BADGE_CLASSES: Record<SubsidieNiveau, string> = {
   provincie: "bg-secondary text-secondary-foreground",
   gemeente: "bg-accent/25 text-primary",
   overig: "bg-muted text-muted-foreground",
+};
+
+// Maatregel-tags: in één oogopslag zien wáár de regeling over gaat. Dekt een
+// regeling (vrijwel) alles, dan één tag i.p.v. acht; anders max vier + teller.
+const MAX_TAGS = 4;
+const maatregelTags = (regeling: SubsidieRegeling): string[] => {
+  if (regeling.maatregelen.length >= ALLE_MAATREGELEN.length - 1) return ["Alle maatregelen"];
+  const labels = regeling.maatregelen.map((m) => MAATREGEL_LABELS[m]);
+  if (labels.length <= MAX_TAGS) return labels;
+  return [...labels.slice(0, MAX_TAGS), `+${labels.length - MAX_TAGS} meer`];
 };
 
 // Eén regeling in het resultaat: titel, niveau-badge, één regel uitleg,
@@ -29,6 +45,17 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => (
       {regeling.titel}
     </h3>
     <p className="mt-1.5 text-[14px] leading-relaxed text-foreground/80">{regeling.omschrijving}</p>
+
+    <div className="mt-3 flex flex-wrap gap-1.5">
+      {maatregelTags(regeling).map((tag) => (
+        <span
+          key={tag}
+          className="inline-flex items-center rounded-full border border-border bg-background px-2.5 py-0.5 text-[12px] text-muted-foreground"
+        >
+          {tag}
+        </span>
+      ))}
+    </div>
 
     <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
       <span className="text-[13px] text-muted-foreground">{regeling.aanbieder}</span>
