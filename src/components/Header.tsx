@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown, Phone } from "lucide-react";
+import { Menu, X, ChevronDown, Phone, Search } from "lucide-react";
 import logoVoortrajectBlauw from "@/assets/logo-voortraject-blauw.png";
 
 const pillShadow = {
@@ -15,7 +15,9 @@ const glassPill = "bg-white/70 backdrop-blur-xl";
 // need a higher white opacity to read as the *same* frosted surface as the pills.
 const glassPanel = "bg-white/90 backdrop-blur-xl";
 
-const verduurzamenItems = [
+type DropdownItem = { href: string; label: string; tool?: boolean };
+
+const verduurzamenItems: DropdownItem[] = [
   { href: "/verduurzamen/isolatie", label: "Isolatie & ventilatie" },
   { href: "/verduurzamen/warmtepomp", label: "Warmtepomp" },
   { href: "/verduurzamen/airco", label: "Airco" },
@@ -25,7 +27,10 @@ const verduurzamenItems = [
   { href: "/verduurzamen/onderhoud", label: "Onderhoud" },
 ];
 
-const subsidiesItems = [
+const subsidiesItems: DropdownItem[] = [
+  // De subsidiecheck is een interactieve tool, geen leespagina — uitgelicht
+  // bovenaan de dropdown, visueel losgetrokken van de informatiepagina's.
+  { href: "/subsidiecheck", label: "Subsidiecheck", tool: true },
   { href: "/subsidies/nij-begun", label: "Nij Begun" },
   { href: "/subsidies/landelijk", label: "Landelijke subsidies" },
   { href: "/subsidies/regionaal", label: "Regionale subsidies" },
@@ -79,16 +84,31 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
                 </button>
                 {openSection === l.href && (
                   <div className="pb-4 pl-2 flex flex-col gap-2">
-                    {l.dropdown.map((s) => (
-                      <a
-                        key={s.href}
-                        href={s.href}
-                        onClick={onClose}
-                        className="py-2 text-lg text-white/80 hover:text-accent"
-                      >
-                        {s.label}
-                      </a>
-                    ))}
+                    {l.dropdown.map((s) =>
+                      s.tool ? (
+                        <a
+                          key={s.href}
+                          href={s.href}
+                          onClick={onClose}
+                          className="inline-flex items-center gap-2 py-2 text-lg font-semibold text-white hover:text-accent"
+                        >
+                          <Search size={17} strokeWidth={2} aria-hidden="true" />
+                          {s.label}
+                          <span className="rounded-full bg-accent/30 px-2 py-0.5 text-[11px] font-semibold text-white">
+                            Tool
+                          </span>
+                        </a>
+                      ) : (
+                        <a
+                          key={s.href}
+                          href={s.href}
+                          onClick={onClose}
+                          className="py-2 text-lg text-white/80 hover:text-accent"
+                        >
+                          {s.label}
+                        </a>
+                      ),
+                    )}
                   </div>
                 )}
               </div>
@@ -180,15 +200,31 @@ export const Header = () => {
                   </button>
                   <div className="absolute left-1/2 -translate-x-1/2 top-full pt-3 hidden group-hover:block">
                     <div className={`${glassPanel} rounded-lg overflow-hidden py-2 min-w-[220px]`} style={pillShadow}>
-                      {l.dropdown.map((s) => (
-                        <a
-                          key={s.href}
-                          href={s.href}
-                          className="block px-4 py-2.5 text-[14px] text-foreground hover:bg-secondary hover:text-primary transition-colors"
-                        >
-                          {s.label}
-                        </a>
-                      ))}
+                      {l.dropdown.map((s) =>
+                        s.tool ? (
+                          <div key={s.href}>
+                            <a
+                              href={s.href}
+                              className="flex items-center gap-2.5 px-4 py-2.5 text-[14px] font-semibold text-primary hover:bg-secondary transition-colors"
+                            >
+                              <Search size={15} strokeWidth={2} className="text-primary" aria-hidden="true" />
+                              {s.label}
+                              <span className="ml-auto rounded-full bg-accent/25 px-2 py-0.5 text-[11px] font-semibold text-primary">
+                                Tool
+                              </span>
+                            </a>
+                            <div className="mx-4 my-1.5 h-px bg-border" aria-hidden="true" />
+                          </div>
+                        ) : (
+                          <a
+                            key={s.href}
+                            href={s.href}
+                            className="block px-4 py-2.5 text-[14px] text-foreground hover:bg-secondary hover:text-primary transition-colors"
+                          >
+                            {s.label}
+                          </a>
+                        ),
+                      )}
                     </div>
                   </div>
                 </div>

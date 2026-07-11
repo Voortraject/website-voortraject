@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
+import { normalizePostcode, POSTCODE_RE, zoekAdres } from "@/lib/pdok";
 import contactAdviseur from "@/assets/christian-koptelefoon.webp";
 
 type Mode = "uitvoerder" | "bewoner";
@@ -71,7 +72,6 @@ const FREE_EMAIL_DOMAINS = ["gmail.com", "hotmail.com", "outlook.com", "live.nl"
 const NAME_RE = /^[\p{L}\s'\-]+$/u;
 const COMPANY_RE = /^[\p{L}\p{N}\s.,&\-'()/]+$/u;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const POSTCODE_RE = /^[1-9][0-9]{3}\s?[A-Za-z]{2}$/;
 
 const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
@@ -85,8 +85,6 @@ const validatePhoneNL = (raw: string): boolean => {
   // Vaste lijn varianten met 10 cijfers ook gedekt door 0xxxxxxxxx
   return false;
 };
-
-const normalizePostcode = (s: string) => s.replace(/\s+/g, "").toUpperCase();
 
 // ---------- Component ----------
 const Contact = () => {
@@ -123,37 +121,24 @@ const Contact = () => {
       return next;
     });
 
-  // ---------- PDOK lookup ----------
+  // ---------- PDOK lookup (gedeeld met de subsidiecheck, zie src/lib/pdok.ts) ----------
   const lookupAdres = async () => {
-    const pc = normalizePostcode(bewoner.postcode);
     const hn = bewoner.huisnummer.trim();
     if (!POSTCODE_RE.test(bewoner.postcode) || !/^[0-9]/.test(hn)) return;
     setAdresLoading(true);
     setAdresChecked(false);
-    try {
-      const url = `https://api.pdok.nl/bzk/locatieserver/search/v3_1/free?q=${encodeURIComponent(pc)}+${encodeURIComponent(hn)}&fq=type:adres&fl=straatnaam,woonplaatsnaam&rows=1`;
-      const res = await fetch(url);
-      setAdresChecked(true);
-      if (res.ok) {
-        const data = await res.json();
-        const doc = data?.response?.docs?.[0];
-        if (doc?.straatnaam && doc?.woonplaatsnaam) {
-          setBewoner((b) => ({ ...b, straatnaam: doc.straatnaam, plaatsnaam: doc.woonplaatsnaam }));
-          setAdresLocked(true);
-          setAdresEditOverride(false);
-          clearError("straatnaam");
-          clearError("plaatsnaam");
-          return;
-        }
-      }
+    const adres = await zoekAdres(bewoner.postcode, hn);
+    setAdresChecked(true);
+    if (adres) {
+      setBewoner((b) => ({ ...b, straatnaam: adres.straatnaam, plaatsnaam: adres.woonplaatsnaam }));
+      setAdresLocked(true);
+      setAdresEditOverride(false);
+      clearError("straatnaam");
+      clearError("plaatsnaam");
+    } else {
       setAdresLocked(false);
-    } catch (err) {
-      console.error("PDOK lookup failed", err);
-      setAdresChecked(true);
-      setAdresLocked(false);
-    } finally {
-      setAdresLoading(false);
     }
+    setAdresLoading(false);
   };
 
   const handlePostcodeChange = (v: string) => {

@@ -1,4 +1,4 @@
-import { Check, Phone } from "lucide-react";
+import { Check, Search } from "lucide-react";
 
 import { CtaButton } from "@/components/CtaButton";
 import { GoogleG } from "@/components/GoogleG";
@@ -75,12 +75,14 @@ export const Hero = () => {
 
           <div className="mt-8 md:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
             <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
+            {/* Secundaire CTA naar de subsidiecheck; bellen kan nog via de
+                header-pill en de WhatsApp-knop. */}
             <a
-              href="tel:+31502112689"
+              href="/subsidiecheck"
               className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-medium border border-white/80 text-white transition-all duration-150 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             >
-              <Phone size={16} strokeWidth={2} aria-hidden="true" />
-              <span>Of bel direct: 050 211 2689</span>
+              <Search size={16} strokeWidth={2} aria-hidden="true" />
+              <span>Check jouw subsidies</span>
             </a>
           </div>
 

@@ -17,6 +17,7 @@ import Laadpaal from "./pages/maatregelen/Laadpaal.tsx";
 import Onderhoud from "./pages/maatregelen/Onderhoud.tsx";
 import OverOns from "./pages/OverOns.tsx";
 import Contact from "./pages/Contact.tsx";
+import Subsidiecheck from "./pages/Subsidiecheck.tsx";
 import SubsidiesNijBegun from "./pages/SubsidiesNijBegun.tsx";
 import SubsidiesLandelijk from "./pages/SubsidiesLandelijk.tsx";
 import SubsidiesRegionaal from "./pages/SubsidiesRegionaal.tsx";
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/over-ons" element={<OverOns />} />
 
             <Route path="/contact" element={<Contact />} />
+            <Route path="/subsidiecheck" element={<Subsidiecheck />} />
             <Route path="/subsidies/nij-begun" element={<SubsidiesNijBegun />} />
             <Route path="/subsidies/landelijk" element={<SubsidiesLandelijk />} />
             <Route path="/subsidies/regionaal" element={<SubsidiesRegionaal />} />

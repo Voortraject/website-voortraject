@@ -130,6 +130,8 @@ voortgangsindicator (afrondingspsychologie), mobile-first, tapdoelen ≥44px:
 **Fase 5 — Echte bron inpluggen (wacht op Milieu Centraal)**
 - [ ] `milieuCentraalProvider` invullen (endpoint/auth/veldnamen), provider omwisselen in `index.ts`
 - [ ] Verifiëren tegen echte responses (postcodeniveau vs adresniveau bevestigen)
+- [ ] E-mailverzending voor "Mail mij dit overzicht" (edge function of handmatig vanuit CRM
+      binnen 24u — zolang dat niet geregeld is belooft de UI iets dat het team moet waarmaken)
 
 ### Open beslissingen / risico's
 - Granulariteit bron: Verbeterjehuis-URL gebruikt alleen `postalcode` (geen huisnummer) →
@@ -138,8 +140,26 @@ voortgangsindicator (afrondingspsychologie), mobile-first, tapdoelen ≥44px:
 - Data-integriteit: `leads_bewoners`-schema is een gedeelde CRM-tabel — kolommen exact
   overnemen zoals in Contact.tsx (geverifieerd), geen nieuwe velden zonder bevestiging.
 
-### Review
-_(in te vullen na oplevering)_
+### Review (2026-07-12 — Fase 0 t/m 4 af, flow werkt end-to-end op mock)
+- **Gebouwd:** adapterlaag (`src/lib/subsidies/`: types, provider-interface, mockProvider
+  met regiofiltering op PDOK-gemeente/-provincie), hooks `usePdokAdres` +
+  `useSubsidieCheck` (react-query), PDOK gedeeld via `src/lib/pdok.ts` (Contact.tsx
+  gerefactord, gedrag identiek), pagina `/subsidiecheck` met stapper (state volledig in
+  URL → back-button, herladen en delen werken), homepage-sectie `SubsidiecheckCta`,
+  hero-CTA "Check jouw subsidies" (i.p.v. "Of bel direct"), uitgelicht Tool-item in de
+  Subsidies-dropdown (desktop + mobiel), "Mail mij dit overzicht" → `leads_bewoners`
+  (bron "Subsidiecheck"), sitemap-entry.
+- **Geverifieerd:** 12/12 vitest groen (filtering, groepering, postcodevalidatie);
+  tsc schoon; build groen (sitemap 15 entries); lint 0 níeuwe issues (20 pre-existing,
+  identiek met/zonder deze diff); headless visueel: stap 1→2→3 op desktop én mobiel,
+  met échte PDOK-lookup (Emmen: rijk + provincie + 2× gemeente + Warmtefonds correct
+  gegroepeerd). Gotcha vastgelegd: Chrome headless clampt window-width op ~500px.
+- **Bewust buiten scope gelaten:** de 20 pre-existing lint-issues; verwijderde
+  `christian-bellen.webp` in de working tree (was al zo, niet van deze taak; niet
+  gecommit).
+- **Open voor merge:** consent-aware GTM-event (Fase 3-restje), e-mailverzending
+  overzicht, echte Milieu Centraal-provider (Fase 5). Mock is als bron zichtbaar
+  ("Voorbeeldgegevens") dus niet stiekem.
 
 ## Google Reviews auto-sync op de home (2026-07-09)
 
