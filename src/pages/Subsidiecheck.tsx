@@ -112,7 +112,19 @@ const Subsidiecheck = () => {
         <section className="pt-4 pb-16 md:pt-6 md:pb-24">
           <div className="container-content">
             <div className="mx-auto w-full" style={{ maxWidth: 640 }}>
-              <Voortgang huidige={stap} />
+              <Voortgang
+                huidige={stap}
+                onStapKlik={(doel) => {
+                  if (doel === 1) {
+                    setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" });
+                  } else {
+                    // Naar stap 2: type laten vallen, maatregelen behouden.
+                    const params: Record<string, string> = { pc, hn };
+                    if (mParam !== null) params.m = mParam;
+                    setSearchParams(params);
+                  }
+                }}
+              />
 
               <h1
                 ref={kopRef}

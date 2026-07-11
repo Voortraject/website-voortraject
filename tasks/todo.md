@@ -148,6 +148,15 @@ voortgangsindicator (afrondingspsychologie), mobile-first, tapdoelen ≥44px:
 - [ ] E-mailverzending voor "Mail mij dit overzicht" (edge function of handmatig vanuit CRM
       binnen 24u — zolang dat niet geregeld is belooft de UI iets dat het team moet waarmaken)
 
+### Suggesties uit vergelijk met Verbetercheck (Verbeterjehuis, 2026-07-12)
+- [ ] **Optioneel toevoeging-veld in stap 1** (naast postcode/huisnummer): appartementen
+      (12A, 263-2) matchen anders soms verkeerd bij PDOK; contactformulier heeft het veld al.
+      Voorstel opdrachtgever — nog niet gebouwd.
+- Verbetercheck ≠ Energiesubsidiewijzer: hun 15+-vragen-wizard rekent subsidiebedragen per
+  maatregel uit; bewust NIET nabouwen (botst met "klaar in 1 minuut" — onze CTA/adviseur ís
+  de verdieping). Hun "prefill + pas aan"-patroon doen wij al via PDOK (gemeente/provincie
+  zonder vraag). Sticky samenvattings-zijbalk: bewaren voor eventuele rekenlaag later.
+
 ### Open beslissingen / risico's
 - Granulariteit bron: Verbeterjehuis-URL gebruikt alleen `postalcode` (geen huisnummer) →
   waarschijnlijk PC6-niveau. Huisnummer dan vooral voor adresbevestiging + lead. Bevestigen bij docs.

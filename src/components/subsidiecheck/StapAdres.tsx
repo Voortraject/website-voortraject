@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { Check, Loader2 } from "lucide-react";
 
 import { pushGtmEvent } from "@/lib/gtm";
-import { POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib/pdok";
+import { displayPostcode, POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib/pdok";
 
 const inputClass =
   "w-full rounded-lg border border-input bg-background px-4 py-3 text-[16px] lg:text-[15px] text-foreground outline-none transition min-h-[48px] focus:border-accent focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.18)]";
@@ -22,7 +22,7 @@ interface StapAdresProps {
 // gevonden adres kort ter bevestiging ("dit gaat echt over mijn huis") en
 // gaan we automatisch door.
 export const StapAdres = ({ initPostcode, initHuisnummer, foutmelding, onBevestigd }: StapAdresProps) => {
-  const [postcode, setPostcode] = useState(initPostcode);
+  const [postcode, setPostcode] = useState(displayPostcode(initPostcode));
   const [huisnummer, setHuisnummer] = useState(initHuisnummer);
   const [bezig, setBezig] = useState(false);
   const [fout, setFout] = useState<string | null>(foutmelding ?? null);

@@ -7,6 +7,12 @@ export const POSTCODE_RE = /^[1-9][0-9]{3}\s?[A-Za-z]{2}$/;
 
 export const normalizePostcode = (s: string) => s.replace(/\s+/g, "").toUpperCase();
 
+/** Weergavevorm met spatie: "9742HJ" → "9742 HJ". Ongeldige invoer blijft ongemoeid. */
+export const displayPostcode = (s: string) => {
+  const pc = normalizePostcode(s);
+  return /^[1-9][0-9]{3}[A-Z]{2}$/.test(pc) ? `${pc.slice(0, 4)} ${pc.slice(4)}` : s;
+};
+
 export type PdokAdres = {
   straatnaam: string;
   woonplaatsnaam: string;

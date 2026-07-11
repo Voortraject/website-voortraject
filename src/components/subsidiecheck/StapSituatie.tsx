@@ -82,7 +82,14 @@ export const StapSituatie = ({ initBewonertype, initMaatregelen, onVerder }: Sta
   };
 
   return (
-    <div>
+    // Form zodat Enter ook gewoon werkt; de kaarten/chips zijn type="button"
+    // en submitten dus niet per ongeluk.
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleVerder();
+      }}
+    >
       <fieldset>
         <legend className="block mb-3 text-[14px] font-semibold text-foreground">Ik ben…</legend>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label="Type bewoner">
@@ -164,12 +171,11 @@ export const StapSituatie = ({ initBewonertype, initMaatregelen, onVerder }: Sta
       </fieldset>
 
       <button
-        type="button"
-        onClick={handleVerder}
+        type="submit"
         className="mt-6 w-full inline-flex items-center justify-center rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         Bekijk mijn subsidies
       </button>
-    </div>
+    </form>
   );
 };
