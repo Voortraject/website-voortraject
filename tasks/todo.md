@@ -99,33 +99,48 @@ voortgangsindicator (afrondingspsychologie), mobile-first, tapdoelen ≥44px:
 
 ### Taken per fase
 **Fase 0 — Scaffolding**
-- [ ] Adapterlaag `src/lib/subsidies/` (types, provider-interface, mockProvider, index)
-- [ ] `useSubsidieCheck` hook (react-query)
-- [ ] Refactor PDOK naar `src/lib/pdok.ts` + `usePdokAdres`; Contact.tsx laten hergebruiken
-- [ ] Route `/subsidiecheck` in `App.tsx` + lege pagina-shell (Header/Seo/Footer)
+- [x] Adapterlaag `src/lib/subsidies/` (types, provider-interface, mockProvider, index)
+- [x] `useSubsidieCheck` hook (react-query)
+- [x] Refactor PDOK naar `src/lib/pdok.ts` + `usePdokAdres`; Contact.tsx laten hergebruiken
+- [x] Route `/subsidiecheck` in `App.tsx` + pagina (Header/Seo/Footer)
 
 **Fase 1 — De flow (mockdata, volledig gestyled)**
-- [ ] Stapper + voortgangsindicator, focus-management tussen stappen
-- [ ] Stap 1 Adres (PDOK-bevestiging), Stap 2 Situatie (kaarten + chips), Stap 3 Resultaat
-- [ ] `SubsidieCard` + groepering per niveau + skeleton/empty/error-states
+- [x] Stapper + voortgangsindicator, focus-management tussen stappen
+- [x] Stap 1 Adres (PDOK-bevestiging), Stap 2 Situatie (kaarten + chips), Stap 3 Resultaat
+- [x] `SubsidieCard` + groepering per niveau + laadsequentie/empty/error-states
+- [x] Extra's na review opdrachtgever: pill-verfijning home (velden #F5F3ED, streepje weg),
+      postcode auto-hoofdletters + autosprong, "situatie aanpassen" op resultaat,
+      maatregel-tags op kaarten, kopieer-link naar overzicht
 
 **Fase 2 — Instappunten**
-- [ ] Homepage-sectie `SubsidiecheckCta` onder `LogoCarousel` (inline postcode → deeplink)
-- [ ] Hero secundaire CTA "Check jouw subsidies" i.p.v. "Of bel direct"
-- [ ] Nav: uitgelicht item in `Subsidies`-dropdown (icoon + "Tool"-label + divider) — desktop
+- [x] Homepage-sectie `SubsidiecheckCta` onder `LogoCarousel` (inline postcode → deeplink)
+- [x] Hero secundaire CTA "Check jouw subsidies" i.p.v. "Of bel direct"
+- [x] Nav: uitgelicht item in `Subsidies`-dropdown (icoon + "Tool"-label + divider) — desktop
       én mobiel menu in `Header.tsx`
 
 **Fase 3 — Lead capture**
-- [ ] "Mail mij dit overzicht" → `leads_bewoners` (bron "Subsidiecheck", maatregelen+aantal in
+- [x] "Mail mij dit overzicht" → `leads_bewoners` (bron "Subsidiecheck", maatregelen+aantal in
       notities), zelfde validatie/honeypot-patroon als Contact.tsx
-- [ ] Consent-aware GTM-event op voltooiing (alleen ná Axeptio-consent; geen tracker vóór keuze)
+- [x] Consent-aware GTM-events in code (`src/lib/gtm.ts`): `subsidiecheck_start` (adres
+      bevestigd), `subsidiecheck_voltooid` (resultaat, incl. aantal/bewonertype/gemeente/
+      provincie), `subsidiecheck_lead` (mail-overzicht) — géén persoonsgegevens in de events
+- [ ] **GTM-container inrichten (klikwerk op tagmanager.google.com, container GTM-P6W5MNN4;
+      kan los van de site-deploy, ~10 min):**
+      1. *Triggers* (type "Aangepaste gebeurtenis"): `subsidiecheck_start`,
+         `subsidiecheck_voltooid`, `subsidiecheck_lead`
+      2. *Gegevenslaagvariabelen*: `aantal_regelingen`, `bewonertype`, `gemeente`, `provincie`
+      3. *GA4-gebeurtenistags* (3×): zelfde eventnamen, parameters uit stap 2 meesturen,
+         gekoppeld aan de triggers uit stap 1 — vereist bestaande GA4-basistag (meet-ID
+         `G-…`); zo niet, eerst GA4-property + Google-tag aanmaken
+      Daarna testen via Voorbeeld-modus (werkt ook op localhost, eerst Axeptio accepteren)
+      en publiceren.
 
 **Fase 4 — Polish & verificatie**
-- [ ] A11y: semantische stappen, `aria-live` op resultaat, toetsenbordnav op kaarten/chips, labels
-- [ ] SEO: `/subsidiecheck` meta + opnemen in `scripts/generate-sitemap.ts`
-- [ ] Tests (vitest): adapter groepeert/filtert correct; postcode-validatie; basis render-flow
-- [ ] `prefers-reduced-motion`, responsive QA, headless visuele verificatie (zie geheugen)
-- [ ] `bun run lint` + typecheck + `bun run build` groen
+- [x] A11y: semantische stappen, `aria-live` op resultaat, focus naar kop bij stapwissel, labels
+- [x] SEO: `/subsidiecheck` meta + opgenomen in `scripts/generate-sitemap.ts`
+- [x] Tests (vitest, 12): adapter groepeert/filtert correct; postcodevalidatie
+- [x] `prefers-reduced-motion`, headless visuele verificatie desktop + mobiel (zie geheugen)
+- [x] Typecheck + `bun run build` groen; lint 0 nieuwe issues (20 pre-existing)
 
 **Fase 5 — Echte bron inpluggen (wacht op Milieu Centraal)**
 - [ ] `milieuCentraalProvider` invullen (endpoint/auth/veldnamen), provider omwisselen in `index.ts`
