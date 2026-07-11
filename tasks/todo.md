@@ -148,10 +148,20 @@ voortgangsindicator (afrondingspsychologie), mobile-first, tapdoelen ≥44px:
 - [ ] E-mailverzending voor "Mail mij dit overzicht" (edge function of handmatig vanuit CRM
       binnen 24u — zolang dat niet geregeld is belooft de UI iets dat het team moet waarmaken)
 
-### Suggesties uit vergelijk met Verbetercheck (Verbeterjehuis, 2026-07-12)
-- [ ] **Optioneel toevoeging-veld in stap 1** (naast postcode/huisnummer): appartementen
-      (12A, 263-2) matchen anders soms verkeerd bij PDOK; contactformulier heeft het veld al.
-      Voorstel opdrachtgever — nog niet gebouwd.
+### Suggesties uit vergelijk met Verbeterjehuis (2026-07-12)
+- **Energiesubsidiewijzer werkt op postcode-only (PC6), bevestigd** door hun aanvraagform.
+  Ons huisnummer blijft voor het vertrouwensmoment (adresbevestiging) + leadkwaliteit,
+  niet voor het resultaat.
+- [ ] **Monument-vinkje** ("Mijn woning is een monument") — zij vragen het; afwijkende
+      regels/regelingen. Meenemen in **Fase 5** als de API de parameter ondersteunt; tot
+      die tijd adviseur-territorium.
+- [ ] Optioneel toevoeging-veld in stap 1 — **laag prioriteit** (verandert het resultaat
+      niet; alleen adresweergave + leaddata). Contactformulier heeft het veld al.
+- **Chips-lijst bevestigd (8)** na vergelijk met hun 18 filteropties: bewust weggelaten:
+  kleine maatregelen, gasaansluiting verwijderen, energieadvies (concurreert met eigen
+  gratis advies!), zonwering, vergroenen-tak, proces ondersteuning. Asbest verwijderen =
+  "misschien later" (agrarisch Noord-NL, combi met dakisolatie). Airco heeft geen eigen
+  chip nodig: ISDE schaart warmtepomp-airco's onder warmtepomp.
 - Verbetercheck ≠ Energiesubsidiewijzer: hun 15+-vragen-wizard rekent subsidiebedragen per
   maatregel uit; bewust NIET nabouwen (botst met "klaar in 1 minuut" — onze CTA/adviseur ís
   de verdieping). Hun "prefill + pas aan"-patroon doen wij al via PDOK (gemeente/provincie
