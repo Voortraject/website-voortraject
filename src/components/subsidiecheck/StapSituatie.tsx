@@ -123,13 +123,10 @@ export const StapSituatie = ({ initBewonertype, initMaatregelen, onVerder }: Sta
         </div>
       </fieldset>
 
-      <fieldset className="mt-8">
-        <legend className="block mb-1 text-[14px] font-semibold text-foreground">
+      <fieldset className="mt-6">
+        <legend className="block mb-3 text-[14px] font-semibold text-foreground">
           Waar ben je in geïnteresseerd?
         </legend>
-        <p className="mb-3 text-[13px] text-muted-foreground">
-          We tonen standaard alle regelingen — wil je gericht kijken, kies dan een of meer onderwerpen.
-        </p>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
@@ -169,7 +166,7 @@ export const StapSituatie = ({ initBewonertype, initMaatregelen, onVerder }: Sta
       <button
         type="button"
         onClick={handleVerder}
-        className="mt-8 w-full inline-flex items-center justify-center rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="mt-6 w-full inline-flex items-center justify-center rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         Bekijk mijn subsidies
       </button>

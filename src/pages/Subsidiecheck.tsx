@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Loader2, Pencil } from "lucide-react";
+import { Loader2, MapPin, Pencil } from "lucide-react";
 
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
@@ -107,7 +107,9 @@ const Subsidiecheck = () => {
       <Header />
 
       <main className="flex-1">
-        <section className="section-pad">
+        {/* Compact verticaal ritme: de hele stap moet op één laptopscherm
+            passen, inclusief de knop onderaan. */}
+        <section className="pt-4 pb-16 md:pt-6 md:pb-24">
           <div className="container-content">
             <div className="mx-auto w-full" style={{ maxWidth: 640 }}>
               <Voortgang huidige={stap} />
@@ -115,47 +117,51 @@ const Subsidiecheck = () => {
               <h1
                 ref={kopRef}
                 tabIndex={-1}
-                className="h2-section mt-8 text-center outline-none"
+                className="h2-section mt-5 text-center outline-none md:mt-6"
                 style={{ fontSize: "clamp(26px, 4vw, 38px)" }}
               >
                 {koppen[stap].titel}
               </h1>
-              <p className="mx-auto mt-3 max-w-md text-center text-[15px] leading-relaxed text-muted-foreground">
+              <p className="mx-auto mt-2 max-w-md text-center text-[15px] leading-relaxed text-muted-foreground">
                 {koppen[stap].sub}
               </p>
 
-              {/* Bevestigd adres boven stap 2 en 3, met wijzig-linkje. */}
+              {/* Bevestigd adres als subtiele pill boven stap 2 en 3 —
+                  visueel te onderscheiden van de content eromheen. */}
               {stap > 1 && adres && (
-                <p className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-[14px] text-foreground/80">
-                  <span>
-                    {adres.straatnaam} {hn.trim()}, {adres.woonplaatsnaam}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
-                    className="inline-flex items-center gap-1 text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
-                  >
-                    <Pencil size={12} aria-hidden="true" />
-                    wijzig
-                  </button>
-                  {stap === 3 && (
+                <div className="mt-4 flex justify-center">
+                  <p className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full border border-border bg-card px-4 py-2 text-[13.5px] text-foreground/80 shadow-subtle">
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin size={13} className="text-muted-foreground" aria-hidden="true" />
+                      {adres.straatnaam} {hn.trim()}, {adres.woonplaatsnaam}
+                    </span>
                     <button
                       type="button"
-                      onClick={() => {
-                        // Terug naar stap 2 mét behoud van adres en maatregelen.
-                        const params: Record<string, string> = { pc, hn };
-                        if (mParam !== null) params.m = mParam;
-                        setSearchParams(params);
-                      }}
+                      onClick={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
                       className="inline-flex items-center gap-1 text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
                     >
-                      situatie aanpassen
+                      <Pencil size={12} aria-hidden="true" />
+                      wijzig
                     </button>
-                  )}
-                </p>
+                    {stap === 3 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          // Terug naar stap 2 mét behoud van adres en maatregelen.
+                          const params: Record<string, string> = { pc, hn };
+                          if (mParam !== null) params.m = mParam;
+                          setSearchParams(params);
+                        }}
+                        className="inline-flex items-center gap-1 text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
+                      >
+                        situatie aanpassen
+                      </button>
+                    )}
+                  </p>
+                </div>
               )}
 
-              <div className="mt-8">
+              <div className="mt-6">
                 {adresZoeken ? (
                   <p className="flex items-center justify-center gap-2 py-10 text-[15px] text-muted-foreground" aria-live="polite">
                     <Loader2 size={18} className="animate-spin" aria-hidden="true" />

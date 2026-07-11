@@ -9,11 +9,13 @@ export const Voortgang = ({ huidige }: { huidige: 1 | 2 | 3 }) => (
       const actief = stap === huidige;
       const afgerond = stap < huidige;
       return (
-        <li key={label} className="flex items-center">
+        <li key={label} className="flex items-start">
           {i > 0 && (
             <span
               aria-hidden="true"
-              className={`mx-2 sm:mx-3 h-px w-8 sm:w-14 ${afgerond || actief ? "bg-primary/50" : "bg-border"}`}
+              // mt = halve bolhoogte (10px), zodat de lijn precies door het
+              // midden van de bolletjes loopt i.p.v. tussen bol en label.
+              className={`mx-2 sm:mx-3 mt-[5px] h-px w-8 sm:w-14 ${afgerond || actief ? "bg-primary/50" : "bg-border"}`}
             />
           )}
           <span
