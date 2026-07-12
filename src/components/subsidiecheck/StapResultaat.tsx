@@ -5,7 +5,12 @@ import { CtaButton } from "@/components/CtaButton";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
-import { groepeerPerNiveau, NIVEAU_LABELS, type SubsidieCheckInput } from "@/lib/subsidies";
+import {
+  groepeerPerNiveau,
+  NIVEAU_LABELS,
+  subsidieProvider,
+  type SubsidieCheckInput,
+} from "@/lib/subsidies";
 
 import { MailOverzicht } from "./MailOverzicht";
 import { NIVEAU_DOT } from "./niveauKleuren";
@@ -148,6 +153,15 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
 
   return (
     <div>
+      {/* Zolang de mock actief is: eerlijk melden dat dit voorbeelddata is.
+          Verdwijnt vanzelf zodra de echte provider is aangesloten. */}
+      {subsidieProvider.naam === "Voorbeeldgegevens" && (
+        <p className="mx-auto mb-4 max-w-xl rounded-lg border border-accent/50 bg-accent/10 px-4 py-2.5 text-center text-[13px] text-foreground/80">
+          <strong className="font-semibold">Let op:</strong> dit zijn voorbeeldgegevens om de tool te testen.
+          De echte subsidiebron wordt nog aangesloten.
+        </p>
+      )}
+
       {/* Compacte samenvatting — het adres staat al in de pill hierboven,
           dus hier alleen de payoff: het aantal. */}
       <p aria-live="polite" className="flex items-center justify-center gap-2 text-[15px] text-foreground">
