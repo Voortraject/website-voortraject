@@ -5,30 +5,16 @@ import { CtaButton } from "@/components/CtaButton";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
-import {
-  groepeerPerNiveau,
-  NIVEAU_LABELS,
-  type SubsidieCheckInput,
-  type SubsidieNiveau,
-} from "@/lib/subsidies";
+import { groepeerPerNiveau, NIVEAU_LABELS, type SubsidieCheckInput } from "@/lib/subsidies";
 
 import { MailOverzicht } from "./MailOverzicht";
+import { NIVEAU_DOT } from "./niveauKleuren";
 import { SubsidieCard } from "./SubsidieCard";
 
 interface StapResultaatProps {
   input: SubsidieCheckInput;
   adres: PdokAdres;
 }
-
-// Kleur-bolletjes per niveau in de groepskop: van koel (landelijk) naar warm
-// (lokaal) — hoe dichterbij, hoe warmer. Eén kleursignaal per groep; de
-// kaarten zelf blijven rustig wit.
-const NIVEAU_DOT: Record<SubsidieNiveau, string> = {
-  rijk: "bg-primary",
-  provincie: "bg-primary/50",
-  gemeente: "bg-accent",
-  overig: "bg-border",
-};
 
 // Eerlijke laadsequentie, gekoppeld aan de echte fetch: vertelt wát er
 // doorzocht wordt (landelijk → provinciaal → gemeentelijk). Bij
@@ -224,9 +210,12 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         Indicatief overzicht op basis van je postcode — aan dit overzicht kunnen geen rechten worden ontleend.
       </p>
 
-      {/* Kalme conversie-afsluiting: hulp aanbieden, niet verkopen. Wit tussen
-          de crème kaarten — zo krijgt juist het actieblok het podium. */}
-      <div className="mt-8 rounded-xl border border-border bg-card p-6 shadow-card md:p-8">
+      {/* Kalme conversie-afsluiting: hulp aanbieden, niet verkopen. Crème
+          tussen de witte kaarten — zo onderscheidt het actieblok zich. */}
+      <div
+        className="mt-8 rounded-xl border border-border p-6 md:p-8"
+        style={{ backgroundColor: "var(--card-soft)" }}
+      >
         <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
           Subsidies stapelen luistert nauw
         </h3>

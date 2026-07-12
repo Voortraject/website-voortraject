@@ -2,6 +2,8 @@ import { ExternalLink } from "lucide-react";
 
 import { ALLE_MAATREGELEN, MAATREGEL_LABELS, type SubsidieRegeling } from "@/lib/subsidies";
 
+import { NIVEAU_RAND } from "./niveauKleuren";
+
 // Maatregel-tags: in één oogopslag zien wáár de regeling over gaat. Dekt een
 // regeling (vrijwel) alles, dan één tag i.p.v. acht; anders max vier + teller.
 const MAX_TAGS = 4;
@@ -13,12 +15,12 @@ const maatregelTags = (regeling: SubsidieRegeling): string[] => {
 };
 
 // Eén regeling in het resultaat. Bewust géén niveau-badge: de groepskop
-// erboven zegt al "Rijksoverheid"/"Gemeente" — de titel verdient de beste
-// plek. Bedrag rustig in navy (geld schreeuwt niet), oker blijft voor actie.
+// erboven zegt al "Rijksoverheid"/"Gemeente" — de linkerrand in de
+// categoriekleur legt de koppeling. Bedrag rustig in navy (geld schreeuwt
+// niet), oker blijft voor actie.
 export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => (
   <article
-    className="rounded-lg border border-border p-5 shadow-card md:p-6"
-    style={{ backgroundColor: "var(--card-soft)" }}
+    className={`rounded-lg border border-border border-l-4 bg-card p-5 shadow-card md:p-6 ${NIVEAU_RAND[regeling.niveau]}`}
   >
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
       <h3 className="font-display text-[17px] font-semibold leading-snug text-primary md:text-[18px]">
@@ -36,7 +38,7 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => (
       {maatregelTags(regeling).map((tag) => (
         <span
           key={tag}
-          className="inline-flex items-center rounded-full border border-border bg-card px-2.5 py-0.5 text-[12px] text-muted-foreground"
+          className="inline-flex items-center rounded-full border border-border bg-background px-2.5 py-0.5 text-[12px] text-muted-foreground"
         >
           {tag}
         </span>
