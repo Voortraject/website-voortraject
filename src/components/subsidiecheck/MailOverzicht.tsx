@@ -179,7 +179,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
           {fout}
         </p>
       )}
-      <p className="mt-2 text-[12px] text-muted-foreground">
+      <p className="mt-2 text-[12px] italic text-muted-foreground">
         Alleen om dit overzicht te sturen — geen nieuwsbrief.
       </p>
     </form>

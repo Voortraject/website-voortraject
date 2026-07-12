@@ -206,9 +206,6 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         </button>
       </div>
 
-      <p className="mt-4 text-[12px] text-muted-foreground">
-        Indicatief overzicht op basis van je postcode — aan dit overzicht kunnen geen rechten worden ontleend.
-      </p>
 
       {/* Kalme conversie-afsluiting, laagdrempeligste actie eerst: het
           overzicht in de mail (klein ja) vóór het gesprek (groot ja). */}
@@ -229,8 +226,8 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         <div className="my-6 h-px bg-border" role="separator" />
 
         <p className="max-w-xl text-[15px] leading-relaxed text-foreground/80">
-          Liever direct weten wat er voor jou in zit? Wij zoeken uit wat je mag combineren en regelen de
-          aanvraag — gratis en vrijblijvend.
+          Liever direct weten wat er voor jou in zit? Wij zoeken vrijblijvend uit wat je mag combineren en
+          stapelen.
         </p>
         <a
           href="/contact"
@@ -239,6 +236,12 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
           Plan een gratis gesprek
         </a>
       </div>
+
+      {/* Juridisch kleingoed als voetnoot van de hele pagina — onderaan,
+          waar het niet tussen resultaat en actie in staat. */}
+      <p className="mt-6 text-[12px] italic text-muted-foreground">
+        Indicatief overzicht op basis van je postcode — aan dit overzicht kunnen geen rechten worden ontleend.
+      </p>
     </div>
   );
 };
