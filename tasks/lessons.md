@@ -79,3 +79,10 @@ drifts; (4) the "one whole" fix was only applied to the homepage, not every page
 - Implementation that worked: `Footer` takes a `cta?: ReactNode`, renders it inside its own
   `bg-primary` + `.ambient-glow` container; each page moves its closing CTA `<section>` into the
   `cta` prop and drops the section's own dark background.
+
+## 2026-07-12 — Geen gedachtestreepjes in zichtbare copy
+**Context:** Bij de subsidiecheck-teksten corrigeerde de opdrachtgever twee keer op
+gedachtestreepjes (—), uiteindelijk met "verwijder op alle plekken de denkstreepjes".
+**Lesson:** Schrijf bezoeker-zichtbare NL-copy voor deze site zonder gedachtestreepjes;
+gebruik punt, komma of dubbele punt. Code-comments mogen wel. Oudere pagina's (FAQ,
+Contact) bevatten nog streepjes: alleen aanpassen op verzoek of bij herbouw.
