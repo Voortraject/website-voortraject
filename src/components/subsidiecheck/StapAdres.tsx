@@ -171,9 +171,16 @@ export const StapAdres = ({ initPostcode, initHuisnummer, initToevoeging, foutme
         )}
       </button>
 
-      <p className="mt-4 text-center text-[13px] text-muted-foreground">
-        Gratis · geen account nodig · klaar in 1 minuut
-      </p>
+      {/* Drie beloftes met vinkjes (zelfde patroon als de hero) — geen
+          kleine lettertjes, maar geruststelling. */}
+      <ul className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+        {["Gratis", "Geen account nodig", "Klaar in 1 minuut"].map((belofte) => (
+          <li key={belofte} className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
+            <Check size={14} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
+            {belofte}
+          </li>
+        ))}
+      </ul>
     </form>
   );
 };
