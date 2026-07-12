@@ -23,6 +23,13 @@ interface StapResultaatProps {
   adres: PdokAdres;
 }
 
+// Duur per zoekstap in de laadsequentie. Bewust ruim (~0,8s × 3 stappen ≈ 2,4s
+// totaal): een zichtbare, benoemde zoekstap verhoogt de gepercipieerde waarde
+// van het resultaat (labor illusion). Sweet spot is 2 à 3s; ga er niet ver
+// overheen, dan slaat het om in ongeduld. De laatste stap wacht bovendien op de
+// echte fetch, dus bij een tragere bron duurt het vanzelf iets langer.
+const STAP_MS = 800;
+
 // Eerlijke laadsequentie, gekoppeld aan de echte fetch: vertelt wát er
 // doorzocht wordt (landelijk → provinciaal → gemeentelijk). Bij
 // prefers-reduced-motion slaan we de sequentie over.
@@ -38,7 +45,7 @@ const useLaadsequentie = (klaar: boolean) => {
     if (fase >= 3) return;
     // De laatste stap wacht op de echte fetch; de eerste twee tikken door.
     if (fase === 2 && !klaar) return;
-    const t = setTimeout(() => setFase((f) => f + 1), 450);
+    const t = setTimeout(() => setFase((f) => f + 1), STAP_MS);
     return () => clearTimeout(t);
   }, [fase, klaar, reduced]);
 
