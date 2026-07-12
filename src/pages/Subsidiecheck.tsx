@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Loader2, MapPin, Pencil } from "lucide-react";
+import { Loader2, MapPin, Pencil, SlidersHorizontal } from "lucide-react";
 
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
@@ -162,7 +162,7 @@ const Subsidiecheck = () => {
                       className="inline-flex items-center gap-1 text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
                     >
                       <Pencil size={12} aria-hidden="true" />
-                      wijzig
+                      adres wijzigen
                     </button>
                     {stap === 3 && (
                       <button
@@ -175,6 +175,7 @@ const Subsidiecheck = () => {
                         }}
                         className="inline-flex items-center gap-1 text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
                       >
+                        <SlidersHorizontal size={12} aria-hidden="true" />
                         situatie aanpassen
                       </button>
                     )}
