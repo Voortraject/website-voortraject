@@ -69,24 +69,20 @@
 
     --card-soft: #FAF5EC;
 
-    /* Subsidiecheck: één kleur per regelingsniveau, koel → warm. Aardse
-       tinten die aansluiten op navy/oker — centraal gedefinieerd zodat
-       bolletje, kaartrand en achtergrondtint nooit uit de pas lopen. */
-    --niveau-rijk: 218 57% 19%;      /* navy — Rijksoverheid (rand + bolletje) */
-    --niveau-provincie: 168 30% 34%; /* gedempt petrolgroen — Provincie */
-    --niveau-gemeente: 42 65% 50%;   /* diep oker — Gemeente */
-    --niveau-overig: 15 45% 52%;     /* gedempt terracotta — Overig */
-    /* Aparte, lichtere blauwtint (zelfde brand-hue 218) alleen voor het
-       kaartvlak van Rijksoverheid: navy is zó donker dat het op lage dekking
-       grijs oogt; deze lichtere, verzadigde variant blijft blauw lezen. */
+    /* Subsidiecheck: per regelingsniveau een donkere "kern"-kleur voor het
+       bolletje, de linkerrand én de gevulde type-pill (met witte tekst) — die
+       matchen zo altijd. Koel → warm. Oker en terracotta zijn van nature licht,
+       dus de kern is een donkere bruin-oker/terracotta zodat wit leesbaar blijft. */
+    --niveau-rijk: 218 57% 19%;      /* navy — Rijksoverheid */
+    --niveau-provincie: 168 30% 34%; /* petrolgroen — Provincie */
+    --niveau-gemeente: 40 58% 36%;   /* bruin-oker — Gemeente */
+    --niveau-overig: 15 52% 40%;     /* terracotta — Leningen/overig */
+    /* Aparte, lichtere "-vlak"-varianten alleen voor de zachte achtergrondtint
+       van de kaart: waar de kern te donker is (rijk grijst; oker/terracotta
+       verdoffen) blijft het vlak zo helder en fris. */
     --niveau-rijk-vlak: 218 60% 50%;
-    /* "Sterke" varianten per niveau voor de gevulde type-badge met witte tekst:
-       donker genoeg voor voldoende contrast (oker wordt daardoor bruin-oker) en
-       onderling gelijk in gewicht. Zelfde hue als de kaartkleur. Rijk gebruikt
-       de navy --niveau-rijk zelf (matcht de rand + het bolletje). */
-    --niveau-provincie-sterk: 168 32% 32%;
-    --niveau-gemeente-sterk: 40 58% 36%;
-    --niveau-overig-sterk: 15 52% 40%;
+    --niveau-gemeente-vlak: 42 65% 50%;
+    --niveau-overig-vlak: 15 45% 52%;
   }
 
   .dark {
