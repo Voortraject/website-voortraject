@@ -72,10 +72,14 @@
     /* Subsidiecheck: één kleur per regelingsniveau, koel → warm. Aardse
        tinten die aansluiten op navy/oker — centraal gedefinieerd zodat
        bolletje, kaartrand en achtergrondtint nooit uit de pas lopen. */
-    --niveau-rijk: 218 57% 19%;      /* navy — Rijksoverheid */
+    --niveau-rijk: 218 57% 19%;      /* navy — Rijksoverheid (rand + bolletje) */
     --niveau-provincie: 168 30% 34%; /* gedempt petrolgroen — Provincie */
     --niveau-gemeente: 42 65% 50%;   /* diep oker — Gemeente */
     --niveau-overig: 15 45% 52%;     /* gedempt terracotta — Overig */
+    /* Aparte, lichtere blauwtint (zelfde brand-hue 218) alleen voor het
+       kaartvlak van Rijksoverheid: navy is zó donker dat het op lage dekking
+       grijs oogt; deze lichtere, verzadigde variant blijft blauw lezen. */
+    --niveau-rijk-vlak: 218 60% 50%;
   }
 
   .dark {
