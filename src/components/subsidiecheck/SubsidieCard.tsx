@@ -16,7 +16,10 @@ const maatregelTags = (regeling: SubsidieRegeling): string[] => {
 // erboven zegt al "Rijksoverheid"/"Gemeente" — de titel verdient de beste
 // plek. Bedrag rustig in navy (geld schreeuwt niet), oker blijft voor actie.
 export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => (
-  <article className="rounded-lg border border-border bg-card p-5 shadow-card md:p-6">
+  <article
+    className="rounded-lg border border-border p-5 shadow-card md:p-6"
+    style={{ backgroundColor: "var(--card-soft)" }}
+  >
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
       <h3 className="font-display text-[17px] font-semibold leading-snug text-primary md:text-[18px]">
         {regeling.titel}
@@ -33,7 +36,7 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => (
       {maatregelTags(regeling).map((tag) => (
         <span
           key={tag}
-          className="inline-flex items-center rounded-full border border-border bg-background px-2.5 py-0.5 text-[12px] text-muted-foreground"
+          className="inline-flex items-center rounded-full border border-border bg-card px-2.5 py-0.5 text-[12px] text-muted-foreground"
         >
           {tag}
         </span>

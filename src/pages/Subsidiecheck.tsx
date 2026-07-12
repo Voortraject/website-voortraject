@@ -115,7 +115,9 @@ const Subsidiecheck = () => {
             passen, inclusief de knop onderaan. */}
         <section className="pt-4 pb-16 md:pt-6 md:pb-24">
           <div className="container-content">
-            <div className="mx-auto w-full" style={{ maxWidth: 640 }}>
+            {/* Stap 1/2 blijven smal (focus op één vraag); het resultaat krijgt
+                de ruimte zodat groepen naast elkaar kunnen staan. */}
+            <div className="mx-auto w-full" style={{ maxWidth: stap === 3 ? 1040 : 640 }}>
               <Voortgang
                 huidige={stap}
                 onStapKlik={(doel) => {

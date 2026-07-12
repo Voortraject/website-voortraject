@@ -113,7 +113,11 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
       input.gemeente ? `Regelingen van gemeente ${input.gemeente} doorzoeken` : "Gemeentelijke regelingen doorzoeken",
     ];
     return (
-      <div className="rounded-lg border border-border bg-card p-6 md:p-8" aria-live="polite" aria-busy="true">
+      <div
+        className="mx-auto max-w-[640px] rounded-lg border border-border bg-card p-6 md:p-8"
+        aria-live="polite"
+        aria-busy="true"
+      >
         <p className="text-[15px] font-semibold text-primary">We zoeken de regelingen voor {adresRegel}…</p>
         <ul className="mt-4 flex flex-col gap-2.5">
           {stappen.map((label, i) => {
@@ -141,7 +145,7 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
 
   if (aantal === 0) {
     return (
-      <div className="rounded-lg border border-border bg-card p-6 text-center md:p-8">
+      <div className="mx-auto max-w-[640px] rounded-lg border border-border bg-card p-6 text-center md:p-8">
         <h3 className="font-display text-[18px] font-semibold text-primary">
           Voor deze combinatie vonden we geen regelingen
         </h3>
@@ -170,7 +174,9 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         </span>
       </p>
 
-      <div className="mt-6 flex flex-col gap-8">
+      {/* Twee groepen naast elkaar op desktop (rijk+provincie, gemeente+overig):
+          minder scrollen, leesvolgorde blijft landelijk → lokaal. */}
+      <div className="mt-6 grid grid-cols-1 items-start gap-8 md:grid-cols-2 md:gap-x-6">
         {groepen.map(({ niveau, regelingen: groep }) => (
           <section key={niveau} aria-label={NIVEAU_LABELS[niveau]}>
             <h2 className="mb-3 flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
@@ -218,11 +224,9 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         Indicatief overzicht op basis van je postcode — aan dit overzicht kunnen geen rechten worden ontleend.
       </p>
 
-      {/* Kalme conversie-afsluiting: hulp aanbieden, niet verkopen. */}
-      <div
-        className="mt-8 rounded-xl border border-border p-6 md:p-8"
-        style={{ backgroundColor: "var(--card-soft)" }}
-      >
+      {/* Kalme conversie-afsluiting: hulp aanbieden, niet verkopen. Wit tussen
+          de crème kaarten — zo krijgt juist het actieblok het podium. */}
+      <div className="mt-8 rounded-xl border border-border bg-card p-6 shadow-card md:p-8">
         <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
           Subsidies stapelen luistert nauw
         </h3>
