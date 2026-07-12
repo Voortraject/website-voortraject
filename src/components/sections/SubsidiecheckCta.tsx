@@ -15,6 +15,7 @@ export const SubsidiecheckCta = () => {
   const navigate = useNavigate();
   const [postcode, setPostcode] = useState("");
   const [huisnummer, setHuisnummer] = useState("");
+  const [toevoeging, setToevoeging] = useState("");
   const [fout, setFout] = useState<string | null>(null);
   const huisnummerRef = useRef<HTMLInputElement>(null);
 
@@ -30,7 +31,11 @@ export const SubsidiecheckCta = () => {
       setFout("Vul ook je huisnummer in.");
       return;
     }
-    navigate(`/subsidiecheck?pc=${encodeURIComponent(normalizePostcode(pc))}&hn=${encodeURIComponent(hn)}`);
+    const tv = toevoeging.trim();
+    navigate(
+      `/subsidiecheck?pc=${encodeURIComponent(normalizePostcode(pc))}&hn=${encodeURIComponent(hn)}` +
+        (tv ? `&tv=${encodeURIComponent(tv)}` : ""),
+    );
   };
 
   return (
@@ -45,7 +50,7 @@ export const SubsidiecheckCta = () => {
             gemeente.
           </p>
 
-          <form onSubmit={handleSubmit} noValidate className="mx-auto mt-7" style={{ maxWidth: 560 }}>
+          <form onSubmit={handleSubmit} noValidate className="mx-auto mt-7" style={{ maxWidth: 640 }}>
             {/* Elke input een eigen subtiel vlak in de huiskleur van de
                 Herkenning-sectie (#F5F3ED), zodat postcode en huisnummer als
                 twee duidelijke velden lezen binnen de witte pill. */}
@@ -87,6 +92,21 @@ export const SubsidiecheckCta = () => {
                   setFout(null);
                 }}
                 maxLength={6}
+              />
+              <label className="sr-only" htmlFor="home-sc-toevoeging">
+                Toevoeging (optioneel)
+              </label>
+              <input
+                id="home-sc-toevoeging"
+                type="text"
+                placeholder="Toev."
+                className="min-h-[48px] w-full rounded-xl bg-[#F5F3ED] px-4 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:bg-white focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-24 sm:rounded-full lg:text-[15px]"
+                value={toevoeging}
+                onChange={(e) => {
+                  setToevoeging(e.target.value);
+                  setFout(null);
+                }}
+                maxLength={10}
               />
               <button
                 type="submit"

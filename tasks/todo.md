@@ -111,6 +111,12 @@ voortgangsindicator (afrondingspsychologie), mobile-first, tapdoelen ≥44px:
 - [x] Extra's na review opdrachtgever: pill-verfijning home (velden #F5F3ED, streepje weg),
       postcode auto-hoofdletters + autosprong, "situatie aanpassen" op resultaat,
       maatregel-tags op kaarten, kopieer-link naar overzicht
+- [x] Feedbackronde 2 (2026-07-12): toevoeging-veld ook in de homepage-pill (loopt mee als
+      `tv` in de deeplink); sitewide `ScrollToTop` in App.tsx — SPA behield scrollpositie
+      bij navigatie, dus wie vanaf de home-CTA (onder de vouw) doorklikte landde onderaan
+      /subsidiecheck. Push/replace → naar boven, back-knop (POP) blijft hersteld. Headless
+      geverifieerd: na submit scrollY 0 + `tv` in URL, na back scrollY 974 hersteld,
+      mobiel 390px geen overflow.
 
 **Fase 2 — Instappunten**
 - [x] Homepage-sectie `SubsidiecheckCta` onder `LogoCarousel` (inline postcode → deeplink)

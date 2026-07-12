@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AudienceProvider } from "@/contexts/AudienceContext";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import Index from "./pages/Index.tsx";
 import Partners from "./pages/Partners.tsx";
@@ -39,6 +40,7 @@ const App = () => (
             een in-flow strook die mee-scrollt, zodat de pagina-content de zone
             vult bij het scrollen (i.p.v. een vaste balk). */}
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/partners" element={<Partners />} />
