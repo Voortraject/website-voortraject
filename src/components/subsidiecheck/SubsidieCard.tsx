@@ -2,7 +2,7 @@ import { ExternalLink } from "lucide-react";
 
 import { ALLE_MAATREGELEN, MAATREGEL_LABELS, type SubsidieRegeling } from "@/lib/subsidies";
 
-import { NIVEAU_KAART } from "./niveauKleuren";
+import { NIVEAU_KAART, NIVEAU_TAG } from "./niveauKleuren";
 
 // Maatregel-tags: in één oogopslag zien wáár de regeling over gaat. Dekt een
 // regeling (vrijwel) alles, dan één tag i.p.v. acht; anders max vier + teller.
@@ -38,7 +38,7 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => (
       {maatregelTags(regeling).map((tag) => (
         <span
           key={tag}
-          className="inline-flex items-center rounded-full border border-border bg-card px-2.5 py-0.5 text-[12px] text-muted-foreground"
+          className={`inline-flex items-center rounded-full border bg-card px-2.5 py-0.5 text-[12px] text-muted-foreground ${NIVEAU_TAG[regeling.niveau]}`}
         >
           {tag}
         </span>
