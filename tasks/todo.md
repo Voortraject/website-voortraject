@@ -154,6 +154,51 @@ voortgangsindicator (afrondingspsychologie), mobile-first, tapdoelen ≥44px:
 - [ ] E-mailverzending voor "Mail mij dit overzicht" (edge function of handmatig vanuit CRM
       binnen 24u — zolang dat niet geregeld is belooft de UI iets dat het team moet waarmaken)
 
+### Resultaatpagina-herontwerp na CRO/psychologie-analyse (2026-07-12)
+Kritische analyse (eigen frisse blik + onderzoek naar bezoekerspsychologie: NN/g,
+Baymard, peer-reviewed labor-illusion/peak-end/goal-gradient, live vergelijk met
+Verbeterjehuis/Independer/Gaslicht). Doel: de meest gebruiksvriendelijke, duidelijke en
+overzichtelijke subsidiewijzer van Noord-Nederland. Alles op mockdata; verdwijnt/wisselt
+mee zodra de echte provider is aangesloten. **Doorgevoerd:**
+- **Datamodel** (`types.ts`): `SubsidieType = 'subsidie' | 'lening'` + `type` op elke
+  regeling; optionele `voorWie` + `belangrijksteVoorwaarde` (uitklap-verdieping);
+  `maakSamenvatting()` (aantal, subsidie/lening-split, per-niveau — **bewust géén verzonnen
+  totaalbedrag**, niet verdedigbaar op mock/niet-stapelbaar); `NIVEAU_KORT` + `TYPE_LABELS`;
+  `NIVEAU_LABELS.overig` → "Leningen en overig".
+- **Samenvattingskaart** (nieuw `Samenvatting.tsx`) bovenaan het resultaat = de piek
+  (inverted pyramid + peak-end): groot aantal (cijfers stoppen het oog), situatie
+  teruggekoppeld ("voor jouw koopwoning in Groningen", endowment), subsidie/lening-split,
+  niveaulegenda die dubbelt als kleurcode voor de kaarten, de keuzestress-wegnemende zin
+  ("je hoeft niets te kiezen, veel is te combineren, wij zoeken het uit"), en een
+  "Mail mij dit overzicht"-quicklink die naar het formulier scrollt + het e-mailveld focust.
+- **SubsidieCard herontworpen**: type-kicker (SUBSIDIE muted / **LENING** terracotta —
+  lost de "€ 71.000 lening leest als subsidie"-val op), bedrag op vaste plek rechtsboven
+  (verticaal scanbaar), body 14→15px (45+-leesbaarheid), maatregelen als rustige leesregel
+  i.p.v. chips (leken op de klikbare filterchips), en een **uitklap** (drielagenmodel
+  Independer: beslissen → begrijpen → verifiëren) met Voor wie / Belangrijkste voorwaarde /
+  combineerbaarheid / officiële bronlink. Kaartactie links uitgelijnd op mobiel (uit de
+  WhatsApp-hoek).
+- **StapResultaat herstructureerd**: groepen nu gestápeld (landelijk → lokaal, layer-cake)
+  met kaarten 2-koloms binnen een groep i.p.v. groepen naast elkaar; conversieblok met
+  endowed-progress ("Stap 1 is klaar"), mail-CTA met meerwaarde (incl. aanvraaglinks),
+  gesprek-CTA met geruststellende microcopy (Vrijblijvend · Reactie binnen 24 uur · Lokaal
+  adviesteam); **disclaimer weg van de allerlaatste plek** (nu naast de kopieer-link), pagina
+  eindigt **warm** ("Veel regelingen blijven onbenut. Jij bent nu een stap verder…").
+- **Sitewide `ScrollToTop`** (eerder deze sessie) + pagina bottom-padding `pb-28` op mobiel
+  voor WhatsApp-FAB-clearance.
+- **Bewust NIET gedaan (met reden):** geen resultaten achter e-mail gaten (vertrouwen +
+  positionering); geen hype-totaalanker; **sticky mobiele mail-balk overgeslagen** omdat die
+  botst met de vaste WhatsApp-knop (twee zwevende dingen rechtsonder = rommelig voor een
+  "kalme" merk) — de mail-quicklink in de samenvatting dekt de vroege toegang af; button-copy
+  "Plan een gratis gesprek" blijft (sitewide één-CTA-regel > eerste-persoon-winst hier);
+  numerieke sortering binnen groepen uitgesteld tot echte data (relevantie-metadata); geen
+  verzonnen review-sterren (feitelijke trust-microcopy i.p.v.).
+- **Geverifieerd:** `tsc` schoon; 12/12 vitest groen; lint 0 nieuwe meldingen (nieuwe
+  bestanden 0, totaal blijft 20 pre-existing); `bun run build` groen; headless CDP desktop +
+  mobiel (samenvatting/kaarten/conversie/warm slot correct, LENING-badge terracotta, geen
+  390px-overflow) + interactietest (mail-knop scrollt naar & focust e-mailveld; uitklap toont
+  voorwaarde + officiële link met aria-expanded).
+
 ### ▶ DRAAIBOEK: oppakken zodra de Milieu Centraal-API binnen is (status 2026-07-12)
 **Waar alles staat.** Branch `feat/subsidiecheck` (gepusht naar origin, 25 commits, GEEN
 PR — bewust: pas live mét echte data). Bouw is af t/m polish; mock levert voorbeelddata
@@ -163,6 +208,10 @@ met zichtbare gele melding op de resultaatpagina (verdwijnt automatisch bij echt
 1. Maak `src/lib/subsidies/milieuCentraalProvider.ts` conform interface in `provider.ts`
    (naam ≠ "Voorbeeldgegevens", anders blijft de voorbeelddata-melding staan).
 2. Map hun categorieën → onze `Maatregel`-types (types.ts) en niveaus → `SubsidieNiveau`.
+   **Ook verplicht per regeling:** `type` (`'subsidie' | 'lening'` — bepaalt het kaartlabel
+   én de subsidie/lening-split in de samenvatting; leningen ≠ subsidies). Optioneel maar
+   aanbevolen: `voorWie` + `belangrijksteVoorwaarde` (vullen de kaart-uitklap; zonder deze
+   toont de uitklap alleen de combineerbaarheid + bronlink).
    Check: postcode-only bevestigd; monument-parameter meenemen als de API die kent.
 3. Wissel om in `src/lib/subsidies/index.ts` (één regel). API-key? Dan NIET client-side
    als die geheim moet blijven → edge function als proxy in het CRM-Supabaseproject.

@@ -113,7 +113,7 @@ const Subsidiecheck = () => {
       <main className="flex-1">
         {/* Compact verticaal ritme: de hele stap moet op één laptopscherm
             passen, inclusief de knop onderaan. */}
-        <section className="pt-4 pb-16 md:pt-6 md:pb-24">
+        <section className="pt-4 pb-28 md:pt-6 md:pb-24">
           <div className="container-content">
             {/* Stap 1/2 blijven smal (focus op één vraag); het resultaat krijgt
                 de ruimte zodat groepen naast elkaar kunnen staan. */}

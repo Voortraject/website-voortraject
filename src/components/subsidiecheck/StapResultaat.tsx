@@ -7,6 +7,7 @@ import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
 import {
   groepeerPerNiveau,
+  maakSamenvatting,
   NIVEAU_LABELS,
   subsidieProvider,
   type SubsidieCheckInput,
@@ -14,6 +15,7 @@ import {
 
 import { MailOverzicht } from "./MailOverzicht";
 import { NIVEAU_DOT } from "./niveauKleuren";
+import { Samenvatting } from "./Samenvatting";
 import { SubsidieCard } from "./SubsidieCard";
 
 interface StapResultaatProps {
@@ -64,7 +66,16 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
     }
   };
 
+  // Vanuit de samenvatting (bovenaan) naar het mailformulier springen.
+  const conversieRef = useRef<HTMLDivElement>(null);
+  const scrollNaarMail = () => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    conversieRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+    window.setTimeout(() => document.getElementById("sc-mail-email")?.focus({ preventScroll: true }), reduced ? 0 : 450);
+  };
+
   const groepen = useMemo(() => groepeerPerNiveau(regelingen ?? []), [regelingen]);
+  const samenvatting = useMemo(() => maakSamenvatting(regelingen ?? []), [regelingen]);
   const adresRegel = `${adres.straatnaam} ${input.huisnummer}${input.toevoeging ? ` ${input.toevoeging}` : ""}, ${adres.woonplaatsnaam}`;
 
   // Eén event per getoond resultaat (ook bij 0 regelingen — dat is óók funnel-data).
@@ -162,29 +173,25 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         </p>
       )}
 
-      {/* Compacte samenvatting — het adres staat al in de pill hierboven,
-          dus hier alleen de payoff: het aantal. */}
-      <p aria-live="polite" className="flex items-center justify-center gap-2 text-[15px] text-foreground">
-        <Check size={17} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
-        <span>
-          <strong className="font-semibold text-primary">
-            {aantal} {aantal === 1 ? "regeling" : "regelingen"}
-          </strong>{" "}
-          gevonden, van landelijk tot lokaal
-        </span>
-      </p>
+      {/* De piek: conclusie eerst (inverted pyramid), dan pas de lijst. */}
+      <Samenvatting
+        data={samenvatting}
+        bewonertype={input.bewonertype}
+        plaats={input.gemeente ?? input.provincie}
+        onMailKlik={scrollNaarMail}
+      />
 
-      {/* Twee groepen naast elkaar op desktop (rijk+provincie, gemeente+overig):
-          minder scrollen, leesvolgorde blijft landelijk → lokaal. */}
-      <div className="mt-6 grid grid-cols-1 items-start gap-8 md:grid-cols-2 md:gap-x-6">
+      {/* Groepen onder elkaar (landelijk → lokaal, layer-cake-scan), met de
+          kaarten binnen een groep naast elkaar op desktop. */}
+      <div className="mt-8 flex flex-col gap-8">
         {groepen.map(({ niveau, regelingen: groep }) => (
           <section key={niveau} aria-label={NIVEAU_LABELS[niveau]}>
-            <h2 className="mb-3 flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-              <span className={`h-2 w-2 rounded-full ${NIVEAU_DOT[niveau]}`} aria-hidden="true" />
+            <h2 className="mb-3 flex items-center gap-2 text-[14px] font-semibold uppercase tracking-[0.08em] text-primary">
+              <span className={`h-2.5 w-2.5 rounded-full ${NIVEAU_DOT[niveau]}`} aria-hidden="true" />
               {NIVEAU_LABELS[niveau]}
-              <span className="font-normal">· {groep.length}</span>
+              <span className="font-normal text-muted-foreground">· {groep.length}</span>
             </h2>
-            <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
               {groep.map((regeling, i) => (
                 <div
                   key={regeling.id}
@@ -199,7 +206,7 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         ))}
       </div>
 
-      <div className="mt-5">
+      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2">
         <button
           type="button"
           onClick={kopieerLink}
@@ -218,20 +225,29 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
             </>
           )}
         </button>
+        <p className="text-[12px] italic text-muted-foreground">
+          Indicatief overzicht op basis van je postcode. Aan dit overzicht kunnen geen rechten worden ontleend.
+        </p>
       </div>
 
-
-      {/* Kalme conversie-afsluiting, laagdrempeligste actie eerst: het
-          overzicht in de mail (klein ja) vóór het gesprek (groot ja). */}
+      {/* Conversie-afsluiting met endowed-progress: stap 1 is al gedaan. De
+          laagdrempeligste actie eerst (overzicht in de mail), dan het gesprek. */}
       <div
-        className="mt-8 rounded-xl border border-border p-6 md:p-8"
+        ref={conversieRef}
+        className="mt-10 scroll-mt-24 rounded-xl border border-border p-6 md:p-8"
         style={{ backgroundColor: "var(--card-soft)" }}
       >
-        <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
+        <p className="flex items-center gap-2 text-[14px] font-semibold text-primary">
+          <Check size={16} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
+          Stap 1 is klaar: je weet nu wat er voor jouw woning beschikbaar is.
+        </p>
+
+        <h3 className="mt-4 font-display text-[19px] font-semibold text-primary md:text-[21px]">
           Ontvang dit overzicht in je mail
         </h3>
         <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-foreground/80">
-          Handig om te bewaren of thuis rustig na te lezen. Je zit nergens aan vast.
+          Handig om te bewaren of thuis rustig na te lezen, inclusief de officiële aanvraaglinks. Je zit nergens
+          aan vast.
         </p>
         <div className="mt-5">
           <MailOverzicht input={input} adres={adres} regelingen={regelingen ?? []} />
@@ -240,8 +256,8 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         <div className="my-6 h-px bg-border" role="separator" />
 
         <p className="max-w-xl text-[15px] leading-relaxed text-foreground/80">
-          Liever direct weten wat er voor jou in zit? Wij zoeken vrijblijvend uit wat je mag combineren en
-          stapelen.
+          Liever direct weten wat er voor jou in zit? In een gratis gesprek zoeken we voor jouw adres uit welke
+          regelingen je kunt combineren en stapelen, en regelen we de aanvraag.
         </p>
         <a
           href="/contact"
@@ -249,12 +265,21 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         >
           Plan een gratis gesprek
         </a>
+
+        {/* Rustige geruststelling naast de CTA (geen verzonnen sterren). */}
+        <ul className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1">
+          {["Vrijblijvend", "Reactie binnen 24 uur", "Lokaal adviesteam"].map((belofte) => (
+            <li key={belofte} className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
+              <Check size={14} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
+              {belofte}
+            </li>
+          ))}
+        </ul>
       </div>
 
-      {/* Juridisch kleingoed als voetnoot van de hele pagina — onderaan,
-          waar het niet tussen resultaat en actie in staat. */}
-      <p className="mt-6 text-[12px] italic text-muted-foreground">
-        Indicatief overzicht op basis van je postcode. Aan dit overzicht kunnen geen rechten worden ontleend.
+      {/* Warm slot (peak-end): de pagina eindigt menselijk, niet juridisch. */}
+      <p className="mt-6 text-center text-[15px] leading-relaxed text-foreground/70">
+        Veel regelingen blijven onbenut. Jij bent nu een stap verder dan de meeste woningeigenaren.
       </p>
     </div>
   );
