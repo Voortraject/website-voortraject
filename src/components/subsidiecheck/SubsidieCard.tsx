@@ -3,7 +3,7 @@ import { ChevronDown, ExternalLink, Tag } from "lucide-react";
 
 import { ALLE_MAATREGELEN, MAATREGEL_LABELS, TYPE_LABELS, type SubsidieRegeling } from "@/lib/subsidies";
 
-import { NIVEAU_KAART } from "./niveauKleuren";
+import { NIVEAU_KAART, NIVEAU_TYPEPILL } from "./niveauKleuren";
 
 // Maatregel-samenvatting als rustige leesregel (géén chips: die lijken op de
 // klikbare filterchips uit stap 2). Dekt een regeling vrijwel alles, dan één
@@ -32,14 +32,10 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
           langs de bedragen kunt scannen en een lening nooit als subsidie leest. */}
       <div className="flex items-start justify-between gap-4">
         <span
-          className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.06em] ${
-            isLening ? "" : "bg-secondary text-muted-foreground"
+          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.06em] ${
+            isLening ? "text-white" : NIVEAU_TYPEPILL[regeling.niveau]
           }`}
-          style={
-            isLening
-              ? { backgroundColor: "hsl(var(--niveau-overig) / 0.14)", color: "hsl(var(--niveau-overig))" }
-              : undefined
-          }
+          style={isLening ? { backgroundColor: "hsl(var(--niveau-overig-sterk))" } : undefined}
         >
           {TYPE_LABELS[regeling.type]}
         </span>

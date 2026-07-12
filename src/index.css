@@ -80,6 +80,9 @@
        kaartvlak van Rijksoverheid: navy is zó donker dat het op lage dekking
        grijs oogt; deze lichtere, verzadigde variant blijft blauw lezen. */
     --niveau-rijk-vlak: 218 60% 50%;
+    /* Donkerder terracotta voor de gevulde LENING-badge, zodat witte tekst
+       genoeg contrast houdt (de gewone --niveau-overig is te licht). */
+    --niveau-overig-sterk: 15 52% 40%;
   }
 
   .dark {
