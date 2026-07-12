@@ -41,7 +41,7 @@ export const SubsidiecheckCta = () => {
             Ontdek welke subsidies er voor <span className="text-accent">jouw woning</span> zijn
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-foreground/80 md:text-[16px]">
-            Vul je postcode in en zie in één overzicht alle regelingen — landelijk, provinciaal én van jouw
+            Vul je postcode in en zie in één overzicht alle regelingen: landelijk, provinciaal én van jouw
             gemeente.
           </p>
 

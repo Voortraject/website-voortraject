@@ -53,7 +53,7 @@ export const StapAdres = ({ initPostcode, initHuisnummer, initToevoeging, foutme
     setBezig(false);
 
     if (!adres) {
-      setFout("We konden dit adres niet vinden — check even je postcode en huisnummer.");
+      setFout("We konden dit adres niet vinden. Check even je postcode en huisnummer.");
       return;
     }
 

@@ -90,7 +90,7 @@ const Subsidiecheck = () => {
   const koppen: Record<1 | 2 | 3, { titel: string; sub?: string }> = {
     1: {
       titel: "Waar staat jouw woning?",
-      sub: "Vul je postcode en huisnummer in — we zoeken alle regelingen die op jouw adres van toepassing zijn.",
+      sub: "Vul je postcode en huisnummer in. We zoeken alle regelingen die op jouw adres van toepassing zijn.",
     },
     2: {
       titel: "Vertel iets over je situatie",
@@ -196,7 +196,7 @@ const Subsidiecheck = () => {
                     initToevoeging={tv}
                     foutmelding={
                       adresNietGevonden
-                        ? "We konden dit adres niet vinden — check even je postcode en huisnummer."
+                        ? "We konden dit adres niet vinden. Check even je postcode en huisnummer."
                         : null
                     }
                     onBevestigd={(nieuwPc, nieuwHn, nieuwTv) =>

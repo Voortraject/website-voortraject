@@ -156,7 +156,7 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
           <strong className="font-semibold text-primary">
             {aantal} {aantal === 1 ? "regeling" : "regelingen"}
           </strong>{" "}
-          gevonden — van landelijk tot lokaal
+          gevonden, van landelijk tot lokaal
         </span>
       </p>
 
@@ -240,7 +240,7 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
       {/* Juridisch kleingoed als voetnoot van de hele pagina — onderaan,
           waar het niet tussen resultaat en actie in staat. */}
       <p className="mt-6 text-[12px] italic text-muted-foreground">
-        Indicatief overzicht op basis van je postcode — aan dit overzicht kunnen geen rechten worden ontleend.
+        Indicatief overzicht op basis van je postcode. Aan dit overzicht kunnen geen rechten worden ontleend.
       </p>
     </div>
   );

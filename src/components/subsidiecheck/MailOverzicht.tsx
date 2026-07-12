@@ -50,7 +50,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
       return;
     }
     if (Date.now() - geladenOp.current < 2000) {
-      setFout("Even geduld — wacht een moment voordat je verstuurt.");
+      setFout("Even geduld. Wacht een moment voordat je verstuurt.");
       return;
     }
 
@@ -180,7 +180,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
         </p>
       )}
       <p className="mt-2 text-[12px] italic text-muted-foreground">
-        Alleen om dit overzicht te sturen — geen nieuwsbrief.
+        Alleen om dit overzicht te sturen. Geen nieuwsbrief.
       </p>
     </form>
   );
