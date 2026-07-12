@@ -217,7 +217,7 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
           Ontvang dit overzicht in je mail
         </h3>
         <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-foreground/80">
-          Handig om te bewaren of thuis rustig na te lezen — je zit nergens aan vast.
+          Handig om te bewaren of thuis rustig na te lezen. Je zit nergens aan vast.
         </p>
         <div className="mt-5">
           <MailOverzicht input={input} adres={adres} regelingen={regelingen ?? []} />
