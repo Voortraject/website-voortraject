@@ -148,6 +148,35 @@ voortgangsindicator (afrondingspsychologie), mobile-first, tapdoelen ≥44px:
 - [ ] E-mailverzending voor "Mail mij dit overzicht" (edge function of handmatig vanuit CRM
       binnen 24u — zolang dat niet geregeld is belooft de UI iets dat het team moet waarmaken)
 
+### ▶ DRAAIBOEK: oppakken zodra de Milieu Centraal-API binnen is (status 2026-07-12)
+**Waar alles staat.** Branch `feat/subsidiecheck` (gepusht naar origin, 25 commits, GEEN
+PR — bewust: pas live mét echte data). Bouw is af t/m polish; mock levert voorbeelddata
+met zichtbare gele melding op de resultaatpagina (verdwijnt automatisch bij echte provider).
+
+**Stap 1 — API aansluiten (~dagdeel):**
+1. Maak `src/lib/subsidies/milieuCentraalProvider.ts` conform interface in `provider.ts`
+   (naam ≠ "Voorbeeldgegevens", anders blijft de voorbeelddata-melding staan).
+2. Map hun categorieën → onze `Maatregel`-types (types.ts) en niveaus → `SubsidieNiveau`.
+   Check: postcode-only bevestigd; monument-parameter meenemen als de API die kent.
+3. Wissel om in `src/lib/subsidies/index.ts` (één regel). API-key? Dan NIET client-side
+   als die geheim moet blijven → edge function als proxy in het CRM-Supabaseproject.
+4. Verifieer met echte adressen: Groningen-stad, Emmen, Leeuwarden, Randstad-adres
+   (buiten werkgebied), huurder, VvE. Vergelijk met verbeterjehuis.nl/energiesubsidiewijzer.
+5. `bun run test` (pas mock-tests aan indien nodig), lint/tsc/build, headless visueel
+   (zie geheugen: Chrome clampt width op ~500px).
+
+**Stap 2 — Go-live-checklist:**
+- [ ] E-mailverzending geregeld (edge function + Resend + SPF/DKIM, óf werkafspraak
+      handmatig <24u vanuit CRM) — de mail is de primaire CTA-belofte
+- [ ] GTM-container ingericht (zie Fase 3-blok hierboven: 3 triggers, 4 variabelen, 3 tags)
+- [ ] `main` in de branch mergen (branch is van 2026-07-12; drift wegwerken)
+- [ ] PR openen → review → merge (main = productie via Cloudflare Pages)
+- [ ] Na livegang: GTM realtime checken + een echte testlead door CRM zien lopen
+
+**Fallback als Milieu Centraal afwijst:** Altum AI Subsidies API (betaald, zelfde
+provider-interface) of eigen gecureerde DB in het CRM-Supabaseproject (zie geheugen
+`supabase-crm-only-active`). Mail verstuurd 2026-07-12; reminder rond 20 juli als stil.
+
 ### Suggesties uit vergelijk met Verbeterjehuis (2026-07-12)
 - **Energiesubsidiewijzer werkt op postcode-only (PC6), bevestigd** door hun aanvraagform.
   Ons huisnummer blijft voor het vertrouwensmoment (adresbevestiging) + leadkwaliteit,
