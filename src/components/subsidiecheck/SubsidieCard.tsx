@@ -24,7 +24,6 @@ const maatregelTekst = (regeling: SubsidieRegeling): string => {
 export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
   const [open, setOpen] = useState(false);
   const regionId = useId();
-  const isLening = regeling.type === "lening";
 
   return (
     <article className={`rounded-lg border border-l-4 p-5 shadow-card ${NIVEAU_KAART[regeling.niveau]}`}>
@@ -32,10 +31,7 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
           langs de bedragen kunt scannen en een lening nooit als subsidie leest. */}
       <div className="flex items-start justify-between gap-4">
         <span
-          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.06em] ${
-            isLening ? "text-white" : NIVEAU_TYPEPILL[regeling.niveau]
-          }`}
-          style={isLening ? { backgroundColor: "hsl(var(--niveau-overig-sterk))" } : undefined}
+          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.06em] ${NIVEAU_TYPEPILL[regeling.niveau]}`}
         >
           {TYPE_LABELS[regeling.type]}
         </span>
