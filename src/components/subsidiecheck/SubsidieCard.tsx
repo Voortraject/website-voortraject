@@ -2,7 +2,7 @@ import { ExternalLink } from "lucide-react";
 
 import { ALLE_MAATREGELEN, MAATREGEL_LABELS, type SubsidieRegeling } from "@/lib/subsidies";
 
-import { NIVEAU_RAND } from "./niveauKleuren";
+import { NIVEAU_KAART } from "./niveauKleuren";
 
 // Maatregel-tags: in één oogopslag zien wáár de regeling over gaat. Dekt een
 // regeling (vrijwel) alles, dan één tag i.p.v. acht; anders max vier + teller.
@@ -20,7 +20,7 @@ const maatregelTags = (regeling: SubsidieRegeling): string[] => {
 // niet), oker blijft voor actie.
 export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => (
   <article
-    className={`rounded-lg border border-border border-l-4 bg-card p-5 shadow-card md:p-6 ${NIVEAU_RAND[regeling.niveau]}`}
+    className={`rounded-lg border border-l-4 p-5 shadow-card md:p-6 ${NIVEAU_KAART[regeling.niveau]}`}
   >
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
       <h3 className="font-display text-[17px] font-semibold leading-snug text-primary md:text-[18px]">
@@ -38,7 +38,8 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => (
       {maatregelTags(regeling).map((tag) => (
         <span
           key={tag}
-          className="inline-flex items-center rounded-full border border-border bg-background px-2.5 py-0.5 text-[12px] text-muted-foreground"
+          className="inline-flex items-center rounded-full border border-border px-2.5 py-0.5 text-[12px] text-muted-foreground"
+          style={{ backgroundColor: "var(--card-soft)" }}
         >
           {tag}
         </span>
