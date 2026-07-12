@@ -38,8 +38,7 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => (
       {maatregelTags(regeling).map((tag) => (
         <span
           key={tag}
-          className="inline-flex items-center rounded-full border border-border px-2.5 py-0.5 text-[12px] text-muted-foreground"
-          style={{ backgroundColor: "var(--card-soft)" }}
+          className="inline-flex items-center rounded-full border border-border bg-card px-2.5 py-0.5 text-[12px] text-muted-foreground"
         >
           {tag}
         </span>
