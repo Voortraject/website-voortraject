@@ -204,6 +204,31 @@ mee zodra de echte provider is aangesloten. **Doorgevoerd:**
 PR — bewust: pas live mét echte data). Bouw is af t/m polish; mock levert voorbeelddata
 met zichtbare gele melding op de resultaatpagina (verdwijnt automatisch bij echte provider).
 
+**Brononderzoek 2026-07-12 (belangrijk — plan bijgesteld):**
+- De XML-webservice uit de data.overheid.nl-catalogus (`energiesubsidiewijzer.nl/
+  Energiesubsidiewijzer.svc`) is **opgeheven**: 301-redirect naar verbeterjehuis.nl. De
+  catalogus-entry is verouderd. Er is dus géén losse XML/SOAP-API meer.
+- Wél werkt **nu, publiek, zonder key, CC-0**: `GET https://www.verbeterjehuis.nl/
+  energiesubsidiewijzer?postalcode=<PC6>` geeft een server-rendered resultaatpagina
+  (voor 9742HJ: 18 kaarten). Schone, parsebare HTML per kaart:
+  - titel: `h2.register-card__title`
+  - niveau: `span.register-card__label--{national-government|municipality|other}`
+    (→ Rijksoverheid/Gemeente/Overige aanbieders; **let op:** hun taxonomie kent geen
+    losse "provincie" — SNN/Nij Begun valt bij hen onder Rijksoverheid. Mapping-keuze
+    maken; onze `provincie`-groep blijft mogelijk leeg of we reclassificeren op aanbieder.)
+  - type: kaart in `#register-subsidies` = subsidie, in `#register-loans` = lening
+  - omschrijving: `span.register-card__body`; detail-link = de `href` van de kaart
+  - **bedrag + voorWie + belangrijksteVoorwaarde + officiële externe bronlink staan NIET
+    op de lijst** — die zitten op de detailpagina per regeling (N+1 fetches nodig).
+- **Aanpak:** edge function in het CRM-Supabaseproject die serverside de HTML ophaalt +
+  parset naar `SubsidieRegeling[]` (voorkomt CORS + houdt scraping van de client). De
+  frontend-`milieuCentraalProvider` roept die function aan. Cachen (dag) tegen fragiliteit.
+- **Afweging:** HTML-parsen is fragiel (markup kan wijzigen) en is technisch de "achterdeur"
+  die dit draaiboek eerder wilde vermijden — maar de data is officieel open (CC-0), dus
+  juridisch prima. Beste plan: **bouw nu tegen de HTML als brug** (dan zijn we niet meer
+  geblokkeerd), en houd de nette REST/JSON-koppeling (mail naar Milieu Centraal) als
+  robuustere einddoel. De provider-interface maakt later omwisselen triviaal.
+
 **Stap 1 — API aansluiten (~dagdeel):**
 1. Maak `src/lib/subsidies/milieuCentraalProvider.ts` conform interface in `provider.ts`
    (naam ≠ "Voorbeeldgegevens", anders blijft de voorbeelddata-melding staan).
