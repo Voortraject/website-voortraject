@@ -82,8 +82,8 @@
     --niveau-rijk-vlak: 218 60% 50%;
     /* "Sterke" varianten per niveau voor de gevulde type-badge met witte tekst:
        donker genoeg voor voldoende contrast (oker wordt daardoor bruin-oker) en
-       onderling gelijk in gewicht. Zelfde hue als de kaartkleur. */
-    --niveau-rijk-sterk: 218 55% 42%;
+       onderling gelijk in gewicht. Zelfde hue als de kaartkleur. Rijk gebruikt
+       de navy --niveau-rijk zelf (matcht de rand + het bolletje). */
     --niveau-provincie-sterk: 168 32% 32%;
     --niveau-gemeente-sterk: 40 58% 36%;
     --niveau-overig-sterk: 15 52% 40%;

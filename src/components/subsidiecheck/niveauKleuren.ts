@@ -23,7 +23,7 @@ export const NIVEAU_DOT: Record<SubsidieNiveau, string> = {
 // kaart (zelfde hue) én valt het duidelijk op. Per niveau een aparte, donkere
 // "sterk"-tint (zie --niveau-*-sterk in index.css) zodat wit altijd leesbaar is.
 export const NIVEAU_TYPEPILL: Record<SubsidieNiveau, string> = {
-  rijk: "bg-[hsl(var(--niveau-rijk-sterk))] text-white",
+  rijk: "bg-[hsl(var(--niveau-rijk))] text-white",
   provincie: "bg-[hsl(var(--niveau-provincie-sterk))] text-white",
   gemeente: "bg-[hsl(var(--niveau-gemeente-sterk))] text-white",
   overig: "bg-[hsl(var(--niveau-overig-sterk))] text-white",
