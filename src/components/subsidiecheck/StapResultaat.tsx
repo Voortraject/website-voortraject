@@ -5,7 +5,12 @@ import { CtaButton } from "@/components/CtaButton";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
-import { groepeerPerNiveau, NIVEAU_LABELS, type SubsidieCheckInput } from "@/lib/subsidies";
+import {
+  groepeerPerNiveau,
+  NIVEAU_LABELS,
+  type SubsidieCheckInput,
+  type SubsidieNiveau,
+} from "@/lib/subsidies";
 
 import { MailOverzicht } from "./MailOverzicht";
 import { SubsidieCard } from "./SubsidieCard";
@@ -14,6 +19,16 @@ interface StapResultaatProps {
   input: SubsidieCheckInput;
   adres: PdokAdres;
 }
+
+// Kleur-bolletjes per niveau in de groepskop: van koel (landelijk) naar warm
+// (lokaal) — hoe dichterbij, hoe warmer. Eén kleursignaal per groep; de
+// kaarten zelf blijven rustig wit.
+const NIVEAU_DOT: Record<SubsidieNiveau, string> = {
+  rijk: "bg-primary",
+  provincie: "bg-primary/50",
+  gemeente: "bg-accent",
+  overig: "bg-border",
+};
 
 // Eerlijke laadsequentie, gekoppeld aan de echte fetch: vertelt wát er
 // doorzocht wordt (landelijk → provinciaal → gemeentelijk). Bij
@@ -143,18 +158,26 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
 
   return (
     <div>
-      <div aria-live="polite">
-        <h2 className="h3-block text-primary">
-          {aantal} {aantal === 1 ? "regeling" : "regelingen"} gevonden voor {adresRegel}
-        </h2>
-      </div>
+      {/* Compacte samenvatting — het adres staat al in de pill hierboven,
+          dus hier alleen de payoff: het aantal. */}
+      <p aria-live="polite" className="flex items-center justify-center gap-2 text-[15px] text-foreground">
+        <Check size={17} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
+        <span>
+          <strong className="font-semibold text-primary">
+            {aantal} {aantal === 1 ? "regeling" : "regelingen"}
+          </strong>{" "}
+          gevonden — van landelijk tot lokaal
+        </span>
+      </p>
 
       <div className="mt-6 flex flex-col gap-8">
         {groepen.map(({ niveau, regelingen: groep }) => (
           <section key={niveau} aria-label={NIVEAU_LABELS[niveau]}>
-            <h3 className="mb-3 text-[13px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            <h2 className="mb-3 flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+              <span className={`h-2 w-2 rounded-full ${NIVEAU_DOT[niveau]}`} aria-hidden="true" />
               {NIVEAU_LABELS[niveau]}
-            </h3>
+              <span className="font-normal">· {groep.length}</span>
+            </h2>
             <div className="flex flex-col gap-3">
               {groep.map((regeling, i) => (
                 <div
@@ -192,8 +215,7 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
       </div>
 
       <p className="mt-4 text-[12px] text-muted-foreground">
-        Indicatief overzicht op basis van je postcode — of een regeling openstaat hangt af van voorwaarden en
-        beschikbaar budget. Aan dit overzicht kunnen geen rechten worden ontleend.
+        Indicatief overzicht op basis van je postcode — aan dit overzicht kunnen geen rechten worden ontleend.
       </p>
 
       {/* Kalme conversie-afsluiting: hulp aanbieden, niet verkopen. */}
@@ -205,8 +227,8 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
           Subsidies stapelen luistert nauw
         </h3>
         <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-foreground/80">
-          Welke regelingen je mag combineren, in welke volgorde je aanvraagt en wat er per postcodegebied openstaat —
-          wij zoeken het voor je uit en regelen de aanvraag. Gratis en vrijblijvend.
+          Wat je mag combineren en wat er in jouw postcodegebied openstaat — wij zoeken het uit en regelen de
+          aanvraag. Gratis en vrijblijvend.
         </p>
         <div className="mt-5">
           <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>

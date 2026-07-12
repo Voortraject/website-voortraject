@@ -85,7 +85,9 @@ const Subsidiecheck = () => {
     kopRef.current?.focus({ preventScroll: false });
   }, [stap]);
 
-  const koppen: Record<1 | 2 | 3, { titel: string; sub: string }> = {
+  // Stap 3 heeft bewust géén subregel: de resultaatsamenvatting in
+  // StapResultaat vertelt daar het verhaal — geen dubbele koppen.
+  const koppen: Record<1 | 2 | 3, { titel: string; sub?: string }> = {
     1: {
       titel: "Waar staat jouw woning?",
       sub: "Vul je postcode en huisnummer in — we zoeken alle regelingen die op jouw adres van toepassing zijn.",
@@ -96,7 +98,6 @@ const Subsidiecheck = () => {
     },
     3: {
       titel: "Jouw subsidieoverzicht",
-      sub: "Landelijke, provinciale en gemeentelijke regelingen op een rij.",
     },
   };
 
@@ -137,9 +138,11 @@ const Subsidiecheck = () => {
               >
                 {koppen[stap].titel}
               </h1>
-              <p className="mx-auto mt-2 max-w-md text-center text-[15px] leading-relaxed text-muted-foreground">
-                {koppen[stap].sub}
-              </p>
+              {koppen[stap].sub && (
+                <p className="mx-auto mt-2 max-w-md text-center text-[15px] leading-relaxed text-muted-foreground">
+                  {koppen[stap].sub}
+                </p>
+              )}
 
               {/* Bevestigd adres als subtiele pill boven stap 2 en 3 —
                   visueel te onderscheiden van de content eromheen. */}

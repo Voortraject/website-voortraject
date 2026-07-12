@@ -182,7 +182,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
         </p>
       )}
       <p className="mt-2 text-[12px] text-muted-foreground">
-        We gebruiken je e-mailadres alleen om dit overzicht te sturen en eventueel op te volgen — geen nieuwsbrief.
+        Alleen om dit overzicht te sturen — geen nieuwsbrief.
       </p>
     </form>
   );

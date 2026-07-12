@@ -1,20 +1,6 @@
 import { ExternalLink } from "lucide-react";
 
-import {
-  ALLE_MAATREGELEN,
-  MAATREGEL_LABELS,
-  NIVEAU_LABELS,
-  type SubsidieNiveau,
-  type SubsidieRegeling,
-} from "@/lib/subsidies";
-
-// Gedempte niveau-badges binnen de huisstijl — bewust geen stoplichtkleuren.
-const BADGE_CLASSES: Record<SubsidieNiveau, string> = {
-  rijk: "bg-primary text-primary-foreground",
-  provincie: "bg-secondary text-secondary-foreground",
-  gemeente: "bg-accent/25 text-primary",
-  overig: "bg-muted text-muted-foreground",
-};
+import { ALLE_MAATREGELEN, MAATREGEL_LABELS, type SubsidieRegeling } from "@/lib/subsidies";
 
 // Maatregel-tags: in één oogopslag zien wáár de regeling over gaat. Dekt een
 // regeling (vrijwel) alles, dan één tag i.p.v. acht; anders max vier + teller.
@@ -26,24 +12,21 @@ const maatregelTags = (regeling: SubsidieRegeling): string[] => {
   return [...labels.slice(0, MAX_TAGS), `+${labels.length - MAX_TAGS} meer`];
 };
 
-// Eén regeling in het resultaat: titel, niveau-badge, één regel uitleg,
-// indicatief bedrag (rustig navy, nooit schreeuwend oker) en de officiële bron.
+// Eén regeling in het resultaat. Bewust géén niveau-badge: de groepskop
+// erboven zegt al "Rijksoverheid"/"Gemeente" — de titel verdient de beste
+// plek. Bedrag rustig in navy (geld schreeuwt niet), oker blijft voor actie.
 export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => (
   <article className="rounded-lg border border-border bg-card p-5 shadow-card md:p-6">
-    <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
-      <span
-        className={`inline-flex items-center rounded-full px-2.5 py-1 text-[12px] font-semibold ${BADGE_CLASSES[regeling.niveau]}`}
-      >
-        {NIVEAU_LABELS[regeling.niveau]}
-      </span>
+    <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+      <h3 className="font-display text-[17px] font-semibold leading-snug text-primary md:text-[18px]">
+        {regeling.titel}
+      </h3>
       {regeling.bedragIndicatie && (
-        <span className="text-[15px] font-semibold text-primary">{regeling.bedragIndicatie}</span>
+        <span className="whitespace-nowrap text-[15px] font-semibold text-primary">
+          {regeling.bedragIndicatie}
+        </span>
       )}
     </div>
-
-    <h3 className="mt-3 font-display text-[17px] font-semibold leading-snug text-primary md:text-[18px]">
-      {regeling.titel}
-    </h3>
     <p className="mt-1.5 text-[14px] leading-relaxed text-foreground/80">{regeling.omschrijving}</p>
 
     <div className="mt-3 flex flex-wrap gap-1.5">

@@ -28,7 +28,7 @@ const REGELINGEN: MockRegeling[] = [
     niveau: "rijk",
     aanbieder: "Rijksoverheid (RVO)",
     omschrijving:
-      "Subsidie op isolatie en glas, warmtepompen, zonneboilers, warmtenet-aansluiting en elektrisch koken.",
+      "De landelijke basissubsidie voor het verduurzamen van je koopwoning.",
     bedragIndicatie: "tot ± 30% van de kosten",
     bronUrl: "https://www.rvo.nl/subsidies-financiering/isde",
     maatregelen: ["isolatie", "warmtepomp", "zonneboiler", "warmtenet", "elektrisch-koken", "ventilatie"],
@@ -39,8 +39,7 @@ const REGELINGEN: MockRegeling[] = [
     titel: "SVVE-subsidie voor VvE's",
     niveau: "rijk",
     aanbieder: "Rijksoverheid (RVO)",
-    omschrijving:
-      "Subsidie voor VvE's voor energieadvies, isolatie en duurzame installaties aan het gebouw.",
+    omschrijving: "De landelijke subsidie voor VvE's die het gebouw willen verduurzamen.",
     bedragIndicatie: "tot ± 30% van de kosten",
     bronUrl: "https://www.rvo.nl/subsidies-financiering/svve",
     maatregelen: ["isolatie", "warmtepomp", "zonneboiler", "ventilatie", "warmtenet"],
@@ -51,8 +50,7 @@ const REGELINGEN: MockRegeling[] = [
     titel: "Subsidie Waardevermeerdering",
     niveau: "rijk",
     aanbieder: "SNN",
-    omschrijving:
-      "Voor bewoners in het aardbevingsgebied met erkende schade van € 1.000 of meer: subsidie om de woning te verduurzamen.",
+    omschrijving: "Voor bewoners in het aardbevingsgebied met erkende schade vanaf € 1.000.",
     bedragIndicatie: "tot € 4.000",
     bronUrl: "https://www.snn.nl/subsidies-voor-particulieren/subsidie-waardevermeerdering",
     maatregelen: ALLE_MAATREGELEN,
@@ -67,8 +65,7 @@ const REGELINGEN: MockRegeling[] = [
     titel: "Subsidie Isolatie Nij Begun",
     niveau: "provincie",
     aanbieder: "SNN (Nij Begun)",
-    omschrijving:
-      "Voor woningeigenaren in Groningen en Noord-Drenthe: isoleer je woning tot de isolatiestandaard. Wordt per postcodegebied opengesteld.",
+    omschrijving: "Isoleer je woning tot de isolatiestandaard. Gaat per postcodegebied open.",
     bedragIndicatie: "tot € 10.000",
     bronUrl: "https://www.snn.nl/subsidies-voor-particulieren/subsidie-isolatie-nij-begun",
     maatregelen: ["isolatie", "ventilatie"],
@@ -81,8 +78,7 @@ const REGELINGEN: MockRegeling[] = [
     titel: "Subsidie Verduurzaming en Verbetering Groningen",
     niveau: "provincie",
     aanbieder: "SNN",
-    omschrijving:
-      "Voor woningeigenaren in het aangewezen postcodegebied: subsidie voor verduurzaming en verbetering van de woning.",
+    omschrijving: "Verduurzaming én verbetering van je woning, in het aangewezen postcodegebied.",
     bedragIndicatie: "tot € 10.000",
     bronUrl:
       "https://www.snn.nl/subsidies-voor-particulieren/subsidie-verduurzaming-en-verbetering-groningen-eu-10000",
@@ -95,8 +91,7 @@ const REGELINGEN: MockRegeling[] = [
     titel: "Subsidie energiebesparende isolatiemaatregelen Drenthe",
     niveau: "provincie",
     aanbieder: "Provincie Drenthe",
-    omschrijving:
-      "Provinciale bijdrage voor het isoleren van je woning, bovenop landelijke regelingen.",
+    omschrijving: "Provinciale bijdrage voor woningisolatie, bovenop de landelijke regelingen.",
     bronUrl: "https://www.provincie.drenthe.nl/loket/subsidieloket/",
     maatregelen: ["isolatie"],
     doelgroepen: ["woningeigenaar"],
@@ -109,8 +104,7 @@ const REGELINGEN: MockRegeling[] = [
     titel: "Subsidie lokale aanpak isolatie Emmen",
     niveau: "gemeente",
     aanbieder: "Gemeente Emmen",
-    omschrijving:
-      "Voor woningeigenaren in de gemeente Emmen die hun huis willen isoleren.",
+    omschrijving: "Gemeentelijke subsidie voor het isoleren van je woning.",
     bronUrl: "https://gemeente.emmen.nl/",
     maatregelen: ["isolatie"],
     doelgroepen: ["woningeigenaar"],
@@ -121,8 +115,7 @@ const REGELINGEN: MockRegeling[] = [
     titel: "Subsidie voor woningisolatie (Nij Begun, maatregel 29)",
     niveau: "gemeente",
     aanbieder: "Gemeente Groningen",
-    omschrijving:
-      "Aanvullende gemeentelijke subsidie voor het isoleren van woningen in de gemeente Groningen.",
+    omschrijving: "Aanvullende gemeentelijke subsidie voor woningisolatie.",
     bronUrl: "https://gemeente.groningen.nl/subsidie-voor-woningisolatie-maatregel-29-van-nij-begun",
     maatregelen: ["isolatie"],
     doelgroepen: ["woningeigenaar"],
@@ -133,8 +126,7 @@ const REGELINGEN: MockRegeling[] = [
     titel: "Subsidie verduurzaming volkshuisvesting Drenthe",
     niveau: "gemeente",
     aanbieder: "Gemeenten Aa en Hunze, Borger-Odoorn, Emmen en Coevorden",
-    omschrijving:
-      "In bepaalde postcodegebieden subsidie voor het isoleren van je woning, zoals HR++ glas of dak-, vloer- en muurisolatie.",
+    omschrijving: "In bepaalde postcodegebieden subsidie voor het isoleren van je woning.",
     bronUrl: "https://www.verbeterjehuis.nl/energiesubsidiewijzer/",
     maatregelen: ["isolatie"],
     doelgroepen: ["woningeigenaar", "huurder"],
@@ -147,8 +139,7 @@ const REGELINGEN: MockRegeling[] = [
     titel: "Energiebespaarlening Nationaal Warmtefonds",
     niveau: "overig",
     aanbieder: "Nationaal Warmtefonds",
-    omschrijving:
-      "Lening met lage rente (0% bij een lager inkomen) voor vrijwel alle verduurzamingsmaatregelen.",
+    omschrijving: "Lening met lage rente (0% bij een lager inkomen) voor vrijwel alle maatregelen.",
     bedragIndicatie: "€ 1.000 – € 71.000",
     bronUrl: "https://www.warmtefonds.nl/",
     maatregelen: ALLE_MAATREGELEN,
