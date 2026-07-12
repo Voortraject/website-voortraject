@@ -114,8 +114,6 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <p className="mb-3 text-[15px] font-semibold text-primary">Of ontvang dit overzicht in je mail</p>
-
       {/* Honeypot */}
       <div
         aria-hidden="true"
@@ -163,7 +161,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
         <button
           type="submit"
           disabled={bezig}
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-primary bg-transparent px-6 py-3 text-[15px] font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground disabled:opacity-70 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-6 py-3 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover disabled:opacity-70 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           {bezig ? (
             <>
