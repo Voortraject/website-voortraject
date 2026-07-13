@@ -173,14 +173,33 @@ function officieleBron(html: string): string | undefined {
   return zwak;
 }
 
+// De "Bedrag"-sectie is een hele alinea; voor het compacte bedrag-slot destilleren
+// we een korte indicatie: het hoogste euro-bedrag ("tot € 10.000") of anders een
+// percentage ("50–100% van de kosten"). Geen getal → geen indicatie (eerlijk;
+// bijv. ISDE hangt af van de maatregel).
+export function beknoptBedrag(tekst?: string): string | undefined {
+  if (!tekst) return undefined;
+  const euros = [...tekst.matchAll(/€\s?([\d.]+)/g)]
+    .map((m) => parseInt(m[1].replace(/\./g, ""), 10))
+    .filter((n) => Number.isFinite(n) && n > 0);
+  if (euros.length) {
+    const max = Math.max(...euros);
+    return `tot € ${max.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+  }
+  const reeks = tekst.match(/(\d{1,3})\s*%\s*(?:tot|-|–|en)\s*(\d{1,3})\s*%/i);
+  if (reeks) return `${reeks[1]}–${reeks[2]}% van de kosten`;
+  const enkel = tekst.match(/\b(?:tot|maximaal)?\s*(\d{1,3})\s*%/i);
+  if (enkel) return `tot ${enkel[1]}% van de kosten`;
+  return undefined;
+}
+
 /** Verrijkt een regeling met bedrag, belangrijkste voorwaarde en officiële bron. */
 export function parseDetail(html: string): RegelingDetail {
-  const officieleBronUrl = officieleBron(html);
   return {
-    bedragIndicatie: sectieTekst(html, "Bedrag"),
+    bedragIndicatie: beknoptBedrag(sectieTekst(html, "Bedrag")),
     belangrijksteVoorwaarde: sectieTekst(html, "Belangrijkste voorwaarden"),
     voorWie: sectieTekst(html, "Voor wie"),
-    officieleBronUrl,
+    officieleBronUrl: officieleBron(html),
   };
 }
 

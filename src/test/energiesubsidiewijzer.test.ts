@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import {
+  beknoptBedrag,
   decodeEntities,
   parseDetail,
   parseResultaten,
@@ -57,12 +58,12 @@ describe("parseResultaten (echte Verbeterjehuis-HTML, 9742HJ)", () => {
 });
 
 describe("parseDetail (echte detailpagina's)", () => {
-  it("haalt bedrag + belangrijkste voorwaarde uit de ISDE-pagina", () => {
+  it("haalt de belangrijkste voorwaarde uit de ISDE-pagina (bedrag varieert → geen indicatie)", () => {
     const detail = parseDetail(fixture("esw-detail-subsidie-isde.html"));
-    expect(detail.bedragIndicatie).toBeDefined();
-    expect(detail.bedragIndicatie!.toLowerCase()).toContain("subsidiebedrag");
     expect(detail.belangrijksteVoorwaarde).toBeDefined();
     expect(detail.belangrijksteVoorwaarde!.length).toBeGreaterThan(10);
+    // Het ISDE-bedrag hangt af van de maatregel → geen concreet bedrag.
+    expect(detail.bedragIndicatie).toBeUndefined();
   });
 
   it("vindt een officiële externe bron (rvo.nl) op de ISDE-pagina", () => {
@@ -78,6 +79,21 @@ describe("parseDetail (echte detailpagina's)", () => {
     expect(verrijkt.bedragIndicatie).toBe(detail.bedragIndicatie);
     expect(verrijkt.bronUrl).toContain("rvo.nl"); // officiële bron wint van de verbeterjehuis-link
     expect(verrijkt.titel).toBe(basis.titel); // rest blijft intact
+  });
+});
+
+describe("beknoptBedrag", () => {
+  it("pakt het hoogste euro-bedrag", () => {
+    expect(beknoptBedrag("Per woning maximaal € 10.000, met zonneboiler € 15.000.")).toBe("tot € 15.000");
+    expect(beknoptBedrag("Maximaal € 4.000.")).toBe("tot € 4.000");
+  });
+  it("valt terug op percentages", () => {
+    expect(beknoptBedrag("Van 50% tot 100% van de kosten.")).toBe("50–100% van de kosten");
+    expect(beknoptBedrag("Je krijgt tot 30% subsidie.")).toBe("tot 30% van de kosten");
+  });
+  it("geeft undefined zonder bedrag", () => {
+    expect(beknoptBedrag("Het subsidiebedrag hangt af van de maatregel.")).toBeUndefined();
+    expect(beknoptBedrag(undefined)).toBeUndefined();
   });
 });
 
