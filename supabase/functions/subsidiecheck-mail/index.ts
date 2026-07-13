@@ -259,10 +259,15 @@ function bouwEmailHtml(opts: {
   const { naam, adresregel, regelingen, siteBasis, overzichtUrl } = opts;
   const subsidies = regelingen.filter((r) => r.type !== "lening").length;
   const goedNieuws = regelingen.length >= 3 && subsidies >= 1;
+  // Binnen een niveaugroep eerst de subsidies, dan de leningen (stabiele sort,
+  // dus bronvolgorde binnen één type blijft). Zelfde ordening als de website.
+  const typeRang = (t?: string) => (t === "lening" ? 1 : 0);
   const groepen = NIVEAU_VOLGORDE.map((niveau) =>
     groepBlok(
       niveau,
-      regelingen.filter((r) => (r.niveau ?? "overig") === niveau),
+      regelingen
+        .filter((r) => (r.niveau ?? "overig") === niveau)
+        .sort((a, b) => typeRang(a.type) - typeRang(b.type)),
     ),
   ).join("");
 

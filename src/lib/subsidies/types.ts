@@ -149,10 +149,17 @@ export type SubsidieCheckInput = {
 /** Vaste volgorde waarin de niveaus in het resultaat getoond worden. */
 export const NIVEAU_VOLGORDE: SubsidieNiveau[] = ["rijk", "provincie", "gemeente", "overig"];
 
+// Binnen een niveaugroep eerst alle subsidies, dan de leningen: geld dat je niet
+// terugbetaalt is het interessantst en hoort bovenaan. Stabiele sort, dus de
+// bronvolgorde binnen één type blijft behouden.
+const TYPE_VOLGORDE: Record<SubsidieType, number> = { subsidie: 0, lening: 1 };
+
 export function groepeerPerNiveau(regelingen: SubsidieRegeling[]) {
   return NIVEAU_VOLGORDE.map((niveau) => ({
     niveau,
-    regelingen: regelingen.filter((r) => r.niveau === niveau),
+    regelingen: regelingen
+      .filter((r) => r.niveau === niveau)
+      .sort((a, b) => TYPE_VOLGORDE[a.type] - TYPE_VOLGORDE[b.type]),
   })).filter((groep) => groep.regelingen.length > 0);
 }
 
