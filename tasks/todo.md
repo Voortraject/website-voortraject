@@ -199,6 +199,24 @@ mee zodra de echte provider is aangesloten. **Doorgevoerd:**
   390px-overflow) + interactietest (mail-knop scrollt naar & focust e-mailveld; uitklap toont
   voorwaarde + officiële link met aria-expanded).
 
+### ▶ STATUS 2026-07-13 — live-brug gebouwd, hier verdergaan
+De bouw tegen de echte bron werkt lokaal. **Af (op `feat/subsidiecheck`, gepusht):**
+- Parser `src/lib/subsidies/energiesubsidiewijzer.ts` (25/25 tests, fixtures in `src/test/fixtures/`).
+- Provider `energiesubsidiewijzerProvider.ts` actief in `index.ts`; DEV via Vite-proxy `/esw`
+  (`vite.config.ts`) + client-side detail-verrijking; terugval op mock. Lokaal geverifieerd:
+  18 echte regelingen voor 9742HJ mét bedragen.
+
+**Resterende stappen om live te gaan (akkoord "helemaal afmaken"):**
+1. **Edge function** (CRM-Supabaseproject): serverside lijst ophalen + detail verrijken + cachen
+   (voorstel: per-regeling cache-tabel of response-cache) + CORS. Herbruik de parser (portable).
+   Daarna `BRON_BASIS` in de provider naar de function-URL (env var). *Deploy = credentials (mens).*
+2. **E-mail** "Mail mij dit overzicht": kies Resend (API-key + domein-DNS SPF/DKIM) óf handmatige
+   werkafspraak <24u (dan alleen de copy eerlijk maken; nu schrijft 'ie enkel een lead).
+3. **GTM-container**: 3 triggers / 4 variabelen / 3 tags (zie Fase 3-blok). Klikwerk.
+4. **`main` mergen** in de branch → PR → review → merge (productie via Cloudflare).
+Detail-parser levert ook `voorWie`/officiële bron; check bij het bouwen van de edge function of
+we die willen meesturen. Verbeterjehuis kent GEEN losse provincie (mapping in de parser vastgelegd).
+
 ### ▶ DRAAIBOEK: oppakken zodra de Milieu Centraal-API binnen is (status 2026-07-12)
 **Waar alles staat.** Branch `feat/subsidiecheck` (gepusht naar origin, 25 commits, GEEN
 PR — bewust: pas live mét echte data). Bouw is af t/m polish; mock levert voorbeelddata
