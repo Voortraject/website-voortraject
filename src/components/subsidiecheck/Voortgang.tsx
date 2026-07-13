@@ -1,0 +1,65 @@
+const STAPPEN = ["Adres", "Situatie", "Resultaat"] as const;
+
+interface VoortgangProps {
+  huidige: 1 | 2 | 3;
+  /** Afgeronde stappen zijn klikbaar om terug te gaan (gangbaar patroon). */
+  onStapKlik?: (stap: 1 | 2) => void;
+}
+
+// Bescheiden voortgangsindicator: drie bolletjes met labels. "Resultaat" als
+// zichtbaar eindpunt trekt de bezoeker door de flow heen.
+export const Voortgang = ({ huidige, onStapKlik }: VoortgangProps) => (
+  <ol className="flex items-center justify-center gap-0" aria-label={`Stap ${huidige} van 3`}>
+    {STAPPEN.map((label, i) => {
+      const stap = (i + 1) as 1 | 2 | 3;
+      const actief = stap === huidige;
+      const afgerond = stap < huidige;
+      const klikbaar = afgerond && stap !== 3 && !!onStapKlik;
+
+      const inhoud = (
+        <>
+          <span
+            aria-hidden="true"
+            className={`h-2.5 w-2.5 rounded-full transition-colors ${
+              actief ? "bg-accent ring-4 ring-accent/25" : afgerond ? "bg-primary" : "bg-border"
+            }`}
+          />
+          <span
+            className={`text-[12px] sm:text-[13px] font-medium ${
+              actief ? "text-primary font-semibold" : afgerond ? "text-primary/70" : "text-muted-foreground"
+            }`}
+          >
+            {label}
+          </span>
+        </>
+      );
+
+      return (
+        <li key={label} className="flex items-start">
+          {i > 0 && (
+            <span
+              aria-hidden="true"
+              // mt = halve bolhoogte (10px), zodat de lijn precies door het
+              // midden van de bolletjes loopt i.p.v. tussen bol en label.
+              className={`mx-2 sm:mx-3 mt-[5px] h-px w-8 sm:w-14 ${afgerond || actief ? "bg-primary/50" : "bg-border"}`}
+            />
+          )}
+          {klikbaar ? (
+            <button
+              type="button"
+              onClick={() => onStapKlik((stap as 1 | 2))}
+              aria-label={`Terug naar stap ${stap}: ${label}`}
+              className="flex flex-col items-center gap-1.5 rounded-sm transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              {inhoud}
+            </button>
+          ) : (
+            <span className="flex flex-col items-center gap-1.5" aria-current={actief ? "step" : undefined}>
+              {inhoud}
+            </span>
+          )}
+        </li>
+      );
+    })}
+  </ol>
+);

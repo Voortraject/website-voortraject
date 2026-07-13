@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AudienceProvider } from "@/contexts/AudienceContext";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import Index from "./pages/Index.tsx";
 import Partners from "./pages/Partners.tsx";
@@ -17,6 +18,7 @@ import Laadpaal from "./pages/maatregelen/Laadpaal.tsx";
 import Onderhoud from "./pages/maatregelen/Onderhoud.tsx";
 import OverOns from "./pages/OverOns.tsx";
 import Contact from "./pages/Contact.tsx";
+import Subsidiecheck from "./pages/Subsidiecheck.tsx";
 import SubsidiesNijBegun from "./pages/SubsidiesNijBegun.tsx";
 import SubsidiesLandelijk from "./pages/SubsidiesLandelijk.tsx";
 import SubsidiesRegionaal from "./pages/SubsidiesRegionaal.tsx";
@@ -38,6 +40,7 @@ const App = () => (
             een in-flow strook die mee-scrollt, zodat de pagina-content de zone
             vult bij het scrollen (i.p.v. een vaste balk). */}
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/partners" element={<Partners />} />
@@ -55,6 +58,7 @@ const App = () => (
             <Route path="/over-ons" element={<OverOns />} />
 
             <Route path="/contact" element={<Contact />} />
+            <Route path="/subsidiecheck" element={<Subsidiecheck />} />
             <Route path="/subsidies/nij-begun" element={<SubsidiesNijBegun />} />
             <Route path="/subsidies/landelijk" element={<SubsidiesLandelijk />} />
             <Route path="/subsidies/regionaal" element={<SubsidiesRegionaal />} />

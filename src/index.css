@@ -68,6 +68,29 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
 
     --card-soft: #FAF5EC;
+
+    /* Subsidiecheck: per regelingsniveau een donkere "kern"-kleur voor het
+       bolletje, de linkerrand én de gevulde type-pill (met witte tekst) — die
+       matchen zo altijd. Koel → warm. Oker en terracotta zijn van nature licht,
+       dus de kern is een donkere bruin-oker/terracotta zodat wit leesbaar blijft. */
+    --niveau-rijk: 218 57% 19%;      /* navy — Rijksoverheid */
+    --niveau-provincie: 168 30% 34%; /* petrolgroen — Provincie */
+    --niveau-gemeente: 40 58% 36%;   /* bruin-oker — Gemeente */
+    --niveau-overig: 15 52% 40%;     /* terracotta — Leningen/overig */
+    /* Aparte, lichtere "-vlak"-varianten alleen voor de zachte achtergrondtint
+       van de kaart: waar de kern te donker is (rijk grijst; oker/terracotta
+       verdoffen) blijft het vlak zo helder en fris. */
+    --niveau-rijk-vlak: 218 60% 50%;
+    --niveau-gemeente-vlak: 42 65% 50%;
+    --niveau-overig-vlak: 15 45% 52%;
+
+    /* Subsidiecheck: kleur per TYPE (het beslissende onderscheid) — subsidie =
+       groen (geld dat je niet terugbetaalt), lening = terracotta (geld dat je
+       leent). Dit is de kleurtaal van de kaarten (pill + linkerrand + lichte
+       tint); het niveau tonen we neutraal als tekstkop. Zo herken je een lening
+       overal, ongeacht in welke niveaugroep 'ie staat. */
+    --subsidie: 154 46% 34%;   /* groen */
+    --lening: 16 62% 44%;      /* terracotta */
   }
 
   .dark {

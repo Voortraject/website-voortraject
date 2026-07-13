@@ -20,6 +20,9 @@ dist-ssr
 # MCP config — contains a local access token, must stay out of git
 .mcp.json
 
+# Supabase CLI local state (project ref, pooler URL) — not source
+supabase/.temp/
+
 # Original photo material (HEIC) — optimized versions live in src/assets
 voortraject-fotos/
 

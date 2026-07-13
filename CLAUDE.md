@@ -7,9 +7,11 @@
 
 - **Project:** Voortraject website (voortraject.nl) — the public marketing/information
   website for Voortraject, a sustainability intermediary ("verduurzamingsintermediair")
-  in the north of the Netherlands (Groningen region) that supports contractors
-  ("uitvoerders") and residents ("bewoners") through the insulation/sustainability
-  journey ("verduurzamingstraject"), often under the **Nij Begun** subsidy scheme.
+  in the north of the Netherlands (Noord-Nederland: Groningen and Drenthe, expanding to
+  Friesland) that supports contractors ("uitvoerders") and residents ("bewoners") through
+  the insulation/sustainability journey ("verduurzamingstraject") across the full range of
+  verduurzaming subsidies. The **Nij Begun** scheme (Groningen) is one important part, but
+  a large share of clients fall outside it — do not treat Nij Begun as the whole business.
   Positioning (from the site): *"Uitvoerders houden focus op planning en uitvoering,
   bewoners krijgen rust en duidelijkheid."*
   - **Not to be confused with** the separate **Voortraject CRM** repo (internal app). This
