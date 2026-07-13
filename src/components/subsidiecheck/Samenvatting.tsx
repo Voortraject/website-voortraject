@@ -37,7 +37,7 @@ export const Samenvatting = ({ data, bewonertype, plaats, onMailKlik }: Samenvat
   return (
     <section
       aria-label="Samenvatting van je subsidieoverzicht"
-      className="rounded-2xl border bg-card p-6 shadow-card md:p-8"
+      className="rounded-2xl border-2 bg-card p-6 shadow-card md:p-8"
       style={{ borderColor: "hsl(var(--accent) / 0.8)" }}
     >
       <div className="grid gap-6 md:grid-cols-[1.6fr_1fr] md:gap-10">

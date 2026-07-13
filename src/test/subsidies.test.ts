@@ -110,4 +110,16 @@ describe("groepeerPerNiveau", () => {
       expect(groep.regelingen.length).toBeGreaterThan(0);
     }
   });
+
+  it("toont binnen elke groep eerst de subsidies, daarna de leningen", async () => {
+    const resultaat = await mockSubsidieProvider.check(basisInput);
+    const groepen = groepeerPerNiveau(resultaat);
+    for (const groep of groepen) {
+      const eersteLening = groep.regelingen.findIndex((r) => r.type === "lening");
+      if (eersteLening === -1) continue; // groep zonder leningen: niets te ordenen
+      // Na de eerste lening mag geen subsidie meer komen.
+      const naLening = groep.regelingen.slice(eersteLening);
+      expect(naLening.every((r) => r.type === "lening")).toBe(true);
+    }
+  });
 });

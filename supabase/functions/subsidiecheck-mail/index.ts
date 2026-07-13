@@ -42,14 +42,16 @@ const TELEFOON = "050 211 26 89";
 const TELEFOON_LINK = "tel:0502112689";
 const FONT_STACK = "'Inter',Arial,sans-serif";
 // Kleur per TYPE — het beslissende onderscheid: subsidie = groen (geld dat je
-// niet terugbetaalt), lening = terracotta (geld dat je leent). Dit is de enige
-// kleurtaal in de lijst; het niveau tonen we als tekstkop, niet als kleur, zodat
-// het rustig blijft i.p.v. een bonte mix.
+// niet terugbetaalt), lening = staalblauw (geld dat je leent). Bewust géén
+// rood/oranje: dat leest als "slecht" tegenover groen, terwijl een lening ook
+// prima kan zijn. Blauw naast groen leest als twee neutrale categorieën en is
+// de conventiekleur voor financiering. Dit is de enige kleurtaal in de lijst;
+// het niveau tonen we als tekstkop, niet als kleur, zodat het rustig blijft.
 const SUBSIDIE_KLEUR = "#2E7D5B";
-const LENING_KLEUR = "#B4532A";
+const LENING_KLEUR = "#3A6EA5";
 // Heel lichte kaart-achtergrond per type (subtiele tint, versterkt het signaal).
 const SUBSIDIE_VLAK = "#F0F6F4";
-const LENING_VLAK = "#FAF3F0";
+const LENING_VLAK = "#EEF3F9";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const NAME_RE = /^[\p{L}\s'-]+$/u;
@@ -190,62 +192,63 @@ function groepBlok(niveau: Niveau, regelingen: Regeling[]): string {
   if (regelingen.length === 0) return "";
   const rijen = regelingen.map(regelingRij).join("");
   return `
-    <tr><td style="padding:16px 0 10px;">
-      <span style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:${KLEUR.primary};">${NIVEAU_LABELS[niveau]}</span>
-      <span style="font-size:12px;color:${KLEUR.muted};"> &middot; ${regelingen.length}</span>
+    <tr><td style="padding:18px 0 10px;">
+      <span style="font-size:16px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:${KLEUR.primary};">${NIVEAU_LABELS[niveau]}</span>
+      <span style="font-size:14px;color:${KLEUR.muted};"> &middot; ${regelingen.length}</span>
     </td></tr>
     <tr><td>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${rijen}</table>
     </td></tr>`;
 }
 
-// Hero-samenvatting bovenaan (de "piek"): groot aantal + subsidie/lening-split +
-// per-niveau telling. Staat vóór de lijst, zodat de kernboodschap altijd zichtbaar
-// is (ook als een mailclient de lange lijst inkort).
+// Eén legenda-item: gekleurde stip + aantal + label ("● 6 subsidies").
+function legendaItem(aantal: number, label: string, kleur: string): string {
+  return `<span style="font-size:14px;color:${KLEUR.primary};font-weight:600;white-space:nowrap;"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${kleur};margin-right:7px;vertical-align:middle;"></span>${aantal} ${label}</span>`;
+}
+
+// Hero-samenvatting bovenaan (de "piek"), in één omkaderd kaartje zodat het als
+// één rustig object leest i.p.v. los tekst op de witte achtergrond. Groot totaal
+// + een verhoudingsbalk die de mix subsidies/leningen in één oogopslag toont
+// (geen los optelwerk), met een legenda eronder. De per-niveau telling laten we
+// hier weg — die komt direct eronder al terug als groepskoppen (dubbel =
+// rommelig). Staat vóór de lijst, zodat de kernboodschap altijd zichtbaar is.
 function bouwSamenvattingBlok(regelingen: Regeling[]): string {
   const totaal = regelingen.length;
   const leningen = regelingen.filter((r) => r.type === "lening").length;
   const subsidies = totaal - leningen;
-  // "Goed nieuws" alleen tonen als het dat ook echt is — niet bij 0 subsidies
-  // (enkel leningen) of een handjevol regelingen. Anders neutraal het getal.
-  const goedNieuws = totaal >= 3 && subsidies >= 1;
+  const meervoud = totaal === 1 ? "regeling" : "regelingen";
 
-  // Split, met leningen in terracotta (zelfde signaal als de kaart-pill).
-  const splitParts = [
-    subsidies > 0
-      ? `<span style="color:${SUBSIDIE_KLEUR};">${subsidies} ${subsidies === 1 ? "subsidie" : "subsidies"}</span>`
-      : "",
-    leningen > 0
-      ? `<span style="color:${LENING_KLEUR};">${leningen} ${leningen === 1 ? "lening" : "leningen"}</span>`
-      : "",
-  ].filter(Boolean);
-  const split = splitParts.join(` <span style="color:#C9CDD4;">&middot;</span> `);
+  // Verhoudingsbalk: groen segment (subsidies) + blauw segment (leningen). Het
+  // groene deel rondt af, het blauwe krijgt de rest zodat de som exact 100% is.
+  const groenPct = totaal > 0 ? Math.round((subsidies / totaal) * 100) : 0;
+  const blauwPct = 100 - groenPct;
+  const segment = (pct: number, kleur: string) =>
+    pct > 0 ? `<td width="${pct}%" style="background:${kleur};height:12px;line-height:12px;font-size:0;">&nbsp;</td>` : "";
+  const balk = `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-radius:7px;overflow:hidden;">
+      <tr>${segment(groenPct, SUBSIDIE_KLEUR)}${segment(blauwPct, LENING_KLEUR)}</tr>
+    </table>`;
 
-  // Rechterkolom: per niveau een regel met gekleurd blokje + aantal.
-  const rijen = NIVEAU_VOLGORDE.map((niveau) => ({
-    niveau,
-    aantal: regelingen.filter((r) => (r.niveau ?? "overig") === niveau).length,
-  }))
-    .filter((g) => g.aantal > 0)
-    .map(
-      (g) =>
-        `<div style="font-size:13px;color:${KLEUR.muted};margin:0 0 6px;line-height:1.3;">${NIVEAU_LABELS[g.niveau]} <span style="color:${KLEUR.primary};font-weight:700;">${g.aantal}</span></div>`,
-    )
-    .join("");
+  // Legenda: alleen de types die er zijn.
+  const legenda = [
+    subsidies > 0 ? legendaItem(subsidies, subsidies === 1 ? "subsidie" : "subsidies", SUBSIDIE_KLEUR) : "",
+    leningen > 0 ? legendaItem(leningen, leningen === 1 ? "lening" : "leningen", LENING_KLEUR) : "",
+  ]
+    .filter(Boolean)
+    .join(`<span style="display:inline-block;width:18px;"></span>`);
 
   return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;background:${KLEUR.achtergrond};border-radius:8px;">
-      <tr>
-        <td width="40%" valign="middle" style="padding:18px 12px;text-align:center;border-right:1px solid ${KLEUR.border};">
-          ${goedNieuws ? `<div style="width:24px;height:3px;background:${KLEUR.accent};border-radius:2px;margin:0 auto 9px;"></div><div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:${KLEUR.primary};margin:0 0 6px;">Goed nieuws</div>` : ""}
-          <div style="font-size:48px;font-weight:800;color:${KLEUR.primary};line-height:1;">${totaal}</div>
-          <div style="font-size:13px;color:${KLEUR.muted};margin:7px 0 0;line-height:1.3;">regelingen voor<br>jouw woning</div>
-        </td>
-        <td valign="middle" style="padding:16px 18px;">
-          ${split ? `<div style="font-size:14px;font-weight:700;margin:0 0 12px;">${split}</div>` : ""}
-          ${rijen}
-        </td>
-      </tr>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px;background:${KLEUR.achtergrond};border:1px solid #EAE4D8;border-radius:14px;overflow:hidden;">
+      <tr><td style="height:4px;background:${KLEUR.accent};line-height:4px;font-size:0;">&nbsp;</td></tr>
+      <tr><td style="padding:22px 24px;">
+        <div style="font-size:13px;font-weight:600;color:${KLEUR.muted};margin:0 0 3px;">We vonden voor jouw woning</div>
+        <div style="line-height:1;margin:0 0 16px;">
+          <span style="font-size:46px;font-weight:800;color:${KLEUR.primary};">${totaal}</span>
+          <span style="font-size:20px;font-weight:700;color:${KLEUR.primary};">&nbsp;${meervoud}</span>
+        </div>
+        ${balk}
+        <div style="margin-top:12px;">${legenda}</div>
+      </td></tr>
     </table>`;
 }
 
@@ -259,10 +262,15 @@ function bouwEmailHtml(opts: {
   const { naam, adresregel, regelingen, siteBasis, overzichtUrl } = opts;
   const subsidies = regelingen.filter((r) => r.type !== "lening").length;
   const goedNieuws = regelingen.length >= 3 && subsidies >= 1;
+  // Binnen een niveaugroep eerst de subsidies, dan de leningen (stabiele sort,
+  // dus bronvolgorde binnen één type blijft). Zelfde ordening als de website.
+  const typeRang = (t?: string) => (t === "lening" ? 1 : 0);
   const groepen = NIVEAU_VOLGORDE.map((niveau) =>
     groepBlok(
       niveau,
-      regelingen.filter((r) => (r.niveau ?? "overig") === niveau),
+      regelingen
+        .filter((r) => (r.niveau ?? "overig") === niveau)
+        .sort((a, b) => typeRang(a.type) - typeRang(b.type)),
     ),
   ).join("");
 
@@ -294,6 +302,12 @@ function bouwEmailHtml(opts: {
           <!-- De belofte: het volledige overzicht in de mail — alle subsidies en
                leningen per niveau onder elkaar. -->
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 8px;">${groepen}</table>
+
+          <!-- Scheidslijn: markeert het einde van de regelingenlijst en de
+               overgang naar het advies-blok. -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:20px 0 0;">
+            <tr><td style="border-top:1px solid ${KLEUR.border};font-size:0;line-height:0;height:1px;">&nbsp;</td></tr>
+          </table>
 
           <!-- Conversie-blok in huisstijl (oker linkerrand) -->
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 8px;background:${KLEUR.achtergrond};border-left:4px solid ${KLEUR.accent};border-radius:4px;">
