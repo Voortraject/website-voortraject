@@ -2,9 +2,10 @@ import type { SubsidieType } from "@/lib/subsidies";
 
 // Kleur per TYPE (tokens in src/index.css: --subsidie / --lening). Het type is
 // het beslissende onderscheid — een subsidie krijg je, een lening betaal je
-// terug — dus dát sturen we met kleur: subsidie groen, lening terracotta. Het
-// niveau (Rijk/Provincie/Gemeente/Overig) tonen we neutraal als tekstkop, zodat
-// er niet twee kleursystemen om aandacht strijden. Zo herken je een lening
+// terug — dus dát sturen we met kleur: subsidie groen, lening staalblauw (géén
+// rood/oranje: dat leest als "slecht", terwijl een lening ook prima kan zijn).
+// Het niveau (Rijk/Provincie/Gemeente/Overig) tonen we neutraal als tekstkop,
+// zodat er niet twee kleursystemen om aandacht strijden. Zo herken je een lening
 // overal, ook als 'ie in de Rijksoverheid-groep staat.
 
 // Kaartstijl: stevige linkerrand + subtiele rand rondom + zachte tint, alles in

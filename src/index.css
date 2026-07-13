@@ -85,12 +85,15 @@
     --niveau-overig-vlak: 15 45% 52%;
 
     /* Subsidiecheck: kleur per TYPE (het beslissende onderscheid) — subsidie =
-       groen (geld dat je niet terugbetaalt), lening = terracotta (geld dat je
-       leent). Dit is de kleurtaal van de kaarten (pill + linkerrand + lichte
-       tint); het niveau tonen we neutraal als tekstkop. Zo herken je een lening
-       overal, ongeacht in welke niveaugroep 'ie staat. */
+       groen (geld dat je niet terugbetaalt), lening = staalblauw (geld dat je
+       leent). Bewust géén rood/oranje: dat leest als "slecht" tegenover groen,
+       terwijl een lening ook prima kan zijn. Blauw naast groen leest als twee
+       neutrale categorieën en is de conventiekleur voor financiering. Dit is de
+       kleurtaal van de kaarten (pill + linkerrand + lichte tint); het niveau
+       tonen we neutraal als tekstkop. Zo herken je een lening overal, ongeacht
+       in welke niveaugroep 'ie staat. */
     --subsidie: 154 46% 34%;   /* groen */
-    --lening: 16 62% 44%;      /* terracotta */
+    --lening: 211 48% 44%;     /* staalblauw */
   }
 
   .dark {
