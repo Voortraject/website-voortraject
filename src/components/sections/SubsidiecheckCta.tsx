@@ -53,8 +53,8 @@ export const SubsidiecheckCta = () => {
           <form onSubmit={handleSubmit} noValidate className="mx-auto mt-7" style={{ maxWidth: 640 }}>
             {/* Elke input een eigen subtiel vlak in de huiskleur van de
                 Herkenning-sectie (#F5F3ED), zodat postcode en huisnummer als
-                twee duidelijke velden lezen binnen de witte pill. */}
-            <div className="flex flex-col gap-2 rounded-2xl bg-card p-2 shadow-card sm:flex-row sm:items-center sm:rounded-full">
+                duidelijke lichte velden lezen binnen de navy pill. */}
+            <div className="flex flex-col gap-2 rounded-2xl bg-primary p-2 shadow-card sm:flex-row sm:items-center sm:rounded-full">
               <label className="sr-only" htmlFor="home-sc-postcode">
                 Postcode
               </label>
