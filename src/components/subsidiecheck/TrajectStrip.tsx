@@ -4,12 +4,7 @@ import { Check } from "lucide-react";
 // het verduurzamingstraject" zichtbaar en gebruikt endowed progress — stap 1 is
 // al afgevinkt, dus de bewoner maakt iets af dat begonnen is. Puur presentatie;
 // de bewoner staat altijd op stap 1 (het overzicht is net klaar).
-const STAPPEN = [
-  { label: "Overzicht", sub: "nu klaar" },
-  { label: "Persoonlijk advies" },
-  { label: "Aanvraag geregeld" },
-  { label: "Woning verduurzaamd" },
-] as const;
+const STAPPEN = ["Overzicht", "Persoonlijk advies", "Aanvraag geregeld", "Woning verduurzaamd"];
 
 export const TrajectStrip = () => {
   return (
@@ -28,7 +23,7 @@ export const TrajectStrip = () => {
         {STAPPEN.map((stap, i) => {
           const gedaan = i === 0;
           return (
-            <li key={stap.label} className="contents">
+            <li key={stap} className="contents">
               {i > 0 && (
                 <span
                   aria-hidden="true"
@@ -46,9 +41,8 @@ export const TrajectStrip = () => {
                   {gedaan ? <Check size={18} strokeWidth={3} aria-hidden="true" /> : i + 1}
                 </span>
                 <span className={`mt-2 text-[13.5px] font-semibold leading-tight ${gedaan ? "text-primary" : "text-muted-foreground"}`}>
-                  {stap.label}
+                  {stap}
                 </span>
-                {stap.sub && <span className="mt-0.5 text-[12px] text-muted-foreground">{stap.sub}</span>}
               </div>
             </li>
           );

@@ -250,18 +250,9 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         className="mt-10 scroll-mt-24 rounded-xl border border-border p-6 md:p-8"
         style={{ backgroundColor: "var(--card-soft)" }}
       >
-        <p className="flex items-center gap-2 text-[14px] font-semibold text-primary">
-          <Check size={16} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
-          Stap 1 is klaar: je weet nu wat er voor jouw woning beschikbaar is.
-        </p>
-
-        <h3 className="mt-4 font-display text-[19px] font-semibold text-primary md:text-[21px]">
+        <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
           Ontvang dit overzicht in je mail
         </h3>
-        <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-foreground/80">
-          Handig om te bewaren of thuis rustig na te lezen, inclusief de officiële aanvraaglinks. Je zit nergens
-          aan vast.
-        </p>
         <div className="mt-5">
           <MailOverzicht input={input} adres={adres} regelingen={regelingen ?? []} />
         </div>
