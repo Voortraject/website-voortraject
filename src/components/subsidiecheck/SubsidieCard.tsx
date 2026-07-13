@@ -3,7 +3,7 @@ import { ChevronDown, ExternalLink, Tag } from "lucide-react";
 
 import { ALLE_MAATREGELEN, MAATREGEL_LABELS, TYPE_LABELS, type SubsidieRegeling } from "@/lib/subsidies";
 
-import { NIVEAU_KAART, NIVEAU_TYPEPILL } from "./niveauKleuren";
+import { TYPE_KAART, TYPE_PILL } from "./niveauKleuren";
 
 // Maatregel-samenvatting als rustige leesregel (géén chips: die lijken op de
 // klikbare filterchips uit stap 2). Dekt een regeling vrijwel alles, dan één
@@ -19,19 +19,20 @@ const maatregelTekst = (regeling: SubsidieRegeling): string => {
 // Eén regeling in het resultaat. Gesloten toont de kaart alles om te beslissen
 // (type, titel, bedrag rechtsboven, één regel uitleg, maatregelen). De uitklap
 // geeft verdieping (voor wie, voorwaarde, officiële bron) volgens het
-// drielagenmodel: beslissen → begrijpen → verifiëren. De linkerrand in de
-// niveaukleur legt de koppeling met de groepskop erboven.
+// drielagenmodel: beslissen → begrijpen → verifiëren. De linkerrand en de pill
+// in de type-kleur (groen = subsidie, terracotta = lening) maken meteen duidelijk
+// of het geld is dat je krijgt of leent.
 export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
   const [open, setOpen] = useState(false);
   const regionId = useId();
 
   return (
-    <article className={`rounded-lg border border-l-4 p-5 shadow-card ${NIVEAU_KAART[regeling.niveau]}`}>
+    <article className={`rounded-lg border border-l-4 p-5 shadow-card ${TYPE_KAART[regeling.type]}`}>
       {/* Kicker (type) links, bedrag rechts — vaste plek, zodat je verticaal
           langs de bedragen kunt scannen en een lening nooit als subsidie leest. */}
       <div className="flex items-start justify-between gap-4">
         <span
-          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.06em] ${NIVEAU_TYPEPILL[regeling.niveau]}`}
+          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.06em] ${TYPE_PILL[regeling.type]}`}
         >
           {TYPE_LABELS[regeling.type]}
         </span>

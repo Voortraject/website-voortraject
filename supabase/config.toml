@@ -1,7 +1,22 @@
-project_id = "zvsmazjcfzjyvnjrlnma"
+# CRM-project (Voortraject CRM). De backend van de website leeft hier, niet meer
+# in het verlaten Lovable-project. Deploy dus tegen dit project-ref
+# (supabase functions deploy … --project-ref lfelnfukbrxznkevnevr).
+project_id = "lfelnfukbrxznkevnevr"
 
 # Google-reviews sync. Geen JWT nodig: de functie draait via cron en gebruikt
 # intern de service_role. Zet de secrets GOOGLE_MAPS_API_KEY en GOOGLE_PLACE_ID
 # in de Supabase-dashboard (Edge Functions → Secrets), niet in dit bestand.
 [functions.sync-google-reviews]
+verify_jwt = false
+
+# Subsidiecheck-databrug: haalt serverside de Energiesubsidiewijzer op, parset +
+# verrijkt + cachet, en levert JSON met open CORS. Geen JWT: publiek/anoniem te
+# gebruiken. Geen secrets nodig (raakt de database niet).
+[functions.subsidiecheck]
+verify_jwt = false
+
+# "Mail mij dit overzicht": schrijft de lead (service_role) en stuurt de mail via
+# Resend. Geen JWT: wordt anoniem vanaf de site aangeroepen. Secrets: RESEND_API_KEY,
+# MAIL_FROM, MAIL_BCC (optioneel), MAIL_REPLY_TO (optioneel), SITE_URL (optioneel).
+[functions.subsidiecheck-mail]
 verify_jwt = false

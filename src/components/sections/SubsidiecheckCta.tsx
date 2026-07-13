@@ -45,15 +45,10 @@ export const SubsidiecheckCta = () => {
           <h2 id="subsidiecheck-cta-titel" className="h2-section">
             Ontdek welke subsidies er voor <span className="text-accent">jouw woning</span> zijn
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-foreground/80 md:text-[16px]">
-            Vul je postcode in en zie in één overzicht alle regelingen: landelijk, provinciaal én van jouw
-            gemeente.
-          </p>
 
           <form onSubmit={handleSubmit} noValidate className="mx-auto mt-7" style={{ maxWidth: 640 }}>
-            {/* Elke input een eigen subtiel vlak in de huiskleur van de
-                Herkenning-sectie (#F5F3ED), zodat postcode en huisnummer als
-                duidelijke lichte velden lezen binnen de navy pill. */}
+            {/* Elke input een wit vlak, zodat postcode, huisnummer en toevoeging
+                als heldere velden lezen binnen de navy pill. */}
             <div className="flex flex-col gap-2 rounded-2xl bg-primary p-2 shadow-card sm:flex-row sm:items-center sm:rounded-full">
               <label className="sr-only" htmlFor="home-sc-postcode">
                 Postcode
@@ -63,7 +58,7 @@ export const SubsidiecheckCta = () => {
                 type="text"
                 autoComplete="postal-code"
                 placeholder="Postcode"
-                className="min-h-[48px] w-full rounded-xl bg-[#F5F3ED] px-5 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:bg-white focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-40 sm:rounded-full lg:text-[15px]"
+                className="min-h-[48px] w-full rounded-xl bg-white px-5 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-40 sm:rounded-full lg:text-[15px]"
                 value={postcode}
                 onChange={(e) => {
                   const v = formatPostcode(e.target.value);
@@ -85,7 +80,7 @@ export const SubsidiecheckCta = () => {
                 type="text"
                 inputMode="numeric"
                 placeholder="Huisnr."
-                className="min-h-[48px] w-full rounded-xl bg-[#F5F3ED] px-4 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:bg-white focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-28 sm:rounded-full lg:text-[15px]"
+                className="min-h-[48px] w-full rounded-xl bg-white px-4 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-28 sm:rounded-full lg:text-[15px]"
                 value={huisnummer}
                 onChange={(e) => {
                   setHuisnummer(e.target.value);
@@ -100,7 +95,7 @@ export const SubsidiecheckCta = () => {
                 id="home-sc-toevoeging"
                 type="text"
                 placeholder="Toev."
-                className="min-h-[48px] w-full rounded-xl bg-[#F5F3ED] px-4 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:bg-white focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-24 sm:rounded-full lg:text-[15px]"
+                className="min-h-[48px] w-full rounded-xl bg-white px-4 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-24 sm:rounded-full lg:text-[15px]"
                 value={toevoeging}
                 onChange={(e) => {
                   setToevoeging(e.target.value);
@@ -124,10 +119,10 @@ export const SubsidiecheckCta = () => {
           </form>
 
           {/* Drie beloftes met vinkjes — zelfde patroon als de hero. */}
-          <ul className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+          <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
             {["Gratis", "Geen account nodig", "Klaar in 1 minuut"].map((belofte) => (
-              <li key={belofte} className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
-                <Check size={14} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
+              <li key={belofte} className="inline-flex items-center gap-2 text-[15px] text-muted-foreground">
+                <Check size={16} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
                 {belofte}
               </li>
             ))}

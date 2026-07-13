@@ -207,15 +207,46 @@ De bouw tegen de echte bron werkt lokaal. **Af (op `feat/subsidiecheck`, gepusht
   18 echte regelingen voor 9742HJ mét bedragen.
 
 **Resterende stappen om live te gaan (akkoord "helemaal afmaken"):**
-1. **Edge function** (CRM-Supabaseproject): serverside lijst ophalen + detail verrijken + cachen
-   (voorstel: per-regeling cache-tabel of response-cache) + CORS. Herbruik de parser (portable).
-   Daarna `BRON_BASIS` in de provider naar de function-URL (env var). *Deploy = credentials (mens).*
-2. **E-mail** "Mail mij dit overzicht": kies Resend (API-key + domein-DNS SPF/DKIM) óf handmatige
-   werkafspraak <24u (dan alleen de copy eerlijk maken; nu schrijft 'ie enkel een lead).
-3. **GTM-container**: 3 triggers / 4 variabelen / 3 tags (zie Fase 3-blok). Klikwerk.
-4. **`main` mergen** in de branch → PR → review → merge (productie via Cloudflare).
-Detail-parser levert ook `voorWie`/officiële bron; check bij het bouwen van de edge function of
-we die willen meesturen. Verbeterjehuis kent GEEN losse provincie (mapping in de parser vastgelegd).
+1. [x] **Edge function** (CRM-project `lfelnfukbrxznkevnevr`) — GEBOUWD 2026-07-13, nog te deployen.
+2. [x] **E-mail**: keuze = **automatisch via Resend** — GEBOUWD 2026-07-13, nog te deployen + DNS.
+3. [ ] **GTM-container**: 3 triggers / 4 variabelen / 3 tags (zie Fase 3-blok). Klikwerk.
+4. [ ] **`main` mergen** in de branch → PR → review → merge (productie via Cloudflare).
+
+#### ▶ STATUS 2026-07-13 (2e sessie) — edge functions + Resend gebouwd, klaar om te deployen
+Twee Deno-edge-functions in `supabase/functions/` (gaan naar het **CRM**-project; `config.toml`
+`project_id` → `lfelnfukbrxznkevnevr` gezet):
+- **`subsidiecheck`** — databrug: haalt serverside de Energiesubsidiewijzer op, parset + verrijkt
+  (bedrag/voorwaarde/officiële bron, concurrency-limiet 6) + **in-memory cache** (lijst 12u,
+  detail 24u) + open CORS, levert JSON. Parser is een **zelfstandige kopie** van
+  `src/lib/subsidies/energiesubsidiewijzer.ts` + `types.ts` mét `.ts`-imports (Deno eist extensies);
+  kopie is regel-identiek aan de bron (bij parserwijziging: sync!). Geen secrets, geen DB.
+- **`subsidiecheck-mail`** — schrijft de lead (service_role, exact `leads_bewoners`-kolommen) én
+  stuurt de bezoeker het overzicht via **Resend** (nette HTML-mail in huisstijl, gegroepeerd per
+  niveau, CTA → /contact, teamkopie via `MAIL_BCC`). Lead is leidend: mail-hapering verliest nooit
+  een lead (`ok:true` zolang de lead staat). Secrets: `RESEND_API_KEY`, `MAIL_FROM`, `MAIL_BCC?`,
+  `MAIL_REPLY_TO?`, `SITE_URL?`.
+
+Frontend-bekabeling (met stille terugval, zoals google-reviews):
+- Provider: `VITE_SUBSIDIECHECK_URL` gezet → JSON via function; anders DEV-proxy `/esw` +
+  client-verrijking; faalt de bron → mock. Aanroep stuurt CRM-anon-key als `apikey`-header mee
+  (gateway-eis, ook bij verify_jwt=false).
+- `MailOverzicht`: `VITE_SUBSIDIECHECK_MAIL_URL` gezet → function (mail+lead); anders directe
+  client-insert (lead zonder mail). Zo breekt niets vóór deploy.
+- `.env.example` bijgewerkt met beide publieke function-URLs. Anon-key + URL geëxporteerd uit
+  `external-client.ts`.
+- Geverifieerd: 25/25 tests, tsc/lint/build groen, 4 Deno-bestanden syntax-valide (esbuild),
+  DEV-proxy levert 18 kaarten. Deno `deno check` NIET lokaal gedraaid (Deno niet geïnstalleerd) —
+  gebeurt bij deploy.
+
+**DEPLOY-STAPPEN (mens, met Supabase-toegang) — zie de sessie-samenvatting / hieronder:**
+A. Resend: account → domein voortraject.nl verifiëren (DKIM/SPF DNS) → API-key.
+B. Supabase-secrets (CRM-project) zetten: RESEND_API_KEY, MAIL_FROM="Voortraject <noreply@voortraject.nl>",
+   MAIL_BCC=info@voortraject.nl, MAIL_REPLY_TO=info@voortraject.nl, SITE_URL=https://www.voortraject.nl.
+C. `supabase functions deploy subsidiecheck --project-ref lfelnfukbrxznkevnevr` (idem `subsidiecheck-mail`).
+D. Env-vars in Cloudflare Pages (+ lokale .env): VITE_SUBSIDIECHECK_URL + VITE_SUBSIDIECHECK_MAIL_URL
+   = `https://lfelnfukbrxznkevnevr.supabase.co/functions/v1/<naam>`. Redeploy site.
+E. Test: `curl ".../functions/v1/subsidiecheck?postalcode=9742HJ"` → JSON; formulier op de site →
+   mail ontvangen + lead in CRM.
 
 ### ▶ DRAAIBOEK: oppakken zodra de Milieu Centraal-API binnen is (status 2026-07-12)
 **Waar alles staat.** Branch `feat/subsidiecheck` (gepusht naar origin, 25 commits, GEEN

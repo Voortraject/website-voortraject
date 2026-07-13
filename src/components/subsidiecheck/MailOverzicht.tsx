@@ -1,7 +1,10 @@
 import { FormEvent, useRef, useState } from "react";
 import { CheckCircle, Loader2 } from "lucide-react";
 
-import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
+import {
+  SUPABASE_EXTERNAL_ANON_KEY,
+  supabaseExternal as supabase,
+} from "@/integrations/supabase/external-client";
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
 import { normalizePostcode } from "@/lib/pdok";
@@ -13,7 +16,13 @@ import {
 } from "@/lib/subsidies";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const NAME_RE = /^[\p{L}\s'\-]+$/u;
+const NAME_RE = /^[\p{L}\s'-]+$/u;
+
+// Productie: de edge function schrijft de lead én stuurt de bezoeker het
+// overzicht automatisch per e-mail (Resend). Is de var niet gezet, dan valt de
+// component terug op een directe lead-insert (zoals voorheen) — dan komt er nog
+// geen automatische mail, maar gaat de lead niet verloren.
+const MAIL_FUNCTIE_URL = import.meta.env.VITE_SUBSIDIECHECK_MAIL_URL as string | undefined;
 
 const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
@@ -39,6 +48,75 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
   const [verstuurd, setVerstuurd] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const geladenOp = useRef(Date.now());
+
+  // Samengestelde notitie voor de lead (zowel client- als serverpad tonen dit
+  // in het CRM zodat het team gericht kan opvolgen).
+  const bouwNotities = () =>
+    [
+      `Subsidiecheck ingevuld: ${regelingen.length} regelingen gevonden.`,
+      `Situatie: ${BEWONERTYPE_LABELS[input.bewonertype]}`,
+      `Interesse: ${input.maatregelen.map((m) => MAATREGEL_LABELS[m]).join(", ")}`,
+      `Regelingen: ${regelingen.map((r) => r.titel).join("; ")}`,
+      `Verzoek: overzicht per e-mail ontvangen.`,
+    ].join("\n");
+
+  // Productie: edge function → schrijft de lead + stuurt de mail via Resend.
+  const verstuurViaFunctie = async (n: string, em: string) => {
+    const res = await fetch(MAIL_FUNCTIE_URL!, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Vereist door de Supabase function-gateway; anon-key is publiek.
+        apikey: SUPABASE_EXTERNAL_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_EXTERNAL_ANON_KEY}`,
+      },
+      body: JSON.stringify({
+        naam: n,
+        email: em,
+        honeypot,
+        input: {
+          postcode: normalizePostcode(input.postcode),
+          huisnummer: input.huisnummer,
+          toevoeging: input.toevoeging?.trim() || undefined,
+          bewonertype: input.bewonertype,
+          maatregelen: input.maatregelen,
+        },
+        adres: { straatnaam: adres.straatnaam, woonplaatsnaam: adres.woonplaatsnaam },
+        // Deelbare URL van dit resultaat (voor de "bekijk online"-link in de mail).
+        overzichtUrl: typeof window !== "undefined" ? window.location.href : undefined,
+        // Alleen wat de mail nodig heeft — geen interne filtervelden meesturen.
+        regelingen: regelingen.map((r) => ({
+          titel: r.titel,
+          niveau: r.niveau,
+          type: r.type,
+          bedragIndicatie: r.bedragIndicatie,
+          omschrijving: r.omschrijving,
+          bronUrl: r.bronUrl,
+        })),
+      }),
+    });
+    if (!res.ok) throw new Error(`subsidiecheck-mail gaf status ${res.status}`);
+  };
+
+  // Terugval (function nog niet gedeployed): directe lead-insert in het CRM,
+  // exact dezelfde tabel/kolommen. Er gaat dan nog geen automatische mail uit.
+  const verstuurViaClientInsert = async (n: string, em: string) => {
+    const { error } = await supabase.from("leads_bewoners").insert({
+      tenant_id: "00000000-0000-0000-0000-000000000001",
+      naam: escapeHtml(n),
+      email: em,
+      telefoon: null,
+      postcode: normalizePostcode(input.postcode),
+      huisnummer: input.huisnummer,
+      toevoeging: input.toevoeging?.trim() ? escapeHtml(input.toevoeging.trim()) : null,
+      straat: escapeHtml(adres.straatnaam),
+      stad: escapeHtml(adres.woonplaatsnaam),
+      notities: bouwNotities(),
+      bron: "Subsidiecheck",
+      status: "nieuw",
+    } as never);
+    if (error) throw error;
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -67,29 +145,11 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
 
     setBezig(true);
     try {
-      const notities = [
-        `Subsidiecheck ingevuld: ${regelingen.length} regelingen gevonden.`,
-        `Situatie: ${BEWONERTYPE_LABELS[input.bewonertype]}`,
-        `Interesse: ${input.maatregelen.map((m) => MAATREGEL_LABELS[m]).join(", ")}`,
-        `Regelingen: ${regelingen.map((r) => r.titel).join("; ")}`,
-        `Verzoek: overzicht per e-mail ontvangen.`,
-      ].join("\n");
-
-      const { error } = await supabase.from("leads_bewoners").insert({
-        tenant_id: "00000000-0000-0000-0000-000000000001",
-        naam: escapeHtml(n),
-        email: em,
-        telefoon: null,
-        postcode: normalizePostcode(input.postcode),
-        huisnummer: input.huisnummer,
-        toevoeging: input.toevoeging?.trim() ? escapeHtml(input.toevoeging.trim()) : null,
-        straat: escapeHtml(adres.straatnaam),
-        stad: escapeHtml(adres.woonplaatsnaam),
-        notities,
-        bron: "Subsidiecheck",
-        status: "nieuw",
-      } as never);
-      if (error) throw error;
+      if (MAIL_FUNCTIE_URL) {
+        await verstuurViaFunctie(n, em);
+      } else {
+        await verstuurViaClientInsert(n, em);
+      }
       // Geen naam/e-mail in het event — alleen dat er een lead is (privacy).
       pushGtmEvent("subsidiecheck_lead", { aantal_regelingen: regelingen.length });
       setVerstuurd(true);

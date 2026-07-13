@@ -14,7 +14,6 @@ import {
 } from "@/lib/subsidies";
 
 import { MailOverzicht } from "./MailOverzicht";
-import { NIVEAU_DOT } from "./niveauKleuren";
 import { Samenvatting } from "./Samenvatting";
 import { SubsidieCard } from "./SubsidieCard";
 
@@ -194,7 +193,6 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         {groepen.map(({ niveau, regelingen: groep }) => (
           <section key={niveau} aria-label={NIVEAU_LABELS[niveau]}>
             <h2 className="mb-3 flex items-center gap-2 text-[14px] font-semibold uppercase tracking-[0.08em] text-primary">
-              <span className={`h-2.5 w-2.5 rounded-full ${NIVEAU_DOT[niveau]}`} aria-hidden="true" />
               {NIVEAU_LABELS[niveau]}
               <span className="font-normal text-muted-foreground">· {groep.length}</span>
             </h2>

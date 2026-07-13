@@ -6,8 +6,6 @@ import {
   type Samenvatting as SamenvattingData,
 } from "@/lib/subsidies";
 
-import { NIVEAU_DOT } from "./niveauKleuren";
-
 // Woordkeuze per bewonertype, zodat de samenvatting terugkoppelt wat je hebt
 // ingevuld ("voor jouw koopwoning") — endowment: dit is jóuw overzicht.
 const WONINGWOORD: Record<Bewonertype, string> = {
@@ -34,14 +32,7 @@ interface SamenvattingProps {
 export const Samenvatting = ({ data, bewonertype, plaats, onMailKlik }: SamenvattingProps) => {
   const { totaal, subsidies, leningen, perNiveau } = data;
   const meervoud = totaal === 1 ? "regeling" : "regelingen";
-
-  // "5 subsidies · 1 lening" — alleen tonen wat er is.
-  const verdeling = [
-    subsidies > 0 ? `${subsidies} ${subsidies === 1 ? "subsidie" : "subsidies"}` : null,
-    leningen > 0 ? `${leningen} ${leningen === 1 ? "lening" : "leningen"}` : null,
-  ]
-    .filter(Boolean)
-    .join(" · ");
+  const heeftVerdeling = subsidies > 0 || leningen > 0;
 
   return (
     <section
@@ -52,7 +43,7 @@ export const Samenvatting = ({ data, bewonertype, plaats, onMailKlik }: Samenvat
       <div className="grid gap-6 md:grid-cols-[1.6fr_1fr] md:gap-10">
         {/* Links: de payoff + geruststelling */}
         <div>
-          <p className="text-[15px] text-muted-foreground">We vonden</p>
+          <p className="text-[17px] font-semibold text-muted-foreground">We vonden</p>
           <p className="mt-0.5 font-display font-bold leading-none text-primary" style={{ fontSize: "clamp(38px, 7vw, 52px)" }}>
             {totaal} <span className="align-baseline text-[0.5em] font-semibold">{meervoud}</span>
           </p>
@@ -64,7 +55,22 @@ export const Samenvatting = ({ data, bewonertype, plaats, onMailKlik }: Samenvat
                 in <span className="font-semibold text-primary">{plaats}</span>
               </>
             ) : null}
-            {verdeling ? <span className="text-muted-foreground"> — {verdeling}</span> : null}
+            {heeftVerdeling ? (
+              <span className="text-muted-foreground">
+                {" — "}
+                {subsidies > 0 ? (
+                  <span className="font-medium text-[hsl(var(--subsidie))]">
+                    {subsidies} {subsidies === 1 ? "subsidie" : "subsidies"}
+                  </span>
+                ) : null}
+                {subsidies > 0 && leningen > 0 ? " · " : null}
+                {leningen > 0 ? (
+                  <span className="font-medium text-[hsl(var(--lening))]">
+                    {leningen} {leningen === 1 ? "lening" : "leningen"}
+                  </span>
+                ) : null}
+              </span>
+            ) : null}
           </p>
 
           <p className="mt-4 max-w-md text-[15px] leading-relaxed text-foreground/80">
@@ -83,14 +89,13 @@ export const Samenvatting = ({ data, bewonertype, plaats, onMailKlik }: Samenvat
           </button>
         </div>
 
-        {/* Rechts: verdeling per niveau — dubbelt als kleurlegenda voor de
-            kaarten hieronder. */}
+        {/* Rechts: verdeling per niveau (landelijk → lokaal) als rustige lijst.
+            Kleur zit nu op het type (groen/terracotta), niet op het niveau. */}
         <div className="md:border-l md:border-border md:pl-8">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">Verdeling</p>
+          <p className="text-[14px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">Verdeling</p>
           <ul className="mt-3 flex flex-col gap-2">
             {perNiveau.map(({ niveau, aantal }) => (
               <li key={niveau} className="flex items-center gap-2.5 text-[14px] text-foreground">
-                <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${NIVEAU_DOT[niveau]}`} aria-hidden="true" />
                 <span className="flex-1">{NIVEAU_KORT[niveau]}</span>
                 <span className="font-semibold text-primary">{aantal}</span>
               </li>

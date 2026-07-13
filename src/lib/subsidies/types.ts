@@ -50,6 +50,44 @@ export const BEWONERTYPE_LABELS: Record<Bewonertype, string> = {
   verhuurder: "Verhuurder",
 };
 
+// --- Bron-koppeling: Energiesubsidiewijzer (Verbeterjehuis) ---
+// Verbeterjehuis filtert server-side op bewonertype (`type-of-resident`) én
+// maatregel (`filter=<id>`). We mappen onze types 1-op-1 op hun waarden, zodat
+// de bron exact dezelfde lijst teruggeeft als hun eigen tool (geverifieerd
+// 2026-07-13: 9742HJ + woningeigenaar + onze 8 maatregelen = 10 regelingen).
+export const BEWONERTYPE_RESIDENT: Record<Bewonertype, string> = {
+  woningeigenaar: "Woningeigenaar",
+  vve: "Vereniging van Eigenaren",
+  huurder: "Huurder",
+  verhuurder: "Particuliere woningverhuurder",
+};
+
+export const MAATREGEL_FILTER_ID: Record<Maatregel, string> = {
+  isolatie: "1503",
+  warmtepomp: "1564",
+  zonnepanelen: "1571",
+  zonneboiler: "1584",
+  ventilatie: "1581",
+  warmtenet: "1594",
+  "elektrisch-koken": "1601",
+  thuisbatterij: "1602",
+};
+
+// Bouwt de filter-parameters voor de Energiesubsidiewijzer: bewonertype + de
+// gekozen maatregelen (lege lijst = alle 8, want dat is onze "Alles"-optie).
+// Retourneert alleen de query zónder postcode, zodat de dev-proxy én de edge
+// function dezelfde logica delen.
+export function bouwEswFilterQuery(bewonertype: Bewonertype, maatregelen: Maatregel[]): string {
+  const gekozen = maatregelen.length > 0 ? maatregelen : ALLE_MAATREGELEN;
+  const params = new URLSearchParams();
+  params.set("type-of-resident", BEWONERTYPE_RESIDENT[bewonertype]);
+  for (const m of gekozen) {
+    const id = MAATREGEL_FILTER_ID[m];
+    if (id) params.append("filter", id);
+  }
+  return params.toString();
+}
+
 export const NIVEAU_LABELS: Record<SubsidieNiveau, string> = {
   rijk: "Rijksoverheid",
   provincie: "Provincie",
