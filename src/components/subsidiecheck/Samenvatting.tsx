@@ -1,9 +1,12 @@
-import { ArrowRight, Mail } from "lucide-react";
+import { ArrowRight, Check, Mail } from "lucide-react";
 
 import {
   type Bewonertype,
-  NIVEAU_KORT,
+  formatEuro,
+  type Maatregel,
+  MAATREGEL_LABELS,
   type Samenvatting as SamenvattingData,
+  type TopBedrag,
 } from "@/lib/subsidies";
 
 // Woordkeuze per bewonertype, zodat de samenvatting terugkoppelt wat je hebt
@@ -20,19 +23,34 @@ interface SamenvattingProps {
   bewonertype: Bewonertype;
   /** Gemeente, of anders provincie — voor de situatie-terugkoppeling. */
   plaats?: string;
+  /** De maatregelen waar de bewoner in geïnteresseerd is (kolom "wat dit dekt"). */
+  maatregelen: Maatregel[];
+  /** Sterkste concrete bedragen om als teaser uit te lichten (topBedragen()). */
+  bedragen: { subsidie?: TopBedrag; lening?: TopBedrag };
   /** Scrollt naar het mailformulier onder de lijst. */
   onMailKlik: () => void;
 }
 
+// Zet een uitgelicht bedrag om in leesbare copy. Subsidie bij voorkeur als
+// percentage ("tot 100% subsidie"), lening als bedrag ("een lening tot € X").
+const subsidieTekst = (b: TopBedrag) =>
+  b.soort === "pct" ? `tot ${b.waarde}% subsidie` : `subsidie tot € ${formatEuro(b.waarde)}`;
+const leningTekst = (b: TopBedrag) =>
+  b.soort === "euro" ? `een lening tot € ${formatEuro(b.waarde)}` : `een lening tot ${b.waarde}% van de kosten`;
+
 // Het samenvattingsblok bovenaan het resultaat — dé piek van de flow
 // (peak-end): eerst de conclusie (inverted pyramid), dan pas de lijst. Groot
-// aantal (cijfers trekken het oog), de ingevulde situatie teruggekoppeld, de
-// subsidie/lening-verdeling, een kleurlegenda die tegelijk de kaarten hieronder
-// verklaart, en één zin die de keuzestress wegneemt.
-export const Samenvatting = ({ data, bewonertype, plaats, onMailKlik }: SamenvattingProps) => {
-  const { totaal, subsidies, leningen, perNiveau } = data;
+// aantal, een eerlijke bedrag-teaser (echte losse cijfers, nooit een opgeteld
+// totaal), de subsidie/lening-verhouding als balk, en rechts wat dit voor jouw
+// woning dekt (de gekozen maatregelen) i.p.v. een administratieve overheidslaag.
+export const Samenvatting = ({ data, bewonertype, plaats, maatregelen, bedragen, onMailKlik }: SamenvattingProps) => {
+  const { totaal, subsidies, leningen } = data;
   const meervoud = totaal === 1 ? "regeling" : "regelingen";
   const heeftVerdeling = subsidies > 0 || leningen > 0;
+  const subsidiePct = totaal > 0 ? Math.round((subsidies / totaal) * 100) : 0;
+
+  // "Meer dan de meeste mensen denken" alleen als het ook echt oogt.
+  const goedNieuws = totaal >= 3 && subsidies >= 1;
 
   return (
     <section
@@ -55,27 +73,50 @@ export const Samenvatting = ({ data, bewonertype, plaats, onMailKlik }: Samenvat
                 in <span className="font-semibold text-primary">{plaats}</span>
               </>
             ) : null}
-            {heeftVerdeling ? (
-              <span className="text-muted-foreground">
-                {" — "}
-                {subsidies > 0 ? (
-                  <span className="font-medium text-[hsl(var(--subsidie))]">
-                    {subsidies} {subsidies === 1 ? "subsidie" : "subsidies"}
-                  </span>
-                ) : null}
-                {subsidies > 0 && leningen > 0 ? " · " : null}
-                {leningen > 0 ? (
-                  <span className="font-medium text-[hsl(var(--lening))]">
-                    {leningen} {leningen === 1 ? "lening" : "leningen"}
-                  </span>
-                ) : null}
-              </span>
-            ) : null}
           </p>
 
+          {/* Bedrag-teaser: het sterkste concrete cijfer, in de type-kleuren. */}
+          {(bedragen.subsidie || bedragen.lening) && (
+            <p className="mt-3 text-[16px] leading-snug text-foreground">
+              Waaronder{" "}
+              {bedragen.subsidie && (
+                <span className="font-semibold text-[hsl(var(--subsidie))]">{subsidieTekst(bedragen.subsidie)}</span>
+              )}
+              {bedragen.subsidie && bedragen.lening ? " en " : null}
+              {bedragen.lening && (
+                <span className="font-semibold text-[hsl(var(--lening))]">{leningTekst(bedragen.lening)}</span>
+              )}
+              .
+            </p>
+          )}
+
+          {/* Verhoudingsbalk: subsidies vs. leningen in één oogopslag. */}
+          {heeftVerdeling && (
+            <div className="mt-4">
+              <div className="flex h-3 overflow-hidden rounded-full" role="img" aria-label={`${subsidies} subsidies en ${leningen} leningen`}>
+                {subsidies > 0 && <span style={{ width: `${subsidiePct}%`, backgroundColor: "hsl(var(--subsidie))" }} />}
+                {leningen > 0 && <span style={{ width: `${100 - subsidiePct}%`, backgroundColor: "hsl(var(--lening))" }} />}
+              </div>
+              <div className="mt-2.5 flex flex-wrap gap-x-5 gap-y-1 text-[14px] font-medium text-foreground">
+                {subsidies > 0 && (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: "hsl(var(--subsidie))" }} />
+                    {subsidies} {subsidies === 1 ? "subsidie" : "subsidies"}
+                  </span>
+                )}
+                {leningen > 0 && (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: "hsl(var(--lening))" }} />
+                    {leningen} {leningen === 1 ? "lening" : "leningen"}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
           <p className="mt-4 max-w-md text-[15px] leading-relaxed text-foreground/80">
-            Je hoeft hier niets uit te kiezen. Veel regelingen zijn te combineren. Wij zoeken voor je uit wat in
-            jouw situatie het meeste oplevert.
+            {goedNieuws ? "Dat is meer dan de meeste mensen denken. " : ""}Je hoeft hier niets uit te kiezen. Wij zoeken
+            voor je uit wat in jouw situatie het meeste oplevert.
           </p>
 
           <button
@@ -89,15 +130,23 @@ export const Samenvatting = ({ data, bewonertype, plaats, onMailKlik }: Samenvat
           </button>
         </div>
 
-        {/* Rechts: verdeling per niveau (landelijk → lokaal) als rustige lijst.
-            Kleur zit nu op het type (groen/terracotta), niet op het niveau. */}
+        {/* Rechts: wat dit voor jouw woning dekt (de gekozen maatregelen),
+            i.p.v. de administratieve verdeling per overheidslaag. */}
         <div className="md:border-l md:border-border md:pl-8">
-          <p className="text-[14px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">Verdeling</p>
-          <ul className="mt-3 flex flex-col gap-2">
-            {perNiveau.map(({ niveau, aantal }) => (
-              <li key={niveau} className="flex items-center gap-2.5 text-[14px] text-foreground">
-                <span className="flex-1">{NIVEAU_KORT[niveau]}</span>
-                <span className="font-semibold text-primary">{aantal}</span>
+          <p className="text-[14px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            Wat dit dekt voor jouw woning
+          </p>
+          <ul className="mt-3 grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-2 md:grid-cols-1">
+            {maatregelen.map((m) => (
+              <li key={m} className="flex items-center gap-2.5 text-[14px] text-foreground">
+                <span
+                  className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+                  style={{ backgroundColor: "hsl(var(--subsidie) / 0.12)" }}
+                  aria-hidden="true"
+                >
+                  <Check size={12} strokeWidth={3} className="text-[hsl(var(--subsidie))]" />
+                </span>
+                {MAATREGEL_LABELS[m]}
               </li>
             ))}
           </ul>

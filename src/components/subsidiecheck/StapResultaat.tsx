@@ -11,11 +11,13 @@ import {
   NIVEAU_LABELS,
   subsidieProvider,
   type SubsidieCheckInput,
+  topBedragen,
 } from "@/lib/subsidies";
 
 import { MailOverzicht } from "./MailOverzicht";
 import { Samenvatting } from "./Samenvatting";
 import { SubsidieCard } from "./SubsidieCard";
+import { TrajectStrip } from "./TrajectStrip";
 
 interface StapResultaatProps {
   input: SubsidieCheckInput;
@@ -82,6 +84,7 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
 
   const groepen = useMemo(() => groepeerPerNiveau(regelingen ?? []), [regelingen]);
   const samenvatting = useMemo(() => maakSamenvatting(regelingen ?? []), [regelingen]);
+  const bedragen = useMemo(() => topBedragen(regelingen ?? []), [regelingen]);
   const adresRegel = `${adres.straatnaam} ${input.huisnummer}${input.toevoeging ? ` ${input.toevoeging}` : ""}, ${adres.woonplaatsnaam}`;
 
   // Eén event per getoond resultaat (ook bij 0 regelingen — dat is óók funnel-data).
@@ -184,8 +187,13 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         data={samenvatting}
         bewonertype={input.bewonertype}
         plaats={input.gemeente ?? input.provincie}
+        maatregelen={input.maatregelen}
+        bedragen={bedragen}
         onMailKlik={scrollNaarMail}
       />
+
+      {/* Endowed progress: stap 1 (overzicht) is klaar, drie stappen te gaan. */}
+      <TrajectStrip />
 
       {/* Groepen onder elkaar (landelijk → lokaal, layer-cake-scan), met de
           kaarten binnen een groep naast elkaar op desktop. */}
@@ -242,18 +250,9 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         className="mt-10 scroll-mt-24 rounded-xl border border-border p-6 md:p-8"
         style={{ backgroundColor: "var(--card-soft)" }}
       >
-        <p className="flex items-center gap-2 text-[14px] font-semibold text-primary">
-          <Check size={16} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
-          Stap 1 is klaar: je weet nu wat er voor jouw woning beschikbaar is.
-        </p>
-
-        <h3 className="mt-4 font-display text-[19px] font-semibold text-primary md:text-[21px]">
+        <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
           Ontvang dit overzicht in je mail
         </h3>
-        <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-foreground/80">
-          Handig om te bewaren of thuis rustig na te lezen, inclusief de officiële aanvraaglinks. Je zit nergens
-          aan vast.
-        </p>
         <div className="mt-5">
           <MailOverzicht input={input} adres={adres} regelingen={regelingen ?? []} />
         </div>

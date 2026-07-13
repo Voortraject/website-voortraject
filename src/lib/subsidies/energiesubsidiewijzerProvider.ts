@@ -18,6 +18,23 @@ import { bouwEswFilterQuery, type SubsidieCheckInput, type SubsidieRegeling } fr
 const FUNCTIE_URL = import.meta.env.VITE_SUBSIDIECHECK_URL as string | undefined;
 const DEV_PROXY = "/esw";
 
+// Curated indicaties voor bekende regelingen waarvoor de bron geen schoon bedrag
+// teruggeeft. ISDE noemt geen los percentage omdat het bedrag per maatregel
+// verschilt (isolatie per m², warmtepomp een vast bedrag); wij tonen een eigen
+// indicatie i.p.v. een leeg veld. Alléén als terugval: een echt bedrag uit de
+// bron wint altijd. Sleutel = de stabiele regeling-id (laatste padsegment).
+const CURATED_BEDRAG: Record<string, string> = {
+  "isde-subsidie-rijksoverheid": "tot ± 30% van de kosten",
+};
+
+// Vult de curated indicatie in waar de bron er geen gaf. Raakt de weergave én de
+// mail (die dezelfde client-lijst meestuurt), zonder de edge function te wijzigen.
+function metCuratedBedrag(regelingen: SubsidieRegeling[]): SubsidieRegeling[] {
+  return regelingen.map((r) =>
+    r.bedragIndicatie || !CURATED_BEDRAG[r.id] ? r : { ...r, bedragIndicatie: CURATED_BEDRAG[r.id] },
+  );
+}
+
 // --- Productie: JSON via de edge function (al verrijkt) ---
 // De filters (bewonertype + maatregelen) gaan mee; de function forwardt ze naar
 // de bron, zodat Verbeterjehuis exact dezelfde lijst als hun eigen tool geeft.
@@ -80,9 +97,10 @@ export const energiesubsidiewijzerProvider: SubsidieProvider = {
       // Een bronfout gooit (→ mock-terugval hieronder); een lege-maar-geldige
       // lijst (0 regelingen voor deze situatie) komt gewoon door en toont de
       // nette "geen regelingen"-staat, niet stiekem voorbeelddata.
-      return FUNCTIE_URL
+      const regelingen = FUNCTIE_URL
         ? await haalViaFunctie(input.postcode, filters)
         : await verrijkAlles(await haalLijstViaProxy(input.postcode, filters));
+      return metCuratedBedrag(regelingen);
     } catch (err) {
       // TODO go-live: bij terugval een zachte melding tonen ("basisoverzicht,
       // live bron even niet bereikbaar") i.p.v. stil de basisset serveren.
