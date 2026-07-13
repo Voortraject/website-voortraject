@@ -186,3 +186,52 @@ export function maakSamenvatting(regelingen: SubsidieRegeling[]): Samenvatting {
     })).filter((g) => g.aantal > 0),
   };
 }
+
+// --- Bedrag-teaser: het sterkste concrete cijfer uitlichten ---
+// Leest de al genormaliseerde `bedragIndicatie` ("tot € X" of "X–Y% van de
+// kosten"). Nooit optellen of verzinnen: we tonen altijd één écht bestaand
+// cijfer uit een gevonden regeling. Voor subsidies lichten we bij voorkeur het
+// hoogste percentage uit (100% spreekt het meeste aan), anders het hoogste
+// bedrag; voor leningen het hoogste bedrag, anders een percentage.
+export type BedragSoort = "euro" | "pct";
+export type TopBedrag = { soort: BedragSoort; waarde: number };
+
+function euroUit(indicatie?: string): number | undefined {
+  const m = indicatie?.match(/€\s?([\d.]+)/);
+  if (!m) return undefined;
+  const n = parseInt(m[1].replace(/\./g, ""), 10);
+  return Number.isFinite(n) && n > 0 ? n : undefined;
+}
+
+function pctUit(indicatie?: string): number | undefined {
+  if (!indicatie) return undefined;
+  const waarden = [...indicatie.matchAll(/(\d{1,3})\s*%/g)]
+    .map((m) => parseInt(m[1], 10))
+    .filter((n) => Number.isFinite(n) && n > 0);
+  return waarden.length ? Math.max(...waarden) : undefined;
+}
+
+function hoogste(regelingen: SubsidieRegeling[], uit: (s?: string) => number | undefined): number | undefined {
+  const waarden = regelingen.map((r) => uit(r.bedragIndicatie)).filter((n): n is number => n != null);
+  return waarden.length ? Math.max(...waarden) : undefined;
+}
+
+export function topBedragen(regelingen: SubsidieRegeling[]): { subsidie?: TopBedrag; lening?: TopBedrag } {
+  const subs = regelingen.filter((r) => r.type === "subsidie");
+  const len = regelingen.filter((r) => r.type === "lening");
+  const subPct = hoogste(subs, pctUit);
+  const subEuro = hoogste(subs, euroUit);
+  const lenEuro = hoogste(len, euroUit);
+  const lenPct = hoogste(len, pctUit);
+  return {
+    subsidie:
+      subPct != null ? { soort: "pct", waarde: subPct } : subEuro != null ? { soort: "euro", waarde: subEuro } : undefined,
+    lening:
+      lenEuro != null ? { soort: "euro", waarde: lenEuro } : lenPct != null ? { soort: "pct", waarde: lenPct } : undefined,
+  };
+}
+
+/** Euro met NL-duizendtallen, bijv. 28000 → "28.000". */
+export function formatEuro(n: number): string {
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}

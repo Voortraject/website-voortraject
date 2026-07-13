@@ -7,6 +7,9 @@ import {
   groepeerPerNiveau,
   NIVEAU_VOLGORDE,
   type SubsidieCheckInput,
+  type SubsidieRegeling,
+  type SubsidieType,
+  topBedragen,
 } from "@/lib/subsidies/types";
 
 const basisInput: SubsidieCheckInput = {
@@ -121,5 +124,43 @@ describe("groepeerPerNiveau", () => {
       const naLening = groep.regelingen.slice(eersteLening);
       expect(naLening.every((r) => r.type === "lening")).toBe(true);
     }
+  });
+});
+
+describe("topBedragen", () => {
+  const mk = (type: SubsidieType, bedragIndicatie?: string): SubsidieRegeling => ({
+    id: `${type}-${bedragIndicatie ?? "geen"}`,
+    titel: "Regeling",
+    niveau: "rijk",
+    type,
+    aanbieder: "",
+    omschrijving: "",
+    bedragIndicatie,
+    bronUrl: "",
+    maatregelen: [],
+    doelgroepen: [],
+  });
+
+  it("licht voor subsidies het hoogste percentage uit en voor leningen het hoogste bedrag", () => {
+    const top = topBedragen([
+      mk("subsidie", "50–100% van de kosten"),
+      mk("subsidie", "tot € 4.000"),
+      mk("lening", "tot € 28.000"),
+      mk("lening", "tot 106% van de kosten"),
+    ]);
+    expect(top.subsidie).toEqual({ soort: "pct", waarde: 100 });
+    expect(top.lening).toEqual({ soort: "euro", waarde: 28000 });
+  });
+
+  it("valt voor subsidies terug op het hoogste bedrag als er geen percentage is", () => {
+    const top = topBedragen([mk("subsidie", "tot € 4.000"), mk("subsidie", "tot € 10.000")]);
+    expect(top.subsidie).toEqual({ soort: "euro", waarde: 10000 });
+    expect(top.lening).toBeUndefined();
+  });
+
+  it("geeft niets terug als er geen bruikbare bedragen zijn", () => {
+    const top = topBedragen([mk("subsidie", undefined), mk("subsidie", "afhankelijk van je situatie")]);
+    expect(top.subsidie).toBeUndefined();
+    expect(top.lening).toBeUndefined();
   });
 });

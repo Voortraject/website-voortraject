@@ -11,11 +11,13 @@ import {
   NIVEAU_LABELS,
   subsidieProvider,
   type SubsidieCheckInput,
+  topBedragen,
 } from "@/lib/subsidies";
 
 import { MailOverzicht } from "./MailOverzicht";
 import { Samenvatting } from "./Samenvatting";
 import { SubsidieCard } from "./SubsidieCard";
+import { TrajectStrip } from "./TrajectStrip";
 
 interface StapResultaatProps {
   input: SubsidieCheckInput;
@@ -82,6 +84,7 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
 
   const groepen = useMemo(() => groepeerPerNiveau(regelingen ?? []), [regelingen]);
   const samenvatting = useMemo(() => maakSamenvatting(regelingen ?? []), [regelingen]);
+  const bedragen = useMemo(() => topBedragen(regelingen ?? []), [regelingen]);
   const adresRegel = `${adres.straatnaam} ${input.huisnummer}${input.toevoeging ? ` ${input.toevoeging}` : ""}, ${adres.woonplaatsnaam}`;
 
   // Eén event per getoond resultaat (ook bij 0 regelingen — dat is óók funnel-data).
@@ -184,8 +187,13 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         data={samenvatting}
         bewonertype={input.bewonertype}
         plaats={input.gemeente ?? input.provincie}
+        maatregelen={input.maatregelen}
+        bedragen={bedragen}
         onMailKlik={scrollNaarMail}
       />
+
+      {/* Endowed progress: stap 1 (overzicht) is klaar, drie stappen te gaan. */}
+      <TrajectStrip />
 
       {/* Groepen onder elkaar (landelijk → lokaal, layer-cake-scan), met de
           kaarten binnen een groep naast elkaar op desktop. */}
