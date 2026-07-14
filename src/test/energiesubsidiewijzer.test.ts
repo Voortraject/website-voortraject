@@ -72,6 +72,45 @@ describe("parseDetail (echte detailpagina's)", () => {
     expect(detail.officieleBronUrl).toContain("rvo.nl");
   });
 
+  // Regressie: regelingen zonder uitvoerder uit de whitelist (rvo/snn/…) kregen
+  // de generieke ministerie-footerlink (rijksoverheid.nl/ministeries/…) als bron.
+  // De echte bron staat altijd in de content vóór de footer.
+  it("pakt belastingdienst.nl als bron voor het lage btw-tarief (niet de ministerie-footerlink)", () => {
+    const detail = parseDetail(fixture("esw-detail-overig-laag-btw-tarief.html"));
+    expect(detail.officieleBronUrl).toContain("belastingdienst.nl");
+  });
+
+  it("pakt nijbegun.nl als bron voor de Isolatieaanpak Groningen en Noord-Drenthe", () => {
+    const detail = parseDetail(fixture("esw-detail-subsidie-isolatieaanpak.html"));
+    expect(detail.officieleBronUrl).toContain("nijbegun.nl");
+  });
+
+  // Regressie: op pagina's waar een PDF (postcodelijst, voorwaarden) vóór de
+  // regelingpagina staat, wonnen die PDF's; een echte pagina heeft voorrang.
+  it("verkiest de snn.nl-regelingpagina boven de postcodelijst-PDF (VVG Groningen)", () => {
+    const detail = parseDetail(fixture("esw-detail-subsidie-vvg-groningen.html"));
+    expect(detail.officieleBronUrl).toContain("snn.nl/subsidies-voor-particulieren");
+    expect(detail.officieleBronUrl).not.toMatch(/\.pdf/i);
+  });
+
+  it("verkiest de svn.nl-regelingpagina boven de voorwaarden-PDF (onderhoudsfonds VvE's)", () => {
+    const detail = parseDetail(fixture("esw-detail-lening-onderhoudsfonds-vves.html"));
+    expect(detail.officieleBronUrl).toContain("svn.nl/toekomstbestendig-onderhoudsfonds-vves");
+    expect(detail.officieleBronUrl).not.toMatch(/\.pdf/i);
+  });
+
+  it("geeft nooit een ministerie-pagina terug als officiële bron", () => {
+    for (const naam of [
+      "esw-detail-subsidie-isde.html",
+      "esw-detail-lening-energiebespaarlening.html",
+      "esw-detail-overig-laag-btw-tarief.html",
+      "esw-detail-subsidie-isolatieaanpak.html",
+    ]) {
+      const detail = parseDetail(fixture(naam));
+      expect(detail.officieleBronUrl ?? "").not.toContain("rijksoverheid.nl/ministeries");
+    }
+  });
+
   it("verrijkt een lijst-regeling met detailvelden", () => {
     const basis = resultaten.find((r) => r.id === "isde-subsidie-rijksoverheid")!;
     const detail = parseDetail(fixture("esw-detail-subsidie-isde.html"));

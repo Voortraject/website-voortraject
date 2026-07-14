@@ -691,3 +691,24 @@ Praktische gotcha's:
   `service_role` key) to `.env`, it would leak. Recommended: add `.env` to `.gitignore` and
   stop tracking it (`git rm --cached .env`). Do this via a branch + PR, and confirm it
   won't break the Lovable/Cloudflare build first.
+
+### Review (2026-07-14) — fix bronlinks subsidiecheck (PR #53)
+- Bug: "Naar de officiële regeling" (site) en "Meer info" (mail) wezen voor veel
+  regelingen naar de generieke ministerie-footerlink van Verbeterjehuis
+  (rijksoverheid.nl/ministeries/…). Oorzaak: `officieleBron()` scande de hele
+  pagina en viel terug op de eerste rijksoverheid.nl-link; de uitvoerder-whitelist
+  was te smal (belastingdienst/svn/nhg/nijbegun/gemeente.groningen vielen erbuiten).
+- Fix: alleen content vóór `<footer` scannen; fallback = eerste echte externe
+  contentlink; ministerie-/campagnelinks uitgesloten. Beide parser-kopieën
+  (frontend + edge function) + 2 echte fixtures + 3 regressietests (32 tests groen).
+- Edge function gedeployed naar CRM-project en live geverifieerd (9742HJ,
+  Woningeigenaar): alle 12 regelingen hebben nu een eigen echte bron.
+- Observatie (buiten scope, evt. later): "Subsidie Verduurzaming en Verbetering
+  Groningen" linkt naar een snn.nl-PDF (postcodelijst) omdat dat de eerste
+  snn.nl-link op de detailpagina is; een pagina-link zou netter zijn.
+- Verfijning (zelfde PR, 2e commit): PDF-links (postcodelijsten/voorwaarden) krijgen
+  lagere rang dan echte pagina's (uitvoerder-pagina > uitvoerder-PDF > andere pagina >
+  andere PDF). VVG Groningen en Onderhoudsfonds VvE's linken nu naar de regelingpagina
+  (snn.nl / svn.nl). Breed herverifieerd: 52 regelingen, 14 postcodes, 0 PDF's,
+  0 ministerie-links. "Energiebespaarlening Fryslân" → warmtefonds.nl/vve is conform
+  de bron (enige externe link op die pagina).
