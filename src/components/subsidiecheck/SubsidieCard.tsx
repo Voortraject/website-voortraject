@@ -46,7 +46,9 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
       <h3 className="mt-2 font-display text-[17px] font-semibold leading-snug text-primary md:text-[18px]">
         {regeling.titel}
       </h3>
-      <p className="mt-1.5 text-[15px] leading-relaxed text-foreground/80">{regeling.omschrijving}</p>
+      {/* Op mobiel blijft de gesloten kaart compact (badge, titel, bedrag,
+          maatregelregel); de omschrijving verhuist daar naar de uitklap. */}
+      <p className="mt-1.5 hidden text-[15px] leading-relaxed text-foreground/80 md:block">{regeling.omschrijving}</p>
 
       <p className="mt-3 flex items-center gap-1.5 text-[13px] text-muted-foreground">
         <Tag size={13} strokeWidth={2} className="shrink-0" aria-hidden="true" />
@@ -74,6 +76,7 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
 
       {open && (
         <div id={regionId} className="mt-3 flex flex-col gap-3 border-t border-border/60 pt-3 text-[14px] leading-relaxed">
+          <p className="text-foreground/80 md:hidden">{regeling.omschrijving}</p>
           {regeling.voorWie && (
             <p>
               <span className="font-semibold text-primary">Voor wie: </span>
