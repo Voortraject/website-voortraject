@@ -39,7 +39,7 @@ export const TrajectStrip = () => {
 
       {/* Horizontaal pad; op smalle schermen mag het rustig scrollen i.p.v. breken. */}
       <div className="relative">
-        <ol ref={scrollerRef} onScroll={updateAffordance} className="flex items-start overflow-x-auto pb-1">
+        <ol ref={scrollerRef} onScroll={updateAffordance} className="no-scrollbar flex items-start overflow-x-auto">
         {STAPPEN.map((stap, i) => {
           const gedaan = i === 0;
           return (
