@@ -1,4 +1,5 @@
-import { Check } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Check, ChevronRight } from "lucide-react";
 
 // Trajectstrip onder de samenvatting: maakt de belofte "rust en duidelijkheid in
 // het verduurzamingstraject" zichtbaar en gebruikt endowed progress — stap 1 is
@@ -7,6 +8,24 @@ import { Check } from "lucide-react";
 const STAPPEN = ["Overzicht", "Persoonlijk advies", "Aanvraag geregeld", "Woning verduurzaamd"];
 
 export const TrajectStrip = () => {
+  const scrollerRef = useRef<HTMLOListElement>(null);
+  // Swipe-affordance: op smalle schermen valt een deel van het pad buiten beeld,
+  // maar zonder hint ziet niemand dat je kunt swipen. Fade + pijl rechts zolang
+  // er nog iets buiten beeld staat; weg zodra het einde bereikt is (of alles past).
+  const [meerRechts, setMeerRechts] = useState(false);
+
+  const updateAffordance = useCallback(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    setMeerRechts(el.scrollWidth - el.scrollLeft - el.clientWidth > 8);
+  }, []);
+
+  useEffect(() => {
+    updateAffordance();
+    window.addEventListener("resize", updateAffordance);
+    return () => window.removeEventListener("resize", updateAffordance);
+  }, [updateAffordance]);
+
   return (
     <section
       aria-label="Jouw verduurzamingstraject"
@@ -19,7 +38,8 @@ export const TrajectStrip = () => {
       </div>
 
       {/* Horizontaal pad; op smalle schermen mag het rustig scrollen i.p.v. breken. */}
-      <ol className="flex items-start overflow-x-auto pb-1">
+      <div className="relative">
+        <ol ref={scrollerRef} onScroll={updateAffordance} className="flex items-start overflow-x-auto pb-1">
         {STAPPEN.map((stap, i) => {
           const gedaan = i === 0;
           return (
@@ -47,7 +67,17 @@ export const TrajectStrip = () => {
             </li>
           );
         })}
-      </ol>
+        </ol>
+        {meerRechts && (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 flex w-14 items-center justify-end"
+            style={{ background: "linear-gradient(to right, transparent, var(--card-soft) 70%)" }}
+          >
+            <ChevronRight size={18} strokeWidth={2.5} className="animate-pulse text-muted-foreground" />
+          </div>
+        )}
+      </div>
     </section>
   );
 };
