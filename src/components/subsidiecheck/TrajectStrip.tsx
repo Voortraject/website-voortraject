@@ -71,10 +71,11 @@ export const TrajectStrip = () => {
         {meerRechts && (
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 right-0 flex w-14 items-center justify-end"
+            className="pointer-events-none absolute inset-y-0 right-0 w-14"
             style={{ background: "linear-gradient(to right, transparent, var(--card-soft) 70%)" }}
           >
-            <ChevronRight size={18} strokeWidth={2.5} className="animate-pulse text-muted-foreground" />
+            {/* Pijl op de hartlijn van de bolletjes (h-10 → midden op 20px). */}
+            <ChevronRight size={18} strokeWidth={2.5} className="absolute right-0 top-[11px] animate-pulse text-muted-foreground" />
           </div>
         )}
       </div>
