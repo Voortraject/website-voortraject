@@ -50,6 +50,10 @@ export const SubsidiecheckCta = () => {
             {/* Elke input een wit vlak, zodat postcode, huisnummer en toevoeging
                 als heldere velden lezen binnen de navy pill. */}
             <div className="flex flex-col gap-2 rounded-2xl bg-primary p-2 shadow-card sm:flex-row sm:items-center sm:rounded-full">
+              {/* Op mobiel één rij: postcode de helft, huisnummer en toevoeging elk
+                  een kwart. Op sm+ lost de wrapper op (contents) zodat de drie velden
+                  weer directe flex-items van de pill zijn, zoals op desktop. */}
+              <div className="flex w-full items-center gap-2 sm:contents">
               <label className="sr-only" htmlFor="home-sc-postcode">
                 Postcode
               </label>
@@ -58,7 +62,7 @@ export const SubsidiecheckCta = () => {
                 type="text"
                 autoComplete="postal-code"
                 placeholder="Postcode"
-                className="min-h-[48px] w-full rounded-xl bg-white px-5 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-40 sm:rounded-full lg:text-[15px]"
+                className="min-h-[48px] min-w-0 flex-[2] rounded-xl bg-white px-3 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-40 sm:flex-none sm:px-5 sm:rounded-full lg:text-[15px]"
                 value={postcode}
                 onChange={(e) => {
                   const v = formatPostcode(e.target.value);
@@ -80,7 +84,7 @@ export const SubsidiecheckCta = () => {
                 type="text"
                 inputMode="numeric"
                 placeholder="Huisnr."
-                className="min-h-[48px] w-full rounded-xl bg-white px-4 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-28 sm:rounded-full lg:text-[15px]"
+                className="min-h-[48px] min-w-0 flex-1 rounded-xl bg-white px-2 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-28 sm:flex-none sm:px-4 sm:rounded-full lg:text-[15px]"
                 value={huisnummer}
                 onChange={(e) => {
                   setHuisnummer(e.target.value);
@@ -95,7 +99,7 @@ export const SubsidiecheckCta = () => {
                 id="home-sc-toevoeging"
                 type="text"
                 placeholder="Toev."
-                className="min-h-[48px] w-full rounded-xl bg-white px-4 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-24 sm:rounded-full lg:text-[15px]"
+                className="min-h-[48px] min-w-0 flex-1 rounded-xl bg-white px-2 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-24 sm:flex-none sm:px-4 sm:rounded-full lg:text-[15px]"
                 value={toevoeging}
                 onChange={(e) => {
                   setToevoeging(e.target.value);
@@ -103,6 +107,7 @@ export const SubsidiecheckCta = () => {
                 }}
                 maxLength={10}
               />
+              </div>
               <button
                 type="submit"
                 className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-accent px-6 py-3 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover sm:rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -119,10 +124,18 @@ export const SubsidiecheckCta = () => {
           </form>
 
           {/* Drie beloftes met vinkjes — zelfde patroon als de hero. */}
-          <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
+          <ul className="mt-5 flex flex-nowrap items-center justify-center gap-x-2.5 sm:gap-x-5">
             {["Gratis", "Geen account nodig", "Klaar in 1 minuut"].map((belofte) => (
-              <li key={belofte} className="inline-flex items-center gap-2 text-[15px] text-muted-foreground">
-                <Check size={16} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
+              <li
+                key={belofte}
+                className="inline-flex items-center gap-1 whitespace-nowrap text-[12px] text-muted-foreground sm:gap-2 sm:text-[15px]"
+              >
+                <Check
+                  size={16}
+                  strokeWidth={2.5}
+                  className="h-3.5 w-3.5 shrink-0 text-accent sm:h-4 sm:w-4"
+                  aria-hidden="true"
+                />
                 {belofte}
               </li>
             ))}
