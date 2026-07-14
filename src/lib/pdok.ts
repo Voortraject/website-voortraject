@@ -18,7 +18,25 @@ export type PdokAdres = {
   woonplaatsnaam: string;
   gemeentenaam: string;
   provincienaam: string;
+  /**
+   * Middelpunt van het adres in RD (EPSG:28992), meters. Optioneel: alleen
+   * aanwezig als PDOK het meelevert. Gebruikt om een luchtfoto-uitsnede rond de
+   * woning te bouwen (zie src/lib/luchtfoto.ts).
+   */
+  centroideRd?: { x: number; y: number };
 };
+
+/**
+ * Parset een PDOK-WKT-punt "POINT(x y)" naar `{ x, y }` (spatie-gescheiden, x
+ * eerst). Geeft `undefined` bij ontbrekende of onparsebare invoer.
+ */
+export function parseRdPoint(wkt?: string): { x: number; y: number } | undefined {
+  const m = wkt?.match(/POINT\(\s*([-\d.]+)\s+([-\d.]+)\s*\)/i);
+  if (!m) return undefined;
+  const x = Number(m[1]);
+  const y = Number(m[2]);
+  return Number.isFinite(x) && Number.isFinite(y) ? { x, y } : undefined;
+}
 
 /**
  * Zoekt een adres op bij PDOK. Geeft `null` terug bij geen match of
@@ -38,7 +56,7 @@ export async function zoekAdres(
 
   try {
     const q = [pc, hn, tv].filter(Boolean).map(encodeURIComponent).join("+");
-    const url = `https://api.pdok.nl/bzk/locatieserver/search/v3_1/free?q=${q}&fq=type:adres&fl=straatnaam,woonplaatsnaam,gemeentenaam,provincienaam&rows=1`;
+    const url = `https://api.pdok.nl/bzk/locatieserver/search/v3_1/free?q=${q}&fq=type:adres&fl=straatnaam,woonplaatsnaam,gemeentenaam,provincienaam,centroide_rd&rows=1`;
     const res = await fetch(url);
     if (!res.ok) return null;
     const data = await res.json();
@@ -49,6 +67,7 @@ export async function zoekAdres(
         woonplaatsnaam: doc.woonplaatsnaam,
         gemeentenaam: doc.gemeentenaam ?? "",
         provincienaam: doc.provincienaam ?? "",
+        centroideRd: parseRdPoint(doc.centroide_rd),
       };
     }
     return null;

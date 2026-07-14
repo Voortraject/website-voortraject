@@ -94,6 +94,21 @@
        in welke niveaugroep 'ie staat. */
     --subsidie: 154 46% 34%;   /* groen */
     --lening: 211 48% 44%;     /* staalblauw */
+
+    /* Energielabel-schaal (subsidiecheck-woningpaneel). De officiële EU/NL
+       energielabel-kleuren zijn een vaste externe standaard (groen = zuinig →
+       rood = onzuinig): een gerechtvaardigde uitzondering op "geen eigen
+       kleuren", net als de kaart-typekleuren hierboven. Waarden zijn iets
+       gekalmeerd t.o.v. het felle origineel zodat ze in de rustige B2B-huisstijl
+       passen. De actuele klasse toont het vlak vol; de overige klassen tonen we
+       als lichte tint (in de component). A+…A+++++ delen de A-kleur. */
+    --label-a: 147 64% 30%;    /* donkergroen */
+    --label-b: 122 47% 40%;    /* groen */
+    --label-c: 78 48% 38%;     /* geelgroen */
+    --label-d: 48 95% 52%;     /* geel */
+    --label-e: 40 92% 50%;     /* amber */
+    --label-f: 26 88% 48%;     /* oranje */
+    --label-g: 353 78% 43%;    /* rood */
   }
 
   .dark {

@@ -40,7 +40,7 @@ Heeft u vragen of wilt u een verzoek indienen? Neem contact met ons op via info@
 
 • van u zelf, wanneer u contact met ons opneemt of gebruikmaakt van onze dienstverlening;
 • van uitvoerders en samenwerkingspartners, in het kader van een gezamenlijk traject;
-• uit openbare bronnen en registers, waaronder de Basisregistratie Adressen en Gebouwen (BAG), het Kadaster, het Handelsregister van de Kamer van Koophandel en de energielabeldatabase EP-online.
+• uit openbare bronnen en registers, waaronder de Basisregistratie Adressen en Gebouwen (BAG), het Kadaster en de kaart- en luchtfotodienst PDOK, het Handelsregister van de Kamer van Koophandel en de energielabeldatabase EP-online. Wanneer u in onze subsidiecheck uw postcode en huisnummer invult, tonen wij op basis daarvan een luchtfoto van uw woning (PDOK) en het eventueel geregistreerde energielabel (EP-online).
 
 Wanneer wij gegevens van uitvoerders of hun contactpersonen uit openbare bronnen verkrijgen, informeren wij de betrokkene daarover overeenkomstig artikel 14 AVG.`,
   },

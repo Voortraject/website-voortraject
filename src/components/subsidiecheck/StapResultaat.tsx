@@ -2,7 +2,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Link2, Loader2 } from "lucide-react";
 
 import { CtaButton } from "@/components/CtaButton";
+import { usePand3d } from "@/hooks/usePand3d";
+import { usePandContour } from "@/hooks/usePandContour";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
+import { useWoningInfo } from "@/hooks/useWoningInfo";
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
 import {
@@ -18,6 +21,7 @@ import { MailOverzicht } from "./MailOverzicht";
 import { Samenvatting } from "./Samenvatting";
 import { SubsidieCard } from "./SubsidieCard";
 import { TrajectStrip } from "./TrajectStrip";
+import { Woningpaneel } from "./Woningpaneel";
 
 interface StapResultaatProps {
   input: SubsidieCheckInput;
@@ -55,6 +59,13 @@ const useLaadsequentie = (klaar: boolean) => {
 
 export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
   const { data: regelingen, isPending, isError, refetch } = useSubsidieCheck(input);
+  const { data: woning, isPending: woningBezig } = useWoningInfo(input.postcode, input.huisnummer, input.toevoeging);
+  // Pand + 3D-model op topniveau (dus vóór de vroege returns): ze starten meteen
+  // bij het mounten van dit scherm — bij het klikken naar het resultaat — en zijn
+  // dus al klaar wanneer het woningpaneel verschijnt. Adresgebaseerd, dus gelijk
+  // voor elke bewonertype-situatie.
+  const { data: pand, isPending: pandBezig } = usePandContour(adres.centroideRd);
+  const { data: model, isPending: modelBezig } = usePand3d(pand?.pandId, adres.centroideRd);
   const fase = useLaadsequentie(!isPending);
   const laden = isPending || fase < 3;
 
@@ -74,6 +85,36 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
     }
   };
 
+  // Deel de tool zelf (niet dit overzicht): via de native deel-sheet (Web Share
+  // API — WhatsApp, mail, enz.), met kopieer-link als terugval op desktop.
+  const [gedeeld, setGedeeld] = useState(false);
+  const deelTimer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => () => clearTimeout(deelTimer.current), []);
+  const deelTool = async () => {
+    const url = `${window.location.origin}/subsidiecheck`;
+    const data = {
+      title: "Voortraject subsidiecheck",
+      text: "Ontdek welke verduurzamingssubsidies er voor jouw woning zijn.",
+      url,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(data);
+      } catch {
+        /* door de gebruiker geannuleerd */
+      }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setGedeeld(true);
+      clearTimeout(deelTimer.current);
+      deelTimer.current = setTimeout(() => setGedeeld(false), 2500);
+    } catch {
+      /* clipboard geweigerd */
+    }
+  };
+
   // Vanuit de samenvatting (bovenaan) naar het mailformulier springen.
   const conversieRef = useRef<HTMLDivElement>(null);
   const scrollNaarMail = () => {
@@ -86,6 +127,19 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
   const samenvatting = useMemo(() => maakSamenvatting(regelingen ?? []), [regelingen]);
   const bedragen = useMemo(() => topBedragen(regelingen ?? []), [regelingen]);
   const adresRegel = `${adres.straatnaam} ${input.huisnummer}${input.toevoeging ? ` ${input.toevoeging}` : ""}, ${adres.woonplaatsnaam}`;
+
+  // Eén woningpaneel-element, gebruikt in zowel de "geen regelingen"-tak als het
+  // normale resultaat — zo verschijnt het in elke situatie (bewonertype/aantal).
+  const woningpaneel = (
+    <Woningpaneel
+      adres={adres}
+      input={input}
+      pand={pand ?? null}
+      pandBezig={pandBezig}
+      model={model ?? null}
+      modelBezig={modelBezig}
+    />
+  );
 
   // Eén event per getoond resultaat (ook bij 0 regelingen — dat is óók funnel-data).
   const resultaatGemeld = useRef(false);
@@ -156,17 +210,20 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
 
   if (aantal === 0) {
     return (
-      <div className="mx-auto max-w-[640px] rounded-lg border border-border bg-card p-6 text-center md:p-8">
-        <h3 className="font-display text-[18px] font-semibold text-primary">
-          Voor deze combinatie vonden we geen regelingen
-        </h3>
-        <p className="mx-auto mt-2 max-w-md text-[15px] leading-relaxed text-foreground/80">
-          Regelingen veranderen vaak en soms zit er meer in dan een eerste check laat zien. Wil je dat wij even
-          meekijken? Dat kost je niets.
-        </p>
-        <div className="mt-5 flex justify-center">
-          <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
+      <div className="grid gap-4 md:grid-cols-[1fr_300px] md:items-start md:gap-6">
+        <div className="rounded-2xl border border-border bg-card p-6 text-center md:p-8">
+          <h3 className="font-display text-[18px] font-semibold text-primary">
+            Voor deze combinatie vonden we geen regelingen
+          </h3>
+          <p className="mx-auto mt-2 max-w-md text-[15px] leading-relaxed text-foreground/80">
+            Regelingen veranderen vaak en soms zit er meer in dan een eerste check laat zien. Wil je dat wij even
+            meekijken? Dat kost je niets.
+          </p>
+          <div className="mt-5 flex justify-center">
+            <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
+          </div>
         </div>
+        {woningpaneel}
       </div>
     );
   }
@@ -182,15 +239,26 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         </p>
       )}
 
-      {/* De piek: conclusie eerst (inverted pyramid), dan pas de lijst. */}
-      <Samenvatting
-        data={samenvatting}
-        bewonertype={input.bewonertype}
-        plaats={input.gemeente ?? input.provincie}
-        maatregelen={input.maatregelen}
-        bedragen={bedragen}
-        onMailKlik={scrollNaarMail}
-      />
+      {/* Split-hero: links het persoonlijke woningpaneel (luchtfoto +
+          energielabel), rechts de samenvatting — die het zwaartepunt houdt
+          (bredere kolom). Op mobiel onder elkaar, woningpaneel eerst. */}
+      <div className="grid gap-4 md:grid-cols-[1fr_300px] md:items-start md:gap-6">
+        {/* De piek: conclusie eerst (inverted pyramid), dan pas de lijst. De
+            foto staat rechts (smalle kolom), de samenvatting links (breed). */}
+        <Samenvatting
+          data={samenvatting}
+          bewonertype={input.bewonertype}
+          plaats={input.gemeente ?? input.provincie}
+          maatregelen={input.maatregelen}
+          bedragen={bedragen}
+          energielabel={woning?.energielabel ?? null}
+          energielabelBezig={woningBezig}
+          onMailKlik={scrollNaarMail}
+          onDeelTool={deelTool}
+          deelGedeeld={gedeeld}
+        />
+        {woningpaneel}
+      </div>
 
       {/* Endowed progress: stap 1 (overzicht) is klaar, drie stappen te gaan. */}
       <TrajectStrip />

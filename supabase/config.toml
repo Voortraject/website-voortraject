@@ -20,3 +20,9 @@ verify_jwt = false
 # MAIL_FROM, MAIL_BCC (optioneel), MAIL_REPLY_TO (optioneel), SITE_URL (optioneel).
 [functions.subsidiecheck-mail]
 verify_jwt = false
+
+# Woninginfo-brug: haalt server-side het geregistreerde energielabel op via de
+# EP-Online API (RVO) en levert genormaliseerde JSON met open CORS. Geen JWT:
+# publiek/anoniem te gebruiken. Secret: EP_ONLINE_API_KEY.
+[functions.woninginfo]
+verify_jwt = false
