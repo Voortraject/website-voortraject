@@ -151,26 +151,29 @@ function sectieTekst(html: string, kop: string): string | undefined {
 }
 
 const ALLE_HREFS_RE = /href="(https?:\/\/[^"]+)"/gi;
-// Niet de bron: Verbeterjehuis/Milieu Centraal zelf, social en assets.
+// Niet de bron: Verbeterjehuis/Milieu Centraal zelf, social, assets én de
+// generieke ministerie-pagina ("een initiatief van …") die op elke pagina staat.
 const UITSLUITEN_RE =
-  /verbeterjehuis\.nl|milieucentraal\.nl|facebook|twitter|x\.com|linkedin|instagram|youtube|whatsapp|google|gstatic|cookie/i;
-// De uitvoerende instanties (sterke voorkeur).
+  /verbeterjehuis\.nl|milieucentraal\.nl|rijksoverheid\.nl\/ministeries|zetookdeknopom\.nl|facebook|twitter|x\.com|linkedin|instagram|youtube|whatsapp|google|gstatic|cookie/i;
+// De uitvoerende instanties (sterke voorkeur boven andere content-links).
 const UITVOERDER_RE =
-  /\b(?:rvo\.nl|snn\.nl|warmtefonds\.nl|provincie\.[a-z-]+\.nl|[a-z-]*gemeente[a-z-]*\.nl)\b/i;
-// Generieker; alleen als er geen uitvoerder-link is.
-const ZWAKKE_BRON_RE = /\brijksoverheid\.nl\b/i;
+  /\b(?:rvo\.nl|snn\.nl|warmtefonds\.nl|provincie\.[a-z-]+\.nl|[a-z-]*gemeente[a-z.-]*\.nl)\b/i;
 
-// Eerste échte bronlink: de uitvoerende instantie wint van een generieke
-// rijksoverheid.nl-link; Verbeterjehuis/social/assets tellen niet mee.
+// Eerste échte bronlink uit de cóntent (alles vóór de footer: die bevat op
+// elke pagina dezelfde generieke ministerie-link, die anders als bron zou
+// winnen voor regelingen buiten de uitvoerder-whitelist — denk aan
+// belastingdienst.nl, svn.nl, nhg.nl of nijbegun.nl). Een uitvoerder-link
+// wint; anders de eerste niet-uitgesloten externe link.
 function officieleBron(html: string): string | undefined {
-  let zwak: string | undefined;
-  for (const m of html.matchAll(ALLE_HREFS_RE)) {
+  const content = html.split(/<footer\b/i)[0];
+  let eerste: string | undefined;
+  for (const m of content.matchAll(ALLE_HREFS_RE)) {
     const url = m[1];
     if (UITSLUITEN_RE.test(url)) continue;
     if (UITVOERDER_RE.test(url)) return url;
-    if (!zwak && ZWAKKE_BRON_RE.test(url)) zwak = url;
+    if (!eerste) eerste = url;
   }
-  return zwak;
+  return eerste;
 }
 
 // De "Bedrag"-sectie is een hele alinea; voor het compacte bedrag-slot destilleren
