@@ -691,3 +691,18 @@ Praktische gotcha's:
   `service_role` key) to `.env`, it would leak. Recommended: add `.env` to `.gitignore` and
   stop tracking it (`git rm --cached .env`). Do this via a branch + PR, and confirm it
   won't break the Lovable/Cloudflare build first.
+
+### Review (2026-07-14) — fix bronlinks subsidiecheck (PR #53)
+- Bug: "Naar de officiële regeling" (site) en "Meer info" (mail) wezen voor veel
+  regelingen naar de generieke ministerie-footerlink van Verbeterjehuis
+  (rijksoverheid.nl/ministeries/…). Oorzaak: `officieleBron()` scande de hele
+  pagina en viel terug op de eerste rijksoverheid.nl-link; de uitvoerder-whitelist
+  was te smal (belastingdienst/svn/nhg/nijbegun/gemeente.groningen vielen erbuiten).
+- Fix: alleen content vóór `<footer` scannen; fallback = eerste echte externe
+  contentlink; ministerie-/campagnelinks uitgesloten. Beide parser-kopieën
+  (frontend + edge function) + 2 echte fixtures + 3 regressietests (32 tests groen).
+- Edge function gedeployed naar CRM-project en live geverifieerd (9742HJ,
+  Woningeigenaar): alle 12 regelingen hebben nu een eigen echte bron.
+- Observatie (buiten scope, evt. later): "Subsidie Verduurzaming en Verbetering
+  Groningen" linkt naar een snn.nl-PDF (postcodelijst) omdat dat de eerste
+  snn.nl-link op de detailpagina is; een pagina-link zou netter zijn.
