@@ -275,14 +275,16 @@ function bouwEmailHtml(opts: {
   ).join("");
 
   return `<!doctype html>
-<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Voortraject - Jouw subsidieoverzicht</title></head>
+<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="color-scheme" content="light"><meta name="supported-color-schemes" content="light"><title>Voortraject - Jouw subsidieoverzicht</title></head>
 <body style="margin:0;padding:0;">
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:${KLEUR.achtergrond};padding:32px 16px;font-family:${FONT_STACK};">
     <tr><td align="center">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:${KLEUR.kaart};border-radius:12px;overflow:hidden;">
 
-        <!-- Header: gecentreerd wit logo op navy -->
-        <tr><td style="background:${KLEUR.primary};padding:32px 24px;text-align:center;">
+        <!-- Header: gecentreerd wit logo op navy. De linear-gradient is een
+             dark-mode-slot: Gmail herkleurt effen achtergrondkleuren in dark
+             mode (navy wordt lila), maar laat achtergrond-gradients met rust. -->
+        <tr><td style="background-color:${KLEUR.primary};background-image:linear-gradient(${KLEUR.primary},${KLEUR.primary});padding:32px 24px;text-align:center;">
           <img src="${LOGO_URL}" alt="Voortraject" style="height:60px;display:inline-block;border:0;">
         </td></tr>
 
