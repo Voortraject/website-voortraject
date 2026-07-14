@@ -9,7 +9,10 @@ import { StapAdres } from "@/components/subsidiecheck/StapAdres";
 import { StapResultaat } from "@/components/subsidiecheck/StapResultaat";
 import { StapSituatie } from "@/components/subsidiecheck/StapSituatie";
 import { Voortgang } from "@/components/subsidiecheck/Voortgang";
+import { usePand3d } from "@/hooks/usePand3d";
+import { usePandContour } from "@/hooks/usePandContour";
 import { usePdokAdres } from "@/hooks/usePdokAdres";
+import { useWoningInfo } from "@/hooks/useWoningInfo";
 import { normalizePostcode, POSTCODE_RE } from "@/lib/pdok";
 import {
   ALLE_MAATREGELEN,
@@ -48,6 +51,14 @@ const Subsidiecheck = () => {
   const adres = paramsGeldig ? (adresQuery.data ?? null) : null;
   const adresZoeken = paramsGeldig && adresQuery.isPending;
   const adresNietGevonden = paramsGeldig && !adresQuery.isPending && !adres;
+
+  // Prefetch: zodra het adres bekend is (bij "Verder", stap 1 → 2) alvast het
+  // pand, het 3D-model en het energielabel ophalen. Deze hooks delen hun
+  // react-query-cache met StapResultaat (zelfde sleutels), dus op stap 3 staat
+  // het woningpaneel al klaar i.p.v. dat het laden dan pas begint.
+  const prefetchPand = usePandContour(adres?.centroideRd);
+  usePand3d(prefetchPand.data?.pandId, adres?.centroideRd);
+  useWoningInfo(paramsGeldig ? pc : "", paramsGeldig ? hn : "", tv);
 
   const stap: 1 | 2 | 3 = editParam || !paramsGeldig || adresNietGevonden ? 1 : !bewonertype ? 2 : 3;
 
