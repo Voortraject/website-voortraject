@@ -132,7 +132,7 @@ export const Samenvatting = ({ data, bewonertype, plaats, maatregelen, bedragen,
 
         {/* Rechts: de maatregelen waarop dit overzicht is gezocht (de gekozen
             maatregelen), i.p.v. de administratieve verdeling per overheidslaag.
-            Bewust "gezocht voor", niet "dekt": de lijst is wat de bewoner koos,
+            Bewust "gevonden voor", niet "dekt": de lijst is wat de bewoner koos,
             niet een dekkingsgarantie per regeling. Op mobiel (waar dit blok
             onder de samenvatting staat) volstaat één regel; de volledige lijst
             met vinkjes is er alleen op md+. */}
@@ -146,12 +146,12 @@ export const Samenvatting = ({ data, bewonertype, plaats, maatregelen, bedragen,
               <Check size={12} strokeWidth={3} className="text-[hsl(var(--subsidie))]" />
             </span>
             {maatregelen.length === 1
-              ? `Regelingen gezocht voor ${MAATREGEL_LABELS[maatregelen[0]]}`
-              : `Regelingen gezocht voor al je ${maatregelen.length} gekozen maatregelen`}
+              ? `Regelingen gevonden voor ${MAATREGEL_LABELS[maatregelen[0]]}`
+              : `Regelingen gevonden voor al je ${maatregelen.length} gekozen maatregelen`}
           </p>
           <div className="hidden md:block">
             <p className="text-[14px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-              Regelingen gezocht voor deze maatregelen
+              Regelingen gevonden voor deze maatregelen
             </p>
             <ul className="mt-3 grid grid-cols-1 gap-x-4 gap-y-2.5">
               {maatregelen.map((m) => (
