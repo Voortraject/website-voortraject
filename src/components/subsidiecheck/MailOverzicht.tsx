@@ -43,7 +43,6 @@ interface MailOverzichtProps {
 export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) => {
   const [naam, setNaam] = useState("");
   const [email, setEmail] = useState("");
-  const [telefoon, setTelefoon] = useState("");
   const [fout, setFout] = useState<string | null>(null);
   const [bezig, setBezig] = useState(false);
   const [verstuurd, setVerstuurd] = useState(false);
@@ -74,7 +73,6 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
       body: JSON.stringify({
         naam: n,
         email: em,
-        telefoon: telefoon.trim() || undefined,
         honeypot,
         input: {
           postcode: normalizePostcode(input.postcode),
@@ -107,7 +105,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
       tenant_id: "00000000-0000-0000-0000-000000000001",
       naam: escapeHtml(n),
       email: em,
-      telefoon: telefoon.trim() ? escapeHtml(telefoon.trim()) : null,
+      telefoon: null,
       postcode: normalizePostcode(input.postcode),
       huisnummer: input.huisnummer,
       toevoeging: input.toevoeging?.trim() ? escapeHtml(input.toevoeging.trim()) : null,
@@ -234,25 +232,6 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
             "Mail mij dit overzicht"
           )}
         </button>
-      </div>
-
-      {/* Optioneel telefoonveld: laagdrempelig geformuleerd zodat het niet
-          afschrikt — bellen gebeurt alleen als de bewoner dat zelf aangeeft. */}
-      <div className="mt-3">
-        <label htmlFor="sc-mail-telefoon" className="text-[13px] text-muted-foreground">
-          Word je liever even gebeld? Laat dan je nummer achter — alleen als je dat wilt.
-        </label>
-        <input
-          id="sc-mail-telefoon"
-          type="tel"
-          autoComplete="tel"
-          inputMode="tel"
-          placeholder="Telefoonnummer (optioneel)"
-          className={`${inputClass} mt-1.5 sm:max-w-xs`}
-          value={telefoon}
-          onChange={(e) => setTelefoon(e.target.value)}
-          maxLength={30}
-        />
       </div>
 
       {fout && (

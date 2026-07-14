@@ -56,8 +56,6 @@ const LENING_VLAK = "#EEF3F9";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const NAME_RE = /^[\p{L}\s'-]+$/u;
 const POSTCODE_RE = /^[1-9][0-9]{3}[A-Z]{2}$/;
-// Telefoon is optioneel; losse validatie (cijfers, +, spaties, haakjes, streepjes).
-const PHONE_RE = /^[+0-9()\s.-]{6,20}$/;
 
 const NIVEAU_VOLGORDE = ["rijk", "provincie", "gemeente", "overig"] as const;
 type Niveau = (typeof NIVEAU_VOLGORDE)[number];
@@ -110,7 +108,6 @@ type Regeling = {
 type Payload = {
   naam?: string;
   email?: string;
-  telefoon?: string;
   honeypot?: string;
   input?: {
     postcode?: string;
@@ -396,9 +393,6 @@ Deno.serve(async (req: Request) => {
   if (!EMAIL_RE.test(email) || email.length > 255) {
     return json({ error: "Dit lijkt geen geldig e-mailadres." }, 400);
   }
-  // Telefoon is optioneel: leeg of ongeldig → negeren, nooit de lead blokkeren.
-  const telefoon = (payload.telefoon ?? "").trim();
-  const telefoonOk = telefoon !== "" && PHONE_RE.test(telefoon);
 
   const input = payload.input ?? {};
   const adres = payload.adres ?? {};
@@ -423,9 +417,8 @@ Deno.serve(async (req: Request) => {
     `Situatie: ${BEWONERTYPE_LABELS[bewonertype] ?? bewonertype}`,
     `Interesse: ${maatregelen.map((m) => MAATREGEL_LABELS[m] ?? m).join(", ")}`,
     `Regelingen: ${regelingen.map((r) => r.titel ?? "").filter(Boolean).join("; ")}`,
-    telefoonOk ? `Telefoon: ${telefoon} — bewoner wil gebeld worden.` : "",
     `Verzoek: overzicht per e-mail ontvangen (automatisch verstuurd).`,
-  ].filter(Boolean).join("\n");
+  ].join("\n");
 
   try {
     const supabase = createClient(
@@ -436,7 +429,7 @@ Deno.serve(async (req: Request) => {
       tenant_id: TENANT_ID,
       naam: escapeHtml(naam),
       email,
-      telefoon: telefoonOk ? escapeHtml(telefoon) : null,
+      telefoon: null,
       postcode,
       huisnummer,
       toevoeging: toevoeging ? escapeHtml(toevoeging) : null,
