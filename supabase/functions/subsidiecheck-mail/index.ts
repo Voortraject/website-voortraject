@@ -177,10 +177,10 @@ function regelingRij(r: Regeling): string {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
           <td style="vertical-align:top;">
             <span style="display:inline-block;padding:2px 9px;border-radius:999px;background:${typeKleur};color:#ffffff;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;">${typeLabel}</span>
-            <div style="margin-top:6px;font-size:16px;font-weight:700;line-height:1.35;color:${KLEUR.primary};">${titel}</div>
           </td>
           <td style="vertical-align:top;text-align:right;padding-left:12px;">${bedrag}</td>
         </tr></table>
+        <div style="margin-top:6px;font-size:16px;font-weight:700;line-height:1.35;color:${KLEUR.primary};">${titel}</div>
         ${omschrijving}
         ${bron}
       </td>
