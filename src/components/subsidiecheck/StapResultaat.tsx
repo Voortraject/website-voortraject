@@ -65,7 +65,13 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
   // dus al klaar wanneer het woningpaneel verschijnt. Adresgebaseerd, dus gelijk
   // voor elke bewonertype-situatie.
   const { data: pand, isPending: pandBezig } = usePandContour(adres.centroideRd);
-  const { data: model, isPending: modelBezig } = usePand3d(pand?.pandId, adres.centroideRd);
+  // Progressief laden: eerst het subject-model zonder buren (1 item-fetch, ~2s)
+  // zodat het huis snel verschijnt; de volledige versie mét buurpanden (~5s)
+  // vervangt het zodra die klaar is.
+  const { data: modelSubject, isPending: subjectBezig } = usePand3d(pand?.pandId);
+  const { data: modelVol } = usePand3d(pand?.pandId, adres.centroideRd);
+  const model = modelVol ?? modelSubject ?? null;
+  const modelBezig = !model && !!pand?.pandId && subjectBezig;
   const fase = useLaadsequentie(!isPending);
   const laden = isPending || fase < 3;
 
@@ -136,7 +142,7 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
       input={input}
       pand={pand ?? null}
       pandBezig={pandBezig}
-      model={model ?? null}
+      model={model}
       modelBezig={modelBezig}
     />
   );

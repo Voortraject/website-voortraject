@@ -57,7 +57,8 @@ const Subsidiecheck = () => {
   // react-query-cache met StapResultaat (zelfde sleutels), dus op stap 3 staat
   // het woningpaneel al klaar i.p.v. dat het laden dan pas begint.
   const prefetchPand = usePandContour(adres?.centroideRd);
-  usePand3d(prefetchPand.data?.pandId, adres?.centroideRd);
+  usePand3d(prefetchPand.data?.pandId); // subject-model (snel)
+  usePand3d(prefetchPand.data?.pandId, adres?.centroideRd); // + buurpanden
   useWoningInfo(paramsGeldig ? pc : "", paramsGeldig ? hn : "", tv);
 
   const stap: 1 | 2 | 3 = editParam || !paramsGeldig || adresNietGevonden ? 1 : !bewonertype ? 2 : 3;
