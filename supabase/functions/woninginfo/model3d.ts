@@ -126,7 +126,7 @@ export function kiesBuren(
   x: number,
   y: number,
   maxAfstand = 20,
-  maxBuren = 4,
+  maxBuren = 2,
 ): string[] {
   const feats = wfsData?.features;
   if (!Array.isArray(feats)) return [];
