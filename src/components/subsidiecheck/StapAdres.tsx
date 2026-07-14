@@ -45,6 +45,7 @@ export const StapAdres = ({
   const [nietGevonden, setNietGevonden] = useState(!!foutmelding);
   const [mPostcode, setMPostcode] = useState(displayPostcode(initPostcode));
   const [mHuisnr, setMHuisnr] = useState(initHuisnummer);
+  const [mToevoeging, setMToevoeging] = useState(initToevoeging);
   const [straat, setStraat] = useState("");
   const [stad, setStad] = useState("");
   const [mFout, setMFout] = useState<string | null>(null);
@@ -78,6 +79,7 @@ export const StapAdres = ({
       // Neem over wat de bewoner al invulde als startpunt voor het handmatige blok.
       setMPostcode(postcode);
       setMHuisnr(huisnummer);
+      setMToevoeging(toevoeging);
       setMFout(null);
       return;
     }
@@ -106,7 +108,7 @@ export const StapAdres = ({
       setMFout("Vul zowel de straatnaam als de plaats in.");
       return;
     }
-    onHandmatig(mPostcode.trim(), mHuisnr.trim(), toevoeging.trim(), straat.trim(), stad.trim());
+    onHandmatig(mPostcode.trim(), mHuisnr.trim(), mToevoeging.trim(), straat.trim(), stad.trim());
   };
 
   return (
@@ -220,7 +222,7 @@ export const StapAdres = ({
             Handig bij bijvoorbeeld een nieuwbouwadres. Je subsidieoverzicht werkt gewoon op basis van je postcode;
             alleen de luchtfoto van je woning tonen we dan niet.
           </p>
-          <div className="mt-3 grid grid-cols-[2fr_1fr] gap-3">
+          <div className="mt-3 grid grid-cols-[2fr_1fr_1fr] gap-3">
             <input
               type="text"
               inputMode="text"
@@ -245,6 +247,18 @@ export const StapAdres = ({
               maxLength={6}
               onChange={(e) => {
                 setMHuisnr(e.target.value);
+                setMFout(null);
+              }}
+            />
+            <input
+              type="text"
+              aria-label="Toevoeging (optioneel)"
+              placeholder="Toev."
+              className={inputClass}
+              value={mToevoeging}
+              maxLength={10}
+              onChange={(e) => {
+                setMToevoeging(e.target.value);
                 setMFout(null);
               }}
             />

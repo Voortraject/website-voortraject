@@ -182,31 +182,50 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
       input.provincie ? `Provinciale regelingen voor ${input.provincie} doorzoeken` : "Provinciale regelingen doorzoeken",
       input.gemeente ? `Regelingen van gemeente ${input.gemeente} doorzoeken` : "Gemeentelijke regelingen doorzoeken",
     ];
+    // Eén zoekstap tegelijk, prominent in beeld; de stappen wisselen elkaar
+    // rustig kruisvervagend af (fase stuurt welke actief is).
+    const idx = Math.min(fase, stappen.length - 1);
     return (
       <div
-        className="mx-auto max-w-[640px] rounded-lg border border-border bg-card p-6 md:p-8"
+        className="mx-auto max-w-[560px] animate-fade-up rounded-2xl border border-border bg-card p-8 text-center shadow-card md:p-10"
         aria-live="polite"
         aria-busy="true"
       >
-        <p className="text-[15px] font-semibold text-primary">We zoeken de regelingen voor {adresRegel}…</p>
-        <ul className="mt-4 flex flex-col gap-2.5">
-          {stappen.map((label, i) => {
-            const gedaan = fase > i;
-            const bezig = fase === i;
-            return (
-              <li key={label} className="flex items-center gap-2.5 text-[14px]">
-                {gedaan ? (
-                  <Check size={16} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
-                ) : bezig ? (
-                  <Loader2 size={16} className="shrink-0 animate-spin text-primary/50" aria-hidden="true" />
-                ) : (
-                  <span className="inline-block h-4 w-4 shrink-0 rounded-full border border-border" aria-hidden="true" />
-                )}
-                <span className={gedaan || bezig ? "text-foreground" : "text-muted-foreground"}>{label}</span>
-              </li>
-            );
-          })}
-        </ul>
+        <p className="text-[13.5px] text-muted-foreground">We zoeken de regelingen voor {adresRegel}</p>
+
+        <Loader2 size={26} className="mx-auto mt-8 animate-spin text-accent" aria-hidden="true" />
+
+        {/* De actuele stap groot in beeld; absoluut gestapeld zodat ze rustig
+            in elkaar overvloeien zonder de layout te laten springen. */}
+        <div className="relative mx-auto mt-4 h-[64px]">
+          {stappen.map((label, i) => (
+            <p
+              key={i}
+              className="absolute inset-0 flex items-center justify-center px-4 text-[18px] font-semibold leading-snug text-primary transition-all duration-500 ease-out md:text-[20px]"
+              style={{
+                opacity: i === idx ? 1 : 0,
+                transform: i === idx ? "translateY(0)" : i < idx ? "translateY(-12px)" : "translateY(12px)",
+              }}
+              aria-hidden={i !== idx}
+            >
+              {label}
+            </p>
+          ))}
+        </div>
+
+        {/* Voortgangsstippen: de actieve rekt rustig uit tot een okerbalkje. */}
+        <div className="mt-7 flex items-center justify-center gap-2.5" aria-hidden="true">
+          {stappen.map((_, i) => (
+            <span
+              key={i}
+              className="h-2 rounded-full transition-all duration-500 ease-out"
+              style={{
+                width: i === idx ? 24 : 8,
+                backgroundColor: i <= idx ? "hsl(var(--accent))" : "hsl(var(--border))",
+              }}
+            />
+          ))}
+        </div>
       </div>
     );
   }
