@@ -56,12 +56,19 @@ export async function zoekAdres(
 
   try {
     const q = [pc, hn, tv].filter(Boolean).map(encodeURIComponent).join("+");
-    const url = `https://api.pdok.nl/bzk/locatieserver/search/v3_1/free?q=${q}&fq=type:adres&fl=straatnaam,woonplaatsnaam,gemeentenaam,provincienaam,centroide_rd&rows=1`;
+    const url = `https://api.pdok.nl/bzk/locatieserver/search/v3_1/free?q=${q}&fq=type:adres&fl=straatnaam,woonplaatsnaam,gemeentenaam,provincienaam,postcode,huisnummer,centroide_rd&rows=1`;
     const res = await fetch(url);
     if (!res.ok) return null;
     const data = await res.json();
     const doc = data?.response?.docs?.[0];
     if (doc?.straatnaam && doc?.woonplaatsnaam) {
+      // De free-search is fuzzy en geeft ALTIJD een best-effort match — ook voor
+      // niet-bestaande adressen, mét een andere postcode. Valideer daarom dat de
+      // gevonden postcode + huisnummer matchen met de invoer; anders: niet gevonden.
+      const invoerHn = hn.match(/\d+/)?.[0] ?? hn;
+      if (normalizePostcode(doc.postcode ?? "") !== pc || String(doc.huisnummer ?? "") !== invoerHn) {
+        return null;
+      }
       return {
         straatnaam: doc.straatnaam,
         woonplaatsnaam: doc.woonplaatsnaam,

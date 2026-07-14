@@ -13,7 +13,7 @@ import { usePand3d } from "@/hooks/usePand3d";
 import { usePandContour } from "@/hooks/usePandContour";
 import { usePdokAdres } from "@/hooks/usePdokAdres";
 import { useWoningInfo } from "@/hooks/useWoningInfo";
-import { normalizePostcode, POSTCODE_RE } from "@/lib/pdok";
+import { normalizePostcode, type PdokAdres, POSTCODE_RE } from "@/lib/pdok";
 import {
   ALLE_MAATREGELEN,
   type Bewonertype,
@@ -48,9 +48,23 @@ const Subsidiecheck = () => {
   }, [mParam]);
 
   const adresQuery = usePdokAdres(paramsGeldig ? pc : "", paramsGeldig ? hn : "", tv);
-  const adres = paramsGeldig ? (adresQuery.data ?? null) : null;
-  const adresZoeken = paramsGeldig && adresQuery.isPending;
-  const adresNietGevonden = paramsGeldig && !adresQuery.isPending && !adres;
+  // Handmatig adres (str/pl in de URL): gebruikt als PDOK het adres niet herkent
+  // (bv. nieuwbouw). Geen coördinaten → geen luchtfoto/3D, maar het overzicht
+  // werkt gewoon op basis van de postcode.
+  const handmatigStraat = searchParams.get("str") ?? "";
+  const handmatigPlaats = searchParams.get("pl") ?? "";
+  const handmatig = paramsGeldig && handmatigStraat.trim() !== "" && handmatigPlaats.trim() !== "";
+  const adres: PdokAdres | null = useMemo(
+    () =>
+      handmatig
+        ? { straatnaam: handmatigStraat, woonplaatsnaam: handmatigPlaats, gemeentenaam: "", provincienaam: "" }
+        : paramsGeldig
+          ? (adresQuery.data ?? null)
+          : null,
+    [handmatig, handmatigStraat, handmatigPlaats, paramsGeldig, adresQuery.data],
+  );
+  const adresZoeken = paramsGeldig && !handmatig && adresQuery.isPending;
+  const adresNietGevonden = paramsGeldig && !handmatig && !adresQuery.isPending && !adres;
 
   // Prefetch: zodra het adres bekend is (bij "Verder", stap 1 → 2) alvast het
   // pand, het 3D-model en het energielabel ophalen. Deze hooks delen hun
@@ -71,6 +85,10 @@ const Subsidiecheck = () => {
     if (mParam !== null) params.m = mParam;
     return params;
   };
+
+  // Behoudt een handmatig adres (straat + plaats) bij navigatie binnen de flow.
+  const metHandmatig = (params: Record<string, string>): Record<string, string> =>
+    handmatig ? { ...params, str: handmatigStraat, pl: handmatigPlaats } : params;
 
   const checkInput: SubsidieCheckInput | null = useMemo(() => {
     if (!adres || !bewonertype) return null;
@@ -139,7 +157,7 @@ const Subsidiecheck = () => {
                     // Naar stap 2: type laten vallen, maatregelen behouden.
                     const params: Record<string, string> = { pc, hn };
                     if (mParam !== null) params.m = mParam;
-                    setSearchParams(params);
+                    setSearchParams(metHandmatig(params));
                   }
                 }}
               />
@@ -183,7 +201,7 @@ const Subsidiecheck = () => {
                           // Terug naar stap 2 mét behoud van adres en maatregelen.
                           const params: Record<string, string> = { pc, hn };
                           if (mParam !== null) params.m = mParam;
-                          setSearchParams(params);
+                          setSearchParams(metHandmatig(params));
                         }}
                         className="inline-flex items-center gap-1 text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
                       >
@@ -216,6 +234,15 @@ const Subsidiecheck = () => {
                       // aanpast, springt direct terug naar het resultaat.
                       setSearchParams(paramsMetKeuzes(normalizePostcode(nieuwPc), nieuwHn, nieuwTv))
                     }
+                    onHandmatig={(nieuwPc, nieuwHn, nieuwTv, straat, stad) =>
+                      // PDOK herkent het adres niet: ga verder met wat de bewoner
+                      // zelf invulde (str/pl); overzicht werkt op de postcode.
+                      setSearchParams({
+                        ...paramsMetKeuzes(normalizePostcode(nieuwPc), nieuwHn, nieuwTv),
+                        str: straat,
+                        pl: stad,
+                      })
+                    }
                   />
                 ) : stap === 2 ? (
                   <StapSituatie
@@ -225,7 +252,7 @@ const Subsidiecheck = () => {
                       const params: Record<string, string> = { pc, hn, type };
                       // Alles geselecteerd = geen m-parameter (schonere URL).
                       if (gekozen.length !== ALLE_MAATREGELEN.length) params.m = gekozen.join(",");
-                      setSearchParams(params);
+                      setSearchParams(metHandmatig(params));
                     }}
                   />
                 ) : (

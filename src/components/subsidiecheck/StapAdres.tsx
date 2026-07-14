@@ -17,18 +17,31 @@ interface StapAdresProps {
   /** Bijv. wanneer een deeplink-adres niet gevonden werd. */
   foutmelding?: string | null;
   onBevestigd: (postcode: string, huisnummer: string, toevoeging: string) => void;
+  /** Handmatig doorgaan (straat + plaats) wanneer PDOK het adres niet herkent. */
+  onHandmatig: (postcode: string, huisnummer: string, toevoeging: string, straat: string, stad: string) => void;
 }
 
 // Stap 1: postcode + huisnummer. Na een geslaagde PDOK-lookup tonen we het
 // gevonden adres kort ter bevestiging ("dit gaat echt over mijn huis") en
 // gaan we automatisch door.
-export const StapAdres = ({ initPostcode, initHuisnummer, initToevoeging, foutmelding, onBevestigd }: StapAdresProps) => {
+export const StapAdres = ({
+  initPostcode,
+  initHuisnummer,
+  initToevoeging,
+  foutmelding,
+  onBevestigd,
+  onHandmatig,
+}: StapAdresProps) => {
   const [postcode, setPostcode] = useState(displayPostcode(initPostcode));
   const [huisnummer, setHuisnummer] = useState(initHuisnummer);
   const [toevoeging, setToevoeging] = useState(initToevoeging);
   const [bezig, setBezig] = useState(false);
   const [fout, setFout] = useState<string | null>(foutmelding ?? null);
   const [gevonden, setGevonden] = useState<PdokAdres | null>(null);
+  // Toont het handmatige invulblok (straat + plaats) als PDOK het adres niet vindt.
+  const [nietGevonden, setNietGevonden] = useState(!!foutmelding);
+  const [straat, setStraat] = useState("");
+  const [stad, setStad] = useState("");
   const doorTimer = useRef<ReturnType<typeof setTimeout>>();
   const huisnummerRef = useRef<HTMLInputElement>(null);
 
@@ -38,6 +51,7 @@ export const StapAdres = ({ initPostcode, initHuisnummer, initToevoeging, foutme
     e.preventDefault();
     if (bezig || gevonden) return;
     setFout(null);
+    setNietGevonden(false);
 
     if (!POSTCODE_RE.test(postcode.trim())) {
       setFout("Vul een geldige postcode in, bijvoorbeeld 9711 AB.");
@@ -54,6 +68,7 @@ export const StapAdres = ({ initPostcode, initHuisnummer, initToevoeging, foutme
 
     if (!adres) {
       setFout("We konden dit adres niet vinden. Check even je postcode en huisnummer.");
+      setNietGevonden(true);
       return;
     }
 
@@ -66,6 +81,14 @@ export const StapAdres = ({ initPostcode, initHuisnummer, initToevoeging, foutme
       () => onBevestigd(postcode.trim(), huisnummer.trim(), toevoeging.trim()),
       reduced ? 0 : 600,
     );
+  };
+
+  const handleHandmatig = () => {
+    if (!straat.trim() || !stad.trim()) {
+      setFout("Vul zowel de straatnaam als de plaats in.");
+      return;
+    }
+    onHandmatig(postcode.trim(), huisnummer.trim(), toevoeging.trim(), straat.trim(), stad.trim());
   };
 
   return (
@@ -170,6 +193,48 @@ export const StapAdres = ({ initPostcode, initHuisnummer, initToevoeging, foutme
           "Verder"
         )}
       </button>
+
+      {/* Handmatig adres invullen als PDOK het niet herkent (bv. nieuwbouw). */}
+      {nietGevonden && (
+        <div className="mt-5 rounded-lg border border-border p-4" style={{ backgroundColor: "var(--card-soft)" }}>
+          <p className="text-[14px] font-semibold text-primary">Adres niet gevonden? Vul het handmatig in.</p>
+          <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+            Handig bij bijvoorbeeld een nieuwbouwadres. Je subsidieoverzicht werkt gewoon op basis van je postcode;
+            alleen de luchtfoto van je woning tonen we dan niet.
+          </p>
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <input
+              type="text"
+              placeholder="Straatnaam"
+              className={inputClass}
+              value={straat}
+              maxLength={80}
+              onChange={(e) => {
+                setStraat(e.target.value);
+                setFout(null);
+              }}
+            />
+            <input
+              type="text"
+              placeholder="Plaats"
+              className={inputClass}
+              value={stad}
+              maxLength={80}
+              onChange={(e) => {
+                setStad(e.target.value);
+                setFout(null);
+              }}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={handleHandmatig}
+            className="mt-3 inline-flex items-center justify-center gap-2 rounded-full border border-primary px-6 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            Ga verder met dit adres
+          </button>
+        </div>
+      )}
 
       {/* Drie beloftes met vinkjes (zelfde patroon als de hero) — geen
           kleine lettertjes, maar geruststelling. */}
