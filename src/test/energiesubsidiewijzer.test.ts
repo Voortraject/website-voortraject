@@ -85,6 +85,20 @@ describe("parseDetail (echte detailpagina's)", () => {
     expect(detail.officieleBronUrl).toContain("nijbegun.nl");
   });
 
+  // Regressie: op pagina's waar een PDF (postcodelijst, voorwaarden) vóór de
+  // regelingpagina staat, wonnen die PDF's; een echte pagina heeft voorrang.
+  it("verkiest de snn.nl-regelingpagina boven de postcodelijst-PDF (VVG Groningen)", () => {
+    const detail = parseDetail(fixture("esw-detail-subsidie-vvg-groningen.html"));
+    expect(detail.officieleBronUrl).toContain("snn.nl/subsidies-voor-particulieren");
+    expect(detail.officieleBronUrl).not.toMatch(/\.pdf/i);
+  });
+
+  it("verkiest de svn.nl-regelingpagina boven de voorwaarden-PDF (onderhoudsfonds VvE's)", () => {
+    const detail = parseDetail(fixture("esw-detail-lening-onderhoudsfonds-vves.html"));
+    expect(detail.officieleBronUrl).toContain("svn.nl/toekomstbestendig-onderhoudsfonds-vves");
+    expect(detail.officieleBronUrl).not.toMatch(/\.pdf/i);
+  });
+
   it("geeft nooit een ministerie-pagina terug als officiële bron", () => {
     for (const naam of [
       "esw-detail-subsidie-isde.html",

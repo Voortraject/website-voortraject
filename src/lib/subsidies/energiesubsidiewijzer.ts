@@ -158,22 +158,26 @@ const UITSLUITEN_RE =
 // De uitvoerende instanties (sterke voorkeur boven andere content-links).
 const UITVOERDER_RE =
   /\b(?:rvo\.nl|snn\.nl|warmtefonds\.nl|provincie\.[a-z-]+\.nl|[a-z-]*gemeente[a-z.-]*\.nl)\b/i;
+// Documenten (postcodelijsten, voorwaarden-PDF's) zijn een slechtere landing
+// dan de regelingpagina zelf; alleen als er niets beters is.
+const DOCUMENT_RE = /\.pdf(?:$|[?#])/i;
 
-// Eerste échte bronlink uit de cóntent (alles vóór de footer: die bevat op
-// elke pagina dezelfde generieke ministerie-link, die anders als bron zou
-// winnen voor regelingen buiten de uitvoerder-whitelist — denk aan
-// belastingdienst.nl, svn.nl, nhg.nl of nijbegun.nl). Een uitvoerder-link
-// wint; anders de eerste niet-uitgesloten externe link.
+// Beste bronlink uit de cóntent (alles vóór de footer: die bevat op elke
+// pagina dezelfde generieke ministerie-link, die anders als bron zou winnen
+// voor regelingen buiten de uitvoerder-whitelist — denk aan belastingdienst.nl,
+// svn.nl, nhg.nl of nijbegun.nl). Rangorde: uitvoerder-pagina > uitvoerder-PDF
+// > andere pagina > andere PDF; bij gelijke rang wint documentvolgorde.
 function officieleBron(html: string): string | undefined {
   const content = html.split(/<footer\b/i)[0];
-  let eerste: string | undefined;
+  let beste: { url: string; rang: number } | undefined;
   for (const m of content.matchAll(ALLE_HREFS_RE)) {
     const url = m[1];
     if (UITSLUITEN_RE.test(url)) continue;
-    if (UITVOERDER_RE.test(url)) return url;
-    if (!eerste) eerste = url;
+    const rang = (UITVOERDER_RE.test(url) ? 0 : 2) + (DOCUMENT_RE.test(url) ? 1 : 0);
+    if (rang === 0) return url;
+    if (!beste || rang < beste.rang) beste = { url, rang };
   }
-  return eerste;
+  return beste?.url;
 }
 
 // De "Bedrag"-sectie is een hele alinea; voor het compacte bedrag-slot destilleren
