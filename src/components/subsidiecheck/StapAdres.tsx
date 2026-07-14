@@ -38,10 +38,16 @@ export const StapAdres = ({
   const [bezig, setBezig] = useState(false);
   const [fout, setFout] = useState<string | null>(foutmelding ?? null);
   const [gevonden, setGevonden] = useState<PdokAdres | null>(null);
-  // Toont het handmatige invulblok (straat + plaats) als PDOK het adres niet vindt.
+  // Toont het handmatige invulblok als PDOK het adres niet vindt. Dat blok is
+  // zelfstandig: eigen postcode + huisnummer (voorgevuld met wat hierboven is
+  // getypt) zodat de bewoner het complete adres invult — de postcode is nodig
+  // voor de regelingen.
   const [nietGevonden, setNietGevonden] = useState(!!foutmelding);
+  const [mPostcode, setMPostcode] = useState(displayPostcode(initPostcode));
+  const [mHuisnr, setMHuisnr] = useState(initHuisnummer);
   const [straat, setStraat] = useState("");
   const [stad, setStad] = useState("");
+  const [mFout, setMFout] = useState<string | null>(null);
   const doorTimer = useRef<ReturnType<typeof setTimeout>>();
   const huisnummerRef = useRef<HTMLInputElement>(null);
 
@@ -69,6 +75,10 @@ export const StapAdres = ({
     if (!adres) {
       setFout("We konden dit adres niet vinden. Check even je postcode en huisnummer.");
       setNietGevonden(true);
+      // Neem over wat de bewoner al invulde als startpunt voor het handmatige blok.
+      setMPostcode(postcode);
+      setMHuisnr(huisnummer);
+      setMFout(null);
       return;
     }
 
@@ -84,11 +94,19 @@ export const StapAdres = ({
   };
 
   const handleHandmatig = () => {
-    if (!straat.trim() || !stad.trim()) {
-      setFout("Vul zowel de straatnaam als de plaats in.");
+    if (!POSTCODE_RE.test(mPostcode.trim())) {
+      setMFout("Vul een geldige postcode in, bijvoorbeeld 9711 AB. Die hebben we nodig voor de regelingen.");
       return;
     }
-    onHandmatig(postcode.trim(), huisnummer.trim(), toevoeging.trim(), straat.trim(), stad.trim());
+    if (!/^[0-9]/.test(mHuisnr.trim())) {
+      setMFout("Vul een huisnummer in.");
+      return;
+    }
+    if (!straat.trim() || !stad.trim()) {
+      setMFout("Vul zowel de straatnaam als de plaats in.");
+      return;
+    }
+    onHandmatig(mPostcode.trim(), mHuisnr.trim(), toevoeging.trim(), straat.trim(), stad.trim());
   };
 
   return (
@@ -202,30 +220,66 @@ export const StapAdres = ({
             Handig bij bijvoorbeeld een nieuwbouwadres. Je subsidieoverzicht werkt gewoon op basis van je postcode;
             alleen de luchtfoto van je woning tonen we dan niet.
           </p>
+          <div className="mt-3 grid grid-cols-[2fr_1fr] gap-3">
+            <input
+              type="text"
+              inputMode="text"
+              autoComplete="postal-code"
+              aria-label="Postcode"
+              placeholder="Postcode"
+              className={inputClass}
+              value={mPostcode}
+              maxLength={7}
+              onChange={(e) => {
+                setMPostcode(formatPostcode(e.target.value));
+                setMFout(null);
+              }}
+            />
+            <input
+              type="text"
+              inputMode="numeric"
+              aria-label="Huisnummer"
+              placeholder="Huisnummer"
+              className={inputClass}
+              value={mHuisnr}
+              maxLength={6}
+              onChange={(e) => {
+                setMHuisnr(e.target.value);
+                setMFout(null);
+              }}
+            />
+          </div>
           <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <input
               type="text"
+              aria-label="Straatnaam"
               placeholder="Straatnaam"
               className={inputClass}
               value={straat}
               maxLength={80}
               onChange={(e) => {
                 setStraat(e.target.value);
-                setFout(null);
+                setMFout(null);
               }}
             />
             <input
               type="text"
+              aria-label="Plaats"
               placeholder="Plaats"
               className={inputClass}
               value={stad}
               maxLength={80}
               onChange={(e) => {
                 setStad(e.target.value);
-                setFout(null);
+                setMFout(null);
               }}
             />
           </div>
+          {mFout && (
+            <p role="alert" className="mt-3 text-[13px] text-destructive">
+              {mFout}
+            </p>
+          )}
           <button
             type="button"
             onClick={handleHandmatig}
