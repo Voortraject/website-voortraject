@@ -93,8 +93,8 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
   const deelTool = async () => {
     const url = `${window.location.origin}/subsidiecheck`;
     const data = {
-      title: "Voortraject subsidiecheck",
-      text: "Ontdek welke verduurzamingssubsidies er voor jouw woning zijn.",
+      title: "Voortraject — gratis subsidiecheck",
+      text: "Check gratis welke verduurzamingssubsidies er voor jouw woning zijn. Vul je postcode in en zie in 1 minuut alle regelingen 👇",
       url,
     };
     if (navigator.share) {
