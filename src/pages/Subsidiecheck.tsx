@@ -7,7 +7,6 @@ import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { StapAdres } from "@/components/subsidiecheck/StapAdres";
 import { StapResultaat } from "@/components/subsidiecheck/StapResultaat";
-import { StapSituatie } from "@/components/subsidiecheck/StapSituatie";
 import { Voortgang } from "@/components/subsidiecheck/Voortgang";
 import { usePand3d } from "@/hooks/usePand3d";
 import { usePandContour } from "@/hooks/usePandContour";
@@ -37,6 +36,9 @@ const Subsidiecheck = () => {
   // edit=1: gebruiker wil het adres aanpassen — toon stap 1 mét voorgevulde
   // velden en behoud van situatie/maatregelen, i.p.v. een lege reset.
   const editParam = searchParams.get("edit") === "1";
+  // sit=1: bezoeker wil alleen z'n situatie/interesses aanpassen — toon stap 1
+  // met het adres als compacte bevestiging en de situatie-uitklap open.
+  const sitParam = searchParams.get("sit") === "1";
 
   const paramsGeldig = POSTCODE_RE.test(pc) && /^[0-9]/.test(hn.trim());
   const bewonertype: Bewonertype | null = BEWONERTYPES.includes(typeParam as Bewonertype)
@@ -65,17 +67,23 @@ const Subsidiecheck = () => {
   );
   const adresZoeken = paramsGeldig && !handmatig && adresQuery.isPending;
   const adresNietGevonden = paramsGeldig && !handmatig && !adresQuery.isPending && !adres;
+  // Al bevestigd adres (geldig, gevonden, niet in wijzig-modus): op stap 1 tonen
+  // we dat compact i.p.v. de invulvelden (bv. wie via de homepage binnenkomt).
+  const bevestigdAdres = !editParam && paramsGeldig && !adresNietGevonden ? adres : null;
 
-  // Prefetch: zodra het adres bekend is (bij "Verder", stap 1 → 2) alvast het
-  // pand, het 3D-model en het energielabel ophalen. Deze hooks delen hun
-  // react-query-cache met StapResultaat (zelfde sleutels), dus op stap 3 staat
-  // het woningpaneel al klaar i.p.v. dat het laden dan pas begint.
+  // Prefetch: zodra het adres bekend is, alvast het pand, het 3D-model en het
+  // energielabel ophalen. Deze hooks delen hun react-query-cache met
+  // StapResultaat (zelfde sleutels), dus op het resultaat staat het woningpaneel
+  // al klaar i.p.v. dat het laden dan pas begint.
   const prefetchPand = usePandContour(adres?.centroideRd);
   usePand3d(prefetchPand.data?.pandId); // subject-model (snel)
   usePand3d(prefetchPand.data?.pandId, adres?.centroideRd); // + buurpanden
   useWoningInfo(paramsGeldig ? pc : "", paramsGeldig ? hn : "", tv);
 
-  const stap: 1 | 2 | 3 = editParam || !paramsGeldig || adresNietGevonden ? 1 : !bewonertype ? 2 : 3;
+  // Twee stappen: alles invullen (adres + interesses + evt. situatie) → resultaat.
+  // De situatie staat standaard op woningeigenaar, dus zodra 'type' gezet is (bij
+  // verzenden) tonen we meteen het overzicht — er is geen aparte situatiestap.
+  const stap: 1 | 2 = editParam || sitParam || !paramsGeldig || adresNietGevonden || !bewonertype ? 1 : 2;
 
   // Bouwt de queryparams opnieuw op met behoud van situatie/maatregelen.
   const paramsMetKeuzes = (nieuwPc: string, nieuwHn: string, nieuwTv = tv): Record<string, string> => {
@@ -115,18 +123,20 @@ const Subsidiecheck = () => {
     kopRef.current?.focus({ preventScroll: false });
   }, [stap]);
 
-  // Stap 3 heeft bewust géén subregel: de resultaatsamenvatting in
-  // StapResultaat vertelt daar het verhaal — geen dubbele koppen.
-  const koppen: Record<1 | 2 | 3, { titel: string; sub?: string }> = {
-    1: {
-      titel: "Waar staat jouw woning?",
-      sub: "Vul je postcode en huisnummer in. We zoeken alle regelingen die op jouw adres van toepassing zijn.",
-    },
+  // Het resultaat heeft bewust géén subregel: de samenvatting in StapResultaat
+  // vertelt daar het verhaal. De stap-1-kop past zich aan: met een al bekend
+  // adres ligt de nadruk op de interesses.
+  const koppen: Record<1 | 2, { titel: string; sub?: string }> = {
+    1: bevestigdAdres
+      ? {
+          titel: "Nog één stap",
+          sub: "Kies waar je in geïnteresseerd bent — dan zien we meteen jouw regelingen.",
+        }
+      : {
+          titel: "Waar staat jouw woning?",
+          sub: "We zoeken alle regelingen die op jouw adres van toepassing zijn.",
+        },
     2: {
-      titel: "Vertel iets over je situatie",
-      sub: "Twee korte vragen, zodat we alleen tonen wat voor jou geldt.",
-    },
-    3: {
       titel: "Jouw subsidieoverzicht",
     },
   };
@@ -145,21 +155,12 @@ const Subsidiecheck = () => {
             passen, inclusief de knop onderaan. */}
         <section className="pt-4 pb-28 md:pt-6 md:pb-24">
           <div className="container-content">
-            {/* Stap 1/2 blijven smal (focus op één vraag); het resultaat krijgt
-                de ruimte zodat groepen naast elkaar kunnen staan. */}
-            <div className="mx-auto w-full" style={{ maxWidth: stap === 3 ? 1040 : 640 }}>
+            {/* Stap 1 blijft smal (focus op de invoer); het resultaat krijgt de
+                ruimte zodat groepen naast elkaar kunnen staan. */}
+            <div className="mx-auto w-full" style={{ maxWidth: stap === 2 ? 1040 : 760 }}>
               <Voortgang
                 huidige={stap}
-                onStapKlik={(doel) => {
-                  if (doel === 1) {
-                    setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" });
-                  } else {
-                    // Naar stap 2: type laten vallen, maatregelen behouden.
-                    const params: Record<string, string> = { pc, hn };
-                    if (mParam !== null) params.m = mParam;
-                    setSearchParams(metHandmatig(params));
-                  }
-                }}
+                onStapKlik={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
               />
 
               <h1
@@ -178,7 +179,7 @@ const Subsidiecheck = () => {
 
               {/* Bevestigd adres als subtiele pill boven stap 2 en 3 —
                   visueel te onderscheiden van de content eromheen. */}
-              {stap > 1 && adres && (
+              {stap === 2 && adres && (
                 <div className="mt-4 flex justify-center">
                   <p className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full border border-border bg-card px-4 py-2 text-[13.5px] text-foreground/80 shadow-subtle">
                     <span className="inline-flex items-center gap-1.5">
@@ -194,21 +195,16 @@ const Subsidiecheck = () => {
                       <Pencil size={12} aria-hidden="true" />
                       adres wijzigen
                     </button>
-                    {stap === 3 && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          // Terug naar stap 2 mét behoud van adres en maatregelen.
-                          const params: Record<string, string> = { pc, hn };
-                          if (mParam !== null) params.m = mParam;
-                          setSearchParams(metHandmatig(params));
-                        }}
-                        className="inline-flex items-center gap-1 text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
-                      >
-                        <SlidersHorizontal size={12} aria-hidden="true" />
-                        situatie aanpassen
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      // Alleen de situatie/interesses aanpassen: terug naar stap 1
+                      // (adres blijft compact) met de situatie-uitklap open.
+                      onClick={() => setSearchParams(metHandmatig({ ...paramsMetKeuzes(pc, hn), sit: "1" }))}
+                      className="inline-flex items-center gap-1 text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
+                    >
+                      <SlidersHorizontal size={12} aria-hidden="true" />
+                      situatie aanpassen
+                    </button>
                   </p>
                 </div>
               )}
@@ -224,36 +220,38 @@ const Subsidiecheck = () => {
                     initPostcode={pc}
                     initHuisnummer={hn}
                     initToevoeging={tv}
+                    initBewonertype={bewonertype}
+                    initMaatregelen={maatregelen}
+                    bevestigdAdres={bevestigdAdres}
                     foutmelding={
                       adresNietGevonden
                         ? "We konden dit adres niet vinden. Check even je postcode en huisnummer."
                         : null
                     }
-                    onBevestigd={(nieuwPc, nieuwHn, nieuwTv) =>
-                      // Behoud eerdere keuzes: wie via "wijzig" alleen het adres
-                      // aanpast, springt direct terug naar het resultaat.
-                      setSearchParams(paramsMetKeuzes(normalizePostcode(nieuwPc), nieuwHn, nieuwTv))
-                    }
-                    onHandmatig={(nieuwPc, nieuwHn, nieuwTv, straat, stad) =>
-                      // PDOK herkent het adres niet: ga verder met wat de bewoner
-                      // zelf invulde (str/pl); overzicht werkt op de postcode.
-                      setSearchParams({
-                        ...paramsMetKeuzes(normalizePostcode(nieuwPc), nieuwHn, nieuwTv),
-                        str: straat,
-                        pl: stad,
-                      })
-                    }
-                  />
-                ) : stap === 2 ? (
-                  <StapSituatie
-                    initBewonertype={bewonertype}
-                    initMaatregelen={maatregelen}
-                    onVerder={(type, gekozen) => {
-                      const params: Record<string, string> = { pc, hn, type };
+                    onStart={(nieuwPc, nieuwHn, nieuwTv, type, gekozen) => {
+                      // Adres + situatie + interesses bevestigd → direct het overzicht.
+                      const params: Record<string, string> = { pc: normalizePostcode(nieuwPc), hn: nieuwHn, type };
+                      if (nieuwTv.trim()) params.tv = nieuwTv.trim();
                       // Alles geselecteerd = geen m-parameter (schonere URL).
                       if (gekozen.length !== ALLE_MAATREGELEN.length) params.m = gekozen.join(",");
+                      // Behoud een handmatig adres (no-op bij een echt PDOK-adres).
                       setSearchParams(metHandmatig(params));
                     }}
+                    onHandmatig={(nieuwPc, nieuwHn, nieuwTv, type, gekozen, straat, stad) => {
+                      // PDOK herkent het adres niet: ga verder met wat de bewoner
+                      // zelf invulde (str/pl); overzicht werkt op de postcode.
+                      const params: Record<string, string> = {
+                        pc: normalizePostcode(nieuwPc),
+                        hn: nieuwHn,
+                        type,
+                        str: straat,
+                        pl: stad,
+                      };
+                      if (nieuwTv.trim()) params.tv = nieuwTv.trim();
+                      if (gekozen.length !== ALLE_MAATREGELEN.length) params.m = gekozen.join(",");
+                      setSearchParams(params);
+                    }}
+                    onAdresWijzigen={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
                   />
                 ) : (
                   checkInput && adres && <StapResultaat input={checkInput} adres={adres} />
