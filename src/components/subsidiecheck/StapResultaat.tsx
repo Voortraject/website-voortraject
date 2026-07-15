@@ -99,7 +99,7 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
     const url = `${window.location.origin}/subsidiecheck`;
     const data = {
       title: "Voortraject — gratis subsidiecheck",
-      text: "Check gratis welke verduurzamingssubsidies er voor jouw woning zijn. Vul je postcode in en zie in 1 minuut alle regelingen 👇",
+      text: "Gratis subsidiecheck van Voortraject — zie in 1 minuut welke verduurzamingssubsidies er voor jouw woning zijn.",
       url,
     };
     if (navigator.share) {
