@@ -134,7 +134,7 @@ const Subsidiecheck = () => {
         }
       : {
           titel: "Waar staat jouw woning?",
-          sub: "We zoeken alle regelingen die op jouw adres van toepassing zijn.",
+          sub: "We zoeken de regelingen die bij jouw adres passen, als startpunt voor je verduurzaming.",
           // Op mobiel verbergen: scheelt verticale ruimte zodat de knop onderaan
           // makkelijker binnen één scherm valt. Op sm+ blijft de regel staan.
           subVerbergMobiel: true,
@@ -148,7 +148,7 @@ const Subsidiecheck = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <Seo
         title="Subsidiecheck | Voortraject"
-        description="Check gratis welke verduurzamingssubsidies er voor jouw woning zijn. Vul je postcode in en zie landelijke, provinciale en gemeentelijke regelingen in één overzicht."
+        description="Voortraject begeleidt bewoners door het verduurzamingstraject. Doe de gratis check op jouw adres en krijg inzicht in de subsidies en regelingen die bij jouw woning passen, als startpunt voor persoonlijk advies. Subsidie-informatie in samenwerking met Milieu Centraal."
         path="/subsidiecheck"
       />
       <Header />
