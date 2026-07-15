@@ -96,15 +96,13 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
   const deelTimer = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => () => clearTimeout(deelTimer.current), []);
   const deelTool = async () => {
+    // Deel alléén de kale URL. WhatsApp (en andere apps) tonen dan de rijke
+    // preview-kaart — net als wanneer je de link handmatig plakt. Sturen we er
+    // tekst bij mee, dan slaat WhatsApp de preview bij het delen vaak over.
     const url = `${window.location.origin}/subsidiecheck`;
-    const data = {
-      title: "Voortraject — gratis subsidiecheck",
-      text: "Gratis subsidiecheck van Voortraject — zie in 1 minuut welke verduurzamingssubsidies er voor jouw woning zijn.",
-      url,
-    };
     if (navigator.share) {
       try {
-        await navigator.share(data);
+        await navigator.share({ url });
       } catch {
         /* door de gebruiker geannuleerd */
       }
