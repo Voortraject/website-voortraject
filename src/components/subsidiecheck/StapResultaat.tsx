@@ -9,17 +9,17 @@ import { useWoningInfo } from "@/hooks/useWoningInfo";
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
 import {
-  groepeerPerNiveau,
   maakSamenvatting,
-  NIVEAU_LABELS,
+  splitZichtbaarheid,
   subsidieProvider,
   type SubsidieCheckInput,
   topBedragen,
 } from "@/lib/subsidies";
 
+import { AfgeschermdeRegelingen, AFGESCHERMD_TITEL } from "./AfgeschermdeRegelingen";
 import { MailOverzicht } from "./MailOverzicht";
+import { RegelingGroep } from "./RegelingGroep";
 import { Samenvatting } from "./Samenvatting";
-import { SubsidieCard } from "./SubsidieCard";
 import { TrajectStrip } from "./TrajectStrip";
 import { Woningpaneel } from "./Woningpaneel";
 
@@ -132,7 +132,14 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
     window.setTimeout(() => document.getElementById("sc-mail-email")?.focus({ preventScroll: true }), reduced ? 0 : 450);
   };
 
-  const groepen = useMemo(() => groepeerPerNiveau(regelingen ?? []), [regelingen]);
+  // Alleen de landelijke regelingen (allowlist op id) zijn vrij leesbaar; de rest
+  // (regionaal, provinciaal, gemeentelijk) staat wazig achter het mailformulier.
+  // Zodra de bezoeker zich laat mailen, ontgrendelen we die ook meteen op het scherm.
+  const { zichtbaar, afgeschermd, afgeschermdAantal } = useMemo(
+    () => splitZichtbaarheid(regelingen ?? []),
+    [regelingen],
+  );
+  const [ontgrendeld, setOntgrendeld] = useState(false);
   const samenvatting = useMemo(() => maakSamenvatting(regelingen ?? []), [regelingen]);
   const bedragen = useMemo(() => topBedragen(regelingen ?? []), [regelingen]);
   const adresRegel = `${adres.straatnaam} ${input.huisnummer}${input.toevoeging ? ` ${input.toevoeging}` : ""}, ${adres.woonplaatsnaam}`;
@@ -162,6 +169,15 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
       provincie: input.provincie ?? "",
     });
   }, [laden, isError, regelingen, input]);
+
+  // Eén event zodra de afscherming zichtbaar is (funnel: hoeveel bezoekers zien de
+  // gate?). Niet melden als er niets af te schermen valt of al ontgrendeld is.
+  const gateGemeld = useRef(false);
+  useEffect(() => {
+    if (laden || isError || ontgrendeld || afgeschermdAantal === 0 || gateGemeld.current) return;
+    gateGemeld.current = true;
+    pushGtmEvent("subsidiecheck_gate_getoond", { afgeschermd_aantal: afgeschermdAantal });
+  }, [laden, isError, ontgrendeld, afgeschermdAantal]);
 
   if (isError) {
     return (
@@ -281,6 +297,7 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
           bedragen={bedragen}
           energielabel={woning?.energielabel ?? null}
           energielabelBezig={woningBezig}
+          afgeschermdAantal={ontgrendeld ? 0 : afgeschermdAantal}
           onMailKlik={scrollNaarMail}
           onDeelTool={deelTool}
           deelGedeeld={gedeeld}
@@ -306,29 +323,31 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         .
       </p>
 
-      {/* Groepen onder elkaar (landelijk → lokaal, layer-cake-scan), met de
-          kaarten binnen een groep naast elkaar op desktop. */}
+      {/* Vrij zichtbaar: de landelijke regelingen. Het regionale/lokale deel komt
+          hieronder wazig achter het mailformulier (of, na ontgrendelen, leesbaar). */}
       <div className="mt-8 flex flex-col gap-8">
-        {groepen.map(({ niveau, regelingen: groep }) => (
-          <section key={niveau} aria-label={NIVEAU_LABELS[niveau]}>
-            <h2 className="mb-3 flex items-center gap-2 text-[14px] font-semibold uppercase tracking-[0.08em] text-primary">
-              {NIVEAU_LABELS[niveau]}
-              <span className="font-normal text-muted-foreground">· {groep.length}</span>
-            </h2>
-            <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
-              {groep.map((regeling, i) => (
-                <div
-                  key={regeling.id}
-                  className="animate-fade-up"
-                  style={{ animationDelay: `${Math.min(i * 50, 300)}ms` }}
-                >
-                  <SubsidieCard regeling={regeling} />
-                </div>
-              ))}
-            </div>
-          </section>
-        ))}
+        {zichtbaar.length > 0 ? (
+          <RegelingGroep titel="Landelijke regelingen" regelingen={zichtbaar} />
+        ) : (
+          afgeschermdAantal > 0 && (
+            <p className="rounded-xl border border-border bg-card px-5 py-4 text-center text-[14px] leading-relaxed text-foreground/80">
+              Voor jouw situatie vonden we geen losse landelijke regeling. Je volledige overzicht met de regionale en
+              lokale regelingen staat hieronder klaar en sturen we je per mail.
+            </p>
+          )
+        )}
       </div>
+
+      {/* Afgeschermd deel: wazig met een overlay-CTA, of leesbaar zodra de
+          bezoeker zich heeft laten mailen (onVerstuurd → ontgrendeld). */}
+      {afgeschermdAantal > 0 &&
+        (ontgrendeld ? (
+          <div className="mt-8 flex flex-col gap-8">
+            <RegelingGroep titel={AFGESCHERMD_TITEL} regelingen={afgeschermd} />
+          </div>
+        ) : (
+          <AfgeschermdeRegelingen regelingen={afgeschermd} aantal={afgeschermdAantal} onOntgrendel={scrollNaarMail} />
+        ))}
 
       <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2">
         <button
@@ -362,10 +381,21 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         style={{ backgroundColor: "var(--card-soft)" }}
       >
         <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
-          Ontvang dit overzicht in je mail
+          Ontvang je volledige overzicht in je mail
         </h3>
+        {afgeschermdAantal > 0 && !ontgrendeld && (
+          <p className="mt-1.5 text-[14px] leading-relaxed text-foreground/80">
+            Inclusief de {afgeschermdAantal} afgeschermde {afgeschermdAantal === 1 ? "regeling" : "regelingen"}:
+            regionaal, provinciaal en gemeentelijk. Je ziet ze meteen hier én in je mail.
+          </p>
+        )}
         <div className="mt-5">
-          <MailOverzicht input={input} adres={adres} regelingen={regelingen ?? []} />
+          <MailOverzicht
+            input={input}
+            adres={adres}
+            regelingen={regelingen ?? []}
+            onVerstuurd={() => setOntgrendeld(true)}
+          />
         </div>
 
         <div className="my-6 h-px bg-border" role="separator" />

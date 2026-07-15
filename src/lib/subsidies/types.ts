@@ -154,13 +154,55 @@ export const NIVEAU_VOLGORDE: SubsidieNiveau[] = ["rijk", "provincie", "gemeente
 // bronvolgorde binnen één type blijft behouden.
 const TYPE_VOLGORDE: Record<SubsidieType, number> = { subsidie: 0, lening: 1 };
 
-export function groepeerPerNiveau(regelingen: SubsidieRegeling[]) {
+export type NiveauGroep = { niveau: SubsidieNiveau; regelingen: SubsidieRegeling[] };
+
+export function groepeerPerNiveau(regelingen: SubsidieRegeling[]): NiveauGroep[] {
   return NIVEAU_VOLGORDE.map((niveau) => ({
     niveau,
     regelingen: regelingen
       .filter((r) => r.niveau === niveau)
       .sort((a, b) => TYPE_VOLGORDE[a.type] - TYPE_VOLGORDE[b.type]),
   })).filter((groep) => groep.regelingen.length > 0);
+}
+
+// Vaste lijst van échte landelijke regelingen die overal in Nederland gelden en
+// gratis leesbaar blijven. Al het andere (provinciaal, gemeentelijk, regionaal,
+// óók als de bron het onder "Rijksoverheid" schaart) gaat wazig achter het
+// mailformulier: dat is de prikkel om het volledige overzicht op te vragen.
+//
+// Sleutel = de stabiele regeling-id (laatste padsegment van de bron-URL),
+// geverifieerd identiek over meerdere postcodes in Groningen én Drenthe. We matchen
+// bewust NIET op het bron-niveau ("national-government"), want de bron labelt
+// regionale regelingen (bv. Isolatieaanpak Groningen, Waardevermeerdering) óók als
+// Rijksoverheid. Niet op de lijst = afgeschermd: de veilige richting, want een
+// nieuwe/onbekende regeling schermen we liever af dan per ongeluk weg te geven.
+// Uitbreiden of inperken = hier een id toevoegen of verwijderen.
+export const GRATIS_ZICHTBARE_IDS: string[] = [
+  "isde-subsidie-rijksoverheid", // ISDE (landelijk)
+  "laag-btw-tarief-voor-isolatiewerkzaamheden", // Verlaagd btw-tarief isolatie (landelijk)
+  "energiebespaarlening-warmtefonds", // Energiebespaarlening Warmtefonds (landelijk)
+  "energiebespaarlening-voor-mensen-met-onvoldoende-leencapaciteit-warmtefonds", // Warmtefonds-variant (landelijk)
+];
+
+const gratisZichtbareSet = new Set(GRATIS_ZICHTBARE_IDS);
+
+/** Blijft deze regeling gratis leesbaar (staat de id op de landelijke allowlist)? */
+export function isGratisZichtbaar(regeling: SubsidieRegeling): boolean {
+  return gratisZichtbareSet.has(regeling.id.toLowerCase());
+}
+
+// Splitst de regelingen in een vrij zichtbaar deel (de landelijke allowlist) en een
+// afgeschermd deel (de rest), elk gesorteerd met subsidies vóór leningen (zelfde
+// ordening als groepeerPerNiveau). Puur, zodat de UI en de tests dezelfde grens delen.
+export function splitZichtbaarheid(regelingen: SubsidieRegeling[]): {
+  zichtbaar: SubsidieRegeling[];
+  afgeschermd: SubsidieRegeling[];
+  afgeschermdAantal: number;
+} {
+  const opType = (a: SubsidieRegeling, b: SubsidieRegeling) => TYPE_VOLGORDE[a.type] - TYPE_VOLGORDE[b.type];
+  const zichtbaar = regelingen.filter(isGratisZichtbaar).sort(opType);
+  const afgeschermd = regelingen.filter((r) => !isGratisZichtbaar(r)).sort(opType);
+  return { zichtbaar, afgeschermd, afgeschermdAantal: afgeschermd.length };
 }
 
 export type Samenvatting = {

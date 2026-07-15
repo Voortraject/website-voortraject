@@ -34,6 +34,8 @@ interface SamenvattingProps {
   energielabel?: EnergielabelData | null;
   /** Label wordt nog opgehaald → toon een laadplaatshouder i.p.v. de "geen label"-staat. */
   energielabelBezig?: boolean;
+  /** Aantal regelingen dat (nog) afgeschermd is; > 0 → toon de eerlijke splitregel. */
+  afgeschermdAantal?: number;
   /** Scrollt naar het mailformulier onder de lijst. */
   onMailKlik: () => void;
   /** Deelt de tool (native deel-sheet / kopieer-link). */
@@ -62,6 +64,7 @@ export const Samenvatting = ({
   bedragen,
   energielabel,
   energielabelBezig,
+  afgeschermdAantal,
   onMailKlik,
   onDeelTool,
   deelGedeeld,
@@ -95,6 +98,15 @@ export const Samenvatting = ({
           ) : null}
         </span>
       </p>
+
+      {/* Eerlijke splitregel: het grote totaal telt alles, maar alleen de
+          Rijksoverheid is nu leesbaar; de rest zit in het mailoverzicht. */}
+      {afgeschermdAantal != null && afgeschermdAantal > 0 && (
+        <p className="mt-2.5 text-[13.5px] leading-relaxed text-muted-foreground">
+          <span className="font-semibold text-foreground">{totaal - afgeschermdAantal} direct zichtbaar</span>,{" "}
+          {afgeschermdAantal} in je mailoverzicht.
+        </p>
+      )}
 
       {/* Bedrag-teaser: het sterkste concrete cijfer, in de type-kleuren. */}
       {(bedragen.subsidie || bedragen.lening) && (

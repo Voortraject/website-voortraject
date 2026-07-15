@@ -80,6 +80,29 @@ drifts; (4) the "one whole" fix was only applied to the homepage, not every page
   `bg-primary` + `.ambient-glow` container; each page moves its closing CTA `<section>` into the
   `cta` prop and drops the section's own dark background.
 
+## 2026-07-15 — Verbeterjehuis niveau-labels zijn onbetrouwbaar; scherm af op regeling-id
+**Context:** Bij het afschermen van niet-landelijke regelingen in de subsidiecheck (Rijksoverheid
+gratis, rest wazig achter het mailformulier) bleek het bron-niveau (`national-government` /
+`province` / `municipality` / `other`) geen betrouwbare grens. Live-verificatie op meerdere
+postcodes toonde: (1) regionale regelingen (Isolatieaanpak Groningen/Noord-Drenthe, Subsidie
+Waardevermeerdering Drenthe en Groningen) staan bij de bron ónder "national-government"; (2) de
+indeling voor hetzelfde adres wisselt per pull (de ene keer een "Provincie"-groep, de andere keer
+niet); (3) een pure `niveau === "rijk"`-grens gaf juist de waardevolle regionale Groningse
+regelingen gratis weg.
+**Lesson:**
+- **Scherm af (of cureer) op de stabiele regeling-id (laatste padsegment van de bron-URL), niet op
+  het bron-niveau.** De id's van échte landelijke regelingen (`isde-subsidie-rijksoverheid`,
+  `energiebespaarlening-warmtefonds`, `laag-btw-tarief-voor-isolatiewerkzaamheden`, …) zijn
+  identiek over Groningse én Drentse postcodes; de niveaus niet. Zie
+  `GRATIS_ZICHTBARE_IDS` in `src/lib/subsidies/types.ts` (zelfde patroon als het bestaande
+  `CURATED_BEDRAG` in `energiesubsidiewijzerProvider.ts`).
+- **Allowlist, niet denylist:** niet-herkende/nieuwe regelingen vallen dan veilig in "afgeschermd"
+  i.p.v. per ongeluk gratis zichtbaar. Nadeel: valt de live-bron weg en draait de mock-terugval,
+  dan matcht geen enkele id → alles afgeschermd (veilige, maar lege, staat).
+- **Verifieer zulke bron-afhankelijke aannames altijd tegen de échte bron op meerdere adressen**
+  (hier via de dev-proxy `/esw`), niet tegen één screenshot of de mockdata — de mock-id's (`isde`,
+  `nij-begun-isolatie`, …) verschillen van de live-id's.
+
 ## 2026-07-12 — Geen gedachtestreepjes in zichtbare copy
 **Context:** Bij de subsidiecheck-teksten corrigeerde de opdrachtgever twee keer op
 gedachtestreepjes (—), uiteindelijk met "verwijder op alle plekken de denkstreepjes".

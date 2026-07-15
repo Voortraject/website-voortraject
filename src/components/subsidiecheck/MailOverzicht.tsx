@@ -41,13 +41,16 @@ interface MailOverzichtProps {
   input: SubsidieCheckInput;
   adres: PdokAdres;
   regelingen: SubsidieRegeling[];
+  /** Aangeroepen na een succesvolle verzending — het resultaat ontgrendelt dan de
+   *  afgeschermde regelingen meteen op het scherm. */
+  onVerstuurd?: () => void;
 }
 
 // De zachte conversieroute: e-mail + naam → lead in het CRM (zelfde
 // `leads_bewoners`-tabel en kolommen als het contactformulier, alleen
 // `bron: "Subsidiecheck"`). De gevonden regelingen gaan mee in `notities`
 // zodat het team het overzicht kan nasturen en gericht kan opvolgen.
-export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) => {
+export const MailOverzicht = ({ input, adres, regelingen, onVerstuurd }: MailOverzichtProps) => {
   const [naam, setNaam] = useState("");
   const [email, setEmail] = useState("");
   const [telefoon, setTelefoon] = useState("");
@@ -171,6 +174,8 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
       // Geen naam/e-mail in het event — alleen dat er een lead is (privacy).
       pushGtmEvent("subsidiecheck_lead", { aantal_regelingen: regelingen.length });
       setVerstuurd(true);
+      // Ontgrendel de afgeschermde regelingen meteen op het scherm (beloning).
+      onVerstuurd?.();
     } catch (err) {
       console.error("Subsidiecheck lead submit failed", err);
       setFout("Er ging iets mis. Probeer het later nog eens of mail ons op info@voortraject.nl.");

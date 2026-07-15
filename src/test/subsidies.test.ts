@@ -6,6 +6,7 @@ import {
   ALLE_MAATREGELEN,
   groepeerPerNiveau,
   NIVEAU_VOLGORDE,
+  splitZichtbaarheid,
   type SubsidieCheckInput,
   type SubsidieRegeling,
   type SubsidieType,
@@ -124,6 +125,57 @@ describe("groepeerPerNiveau", () => {
       const naLening = groep.regelingen.slice(eersteLening);
       expect(naLening.every((r) => r.type === "lening")).toBe(true);
     }
+  });
+});
+
+describe("splitZichtbaarheid", () => {
+  // niveau bewust "rijk" op álle testregelingen: het bewijst dat de split op de
+  // regeling-id splitst (allowlist), niet op het bron-niveau — de bron labelt
+  // regionale regelingen immers óók als Rijksoverheid.
+  const mk = (id: string, type: SubsidieType = "subsidie"): SubsidieRegeling => ({
+    id,
+    titel: id,
+    niveau: "rijk",
+    type,
+    aanbieder: "",
+    omschrijving: "",
+    bronUrl: "",
+    maatregelen: [],
+    doelgroepen: [],
+  });
+
+  it("toont alleen de landelijke allowlist vrij en schermt de rest af", () => {
+    const regelingen = [
+      mk("isde-subsidie-rijksoverheid"),
+      mk("laag-btw-tarief-voor-isolatiewerkzaamheden"),
+      mk("energiebespaarlening-warmtefonds", "lening"),
+      mk("isolatieaanpak-groningen-en-noord-drenthe"), // regionaal (bron-label "rijk") → afgeschermd
+      mk("subsidie-energiemaatregelen-groningen"), // gemeentelijk → afgeschermd
+      mk("extra-geld-voor-energiebesparing-in-hypotheek-met-nhg", "lening"), // niet op lijst → afgeschermd
+    ];
+    const { zichtbaar, afgeschermd, afgeschermdAantal } = splitZichtbaarheid(regelingen);
+
+    // Alleen de allowlist-id's, subsidies vóór leningen.
+    expect(zichtbaar.map((r) => r.id)).toEqual([
+      "isde-subsidie-rijksoverheid",
+      "laag-btw-tarief-voor-isolatiewerkzaamheden",
+      "energiebespaarlening-warmtefonds",
+    ]);
+    expect(afgeschermdAantal).toBe(3);
+    // Niets zoekgeraakt of dubbel geteld.
+    expect(zichtbaar.length + afgeschermdAantal).toBe(regelingen.length);
+    expect(afgeschermd.some((r) => r.id === "isolatieaanpak-groningen-en-noord-drenthe")).toBe(true);
+  });
+
+  it("matcht de id hoofdletterongevoelig", () => {
+    const { zichtbaar } = splitZichtbaarheid([mk("ISDE-SUBSIDIE-RIJKSOVERHEID")]);
+    expect(zichtbaar).toHaveLength(1);
+  });
+
+  it("schermt alles af als niets op de allowlist staat (bijv. mock-terugval)", () => {
+    const { zichtbaar, afgeschermdAantal } = splitZichtbaarheid([mk("nij-begun-isolatie"), mk("svve")]);
+    expect(zichtbaar).toHaveLength(0);
+    expect(afgeschermdAantal).toBe(2);
   });
 });
 
