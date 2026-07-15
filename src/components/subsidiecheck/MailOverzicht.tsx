@@ -18,6 +18,13 @@ import {
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const NAME_RE = /^[\p{L}\s'-]+$/u;
 
+// Zelfde NL-nummercheck als het contactformulier: 0xxxxxxxxx of +31xxxxxxxxx.
+const validatePhoneNL = (raw: string): boolean => {
+  const cleaned = raw.replace(/[\s-]/g, "");
+  if (!/^[+0-9]+$/.test(cleaned)) return false;
+  return /^0[0-9]{9}$/.test(cleaned) || /^\+31[0-9]{9}$/.test(cleaned);
+};
+
 // Productie: de edge function schrijft de lead én stuurt de bezoeker het
 // overzicht automatisch per e-mail (Resend). Is de var niet gezet, dan valt de
 // component terug op een directe lead-insert (zoals voorheen) — dan komt er nog
@@ -43,6 +50,7 @@ interface MailOverzichtProps {
 export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) => {
   const [naam, setNaam] = useState("");
   const [email, setEmail] = useState("");
+  const [telefoon, setTelefoon] = useState("");
   const [fout, setFout] = useState<string | null>(null);
   const [bezig, setBezig] = useState(false);
   const [verstuurd, setVerstuurd] = useState(false);
@@ -61,7 +69,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
     ].join("\n");
 
   // Productie: edge function → schrijft de lead + stuurt de mail via Resend.
-  const verstuurViaFunctie = async (n: string, em: string) => {
+  const verstuurViaFunctie = async (n: string, em: string, tel: string) => {
     const res = await fetch(MAIL_FUNCTIE_URL!, {
       method: "POST",
       headers: {
@@ -73,6 +81,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
       body: JSON.stringify({
         naam: n,
         email: em,
+        telefoon: tel,
         honeypot,
         input: {
           postcode: normalizePostcode(input.postcode),
@@ -100,12 +109,12 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
 
   // Terugval (function nog niet gedeployed): directe lead-insert in het CRM,
   // exact dezelfde tabel/kolommen. Er gaat dan nog geen automatische mail uit.
-  const verstuurViaClientInsert = async (n: string, em: string) => {
+  const verstuurViaClientInsert = async (n: string, em: string, tel: string) => {
     const { error } = await supabase.from("leads_bewoners").insert({
       tenant_id: "00000000-0000-0000-0000-000000000001",
       naam: escapeHtml(n),
       email: em,
-      telefoon: null,
+      telefoon: tel,
       postcode: normalizePostcode(input.postcode),
       huisnummer: input.huisnummer,
       toevoeging: input.toevoeging?.trim() ? escapeHtml(input.toevoeging.trim()) : null,
@@ -142,13 +151,22 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
       setFout("Dit lijkt geen geldig e-mailadres.");
       return;
     }
+    const tel = telefoon.trim();
+    if (!tel) {
+      setFout("Vul je telefoonnummer in.");
+      return;
+    }
+    if (!validatePhoneNL(tel)) {
+      setFout("Vul een geldig Nederlands telefoonnummer in (bijvoorbeeld 06 12345678).");
+      return;
+    }
 
     setBezig(true);
     try {
       if (MAIL_FUNCTIE_URL) {
-        await verstuurViaFunctie(n, em);
+        await verstuurViaFunctie(n, em, tel);
       } else {
-        await verstuurViaClientInsert(n, em);
+        await verstuurViaClientInsert(n, em, tel);
       }
       // Geen naam/e-mail in het event — alleen dat er een lead is (privacy).
       pushGtmEvent("subsidiecheck_lead", { aantal_regelingen: regelingen.length });
@@ -185,7 +203,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
         </label>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1.4fr_auto]">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1.4fr_1fr_auto]">
         <label className="sr-only" htmlFor="sc-mail-naam">
           Je naam
         </label>
@@ -217,6 +235,23 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
             setFout(null);
           }}
           maxLength={255}
+        />
+        <label className="sr-only" htmlFor="sc-mail-telefoon">
+          Je telefoonnummer
+        </label>
+        <input
+          id="sc-mail-telefoon"
+          type="tel"
+          autoComplete="tel"
+          inputMode="tel"
+          placeholder="Je telefoonnummer"
+          className={inputClass}
+          value={telefoon}
+          onChange={(e) => {
+            setTelefoon(e.target.value);
+            setFout(null);
+          }}
+          maxLength={20}
         />
         <button
           type="submit"
