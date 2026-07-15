@@ -90,17 +90,23 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
     }
   };
 
-  // Deel de tool zelf (niet dit overzicht): via de native deel-sheet (Web Share
-  // API — WhatsApp, mail, enz.), met kopieer-link als terugval op desktop.
+  // Deel de tool zelf (niet dit overzicht): op mobiel via de native deel-sheet
+  // (Web Share API: WhatsApp, mail, enz.); op desktop kopiëren we de link.
   const [gedeeld, setGedeeld] = useState(false);
   const deelTimer = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => () => clearTimeout(deelTimer.current), []);
   const deelTool = async () => {
-    // Deel de kale URL (de mooiste variant, net als handmatig plakken). WhatsApp
-    // toont bij een kale link de rijke preview-kaart; sturen we er tekst bij mee,
-    // dan slaat WhatsApp die preview bij het delen vaak over.
     const url = `${window.location.origin}/subsidiecheck`;
-    if (navigator.share) {
+    // Native deel-sheet alleen op touch-apparaten (mobiel): daar toont WhatsApp de
+    // rijke kaart betrouwbaar. Op desktop opent de OS-deelsheet WhatsApp Web, dat
+    // de preview bij het delen vaak niet genereert; daar kopiëren we de link
+    // (plakken toont de kaart wél). Web Share bestaat namelijk óók op
+    // desktop-Edge/Chrome, dus we checken expliciet op een touch-pointer.
+    const kanNatiefDelen =
+      typeof navigator.share === "function" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(pointer: coarse)").matches;
+    if (kanNatiefDelen) {
       try {
         await navigator.share({ url });
       } catch {

@@ -4,7 +4,7 @@ const SITE_URL = "https://voortraject.nl";
 // Standaard deel-afbeelding (1200×630, op ons eigen domein). Social-crawlers
 // draaien geen JS, dus voor de crawler telt de statische kopie in index.html;
 // deze tags houden de client-side DOM consistent en dekken JS-uitvoerende bots.
-const OG_IMAGE = `${SITE_URL}/og/voortraject-og.jpg`;
+const OG_IMAGE = `${SITE_URL}/og/voortraject-og-v2.jpg`;
 
 interface SeoProps {
   title: string;
