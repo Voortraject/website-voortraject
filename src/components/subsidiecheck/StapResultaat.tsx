@@ -286,6 +286,21 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
       {/* Endowed progress: stap 1 (overzicht) is klaar, drie stappen te gaan. */}
       <TrajectStrip />
 
+      {/* Bronvermelding — de subsidie-informatie komt uit de Energiesubsidiewijzer
+          van Milieu Centraal. Staat bewust bij de getoonde regelingen. */}
+      <p className="mt-6 text-center text-[12.5px] leading-relaxed text-muted-foreground">
+        Subsidie-informatie in samenwerking met voorlichtingsorganisatie{" "}
+        <a
+          href="https://www.milieucentraal.nl"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-sm underline underline-offset-2 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          Milieu Centraal
+        </a>
+        .
+      </p>
+
       {/* Groepen onder elkaar (landelijk → lokaal, layer-cake-scan), met de
           kaarten binnen een groep naast elkaar op desktop. */}
       <div className="mt-8 flex flex-col gap-8">

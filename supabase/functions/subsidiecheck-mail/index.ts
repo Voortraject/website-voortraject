@@ -326,7 +326,7 @@ function bouwEmailHtml(opts: {
 
         <!-- Footer -->
         <tr><td style="background:${KLEUR.achtergrond};padding:24px 32px;text-align:center;border-top:1px solid ${KLEUR.border};">
-          <p style="font-size:12px;color:${KLEUR.muted};margin:0 0 8px;line-height:1.6;font-style:italic;">Dit overzicht is een indicatie op basis van de Energiesubsidiewijzer en jouw postcode. Aan de bedragen en voorwaarden kunnen geen rechten worden ontleend.</p>
+          <p style="font-size:12px;color:${KLEUR.muted};margin:0 0 8px;line-height:1.6;font-style:italic;">Dit overzicht is een indicatie op basis van de Energiesubsidiewijzer, in samenwerking met voorlichtingsorganisatie Milieu Centraal, en jouw postcode. Aan de bedragen en voorwaarden kunnen geen rechten worden ontleend.</p>
           <p style="font-size:12px;color:${KLEUR.muted};margin:0;line-height:1.6;"><strong style="color:${KLEUR.primary};">Voortraject</strong><br>Vragen? Bel <a href="${TELEFOON_LINK}" style="color:${KLEUR.muted};">${TELEFOON}</a> of reageer op deze mail.</p>
         </td></tr>
 
