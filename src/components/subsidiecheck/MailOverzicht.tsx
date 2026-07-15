@@ -275,7 +275,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
         </p>
       )}
       <p className="mt-2 text-[12px] italic text-muted-foreground">
-        Alleen om dit overzicht te sturen. Geen nieuwsbrief.
+        Alleen om dit overzicht te sturen en vrijblijvend contact op te nemen. Geen nieuwsbrief.
       </p>
     </form>
   );
