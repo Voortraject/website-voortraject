@@ -96,10 +96,11 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
   const deelTimer = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => () => clearTimeout(deelTimer.current), []);
   const deelTool = async () => {
-    // Deel alléén de kale URL. WhatsApp (en andere apps) tonen dan de rijke
-    // preview-kaart — net als wanneer je de link handmatig plakt. Sturen we er
-    // tekst bij mee, dan slaat WhatsApp de preview bij het delen vaak over.
-    const url = `${window.location.origin}/subsidiecheck`;
+    // Deel de kale URL met een bron-parameter. WhatsApp toont bij een kale link
+    // de rijke preview-kaart (net als bij handmatig plakken); sturen we er tekst
+    // bij mee, dan slaat WhatsApp die preview vaak over. De ?ref houdt de gedeelde
+    // link bovendien "vers" voor de WhatsApp-cache en geeft attributie in analytics.
+    const url = `${window.location.origin}/subsidiecheck?ref=deel`;
     if (navigator.share) {
       try {
         await navigator.share({ url });
