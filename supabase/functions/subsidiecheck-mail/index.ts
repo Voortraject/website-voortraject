@@ -57,6 +57,13 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const NAME_RE = /^[\p{L}\s'-]+$/u;
 const POSTCODE_RE = /^[1-9][0-9]{3}[A-Z]{2}$/;
 
+// Zelfde NL-nummercheck als de client: 0xxxxxxxxx of +31xxxxxxxxx.
+function validatePhoneNL(raw: string): boolean {
+  const cleaned = raw.replace(/[\s-]/g, "");
+  if (!/^[+0-9]+$/.test(cleaned)) return false;
+  return /^0[0-9]{9}$/.test(cleaned) || /^\+31[0-9]{9}$/.test(cleaned);
+}
+
 const NIVEAU_VOLGORDE = ["rijk", "provincie", "gemeente", "overig"] as const;
 type Niveau = (typeof NIVEAU_VOLGORDE)[number];
 const NIVEAU_LABELS: Record<Niveau, string> = {
@@ -108,6 +115,7 @@ type Regeling = {
 type Payload = {
   naam?: string;
   email?: string;
+  telefoon?: string;
   honeypot?: string;
   input?: {
     postcode?: string;
@@ -393,6 +401,10 @@ Deno.serve(async (req: Request) => {
   if (!EMAIL_RE.test(email) || email.length > 255) {
     return json({ error: "Dit lijkt geen geldig e-mailadres." }, 400);
   }
+  // De client vraagt het telefoonnummer verplicht op; serverside blijven we
+  // mild (bij ontbreken/ongeldig → null) zodat een lead nooit verloren gaat.
+  const telefoonRuw = (payload.telefoon ?? "").trim();
+  const telefoon = telefoonRuw && validatePhoneNL(telefoonRuw) ? telefoonRuw : null;
 
   const input = payload.input ?? {};
   const adres = payload.adres ?? {};
@@ -429,7 +441,7 @@ Deno.serve(async (req: Request) => {
       tenant_id: TENANT_ID,
       naam: escapeHtml(naam),
       email,
-      telefoon: null,
+      telefoon,
       postcode,
       huisnummer,
       toevoeging: toevoeging ? escapeHtml(toevoeging) : null,
