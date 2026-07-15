@@ -126,7 +126,7 @@ const Subsidiecheck = () => {
   // Het resultaat heeft bewust géén subregel: de samenvatting in StapResultaat
   // vertelt daar het verhaal. De stap-1-kop past zich aan: met een al bekend
   // adres ligt de nadruk op de interesses.
-  const koppen: Record<1 | 2, { titel: string; sub?: string }> = {
+  const koppen: Record<1 | 2, { titel: string; sub?: string; subVerbergMobiel?: boolean }> = {
     1: bevestigdAdres
       ? {
           titel: "Nog één stap",
@@ -135,6 +135,9 @@ const Subsidiecheck = () => {
       : {
           titel: "Waar staat jouw woning?",
           sub: "We zoeken alle regelingen die op jouw adres van toepassing zijn.",
+          // Op mobiel verbergen: scheelt verticale ruimte zodat de knop onderaan
+          // makkelijker binnen één scherm valt. Op sm+ blijft de regel staan.
+          subVerbergMobiel: true,
         },
     2: {
       titel: "Jouw subsidieoverzicht",
@@ -156,8 +159,9 @@ const Subsidiecheck = () => {
         <section className="pt-4 pb-28 md:pt-6 md:pb-24">
           <div className="container-content">
             {/* Stap 1 blijft smal (focus op de invoer); het resultaat krijgt de
-                ruimte zodat groepen naast elkaar kunnen staan. */}
-            <div className="mx-auto w-full" style={{ maxWidth: stap === 2 ? 1040 : 760 }}>
+                ruimte zodat groepen naast elkaar kunnen staan. De interesses
+                staan standaard ingeklapt, dus stap 1 kan compacter dan voorheen. */}
+            <div className="mx-auto w-full" style={{ maxWidth: stap === 2 ? 1040 : 640 }}>
               <Voortgang
                 huidige={stap}
                 onStapKlik={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
@@ -172,7 +176,11 @@ const Subsidiecheck = () => {
                 {koppen[stap].titel}
               </h1>
               {koppen[stap].sub && (
-                <p className="mx-auto mt-2 max-w-md text-center text-[15px] leading-relaxed text-muted-foreground">
+                <p
+                  className={`mx-auto mt-2 max-w-md text-center text-[15px] leading-relaxed text-muted-foreground${
+                    koppen[stap].subVerbergMobiel ? " hidden sm:block" : ""
+                  }`}
+                >
                   {koppen[stap].sub}
                 </p>
               )}
