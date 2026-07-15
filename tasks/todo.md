@@ -2,6 +2,38 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Social preview / deel-kaart subsidiecheck (2026-07-15)
+
+Branch: `feat/subsidiecheck-social-preview`. Aanleiding: de "Deel de tool"-knop op
+het resultaat toonde in WhatsApp alleen kale tekst + link, geen preview-kaart.
+
+### Diagnose (op productie geverifieerd met curl + WhatsApp-UA)
+- `voortraject.nl/subsidiecheck` gaf 200 mét OG-tags, en de `og:image` was bereikbaar
+  — technisch dus "geldig". Tóch geen kaart, omdat:
+  1. De afbeelding was een **Lovable-restje: 568 KB op een extern `…r2.dev`-domein**.
+     WhatsApp toont previews boven ~300 KB en/of cross-domain vaak niet.
+  2. `og:url` en `og:image:width/height` ontbraken.
+- Extra: WhatsApp **cachet per URL** lang → na de fix testen met een verse URL (`?v=2`).
+
+### Gedaan
+- [x] Eigen gebrande deel-kaart `public/og/voortraject-subsidiecheck.jpg` (1200×630, **96 KB**):
+      hero-adviesgesprek-foto + navy-scrim + wit woordmerk + oker accent +
+      "Gratis subsidiecheck". Gerenderd via headless Chrome (2×) + ImageMagick.
+- [x] `index.html`: Lovable-URL vervangen door de eigen afbeelding; volledige tags
+      toegevoegd (`og:url`, `og:site_name`, `og:locale`, `og:image:width/height/alt/type`).
+- [x] `Seo.tsx`: `og:image`/`twitter:image`/`twitter:card`/`og:site_name` toegevoegd,
+      met optionele `image`-prop (voor latere per-pagina kaarten = Tier 2).
+- [x] `StapResultaat.tsx`: deeltekst ingekort/betrouwbaarder gemaakt (emoji weg).
+
+### Bewust (nog) NIET gedaan
+- **Tier 2 (per-pagina kaart via Cloudflare Pages Function).** Nu 1 sitebrede kaart:
+  elke gedeelde link toont de subsidiecheck-kaart. Prima voor de deel-knop; homepage
+  toont dan óók die kaart. Optioneel later opsplitsen.
+
+### Na deploy (productie) — testen
+1. Cloudflare-deploy afwachten. 2. Facebook Sharing Debugger de URL laten her-scrapen.
+3. In WhatsApp `voortraject.nl/subsidiecheck?v=2` delen (cache-bust) → kaart moet verschijnen.
+
 ## Subsidiechecker — conversietool (2026-07-12)
 
 Branch: `feat/subsidiecheck` (langlopende feature-branch, meerdere dagen; regelmatig
