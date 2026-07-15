@@ -2,6 +2,31 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Subsidiecheck — stap 1 desktop-polish (2026-07-15)
+
+Branch: `tweak/subsidiecheck-stap1-desktop`. Kleine vervolg-tweaks op de 2-stappen-flow
+(PR #56), alleen in `src/pages/Subsidiecheck.tsx`.
+
+### Keuzes (met opdrachtgever afgestemd)
+- Interesses-uitklap **ingeklapt houden** op desktop én mobiel (rustig, "alle maatregelen"
+  als default) — géén wijziging.
+- Stap-1-breedte van **760 → 640px** (interesses staan standaard ingeklapt, dus de
+  "Ik ben…"-2×2 mag compacter). Stap 2 blijft 1040.
+
+### Gedaan
+- [x] `maxWidth` stap 1: 760 → 640 (comment bijgewerkt).
+- [x] Adres-zoeksubregel ("We zoeken alle regelingen…") op mobiel verborgen via
+      `hidden sm:block` (nieuw veldje `subVerbergMobiel` op de kop-config); de
+      "Nog één stap"-subregel (bekend adres) blijft op alle schermen staan.
+- [x] Verificatie: `tsc` schoon · `eslint` op het bestand schoon (baseline 11 err/8 warn
+      ongewijzigd, in níet-aangeraakte bestanden) · 49/49 vitest · `bun run build` groen.
+
+### Bewust NIET gedaan
+- Interesse-chips op echte mobiel vallen (gerekend, 360px) in ~4 regels i.p.v. ≤3;
+  "Warmtenet-aansluiting"/"Isolatie & glas" zijn de brede labels. Omdat de chips op mobiel
+  achter de opt-in-uitklap zitten, acceptabel gelaten. Kortere mobiele labels zouden de
+  gedeelde `MAATREGEL_LABELS` raken → alleen op verzoek.
+
 ## Subsidiechecker — conversietool (2026-07-12)
 
 Branch: `feat/subsidiecheck` (langlopende feature-branch, meerdere dagen; regelmatig
