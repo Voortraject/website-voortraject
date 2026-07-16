@@ -43,14 +43,16 @@ export const AfgeschermdeRegelingen = ({ regelingen, aantal, onOntgrendel }: Afg
       aria-hidden="true"
     />
 
-    {/* Uitnodiging als brede banner, bovenaan het blok: direct in beeld zodra de
-        bezoeker voorbij de landelijke regelingen scrolt, vóór het wegklik-moment. */}
-    <div className="absolute inset-x-0 top-3 flex justify-center px-4 md:top-5">
+    {/* Uitnodiging als brede banner, over de eerste rij wazige kaarten: in beeld
+        zodra de bezoeker voorbij de landelijke regelingen scrolt, vóór het
+        wegklik-moment. Op mobiel bijna volle breedte en iets kleinere letters,
+        zodat de kop en de knoptekst elk op één regel passen. */}
+    <div className="absolute inset-x-0 top-12 flex justify-center px-2 md:top-20 md:px-4">
       <div
-        className="w-full max-w-3xl rounded-2xl border-2 bg-card p-5 shadow-card md:p-6"
+        className="w-full max-w-3xl rounded-2xl border-2 bg-card p-4 shadow-card md:p-6"
         style={{ borderColor: "hsl(var(--accent) / 0.8)" }}
       >
-        <div className="flex flex-col items-center gap-4 text-center md:flex-row md:gap-5 md:text-left">
+        <div className="flex flex-col items-center gap-3.5 text-center md:flex-row md:gap-5 md:text-left">
           <span
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
             style={{ backgroundColor: "hsl(var(--accent) / 0.15)" }}
@@ -59,17 +61,17 @@ export const AfgeschermdeRegelingen = ({ regelingen, aantal, onOntgrendel }: Afg
             <Mail size={20} strokeWidth={2} className="text-primary" />
           </span>
           <div className="min-w-0 flex-1">
-            <h3 className="font-display text-[18px] font-semibold leading-snug text-primary md:text-[20px]">
+            <h3 className="font-display text-[16.5px] font-semibold leading-snug text-primary md:text-[20px]">
               Nog {aantal} {aantal === 1 ? "regeling" : "regelingen"} voor jouw adres
             </h3>
-            <p className="mt-1 text-[14.5px] leading-relaxed text-foreground/80">
+            <p className="mt-1 text-[14px] leading-relaxed text-foreground/80 md:text-[14.5px]">
               Regionaal, provinciaal en gemeentelijk. We mailen ze je gratis en vrijblijvend, geen nieuwsbrief.
             </p>
           </div>
           <button
             type="button"
             onClick={onOntgrendel}
-            className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover min-h-[48px] sm:w-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-full bg-accent px-4 py-3 text-[14px] font-semibold text-primary transition-colors hover:bg-accent-hover min-h-[48px] sm:w-auto md:px-6 md:text-[15px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <Mail size={16} strokeWidth={2} aria-hidden="true" />
             Mail mij de overige regelingen
