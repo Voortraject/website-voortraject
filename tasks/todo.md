@@ -33,6 +33,13 @@ drie losse delen (getrimd, leeg = null; achternaam verplicht).
 - Tussenvoegsel bewust zonder autoComplete (geen standaard token); voornaam/achternaam
   kregen given-name/family-name. Optionele naamdelen: ongeldige tekens → veldfout client-
   side; serverside mild (ongeldig deel weglaten) zodat een lead nooit verloren gaat.
+- Vervolg 2 (zelfde dag, afgestemd): voornaam overal verplicht (contact bewoner +
+  uitvoerder + subsidiecheck); naamvelden op lg+ op één rij, daaronder voornaam boven en
+  tussenvoegsel + achternaam samen. Uitvoerder-variant naar het Adres-groepspatroon
+  (groepslabel "Contactpersoon (tussenvoegsel optioneel)" + placeholders) omdat de losse
+  labels over twee regels braken. Tussenvoegsel blijft optioneel (geen *). Geverifieerd:
+  tsc/49 tests/baseline-eslint + headless (één rij desktop, stapeling tablet/mobiel,
+  "Vul je voornaam in."-fout op beide formulieren zonder insert).
 - Vervolg (zelfde dag, afgestemd): mail-aanhef persoonlijker. Met voornaam "Hallo Jan,";
   zonder voornaam "Beste heer/mevrouw Van der Berg," (geslacht wordt niet uitgevraagd →
   gecombineerde vorm; tussenvoegsel/naam met hoofdletter in weergave, DB blijft zoals

@@ -81,7 +81,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
         Authorization: `Bearer ${SUPABASE_EXTERNAL_ANON_KEY}`,
       },
       body: JSON.stringify({
-        voornaam: vn || undefined,
+        voornaam: vn,
         tussenvoegsel: tv || undefined,
         achternaam: an,
         email: em,
@@ -118,7 +118,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
   const verstuurViaClientInsert = async (vn: string, tv: string, an: string, em: string, tel: string) => {
     const { error } = await supabase.from("leads_bewoners").insert({
       tenant_id: "00000000-0000-0000-0000-000000000001",
-      voornaam: vn ? escapeHtml(vn) : null,
+      voornaam: escapeHtml(vn),
       tussenvoegsel: tv ? escapeHtml(tv) : null,
       achternaam: escapeHtml(an),
       email: em,
@@ -150,7 +150,11 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
     }
 
     const vn = voornaam.trim();
-    if (vn && (vn.length > 100 || !NAME_RE.test(vn))) {
+    if (!vn) {
+      setFout("Vul je voornaam in.");
+      return;
+    }
+    if (vn.length > 100 || !NAME_RE.test(vn)) {
       setFout("Je voornaam bevat ongeldige tekens.");
       return;
     }
@@ -224,13 +228,14 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
       {/* Regel 1: de drie naamvelden (tussenvoegsel smal). Op mobiel stapelt alles. */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1.2fr_0.7fr_1.4fr]">
         <label className="sr-only" htmlFor="sc-mail-voornaam">
-          Je voornaam (optioneel)
+          Je voornaam (verplicht)
         </label>
         <input
           id="sc-mail-voornaam"
           type="text"
           autoComplete="given-name"
-          placeholder="Je voornaam"
+          aria-required="true"
+          placeholder="Je voornaam *"
           className={inputClass}
           value={voornaam}
           onChange={(e) => {
