@@ -7,6 +7,10 @@ import { ALLE_MAATREGELEN } from "./types";
 // op de PDOK-gemeente/-provincie. Regelingen en bedragen zijn indicatief —
 // deze provider bestaat om de volledige flow te kunnen bouwen en testen en
 // wordt vervangen door de echte bron (zie provider.ts).
+//
+// De id's spiegelen de échte bron-slugs (laatste padsegment van de
+// Verbeterjehuis-URL): zo gedraagt de afscherming (GRATIS_ZICHTBARE_IDS,
+// allowlist op id) zich op voorbeelddata exact zoals op live data.
 
 type MockRegeling = SubsidieRegeling & {
   /** Alleen tonen binnen deze provincies (naast eventuele gemeenten-match). */
@@ -23,7 +27,7 @@ const NOORD_DRENTHE = ["Aa en Hunze", "Assen", "Noordenveld", "Tynaarlo"];
 const REGELINGEN: MockRegeling[] = [
   // ---------- Rijksoverheid ----------
   {
-    id: "isde",
+    id: "isde-subsidie-rijksoverheid",
     titel: "ISDE-subsidie",
     niveau: "rijk",
     type: "subsidie",
@@ -39,7 +43,7 @@ const REGELINGEN: MockRegeling[] = [
     doelgroepen: ["woningeigenaar"],
   },
   {
-    id: "svve",
+    id: "subsidieregeling-verduurzaming-voor-verenigingen-van-eigenaars-svve",
     titel: "SVVE-subsidie voor VvE's",
     niveau: "rijk",
     type: "subsidie",
@@ -54,7 +58,7 @@ const REGELINGEN: MockRegeling[] = [
     doelgroepen: ["vve"],
   },
   {
-    id: "waardevermeerdering",
+    id: "subsidie-waardevermeerdering-drenthe-en-groningen",
     titel: "Subsidie Waardevermeerdering",
     niveau: "rijk",
     type: "subsidie",
@@ -73,7 +77,7 @@ const REGELINGEN: MockRegeling[] = [
 
   // ---------- Provincie / regionaal ----------
   {
-    id: "nij-begun-isolatie",
+    id: "subsidie-isolatie-nij-begun",
     titel: "Subsidie Isolatie Nij Begun",
     niveau: "provincie",
     type: "subsidie",
@@ -90,7 +94,7 @@ const REGELINGEN: MockRegeling[] = [
     gemeenten: NOORD_DRENTHE,
   },
   {
-    id: "vvg-10000",
+    id: "subsidie-verduurzaming-en-verbetering-groningen-10-000",
     titel: "Subsidie Verduurzaming en Verbetering Groningen",
     niveau: "provincie",
     type: "subsidie",
@@ -107,7 +111,7 @@ const REGELINGEN: MockRegeling[] = [
     provincies: ["Groningen"],
   },
   {
-    id: "drenthe-isolatie",
+    id: "subsidie-energiebesparende-isolatiemaatregelen-drenthe",
     titel: "Subsidie energiebesparende isolatiemaatregelen Drenthe",
     niveau: "provincie",
     type: "subsidie",
@@ -124,7 +128,7 @@ const REGELINGEN: MockRegeling[] = [
 
   // ---------- Gemeente ----------
   {
-    id: "emmen-lokale-aanpak",
+    id: "subsidie-lokale-aanpak-isolatie-emmen",
     titel: "Subsidie lokale aanpak isolatie Emmen",
     niveau: "gemeente",
     type: "subsidie",
@@ -139,7 +143,7 @@ const REGELINGEN: MockRegeling[] = [
     gemeenten: ["Emmen"],
   },
   {
-    id: "groningen-maatregel-29",
+    id: "subsidie-voor-woningisolatie-nij-begun-maatregel-29",
     titel: "Subsidie voor woningisolatie (Nij Begun, maatregel 29)",
     niveau: "gemeente",
     type: "subsidie",
@@ -154,7 +158,7 @@ const REGELINGEN: MockRegeling[] = [
     gemeenten: ["Groningen"],
   },
   {
-    id: "volkshuisvesting-drenthe",
+    id: "subsidie-verduurzaming-volkshuisvesting-drenthe",
     titel: "Subsidie verduurzaming volkshuisvesting Drenthe",
     niveau: "gemeente",
     type: "subsidie",
@@ -171,7 +175,7 @@ const REGELINGEN: MockRegeling[] = [
 
   // ---------- Overig / leningen ----------
   {
-    id: "warmtefonds",
+    id: "energiebespaarlening-warmtefonds",
     titel: "Energiebespaarlening Nationaal Warmtefonds",
     niveau: "overig",
     type: "lening",

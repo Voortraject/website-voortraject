@@ -80,7 +80,24 @@ drifts; (4) the "one whole" fix was only applied to the homepage, not every page
   `bg-primary` + `.ambient-glow` container; each page moves its closing CTA `<section>` into the
   `cta` prop and drops the section's own dark background.
 
-## 2026-07-15 — Verbeterjehuis niveau-labels zijn onbetrouwbaar; scherm af op regeling-id
+## 2026-07-16 — Stille terugval op voorbeelddata = onzichtbare fouten; faal eerlijk
+**Context:** De subsidiecheck viel bij een bronfout stil terug op de mock ("basisset"). Met de
+nieuwe afscherming werd dat pijnlijk zichtbaar: één transiënte fout van Verbeterjehuis en de
+bezoeker zag 5 verzonnen regelingen (mock-Tynaarlo) met álles afgeschermd ("0 direct zichtbaar"),
+terwijl productie er 11 toonde. Extra verraderlijk: doordat de provider de fout inslikte, deed
+react-query's `retry: 1` nooit iets en bleef het foute resultaat 5 minuten in de query-cache; en
+de Vite-proxy logt upstream-fouten niet, dus de dev-log bleef leeg.
+**Lesson:**
+- **Geen stille terugval op nepdata in een tool die echte beslissingen en leads stuurt.** Laat de
+  fout door naar react-query (retry) en toon daarna de eerlijke foutstaat met "Opnieuw proberen".
+  Mock-data zou anders ook nog per mail verstuurd worden.
+- **Een provider die intern catcht, schakelt de retry-laag erboven uit.** Foutafhandeling hoort op
+  één laag te leven; hier is dat react-query.
+- **Herken de mock aan de details:** "lening tot € 1.000" (eerste bedrag uit de mock-range
+  "€ 1.000 – € 71.000") en id's zonder bron-slugformaat. Mock-id's spiegelen nu de echte slugs,
+  zodat voorbeelddata zich hetzelfde gedraagt als live data.
+
+## 2026-07-16 — Verbeterjehuis niveau-labels zijn onbetrouwbaar; scherm af op regeling-id
 **Context:** Bij het afschermen van niet-landelijke regelingen in de subsidiecheck (Rijksoverheid
 gratis, rest wazig achter het mailformulier) bleek het bron-niveau (`national-government` /
 `province` / `municipality` / `other`) geen betrouwbare grens. Live-verificatie op meerdere

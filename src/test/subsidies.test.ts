@@ -47,12 +47,12 @@ describe("mockprovider filtering", () => {
     expect(niveaus.has("rijk")).toBe(true);
     expect(niveaus.has("provincie")).toBe(true);
     expect(niveaus.has("gemeente")).toBe(true);
-    expect(resultaat.some((r) => r.id === "emmen-lokale-aanpak")).toBe(true);
+    expect(resultaat.some((r) => r.id === "subsidie-lokale-aanpak-isolatie-emmen")).toBe(true);
   });
 
   it("toont Groningse regelingen niet in Drenthe (buiten Noord-Drenthe)", async () => {
     const resultaat = await mockSubsidieProvider.check(basisInput);
-    expect(resultaat.some((r) => r.id === "vvg-10000")).toBe(false);
+    expect(resultaat.some((r) => r.id === "subsidie-verduurzaming-en-verbetering-groningen-10-000")).toBe(false);
   });
 
   it("toont Nij Begun wél in Groningen en Noord-Drenthe", async () => {
@@ -61,20 +61,20 @@ describe("mockprovider filtering", () => {
       gemeente: "Groningen",
       provincie: "Groningen",
     });
-    expect(groningen.some((r) => r.id === "nij-begun-isolatie")).toBe(true);
+    expect(groningen.some((r) => r.id === "subsidie-isolatie-nij-begun")).toBe(true);
 
     const assen = await mockSubsidieProvider.check({
       ...basisInput,
       gemeente: "Assen",
       provincie: "Drenthe",
     });
-    expect(assen.some((r) => r.id === "nij-begun-isolatie")).toBe(true);
+    expect(assen.some((r) => r.id === "subsidie-isolatie-nij-begun")).toBe(true);
   });
 
   it("filtert op bewonertype", async () => {
     const vve = await mockSubsidieProvider.check({ ...basisInput, bewonertype: "vve" });
-    expect(vve.some((r) => r.id === "svve")).toBe(true);
-    expect(vve.some((r) => r.id === "isde")).toBe(false);
+    expect(vve.some((r) => r.id === "subsidieregeling-verduurzaming-voor-verenigingen-van-eigenaars-svve")).toBe(true);
+    expect(vve.some((r) => r.id === "isde-subsidie-rijksoverheid")).toBe(false);
   });
 
   it("filtert op maatregelen", async () => {
@@ -83,8 +83,8 @@ describe("mockprovider filtering", () => {
       maatregelen: ["zonnepanelen"],
     });
     // ISDE dekt geen zonnepanelen; de Energiebespaarlening wel.
-    expect(alleenZonnepanelen.some((r) => r.id === "isde")).toBe(false);
-    expect(alleenZonnepanelen.some((r) => r.id === "warmtefonds")).toBe(true);
+    expect(alleenZonnepanelen.some((r) => r.id === "isde-subsidie-rijksoverheid")).toBe(false);
+    expect(alleenZonnepanelen.some((r) => r.id === "energiebespaarlening-warmtefonds")).toBe(true);
   });
 
   it("behandelt een lege maatregelenlijst als 'alles'", () => {
@@ -172,10 +172,27 @@ describe("splitZichtbaarheid", () => {
     expect(zichtbaar).toHaveLength(1);
   });
 
-  it("schermt alles af als niets op de allowlist staat (bijv. mock-terugval)", () => {
-    const { zichtbaar, afgeschermdAantal } = splitZichtbaarheid([mk("nij-begun-isolatie"), mk("svve")]);
+  it("schermt alles af als geen enkele id op de allowlist staat", () => {
+    const { zichtbaar, afgeschermdAantal } = splitZichtbaarheid([
+      mk("subsidie-isolatie-nij-begun"),
+      mk("verzilverlening", "lening"),
+    ]);
     expect(zichtbaar).toHaveLength(0);
     expect(afgeschermdAantal).toBe(2);
+  });
+
+  it("houdt landelijke regelingen voor VvE's en verhuurders vrij zichtbaar", () => {
+    const { zichtbaar } = splitZichtbaarheid([
+      mk("subsidieregeling-verduurzaming-voor-verenigingen-van-eigenaars-svve"), // SVVE (VvE)
+      mk("subsidieregeling-verduurzaming-en-onderhoud-huurwoningen-svoh"), // SVOH (verhuurder)
+      mk("vve-energiebespaarlening-warmtefonds", "lening"),
+      mk("subsidie-isolatie-nij-begun"), // regionaal → afgeschermd
+    ]);
+    expect(zichtbaar.map((r) => r.id)).toEqual([
+      "subsidieregeling-verduurzaming-voor-verenigingen-van-eigenaars-svve",
+      "subsidieregeling-verduurzaming-en-onderhoud-huurwoningen-svoh",
+      "vve-energiebespaarlening-warmtefonds",
+    ]);
   });
 });
 

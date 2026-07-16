@@ -178,10 +178,18 @@ export function groepeerPerNiveau(regelingen: SubsidieRegeling[]): NiveauGroep[]
 // nieuwe/onbekende regeling schermen we liever af dan per ongeluk weg te geven.
 // Uitbreiden of inperken = hier een id toevoegen of verwijderen.
 export const GRATIS_ZICHTBARE_IDS: string[] = [
+  // Woningeigenaar
   "isde-subsidie-rijksoverheid", // ISDE (landelijk)
   "laag-btw-tarief-voor-isolatiewerkzaamheden", // Verlaagd btw-tarief isolatie (landelijk)
   "energiebespaarlening-warmtefonds", // Energiebespaarlening Warmtefonds (landelijk)
   "energiebespaarlening-voor-mensen-met-onvoldoende-leencapaciteit-warmtefonds", // Warmtefonds-variant (landelijk)
+  // VvE
+  "subsidieregeling-verduurzaming-voor-verenigingen-van-eigenaars-svve", // SVVE (landelijk)
+  "zonne-energie-sce-voor-vves", // SCE zonne-energie voor VvE's (landelijk)
+  "vve-energiebespaarlening-warmtefonds", // VvE-Energiebespaarlening Warmtefonds (landelijk)
+  "toekomstbestendig-onderhoudsfonds-vves", // Toekomstbestendig onderhoudsfonds, Warmtefonds (landelijk)
+  // Verhuurder
+  "subsidieregeling-verduurzaming-en-onderhoud-huurwoningen-svoh", // SVOH (landelijk)
 ];
 
 const gratisZichtbareSet = new Set(GRATIS_ZICHTBARE_IDS);
