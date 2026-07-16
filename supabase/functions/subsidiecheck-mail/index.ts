@@ -266,13 +266,14 @@ function bouwSamenvattingBlok(regelingen: Regeling[]): string {
 }
 
 function bouwEmailHtml(opts: {
-  naam: string;
+  /** Volledige aanhefregel zonder komma, bijv. "Hallo Jan" of "Beste heer/mevrouw De Vries". */
+  aanhef: string;
   adresregel: string;
   regelingen: Regeling[];
   siteBasis: string;
   overzichtUrl?: string;
 }): string {
-  const { naam, adresregel, regelingen, siteBasis, overzichtUrl } = opts;
+  const { aanhef, adresregel, regelingen, siteBasis, overzichtUrl } = opts;
   const subsidies = regelingen.filter((r) => r.type !== "lening").length;
   const goedNieuws = regelingen.length >= 3 && subsidies >= 1;
   // Binnen een niveaugroep eerst de subsidies, dan de leningen (stabiele sort,
@@ -303,7 +304,7 @@ function bouwEmailHtml(opts: {
 
         <!-- Body -->
         <tr><td style="padding:40px 32px;color:${KLEUR.primary};line-height:1.6;">
-          <p style="font-size:16px;margin:0 0 20px;">Hallo ${escapeHtml(naam)},</p>
+          <p style="font-size:16px;margin:0 0 20px;">${escapeHtml(aanhef)},</p>
           <p style="font-size:16px;margin:0 0 20px;">Hier is je persoonlijke subsidieoverzicht voor <strong>${escapeHtml(adresregel)}</strong>.</p>
 
           ${bouwSamenvattingBlok(regelingen)}
@@ -417,8 +418,21 @@ Deno.serve(async (req: Request) => {
   } else if (legacyNaam.length < 2 || legacyNaam.length > 100 || !NAME_RE.test(legacyNaam)) {
     return json({ error: "Vul een geldige naam in." }, 400);
   }
-  // Weergavenaam voor de mail-aanhef ("Hallo …,").
-  const naam = achternaam ? [voornaam, tussenvoegsel, achternaam].filter(Boolean).join(" ") : legacyNaam;
+  // Mail-aanhef (weergave; de database houdt de invoer zoals getypt):
+  //   met voornaam    → "Hallo Jan" (informele je-toon van de subsidiecheck)
+  //   zonder voornaam → "Beste heer/mevrouw Van der Berg" (geslacht wordt niet
+  //     uitgevraagd, dus de gecombineerde nette vorm; tussenvoegsel krijgt een
+  //     hoofdletter omdat er geen voornaam voor staat: "meneer De Vries")
+  //   legacy (één naamveld) → "Hallo {naam}" zoals voorheen
+  const capEerste = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  let aanhef: string;
+  if (achternaam) {
+    aanhef = voornaam
+      ? `Hallo ${capEerste(voornaam)}`
+      : `Beste heer/mevrouw ${[tussenvoegsel ? capEerste(tussenvoegsel) : "", capEerste(achternaam)].filter(Boolean).join(" ")}`;
+  } else {
+    aanhef = `Hallo ${legacyNaam}`;
+  }
 
   const email = (payload.email ?? "").trim();
   if (!EMAIL_RE.test(email) || email.length > 255) {
@@ -499,7 +513,7 @@ Deno.serve(async (req: Request) => {
         ? payload.overzichtUrl
         : undefined;
     const html = bouwEmailHtml({
-      naam,
+      aanhef,
       adresregel: adresregel || "jouw woning",
       regelingen,
       siteBasis,

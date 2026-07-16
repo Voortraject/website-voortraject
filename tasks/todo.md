@@ -33,6 +33,11 @@ drie losse delen (getrimd, leeg = null; achternaam verplicht).
 - Tussenvoegsel bewust zonder autoComplete (geen standaard token); voornaam/achternaam
   kregen given-name/family-name. Optionele naamdelen: ongeldige tekens → veldfout client-
   side; serverside mild (ongeldig deel weglaten) zodat een lead nooit verloren gaat.
+- Vervolg (zelfde dag, afgestemd): mail-aanhef persoonlijker. Met voornaam "Hallo Jan,";
+  zonder voornaam "Beste heer/mevrouw Van der Berg," (geslacht wordt niet uitgevraagd →
+  gecombineerde vorm; tussenvoegsel/naam met hoofdletter in weergave, DB blijft zoals
+  getypt); legacy-pad blijft "Hallo {naam},". Opnieuw gedeployed + live getest (2 extra
+  testrijen leads_bewoners, achternaam Testaanhef; mails ter controle op info@).
 
 ## Visuele aanpassingen Over ons + Partners (2026-07-16)
 
