@@ -16,17 +16,17 @@ const team = [
   },
   {
     name: "Tim",
-    specialty: "Bewonersbegeleider",
+    specialty: "Bewonersadviseur",
     img: tim,
   },
   {
     name: "Wouter",
-    specialty: "Bewonersbegeleider",
+    specialty: "Bewonersadviseur",
     img: wouter,
   },
   {
     name: "Christian",
-    specialty: "Verduurzamingsspecialist",
+    specialty: "Subsidiespecialist",
     img: christian,
   },
 ];
