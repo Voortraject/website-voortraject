@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { Check, Inbox, FileText, Bell, X, PhoneCall, MessageCircle, FileCheck, ShieldCheck, FolderOpen, AlertCircle, ChevronDown } from "lucide-react";
-import { AnimatedGradientBorder, BorderRotate } from "@/components/ui/animated-gradient-border";
+import { Check, Inbox, FileText, Bell, X, PhoneCall, MessageCircle, FolderOpen, AlertCircle } from "lucide-react";
+import { BorderRotate } from "@/components/ui/animated-gradient-border";
 
 const withoutItems = [
   "Bewoners bellen en appen dezelfde vragen, keer op keer",
@@ -24,74 +23,8 @@ import { Seo } from "@/components/Seo";
 import { Why } from "@/components/sections/Why";
 import { Footer } from "@/components/Footer";
 import { OfBelOnsCta } from "@/components/OfBelOnsCta";
+import { CtaButton } from "@/components/CtaButton";
 import heroUitvoerders from "@/assets/partners-overleg.webp";
-import type { LucideIcon } from "lucide-react";
-
-type Bullet = { label: string; text: string };
-type Package = {
-  number: string;
-  title: string;
-  hook: string;
-  time: string;
-  timeReason: string;
-  bullets: Bullet[];
-  audience: string;
-  cta: string;
-  featured?: boolean;
-  icon: LucideIcon;
-};
-
-const packages: Package[] = [
-  {
-    number: "01",
-    title: "Bewonersstart",
-    hook: "Elke aanvraag die afkoelt is omzet die je niet eens gezien hebt.",
-    time: "Bespaart minimaal 3 uur per dossier",
-    timeReason: "Snelheid omhoog. Geen leads die nog wegglippen.",
-    bullets: [
-      { label: "SNELHEID", text: "Aanvragen binnen 24 uur opgepakt" },
-      { label: "DUIDELIJKHEID", text: "Bewoner meteen geïnformeerd" },
-      { label: "KWALITEIT", text: "Alleen warme leads op jullie tafel" },
-      { label: "WARM", text: "Bewoner warm gehouden tot het volgende contactmoment" },
-    ],
-    audience: "Voor uitvoerders die meer aanvragen binnenkrijgen dan ze direct kunnen oppakken, en die merken dat warme leads afhaken bij gebrek aan snelle opvolging. Geschikt als jullie het eerste contact en de routebepaling buiten de deur willen zetten voordat een afspraak in de agenda komt.",
-    cta: "Bespreek dit pakket",
-    icon: MessageCircle,
-  },
-  {
-    number: "02",
-    title: "Dossierafhandeling",
-    hook: "Hoeveel dossiers blijven hangen op ontbrekende stukken of fouten?",
-    time: "Bespaart minimaal 6 uur per dossier",
-    timeReason: "Foutmarge omlaag. Dossiers die in één keer door de check komen.",
-    bullets: [
-      { label: "GEMAK", text: "Uitvoerbaar dossier zonder formulier-gedoe" },
-      { label: "ZEKERHEID", text: "Subsidieaanvraag in één keer door de check" },
-      { label: "RUST", text: "Geen bewonervragen meer aan jullie kantoor" },
-      { label: "AANLEVERING", text: "Bewoner die zijn eigen stukken aanlevert" },
-    ],
-    audience: "Voor uitvoerders die hun mensen liever zien bouwen dan formulieren invullen, en die te veel tijd verliezen aan ontbrekende stukken of subsidieaanvragen die afketsen. Geschikt als jullie het hele dossiertraject van plan tot indiening uit handen willen geven.",
-    cta: "Bespreek dit pakket",
-    icon: FileCheck,
-  },
-  {
-    number: "03",
-    title: "Totaal Ontzorging",
-    hook: "Het traject loopt zonder dat je erbij hoeft.",
-    time: "Bespaart minimaal 10 uur per dossier",
-    timeReason: "Snelheid omhoog, foutmarge omlaag. Over het hele traject.",
-    bullets: [
-      { label: "VOLLEDIG", text: "Volledig traject uit handen" },
-      { label: "REGIE", text: "Eén regisseur, één aanspreekpunt" },
-      { label: "GROEI", text: "Vervolgwerk uit dezelfde klant" },
-      { label: "CONTINUÏTEIT", text: "Begeleiding ook na uitvoering, tot en met review" },
-    ],
-    audience: "Voor uitvoerders die willen groeien zonder hun kantoor uit te breiden, en die zich volledig willen focussen op het bouwwerk zelf. Geschikt als jullie alle bewonercontact, dossierwerk en nazorg buiten de deur willen zetten en één partij willen die regie houdt.",
-    cta: "Bespreek dit pakket",
-    featured: true,
-    icon: ShieldCheck,
-  },
-];
 
 const whyCards = [
   {
@@ -110,368 +43,6 @@ const whyCards = [
     body: "Grip op openstaande acties en losse eindjes, ook na uitvoering.",
   },
 ];
-
-const PackageCard = ({ p, index }: { p: Package; index: number }) => {
-  const [open, setOpen] = useState(false);
-  const [hover, setHover] = useState(false);
-  const featured = !!p.featured;
-  const delays = [0.05, 0.12, 0.19];
-
-  const cardBg = "#FFFFFF";
-  const cardBorder = featured ? "none" : "1px solid #E5E2DB";
-  const baseShadow = "0 1px 2px rgba(21,44,78,0.04)";
-  const hoverShadow = "0 12px 32px rgba(21,44,78,0.10)";
-
-  const baseTransform = "translateY(0)";
-  const hoverTransform = "translateY(-2px)";
-
-  const outcomeBg = featured ? "rgba(255,255,255,0.5)" : "#F5F2EC";
-  const timeColor = featured ? "#152C4E" : "#8B8680";
-
-  const ctaBg = featured ? "#E8B547" : "#FFFFFF";
-  const ctaColor = featured ? "#2B2B2B" : "#152C4E";
-  const ctaBorder = featured ? "1px solid #E8B547" : "1px solid #E5E2DB";
-  const ctaHoverBg = featured ? "#D9A538" : "#152C4E";
-  const ctaHoverColor = featured ? "#2B2B2B" : "#FFFFFF";
-
-  const mono = "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
-  const display = "'Inter Tight', 'Inter', sans-serif";
-
-  return (
-    <div
-      className="flex flex-col animate-fade-up opacity-0"
-      style={{
-        animationDelay: `${delays[index] ?? 0.05}s`,
-        animationFillMode: "forwards",
-        animationDuration: "0.5s",
-        marginTop: 0,
-      }}
-    >
-      {/* Pakketnummer boven de kaart */}
-      <div className="text-center" style={{ marginBottom: "1rem" }}>
-        <div
-          style={{
-            fontFamily: mono,
-            fontSize: 11,
-            textTransform: "uppercase",
-            letterSpacing: "0.12em",
-            color: "#8B8680",
-          }}
-        >
-          PAKKET
-        </div>
-        <div
-          style={{
-            fontFamily: display,
-            fontSize: "2.25rem",
-            fontWeight: 500,
-            letterSpacing: "-0.02em",
-            color: "#152C4E",
-            lineHeight: 1.1,
-          }}
-        >
-          {p.number}
-        </div>
-      </div>
-
-      {(() => {
-        const cardEl = (
-      <article
-        className="flex flex-col flex-1"
-        style={{
-          position: "relative",
-          backgroundColor: cardBg,
-          border: cardBorder,
-          borderRadius: 16,
-          padding: "2.25rem 1.875rem",
-          transition: "transform 0.2s ease, box-shadow 0.2s ease",
-          boxShadow: hover ? hoverShadow : baseShadow,
-          transform: hover ? hoverTransform : baseTransform,
-        }}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-      >
-        {featured && (
-          <div
-            style={{
-              position: "absolute",
-              top: -14,
-              right: "1.5rem",
-              backgroundColor: "#FFFFFF",
-              border: "1px solid #E8B547",
-              borderRadius: 999,
-              boxShadow: "0 4px 12px rgba(21, 44, 78, 0.08)",
-              padding: "0.5rem 1.125rem",
-              fontFamily: display,
-              fontSize: 11,
-              fontWeight: 600,
-              textTransform: "uppercase",
-              letterSpacing: "0.12em",
-              color: "#152C4E",
-            }}
-          >
-            ALLES IN ÉÉN
-          </div>
-        )}
-
-        {/* Vaste content boven uitklap */}
-        <div className="flex flex-col">
-          {/* Titel met icoon */}
-          <div className="flex items-center" style={{ gap: "0.75rem" }}>
-            <p.icon
-              size={26}
-              strokeWidth={1.75}
-              style={{ color: featured ? "#D9A538" : "#152C4E", flexShrink: 0 }}
-              aria-hidden="true"
-            />
-            <h3
-              style={{
-                fontFamily: display,
-                fontSize: "1.875rem",
-                fontWeight: 600,
-                letterSpacing: "-0.02em",
-                lineHeight: 1.05,
-                color: "#152C4E",
-                margin: 0,
-              }}
-            >
-              {p.title}
-            </h3>
-          </div>
-
-          {/* Doorlopende lijn onder titel */}
-          <span
-            aria-hidden="true"
-            style={{
-              display: "block",
-              width: "100%",
-              height: 1,
-              backgroundColor: featured ? "rgba(232, 181, 71, 0.35)" : "#E5E2DB",
-              marginTop: "1rem",
-              marginBottom: "1rem",
-            }}
-          />
-
-          {/* Hookzin */}
-          <p
-            style={{
-              fontSize: "1rem",
-              lineHeight: 1.5,
-              color: "#6B6B6B",
-              margin: 0,
-            }}
-          >
-            {p.hook}
-          </p>
-
-          {/* Wat het oplevert kopje */}
-          <div
-            className="flex items-center"
-            style={{
-              gap: "0.5rem",
-              marginTop: "2rem",
-              marginBottom: "0.4rem",
-            }}
-          >
-            <Check
-              size={18}
-              style={{ color: "#E8B547", flexShrink: 0 }}
-              aria-hidden="true"
-            />
-            <span
-              style={{
-                fontFamily: display,
-                fontSize: "0.9375rem",
-                fontWeight: 600,
-                color: "#152C4E",
-              }}
-            >
-              Wat het oplevert:
-            </span>
-          </div>
-
-          {/* Kernpunten */}
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {p.bullets.map((b) => (
-              <li
-                key={b.label}
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 12,
-                  margin: "0.625rem 0",
-                  fontSize: "0.9375rem",
-                  lineHeight: 1.5,
-                  color: "#2B2B2B",
-                }}
-              >
-                <span
-                  aria-hidden="true"
-                  style={{
-                    display: "inline-block",
-                    width: 6,
-                    height: 1.5,
-                    backgroundColor: "#E8B547",
-                    flexShrink: 0,
-                    marginTop: "0.7em",
-                  }}
-                />
-                <span>{b.text}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Uitklap toggle */}
-        <div style={{ marginTop: "1rem", borderTop: "1px solid #E5E2DB" }}>
-          <button
-            type="button"
-            onClick={() => setOpen(!open)}
-            aria-expanded={open}
-            className="w-full flex items-center justify-between"
-            style={{
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              padding: "0.875rem 0",
-              fontFamily: display,
-              fontSize: "0.875rem",
-              fontWeight: 500,
-              color: "#152C4E",
-            }}
-          >
-            <span>Meer over dit pakket</span>
-            <ChevronDown
-              size={16}
-              style={{
-                transition: "transform 0.3s ease",
-                transform: open ? "rotate(90deg)" : "rotate(0deg)",
-              }}
-              aria-hidden="true"
-            />
-          </button>
-          <div
-            style={{
-              maxHeight: open ? 800 : 0,
-              overflow: "hidden",
-              transition: "max-height 0.3s ease",
-            }}
-          >
-            <div style={{ paddingBottom: "1rem" }}>
-              {/* Voor wie is dit pakket? */}
-              <div style={{ marginBottom: "1.5rem" }}>
-                <div
-                  style={{
-                    fontFamily: display,
-                    fontSize: "0.9375rem",
-                    fontWeight: 600,
-                    color: "#152C4E",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  Voor wie is dit pakket?
-                </div>
-                <p
-                  style={{
-                    fontSize: "0.875rem",
-                    lineHeight: 1.5,
-                    color: "#6B6B6B",
-                    margin: 0,
-                  }}
-                >
-                  {p.audience}
-                </p>
-              </div>
-
-              {/* Tijdsbesparing blok */}
-              <div style={{ margin: "1.5rem 0 0" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <Check size={18} style={{ color: "#E8B547", flexShrink: 0 }} aria-hidden="true" />
-                  <span
-                    style={{
-                      fontFamily: display,
-                      fontSize: "0.9375rem",
-                      fontWeight: 600,
-                      color: "#152C4E",
-                    }}
-                  >
-                    {p.time}
-                  </span>
-                </div>
-                <p
-                  style={{
-                    fontSize: "0.8125rem",
-                    color: "#6B6B6B",
-                    margin: "0.4rem 0 0 28px",
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {p.timeReason}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div style={{ marginTop: "auto", paddingTop: "1.25rem" }}>
-          <a
-            href="/contact"
-            className="group inline-flex items-center justify-between w-full"
-            style={{
-              padding: "0.95rem 1.25rem",
-              borderRadius: 8,
-              fontFamily: display,
-              fontSize: "0.9rem",
-              fontWeight: 600,
-              backgroundColor: ctaBg,
-              color: ctaColor,
-              border: ctaBorder,
-              transition: "background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = ctaHoverBg;
-              e.currentTarget.style.color = ctaHoverColor;
-              e.currentTarget.style.borderColor = ctaHoverBg;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = ctaBg;
-              e.currentTarget.style.color = ctaColor;
-              e.currentTarget.style.borderColor = featured ? "#E8B547" : "#E5E2DB";
-            }}
-          >
-            <span>{p.cta}</span>
-            <span
-              aria-hidden="true"
-              style={{ display: "inline-block", transition: "transform 0.2s ease" }}
-              className="group-hover:translate-x-[3px]"
-            >
-              →
-            </span>
-          </a>
-        </div>
-      </article>
-        );
-        return featured ? (
-          <AnimatedGradientBorder
-            animationMode="auto-rotate"
-            animationSpeed={4}
-            gradientColors={{ primary: "#92701a", secondary: "#c9a227", accent: "#f5d176" }}
-            backgroundColor="#ffffff"
-            borderWidth={2}
-            borderRadius={12}
-            style={{ display: "flex", flex: 1 }}
-          >
-            {cardEl}
-          </AnimatedGradientBorder>
-        ) : cardEl;
-      })()}
-    </div>
-  );
-};
-
-const ctaButton =
-  "inline-flex items-center justify-center font-sans font-semibold text-[15px] transition-colors";
 
 const Partners = () => {
   return (
@@ -494,12 +65,13 @@ const Partners = () => {
               <div style={{ textAlign: "left" }}>
                 <h1
                   id="uitv-hero-title"
-                  className="font-display font-semibold"
+                  className="font-display"
                   style={{
-                    color: "#2B2B2B",
+                    color: "hsl(var(--primary))",
+                    fontWeight: 700,
                     fontSize: "clamp(32px, 3.6vw, 48px)",
                     lineHeight: 1.15,
-                    letterSpacing: "-0.02em",
+                    letterSpacing: "-0.03em",
                     maxWidth: 720,
                     textAlign: "left",
                   }}
@@ -515,22 +87,9 @@ const Partners = () => {
                   Wij nemen bewonerscontact, offerte-opvolging, akkoordtrajecten en nazorg uit handen, zodat jouw team zich volledig richt op planning en uitvoering.
                 </p>
                 <div className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5" style={{ textAlign: "left" }}>
-                  <a
-                    href="/contact"
-                    className={`${ctaButton} w-full sm:w-auto`}
-                    style={{
-                      backgroundColor: "#E8B547",
-                      color: "#2B2B2B",
-                      padding: "14px 32px",
-                      borderRadius: 8,
-                      minHeight: 44,
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
-                  >
+                  <CtaButton href="/contact" className="px-8 w-full sm:w-auto">
                     Plan een kennismaking
-                  </a>
-                  
+                  </CtaButton>
                 </div>
               </div>
               <div>
@@ -551,7 +110,7 @@ const Partners = () => {
           </div>
         </section>
 
-        {/* INLEIDING PAKKETTEN (Vastlopen) */}
+        {/* VASTLOPEN */}
         <section className="py-[48px] md:py-[72px]" style={{ backgroundColor: "#F9F9F7" }}>
           <div className="container-content">
             <div className="mx-auto" style={{ maxWidth: 820 }}>
@@ -716,21 +275,9 @@ const Partners = () => {
             </div>
 
             <div className="mt-16 text-center flex flex-col items-stretch sm:items-center">
-              <a
-                href="/contact"
-                className={`${ctaButton} w-full sm:w-auto`}
-                style={{
-                  backgroundColor: "#E8B547",
-                  color: "#2B2B2B",
-                  padding: "14px 32px",
-                  borderRadius: 8,
-                  minHeight: 44,
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
-              >
+              <CtaButton href="/contact" className="px-8 w-full sm:w-auto">
                 Plan een kennismaking
-              </a>
+              </CtaButton>
             </div>
           </div>
         </section>
@@ -791,27 +338,6 @@ const Partners = () => {
           </div>
         </section>
 
-        {/* PAKKETTEN */}
-        <section id="pakketten" className="py-[48px] md:py-[72px]" style={{ backgroundColor: "#FBFAF7" }}>
-          <div className="mx-auto w-full px-6 md:px-12" style={{ maxWidth: 1440 }}>
-            <h2 className="h2-section text-center mx-auto" style={{ color: "#152C4E" }}>
-              <span style={{ color: "hsl(var(--accent))" }}>Kies</span> wat past bij jullie
-            </h2>
-            <p
-              className="mt-6 text-[18px] text-center mx-auto"
-              style={{ color: "#6B6B6B", lineHeight: 1.6, maxWidth: 720 }}
-            >
-              Drie pakketten, van losse bewonersstart tot volledige ontzorging.
-            </p>
-
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-              {packages.map((p, i) => (
-                <PackageCard key={p.number} p={p} index={i} />
-              ))}
-            </div>
-          </div>
-        </section>
-
       </main>
       <Footer
         cta={
@@ -844,20 +370,9 @@ const Partners = () => {
                 Wij nemen het voortraject uit handen. Jullie houden de focus op bouwen.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
-                <a
-                  href="/contact"
-                  className={ctaButton}
-                  style={{
-                    backgroundColor: "#E8B547",
-                    color: "#2B2B2B",
-                    padding: "14px 32px",
-                    borderRadius: 8,
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
-                >
+                <CtaButton href="/contact" className="px-8 w-full sm:w-auto">
                   Plan een kennismaking
-                </a>
+                </CtaButton>
                 <OfBelOnsCta color="#FFFFFF" align="center" />
               </div>
             </div>
