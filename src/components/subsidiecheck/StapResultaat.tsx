@@ -385,8 +385,8 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         </h3>
         {afgeschermdAantal > 0 && !ontgrendeld && (
           <p className="mt-1.5 text-[14px] leading-relaxed text-foreground/80">
-            Inclusief de {afgeschermdAantal} afgeschermde {afgeschermdAantal === 1 ? "regeling" : "regelingen"}:
-            regionaal, provinciaal en gemeentelijk. Je ziet ze meteen hier én in je mail.
+            Inclusief de {afgeschermdAantal} regionale en lokale {afgeschermdAantal === 1 ? "regeling" : "regelingen"}{" "}
+            voor jouw adres. Gratis en vrijblijvend, en je ziet ze meteen hier én in je mail.
           </p>
         )}
         <div className="mt-5">
