@@ -96,6 +96,13 @@ de Vite-proxy logt upstream-fouten niet, dus de dev-log bleef leeg.
 - **Herken de mock aan de details:** "lening tot € 1.000" (eerste bedrag uit de mock-range
   "€ 1.000 – € 71.000") en id's zonder bron-slugformaat. Mock-id's spiegelen nu de echte slugs,
   zodat voorbeelddata zich hetzelfde gedraagt als live data.
+- **Draai de subsidiecheck ook lokaal via de edge function** (`VITE_SUBSIDIECHECK_URL` in `.env`,
+  zie `.env.example`): rechtstreeks scrapen via de `/esw`-proxy vuurt per check ~12 parallelle
+  browser-requests zonder cache af en hapert geregeld op de bron; de function heeft een 12u-cache
+  en nette limieten (zelfde pad als productie). De proxy is alleen nog voor bron/parser-debugging.
+- **De chip op verbeterjehuis.nl ("Rijksoverheid"/"Gemeente"/…) codeert de financier, niet het
+  toepassingsgebied.** Hun eigen pagina is één platte lijst met die chips; een as
+  "landelijk vs regionaal" bestaat bij de bron niet. Vandaar de id-allowlist.
 
 ## 2026-07-16 — Verbeterjehuis niveau-labels zijn onbetrouwbaar; scherm af op regeling-id
 **Context:** Bij het afschermen van niet-landelijke regelingen in de subsidiecheck (Rijksoverheid
