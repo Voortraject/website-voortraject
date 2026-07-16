@@ -281,13 +281,14 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
       {/* Regel 2: e-mail, telefoon en de verstuurknop. */}
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-[1.4fr_1fr_auto]">
         <label className="sr-only" htmlFor="sc-mail-email">
-          Je e-mailadres
+          Je e-mailadres (verplicht)
         </label>
         <input
           id="sc-mail-email"
           type="email"
           autoComplete="email"
-          placeholder="Je e-mailadres"
+          aria-required="true"
+          placeholder="Je e-mailadres *"
           className={inputClass}
           value={email}
           onChange={(e) => {
@@ -297,14 +298,15 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
           maxLength={255}
         />
         <label className="sr-only" htmlFor="sc-mail-telefoon">
-          Je telefoonnummer
+          Je telefoonnummer (verplicht)
         </label>
         <input
           id="sc-mail-telefoon"
           type="tel"
           autoComplete="tel"
           inputMode="tel"
-          placeholder="Je telefoonnummer"
+          aria-required="true"
+          placeholder="Je telefoonnummer *"
           className={inputClass}
           value={telefoon}
           onChange={(e) => {
