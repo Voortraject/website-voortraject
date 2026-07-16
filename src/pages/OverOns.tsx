@@ -1,6 +1,7 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
+import { CtaButton } from "@/components/CtaButton";
 import michael from "@/assets/team-michael.png";
 import tim from "@/assets/team-tim.png";
 import wouter from "@/assets/team-wouter.png";
@@ -12,30 +13,21 @@ const team = [
     name: "Michael",
     specialty: "Verduurzamingsspecialist",
     img: michael,
-    quote:
-      "Ik kijk altijd eerst naar de woning zelf, want de techniek moet passen bij de situatie, niet andersom.",
   },
   {
     name: "Tim",
-    specialty: "Bewonersbegeleider",
+    specialty: "Bewonersadviseur",
     img: tim,
-    quote:
-      "Ik zorg dat bewoners altijd weten waar ze aan toe zijn en wat er als volgende gebeurt.",
   },
   {
     name: "Wouter",
-    specialty: "Bewonersbegeleider",
+    specialty: "Bewonersadviseur",
     img: wouter,
-    quote:
-      "Voor mij is een goed traject \u00E9\u00E9n waarbij de bewoner nooit hoeft te vragen hoe het staat.",
   },
   {
     name: "Christian",
-    specialty: "Verduurzamingsspecialist",
+    specialty: "Subsidiespecialist",
     img: christian,
-    quote:
-      "Een woning goed verduurzamen begint bij de juiste voorbereiding. Ik zorg dat er niets over het hoofd wordt gezien voor de uitvoering.",
-
   },
 ];
 
@@ -128,18 +120,6 @@ const OverOns = () => {
                     </h3>
                     <p className="text-muted-foreground text-[14px] leading-tight" style={{ marginTop: 4 }}>
                       {p.specialty}
-                    </p>
-                    <div className="border-t mt-3 mb-3" style={{ borderColor: "#E5E2DB" }} />
-                    <p
-                      style={{
-                        fontStyle: "italic",
-                        color: "#6B6B6B",
-                        fontSize: 14,
-                        lineHeight: 1.5,
-                        fontWeight: 400,
-                      }}
-                    >
-                      {p.quote}
                     </p>
                   </div>
                 </article>
@@ -239,22 +219,9 @@ const OverOns = () => {
               >
                 Plan een vrijblijvende kennismaking. We vertellen je precies wie wat doet en hoe een traject eruitziet.
               </p>
-              <a
-                href="/contact"
-                className="font-sans font-semibold transition-colors text-center w-full sm:w-auto inline-flex items-center justify-center"
-                style={{
-                  backgroundColor: "#E8B547",
-                  color: "#2B2B2B",
-                  padding: "14px 32px",
-                  borderRadius: 8,
-                  fontSize: 15,
-                  minHeight: 44,
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D9A538")}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#E8B547")}
-              >
+              <CtaButton href="/contact" className="px-8 w-full sm:w-auto">
                 Plan een kennismaking
-              </a>
+              </CtaButton>
             </div>
           </section>
         }

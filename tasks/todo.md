@@ -2,6 +2,27 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Visuele aanpassingen Over ons + Partners (2026-07-16)
+
+Branch: `tweak/team-partners-visuals` (nieuw, vanaf `main`). PR ready-for-review, niet mergen.
+
+### Plan
+- [x] Nieuwe branch vanaf `main` (huidige `feat/subsidiecheck-afscherming` blijft onaangeroerd, PR #66 open)
+- [x] **Over ons:** persoonlijke quotes per teamlid verwijderen (`quote`-veld + weergaveblok met scheidingslijn); naam + functie blijven
+- [x] **Partners:** hele pakkettensectie ("Kies wat past bij jullie", pakket 01/02/03) verwijderen, incl. `PackageCard`, `packages`-data, types en dan ongebruikte imports (`useState`, `ChevronDown`, `FileCheck`, `ShieldCheck`, `AnimatedGradientBorder`, `LucideIcon`)
+- [x] **Partners hero:** titel donkerblauw (`hsl(var(--primary))` = #152C4E), het woord "voortraject" blijft oker (accent)
+- [x] **Partners fontcontrole:** hele pagina langsgelopen. Bevinding: alles volgt de huisstijl (Manrope + Inter Tight via `h2-section`), behalve de hero-h1: weight 600 / -0.02em waar alle andere paginahero's Manrope 700 / -0.03em gebruiken → gelijkgetrokken. (De pakkettensectie met afwijkende inline JetBrains Mono/Inter Tight is sowieso weg.)
+- [x] **Partners CTA's:** de "Plan een kennismaking"-knoppen (hero, voor/na-sectie, footer-CTA) vervangen door de bestaande `CtaButton`-component = exact de headerknop-stijl (gouden pill, rounded-full, sheen-glans). Label blijft "Plan een kennismaking". Ongebruikte `ctaButton`-const opgeruimd.
+- [x] Over ons footer-CTA ook naar `CtaButton` (afgestemd: "ook Over ons")
+- [x] Verificatie: `tsc` schoon · eslint op beide bestanden schoon (baseline 11 err/8 warn ongewijzigd, in niet-aangeraakte bestanden) · 49/49 vitest · `bun run build` groen · visueel geverifieerd via dev-server + headless Chrome (desktop + mobiel, beide pagina's)
+- [x] Commit + PR (ready-for-review)
+
+### Review
+- Teamkaarten Over ons tonen nu alleen naam + functie; scheidingslijn onder de functie is mee verwijderd (hing anders los onderaan de kaart).
+- Partners: sectie-anchor `#pakketten` bestond nergens als link, dus veilig verwijderd; sectiecomment "INLEIDING PAKKETTEN (Vastlopen)" hernoemd naar "VASTLOPEN".
+- Mobiele headless-screenshot (390px) toont rechts afgesneden content, maar productie doet in dezelfde headless-opstelling exact hetzelfde → pre-existing artefact van headless Chrome + `overflow-x: clip`, geen regressie.
+- Bewust niet aangepast: "Zonder/Met Voortraject"-h3's en footer-CTA-koppen gebruiken sitebreed `font-display` (Manrope); dat is de bestaande conventie, geen afwijking van de Partners-pagina.
+
 ## Subsidiecheck — stap 1 desktop-polish (2026-07-15)
 
 Branch: `tweak/subsidiecheck-stap1-desktop`. Kleine vervolg-tweaks op de 2-stappen-flow
