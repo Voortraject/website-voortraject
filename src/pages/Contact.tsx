@@ -45,7 +45,9 @@ const belVoorkeurOpties = [
 ];
 
 const initialBewoner = {
-  naam: "",
+  voornaam: "",
+  tussenvoegsel: "",
+  achternaam: "",
   email: "",
   telefoonnummer: "",
   postcode: "",
@@ -59,7 +61,9 @@ const initialBewoner = {
 
 const initialUitvoerder = {
   bedrijfsnaam: "",
-  naam_contactpersoon: "",
+  contactpersoon_voornaam: "",
+  contactpersoon_tussenvoegsel: "",
+  contactpersoon_achternaam: "",
   email: "",
   telefoonnummer: "",
   vragen: "",
@@ -160,10 +164,19 @@ const Contact = () => {
   const validate = (): Record<string, string> => {
     const e: Record<string, string> = {};
     if (mode === "bewoner") {
-      const naam = bewoner.naam.trim();
-      if (!naam) e.naam = "Vul je naam in.";
-      else if (naam.length < 2) e.naam = "Je naam moet minimaal 2 karakters bevatten.";
-      else if (naam.length > 100 || !NAME_RE.test(naam)) e.naam = "Je naam bevat ongeldige tekens.";
+      const voornaam = bewoner.voornaam.trim();
+      if (!voornaam) e.voornaam = "Vul je voornaam in.";
+      else if (voornaam.length > 100 || !NAME_RE.test(voornaam))
+        e.voornaam = "Je voornaam bevat ongeldige tekens.";
+
+      const tussenvoegsel = bewoner.tussenvoegsel.trim();
+      if (tussenvoegsel && (tussenvoegsel.length > 25 || !NAME_RE.test(tussenvoegsel)))
+        e.tussenvoegsel = "Het tussenvoegsel bevat ongeldige tekens.";
+
+      const achternaam = bewoner.achternaam.trim();
+      if (!achternaam) e.achternaam = "Vul je achternaam in.";
+      else if (achternaam.length < 2) e.achternaam = "Je achternaam moet minimaal 2 karakters bevatten.";
+      else if (achternaam.length > 100 || !NAME_RE.test(achternaam)) e.achternaam = "Je achternaam bevat ongeldige tekens.";
 
       const email = bewoner.email.trim();
       if (!email) e.email = "Vul je e-mailadres in.";
@@ -188,10 +201,20 @@ const Contact = () => {
       else if (bn.length < 2) e.bedrijfsnaam = "De bedrijfsnaam moet minimaal 2 karakters bevatten.";
       else if (bn.length > 150 || !COMPANY_RE.test(bn)) e.bedrijfsnaam = "De bedrijfsnaam bevat ongeldige tekens.";
 
-      const cp = uitvoerder.naam_contactpersoon.trim();
-      if (!cp) e.naam_contactpersoon = "Vul je naam in.";
-      else if (cp.length < 2) e.naam_contactpersoon = "Je naam moet minimaal 2 karakters bevatten.";
-      else if (cp.length > 100 || !NAME_RE.test(cp)) e.naam_contactpersoon = "Je naam bevat ongeldige tekens.";
+      const cpVoornaam = uitvoerder.contactpersoon_voornaam.trim();
+      if (!cpVoornaam) e.contactpersoon_voornaam = "Vul je voornaam in.";
+      else if (cpVoornaam.length > 100 || !NAME_RE.test(cpVoornaam))
+        e.contactpersoon_voornaam = "Je voornaam bevat ongeldige tekens.";
+
+      const cpTussenvoegsel = uitvoerder.contactpersoon_tussenvoegsel.trim();
+      if (cpTussenvoegsel && (cpTussenvoegsel.length > 25 || !NAME_RE.test(cpTussenvoegsel)))
+        e.contactpersoon_tussenvoegsel = "Het tussenvoegsel bevat ongeldige tekens.";
+
+      const cpAchternaam = uitvoerder.contactpersoon_achternaam.trim();
+      if (!cpAchternaam) e.contactpersoon_achternaam = "Vul je achternaam in.";
+      else if (cpAchternaam.length < 2) e.contactpersoon_achternaam = "Je achternaam moet minimaal 2 karakters bevatten.";
+      else if (cpAchternaam.length > 100 || !NAME_RE.test(cpAchternaam))
+        e.contactpersoon_achternaam = "Je achternaam bevat ongeldige tekens.";
 
       const email = uitvoerder.email.trim();
       if (!email) e.email = "Vul je e-mailadres in.";
@@ -222,8 +245,8 @@ const Contact = () => {
   const focusFirstError = (errs: Record<string, string>) => {
     const order =
       mode === "bewoner"
-        ? ["naam", "email", "telefoonnummer", "postcode", "huisnummer", "straatnaam", "plaatsnaam", "vragen"]
-        : ["bedrijfsnaam", "naam_contactpersoon", "email", "telefoonnummer", "vragen"];
+        ? ["voornaam", "tussenvoegsel", "achternaam", "email", "telefoonnummer", "postcode", "huisnummer", "straatnaam", "plaatsnaam", "vragen"]
+        : ["bedrijfsnaam", "contactpersoon_voornaam", "contactpersoon_tussenvoegsel", "contactpersoon_achternaam", "email", "telefoonnummer", "vragen"];
     const first = order.find((k) => errs[k]);
     if (!first || !formRef.current) return;
     const el = formRef.current.querySelector<HTMLElement>(`[name="${first}"]`);
@@ -267,9 +290,13 @@ const Contact = () => {
         else if (beltijd) notities = `Voorkeur voor contact: ${beltijd}`;
         else if (opmerkingen) notities = opmerkingen;
 
+        // De kolom `naam` bewust niet meesturen: een BEFORE INSERT-trigger in het
+        // CRM stelt die zelf samen uit voornaam/tussenvoegsel/achternaam.
         const { error } = await supabase.from("leads_bewoners").insert({
           tenant_id: "00000000-0000-0000-0000-000000000001",
-          naam: escapeHtml(bewoner.naam.trim()),
+          voornaam: escapeHtml(bewoner.voornaam.trim()),
+          tussenvoegsel: bewoner.tussenvoegsel.trim() ? escapeHtml(bewoner.tussenvoegsel.trim()) : null,
+          achternaam: escapeHtml(bewoner.achternaam.trim()),
           email: bewoner.email.trim(),
           telefoon: bewoner.telefoonnummer.trim(),
           postcode: bewoner.postcode ? normalizePostcode(bewoner.postcode) : null,
@@ -287,10 +314,16 @@ const Contact = () => {
         setAdresChecked(false);
         setSubmitted(true);
       } else {
+        // De kolom `contactpersoon` bewust niet meesturen: een BEFORE INSERT-trigger
+        // in het CRM stelt die zelf samen uit de drie contactpersoon-delen.
         const { error } = await supabase.from("leads_uitvoerders").insert({
           tenant_id: "00000000-0000-0000-0000-000000000001",
           bedrijfsnaam: escapeHtml(uitvoerder.bedrijfsnaam.trim()),
-          contactpersoon: escapeHtml(uitvoerder.naam_contactpersoon.trim()),
+          contactpersoon_voornaam: escapeHtml(uitvoerder.contactpersoon_voornaam.trim()),
+          contactpersoon_tussenvoegsel: uitvoerder.contactpersoon_tussenvoegsel.trim()
+            ? escapeHtml(uitvoerder.contactpersoon_tussenvoegsel.trim())
+            : null,
+          contactpersoon_achternaam: escapeHtml(uitvoerder.contactpersoon_achternaam.trim()),
           email: uitvoerder.email.trim(),
           telefoon: uitvoerder.telefoonnummer.trim(),
           notities: uitvoerder.vragen.trim() ? escapeHtml(uitvoerder.vragen.trim()) : null,
@@ -501,21 +534,68 @@ const Contact = () => {
                           />
                           <FieldError name="bedrijfsnaam" />
                         </div>
+                        {/* Naamvelden contactpersoon: groepslabel + placeholders (zelfde
+                            patroon als het Adres-blok bij de bewoner) — de losse labels
+                            "Voornaam contactpersoon" braken anders over twee regels. Op
+                            brede schermen één rij, daaronder voornaam boven en
+                            tussenvoegsel + achternaam samen op een rij. */}
                         <div className={fieldWrap}>
-                          <label htmlFor="f-cp" className={labelClass}>Naam contactpersoon{required}</label>
-                          <input
-                            id="f-cp"
-                            name="naam_contactpersoon"
-                            type="text"
-                            aria-required="true"
-                            aria-invalid={!!errors.naam_contactpersoon}
-                            aria-describedby={errors.naam_contactpersoon ? errId("naam_contactpersoon") : undefined}
-                            className={inputCls("naam_contactpersoon")}
-                            value={uitvoerder.naam_contactpersoon}
-                            onChange={onChangeUit("naam_contactpersoon")}
-                            maxLength={100}
-                          />
-                          <FieldError name="naam_contactpersoon" />
+                          <label className={labelClass}>
+                            Contactpersoon
+                            <span className="text-[#8B8680] font-normal ml-1">(tussenvoegsel optioneel)</span>
+                          </label>
+                          <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] lg:grid-cols-[1fr_0.95fr_1.25fr] gap-4">
+                            <div className="sm:col-span-2 lg:col-span-1">
+                              <input
+                                id="f-cp-voornaam"
+                                name="contactpersoon_voornaam"
+                                type="text"
+                                autoComplete="given-name"
+                                placeholder="Voornaam *"
+                                aria-label="Voornaam contactpersoon"
+                                aria-required="true"
+                                aria-invalid={!!errors.contactpersoon_voornaam}
+                                aria-describedby={errors.contactpersoon_voornaam ? errId("contactpersoon_voornaam") : undefined}
+                                className={inputCls("contactpersoon_voornaam")}
+                                value={uitvoerder.contactpersoon_voornaam}
+                                onChange={onChangeUit("contactpersoon_voornaam")}
+                                maxLength={100}
+                              />
+                            </div>
+                            <input
+                              id="f-cp-tussenvoegsel"
+                              name="contactpersoon_tussenvoegsel"
+                              type="text"
+                              placeholder="Tussenvoegsel"
+                              aria-label="Tussenvoegsel contactpersoon"
+                              aria-invalid={!!errors.contactpersoon_tussenvoegsel}
+                              aria-describedby={errors.contactpersoon_tussenvoegsel ? errId("contactpersoon_tussenvoegsel") : undefined}
+                              className={inputCls("contactpersoon_tussenvoegsel")}
+                              value={uitvoerder.contactpersoon_tussenvoegsel}
+                              onChange={onChangeUit("contactpersoon_tussenvoegsel")}
+                              maxLength={25}
+                            />
+                            <input
+                              id="f-cp-achternaam"
+                              name="contactpersoon_achternaam"
+                              type="text"
+                              autoComplete="family-name"
+                              placeholder="Achternaam *"
+                              aria-label="Achternaam contactpersoon"
+                              aria-required="true"
+                              aria-invalid={!!errors.contactpersoon_achternaam}
+                              aria-describedby={errors.contactpersoon_achternaam ? errId("contactpersoon_achternaam") : undefined}
+                              className={inputCls("contactpersoon_achternaam")}
+                              value={uitvoerder.contactpersoon_achternaam}
+                              onChange={onChangeUit("contactpersoon_achternaam")}
+                              maxLength={100}
+                            />
+                          </div>
+                          <div className="mt-1">
+                            <FieldError name="contactpersoon_voornaam" />
+                            <FieldError name="contactpersoon_tussenvoegsel" />
+                            <FieldError name="contactpersoon_achternaam" />
+                          </div>
                         </div>
                         <div className={cx("grid grid-cols-1 sm:grid-cols-2 gap-4", fieldWrap)}>
                           <div>
@@ -581,21 +661,65 @@ const Contact = () => {
                       </>
                     ) : (
                       <>
-                        <div className={fieldWrap}>
-                          <label htmlFor="f-naam" className={labelClass}>Volledige naam{required}</label>
-                          <input
-                            id="f-naam"
-                            name="naam"
-                            type="text"
-                            aria-required="true"
-                            aria-invalid={!!errors.naam}
-                            aria-describedby={errors.naam ? errId("naam") : undefined}
-                            className={inputCls("naam")}
-                            value={bewoner.naam}
-                            onChange={onChangeBew("naam")}
-                            maxLength={100}
-                          />
-                          <FieldError name="naam" />
+                        {/* Naamvelden: op brede schermen op één rij (tussenvoegsel smal),
+                            op mobiel/tablet voornaam boven en tussenvoegsel + achternaam
+                            samen op een rij. justify-end houdt de inputs uitgelijnd als
+                            een label ooit over twee regels loopt. */}
+                        <div className={cx("grid grid-cols-1 sm:grid-cols-[1fr_2fr] lg:grid-cols-[1.1fr_0.8fr_1.3fr] gap-4", fieldWrap)}>
+                          <div className="sm:col-span-2 lg:col-span-1 flex flex-col justify-end">
+                            <label htmlFor="f-voornaam" className={labelClass}>Voornaam{required}</label>
+                            <input
+                              id="f-voornaam"
+                              name="voornaam"
+                              type="text"
+                              autoComplete="given-name"
+                              aria-required="true"
+                              aria-invalid={!!errors.voornaam}
+                              aria-describedby={errors.voornaam ? errId("voornaam") : undefined}
+                              className={inputCls("voornaam")}
+                              value={bewoner.voornaam}
+                              onChange={onChangeBew("voornaam")}
+                              maxLength={100}
+                            />
+                          </div>
+                          <div className="flex flex-col justify-end">
+                            <label htmlFor="f-tussenvoegsel" className={labelClass}>Tussenvoegsel</label>
+                            <input
+                              id="f-tussenvoegsel"
+                              name="tussenvoegsel"
+                              type="text"
+                              placeholder="van der"
+                              aria-invalid={!!errors.tussenvoegsel}
+                              aria-describedby={errors.tussenvoegsel ? errId("tussenvoegsel") : undefined}
+                              className={inputCls("tussenvoegsel")}
+                              value={bewoner.tussenvoegsel}
+                              onChange={onChangeBew("tussenvoegsel")}
+                              maxLength={25}
+                            />
+                          </div>
+                          <div className="flex flex-col justify-end">
+                            <label htmlFor="f-achternaam" className={labelClass}>Achternaam{required}</label>
+                            <input
+                              id="f-achternaam"
+                              name="achternaam"
+                              type="text"
+                              autoComplete="family-name"
+                              aria-required="true"
+                              aria-invalid={!!errors.achternaam}
+                              aria-describedby={errors.achternaam ? errId("achternaam") : undefined}
+                              className={inputCls("achternaam")}
+                              value={bewoner.achternaam}
+                              onChange={onChangeBew("achternaam")}
+                              maxLength={100}
+                            />
+                          </div>
+                          {(errors.voornaam || errors.tussenvoegsel || errors.achternaam) && (
+                            <div className="col-span-full -mt-2">
+                              <FieldError name="voornaam" />
+                              <FieldError name="tussenvoegsel" />
+                              <FieldError name="achternaam" />
+                            </div>
+                          )}
                         </div>
                         <div className={cx("grid grid-cols-1 sm:grid-cols-2 gap-4", fieldWrap)}>
                           <div>

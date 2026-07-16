@@ -2,6 +2,50 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Naamvelden splitsen: voornaam / tussenvoegsel / achternaam (2026-07-16)
+
+Branch: `feat/naamvelden-gesplitst`. CRM-database heeft de kolommen al; een BEFORE
+INSERT-trigger stelt `naam`/`contactpersoon` zelf samen. Website stuurt alleen nog de
+drie losse delen (getrimd, leeg = null; achternaam verplicht).
+
+### Plan
+- [x] `/contact` bewoner: "Volledige naam *" → Voornaam (opt) + Tussenvoegsel (opt, smal) + Achternaam (verplicht); payload `voornaam`/`tussenvoegsel`/`achternaam`, kolom `naam` weglaten
+- [x] `/contact` uitvoerder: "Naam contactpersoon *" → drie velden; payload `contactpersoon_voornaam`/`_tussenvoegsel`/`_achternaam`, kolom `contactpersoon` weglaten
+- [x] `/subsidiecheck` MailOverzicht: "Je naam" → Je voornaam / Tussenvoegsel / Je achternaam (2 regels, mobiel stapelend); client-insert én function-payload op de drie velden
+- [x] Edge function `subsidiecheck-mail`: drie velden accepteren + wegschrijven (zonder `naam`), aanhef samenstellen, legacy-terugval voor oude bundles die nog `naam` sturen
+- [x] Lokale dev-server voor visuele controle gebruiker (http://localhost:8081)
+- [x] Verificatie: tsc schoon · eslint alleen de 4 baseline-fouten die ook op main staan · 49/49 vitest · build groen · 3 testinzendingen via de echte formulieren (headless CDP) + DB-controle via `supabase db query --linked`
+- [x] Edge function gedeployed naar CRM-project (neemt ook de nog niet gedeployde telefoon-wijziging van PR #65 en de mail-wijzigingen van PR #60 mee); productiepad + legacy-pad daarna live getest via curl
+- [x] PR openen; testrijen rapporteren aan CRM-team (niet zelf verwijderen)
+
+### Review
+- DB-verificatie (leads_bewoners): "Jan / van der / Testcontact" → `naam` door trigger
+  "Jan van der Testcontact", bron Website; "Jan / van der / Testsubsidie" → bron
+  Subsidiecheck mét postcode/straat/notities intact. (leads_uitvoerders): "Piet / de /
+  Testuitvoerder" → `contactpersoon` "Piet de Testuitvoerder".
+- Functie-test na deploy: nieuw pad ("Testfunctie") én legacy pad (alleen `naam`
+  "Jan Legacytest") geven ok+mailed; de CRM-trigger blijkt een legacy `naam` zelfs zelf
+  te splitsen in voornaam/achternaam. Legacy-terugval in de functie kan weg zodra `naam`
+  een generated column wordt.
+- Testrijen (door CRM-team te verwijderen): leads_bewoners achternaam Testcontact,
+  Testsubsidie, Testfunctie + naam "Jan Legacytest"; leads_uitvoerders achternaam
+  Testuitvoerder.
+- Tussenvoegsel bewust zonder autoComplete (geen standaard token); voornaam/achternaam
+  kregen given-name/family-name. Optionele naamdelen: ongeldige tekens → veldfout client-
+  side; serverside mild (ongeldig deel weglaten) zodat een lead nooit verloren gaat.
+- Vervolg 2 (zelfde dag, afgestemd): voornaam overal verplicht (contact bewoner +
+  uitvoerder + subsidiecheck); naamvelden op lg+ op één rij, daaronder voornaam boven en
+  tussenvoegsel + achternaam samen. Uitvoerder-variant naar het Adres-groepspatroon
+  (groepslabel "Contactpersoon (tussenvoegsel optioneel)" + placeholders) omdat de losse
+  labels over twee regels braken. Tussenvoegsel blijft optioneel (geen *). Geverifieerd:
+  tsc/49 tests/baseline-eslint + headless (één rij desktop, stapeling tablet/mobiel,
+  "Vul je voornaam in."-fout op beide formulieren zonder insert).
+- Vervolg (zelfde dag, afgestemd): mail-aanhef persoonlijker. Met voornaam "Hallo Jan,";
+  zonder voornaam "Beste heer/mevrouw Van der Berg," (geslacht wordt niet uitgevraagd →
+  gecombineerde vorm; tussenvoegsel/naam met hoofdletter in weergave, DB blijft zoals
+  getypt); legacy-pad blijft "Hallo {naam},". Opnieuw gedeployed + live getest (2 extra
+  testrijen leads_bewoners, achternaam Testaanhef; mails ter controle op info@).
+
 ## Visuele aanpassingen Over ons + Partners (2026-07-16)
 
 Branch: `tweak/team-partners-visuals` (nieuw, vanaf `main`). PR ready-for-review, niet mergen.

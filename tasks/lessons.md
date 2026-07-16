@@ -9,6 +9,15 @@ the user corrects course or a non-obvious gotcha surfaces. Review at session sta
 **Lesson:** the rule to follow next time
 -->
 
+## 2026-07-16 — Eerst fetchen: Lovable/andere sessies pushen ook naar main
+**Context:** Bij de naamvelden-splitsing beschreef de opdracht een telefoonveld op de
+subsidiecheck dat lokaal niet bestond. Ik hield het voor een vergissing van de opdrachtgever;
+lokale main bleek 12 commits achter te lopen (o.a. PR #65 dat precies dat veld toevoegde).
+**Lesson:** Dit repo wordt door meerdere kanalen bijgewerkt (Lovable, andere sessies).
+Draai bij sessiestart en vóór elke analyse van "huidige" code eerst `git fetch` en controleer
+of lokale main achterloopt. Als de opdrachtgever de site anders beschrijft dan de code: eerst
+aannemen dat de code veroudert is, niet de opdrachtgever.
+
 ## 2026-07-06 — Mobiele safe-area witte stroken: fixed i.p.v. absolute, en body-navy
 **Context:** Twee eerdere pogingen om de witte stroken boven de header / onder de footer op
 iOS Safari navy te maken faalden. Aanpak: `theme-color`, `html`-navy, en een *absolute* navy
