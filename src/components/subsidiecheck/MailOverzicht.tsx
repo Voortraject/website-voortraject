@@ -228,7 +228,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
       {/* Regel 1: de drie naamvelden (tussenvoegsel smal). Op mobiel krijgt de
           voornaam de volle breedte en zakken tussenvoegsel + achternaam samen
           naar de tweede regel (het tussenvoegsel hoort bij de achternaam). */}
-      <div className="grid grid-cols-[0.7fr_1.4fr] gap-3 sm:grid-cols-[1.2fr_0.7fr_1.4fr]">
+      <div className="grid grid-cols-[2fr_3fr] gap-3 sm:grid-cols-[1.2fr_0.7fr_1.4fr]">
         <label className="sr-only" htmlFor="sc-mail-voornaam">
           Je voornaam (verplicht)
         </label>
@@ -252,7 +252,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
         <input
           id="sc-mail-tussenvoegsel"
           type="text"
-          placeholder="Tussenvoegsel"
+          placeholder="Tussenv."
           className={inputClass}
           value={tussenvoegsel}
           onChange={(e) => {
