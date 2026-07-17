@@ -225,8 +225,10 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
         </label>
       </div>
 
-      {/* Regel 1: de drie naamvelden (tussenvoegsel smal). Op mobiel stapelt alles. */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1.2fr_0.7fr_1.4fr]">
+      {/* Regel 1: de drie naamvelden (tussenvoegsel smal). Op mobiel krijgt de
+          voornaam de volle breedte en zakken tussenvoegsel + achternaam samen
+          naar de tweede regel (het tussenvoegsel hoort bij de achternaam). */}
+      <div className="grid grid-cols-[0.7fr_1.4fr] gap-3 sm:grid-cols-[1.2fr_0.7fr_1.4fr]">
         <label className="sr-only" htmlFor="sc-mail-voornaam">
           Je voornaam (verplicht)
         </label>
@@ -236,7 +238,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
           autoComplete="given-name"
           aria-required="true"
           placeholder="Je voornaam *"
-          className={inputClass}
+          className={`${inputClass} col-span-2 sm:col-span-1`}
           value={voornaam}
           onChange={(e) => {
             setVoornaam(e.target.value);
