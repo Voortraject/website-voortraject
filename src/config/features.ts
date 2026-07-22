@@ -15,4 +15,4 @@
  *
  * Zet deze op `true` bij de echte launch. Verder is geen enkele wijziging nodig.
  */
-export const SUBSIDIECHECK_LIVE = false;
+export const SUBSIDIECHECK_LIVE = true;
