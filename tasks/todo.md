@@ -2,6 +2,42 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Subsidiecheck achter "binnenkort"-schakelaar (2026-07-22)
+
+Branch: `feat/subsidiecheck-binnenkort` (vanaf `main`). PR ready-for-review, niet mergen.
+
+Aanleiding: de subsidiecheck mag nog niet gebruikt kunnen worden (postcodecheck), hij
+gaat later pas echt live. Met opdrachtgever afgestemd (3 keuzes): (1) de /subsidiecheck-
+pagina blíjft bestaan maar toont een "binnenkort"-melding, (2) instappunten laten staan →
+ze leiden naar die melding, (3) géén e-mailverzameling, alleen een nette melding + CTA.
+
+### Plan
+- [x] Feature-flag `src/config/features.ts` → `SUBSIDIECHECK_LIVE = false` (puur een
+      constante, geen React-import, zodat het sitemap-script hem ook kan importeren).
+- [x] `Seo.tsx`: optionele `noindex`-prop → `<meta name="robots" content="noindex, follow">`.
+- [x] `src/components/subsidiecheck/Binnenkort.tsx`: kalme melding in huisstijl (Header +
+      Footer, oker klok-icoon, kop "De subsidiecheck komt eraan", uitleg, `CtaButton` naar
+      /contact + telefoonlink). Geen denkstreepjes. Seo met noindex.
+- [x] `Subsidiecheck.tsx`: bestaande component → `SubsidiecheckLive` (ongewijzigd); dunne
+      wrapper `Subsidiecheck` toont bij `!SUBSIDIECHECK_LIVE` de melding. Postcodecheck wordt
+      dan niet eens gerenderd (ook niet via directe link/oude Google-hit). Wrapper roept geen
+      hooks aan → hook-volgorde in Live blijft heel.
+- [x] `scripts/generate-sitemap.ts`: `/subsidiecheck` alleen in de sitemap als de flag `true` is.
+
+### Launch (later) — één handeling
+- [ ] Zet `SUBSIDIECHECK_LIVE = true` in `src/config/features.ts` → check + sitemap-entry +
+      indexering komen in één keer terug. Verder geen wijziging nodig.
+
+### Review
+- Verificatie: `tsc` schoon · eslint op de 4 geraakte bestanden schoon · 49/49 vitest ·
+  `bun run build` groen · sitemap 15 → 14 entries (`/subsidiecheck` eruit, geverifieerd 0 hits).
+- Visueel (headless Chrome tegen `vite preview`): desktop 1440px + mobiel 480px tonen de
+  melding correct (kop op één regel, tekst breekt netjes, gouden CTA + telefoonlink,
+  Header/Footer/WhatsApp intact). De 390px-headless-shot sneed rechts af = bekend
+  headless-artefact (clamp ~500px, zie lessons.md), geen echte overflow.
+- Bewust NIET gedaan (conform keuzes opdrachtgever): instappunten (homepage-formulier,
+  hero-knop, header-tool) blijven staan en leiden naar de melding; geen e-mailverzameling.
+
 ## Visuele aanpassingen Over ons + Partners (2026-07-16)
 
 Branch: `tweak/team-partners-visuals` (nieuw, vanaf `main`). PR ready-for-review, niet mergen.

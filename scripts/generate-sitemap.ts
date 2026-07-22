@@ -3,6 +3,8 @@
 import { writeFileSync } from "fs";
 import { resolve } from "path";
 
+import { SUBSIDIECHECK_LIVE } from "../src/config/features";
+
 const BASE_URL = "https://voortraject.nl";
 
 interface SitemapEntry {
@@ -13,7 +15,11 @@ interface SitemapEntry {
 
 const entries: SitemapEntry[] = [
   { path: "/", changefreq: "weekly", priority: "1.0" },
-  { path: "/subsidiecheck", changefreq: "weekly", priority: "0.9" },
+  // De subsidiecheck valt uit de sitemap zolang hij nog niet live is (de pagina
+  // staat dan op noindex) — zie src/config/features.ts.
+  ...(SUBSIDIECHECK_LIVE
+    ? [{ path: "/subsidiecheck", changefreq: "weekly", priority: "0.9" } as SitemapEntry]
+    : []),
   { path: "/partners", changefreq: "monthly", priority: "0.9" },
 
   { path: "/verduurzamen/isolatie", changefreq: "monthly", priority: "0.8" },
