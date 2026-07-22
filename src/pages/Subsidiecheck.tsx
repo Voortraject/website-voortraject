@@ -5,6 +5,7 @@ import { Loader2, MapPin, Pencil, SlidersHorizontal } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
+import { Binnenkort } from "@/components/subsidiecheck/Binnenkort";
 import { StapAdres } from "@/components/subsidiecheck/StapAdres";
 import { StapResultaat } from "@/components/subsidiecheck/StapResultaat";
 import { Voortgang } from "@/components/subsidiecheck/Voortgang";
@@ -19,13 +20,14 @@ import {
   type Maatregel,
   type SubsidieCheckInput,
 } from "@/lib/subsidies";
+import { SUBSIDIECHECK_LIVE } from "@/config/features";
 
 const BEWONERTYPES: Bewonertype[] = ["woningeigenaar", "huurder", "vve", "verhuurder"];
 
 // De volledige stap-state leeft in de URL (?pc=…&hn=…&type=…&m=…): de
 // back-button werkt gewoon, een herlaad houdt je resultaat vast en het
 // overzicht is deelbaar. Geen m-parameter = alle maatregelen.
-const Subsidiecheck = () => {
+const SubsidiecheckLive = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const pc = searchParams.get("pc") ?? "";
@@ -274,5 +276,11 @@ const Subsidiecheck = () => {
     </div>
   );
 };
+
+// Feature-gate: zolang de check nog niet echt live is (SUBSIDIECHECK_LIVE = false)
+// tonen we de "binnenkort"-melding i.p.v. de postcodecheck. De check-code hierboven
+// blijft intact; bij de launch volstaat het omzetten van de flag. De wrapper zelf
+// roept geen hooks aan, dus de vaste hook-volgorde in SubsidiecheckLive blijft heel.
+const Subsidiecheck = () => (SUBSIDIECHECK_LIVE ? <SubsidiecheckLive /> : <Binnenkort />);
 
 export default Subsidiecheck;

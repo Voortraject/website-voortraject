@@ -13,10 +13,12 @@ interface SeoProps {
   type?: "website" | "article";
   /** Absolute URL naar een pagina-specifieke deel-afbeelding; default = OG_IMAGE. */
   image?: string;
+  /** Houd deze pagina uit de zoekresultaten (bv. een tijdelijke placeholder). */
+  noindex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-export const Seo = ({ title, description, path, type = "website", image = OG_IMAGE, jsonLd }: SeoProps) => {
+export const Seo = ({ title, description, path, type = "website", image = OG_IMAGE, noindex = false, jsonLd }: SeoProps) => {
   const url = `${SITE_URL}${path}`;
   const schemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
@@ -24,6 +26,8 @@ export const Seo = ({ title, description, path, type = "website", image = OG_IMA
     <Helmet>
       <title>{title}</title>
       <meta name="description" content={description} />
+      {/* follow: linkwaarde blijft doorstromen, alleen indexeren staat uit. */}
+      {noindex && <meta name="robots" content="noindex, follow" />}
       <link rel="canonical" href={url} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
