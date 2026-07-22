@@ -24,9 +24,13 @@ ze leiden naar die melding, (3) géén e-mailverzameling, alleen een nette meldi
       hooks aan → hook-volgorde in Live blijft heel.
 - [x] `scripts/generate-sitemap.ts`: `/subsidiecheck` alleen in de sitemap als de flag `true` is.
 
-### Launch (later) — één handeling
-- [ ] Zet `SUBSIDIECHECK_LIVE = true` in `src/config/features.ts` → check + sitemap-entry +
-      indexering komen in één keer terug. Verder geen wijziging nodig.
+### Launch — één handeling
+- [x] Zet `SUBSIDIECHECK_LIVE = true` in `src/config/features.ts` → check + sitemap-entry +
+      indexering komen in één keer terug. Verder geen wijziging nodig. **Gedaan 2026-07-22**
+      (opdrachtgever: "weer helemaal op actief"), branch `chore/subsidiecheck-weer-actief`.
+      De schakelaar-code blijft staan (slapend) voor eventueel later opnieuw afschermen.
+      Geverifieerd: sitemap 14 → 15 (`/subsidiecheck` terug), tsc/build groen, visueel de
+      echte stap-1-check weer op /subsidiecheck.
 
 ### Review
 - Verificatie: `tsc` schoon · eslint op de 4 geraakte bestanden schoon · 49/49 vitest ·
