@@ -48,7 +48,9 @@ interface MailOverzichtProps {
 // `bron: "Subsidiecheck"`). De gevonden regelingen gaan mee in `notities`
 // zodat het team het overzicht kan nasturen en gericht kan opvolgen.
 export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) => {
-  const [naam, setNaam] = useState("");
+  const [voornaam, setVoornaam] = useState("");
+  const [tussenvoegsel, setTussenvoegsel] = useState("");
+  const [achternaam, setAchternaam] = useState("");
   const [email, setEmail] = useState("");
   const [telefoon, setTelefoon] = useState("");
   const [fout, setFout] = useState<string | null>(null);
@@ -69,7 +71,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
     ].join("\n");
 
   // Productie: edge function → schrijft de lead + stuurt de mail via Resend.
-  const verstuurViaFunctie = async (n: string, em: string, tel: string) => {
+  const verstuurViaFunctie = async (vn: string, tv: string, an: string, em: string, tel: string) => {
     const res = await fetch(MAIL_FUNCTIE_URL!, {
       method: "POST",
       headers: {
@@ -79,7 +81,9 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
         Authorization: `Bearer ${SUPABASE_EXTERNAL_ANON_KEY}`,
       },
       body: JSON.stringify({
-        naam: n,
+        voornaam: vn,
+        tussenvoegsel: tv || undefined,
+        achternaam: an,
         email: em,
         telefoon: tel,
         honeypot,
@@ -109,10 +113,14 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
 
   // Terugval (function nog niet gedeployed): directe lead-insert in het CRM,
   // exact dezelfde tabel/kolommen. Er gaat dan nog geen automatische mail uit.
-  const verstuurViaClientInsert = async (n: string, em: string, tel: string) => {
+  // De kolom `naam` bewust niet meesturen: een BEFORE INSERT-trigger in het CRM
+  // stelt die zelf samen uit voornaam/tussenvoegsel/achternaam.
+  const verstuurViaClientInsert = async (vn: string, tv: string, an: string, em: string, tel: string) => {
     const { error } = await supabase.from("leads_bewoners").insert({
       tenant_id: "00000000-0000-0000-0000-000000000001",
-      naam: escapeHtml(n),
+      voornaam: escapeHtml(vn),
+      tussenvoegsel: tv ? escapeHtml(tv) : null,
+      achternaam: escapeHtml(an),
       email: em,
       telefoon: tel,
       postcode: normalizePostcode(input.postcode),
@@ -141,9 +149,23 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
       return;
     }
 
-    const n = naam.trim();
-    if (!n || n.length < 2 || n.length > 100 || !NAME_RE.test(n)) {
-      setFout("Vul je naam in.");
+    const vn = voornaam.trim();
+    if (!vn) {
+      setFout("Vul je voornaam in.");
+      return;
+    }
+    if (vn.length > 100 || !NAME_RE.test(vn)) {
+      setFout("Je voornaam bevat ongeldige tekens.");
+      return;
+    }
+    const tv = tussenvoegsel.trim();
+    if (tv && (tv.length > 25 || !NAME_RE.test(tv))) {
+      setFout("Het tussenvoegsel bevat ongeldige tekens.");
+      return;
+    }
+    const an = achternaam.trim();
+    if (!an || an.length < 2 || an.length > 100 || !NAME_RE.test(an)) {
+      setFout("Vul je achternaam in.");
       return;
     }
     const em = email.trim();
@@ -164,9 +186,9 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
     setBezig(true);
     try {
       if (MAIL_FUNCTIE_URL) {
-        await verstuurViaFunctie(n, em, tel);
+        await verstuurViaFunctie(vn, tv, an, em, tel);
       } else {
-        await verstuurViaClientInsert(n, em, tel);
+        await verstuurViaClientInsert(vn, tv, an, em, tel);
       }
       // Geen naam/e-mail in het event — alleen dat er een lead is (privacy).
       pushGtmEvent("subsidiecheck_lead", { aantal_regelingen: regelingen.length });
@@ -203,31 +225,72 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
         </label>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1.4fr_1fr_auto]">
-        <label className="sr-only" htmlFor="sc-mail-naam">
-          Je naam
+      {/* Regel 1: de drie naamvelden (tussenvoegsel smal). Op mobiel krijgt de
+          voornaam de volle breedte en zakken tussenvoegsel + achternaam samen
+          naar de tweede regel (het tussenvoegsel hoort bij de achternaam). */}
+      <div className="grid grid-cols-[2fr_3fr] gap-3 sm:grid-cols-[1.2fr_0.7fr_1.4fr]">
+        <label className="sr-only" htmlFor="sc-mail-voornaam">
+          Je voornaam (verplicht)
         </label>
         <input
-          id="sc-mail-naam"
+          id="sc-mail-voornaam"
           type="text"
-          autoComplete="name"
-          placeholder="Je naam"
-          className={inputClass}
-          value={naam}
+          autoComplete="given-name"
+          aria-required="true"
+          placeholder="Je voornaam *"
+          className={`${inputClass} col-span-2 sm:col-span-1`}
+          value={voornaam}
           onChange={(e) => {
-            setNaam(e.target.value);
+            setVoornaam(e.target.value);
             setFout(null);
           }}
           maxLength={100}
         />
+        <label className="sr-only" htmlFor="sc-mail-tussenvoegsel">
+          Tussenvoegsel (optioneel)
+        </label>
+        <input
+          id="sc-mail-tussenvoegsel"
+          type="text"
+          placeholder="Tussenv."
+          className={inputClass}
+          value={tussenvoegsel}
+          onChange={(e) => {
+            setTussenvoegsel(e.target.value);
+            setFout(null);
+          }}
+          maxLength={25}
+        />
+        <label className="sr-only" htmlFor="sc-mail-achternaam">
+          Je achternaam (verplicht)
+        </label>
+        <input
+          id="sc-mail-achternaam"
+          type="text"
+          autoComplete="family-name"
+          aria-required="true"
+          placeholder="Je achternaam *"
+          className={inputClass}
+          value={achternaam}
+          onChange={(e) => {
+            setAchternaam(e.target.value);
+            setFout(null);
+          }}
+          maxLength={100}
+        />
+      </div>
+
+      {/* Regel 2: e-mail, telefoon en de verstuurknop. */}
+      <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-[1.4fr_1fr_auto]">
         <label className="sr-only" htmlFor="sc-mail-email">
-          Je e-mailadres
+          Je e-mailadres (verplicht)
         </label>
         <input
           id="sc-mail-email"
           type="email"
           autoComplete="email"
-          placeholder="Je e-mailadres"
+          aria-required="true"
+          placeholder="Je e-mailadres *"
           className={inputClass}
           value={email}
           onChange={(e) => {
@@ -237,14 +300,15 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
           maxLength={255}
         />
         <label className="sr-only" htmlFor="sc-mail-telefoon">
-          Je telefoonnummer
+          Je telefoonnummer (verplicht)
         </label>
         <input
           id="sc-mail-telefoon"
           type="tel"
           autoComplete="tel"
           inputMode="tel"
-          placeholder="Je telefoonnummer"
+          aria-required="true"
+          placeholder="Je telefoonnummer *"
           className={inputClass}
           value={telefoon}
           onChange={(e) => {

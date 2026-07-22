@@ -113,6 +113,11 @@ type Regeling = {
 };
 
 type Payload = {
+  /** Gesplitste naamvelden (huidige site). */
+  voornaam?: string;
+  tussenvoegsel?: string;
+  achternaam?: string;
+  /** Legacy: één naamveld, gestuurd door oude gecachte bundles. */
   naam?: string;
   email?: string;
   telefoon?: string;
@@ -261,13 +266,14 @@ function bouwSamenvattingBlok(regelingen: Regeling[]): string {
 }
 
 function bouwEmailHtml(opts: {
-  naam: string;
+  /** Volledige aanhefregel zonder komma, bijv. "Hallo Jan" of "Beste heer/mevrouw De Vries". */
+  aanhef: string;
   adresregel: string;
   regelingen: Regeling[];
   siteBasis: string;
   overzichtUrl?: string;
 }): string {
-  const { naam, adresregel, regelingen, siteBasis, overzichtUrl } = opts;
+  const { aanhef, adresregel, regelingen, siteBasis, overzichtUrl } = opts;
   const subsidies = regelingen.filter((r) => r.type !== "lening").length;
   const goedNieuws = regelingen.length >= 3 && subsidies >= 1;
   // Binnen een niveaugroep eerst de subsidies, dan de leningen (stabiele sort,
@@ -298,7 +304,7 @@ function bouwEmailHtml(opts: {
 
         <!-- Body -->
         <tr><td style="padding:40px 32px;color:${KLEUR.primary};line-height:1.6;">
-          <p style="font-size:16px;margin:0 0 20px;">Hallo ${escapeHtml(naam)},</p>
+          <p style="font-size:16px;margin:0 0 20px;">${escapeHtml(aanhef)},</p>
           <p style="font-size:16px;margin:0 0 20px;">Hier is je persoonlijke subsidieoverzicht voor <strong>${escapeHtml(adresregel)}</strong>.</p>
 
           ${bouwSamenvattingBlok(regelingen)}
@@ -393,11 +399,42 @@ Deno.serve(async (req: Request) => {
   // Honeypot: stil "gelukt" teruggeven zodat bots geen signaal krijgen.
   if (payload.honeypot && payload.honeypot.trim() !== "") return json({ ok: true, mailed: false });
 
-  const naam = (payload.naam ?? "").trim();
-  const email = (payload.email ?? "").trim();
-  if (naam.length < 2 || naam.length > 100 || !NAME_RE.test(naam)) {
+  // Naamvelden: de site stuurt voornaam/tussenvoegsel/achternaam; de database-
+  // trigger stelt daar zelf `naam` uit samen. Oude gecachte bundles sturen nog
+  // één `naam` — die terugval kan weg zodra `naam` een generated column wordt.
+  // Streng op de verplichte achternaam; mild op de optionele delen (ongeldig →
+  // weglaten) zodat een lead nooit verloren gaat.
+  const voornaamRuw = (payload.voornaam ?? "").trim();
+  const voornaam = voornaamRuw && voornaamRuw.length <= 100 && NAME_RE.test(voornaamRuw) ? voornaamRuw : null;
+  const tussenvoegselRuw = (payload.tussenvoegsel ?? "").trim();
+  const tussenvoegsel =
+    tussenvoegselRuw && tussenvoegselRuw.length <= 25 && NAME_RE.test(tussenvoegselRuw) ? tussenvoegselRuw : null;
+  const achternaam = (payload.achternaam ?? "").trim();
+  const legacyNaam = (payload.naam ?? "").trim();
+  if (achternaam) {
+    if (achternaam.length < 2 || achternaam.length > 100 || !NAME_RE.test(achternaam)) {
+      return json({ error: "Vul een geldige achternaam in." }, 400);
+    }
+  } else if (legacyNaam.length < 2 || legacyNaam.length > 100 || !NAME_RE.test(legacyNaam)) {
     return json({ error: "Vul een geldige naam in." }, 400);
   }
+  // Mail-aanhef (weergave; de database houdt de invoer zoals getypt):
+  //   met voornaam    → "Hallo Jan" (informele je-toon van de subsidiecheck)
+  //   zonder voornaam → "Beste heer/mevrouw Van der Berg" (geslacht wordt niet
+  //     uitgevraagd, dus de gecombineerde nette vorm; tussenvoegsel krijgt een
+  //     hoofdletter omdat er geen voornaam voor staat: "meneer De Vries")
+  //   legacy (één naamveld) → "Hallo {naam}" zoals voorheen
+  const capEerste = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  let aanhef: string;
+  if (achternaam) {
+    aanhef = voornaam
+      ? `Hallo ${capEerste(voornaam)}`
+      : `Beste heer/mevrouw ${[tussenvoegsel ? capEerste(tussenvoegsel) : "", capEerste(achternaam)].filter(Boolean).join(" ")}`;
+  } else {
+    aanhef = `Hallo ${legacyNaam}`;
+  }
+
+  const email = (payload.email ?? "").trim();
   if (!EMAIL_RE.test(email) || email.length > 255) {
     return json({ error: "Dit lijkt geen geldig e-mailadres." }, 400);
   }
@@ -437,9 +474,18 @@ Deno.serve(async (req: Request) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
+    // Nieuwe pad: de drie losse delen (kolom `naam` vult de trigger). Legacy pad
+    // (oude bundle, alleen `naam`): schrijf zoals voorheen de ene kolom.
+    const naamVelden = achternaam
+      ? {
+          voornaam: voornaam ? escapeHtml(voornaam) : null,
+          tussenvoegsel: tussenvoegsel ? escapeHtml(tussenvoegsel) : null,
+          achternaam: escapeHtml(achternaam),
+        }
+      : { naam: escapeHtml(legacyNaam) };
     const { error } = await supabase.from("leads_bewoners").insert({
       tenant_id: TENANT_ID,
-      naam: escapeHtml(naam),
+      ...naamVelden,
       email,
       telefoon,
       postcode,
@@ -467,7 +513,7 @@ Deno.serve(async (req: Request) => {
         ? payload.overzichtUrl
         : undefined;
     const html = bouwEmailHtml({
-      naam,
+      aanhef,
       adresregel: adresregel || "jouw woning",
       regelingen,
       siteBasis,
