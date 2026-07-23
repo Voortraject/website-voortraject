@@ -2,6 +2,42 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## 3D BAG persistente cache (optie E) (2026-07-23)
+
+Branch: `feat/3dbag-persistente-cache` (vanaf `main`, ná merge van PR #73). PR ready-for-review,
+NIET zelf mergen: raakt de CRM-database (migratie), dus mens beslist + past de migratie toe.
+
+Aanleiding: vervolg op PR #73. De bottleneck blijft api.3dbag.nl (1,5 tot 3,5s per item, soms
+502). De in-memory cache in de edge function is per-instance en vluchtig (Supabase spint
+functions af). Optie E maakt de cache persistent en gedeeld: een adres dat één keer is
+opgehaald laadt daarna direct, ook voor andere bezoekers en gedeelde links, en is immuun voor
+3dbag-storingen. Met opdrachtgever afgestemd ("Doe dat voor mij").
+
+### Plan
+- [x] **Migratie** `supabase/migrations/20260723120000_pand_3d_cache.sql`: tabel `pand_3d_cache`
+      (`cache_key text pk`, `model jsonb not null`, `updated_at timestamptz`). RLS AAN, géén
+      policies voor anon/authenticated (clients raken 'm nooit aan), `grant all ... to service_role`.
+      Puur een cache, geen persoonsgegevens, geen relatie met CRM-tabellen.
+- [x] **Edge function** `woninginfo`: supabase-client (service_role, auto-geïnjecteerde
+      `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY`, zelfde patroon als subsidiecheck-mail).
+      Leeslaag `leesModelCache` + schrijflaag `schrijfModelCache`, met `MODEL_VERSION`-prefix in
+      de sleutel (bump = oude rijen negeren) en 90-dagen TTL. Handler: in-memory → persistente
+      cache → 3dbag; alleen niet-lege modellen worden persistent bewaard.
+- [x] **Graceful fallback**: ontbreekt de tabel of de env, of faalt een DB-call, dan valt alles
+      stil terug op in-memory + 3dbag (try/catch, `null`). De function kan dus vóór de migratie
+      al gedeployed worden zonder iets te breken.
+
+### Verificatie
+- esbuild-syntaxcheck + eslint schoon; 49/49 vitest groen. (`deno check` bij deploy.)
+- Frontend ongewijzigd: de persistente cache is volledig server-side.
+
+### Nog te doen (opdrachtgever, Supabase-toegang, CRM-project lfelnfukbrxznkevnevr)
+1. Migratie toepassen (`supabase db push`, of het SQL uit de migratie draaien in de dashboard).
+2. `supabase functions deploy woninginfo --project-ref lfelnfukbrxznkevnevr`.
+3. (Optioneel) Supabase-types regenereren; de edge function gebruikt geen gegenereerde types,
+   dus niet strikt nodig.
+4. Testen: zelfde adres 2x opvragen → 2e keer direct (rij in `pand_3d_cache`, geen 3dbag-call).
+
 ## 3D BAG sneller laden op de subsidiecheck (2026-07-23)
 
 Branch: `perf/subsidiecheck-3dbag-laden` (vanaf `main`). PR ready-for-review, niet mergen.
