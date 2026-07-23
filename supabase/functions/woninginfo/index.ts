@@ -15,6 +15,8 @@
 //
 // Fase 2 breidt deze function uit met oppervlaktes (3D BAG) via de pand-ID.
 
+import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+
 import { bouwModel, decodeer3dBag, kiesBuren } from "./model3d.ts";
 import { normaliseerEpOnline } from "./normaliseer.ts";
 import type { Model3d, WoningInfo } from "./types.ts";
@@ -41,6 +43,16 @@ const FETCH_TIMEOUT_MS = 15000;
 const MODEL_CACHE_GEVULD = "public, max-age=86400, stale-while-revalidate=2592000";
 const MODEL_CACHE_LEEG = "public, max-age=60";
 
+// Persistente cache (Postgres-tabel `pand_3d_cache` in dit CRM-project). Naast de
+// in-memory Map (per instance, vluchtig) bewaart die het gedecodeerde model over
+// instances én bezoekers heen: een adres dat één keer is opgehaald, laadt daarna
+// direct en overleeft 3dbag-storingen. Best-effort: ontbreekt de tabel of de
+// service-key, dan valt alles stil terug op in-memory + 3dbag (zie leesModelCache).
+// `MODEL_VERSION` in de sleutel: bump 'm als de decoder-vorm wijzigt, dan worden
+// oude rijen vanzelf genegeerd i.p.v. verkeerd-gevormde modellen te serveren.
+const MODEL_VERSION = "v1";
+const MODEL_CACHE_TTL_MS = 90 * 24 * 60 * 60 * 1000; // 90 dagen; gebouwen wijzigen zelden
+
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
@@ -66,6 +78,54 @@ function model3dResponse(model: Model3d | null): Response {
   return json({ model3d: model }, 200, {
     "Cache-Control": model ? MODEL_CACHE_GEVULD : MODEL_CACHE_LEEG,
   });
+}
+
+// Supabase-client voor de persistente modelcache (service_role, auto-geïnjecteerd).
+// Eén keer opgezet en hergebruikt; `null` als de env ontbreekt → cache uit.
+let modelDbClient: SupabaseClient | null | undefined;
+function getModelDb(): SupabaseClient | null {
+  if (modelDbClient !== undefined) return modelDbClient;
+  const url = Deno.env.get("SUPABASE_URL");
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  modelDbClient = url && serviceKey ? createClient(url, serviceKey, { auth: { persistSession: false } }) : null;
+  return modelDbClient;
+}
+
+const dbSleutel = (cacheKey: string) => `${MODEL_VERSION}:${cacheKey}`;
+
+// Leest het model uit de persistente cache. `null` bij een miss, verlopen entry
+// of welke hapering dan ook (tabel bestaat niet, geen client, netwerkfout) —
+// de aanroeper haalt dan gewoon vers op. We bewaren alleen niet-lege modellen,
+// dus een rij = een echt model.
+async function leesModelCache(cacheKey: string): Promise<Model3d | null> {
+  const db = getModelDb();
+  if (!db) return null;
+  try {
+    const { data, error } = await db
+      .from("pand_3d_cache")
+      .select("model, updated_at")
+      .eq("cache_key", dbSleutel(cacheKey))
+      .maybeSingle();
+    if (error || !data?.model) return null;
+    if (Date.now() - new Date(data.updated_at as string).getTime() > MODEL_CACHE_TTL_MS) return null;
+    return data.model as Model3d;
+  } catch {
+    return null;
+  }
+}
+
+// Schrijft (upsert) een niet-leeg model naar de persistente cache. Best-effort:
+// een schrijffout mag de respons nooit blokkeren.
+async function schrijfModelCache(cacheKey: string, model: Model3d): Promise<void> {
+  const db = getModelDb();
+  if (!db) return;
+  try {
+    await db
+      .from("pand_3d_cache")
+      .upsert({ cache_key: dbSleutel(cacheKey), model, updated_at: new Date().toISOString() }, { onConflict: "cache_key" });
+  } catch {
+    /* cache is best-effort */
+  }
 }
 
 function normalizePostcode(raw: string): string {
@@ -186,10 +246,25 @@ Deno.serve(async (req: Request) => {
     const x = Number(url.searchParams.get("x"));
     const y = Number(url.searchParams.get("y"));
     const cacheKey = Number.isFinite(x) && Number.isFinite(y) ? `${pandid}@${Math.round(x)},${Math.round(y)}` : pandid;
+    // 1) In-memory (per instance, snelst): dekt herhaalde hits binnen deze instance.
     const cached = model3dCache.get(cacheKey);
     if (cached && Date.now() - cached.at < CACHE_TTL_MS) return model3dResponse(cached.model);
+
+    // 2) Persistente cache (gedeeld over instances én bezoekers, immuun voor 3dbag):
+    // een adres dat ooit is opgehaald, komt hier direct uit i.p.v. langs het trage
+    // 3dbag. Alleen bevraagd bij een in-memory miss, dus geen extra last op hits.
+    const uitDb = await leesModelCache(cacheKey);
+    if (uitDb) {
+      model3dCache.set(cacheKey, { model: uitDb, at: Date.now() });
+      return model3dResponse(uitDb);
+    }
+
+    // 3) Vers ophalen bij 3dbag en beide caches vullen. Alleen een niet-leeg model
+    // bewaren we persistent: een lege uitkomst (3dbag hikte) mag geen "geen model"
+    // vastzetten, zodat een volgende poging het gewoon opnieuw probeert.
     const model = await haal3dBag(pandid, x, y);
     model3dCache.set(cacheKey, { model, at: Date.now() });
+    if (model) await schrijfModelCache(cacheKey, model);
     return model3dResponse(model);
   }
 
