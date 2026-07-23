@@ -2,6 +2,51 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## 3D BAG sneller laden op de subsidiecheck (2026-07-23)
+
+Branch: `perf/subsidiecheck-3dbag-laden` (vanaf `main`). PR ready-for-review, niet mergen.
+
+Aanleiding: het 3D-model op de resultaatpagina laadt traag. Gemeten waar de tijd zit
+(curl tegen de echte upstreams):
+- PDOK BAG WFS (contour/pand-id én buur-selectie): ~0,08 tot 0,10s. Niet de bottleneck.
+- **api.3dbag.nl, één item: 1,5 tot 3,5s, af en toe een 502.** Hier zit alle tijd.
+- api.3dbag.nl bbox-endpoint (alles in één call): 15 tot 20s. Terecht al vermeden in de code.
+
+Al goed: progressief laden (subject eerst zonder buren, daarna de volledige versie met
+buren), serverside decoding, lichte SVG-render (geen 3D-lib). Scope met opdrachtgever
+afgestemd: A+B+C (geen DB-wijziging). Alles in de edge function `woninginfo` (CRM-project
+`lfelnfukbrxznkevnevr`), die de opdrachtgever nog moet deployen.
+
+### Plan
+- [x] **A. `Cache-Control` op het model-antwoord.** Gevuld model lang cachen
+      (`max-age=86400, stale-while-revalidate=2592000`; gebouwen zijn statisch), leeg model
+      kort (`max-age=60`) zodat een volgende poging snel weer echt ophaalt. Browser /
+      terug-navigatie / gedeelde link hoeft dan niet opnieuw naar het trage 3dbag.
+      Helper `model3dResponse()`, `json()` kreeg een `extraHeaders`-parameter.
+- [x] **B. Buren parallel aan de subject ophalen.** `haal3dBag` startte de buur-items pas
+      ná de trage subject-fetch, terwijl de buur-id's al na ~0,1s uit de WFS komen. Nu lopen
+      subject (met retry) en buren (pool 2, na de snelle WFS) parallel. Piek-concurrency op
+      3dbag blijft 3 (1 subject + 2 buren), binnen de betrouwbare grens.
+- [x] **C. Subject-item retry bij 502/timeout.** Nieuwe `fetchItemMetRetry` (2 pogingen) voor
+      alleen de subject (kritiek: zonder subject geen model). Voorkomt dat een transiente 502
+      de héle client-call (incl. WFS + buren) laat herhalen. Buren mogen wegvallen (context).
+- [x] **D. Dubbele PDOK-lookup weg (frontend).** `StapAdres` valideerde het adres met een losse
+      `zoekAdres` (buiten react-query), waarna de pagina hem via `usePdokAdres` opnieuw ophaalde.
+      Nu seedt `StapAdres` na een geslaagde lookup de react-query-cache met exact dezelfde sleutel
+      (`["pdok-adres", normalizePostcode(pc), hn, tv]`), zodat de pagina-lookup een directe cache-hit
+      is en de 3D-prefetch ~0,1s eerder start (plus geen "Adres controleren…"-flits meer).
+
+### Verificatie
+- esbuild-syntaxcheck van `index.ts` groen (Deno niet lokaal geïnstalleerd; `deno check` bij deploy).
+- eslint op `index.ts` schoon; 49/49 vitest groen (pure decoder-tests ongemoeid, alleen `index.ts` geraakt).
+- Live tegen de echte API getest: subject + 2 buren tegelijk (piek 3) → 3× 200, geen overload-502,
+  volledige set in ~2s wall-clock (vs. ~4 tot 6s bij subject-dan-buren sequentieel).
+
+### Nog te doen (opdrachtgever, Supabase-toegang)
+- `supabase functions deploy woninginfo --project-ref lfelnfukbrxznkevnevr`.
+- Na deploy in de network-tab checken dat de `?pandid=...`-respons de `Cache-Control`-header
+  draagt en dat een tweede load van hetzelfde adres direct uit de cache komt.
+
 ## Subsidiecheck achter "binnenkort"-schakelaar (2026-07-22)
 
 Branch: `feat/subsidiecheck-binnenkort` (vanaf `main`). PR ready-for-review, niet mergen.
