@@ -30,6 +30,11 @@ afgestemd: A+B+C (geen DB-wijziging). Alles in de edge function `woninginfo` (CR
 - [x] **C. Subject-item retry bij 502/timeout.** Nieuwe `fetchItemMetRetry` (2 pogingen) voor
       alleen de subject (kritiek: zonder subject geen model). Voorkomt dat een transiente 502
       de héle client-call (incl. WFS + buren) laat herhalen. Buren mogen wegvallen (context).
+- [x] **D. Dubbele PDOK-lookup weg (frontend).** `StapAdres` valideerde het adres met een losse
+      `zoekAdres` (buiten react-query), waarna de pagina hem via `usePdokAdres` opnieuw ophaalde.
+      Nu seedt `StapAdres` na een geslaagde lookup de react-query-cache met exact dezelfde sleutel
+      (`["pdok-adres", normalizePostcode(pc), hn, tv]`), zodat de pagina-lookup een directe cache-hit
+      is en de 3D-prefetch ~0,1s eerder start (plus geen "Adres controleren…"-flits meer).
 
 ### Verificatie
 - esbuild-syntaxcheck van `index.ts` groen (Deno niet lokaal geïnstalleerd; `deno check` bij deploy).

@@ -1,8 +1,9 @@
 import { FormEvent, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Check, ChevronDown, Loader2, MapPin } from "lucide-react";
 
 import { pushGtmEvent } from "@/lib/gtm";
-import { displayPostcode, POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib/pdok";
+import { displayPostcode, normalizePostcode, POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib/pdok";
 import { ALLE_MAATREGELEN, type Bewonertype, type Maatregel } from "@/lib/subsidies";
 
 import { BewonertypeKeuze } from "./BewonertypeKeuze";
@@ -90,6 +91,7 @@ export const StapAdres = ({
   const [straat, setStraat] = useState("");
   const [stad, setStad] = useState("");
   const [mFout, setMFout] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   const gekozenMaatregelen = (): Maatregel[] => (maatregelen.length === 0 ? [...ALLE_MAATREGELEN] : maatregelen);
 
@@ -132,6 +134,14 @@ export const StapAdres = ({
       setMFout(null);
       return;
     }
+
+    // Deel de bevestiging met de pagina-prefetch: exact dezelfde react-query-sleutel
+    // als usePdokAdres, zodat de pagina het adres niet nóg een keer bij PDOK opvraagt
+    // en de 3D-prefetch (pand + model) meteen kan starten i.p.v. na een tweede lookup.
+    queryClient.setQueryData(
+      ["pdok-adres", normalizePostcode(postcode), huisnummer.trim(), toevoeging.trim()],
+      adres,
+    );
 
     // Adres bevestigd = echte intentie; geen postcode/adres in het event (privacy).
     pushGtmEvent("subsidiecheck_start", { gemeente: adres.gemeentenaam, provincie: adres.provincienaam });
