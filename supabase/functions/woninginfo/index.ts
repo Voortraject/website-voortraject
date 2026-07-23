@@ -33,6 +33,14 @@ const POSTCODE_RE = /^[1-9][0-9]{3}[A-Z]{2}$/;
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 uur
 const FETCH_TIMEOUT_MS = 15000;
 
+// Een 3D-model per pand is in de praktijk statisch (gebouwen veranderen niet).
+// Cache-headers laten de browser (en terug-navigatie / gedeelde links) het model
+// hergebruiken i.p.v. het trage, wisselvallige api.3dbag.nl opnieuw te bevragen.
+// Een gevonden model mag lang blijven staan; een leeg model (3dbag hikte) juist
+// kort, zodat een volgende poging snel weer echt ophaalt.
+const MODEL_CACHE_GEVULD = "public, max-age=86400, stale-while-revalidate=2592000";
+const MODEL_CACHE_LEEG = "public, max-age=60";
+
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
@@ -45,10 +53,18 @@ const cache = new Map<string, CacheItem>();
 type Model3dCacheItem = { model: Model3d | null; at: number };
 const model3dCache = new Map<string, Model3dCacheItem>();
 
-function json(body: unknown, status = 200): Response {
+function json(body: unknown, status = 200, extraHeaders: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "Content-Type": "application/json", ...CORS },
+    headers: { "Content-Type": "application/json", ...CORS, ...extraHeaders },
+  });
+}
+
+// 3D-model-antwoord met de juiste cache-header (lang bij een gevuld model, kort
+// bij een leeg model). Zowel de cache-hit als een verse fetch gaan hierlangs.
+function model3dResponse(model: Model3d | null): Response {
+  return json({ model3d: model }, 200, {
+    "Cache-Control": model ? MODEL_CACHE_GEVULD : MODEL_CACHE_LEEG,
   });
 }
 
@@ -69,6 +85,18 @@ async function fetchJson(url: string, timeout = FETCH_TIMEOUT_MS): Promise<unkno
   } finally {
     clearTimeout(timer);
   }
+}
+
+// api.3dbag.nl hikt af en toe met een 502/timeout. Voor de subject (kritiek:
+// zonder subject geen model) proberen we het kort opnieuw i.p.v. de client de
+// héle call (incl. WFS + buren) te laten herhalen. Buren hebben dit niet nodig:
+// die zijn optionele context en mogen wegvallen.
+async function fetchItemMetRetry(url: string, pogingen = 2, timeout = 8000): Promise<unknown> {
+  for (let poging = 1; poging <= pogingen; poging++) {
+    const data = await fetchJson(url, timeout);
+    if (data) return data;
+  }
+  return null;
 }
 
 // Draait taken met een concurrency-limiet. api.3dbag.nl wordt onbetrouwbaar bij
@@ -92,21 +120,26 @@ async function metLimiet<T, R>(items: T[], limiet: number, fn: (t: T) => Promise
 // concurrency + korte timeout, zodat trage/onbereikbare buren wegvallen i.p.v.
 // de call op te houden. Het trage 3D BAG bbox-endpoint mijden we.
 async function haal3dBag(pandid: string, x: number, y: number): Promise<Model3d | null> {
-  const subjectUrl = `${BAG_3D}/NL.IMBAG.Pand.${pandid}`;
+  const itemUrl = (id: string) => `${BAG_3D}/NL.IMBAG.Pand.${id}`;
   const heeftCoord = Number.isFinite(x) && Number.isFinite(y);
   const wfsUrl =
     `${BAG_WFS}?service=WFS&version=2.0.0&request=GetFeature&typeNames=bag:pand` +
     `&outputFormat=application/json&srsName=EPSG:28992&count=40` +
     `&bbox=${x - BUURT_STRAAL},${y - BUURT_STRAAL},${x + BUURT_STRAAL},${y + BUURT_STRAAL},urn:ogc:def:crs:EPSG::28992`;
 
-  const [subjectItem, wfs] = await Promise.all([
-    fetchJson(subjectUrl),
-    heeftCoord ? fetchJson(wfsUrl) : Promise.resolve(null),
-  ]);
-  if (!subjectItem) return null;
+  // Subject (kritiek, met korte retry) en buren lopen zoveel mogelijk parallel.
+  // De buur-id's komen uit de snelle WFS (~0,1s), dus we starten het ophalen van
+  // de buur-items zodra die binnen is i.p.v. te wachten op de trage subject-fetch
+  // (~2s). Piek-concurrency op api.3dbag.nl blijft 3 (1 subject + pool van 2
+  // buren), binnen de grens waarbinnen de 3dbag-API betrouwbaar blijft.
+  const subjectP = fetchItemMetRetry(itemUrl(pandid));
+  const burenP = (heeftCoord ? fetchJson(wfsUrl) : Promise.resolve(null)).then((wfs) => {
+    const buurIds = wfs ? kiesBuren(wfs as Parameters<typeof kiesBuren>[0], pandid, x, y) : [];
+    return metLimiet(buurIds, 2, (id) => fetchJson(itemUrl(id), 8000));
+  });
 
-  const buurIds = wfs ? kiesBuren(wfs as Parameters<typeof kiesBuren>[0], pandid, x, y) : [];
-  const buurItems = await metLimiet(buurIds, 3, (id) => fetchJson(`${BAG_3D}/NL.IMBAG.Pand.${id}`, 8000));
+  const [subjectItem, buurItems] = await Promise.all([subjectP, burenP]);
+  if (!subjectItem) return null;
   return (
     bouwModel(subjectItem as Parameters<typeof bouwModel>[0], buurItems as Parameters<typeof bouwModel>[1]) ??
     decodeer3dBag(subjectItem as Parameters<typeof decodeer3dBag>[0])
@@ -154,10 +187,10 @@ Deno.serve(async (req: Request) => {
     const y = Number(url.searchParams.get("y"));
     const cacheKey = Number.isFinite(x) && Number.isFinite(y) ? `${pandid}@${Math.round(x)},${Math.round(y)}` : pandid;
     const cached = model3dCache.get(cacheKey);
-    if (cached && Date.now() - cached.at < CACHE_TTL_MS) return json({ model3d: cached.model });
+    if (cached && Date.now() - cached.at < CACHE_TTL_MS) return model3dResponse(cached.model);
     const model = await haal3dBag(pandid, x, y);
     model3dCache.set(cacheKey, { model, at: Date.now() });
-    return json({ model3d: model });
+    return model3dResponse(model);
   }
 
   // Tak 1: energielabel op basis van adres.
