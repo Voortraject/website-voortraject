@@ -26,6 +26,9 @@ import { Woningpaneel } from "./Woningpaneel";
 interface StapResultaatProps {
   input: SubsidieCheckInput;
   adres: PdokAdres;
+  /** Met de gegevens-poort zijn naam/e-mail/telefoon al binnen: dan geen
+      "mail mij dit overzicht"-blok (en -knop) meer op het resultaat. */
+  verbergMail?: boolean;
 }
 
 // Duur per zoekstap in de laadsequentie. Bewust ruim (~1,13s × 3 stappen ≈ 3,4s
@@ -56,7 +59,7 @@ const useLaadsequentie = (klaar: boolean) => {
   return fase;
 };
 
-export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
+export const StapResultaat = ({ input, adres, verbergMail = false }: StapResultaatProps) => {
   const { data: regelingen, isPending, isError, refetch } = useSubsidieCheck(input);
   const { data: woning, isPending: woningBezig } = useWoningInfo(input.postcode, input.huisnummer, input.toevoeging);
   // Pand + 3D-model op topniveau (dus vóór de vroege returns): ze starten meteen
@@ -284,6 +287,7 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
           onMailKlik={scrollNaarMail}
           onDeelTool={deelTool}
           deelGedeeld={gedeeld}
+          toonMailKnop={!verbergMail}
         />
         {woningpaneel}
       </div>
@@ -361,14 +365,20 @@ export const StapResultaat = ({ input, adres }: StapResultaatProps) => {
         className="mt-10 scroll-mt-24 rounded-xl border border-border p-6 md:p-8"
         style={{ backgroundColor: "var(--card-soft)" }}
       >
-        <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
-          Ontvang dit overzicht in je mail
-        </h3>
-        <div className="mt-5">
-          <MailOverzicht input={input} adres={adres} regelingen={regelingen ?? []} />
-        </div>
+        {/* Zachte mail-route: met de gegevens-poort (verbergMail) zijn deze
+            gegevens al vooraf opgehaald, dan slaan we dit blok over. */}
+        {!verbergMail && (
+          <>
+            <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
+              Ontvang dit overzicht in je mail
+            </h3>
+            <div className="mt-5">
+              <MailOverzicht input={input} adres={adres} regelingen={regelingen ?? []} />
+            </div>
 
-        <div className="my-6 h-px bg-border" role="separator" />
+            <div className="my-6 h-px bg-border" role="separator" />
+          </>
+        )}
 
         <p className="max-w-xl text-[15px] leading-relaxed text-foreground/80">
           Liever direct weten wat er voor jou in zit? In een gratis gesprek zoeken we voor jouw adres uit welke

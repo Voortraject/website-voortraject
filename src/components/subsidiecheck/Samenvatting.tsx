@@ -36,6 +36,9 @@ interface SamenvattingProps {
   energielabelBezig?: boolean;
   /** Scrollt naar het mailformulier onder de lijst. */
   onMailKlik: () => void;
+  /** Toon de "mail mij dit overzicht"-knop (uit bij de gegevens-poort: die
+      gegevens zijn dan al binnen). */
+  toonMailKnop?: boolean;
   /** Deelt de tool (native deel-sheet / kopieer-link). */
   onDeelTool: () => void;
   /** Terugval "link gekopieerd"-feedback (desktop zonder deel-sheet). */
@@ -65,6 +68,7 @@ export const Samenvatting = ({
   onMailKlik,
   onDeelTool,
   deelGedeeld,
+  toonMailKnop = true,
 }: SamenvattingProps) => {
   const { totaal, subsidies, leningen } = data;
   const meervoud = totaal === 1 ? "regeling" : "regelingen";
@@ -197,14 +201,16 @@ export const Samenvatting = ({
       {/* Acties: het overzicht mailen + de tool delen. */}
       <div className="mt-8 h-px bg-border/60" role="separator" />
       <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
-        <button
-          type="button"
-          onClick={onMailKlik}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-accent bg-accent/15 px-5 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:bg-accent/25 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          <Mail size={16} strokeWidth={2} aria-hidden="true" />
-          Mail mij dit overzicht
-        </button>
+        {toonMailKnop && (
+          <button
+            type="button"
+            onClick={onMailKlik}
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-accent bg-accent/15 px-5 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:bg-accent/25 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            <Mail size={16} strokeWidth={2} aria-hidden="true" />
+            Mail mij dit overzicht
+          </button>
+        )}
         <button
           type="button"
           onClick={onDeelTool}

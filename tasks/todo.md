@@ -2,6 +2,88 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Subsidiecheck — gegevens vooraf verzamelen (tussenoplossing) (2026-07-24)
+
+Branch: `feat/subsidiecheck-gegevens-poort` (vanaf `main`). PR ready-for-review, niet zelf mergen.
+
+Aanleiding: de echte subsidiecheck (afscherming, PR #66) gaat pas over een paar weken live. In
+de tussentijd wil de opdrachtgever nu al leads verzamelen: na de stap "Jouw woning" komt een
+extra stap "Je gegevens" (voornaam, tussenvoegsel, achternaam, e-mail, telefoon) die als
+toegangspoort naar het resultaat fungeert.
+
+Afgestemd (2026-07-24):
+- Aparte tussenstap i.p.v. alles op één scherm (drempel/schermruimte/hergebruik van het
+  bestaande contactformulier in `MailOverzicht`).
+- Gegevens = toegangspoort: ná het invullen ziet de bezoeker het resultaat.
+- Situatie + interesse blijven op stap 1 (kwalificatie + korte gegevensstap).
+- Poort via client-state (niet via de URL): een gedeelde of ververste link vraagt opnieuw om
+  gegevens (meer leads). `sessionStorage` verzacht: binnen dezelfde sessie niet dubbel vragen.
+- Het "mail mij dit overzicht"-blok onderaan het resultaat vervalt (gegevens zijn al binnen).
+
+LET OP / te bevestigen: toont het resultaat op productie nu echte regelingen of nog
+voorbeelddata? De live provider (`energiesubsidiewijzerProvider`) valt terug op mock
+("Voorbeeldgegevens") als `VITE_SUBSIDIECHECK_URL` niet staat of de `subsidiecheck` edge
+function niet gedeployed is. Gegevens vóór het resultaat zetten heeft alleen zin als de
+bezoeker daarna echte data ziet, niet voorbeelddata.
+
+### Flow (3 stappen)
+Voortgangsbalk: Jouw woning → Je gegevens → Resultaat.
+1. **Jouw woning** (StapAdres, ongewijzigd behalve knoplabel "Verder" i.p.v. "Bekijk mijn
+   subsidies" zolang de poort aan staat).
+2. **Je gegevens** (nieuw, StapGegevens): naam/e-mail/telefoon → lead naar `leads_bewoners`
+   (bron "Subsidiecheck", zonder regelingen in de notities). Bij succes: ontgrendel → resultaat.
+3. **Resultaat** (StapResultaat, MailOverzicht-blok eruit; "plan een gratis gesprek"-CTA blijft).
+
+### Plan
+- [x] Feature-flag `SUBSIDIECHECK_GEGEVENS_POORT = true` in `src/config/features.ts` (makkelijk
+      terug te draaien bij de echte launch: flag uit = resultaat weer direct na stap 1).
+- [x] `src/components/subsidiecheck/leadFormulier.ts` (nieuw, gepland als `contactValidatie.ts`):
+      gedeelde validators (`EMAIL_RE`, `NAME_RE`, `validatePhoneNL`, `escapeHtml`) +
+      `valideerContact()` + `schrijfSubsidiecheckLead()` die de directe `leads_bewoners`-insert
+      centraliseert (exact dezelfde kolommen; data-integriteit, CLAUDE.md-regel 2). `MailOverzicht`
+      gerefactord naar dezelfde helper (geen kolomdrift).
+- [x] `src/components/subsidiecheck/StapGegevens.tsx` (nieuw): het poortformulier. Zelfde
+      velden/validatie/honeypot/timing als `MailOverzicht`, maar directe lead-insert (geen mail:
+      geen regelingen op dit punt). GTM `subsidiecheck_lead` (alleen bewonertype, geen PII). Bij
+      succes `onOntgrendeld()`.
+- [x] `Subsidiecheck.tsx`: `stap` 1|2|3, client-state `ontgrendeld` (+ `sessionStorage` zodat een
+      refresh binnen de sessie niet opnieuw vraagt), StapGegevens tussen adres en resultaat, kop +
+      prefetch ongemoeid. Flag uit = huidige 2-stappenflow.
+- [x] `Voortgang.tsx`: generiek gemaakt (prop `stappen` + `huidige`), 2 of 3 stappen, terug-naar-
+      stap-1 klikbaar.
+- [x] `StapAdres.tsx`: knoplabel via prop `knopLabel` ("Verder" bij de poort, default "Bekijk mijn
+      subsidies").
+- [x] `StapResultaat.tsx` (prop `verbergMail`) + `Samenvatting.tsx` (prop `toonMailKnop`): het
+      "Ontvang dit overzicht in je mail"-blok én de "mail mij dit overzicht"-knop verborgen bij de
+      poort; "plan een gratis gesprek"-CTA + warm slot blijven.
+- [x] Test `src/test/leadFormulier.test.ts` (vitest): `valideerContact` (alle veldregels) +
+      `validatePhoneNL`. Pure-functietest, past bij de bestaande lib-tests.
+- [x] Verificatie: `tsc` schoon · eslint baseline ongewijzigd (11 err/8 warn, allemaal in niet-
+      geraakte bestanden) · 60/60 vitest (49 + 11 nieuw) · `bun run build` groen · headless Chrome
+      desktop + mobiel: stap 1 (3-staps-balk + knop "Verder") en de poort (kop/adres-pill/velden/
+      knop) renderen correct.
+- [x] Commit + PR (ready-for-review), niet zelf mergen.
+
+### Review
+- Flow werkt zoals afgesproken: Jouw woning → Je gegevens (poort, schrijft de lead) → Resultaat.
+  De poort staat achter `SUBSIDIECHECK_GEGEVENS_POORT`; flag op `false` = exact de oude
+  2-stappenflow (Voortgang, koppen, breedte en render vallen dan terug).
+- Poort via client-state + `sessionStorage` (`sc_poort_ontgrendeld`), bewust niet in de URL: een
+  gedeelde of ververste link (andere browser/incognito) vraagt opnieuw om gegevens. Wie op het
+  resultaat het adres/situatie aanpast (`edit`/`sit`) blijft ontgrendeld (geen dubbele poort).
+- Bewust NIET: geen automatische overzicht-mail vanuit de poort (regelingen zijn daar nog niet
+  bekend; de lead is leidend). Deelknoppen op het resultaat blijven staan.
+- Niet headless getest (zou een echte CRM-lead schrijven): de daadwerkelijke submit + stap 3 na
+  ontgrendelen. De submit gebruikt wel de los geteste `valideerContact` + de ongewijzigde
+  `leads_bewoners`-insert. Eventueel end-to-end te checken op de PR-preview (schrijft dan 1 lead).
+
+### Open / beslispunten
+- Echte data vs voorbeelddata achter de poort (zie LET OP hierboven).
+- Deelknoppen op het resultaat ("kopieer link naar dit overzicht") worden met een harde poort
+  minder logisch; voor nu laten staan, tenzij anders gewenst.
+- `sessionStorage`-ontgrendeling geldt sessiebreed (één keer lead = niet opnieuw vragen, ook
+  voor een tweede adres). Akkoord tenzij anders gewenst.
+
 ## 3D BAG persistente cache (optie E) (2026-07-23)
 
 Branch: `feat/3dbag-persistente-cache` (vanaf `main`, ná merge van PR #73). PR ready-for-review,

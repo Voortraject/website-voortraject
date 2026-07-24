@@ -1,13 +1,9 @@
 import { FormEvent, useRef, useState } from "react";
 import { CheckCircle, Loader2 } from "lucide-react";
 
-import {
-  SUPABASE_EXTERNAL_ANON_KEY,
-  supabaseExternal as supabase,
-} from "@/integrations/supabase/external-client";
+import { SUPABASE_EXTERNAL_ANON_KEY } from "@/integrations/supabase/external-client";
 import { pushGtmEvent } from "@/lib/gtm";
-import type { PdokAdres } from "@/lib/pdok";
-import { normalizePostcode } from "@/lib/pdok";
+import { normalizePostcode, type PdokAdres } from "@/lib/pdok";
 import {
   BEWONERTYPE_LABELS,
   MAATREGEL_LABELS,
@@ -15,24 +11,13 @@ import {
   type SubsidieRegeling,
 } from "@/lib/subsidies";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const NAME_RE = /^[\p{L}\s'-]+$/u;
-
-// Zelfde NL-nummercheck als het contactformulier: 0xxxxxxxxx of +31xxxxxxxxx.
-const validatePhoneNL = (raw: string): boolean => {
-  const cleaned = raw.replace(/[\s-]/g, "");
-  if (!/^[+0-9]+$/.test(cleaned)) return false;
-  return /^0[0-9]{9}$/.test(cleaned) || /^\+31[0-9]{9}$/.test(cleaned);
-};
+import { schrijfSubsidiecheckLead, valideerContact } from "./leadFormulier";
 
 // Productie: de edge function schrijft de lead én stuurt de bezoeker het
 // overzicht automatisch per e-mail (Resend). Is de var niet gezet, dan valt de
 // component terug op een directe lead-insert (zoals voorheen) — dan komt er nog
 // geen automatische mail, maar gaat de lead niet verloren.
 const MAIL_FUNCTIE_URL = import.meta.env.VITE_SUBSIDIECHECK_MAIL_URL as string | undefined;
-
-const escapeHtml = (s: string) =>
-  s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 
 const inputClass =
   "w-full rounded-lg border border-input bg-background px-4 py-3 text-[16px] lg:text-[15px] text-foreground outline-none transition min-h-[48px] focus:border-accent focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.18)]";
@@ -111,30 +96,6 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
     if (!res.ok) throw new Error(`subsidiecheck-mail gaf status ${res.status}`);
   };
 
-  // Terugval (function nog niet gedeployed): directe lead-insert in het CRM,
-  // exact dezelfde tabel/kolommen. Er gaat dan nog geen automatische mail uit.
-  // De kolom `naam` bewust niet meesturen: een BEFORE INSERT-trigger in het CRM
-  // stelt die zelf samen uit voornaam/tussenvoegsel/achternaam.
-  const verstuurViaClientInsert = async (vn: string, tv: string, an: string, em: string, tel: string) => {
-    const { error } = await supabase.from("leads_bewoners").insert({
-      tenant_id: "00000000-0000-0000-0000-000000000001",
-      voornaam: escapeHtml(vn),
-      tussenvoegsel: tv ? escapeHtml(tv) : null,
-      achternaam: escapeHtml(an),
-      email: em,
-      telefoon: tel,
-      postcode: normalizePostcode(input.postcode),
-      huisnummer: input.huisnummer,
-      toevoeging: input.toevoeging?.trim() ? escapeHtml(input.toevoeging.trim()) : null,
-      straat: escapeHtml(adres.straatnaam),
-      stad: escapeHtml(adres.woonplaatsnaam),
-      notities: bouwNotities(),
-      bron: "Subsidiecheck",
-      status: "nieuw",
-    } as never);
-    if (error) throw error;
-  };
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (bezig) return;
@@ -149,46 +110,19 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
       return;
     }
 
-    const vn = voornaam.trim();
-    if (!vn) {
-      setFout("Vul je voornaam in.");
+    const resultaat = valideerContact({ voornaam, tussenvoegsel, achternaam, email, telefoon });
+    if ("fout" in resultaat) {
+      setFout(resultaat.fout);
       return;
     }
-    if (vn.length > 100 || !NAME_RE.test(vn)) {
-      setFout("Je voornaam bevat ongeldige tekens.");
-      return;
-    }
-    const tv = tussenvoegsel.trim();
-    if (tv && (tv.length > 25 || !NAME_RE.test(tv))) {
-      setFout("Het tussenvoegsel bevat ongeldige tekens.");
-      return;
-    }
-    const an = achternaam.trim();
-    if (!an || an.length < 2 || an.length > 100 || !NAME_RE.test(an)) {
-      setFout("Vul je achternaam in.");
-      return;
-    }
-    const em = email.trim();
-    if (!EMAIL_RE.test(em) || em.length > 255) {
-      setFout("Dit lijkt geen geldig e-mailadres.");
-      return;
-    }
-    const tel = telefoon.trim();
-    if (!tel) {
-      setFout("Vul je telefoonnummer in.");
-      return;
-    }
-    if (!validatePhoneNL(tel)) {
-      setFout("Vul een geldig Nederlands telefoonnummer in (bijvoorbeeld 06 12345678).");
-      return;
-    }
+    const { voornaam: vn, tussenvoegsel: tv, achternaam: an, email: em, telefoon: tel } = resultaat.waarden;
 
     setBezig(true);
     try {
       if (MAIL_FUNCTIE_URL) {
         await verstuurViaFunctie(vn, tv, an, em, tel);
       } else {
-        await verstuurViaClientInsert(vn, tv, an, em, tel);
+        await schrijfSubsidiecheckLead({ waarden: resultaat.waarden, input, adres, notities: bouwNotities() });
       }
       // Geen naam/e-mail in het event — alleen dat er een lead is (privacy).
       pushGtmEvent("subsidiecheck_lead", { aantal_regelingen: regelingen.length });

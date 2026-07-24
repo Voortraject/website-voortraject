@@ -1,17 +1,18 @@
-const STAPPEN = ["Jouw woning", "Resultaat"] as const;
-
 interface VoortgangProps {
-  huidige: 1 | 2;
+  /** De labels van de stappen (2 zonder poort, 3 met de gegevens-poort). */
+  stappen: readonly string[];
+  /** 1-based index van de huidige stap. */
+  huidige: number;
   /** De afgeronde eerste stap is klikbaar om terug te gaan (gangbaar patroon). */
-  onStapKlik?: (stap: 1) => void;
+  onStapKlik?: () => void;
 }
 
-// Bescheiden voortgangsindicator: twee bolletjes met labels. "Resultaat" als
-// zichtbaar eindpunt trekt de bezoeker door de flow heen.
-export const Voortgang = ({ huidige, onStapKlik }: VoortgangProps) => (
-  <ol className="flex items-center justify-center gap-0" aria-label={`Stap ${huidige} van ${STAPPEN.length}`}>
-    {STAPPEN.map((label, i) => {
-      const stap = (i + 1) as 1 | 2;
+// Bescheiden voortgangsindicator: bolletjes met labels. Het zichtbare eindpunt
+// ("Resultaat") trekt de bezoeker door de flow heen. Werkt voor 2 of 3 stappen.
+export const Voortgang = ({ stappen, huidige, onStapKlik }: VoortgangProps) => (
+  <ol className="flex items-center justify-center gap-0" aria-label={`Stap ${huidige} van ${stappen.length}`}>
+    {stappen.map((label, i) => {
+      const stap = i + 1;
       const actief = stap === huidige;
       const afgerond = stap < huidige;
       const klikbaar = afgerond && stap === 1 && !!onStapKlik;
@@ -47,7 +48,7 @@ export const Voortgang = ({ huidige, onStapKlik }: VoortgangProps) => (
           {klikbaar ? (
             <button
               type="button"
-              onClick={() => onStapKlik(1)}
+              onClick={onStapKlik}
               aria-label={`Terug naar stap 1: ${label}`}
               className="flex flex-col items-center gap-1.5 rounded-sm transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
