@@ -46,6 +46,8 @@ interface StapAdresProps {
   ) => void;
   /** Vanuit de compacte bevestiging het adres alsnog aanpassen (toont de velden). */
   onAdresWijzigen: () => void;
+  /** Label van de doorknop. Met de gegevens-poort "Verder" (er volgt nog een stap). */
+  knopLabel?: string;
 }
 
 // Gecombineerde eerste stap: adres + interesses + (optioneel) situatie op één
@@ -64,6 +66,7 @@ export const StapAdres = ({
   onStart,
   onHandmatig,
   onAdresWijzigen,
+  knopLabel = "Bekijk mijn subsidies",
 }: StapAdresProps) => {
   const [postcode, setPostcode] = useState(displayPostcode(initPostcode));
   const [huisnummer, setHuisnummer] = useState(initHuisnummer);
@@ -309,7 +312,7 @@ export const StapAdres = ({
             Adres zoeken…
           </>
         ) : (
-          "Bekijk mijn subsidies"
+          knopLabel
         )}
       </button>
 

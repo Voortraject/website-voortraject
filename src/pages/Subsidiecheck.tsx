@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Loader2, MapPin, Pencil, SlidersHorizontal } from "lucide-react";
 
@@ -7,6 +7,7 @@ import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Binnenkort } from "@/components/subsidiecheck/Binnenkort";
 import { StapAdres } from "@/components/subsidiecheck/StapAdres";
+import { StapGegevens } from "@/components/subsidiecheck/StapGegevens";
 import { StapResultaat } from "@/components/subsidiecheck/StapResultaat";
 import { Voortgang } from "@/components/subsidiecheck/Voortgang";
 import { usePand3d } from "@/hooks/usePand3d";
@@ -20,7 +21,7 @@ import {
   type Maatregel,
   type SubsidieCheckInput,
 } from "@/lib/subsidies";
-import { SUBSIDIECHECK_LIVE } from "@/config/features";
+import { SUBSIDIECHECK_GEGEVENS_POORT, SUBSIDIECHECK_LIVE } from "@/config/features";
 
 const BEWONERTYPES: Bewonertype[] = ["woningeigenaar", "huurder", "vve", "verhuurder"];
 
@@ -82,10 +83,38 @@ const SubsidiecheckLive = () => {
   usePand3d(prefetchPand.data?.pandId, adres?.centroideRd); // + buurpanden
   useWoningInfo(paramsGeldig ? pc : "", paramsGeldig ? hn : "", tv);
 
-  // Twee stappen: alles invullen (adres + interesses + evt. situatie) → resultaat.
-  // De situatie staat standaard op woningeigenaar, dus zodra 'type' gezet is (bij
-  // verzenden) tonen we meteen het overzicht — er is geen aparte situatiestap.
-  const stap: 1 | 2 = editParam || sitParam || !paramsGeldig || adresNietGevonden || !bewonertype ? 1 : 2;
+  // De gegevens-poort (tussenoplossing): staat die aan, dan zit er tussen "Jouw
+  // woning" en het resultaat een extra stap "Je gegevens". Bewust client-state en
+  // niet in de URL: een gedeelde of ververste link vraagt zo opnieuw om gegevens
+  // (meer leads). sessionStorage verzacht: binnen dezelfde sessie niet dubbel.
+  const poortAan = SUBSIDIECHECK_GEGEVENS_POORT;
+  const [ontgrendeld, setOntgrendeld] = useState(() => {
+    if (!poortAan) return true;
+    try {
+      return sessionStorage.getItem("sc_poort_ontgrendeld") === "1";
+    } catch {
+      return false;
+    }
+  });
+  const ontgrendel = () => {
+    try {
+      sessionStorage.setItem("sc_poort_ontgrendeld", "1");
+    } catch {
+      /* private mode → poort blijft binnen deze render-sessie ontgrendeld via state */
+    }
+    setOntgrendeld(true);
+  };
+
+  // Stap 1 = adres + interesses + evt. situatie invullen. Zodra 'type' gezet is
+  // (bij verzenden) is stap 1 klaar; met de poort volgt dan stap 2 (gegevens),
+  // anders meteen het resultaat. De situatie staat standaard op woningeigenaar,
+  // dus er is geen aparte situatiestap.
+  const stap1Actief = editParam || sitParam || !paramsGeldig || adresNietGevonden || !bewonertype;
+  const stappen = poortAan
+    ? (["Jouw woning", "Je gegevens", "Resultaat"] as const)
+    : (["Jouw woning", "Resultaat"] as const);
+  const resultaatStap = stappen.length; // 3 met poort, anders 2
+  const stap = stap1Actief ? 1 : poortAan && !ontgrendeld ? 2 : resultaatStap;
 
   // Bouwt de queryparams opnieuw op met behoud van situatie/maatregelen.
   const paramsMetKeuzes = (nieuwPc: string, nieuwHn: string, nieuwTv = tv): Record<string, string> => {
@@ -128,23 +157,30 @@ const SubsidiecheckLive = () => {
   // Het resultaat heeft bewust géén subregel: de samenvatting in StapResultaat
   // vertelt daar het verhaal. De stap-1-kop past zich aan: met een al bekend
   // adres ligt de nadruk op de interesses.
-  const koppen: Record<1 | 2, { titel: string; sub?: string; subVerbergMobiel?: boolean }> = {
-    1: bevestigdAdres
-      ? {
-          titel: "Nog één stap",
-          sub: "Kies waar je in geïnteresseerd bent — dan zien we meteen jouw regelingen.",
-        }
-      : {
-          titel: "Waar staat jouw woning?",
-          sub: "We zoeken de regelingen die bij jouw adres passen, als startpunt voor je verduurzaming.",
-          // Op mobiel verbergen: scheelt verticale ruimte zodat de knop onderaan
-          // makkelijker binnen één scherm valt. Op sm+ blijft de regel staan.
-          subVerbergMobiel: true,
-        },
-    2: {
-      titel: "Jouw subsidieoverzicht",
-    },
+  const kopVoorStap = (): { titel: string; sub?: string; subVerbergMobiel?: boolean } => {
+    if (stap === 1) {
+      return bevestigdAdres
+        ? {
+            titel: "Nog één stap",
+            sub: "Kies waar je in geïnteresseerd bent — dan zien we meteen jouw regelingen.",
+          }
+        : {
+            titel: "Waar staat jouw woning?",
+            sub: "We zoeken de regelingen die bij jouw adres passen, als startpunt voor je verduurzaming.",
+            // Op mobiel verbergen: scheelt verticale ruimte zodat de knop onderaan
+            // makkelijker binnen één scherm valt. Op sm+ blijft de regel staan.
+            subVerbergMobiel: true,
+          };
+    }
+    if (poortAan && stap === 2) {
+      return {
+        titel: "Nog even je gegevens",
+        sub: "Dan sturen we jouw persoonlijke overzicht naar je toe.",
+      };
+    }
+    return { titel: "Jouw subsidieoverzicht" };
   };
+  const kop = kopVoorStap();
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -163,8 +199,9 @@ const SubsidiecheckLive = () => {
             {/* Stap 1 blijft smal (focus op de invoer); het resultaat krijgt de
                 ruimte zodat groepen naast elkaar kunnen staan. De interesses
                 staan standaard ingeklapt, dus stap 1 kan compacter dan voorheen. */}
-            <div className="mx-auto w-full" style={{ maxWidth: stap === 2 ? 1040 : 640 }}>
+            <div className="mx-auto w-full" style={{ maxWidth: stap === resultaatStap ? 1040 : 640 }}>
               <Voortgang
+                stappen={stappen}
                 huidige={stap}
                 onStapKlik={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
               />
@@ -175,21 +212,21 @@ const SubsidiecheckLive = () => {
                 className="h2-section mt-5 text-center outline-none md:mt-6"
                 style={{ fontSize: "clamp(26px, 4vw, 38px)" }}
               >
-                {koppen[stap].titel}
+                {kop.titel}
               </h1>
-              {koppen[stap].sub && (
+              {kop.sub && (
                 <p
                   className={`mx-auto mt-2 max-w-md text-center text-[15px] leading-relaxed text-muted-foreground${
-                    koppen[stap].subVerbergMobiel ? " hidden sm:block" : ""
+                    kop.subVerbergMobiel ? " hidden sm:block" : ""
                   }`}
                 >
-                  {koppen[stap].sub}
+                  {kop.sub}
                 </p>
               )}
 
               {/* Bevestigd adres als subtiele pill boven stap 2 en 3 —
                   visueel te onderscheiden van de content eromheen. */}
-              {stap === 2 && adres && (
+              {stap === resultaatStap && adres && (
                 <div className="mt-4 flex justify-center">
                   <p className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full border border-border bg-card px-4 py-2 text-[13.5px] text-foreground/80 shadow-subtle">
                     <span className="inline-flex items-center gap-1.5">
@@ -262,9 +299,13 @@ const SubsidiecheckLive = () => {
                       setSearchParams(params);
                     }}
                     onAdresWijzigen={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
+                    knopLabel={poortAan ? "Verder" : "Bekijk mijn subsidies"}
                   />
+                ) : poortAan && stap === 2 ? (
+                  checkInput &&
+                  adres && <StapGegevens input={checkInput} adres={adres} onOntgrendeld={ontgrendel} />
                 ) : (
-                  checkInput && adres && <StapResultaat input={checkInput} adres={adres} />
+                  checkInput && adres && <StapResultaat input={checkInput} adres={adres} verbergMail={poortAan} />
                 )}
               </div>
             </div>
