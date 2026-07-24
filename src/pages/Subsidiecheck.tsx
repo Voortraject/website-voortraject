@@ -175,7 +175,7 @@ const SubsidiecheckLive = () => {
     if (poortAan && stap === 2) {
       return {
         titel: "Nog even je gegevens",
-        sub: "Dan zie je meteen welke regelingen bij jouw woning passen.",
+        sub: "Dan sturen we jouw persoonlijke overzicht naar je toe.",
       };
     }
     return { titel: "Jouw subsidieoverzicht" };

@@ -1,23 +1,11 @@
 import { FormEvent, useRef, useState } from "react";
 import { CheckCircle, Loader2 } from "lucide-react";
 
-import { SUPABASE_EXTERNAL_ANON_KEY } from "@/integrations/supabase/external-client";
 import { pushGtmEvent } from "@/lib/gtm";
-import { normalizePostcode, type PdokAdres } from "@/lib/pdok";
-import {
-  BEWONERTYPE_LABELS,
-  MAATREGEL_LABELS,
-  type SubsidieCheckInput,
-  type SubsidieRegeling,
-} from "@/lib/subsidies";
+import type { PdokAdres } from "@/lib/pdok";
+import type { SubsidieCheckInput, SubsidieRegeling } from "@/lib/subsidies";
 
-import { schrijfSubsidiecheckLead, valideerContact } from "./leadFormulier";
-
-// Productie: de edge function schrijft de lead én stuurt de bezoeker het
-// overzicht automatisch per e-mail (Resend). Is de var niet gezet, dan valt de
-// component terug op een directe lead-insert (zoals voorheen) — dan komt er nog
-// geen automatische mail, maar gaat de lead niet verloren.
-const MAIL_FUNCTIE_URL = import.meta.env.VITE_SUBSIDIECHECK_MAIL_URL as string | undefined;
+import { valideerContact, verstuurSubsidiecheckLead } from "./leadFormulier";
 
 const inputClass =
   "w-full rounded-lg border border-input bg-background px-4 py-3 text-[16px] lg:text-[15px] text-foreground outline-none transition min-h-[48px] focus:border-accent focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.18)]";
@@ -44,58 +32,6 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
   const [honeypot, setHoneypot] = useState("");
   const geladenOp = useRef(Date.now());
 
-  // Samengestelde notitie voor de lead (zowel client- als serverpad tonen dit
-  // in het CRM zodat het team gericht kan opvolgen).
-  const bouwNotities = () =>
-    [
-      `Subsidiecheck ingevuld: ${regelingen.length} regelingen gevonden.`,
-      `Situatie: ${BEWONERTYPE_LABELS[input.bewonertype]}`,
-      `Interesse: ${input.maatregelen.map((m) => MAATREGEL_LABELS[m]).join(", ")}`,
-      `Regelingen: ${regelingen.map((r) => r.titel).join("; ")}`,
-      `Verzoek: overzicht per e-mail ontvangen.`,
-    ].join("\n");
-
-  // Productie: edge function → schrijft de lead + stuurt de mail via Resend.
-  const verstuurViaFunctie = async (vn: string, tv: string, an: string, em: string, tel: string) => {
-    const res = await fetch(MAIL_FUNCTIE_URL!, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        // Vereist door de Supabase function-gateway; anon-key is publiek.
-        apikey: SUPABASE_EXTERNAL_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_EXTERNAL_ANON_KEY}`,
-      },
-      body: JSON.stringify({
-        voornaam: vn,
-        tussenvoegsel: tv || undefined,
-        achternaam: an,
-        email: em,
-        telefoon: tel,
-        honeypot,
-        input: {
-          postcode: normalizePostcode(input.postcode),
-          huisnummer: input.huisnummer,
-          toevoeging: input.toevoeging?.trim() || undefined,
-          bewonertype: input.bewonertype,
-          maatregelen: input.maatregelen,
-        },
-        adres: { straatnaam: adres.straatnaam, woonplaatsnaam: adres.woonplaatsnaam },
-        // Deelbare URL van dit resultaat (voor de "bekijk online"-link in de mail).
-        overzichtUrl: typeof window !== "undefined" ? window.location.href : undefined,
-        // Alleen wat de mail nodig heeft — geen interne filtervelden meesturen.
-        regelingen: regelingen.map((r) => ({
-          titel: r.titel,
-          niveau: r.niveau,
-          type: r.type,
-          bedragIndicatie: r.bedragIndicatie,
-          omschrijving: r.omschrijving,
-          bronUrl: r.bronUrl,
-        })),
-      }),
-    });
-    if (!res.ok) throw new Error(`subsidiecheck-mail gaf status ${res.status}`);
-  };
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (bezig) return;
@@ -115,15 +51,17 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
       setFout(resultaat.fout);
       return;
     }
-    const { voornaam: vn, tussenvoegsel: tv, achternaam: an, email: em, telefoon: tel } = resultaat.waarden;
-
     setBezig(true);
     try {
-      if (MAIL_FUNCTIE_URL) {
-        await verstuurViaFunctie(vn, tv, an, em, tel);
-      } else {
-        await schrijfSubsidiecheckLead({ waarden: resultaat.waarden, input, adres, notities: bouwNotities() });
-      }
+      await verstuurSubsidiecheckLead({
+        waarden: resultaat.waarden,
+        input,
+        adres,
+        regelingen,
+        // Deelbare URL van dit resultaat (voor de "bekijk online"-link in de mail).
+        overzichtUrl: typeof window !== "undefined" ? window.location.href : undefined,
+        honeypot,
+      });
       // Geen naam/e-mail in het event — alleen dat er een lead is (privacy).
       pushGtmEvent("subsidiecheck_lead", { aantal_regelingen: regelingen.length });
       setVerstuurd(true);

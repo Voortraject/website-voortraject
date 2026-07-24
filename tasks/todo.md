@@ -71,11 +71,19 @@ Voortgangsbalk: Jouw woning → Je gegevens → Resultaat.
 - Poort via client-state + `sessionStorage` (`sc_poort_ontgrendeld`), bewust niet in de URL: een
   gedeelde of ververste link (andere browser/incognito) vraagt opnieuw om gegevens. Wie op het
   resultaat het adres/situatie aanpast (`edit`/`sit`) blijft ontgrendeld (geen dubbele poort).
-- Bewust NIET: geen automatische overzicht-mail vanuit de poort (regelingen zijn daar nog niet
-  bekend; de lead is leidend). Deelknoppen op het resultaat blijven staan.
-- Niet headless getest (zou een echte CRM-lead schrijven): de daadwerkelijke submit + stap 3 na
-  ontgrendelen. De submit gebruikt wel de los geteste `valideerContact` + de ongewijzigde
-  `leads_bewoners`-insert. Eventueel end-to-end te checken op de PR-preview (schrijft dan 1 lead).
+- Vervolg (2026-07-24, afgestemd): de poort **mailt het overzicht nu ook**. Op "Mail mij dit
+  overzicht" halen we de regelingen op (primeert meteen de cache voor stap 3) en sturen we het
+  overzicht per mail via de gedeelde `verstuurSubsidiecheckLead` (edge function `subsidiecheck-mail`
+  + Resend), net als het oude mail-blok. Subline: "Dan sturen we jouw persoonlijke overzicht naar je
+  toe." `MailOverzicht` gebruikt nu dezelfde helper (mailfunctie stond daar al).
+- **LET OP (afhankelijkheid):** dit mailt alleen echt als `VITE_SUBSIDIECHECK_MAIL_URL` in
+  Cloudflare gezet is én `subsidiecheck-mail` gedeployed staat (Resend). Zo niet, dan valt het stil
+  terug op alleen de lead-insert (geen mail) en klopt de belofte in de subline/knop niet. Te
+  verifiëren voor de belofte waargemaakt wordt.
+- Deelknoppen op het resultaat blijven staan.
+- Niet headless getest (zou een echte CRM-lead + mail sturen): de daadwerkelijke submit + stap 3 na
+  ontgrendelen. De validatie (`valideerContact`) is los getest; de insert/mail is ongewijzigd
+  hergebruikt. Eventueel end-to-end te checken op de PR-preview (schrijft dan 1 lead + 1 mail).
 
 ### Open / beslispunten
 - Echte data vs voorbeelddata achter de poort (zie LET OP hierboven).

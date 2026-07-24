@@ -1,6 +1,11 @@
-import { supabaseExternal } from "@/integrations/supabase/external-client";
+import { SUPABASE_EXTERNAL_ANON_KEY, supabaseExternal } from "@/integrations/supabase/external-client";
 import { normalizePostcode, type PdokAdres } from "@/lib/pdok";
-import type { SubsidieCheckInput } from "@/lib/subsidies";
+import {
+  BEWONERTYPE_LABELS,
+  MAATREGEL_LABELS,
+  type SubsidieCheckInput,
+  type SubsidieRegeling,
+} from "@/lib/subsidies";
 
 // Gedeelde logica voor de twee lead-formulieren van de subsidiecheck: de
 // gegevens-poort (StapGegevens) en het "mail mij dit overzicht"-blok
@@ -95,4 +100,89 @@ export async function schrijfSubsidiecheckLead(args: {
     status: "nieuw",
   } as never);
   if (error) throw error;
+}
+
+// Productie: de edge function (VITE_SUBSIDIECHECK_MAIL_URL) schrijft de lead én
+// stuurt de bezoeker het overzicht per mail (Resend). Is de var niet gezet, dan
+// valt alles terug op een directe lead-insert: dan gaat er geen mail uit, maar de
+// lead gaat niet verloren.
+const MAIL_FUNCTIE_URL = import.meta.env.VITE_SUBSIDIECHECK_MAIL_URL as string | undefined;
+
+/** True als de mailfunctie geconfigureerd is (dan wordt het overzicht ook gemaild). */
+export const kanOverzichtMailen = !!MAIL_FUNCTIE_URL;
+
+// Notitie voor de lead (client-insertpad). De edge function stelt server-side een
+// eigen notitie samen uit de payload, dus deze telt alleen bij de terugval.
+export function bouwSubsidiecheckNotities(input: SubsidieCheckInput, regelingen: SubsidieRegeling[]): string {
+  return [
+    `Subsidiecheck ingevuld: ${regelingen.length} regelingen gevonden.`,
+    `Situatie: ${BEWONERTYPE_LABELS[input.bewonertype]}`,
+    `Interesse: ${input.maatregelen.map((m) => MAATREGEL_LABELS[m]).join(", ")}`,
+    `Regelingen: ${regelingen.map((r) => r.titel).join("; ")}`,
+    `Verzoek: overzicht per e-mail ontvangen.`,
+  ].join("\n");
+}
+
+// Schrijft de lead én stuurt (in productie) het overzicht per mail. Via de edge
+// function als VITE_SUBSIDIECHECK_MAIL_URL gezet is; anders een directe
+// lead-insert zonder mail (de lead gaat nooit verloren). Gedeeld door de
+// gegevens-poort (StapGegevens) en het mail-blok onderaan het resultaat
+// (MailOverzicht), zodat het maar op één plek staat.
+export async function verstuurSubsidiecheckLead(args: {
+  waarden: ContactSchoon;
+  input: SubsidieCheckInput;
+  adres: Pick<PdokAdres, "straatnaam" | "woonplaatsnaam">;
+  regelingen: SubsidieRegeling[];
+  overzichtUrl?: string;
+  honeypot?: string;
+}): Promise<void> {
+  const { waarden, input, adres, regelingen, overzichtUrl, honeypot } = args;
+
+  if (!MAIL_FUNCTIE_URL) {
+    // Terugval: alleen de lead, geen mail.
+    await schrijfSubsidiecheckLead({
+      waarden,
+      input,
+      adres,
+      notities: bouwSubsidiecheckNotities(input, regelingen),
+    });
+    return;
+  }
+
+  const res = await fetch(MAIL_FUNCTIE_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      // Vereist door de Supabase function-gateway; anon-key is publiek.
+      apikey: SUPABASE_EXTERNAL_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_EXTERNAL_ANON_KEY}`,
+    },
+    body: JSON.stringify({
+      voornaam: waarden.voornaam,
+      tussenvoegsel: waarden.tussenvoegsel || undefined,
+      achternaam: waarden.achternaam,
+      email: waarden.email,
+      telefoon: waarden.telefoon,
+      honeypot: honeypot ?? "",
+      input: {
+        postcode: normalizePostcode(input.postcode),
+        huisnummer: input.huisnummer,
+        toevoeging: input.toevoeging?.trim() || undefined,
+        bewonertype: input.bewonertype,
+        maatregelen: input.maatregelen,
+      },
+      adres: { straatnaam: adres.straatnaam, woonplaatsnaam: adres.woonplaatsnaam },
+      overzichtUrl,
+      // Alleen wat de mail nodig heeft — geen interne filtervelden meesturen.
+      regelingen: regelingen.map((r) => ({
+        titel: r.titel,
+        niveau: r.niveau,
+        type: r.type,
+        bedragIndicatie: r.bedragIndicatie,
+        omschrijving: r.omschrijving,
+        bronUrl: r.bronUrl,
+      })),
+    }),
+  });
+  if (!res.ok) throw new Error(`subsidiecheck-mail gaf status ${res.status}`);
 }

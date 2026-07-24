@@ -1,11 +1,12 @@
 import { FormEvent, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader2, MapPin } from "lucide-react";
 
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
-import { BEWONERTYPE_LABELS, MAATREGEL_LABELS, type SubsidieCheckInput } from "@/lib/subsidies";
+import { subsidieProvider, type SubsidieCheckInput } from "@/lib/subsidies";
 
-import { schrijfSubsidiecheckLead, valideerContact } from "./leadFormulier";
+import { valideerContact, verstuurSubsidiecheckLead } from "./leadFormulier";
 
 const inputClass =
   "w-full rounded-lg border border-input bg-background px-4 py-3.5 text-[16px] text-foreground outline-none transition min-h-[52px] focus:border-accent focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.18)]";
@@ -18,11 +19,11 @@ interface StapGegevensProps {
 }
 
 // De gegevens-poort: de tussenstap tussen "Jouw woning" en het resultaat. We
-// vragen naam + e-mail + telefoon, schrijven de lead naar het CRM
-// (`leads_bewoners`, bron "Subsidiecheck") en tonen daarna pas het overzicht. Zo
-// verzamelen we alvast leads terwijl de echte lancering nog een paar weken weg is.
-// Bewust géén automatische overzicht-mail hier: de regelingen zijn op dit punt
-// nog niet opgehaald, en de lead is leidend.
+// vragen naam + e-mail + telefoon, halen de regelingen op (primeert meteen de
+// cache voor het resultaat), schrijven de lead naar het CRM (`leads_bewoners`,
+// bron "Subsidiecheck") én sturen het overzicht per mail. Daarna openen we het
+// resultaat op het scherm. Zo verzamelen we alvast leads terwijl de echte
+// lancering nog een paar weken weg is.
 export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps) => {
   const [voornaam, setVoornaam] = useState("");
   const [tussenvoegsel, setTussenvoegsel] = useState("");
@@ -33,17 +34,9 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
   const [bezig, setBezig] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const geladenOp = useRef(Date.now());
+  const queryClient = useQueryClient();
 
   const adresRegel = `${adres.straatnaam} ${input.huisnummer}${input.toevoeging ? ` ${input.toevoeging}` : ""}, ${adres.woonplaatsnaam}`;
-
-  // Situatie + interesse mee in de notitie zodat het team gericht kan opvolgen.
-  // Geen regelingen: die zijn op dit punt (vóór het resultaat) nog niet bekend.
-  const bouwNotities = () =>
-    [
-      "Subsidiecheck: gegevens vooraf verzameld (voordat het overzicht getoond werd).",
-      `Situatie: ${BEWONERTYPE_LABELS[input.bewonertype]}`,
-      `Interesse: ${input.maatregelen.map((m) => MAATREGEL_LABELS[m]).join(", ")}`,
-    ].join("\n");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -67,9 +60,24 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
 
     setBezig(true);
     try {
-      await schrijfSubsidiecheckLead({ waarden: resultaat.waarden, input, adres, notities: bouwNotities() });
+      // Haal de regelingen op (primeert meteen de react-query-cache voor het
+      // resultaat) zodat de mail het echte overzicht kan meesturen.
+      const regelingen = await queryClient.fetchQuery({
+        queryKey: ["subsidiecheck", input],
+        queryFn: () => subsidieProvider.check(input),
+        staleTime: 5 * 60 * 1000,
+      });
+      await verstuurSubsidiecheckLead({
+        waarden: resultaat.waarden,
+        input,
+        adres,
+        regelingen,
+        // Deelbare URL van dit resultaat (voor de "bekijk online"-link in de mail).
+        overzichtUrl: typeof window !== "undefined" ? window.location.href : undefined,
+        honeypot,
+      });
       // Geen persoonsgegevens in het event (privacy) — alleen grove context.
-      pushGtmEvent("subsidiecheck_lead", { bewonertype: input.bewonertype });
+      pushGtmEvent("subsidiecheck_lead", { bewonertype: input.bewonertype, aantal_regelingen: regelingen.length });
       onOntgrendeld(); // component unmount hierna → bezig blijft bewust true
     } catch (err) {
       console.error("Subsidiecheck poort-lead submit failed", err);
@@ -204,15 +212,15 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         {bezig ? (
           <>
             <Loader2 size={16} className="animate-spin" aria-hidden="true" />
-            Momentje…
+            Versturen…
           </>
         ) : (
-          "Bekijk mijn subsidies"
+          "Mail mij dit overzicht"
         )}
       </button>
 
       <p className="mt-3 text-[12px] italic text-muted-foreground">
-        Alleen om je overzicht te tonen en vrijblijvend contact op te nemen. Geen nieuwsbrief.
+        Alleen om je overzicht te sturen en vrijblijvend contact op te nemen. Geen nieuwsbrief.
       </p>
     </form>
   );
