@@ -502,12 +502,16 @@ const Contact = () => {
                   )}
 
                   <form ref={formRef} onSubmit={handleSubmit} noValidate>
-                    {/* Honeypot */}
+                    {/* Honeypot: een gewoon tekstveld (géén type="hidden" — dat slaan
+                        bots juist over) dat alleen met CSS uit beeld staat. De naam is
+                        bewust nietszeggend: browser-autofill herkent `vt_check` niet, dus
+                        een echte bezoeker laat hem gegarandeerd leeg. */}
                     <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", top: "auto", width: 1, height: 1, overflow: "hidden" }}>
                       <label>
                         Laat dit veld leeg
                         <input
                           type="text"
+                          name="vt_check"
                           tabIndex={-1}
                           autoComplete="off"
                           value={honeypot}

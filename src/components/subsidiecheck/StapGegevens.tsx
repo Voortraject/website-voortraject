@@ -94,14 +94,16 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         Je overzicht voor {adresRegel}
       </p>
 
-      {/* Honeypot */}
+      {/* Honeypot: gewoon tekstveld (géén type="hidden" — dat slaan bots juist over),
+          alleen met CSS uit beeld. Naam bewust nietszeggend zodat browser-autofill
+          hem niet herkent en een echte bezoeker hem gegarandeerd leeg laat. */}
       <div
         aria-hidden="true"
         style={{ position: "absolute", left: "-10000px", top: "auto", width: 1, height: 1, overflow: "hidden" }}
       >
         <label>
           Laat dit veld leeg
-          <input type="text" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
+          <input type="text" name="vt_check" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
         </label>
       </div>
 
