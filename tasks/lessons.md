@@ -9,6 +9,40 @@ the user corrects course or a non-obvious gotcha surfaces. Review at session sta
 **Lesson:** the rule to follow next time
 -->
 
+## 2026-07-26 — Formulieren verifiëren zonder de productie-CRM te vervuilen (+ vitest .tsx-valkuil)
+**Context:** Bij het afmaken van de honeypot (veldnaam `vt_check`) moesten alle formulieren
+end-to-end getest worden. Er is geen test-Supabase: elke echte inzending zou een lead in de
+productie-CRM schrijven.
+**Lesson:**
+- **CDP `Fetch.enable` + `Fetch.fulfillRequest` is dé manier om lead-formulieren echt te testen.**
+  Onderschep `*.supabase.co/(rest|functions)/*`, registreer de payload, antwoord zelf met 201.
+  Zo bewijs je én dat het happy path een insert doet én wat er precies in de payload zit, zonder
+  één echte lead. Vang OPTIONS apart af (preflight, 204 + CORS-headers) anders faalt de POST.
+- **Filter netwerkchecks op de échte API-host, niet op het woord "supabase".** De dev-server
+  serveert `src/integrations/supabase/external-client.ts` als gewoon bronbestand; die URL matcht
+  anders je "is er een lead verstuurd"-check en geeft een vals alarm.
+- **Een negatieve check (0 requests) is pas bewijs met een positieve tegenhanger.** Test altijd óók
+  dat een gewone inzending wél precies één call oplevert, anders test je alleen je eigen filter.
+- **Wacht op een DOM-conditie, niet op een vaste sleep.** De dev-server compileert on demand; 2,5 s
+  was te kort voor `/contact` (leeg formulier → misleidende FAIL), pollen op `document.querySelector`
+  is stabiel.
+- **Vitest-valkuil in `.tsx`-tests: `React.ReactElement` gebruiken zonder React te importeren** geeft
+  de nietszeggende fout `Vitest failed to find the runner` op een willekeurige `beforeEach`-regel.
+  Importeer `import type { ReactElement } from "react"`.
+- **`vi.restoreAllMocks()` in `afterEach` wist ook de implementatie van `vi.fn()`-mocks** uit een
+  `vi.mock`-factory. Zet zulke implementaties opnieuw in `beforeEach`, anders faalt de tweede test
+  in een bestand met een onverklaarbare "er ging iets mis".
+
+## 2026-07-17 — Stage opnieuw na élke edit vóór commit (git commit gebruikt de index, niet de working tree)
+**Context:** Bij de mobiele naamvelden-fix deed ik `git add MailOverzicht.tsx` en daarna nog twee
+edits (kolommen 2fr/3fr + placeholder "Tussenv."). `git commit` legde alleen de gestagede
+tussenversie vast; de laatste polish bleef ongecommit. PR #69 mergede daardoor de verkeerde versie
+en er was een reparatie-PR #70 nodig.
+**Lesson:** `git add` bevriest een snapshot in de index. Elke edit ná `git add` valt buiten de commit
+tenzij je opnieuw staget. Doe direct vóór `git commit`: `git status`/`git diff` bekijken, of gewoon
+`git add -A` (of het specifieke bestand) opnieuw — zeker na een reeks visuele iteraties. Verifieer na
+commit dat het diff-aantal klopt met wat je verwacht (5 regels ≠ de volledige wijziging).
+
 ## 2026-07-16 — Eerst fetchen: Lovable/andere sessies pushen ook naar main
 **Context:** Bij de naamvelden-splitsing beschreef de opdracht een telefoonveld op de
 subsidiecheck dat lokaal niet bestond. Ik hield het voor een vergissing van de opdrachtgever;
