@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { valideerContact, validatePhoneNL } from "@/components/subsidiecheck/leadFormulier";
+import { TELEFOON_FOUT } from "@/lib/telefoon";
 
 // Basis: een volledig geldige invoer waar de losse tests één veld van afwijken.
 const basis = {
@@ -11,21 +12,12 @@ const basis = {
   telefoon: "0612345678",
 };
 
+// De nummerregels zelf staan in src/test/telefoon.test.ts; hier alleen dat het
+// formulier die check daadwerkelijk gebruikt.
 describe("validatePhoneNL", () => {
-  it("accepteert geldige NL-nummers (met spatie/streepje/landcode)", () => {
-    expect(validatePhoneNL("0612345678")).toBe(true);
-    expect(validatePhoneNL("06 12345678")).toBe(true);
-    expect(validatePhoneNL("06-12345678")).toBe(true);
-    expect(validatePhoneNL("+31612345678")).toBe(true);
+  it("wordt vanuit het lead-formulier doorgegeven", () => {
     expect(validatePhoneNL("0502112689")).toBe(true);
-  });
-
-  it("weigert ongeldige nummers", () => {
     expect(validatePhoneNL("0612")).toBe(false);
-    expect(validatePhoneNL("12345678")).toBe(false);
-    expect(validatePhoneNL("+3161234567")).toBe(false); // te kort
-    expect(validatePhoneNL("abcdefghij")).toBe(false);
-    expect(validatePhoneNL("")).toBe(false);
   });
 });
 
@@ -77,7 +69,7 @@ describe("valideerContact", () => {
 
   it("weigert een ongeldig telefoonnummer", () => {
     expect(valideerContact({ ...basis, telefoon: "0612" })).toEqual({
-      fout: "Vul een geldig Nederlands telefoonnummer in (bijvoorbeeld 06 12345678).",
+      fout: TELEFOON_FOUT,
     });
   });
 });
