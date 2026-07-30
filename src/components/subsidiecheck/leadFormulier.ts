@@ -113,6 +113,11 @@ export async function schrijfSubsidiecheckLead(args: {
     stad: adres.woonplaatsnaam,
     notities: null,
     subsidiecheck_interesses: bouwSubsidiecheckInteresses(input.maatregelen),
+    // Welk formulier de lead opleverde. n8n bepaalt hiermee de taaktitel én of de
+    // bevestigingsmail uitgaat: wie alleen de subsidiecheck deed krijgt die niet,
+    // want die heeft het overzicht al. CHECK op de kolom: alleen
+    // 'contactformulier', 'subsidietool' of NULL.
+    formulier: "subsidietool",
     bron: "Subsidiecheck",
     status: "nieuw",
   } as never);

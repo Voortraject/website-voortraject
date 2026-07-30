@@ -307,6 +307,10 @@ const Contact = () => {
           stad: bewoner.plaatsnaam.trim() || null,
           notities,
           bron: "Website",
+          // Welk formulier de lead opleverde. n8n bepaalt hiermee de taaktitel én
+          // of de bevestigingsmail ("binnen 24 uur contact") uitgaat. Er staat een
+          // CHECK op: alleen 'contactformulier', 'subsidietool' of NULL.
+          formulier: "contactformulier",
           status: "nieuw",
         } as any);
         if (error) throw error;
