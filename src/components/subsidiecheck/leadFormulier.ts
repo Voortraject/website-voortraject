@@ -22,8 +22,9 @@ export const validatePhoneNL = (raw: string): boolean => {
   return /^0[0-9]{9}$/.test(cleaned) || /^\+31[0-9]{9}$/.test(cleaned);
 };
 
-export const escapeHtml = (s: string) =>
-  s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+// Bewust géén HTML-escaping op de invoer: wat we opslaan moet exact zijn wat de
+// bezoeker typte. Escapen hoort bij het renderen (React doet dat zelf, en het
+// CRM toont deze kolommen als platte tekst), niet bij het opslaan.
 
 // Ruwe invoer uit de formuliervelden.
 export interface ContactVelden {
@@ -85,16 +86,16 @@ export async function schrijfSubsidiecheckLead(args: {
   const { waarden, input, adres, notities } = args;
   const { error } = await supabaseExternal.from("leads_bewoners").insert({
     tenant_id: "00000000-0000-0000-0000-000000000001",
-    voornaam: escapeHtml(waarden.voornaam),
-    tussenvoegsel: waarden.tussenvoegsel ? escapeHtml(waarden.tussenvoegsel) : null,
-    achternaam: escapeHtml(waarden.achternaam),
+    voornaam: waarden.voornaam,
+    tussenvoegsel: waarden.tussenvoegsel || null,
+    achternaam: waarden.achternaam,
     email: waarden.email,
     telefoon: waarden.telefoon,
     postcode: normalizePostcode(input.postcode),
     huisnummer: input.huisnummer,
-    toevoeging: input.toevoeging?.trim() ? escapeHtml(input.toevoeging.trim()) : null,
-    straat: escapeHtml(adres.straatnaam),
-    stad: escapeHtml(adres.woonplaatsnaam),
+    toevoeging: input.toevoeging?.trim() || null,
+    straat: adres.straatnaam,
+    stad: adres.woonplaatsnaam,
     notities,
     bron: "Subsidiecheck",
     status: "nieuw",

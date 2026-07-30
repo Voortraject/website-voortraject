@@ -129,3 +129,25 @@ gedachtestreepjes (—), uiteindelijk met "verwijder op alle plekken de denkstre
 **Lesson:** Schrijf bezoeker-zichtbare NL-copy voor deze site zonder gedachtestreepjes;
 gebruik punt, komma of dubbele punt. Code-comments mogen wel. Oudere pagina's (FAQ,
 Contact) bevatten nog streepjes: alleen aanpassen op verzoek of bij herbouw.
+
+## 2026-07-30 — Escapen hoort bij het renderen, niet bij het opslaan
+**Context:** In het CRM verschenen contactformulier-berichten met letterlijk `&#39;` op het
+scherm. Oorzaak: een `escapeHtml`-helper in `src/pages/Contact.tsx` die de invoer omzette
+*vóór* de insert in `leads_bewoners`. Dezelfde helper stond ook in
+`src/components/subsidiecheck/leadFormulier.ts` en in de edge function
+`subsidiecheck-mail` (bij de insert).
+**Lesson:**
+- Een database-kolom bewaart wat de bezoeker typte, byte voor byte. Escapen is een
+  *output*-stap: doe het op het moment van renderen, in de context die het nodig heeft
+  (HTML-mail, `innerHTML`). Escapen bij opslag beschermt niets en bederft elke consument die
+  de kolom terecht als platte tekst toont.
+- React (JSX) escapet zelf al bij het renderen; er is dus geen reden om invoer "veilig" te
+  maken voordat die de database in gaat. `escapeHtml` in de edge function blijft wél staan
+  voor de mail-HTML — dat is de juiste plek.
+- Zoek bij zulke bugs op alle schrijfpaden naar dezelfde tabel (hier drie: contactformulier,
+  subsidiecheck-terugval, edge function), niet alleen op het pad uit de melding.
+- Verificatie loopt via een echte inzending: dev server + CDP, daarna de rij teruglezen met
+  `bunx supabase db query --linked` en vergelijken met een SQL-literal (`notities = E'...'`).
+  Let op: de JSON-uitvoer van de CLI schrijft ampersand en kleiner-dan als unicode-escapes
+  (backslash-u-0026 / backslash-u-003c). Dat is de JSON-encoder, niet de data: laat de
+  vergelijking daarom door SQL zelf doen en lees een boolean terug.
