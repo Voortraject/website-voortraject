@@ -77,8 +77,9 @@ const NAME_RE = /^[\p{L}\s'\-]+$/u;
 const COMPANY_RE = /^[\p{L}\p{N}\s.,&\-'()/]+$/u;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-const escapeHtml = (s: string) =>
-  s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+// Bewust géén HTML-escaping op de invoer: wat we opslaan moet exact zijn wat de
+// bezoeker typte. Escapen hoort bij het renderen (React doet dat zelf, en het
+// CRM toont deze kolommen als platte tekst), niet bij het opslaan.
 
 const validatePhoneNL = (raw: string): boolean => {
   const cleaned = raw.replace(/[\s\-]/g, "");
@@ -284,7 +285,7 @@ const Contact = () => {
     try {
       if (mode === "bewoner") {
         const beltijd = bewoner.bel_voorkeur.trim();
-        const opmerkingen = escapeHtml(bewoner.vragen.trim());
+        const opmerkingen = bewoner.vragen.trim();
         let notities: string | null = null;
         if (beltijd && opmerkingen) notities = `Voorkeur voor contact: ${beltijd}\n${opmerkingen}`;
         else if (beltijd) notities = `Voorkeur voor contact: ${beltijd}`;
@@ -294,16 +295,16 @@ const Contact = () => {
         // CRM stelt die zelf samen uit voornaam/tussenvoegsel/achternaam.
         const { error } = await supabase.from("leads_bewoners").insert({
           tenant_id: "00000000-0000-0000-0000-000000000001",
-          voornaam: escapeHtml(bewoner.voornaam.trim()),
-          tussenvoegsel: bewoner.tussenvoegsel.trim() ? escapeHtml(bewoner.tussenvoegsel.trim()) : null,
-          achternaam: escapeHtml(bewoner.achternaam.trim()),
+          voornaam: bewoner.voornaam.trim(),
+          tussenvoegsel: bewoner.tussenvoegsel.trim() || null,
+          achternaam: bewoner.achternaam.trim(),
           email: bewoner.email.trim(),
           telefoon: bewoner.telefoonnummer.trim(),
           postcode: bewoner.postcode ? normalizePostcode(bewoner.postcode) : null,
           huisnummer: bewoner.huisnummer.trim() || null,
           toevoeging: bewoner.toevoeging.trim() || null,
-          straat: bewoner.straatnaam.trim() ? escapeHtml(bewoner.straatnaam.trim()) : null,
-          stad: bewoner.plaatsnaam.trim() ? escapeHtml(bewoner.plaatsnaam.trim()) : null,
+          straat: bewoner.straatnaam.trim() || null,
+          stad: bewoner.plaatsnaam.trim() || null,
           notities,
           bron: "Website",
           status: "nieuw",
@@ -318,15 +319,13 @@ const Contact = () => {
         // in het CRM stelt die zelf samen uit de drie contactpersoon-delen.
         const { error } = await supabase.from("leads_uitvoerders").insert({
           tenant_id: "00000000-0000-0000-0000-000000000001",
-          bedrijfsnaam: escapeHtml(uitvoerder.bedrijfsnaam.trim()),
-          contactpersoon_voornaam: escapeHtml(uitvoerder.contactpersoon_voornaam.trim()),
-          contactpersoon_tussenvoegsel: uitvoerder.contactpersoon_tussenvoegsel.trim()
-            ? escapeHtml(uitvoerder.contactpersoon_tussenvoegsel.trim())
-            : null,
-          contactpersoon_achternaam: escapeHtml(uitvoerder.contactpersoon_achternaam.trim()),
+          bedrijfsnaam: uitvoerder.bedrijfsnaam.trim(),
+          contactpersoon_voornaam: uitvoerder.contactpersoon_voornaam.trim(),
+          contactpersoon_tussenvoegsel: uitvoerder.contactpersoon_tussenvoegsel.trim() || null,
+          contactpersoon_achternaam: uitvoerder.contactpersoon_achternaam.trim(),
           email: uitvoerder.email.trim(),
           telefoon: uitvoerder.telefoonnummer.trim(),
-          notities: uitvoerder.vragen.trim() ? escapeHtml(uitvoerder.vragen.trim()) : null,
+          notities: uitvoerder.vragen.trim() || null,
           bron: "Website",
           status: "nieuw",
         } as any);

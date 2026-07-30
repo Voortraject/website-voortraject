@@ -148,6 +148,8 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
+// Alleen voor de mail-HTML hieronder: escapen hoort bij het renderen. Wat we in
+// `leads_bewoners` opslaan blijft onbewerkt — precies wat de bezoeker typte.
 const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 
@@ -478,11 +480,11 @@ Deno.serve(async (req: Request) => {
     // (oude bundle, alleen `naam`): schrijf zoals voorheen de ene kolom.
     const naamVelden = achternaam
       ? {
-          voornaam: voornaam ? escapeHtml(voornaam) : null,
-          tussenvoegsel: tussenvoegsel ? escapeHtml(tussenvoegsel) : null,
-          achternaam: escapeHtml(achternaam),
+          voornaam: voornaam || null,
+          tussenvoegsel: tussenvoegsel || null,
+          achternaam,
         }
-      : { naam: escapeHtml(legacyNaam) };
+      : { naam: legacyNaam };
     const { error } = await supabase.from("leads_bewoners").insert({
       tenant_id: TENANT_ID,
       ...naamVelden,
@@ -490,9 +492,9 @@ Deno.serve(async (req: Request) => {
       telefoon,
       postcode,
       huisnummer,
-      toevoeging: toevoeging ? escapeHtml(toevoeging) : null,
-      straat: escapeHtml(straat),
-      stad: escapeHtml(stad),
+      toevoeging: toevoeging || null,
+      straat,
+      stad,
       notities,
       bron: "Subsidiecheck",
       status: "nieuw",
