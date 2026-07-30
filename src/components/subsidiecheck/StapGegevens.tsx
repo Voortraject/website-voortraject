@@ -4,9 +4,9 @@ import { Loader2, MapPin } from "lucide-react";
 
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
-import { subsidieProvider, type SubsidieCheckInput } from "@/lib/subsidies";
+import { subsidieProvider, type SubsidieCheckInput, type SubsidieRegeling } from "@/lib/subsidies";
 
-import { valideerContact, verstuurSubsidiecheckLead } from "./leadFormulier";
+import { schrijfSubsidiecheckLead, valideerContact, verstuurSubsidiecheckLead } from "./leadFormulier";
 
 const inputClass =
   "w-full rounded-lg border border-input bg-background px-4 py-3.5 text-[16px] text-foreground outline-none transition min-h-[52px] focus:border-accent focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.18)]";
@@ -23,7 +23,8 @@ interface StapGegevensProps {
 // cache voor het resultaat), schrijven de lead naar het CRM (`leads_bewoners`,
 // bron "Subsidiecheck") én sturen het overzicht per mail. Daarna openen we het
 // resultaat op het scherm. Zo verzamelen we alvast leads terwijl de echte
-// lancering nog een paar weken weg is.
+// lancering nog een paar weken weg is. Faalt de bron, dan gaat de lead er
+// alsnog in (zonder mail) en toont het resultaat zelf de foutstaat.
 export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps) => {
   const [voornaam, setVoornaam] = useState("");
   const [tussenvoegsel, setTussenvoegsel] = useState("");
@@ -61,12 +62,33 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
     setBezig(true);
     try {
       // Haal de regelingen op (primeert meteen de react-query-cache voor het
-      // resultaat) zodat de mail het echte overzicht kan meesturen.
-      const regelingen = await queryClient.fetchQuery({
-        queryKey: ["subsidiecheck", input],
-        queryFn: () => subsidieProvider.check(input),
-        staleTime: 5 * 60 * 1000,
-      });
+      // resultaat) zodat de mail het echte overzicht kan meesturen. `retry: 1`
+      // gelijk aan useSubsidieCheck; de standaard (3x met backoff) zou de
+      // bezoeker hier seconden laten wachten.
+      let regelingen: SubsidieRegeling[];
+      try {
+        regelingen = await queryClient.fetchQuery({
+          queryKey: ["subsidiecheck", input],
+          queryFn: () => subsidieProvider.check(input),
+          staleTime: 5 * 60 * 1000,
+          retry: 1,
+        });
+      } catch (bronFout) {
+        // Bron onbereikbaar: de lead is leidend en mag hier niet sneuvelen. We
+        // schrijven 'm direct weg (zonder mail — een overzicht met 0 regelingen
+        // mailen is erger dan niets) en laten de bezoeker door naar het
+        // resultaat, dat zelf de eerlijke foutstaat met "Opnieuw proberen"
+        // toont. Het team ziet de lead en volgt op.
+        console.error("Subsidiecheck: bron faalde in de poort, lead zonder mail opgeslagen", bronFout);
+        await schrijfSubsidiecheckLead({ waarden: resultaat.waarden, input, adres });
+        pushGtmEvent("subsidiecheck_lead", {
+          bewonertype: input.bewonertype,
+          aantal_regelingen: 0,
+          bron_fout: true,
+        });
+        onOntgrendeld();
+        return;
+      }
       await verstuurSubsidiecheckLead({
         waarden: resultaat.waarden,
         input,

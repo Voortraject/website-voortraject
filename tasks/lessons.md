@@ -9,6 +9,45 @@ the user corrects course or a non-obvious gotcha surfaces. Review at session sta
 **Lesson:** the rule to follow next time
 -->
 
+## 2026-07-30 — Stille terugval op voorbeelddata = onzichtbare fouten; faal eerlijk
+**Context:** De subsidiecheck viel bij een bronfout stil terug op de mock ("basisset"): één
+transiënte fout van Verbeterjehuis en de bezoeker zag 5 verzonnen regelingen in plaats van de
+echte lijst, mét een verkeerd totaal, en kreeg die ook nog per mail. Extra verraderlijk: doordat
+de provider de fout inslikte deed react-query's `retry: 1` nooit iets en bleef het foute resultaat
+5 minuten in de query-cache; de Vite-proxy logt upstream-fouten niet, dus de dev-log bleef leeg.
+De foutstaat met "Opnieuw proberen" stond al in `StapResultaat`, maar werd nooit bereikt.
+**Lesson:**
+- **Geen stille terugval op nepdata in een tool die echte beslissingen en leads stuurt.** Laat de
+  fout door naar react-query (retry) en toon daarna de eerlijke foutstaat.
+- **Een provider die intern catcht, schakelt de retry-laag erboven uit.** Foutafhandeling hoort op
+  één laag te leven; hier is dat react-query.
+- **Faal eerlijk mag nooit ten koste van de lead gaan.** In de gegevens-poort (`StapGegevens`)
+  zaten "regelingen ophalen" en "lead wegschrijven" in dezelfde `try`: zodra de bron ging gooien,
+  verloor je de lead van een bezoeker die zijn gegevens al had ingevuld. Nu apart: bron faalt →
+  lead direct wegschrijven (zonder mail, want een overzicht met 0 regelingen mailen is erger dan
+  niets) en doorlaten naar de foutstaat. Let bij zulke fixes altijd op de *andere* consumenten van
+  de call die je laat gooien.
+- **Herken de mock aan de details:** "lening tot € 1.000" (eerste bedrag uit de mock-range
+  "€ 1.000 – € 71.000") en id's zonder bron-slugformaat.
+- **Draai de subsidiecheck ook lokaal via de edge function** (`VITE_SUBSIDIECHECK_URL` in `.env`,
+  zie `.env.example`): rechtstreeks scrapen via de `/esw`-proxy vuurt per check ~12 parallelle
+  browser-requests zonder cache af en hapert geregeld op de bron; de function heeft een 12u-cache
+  en nette limieten (zelfde pad als productie). De proxy is alleen nog voor bron/parser-debugging.
+
+## 2026-07-30 — Verbeterjehuis-niveaus zijn onbetrouwbaar: de chip codeert de financier
+**Context:** Bij een poging om niet-landelijke regelingen apart te behandelen bleek het
+bron-niveau (`national-government` / `province` / `municipality` / `other`) geen bruikbare grens.
+Live-verificatie op meerdere postcodes toonde: regionale regelingen (Isolatieaanpak Groningen,
+Subsidie Waardevermeerdering) staan bij de bron ónder "national-government", en de indeling voor
+hetzelfde adres wisselt per pull.
+**Lesson:** de chip op verbeterjehuis.nl codeert **wie betaalt**, niet het toepassingsgebied; een
+as "landelijk vs regionaal" bestaat bij de bron niet. Wil je regelingen cureren of apart
+behandelen, doe dat op de stabiele **regeling-id** (laatste padsegment van de bron-URL, bijv.
+`isde-subsidie-rijksoverheid`) — die is identiek over Groningse en Drentse postcodes. Zelfde
+patroon als `CURATED_BEDRAG` in `energiesubsidiewijzerProvider.ts`. Verifieer zulke
+bron-aannames altijd tegen de échte bron op meerdere adressen, niet tegen één screenshot of de
+mockdata (mock-id's wijken af van de live id's).
+
 ## 2026-07-26 — Formulieren verifiëren zonder de productie-CRM te vervuilen (+ vitest .tsx-valkuil)
 **Context:** Bij het afmaken van de honeypot (veldnaam `vt_check`) moesten alle formulieren
 end-to-end getest worden. Er is geen test-Supabase: elke echte inzending zou een lead in de
