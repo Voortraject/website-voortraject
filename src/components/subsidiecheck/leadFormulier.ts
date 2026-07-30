@@ -1,8 +1,9 @@
 import { SUPABASE_EXTERNAL_ANON_KEY, supabaseExternal } from "@/integrations/supabase/external-client";
 import { normalizePostcode, type PdokAdres } from "@/lib/pdok";
 import {
-  BEWONERTYPE_LABELS,
+  ALLE_MAATREGELEN,
   MAATREGEL_LABELS,
+  type Maatregel,
   type SubsidieCheckInput,
   type SubsidieRegeling,
 } from "@/lib/subsidies";
@@ -73,17 +74,31 @@ export function valideerContact(velden: ContactVelden): ContactResultaat {
   return { waarden: { voornaam, tussenvoegsel, achternaam, email, telefoon } };
 }
 
+// De aangevinkte interesses als platte tekst voor `subsidiecheck_interesses`,
+// bijvoorbeeld "Isolatie & glas, Warmtepomp, Thuisbatterij". Altijd in de
+// volgorde waarin de chips op de site staan (ALLE_MAATREGELEN), niet in
+// klikvolgorde, zodat het CRM leest zoals de bezoeker het zag. Rauwe tekst: de
+// `&` blijft een gewone ampersand (escapen hoort bij het renderen).
+export function bouwSubsidiecheckInteresses(maatregelen: Maatregel[]): string {
+  return ALLE_MAATREGELEN.filter((m) => maatregelen.includes(m))
+    .map((m) => MAATREGEL_LABELS[m])
+    .join(", ");
+}
+
 // Schrijft de subsidiecheck-lead rechtstreeks in het CRM (`leads_bewoners`),
 // exact dezelfde tabel/kolommen als het contactformulier — alleen `bron`
 // verschilt. De kolom `naam` bewust niet meesturen: een BEFORE INSERT-trigger in
 // het CRM stelt die zelf samen uit voornaam/tussenvoegsel/achternaam.
+//
+// `notities` blijft leeg (die kolom is voor het team zelf) en
+// `gewenste_maatregelen` raken we niet aan; de aangevinkte onderwerpen gaan naar
+// de eigen kolom `subsidiecheck_interesses`.
 export async function schrijfSubsidiecheckLead(args: {
   waarden: ContactSchoon;
   input: SubsidieCheckInput;
   adres: Pick<PdokAdres, "straatnaam" | "woonplaatsnaam">;
-  notities: string;
 }): Promise<void> {
-  const { waarden, input, adres, notities } = args;
+  const { waarden, input, adres } = args;
   const { error } = await supabaseExternal.from("leads_bewoners").insert({
     tenant_id: "00000000-0000-0000-0000-000000000001",
     voornaam: waarden.voornaam,
@@ -96,7 +111,8 @@ export async function schrijfSubsidiecheckLead(args: {
     toevoeging: input.toevoeging?.trim() || null,
     straat: adres.straatnaam,
     stad: adres.woonplaatsnaam,
-    notities,
+    notities: null,
+    subsidiecheck_interesses: bouwSubsidiecheckInteresses(input.maatregelen),
     bron: "Subsidiecheck",
     status: "nieuw",
   } as never);
@@ -111,18 +127,6 @@ const MAIL_FUNCTIE_URL = import.meta.env.VITE_SUBSIDIECHECK_MAIL_URL as string |
 
 /** True als de mailfunctie geconfigureerd is (dan wordt het overzicht ook gemaild). */
 export const kanOverzichtMailen = !!MAIL_FUNCTIE_URL;
-
-// Notitie voor de lead (client-insertpad). De edge function stelt server-side een
-// eigen notitie samen uit de payload, dus deze telt alleen bij de terugval.
-export function bouwSubsidiecheckNotities(input: SubsidieCheckInput, regelingen: SubsidieRegeling[]): string {
-  return [
-    `Subsidiecheck ingevuld: ${regelingen.length} regelingen gevonden.`,
-    `Situatie: ${BEWONERTYPE_LABELS[input.bewonertype]}`,
-    `Interesse: ${input.maatregelen.map((m) => MAATREGEL_LABELS[m]).join(", ")}`,
-    `Regelingen: ${regelingen.map((r) => r.titel).join("; ")}`,
-    `Verzoek: overzicht per e-mail ontvangen.`,
-  ].join("\n");
-}
 
 // Schrijft de lead én stuurt (in productie) het overzicht per mail. Via de edge
 // function als VITE_SUBSIDIECHECK_MAIL_URL gezet is; anders een directe
@@ -141,12 +145,7 @@ export async function verstuurSubsidiecheckLead(args: {
 
   if (!MAIL_FUNCTIE_URL) {
     // Terugval: alleen de lead, geen mail.
-    await schrijfSubsidiecheckLead({
-      waarden,
-      input,
-      adres,
-      notities: bouwSubsidiecheckNotities(input, regelingen),
-    });
+    await schrijfSubsidiecheckLead({ waarden, input, adres });
     return;
   }
 

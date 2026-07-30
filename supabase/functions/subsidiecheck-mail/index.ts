@@ -79,12 +79,18 @@ const LOGO_URL =
 
 // (Niveau-kleuren zijn bewust verwijderd: kleur = alleen het type, zie hierboven.)
 const TYPE_LABELS: Record<string, string> = { subsidie: "Subsidie", lening: "Lening" };
-const BEWONERTYPE_LABELS: Record<string, string> = {
-  woningeigenaar: "Woningeigenaar",
-  huurder: "Huurder",
-  vve: "VvE",
-  verhuurder: "Verhuurder",
-};
+// Volgorde van de chips op de site; bepaalt ook de volgorde in
+// `subsidiecheck_interesses` (niet de klikvolgorde van de bezoeker).
+const ALLE_MAATREGELEN = [
+  "isolatie",
+  "warmtepomp",
+  "zonnepanelen",
+  "zonneboiler",
+  "ventilatie",
+  "warmtenet",
+  "elektrisch-koken",
+  "thuisbatterij",
+] as const;
 const MAATREGEL_LABELS: Record<string, string> = {
   isolatie: "Isolatie & glas",
   warmtepomp: "Warmtepomp",
@@ -452,7 +458,6 @@ Deno.serve(async (req: Request) => {
 
   // Kap de lijst af tegen misbruik; behoud de volgorde.
   const regelingen = Array.isArray(payload.regelingen) ? payload.regelingen.slice(0, 60) : [];
-  const bewonertype = input.bewonertype ?? "woningeigenaar";
   const maatregelen = Array.isArray(input.maatregelen) ? input.maatregelen : [];
 
   const straat = (adres.straatnaam ?? "").trim();
@@ -463,13 +468,13 @@ Deno.serve(async (req: Request) => {
     [straat, huisnummer].filter(Boolean).join(" ") + (toevoeging ? ` ${toevoeging}` : "") + (stad ? `, ${stad}` : "");
 
   // 1) Lead opslaan (leidend — nooit verliezen).
-  const notities = [
-    `Subsidiecheck ingevuld: ${regelingen.length} regelingen gevonden.`,
-    `Situatie: ${BEWONERTYPE_LABELS[bewonertype] ?? bewonertype}`,
-    `Interesse: ${maatregelen.map((m) => MAATREGEL_LABELS[m] ?? m).join(", ")}`,
-    `Regelingen: ${regelingen.map((r) => r.titel ?? "").filter(Boolean).join("; ")}`,
-    `Verzoek: overzicht per e-mail ontvangen (automatisch verstuurd).`,
-  ].join("\n");
+  // `notities` blijft leeg (die kolom is voor het team zelf) en
+  // `gewenste_maatregelen` raken we niet aan; de aangevinkte onderwerpen gaan
+  // als platte tekst naar `subsidiecheck_interesses`, in de volgorde van de
+  // chips op de site — bijv. "Isolatie & glas, Warmtepomp, Thuisbatterij".
+  const interesses = ALLE_MAATREGELEN.filter((m) => maatregelen.includes(m))
+    .map((m) => MAATREGEL_LABELS[m])
+    .join(", ");
 
   try {
     const supabase = createClient(
@@ -495,7 +500,8 @@ Deno.serve(async (req: Request) => {
       toevoeging: toevoeging || null,
       straat,
       stad,
-      notities,
+      notities: null,
+      subsidiecheck_interesses: interesses,
       bron: "Subsidiecheck",
       status: "nieuw",
     });
