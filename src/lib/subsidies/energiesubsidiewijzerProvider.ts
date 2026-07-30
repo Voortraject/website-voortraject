@@ -2,7 +2,6 @@ import {
   SUPABASE_EXTERNAL_ANON_KEY,
 } from "@/integrations/supabase/external-client";
 import { parseDetail, parseResultaten, verrijk, type RegelingDetail } from "./energiesubsidiewijzer";
-import { mockSubsidieProvider } from "./mockProvider";
 import type { SubsidieProvider } from "./provider";
 import { bouwEswFilterQuery, type SubsidieCheckInput, type SubsidieRegeling } from "./types";
 
@@ -90,22 +89,20 @@ async function verrijkAlles(regelingen: SubsidieRegeling[]): Promise<SubsidieReg
 export const energiesubsidiewijzerProvider: SubsidieProvider = {
   naam: "Energiesubsidiewijzer",
   async check(input: SubsidieCheckInput): Promise<SubsidieRegeling[]> {
-    try {
-      // Bewonertype + maatregelen → Verbeterjehuis-filterparameters (bron filtert
-      // server-side, exact zoals hun eigen tool).
-      const filters = bouwEswFilterQuery(input.bewonertype, input.maatregelen);
-      // Een bronfout gooit (→ mock-terugval hieronder); een lege-maar-geldige
-      // lijst (0 regelingen voor deze situatie) komt gewoon door en toont de
-      // nette "geen regelingen"-staat, niet stiekem voorbeelddata.
-      const regelingen = FUNCTIE_URL
-        ? await haalViaFunctie(input.postcode, filters)
-        : await verrijkAlles(await haalLijstViaProxy(input.postcode, filters));
-      return metCuratedBedrag(regelingen);
-    } catch (err) {
-      // TODO go-live: bij terugval een zachte melding tonen ("basisoverzicht,
-      // live bron even niet bereikbaar") i.p.v. stil de basisset serveren.
-      console.warn("[Energiesubsidiewijzer] live-bron faalde, terugval op basisset:", err);
-      return mockSubsidieProvider.check(input);
-    }
+    // Bewonertype + maatregelen → Verbeterjehuis-filterparameters (bron filtert
+    // server-side, exact zoals hun eigen tool).
+    const filters = bouwEswFilterQuery(input.bewonertype, input.maatregelen);
+    // Een bronfout gooit hier bewust DOOR (geen stille terugval op voorbeelddata
+    // meer): react-query retry't en toont daarna de eerlijke foutstaat met
+    // "Opnieuw proberen". Nepdata tonen is erger dan een nette fout, want de
+    // bezoeker neemt beslissingen op dit overzicht en krijgt het ook per mail.
+    // Bijkomend: een provider die intern catcht schakelt die retry-laag uit, en
+    // een fout resultaat bleef zo 5 minuten in de query-cache hangen.
+    // Een lege-maar-geldige lijst (0 regelingen voor deze situatie) komt gewoon
+    // door en toont de nette "geen regelingen"-staat.
+    const regelingen = FUNCTIE_URL
+      ? await haalViaFunctie(input.postcode, filters)
+      : await verrijkAlles(await haalLijstViaProxy(input.postcode, filters));
+    return metCuratedBedrag(regelingen);
   },
 };
