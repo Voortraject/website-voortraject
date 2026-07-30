@@ -502,6 +502,11 @@ Deno.serve(async (req: Request) => {
       stad,
       notities: null,
       subsidiecheck_interesses: interesses,
+      // Welk formulier de lead opleverde. n8n bepaalt hiermee de taaktitel én of
+      // de bevestigingsmail uitgaat: deze bezoeker krijgt hierboven al het
+      // subsidieoverzicht, dus niet nóg een "we nemen contact op"-mail. CHECK op
+      // de kolom: alleen 'contactformulier', 'subsidietool' of NULL.
+      formulier: "subsidietool",
       bron: "Subsidiecheck",
       status: "nieuw",
     });
