@@ -5,6 +5,7 @@ import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
 import { normalizePostcode, POSTCODE_RE, zoekAdres } from "@/lib/pdok";
+import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
 import contactAdviseur from "@/assets/christian-koptelefoon.webp";
 
 type Mode = "uitvoerder" | "bewoner";
@@ -81,15 +82,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 // bezoeker typte. Escapen hoort bij het renderen (React doet dat zelf, en het
 // CRM toont deze kolommen als platte tekst), niet bij het opslaan.
 
-const validatePhoneNL = (raw: string): boolean => {
-  const cleaned = raw.replace(/[\s\-]/g, "");
-  if (!/^[+0-9]+$/.test(cleaned)) return false;
-  // Accepteer 0xxxxxxxxx (10 digits) of +31xxxxxxxxx
-  if (/^0[0-9]{9}$/.test(cleaned)) return true;
-  if (/^\+31[0-9]{9}$/.test(cleaned)) return true;
-  // Vaste lijn varianten met 10 cijfers ook gedekt door 0xxxxxxxxx
-  return false;
-};
+// De nummercheck zelf staat in src/lib/telefoon.ts, gedeeld met de subsidiecheck.
 
 // ---------- Component ----------
 const Contact = () => {
@@ -185,8 +178,7 @@ const Contact = () => {
 
       const tel = bewoner.telefoonnummer.trim();
       if (!tel) e.telefoonnummer = "Vul je telefoonnummer in.";
-      else if (!validatePhoneNL(tel))
-        e.telefoonnummer = "Vul een geldig Nederlands telefoonnummer in (bijvoorbeeld 06 12345678).";
+      else if (!validatePhoneNL(tel)) e.telefoonnummer = TELEFOON_FOUT;
 
       const pc = bewoner.postcode.trim();
       const hn = bewoner.huisnummer.trim();
@@ -223,8 +215,7 @@ const Contact = () => {
 
       const tel = uitvoerder.telefoonnummer.trim();
       if (!tel) e.telefoonnummer = "Vul je telefoonnummer in.";
-      else if (!validatePhoneNL(tel))
-        e.telefoonnummer = "Vul een geldig Nederlands telefoonnummer in (bijvoorbeeld 06 12345678).";
+      else if (!validatePhoneNL(tel)) e.telefoonnummer = TELEFOON_FOUT;
 
       if (uitvoerder.vragen.length > MAX_NOTES) e.vragen = "Je bericht is te lang (maximaal 2000 karakters).";
     }

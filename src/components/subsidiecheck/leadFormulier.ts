@@ -1,5 +1,6 @@
 import { SUPABASE_EXTERNAL_ANON_KEY, supabaseExternal } from "@/integrations/supabase/external-client";
 import { normalizePostcode, type PdokAdres } from "@/lib/pdok";
+import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
 import {
   ALLE_MAATREGELEN,
   MAATREGEL_LABELS,
@@ -16,12 +17,9 @@ import {
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 export const NAME_RE = /^[\p{L}\s'-]+$/u;
 
-// Zelfde NL-nummercheck als het contactformulier: 0xxxxxxxxx of +31xxxxxxxxx.
-export const validatePhoneNL = (raw: string): boolean => {
-  const cleaned = raw.replace(/[\s-]/g, "");
-  if (!/^[+0-9]+$/.test(cleaned)) return false;
-  return /^0[0-9]{9}$/.test(cleaned) || /^\+31[0-9]{9}$/.test(cleaned);
-};
+// De nummercheck woont in src/lib/telefoon.ts en wordt gedeeld met het
+// contactformulier. Hier ook geëxporteerd zodat bestaande imports blijven werken.
+export { validatePhoneNL };
 
 // Bewust géén HTML-escaping op de invoer: wat we opslaan moet exact zijn wat de
 // bezoeker typte. Escapen hoort bij het renderen (React doet dat zelf, en het
@@ -68,8 +66,7 @@ export function valideerContact(velden: ContactVelden): ContactResultaat {
 
   const telefoon = velden.telefoon.trim();
   if (!telefoon) return { fout: "Vul je telefoonnummer in." };
-  if (!validatePhoneNL(telefoon))
-    return { fout: "Vul een geldig Nederlands telefoonnummer in (bijvoorbeeld 06 12345678)." };
+  if (!validatePhoneNL(telefoon)) return { fout: TELEFOON_FOUT };
 
   return { waarden: { voornaam, tussenvoegsel, achternaam, email, telefoon } };
 }

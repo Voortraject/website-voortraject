@@ -57,11 +57,23 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const NAME_RE = /^[\p{L}\s'-]+$/u;
 const POSTCODE_RE = /^[1-9][0-9]{3}[A-Z]{2}$/;
 
-// Zelfde NL-nummercheck als de client: 0xxxxxxxxx of +31xxxxxxxxx.
+// Bewust dezelfde, ruime nummercheck als de client. Deno kan src/ niet
+// importeren, dus dit is een kopie van src/lib/telefoon.ts: pas ze samen aan.
+// Wijkt deze af, dan zet de check hieronder een geldig nummer op null en raakt
+// de lead zijn telefoonnummer kwijt.
+const SCHEIDINGSTEKENS = /[\s.–—/()-]/g;
+
 function validatePhoneNL(raw: string): boolean {
-  const cleaned = raw.replace(/[\s-]/g, "");
-  if (!/^[+0-9]+$/.test(cleaned)) return false;
-  return /^0[0-9]{9}$/.test(cleaned) || /^\+31[0-9]{9}$/.test(cleaned);
+  let n = raw.trim().replace(SCHEIDINGSTEKENS, "");
+  if (n.startsWith("00")) n = `+${n.slice(2)}`;
+  if (!/^\+?[0-9]+$/.test(n)) return false;
+  n = n.replace(/^\+310(?=[0-9])/, "+31");
+
+  if (/^0[0-9]{9}$/.test(n)) return true; // NL nationaal: 06…, 050…, 0592…
+  if (/^\+31[1-9][0-9]{8}$/.test(n)) return true; // NL met landcode
+  if (/^[1-9][0-9]{8}$/.test(n)) return true; // trunk-nul vergeten
+  if (n.startsWith("+31")) return false; // NL van de verkeerde lengte
+  return /^\+[1-9][0-9]{7,14}$/.test(n); // overig buitenlands nummer
 }
 
 const NIVEAU_VOLGORDE = ["rijk", "provincie", "gemeente", "overig"] as const;
