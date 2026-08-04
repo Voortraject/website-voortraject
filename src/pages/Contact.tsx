@@ -297,7 +297,11 @@ const Contact = () => {
           straat: bewoner.straatnaam.trim() || null,
           stad: bewoner.plaatsnaam.trim() || null,
           notities,
-          bron: "Website",
+          // Eigen lead van onze eigen site: bron "Voortraject". Het CRM
+          // normaliseert dat (trigger `normaliseer_lead_bron`) via de naam in
+          // `lead_bronnen` naar de code `voortraject`. De oude waarde "Website"
+          // werd code `website`, en die bron is in het CRM niet meer in gebruik.
+          bron: "Voortraject",
           // Welk formulier de lead opleverde. n8n bepaalt hiermee de taaktitel én
           // of de bevestigingsmail ("binnen 24 uur contact") uitgaat. Er staat een
           // CHECK op: alleen 'contactformulier', 'subsidietool' of NULL.
@@ -321,7 +325,8 @@ const Contact = () => {
           email: uitvoerder.email.trim(),
           telefoon: uitvoerder.telefoonnummer.trim(),
           notities: uitvoerder.vragen.trim() || null,
-          bron: "Website",
+          // Zie de bewoners-insert hierboven: eigen lead, dus bron "Voortraject".
+          bron: "Voortraject",
           status: "nieuw",
         } as any);
         if (error) throw error;
