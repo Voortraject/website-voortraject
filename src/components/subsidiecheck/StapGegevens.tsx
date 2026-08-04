@@ -21,7 +21,7 @@ interface StapGegevensProps {
 // De gegevens-poort: de tussenstap tussen "Jouw woning" en het resultaat. We
 // vragen naam + e-mail + telefoon, halen de regelingen op (primeert meteen de
 // cache voor het resultaat), schrijven de lead naar het CRM (`leads_bewoners`,
-// bron "Subsidiecheck") én sturen het overzicht per mail. Daarna openen we het
+// bron "Voortraject", formulier "subsidietool") én sturen het overzicht per mail. Daarna openen we het
 // resultaat op het scherm. Zo verzamelen we alvast leads terwijl de echte
 // lancering nog een paar weken weg is. Faalt de bron, dan gaat de lead er
 // alsnog in (zonder mail) en toont het resultaat zelf de foutstaat.

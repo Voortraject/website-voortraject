@@ -3,7 +3,7 @@
 // De zachte conversieroute "Mail mij dit overzicht". Doet twee dingen serverside:
 //   1. schrijft de lead naar `leads_bewoners` in het CRM-project (via
 //      service_role — dezelfde tabel/kolommen als het contactformulier, alleen
-//      bron: "Subsidiecheck"), en
+//      bron: "Voortraject"), en
 //   2. stuurt de bezoeker het gevonden subsidieoverzicht per e-mail via Resend
 //      (API-key blijft server-side geheim), met een kopie naar het team.
 //
@@ -519,7 +519,12 @@ Deno.serve(async (req: Request) => {
       // subsidieoverzicht, dus niet nóg een "we nemen contact op"-mail. CHECK op
       // de kolom: alleen 'contactformulier', 'subsidietool' of NULL.
       formulier: "subsidietool",
-      bron: "Subsidiecheck",
+      // Eigen lead uit onze eigen tool, dus bron "Voortraject". Het CRM
+      // normaliseert dit (trigger `normaliseer_lead_bron`) via de naam in
+      // `lead_bronnen` naar de code `voortraject`; vóór deze wijziging viel
+      // "Subsidiecheck" terug op `website`. Welk formulier de lead opleverde
+      // staat in `formulier` hierboven.
+      bron: "Voortraject",
       status: "nieuw",
     });
     if (error) throw error;

@@ -101,7 +101,7 @@ describe("gegevens-poort bij een bronfout", () => {
     expect(insertMock).toHaveBeenCalledTimes(1);
     const [tabel, rij] = insertMock.mock.calls[0];
     expect(tabel).toBe("leads_bewoners");
-    expect(rij).toMatchObject({ email: "jan@example.nl", bron: "Subsidiecheck" });
+    expect(rij).toMatchObject({ email: "jan@example.nl", bron: "Voortraject" });
     expect(rij.subsidiecheck_interesses).toBe("Isolatie & glas");
   });
 });

@@ -83,8 +83,8 @@ export function bouwSubsidiecheckInteresses(maatregelen: Maatregel[]): string {
 }
 
 // Schrijft de subsidiecheck-lead rechtstreeks in het CRM (`leads_bewoners`),
-// exact dezelfde tabel/kolommen als het contactformulier — alleen `bron`
-// verschilt. De kolom `naam` bewust niet meesturen: een BEFORE INSERT-trigger in
+// exact dezelfde tabel/kolommen als het contactformulier — alleen `bron` en
+// `formulier` verschillen. De kolom `naam` bewust niet meesturen: een BEFORE INSERT-trigger in
 // het CRM stelt die zelf samen uit voornaam/tussenvoegsel/achternaam.
 //
 // `notities` blijft leeg (die kolom is voor het team zelf) en
@@ -115,7 +115,11 @@ export async function schrijfSubsidiecheckLead(args: {
     // want die heeft het overzicht al. CHECK op de kolom: alleen
     // 'contactformulier', 'subsidietool' of NULL.
     formulier: "subsidietool",
-    bron: "Subsidiecheck",
+    // Eigen lead uit onze eigen tool, dus bron "Voortraject". Het CRM normaliseert
+    // dit (trigger `normaliseer_lead_bron`) via de naam in `lead_bronnen` naar de
+    // code `voortraject`; vóór deze wijziging viel "Subsidiecheck" terug op
+    // `website`. Welk formulier de lead opleverde staat in `formulier` hierboven.
+    bron: "Voortraject",
     status: "nieuw",
   } as never);
   if (error) throw error;

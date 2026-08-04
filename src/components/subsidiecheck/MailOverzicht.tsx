@@ -17,8 +17,8 @@ interface MailOverzichtProps {
 }
 
 // De zachte conversieroute: e-mail + naam → lead in het CRM (zelfde
-// `leads_bewoners`-tabel en kolommen als het contactformulier, alleen
-// `bron: "Subsidiecheck"`). De aangevinkte interesses gaan mee in
+// `leads_bewoners`-tabel en kolommen als het contactformulier, met
+// `bron: "Voortraject"` en `formulier: "subsidietool"`). De aangevinkte interesses gaan mee in
 // `subsidiecheck_interesses` zodat het team gericht kan opvolgen.
 export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) => {
   const [voornaam, setVoornaam] = useState("");
