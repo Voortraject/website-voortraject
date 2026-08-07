@@ -60,7 +60,6 @@ export const Woningpaneel = ({
           adresRegel={adresRegel}
           pand={pand}
           pandBezig={pandBezig}
-          className="aspect-[3/2]"
           onFout={() => setBeeldFout(true)}
         />
 

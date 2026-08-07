@@ -47,7 +47,7 @@ type FrameOpties = {
  */
 export function bouwLuchtfotoFrame(
   centrum: { x: number; y: number },
-  { spanMeters = 110, width = 720, height = 540 }: FrameOpties = {},
+  { spanMeters = 110, width = 720, height = 480 }: FrameOpties = {},
 ): LuchtfotoFrame {
   const spanX = spanMeters;
   const spanY = spanMeters * (height / width);
@@ -92,6 +92,9 @@ type OmvatOpties = {
   minSpan?: number;
   /** Bovengrens (heel groot complex zoomt niet eindeloos uit). */
   maxSpan?: number;
+  /** Beeldverhouding van het frame (breedte / hoogte). Moet gelijk zijn aan die
+      van `bouwLuchtfotoFrame`, anders valt een hoog pand buiten beeld. */
+  aspect?: number;
 };
 
 /**
@@ -102,7 +105,7 @@ type OmvatOpties = {
  */
 export function frameOmvat(
   rings: number[][][],
-  { padding = 1.3, minSpan = 38, maxSpan = 250 }: OmvatOpties = {},
+  { padding = 1.3, minSpan = 38, maxSpan = 250, aspect = 3 / 2 }: OmvatOpties = {},
 ): { centrum: { x: number; y: number }; spanMeters: number } {
   let minX = Infinity;
   let minY = Infinity;
@@ -119,7 +122,7 @@ export function frameOmvat(
   const centrum = { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
   const pandW = maxX - minX;
   const pandH = maxY - minY;
-  // Frame is 4:3 (spanY = spanX * 3/4), dus voor de hoogte spanX >= pandH * 4/3.
-  const spanX = Math.min(Math.max(Math.max(pandW, pandH * (4 / 3)) * padding, minSpan), maxSpan);
+  // spanY = spanX / aspect, dus om het pand ook verticaal te vatten: spanX >= pandH * aspect.
+  const spanX = Math.min(Math.max(Math.max(pandW, pandH * aspect) * padding, minSpan), maxSpan);
   return { centrum, spanMeters: spanX };
 }

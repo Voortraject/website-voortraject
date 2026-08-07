@@ -187,13 +187,18 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         className="overflow-hidden rounded-2xl border-2 bg-card shadow-card"
         style={{ borderColor: "hsl(var(--accent) / 0.8)" }}
       >
-        <div className="flex items-stretch">
+        {/* Mobiel de foto als brede band bovenaan en de tekst eronder: naast
+            elkaar werd de foto een smalle strook en brak elke regel in tweeën.
+            Vanaf sm past het wél naast elkaar. */}
+        <div className="flex flex-col sm:flex-row sm:items-start">
           <Luchtfoto
             adres={adres}
             adresRegel={adresKort}
             pand={pand ?? null}
             pandBezig={pandBezig}
-            className="w-[112px] shrink-0 sm:w-[150px]"
+            // 240px breed = 160px hoog (3:2), ongeveer even hoog als het
+            // tekstblok ernaast, dus geen wit gat onder de foto.
+            className="sm:w-[240px] sm:shrink-0"
             verbergBron
           />
           <div className="flex-1 p-4 sm:p-5">
@@ -211,13 +216,14 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
 
             {/* Het energielabel is echte, opzoekbare informatie die de bezoeker
                 hier gratis krijgt. Nog aan het laden → niets tonen; geen label →
-                dat is ook een antwoord. */}
+                dat is ook een antwoord. De bron staat op een eigen regel, anders
+                breekt "EP-Online" op smalle schermen halverwege af. */}
             {!woningBezig && (
-              <p className="mt-2.5 text-[13.5px] text-foreground/80">
+              <p className="mt-2.5 text-[13.5px] leading-snug text-foreground/80">
                 {woning?.energielabel ? (
                   <>
-                    Energielabel <span className="font-semibold text-primary">{woning.energielabel.klasse}</span> volgens
-                    EP-Online
+                    Energielabel <span className="font-semibold text-primary">{woning.energielabel.klasse}</span>
+                    <span className="block text-[12px] text-muted-foreground">Bron: EP-Online</span>
                   </>
                 ) : (
                   "Nog geen geregistreerd energielabel"
