@@ -239,7 +239,17 @@ export const ZakelijkContactFormulier = () => {
         </div>
       )}
 
-      <form ref={formRef} onSubmit={handleSubmit} noValidate>
+      {/* Er is bewust geen enkel uploadveld: het formulier kent alleen tekstvelden,
+          dus er kan niets binnenkomen behalve tekst. De drop-guard is puur comfort:
+          zonder deze regel navigeert de browser weg naar een bestand dat iemand op
+          het formulier sleept, en is alles wat er getypt was verdwenen. */}
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+        noValidate
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => e.preventDefault()}
+      >
         {/* Honeypot: een gewoon tekstveld (géén type="hidden" — dat slaan bots juist
             over) dat alleen met CSS uit beeld staat. De naam is bewust nietszeggend:
             browser-autofill herkent `vt_check` niet, dus een echte bezoeker laat hem
@@ -382,7 +392,10 @@ export const ZakelijkContactFormulier = () => {
         </div>
 
         <div className={fieldWrap}>
-          <label htmlFor="zak-vragen" className={labelClass}>Vragen of opmerkingen{optional}</label>
+          <label htmlFor="zak-vragen" className={labelClass}>
+            Vragen of opmerkingen{optional}
+            <span className="text-muted-foreground font-normal ml-1">, max. {MAX_NOTES} tekens</span>
+          </label>
           <textarea
             id="zak-vragen"
             name="vragen"
@@ -397,11 +410,9 @@ export const ZakelijkContactFormulier = () => {
           />
           <div className="flex justify-between items-center mt-1">
             <FieldError name="vragen" />
-            {velden.vragen.length > 0 && (
-              <span id="zak-count-vragen" className="font-sans text-[12px] ml-auto text-muted-foreground">
-                {velden.vragen.length} / {MAX_NOTES}
-              </span>
-            )}
+            <span id="zak-count-vragen" className="font-sans text-[12px] ml-auto text-muted-foreground">
+              {velden.vragen.length} / {MAX_NOTES}
+            </span>
           </div>
         </div>
 
