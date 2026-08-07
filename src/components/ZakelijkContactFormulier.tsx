@@ -20,9 +20,14 @@ const inputErr =
   "border-destructive focus:border-destructive focus:shadow-[0_0_0_3px_hsl(var(--destructive)/0.15)]";
 
 const cx = (...c: (string | false | undefined)[]) => c.filter(Boolean).join(" ");
-const labelClass = "block mb-2 text-[14px] font-semibold text-foreground";
-const fieldWrap = "mb-4";
-const required = <span className="text-accent ml-1" aria-hidden="true">*</span>;
+// Zelfde opbouw als het bewonersformulier op /contact: labels zijn bewust
+// lichter dan de invoer, zodat de enige vette tekst in de kaart de twee
+// groepskoppen zijn en niet zeven labels op een rij.
+const labelClass = "block mb-2 text-[13px] font-medium text-muted-foreground";
+const groepKopClass = "font-display text-[15px] font-semibold text-primary";
+// Verplicht is de regel, niet de uitzondering: we markeren alleen wat optioneel
+// is. Dat scheelt vier accentkleurige sterretjes die met de CTA concurreerden.
+const optional = <span className="text-muted-foreground font-normal ml-1">(optioneel)</span>;
 
 const initieel = {
   bedrijfsnaam: "",
@@ -276,8 +281,10 @@ export const ZakelijkContactFormulier = () => {
           </label>
         </div>
 
-        <div className={fieldWrap}>
-          <label htmlFor="zak-bedrijfsnaam" className={labelClass}>Bedrijfsnaam{required}</label>
+        <p className={groepKopClass}>Jullie gegevens</p>
+
+        <div className="mt-4">
+          <label htmlFor="zak-bedrijfsnaam" className={labelClass}>Bedrijfsnaam</label>
           <input
             id="zak-bedrijfsnaam"
             name="bedrijfsnaam"
@@ -294,36 +301,36 @@ export const ZakelijkContactFormulier = () => {
           <FieldError name="bedrijfsnaam" />
         </div>
 
-        {/* Naamvelden contactpersoon: groepslabel + placeholders. Losse labels
-            ("Voornaam contactpersoon") braken anders over twee regels. */}
-        <div className={fieldWrap}>
-          <label className={labelClass}>
-            Contactpersoon
-            <span className="text-muted-foreground font-normal ml-1">(tussenvoegsel optioneel)</span>
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr] lg:grid-cols-[1fr_0.95fr_1.25fr] gap-4">
-            <div className="sm:col-span-2 lg:col-span-1">
-              <input
-                id="zak-cp-voornaam"
-                name="contactpersoon_voornaam"
-                type="text"
-                autoComplete="given-name"
-                placeholder="Voornaam *"
-                aria-label="Voornaam contactpersoon"
-                aria-required="true"
-                aria-invalid={!!errors.contactpersoon_voornaam}
-                aria-describedby={errors.contactpersoon_voornaam ? errId("contactpersoon_voornaam") : undefined}
-                className={inputCls("contactpersoon_voornaam")}
-                value={velden.contactpersoon_voornaam}
-                onChange={onChange("contactpersoon_voornaam")}
-                maxLength={100}
-              />
-            </div>
+        {/* Naam van de contactpersoon: drie gelijke blokken van 4 kolommen, dus
+            dezelfde verticale naden (33% en 67%) als de rij eronder. De velden
+            hebben nu een eigen label in plaats van een placeholder die als label
+            moest doorgaan; het aria-label houdt "contactpersoon" erbij, zodat een
+            schermlezer weet over wiens naam het gaat. justify-end houdt de inputs
+            op één lijn als een label over twee regels breekt. */}
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-12 gap-4">
+          <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
+            <label htmlFor="zak-cp-voornaam" className={labelClass}>Voornaam</label>
+            <input
+              id="zak-cp-voornaam"
+              name="contactpersoon_voornaam"
+              type="text"
+              autoComplete="given-name"
+              aria-label="Voornaam contactpersoon"
+              aria-required="true"
+              aria-invalid={!!errors.contactpersoon_voornaam}
+              aria-describedby={errors.contactpersoon_voornaam ? errId("contactpersoon_voornaam") : undefined}
+              className={inputCls("contactpersoon_voornaam")}
+              value={velden.contactpersoon_voornaam}
+              onChange={onChange("contactpersoon_voornaam")}
+              maxLength={100}
+            />
+          </div>
+          <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
+            <label htmlFor="zak-cp-tussenvoegsel" className={labelClass}>Tussenvoegsel{optional}</label>
             <input
               id="zak-cp-tussenvoegsel"
               name="contactpersoon_tussenvoegsel"
               type="text"
-              placeholder="Tussenvoegsel"
               aria-label="Tussenvoegsel contactpersoon"
               aria-invalid={!!errors.contactpersoon_tussenvoegsel}
               aria-describedby={errors.contactpersoon_tussenvoegsel ? errId("contactpersoon_tussenvoegsel") : undefined}
@@ -332,12 +339,14 @@ export const ZakelijkContactFormulier = () => {
               onChange={onChange("contactpersoon_tussenvoegsel")}
               maxLength={25}
             />
+          </div>
+          <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
+            <label htmlFor="zak-cp-achternaam" className={labelClass}>Achternaam</label>
             <input
               id="zak-cp-achternaam"
               name="contactpersoon_achternaam"
               type="text"
               autoComplete="family-name"
-              placeholder="Achternaam *"
               aria-label="Achternaam contactpersoon"
               aria-required="true"
               aria-invalid={!!errors.contactpersoon_achternaam}
@@ -348,16 +357,18 @@ export const ZakelijkContactFormulier = () => {
               maxLength={100}
             />
           </div>
-          <div className="mt-1">
-            <FieldError name="contactpersoon_voornaam" />
-            <FieldError name="contactpersoon_tussenvoegsel" />
-            <FieldError name="contactpersoon_achternaam" />
-          </div>
+          {(errors.contactpersoon_voornaam || errors.contactpersoon_tussenvoegsel || errors.contactpersoon_achternaam) && (
+            <div className="col-span-full -mt-2">
+              <FieldError name="contactpersoon_voornaam" />
+              <FieldError name="contactpersoon_tussenvoegsel" />
+              <FieldError name="contactpersoon_achternaam" />
+            </div>
+          )}
         </div>
 
-        <div className={cx("grid grid-cols-1 sm:grid-cols-2 gap-4", fieldWrap)}>
-          <div>
-            <label htmlFor="zak-email" className={labelClass}>E-mailadres{required}</label>
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-12 gap-4">
+          <div className="sm:col-span-8 min-w-0">
+            <label htmlFor="zak-email" className={labelClass}>E-mailadres</label>
             <input
               id="zak-email"
               name="email"
@@ -378,8 +389,8 @@ export const ZakelijkContactFormulier = () => {
               </p>
             )}
           </div>
-          <div>
-            <label htmlFor="zak-tel" className={labelClass}>Telefoonnummer{required}</label>
+          <div className="sm:col-span-4 min-w-0">
+            <label htmlFor="zak-tel" className={labelClass}>Telefoonnummer</label>
             <input
               id="zak-tel"
               name="telefoonnummer"
@@ -396,9 +407,11 @@ export const ZakelijkContactFormulier = () => {
           </div>
         </div>
 
-        <div className={fieldWrap}>
+        <p className={cx(groepKopClass, "mt-8")}>Jullie vraag</p>
+
+        <div className="mt-4">
           {/* Tekenlimiet staat alleen in de teller onder het veld. */}
-          <label htmlFor="zak-vragen" className={labelClass}>Bericht{required}</label>
+          <label htmlFor="zak-vragen" className={labelClass}>Bericht</label>
           <textarea
             id="zak-vragen"
             name="vragen"
@@ -423,7 +436,7 @@ export const ZakelijkContactFormulier = () => {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-accent hover:bg-accent-hover text-primary font-semibold text-[15px] px-8 py-3 min-h-[48px] transition-colors disabled:opacity-70"
+          className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-full bg-accent hover:bg-accent-hover text-primary font-semibold text-[15px] px-8 py-3 min-h-[48px] transition-colors disabled:opacity-70"
         >
           {submitting && <Loader2 size={18} className="animate-spin" aria-hidden="true" />}
           {submitting ? "Versturen..." : "Verstuur bericht"}

@@ -717,7 +717,7 @@ const Contact = () => {
                       disabled={submitting}
                       className="w-full font-sans transition-colors inline-flex items-center justify-center gap-2"
                       style={{
-                        marginTop: 12,
+                        marginTop: 24,
                         backgroundColor: "#E8B547",
                         color: "#2B2B2B",
                         padding: "14px 32px",
