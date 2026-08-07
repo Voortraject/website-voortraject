@@ -26,9 +26,9 @@ const inputClass =
 // ook in de notitie bij de lead te staan. Kort en gelijk van vorm, zodat de vier
 // tegels in één oogopslag te vergelijken zijn.
 const HULPVRAGEN = [
-  { id: "subsidies", label: "Uitzoeken wat ik krijg", Icon: BadgeEuro },
+  { id: "subsidies", label: "Subsidies uitzoeken", Icon: BadgeEuro },
   { id: "aanvraag", label: "De aanvraag regelen", Icon: FileCheck },
-  { id: "uitvoerder", label: "Een goede uitvoerder", Icon: HardHat },
+  { id: "uitvoerder", label: "Een uitvoerder vinden", Icon: HardHat },
   { id: "plan", label: "Een plan voor mijn huis", Icon: Home },
 ] as const;
 

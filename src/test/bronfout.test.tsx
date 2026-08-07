@@ -127,7 +127,7 @@ describe("gegevens-poort bij een bronfout", () => {
     vi.mocked(subsidieProvider.check).mockRejectedValue(new Error("bron plat"));
     const onOntgrendeld = vi.fn();
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
-    fireEvent.click(screen.getByRole("radio", { name: /Uitzoeken wat ik krijg/ }));
+    fireEvent.click(screen.getByRole("radio", { name: /Subsidies uitzoeken/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
