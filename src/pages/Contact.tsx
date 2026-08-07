@@ -1,8 +1,9 @@
 import { useState, useRef, FormEvent, ChangeEvent } from "react";
-import { CheckCircle, Loader2 } from "lucide-react";
+import { CheckCircle, Loader2, Mail, MapPin, Phone } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
+import { Reviews } from "@/components/sections/Reviews";
 import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
 import { normalizePostcode, POSTCODE_RE, zoekAdres } from "@/lib/pdok";
 import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
@@ -22,9 +23,16 @@ const optional = <span className="text-[#8B8680] font-normal ml-1">(optioneel)</
 
 const expectations = [
   "We nemen binnen 24 uur contact op",
-  "Een vrijblijvend gesprek van ongeveer 15 minuten, telefonisch of bij jou thuis",
   "We kijken samen wat er voor jouw woning logisch is",
   "Je hoeft niets voor te bereiden",
+];
+
+// Dezelfde gegevens als in de footer: één plek om ons te bereiken zonder eerst
+// het formulier in te vullen.
+const contactBlokken = [
+  { icon: MapPin, label: "Vestiging", waarde: "Viaductstraat 3-15, Groningen" },
+  { icon: Mail, label: "E-mailadres", waarde: "info@voortraject.nl", href: "mailto:info@voortraject.nl" },
+  { icon: Phone, label: "Telefoonnummer", waarde: "050 211 2689", href: "tel:+31502112689" },
 ];
 
 // Exact de drie waarden die het CRM zelf in zijn lead-formulieren aanbiedt
@@ -722,10 +730,42 @@ const Contact = () => {
                   </li>
                 ))}
               </ul>
+
+              <div className="mt-8 flex flex-col gap-3">
+                {contactBlokken.map(({ icon: Icon, label, waarde, href }) => (
+                  <div
+                    key={label}
+                    className="flex items-start gap-4 rounded-xl border border-border bg-card p-4"
+                  >
+                    <span
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/15"
+                      aria-hidden="true"
+                    >
+                      <Icon size={18} strokeWidth={2} className="text-primary" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-display text-[15px] font-semibold text-primary">{label}</p>
+                      {href ? (
+                        <a
+                          href={href}
+                          className="font-sans text-[15px] text-muted-foreground underline-offset-2 hover:text-primary hover:underline break-words"
+                        >
+                          {waarde}
+                        </a>
+                      ) : (
+                        <p className="font-sans text-[15px] text-muted-foreground break-words">{waarde}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Dezelfde reviewsectie als op de homepagina, direct onder het formulier. */}
+      <Reviews />
 
       <Footer />
     </div>
