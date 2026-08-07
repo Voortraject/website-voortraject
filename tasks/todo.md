@@ -34,9 +34,26 @@ Bronnen voor zelf-bijwerkende cijfers (uitgezocht):
 - Resterende vaste cijfers in één bestand `src/config/bewijs.ts` met peildatum, halfjaarlijks na
   te lopen. Formuleringen kiezen die niet bederven.
 
+**CRM-cijfers, opgehaald 2026-08-07 (nulmeting vóór de wijzigingen):**
+- Week van 3 augustus: **11 leads uit de subsidietool, 0 uit het contactformulier**. Week ervoor:
+  1 en 1. Daarvoor niets. De tool ís dus de leadmotor; het contactformulier levert vrijwel niets.
+- **Alle 11 leads hadden een telefoonnummer**, logisch: dat veld was verplicht. Dit is het
+  getal om te bewaken nu telefoon optioneel is. Zakt het aandeel hard terwijl het totaal niet
+  stijgt, dan is optioneel maken hier de verkeerde keuze geweest.
+- 4 van de 11 hadden een notitie. Dat waren teamnotities (de tool schreef `notities` toen nog niet).
+  **Let op: die maatstaf verandert nu van betekenis**, want elke nieuwe subsidietool-lead krijgt
+  automatisch de regel "Wil hulp met: …". Meet voortaan met `notities like 'Wil hulp met:%'`.
+
+**Schema-antwoorden (2026-08-07):**
+- `achternaam` is **NOT NULL** en heeft een CHECK dat 'ie niet leeg mag zijn. Het veld kan dus
+  niet uit de poort; drie verplichte velden is het minimum. `voornaam` en `email` zijn technisch
+  nullable, maar die hebben we nodig om iemand aan te spreken en te antwoorden.
+- Er staat **geen CHECK op `energielabel` of `bouwjaar`**. De terugval-insert zonder verrijking
+  blijft als goedkope verzekering staan, maar zal in de praktijk niet afgaan.
+- De CHECKs die er wél zijn (`formulier`, `subsidiecheck_type_bewoner`) sluiten precies aan op
+  wat de code stuurt.
+
 Openstaand bij de opdrachtgever:
-- [ ] Funnelcijfers uit het CRM (`aangemaakt_op` is de datumkolom).
-- [ ] `is_nullable` + CHECK-constraints op `leads_bewoners` (mag achternaam leeg?).
 - [ ] Akkoord op welke bestaande CRM-kolommen we mogen vullen (`energielabel`, `bouwjaar`,
       `voorkeurskanaal`).
 - [ ] Wil n8n/CRM iets extra's met een bericht, of volstaat notitie + teammail?
@@ -121,8 +138,8 @@ info@voortraject.nl).
 - [x] `bag_verblijfsobject_id` bewust NIET gevuld: wij hebben een pand-id, geen
       verblijfsobject-id. Verkeerde data is erger dan geen data.
 - [x] Knoplabel "Mail mij dit overzicht" → "Bekijk mijn overzicht": dát is wat de bezoeker wil.
-- [ ] Achternaam eruit halen zodra bekend is of `leads_bewoners.achternaam` NOT NULL is. Zolang
-      dat onbekend is blijft het veld staan; een geweigerde insert kost een lead.
+- [x] Achternaam eruit halen: **kan niet**. De kolom is NOT NULL mét een CHECK op niet-leeg
+      (geverifieerd 2026-08-07). Drie verplichte velden is dus het minimum.
 - [ ] Vraagveld in de poort zelf: bewust niet gedaan. De poort heeft nu al een teaser, een
       kwalificatievraag en vier velden; het vraagveld staat één stap verderop op het resultaat,
       waar de bezoeker weet wát hij wil vragen.
