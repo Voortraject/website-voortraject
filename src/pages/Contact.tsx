@@ -660,7 +660,13 @@ const Contact = () => {
                     </div>
 
                     <div className={fieldWrap}>
-                      <label htmlFor="f-vragen-b" className={labelClass}>Bericht{required}</label>
+                      {/* Zelfde opbouw als het berichtblok op /zakelijk:
+                          tekenlimiet in het label en een teller die altijd
+                          zichtbaar is. */}
+                      <label htmlFor="f-vragen-b" className={labelClass}>
+                        Bericht{required}
+                        <span className="text-[#8B8680] font-normal">, max. {MAX_NOTES} tekens</span>
+                      </label>
                       <textarea
                         id="f-vragen-b"
                         name="vragen"
@@ -668,19 +674,17 @@ const Contact = () => {
                         aria-invalid={!!errors.vragen}
                         aria-describedby={errors.vragen ? errId("vragen") : "count-vragen-b"}
                         className={inputCls("vragen")}
-                        placeholder="Stel hier je vraag of voeg toe wat je wil meegeven."
-                        style={{ minHeight: 120, resize: "vertical" }}
+                        placeholder="Vertel kort waar je tegenaan loopt of wat je wil weten."
+                        style={{ minHeight: 100, resize: "vertical" }}
                         value={bewoner.vragen}
                         onChange={onChangeBew("vragen")}
                         maxLength={MAX_NOTES}
                       />
                       <div className="flex justify-between items-center mt-1">
                         <FieldError name="vragen" />
-                        {bewoner.vragen.length > 0 && (
-                          <span id="count-vragen-b" className="font-sans text-[12px] ml-auto" style={{ color: "#8B8680" }}>
-                            {bewoner.vragen.length} / {MAX_NOTES}
-                          </span>
-                        )}
+                        <span id="count-vragen-b" className="font-sans text-[12px] ml-auto" style={{ color: "#8B8680" }}>
+                          {bewoner.vragen.length} / {MAX_NOTES}
+                        </span>
                       </div>
                     </div>
 
