@@ -1,4 +1,4 @@
-import { Check, HardHat, Wrench, Building2, Landmark, KeyRound, ClipboardCheck, Mail, Phone } from "lucide-react";
+import { HardHat, Wrench, Building2, Landmark, KeyRound, ClipboardCheck } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
@@ -40,13 +40,6 @@ const doelgroepen = [
     title: "Energieadviseurs",
     body: "Het advies is jullie werk. Wij pakken het traject eromheen op, van offerte tot oplevering.",
   },
-];
-
-const verwachtingen = [
-  "We nemen binnen 24 uur contact op",
-  "Een kennismakingsgesprek van ongeveer 15 minuten, vrijblijvend",
-  "We brengen in kaart waar jullie op vastlopen en waar wij kunnen helpen",
-  "Geen verkooppraatje, wel een concreet vervolgplan",
 ];
 
 // Bewust een korte pagina: hero, voor wie we werken, formulier. Wie meer wil
@@ -175,70 +168,21 @@ const Zakelijk = () => {
           aria-labelledby="zak-contact-title"
         >
           <div className="container-content">
-            <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-8 lg:gap-12 items-start">
-              <div
-                className="bg-card border border-border p-7 md:p-10"
-                style={{ borderRadius: 16, boxShadow: "0 4px 24px hsl(var(--primary) / 0.06)" }}
+            <div
+              className="bg-card border border-border p-7 md:p-10 mx-auto"
+              style={{ borderRadius: 16, boxShadow: "0 4px 24px hsl(var(--primary) / 0.06)", maxWidth: 760 }}
+            >
+              <h2
+                id="zak-contact-title"
+                className="font-display"
+                style={{ fontSize: 26, fontWeight: 600, color: "hsl(var(--primary))", letterSpacing: "-0.01em", lineHeight: 1.25, marginBottom: 8 }}
               >
-                <h2
-                  id="zak-contact-title"
-                  className="font-display"
-                  style={{ fontSize: 26, fontWeight: 600, color: "hsl(var(--primary))", letterSpacing: "-0.01em", lineHeight: 1.25, marginBottom: 8 }}
-                >
-                  Plan een kennismaking
-                </h2>
-                <p style={{ fontSize: 15, color: "hsl(var(--muted-foreground))", lineHeight: 1.6, marginBottom: 24 }}>
-                  Vertel ons kort over jullie bedrijf. Hoe meer we vooraf weten, hoe scherper we het gesprek kunnen voeren.
-                </p>
-                <ZakelijkContactFormulier />
-              </div>
-
-              <div className="lg:pt-4">
-                <h3
-                  className="font-display"
-                  style={{ fontSize: 20, fontWeight: 600, color: "hsl(var(--primary))", lineHeight: 1.3, marginBottom: 16 }}
-                >
-                  Wat kun je verwachten?
-                </h3>
-                <ul className="space-y-4" style={{ marginBottom: 32 }}>
-                  {verwachtingen.map((item) => (
-                    <li key={item} className="flex items-start gap-3">
-                      <span
-                        className="flex items-center justify-center rounded-full flex-shrink-0"
-                        style={{ width: 24, height: 24, backgroundColor: "hsl(var(--secondary))", marginTop: 2 }}
-                      >
-                        <Check size={14} color="hsl(var(--accent))" strokeWidth={3} aria-hidden="true" />
-                      </span>
-                      <span style={{ fontSize: 15, color: "hsl(var(--primary))", lineHeight: 1.6 }}>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <h3
-                  className="font-display"
-                  style={{ fontSize: 20, fontWeight: 600, color: "hsl(var(--primary))", lineHeight: 1.3, marginBottom: 16 }}
-                >
-                  Liever direct contact?
-                </h3>
-                <div className="flex flex-col gap-3">
-                  <a
-                    href="tel:+31502112689"
-                    className="inline-flex items-center gap-3 hover:text-accent transition-colors"
-                    style={{ fontSize: 15, color: "hsl(var(--primary))" }}
-                  >
-                    <Phone size={18} strokeWidth={2} aria-hidden="true" />
-                    050 211 2689
-                  </a>
-                  <a
-                    href="mailto:info@voortraject.nl"
-                    className="inline-flex items-center gap-3 hover:text-accent transition-colors"
-                    style={{ fontSize: 15, color: "hsl(var(--primary))" }}
-                  >
-                    <Mail size={18} strokeWidth={2} aria-hidden="true" />
-                    info@voortraject.nl
-                  </a>
-                </div>
-              </div>
+                Plan een kennismaking
+              </h2>
+              <p style={{ fontSize: 15, color: "hsl(var(--muted-foreground))", lineHeight: 1.6, marginBottom: 24 }}>
+                Vertel ons kort over jullie bedrijf. Hoe meer we vooraf weten, hoe scherper we het gesprek kunnen voeren.
+              </p>
+              <ZakelijkContactFormulier />
             </div>
           </div>
         </section>
