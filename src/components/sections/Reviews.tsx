@@ -100,7 +100,17 @@ export const ReviewKaart = ({
         <Sterren waarde={rating} />
       </div>
 
-      <blockquote className={cn("mt-3 leading-[1.65] text-foreground", compact ? "text-[14px]" : "text-[15px]")}>
+      {/* Bewust géén cn() met een losse text-[..]-klasse erachter: tailwind-merge
+          ziet `text-[15px]` en `leading-[1.65]` als één groep (de
+          `text-[size]/[leading]`-syntax) en gooit de regelafstand dan weg. Zonder
+          die leading past er een halve vijfde regel onder de clamp. */}
+      <blockquote
+        className={
+          compact
+            ? "mt-3 text-[14px] leading-[1.65] text-foreground"
+            : "mt-3 text-[15px] leading-[1.65] text-foreground"
+        }
+      >
         <p
           ref={tekstRef}
           className={cn(
