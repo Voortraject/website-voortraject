@@ -83,7 +83,7 @@ describe("energiesubsidiewijzerProvider", () => {
 describe("gegevens-poort bij een bronfout", () => {
   const vulIn = () => {
     // De hulpvraag is verplicht, naast de velden.
-    fireEvent.click(screen.getByRole("radio", { name: /Hulp bij de aanvraag/ }));
+    fireEvent.click(screen.getByRole("radio", { name: /De aanvraag regelen/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
@@ -106,7 +106,7 @@ describe("gegevens-poort bij een bronfout", () => {
     expect(rij).toMatchObject({ email: "jan@example.nl", bron: "Voortraject" });
     expect(rij.subsidiecheck_interesses).toBe("Isolatie & glas");
     // De gekozen hulpvraag gaat als kopregel mee naar het CRM.
-    expect(rij.notities).toBe("Wil hulp met: Hulp bij de aanvraag");
+    expect(rij.notities).toBe("Wil hulp met: De aanvraag regelen");
   });
 
   it("verstuurt niets zolang de hulpvraag niet gekozen is", async () => {
@@ -127,7 +127,7 @@ describe("gegevens-poort bij een bronfout", () => {
     vi.mocked(subsidieProvider.check).mockRejectedValue(new Error("bron plat"));
     const onOntgrendeld = vi.fn();
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
-    fireEvent.click(screen.getByRole("radio", { name: /Weten wat ik kan krijgen/ }));
+    fireEvent.click(screen.getByRole("radio", { name: /Uitzoeken wat ik krijg/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");

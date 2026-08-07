@@ -1,6 +1,6 @@
 import { FormEvent, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { BadgeEuro, Check, FileCheck, HardHat, Home, Loader2, MapPin, Search } from "lucide-react";
+import { BadgeEuro, Check, FileCheck, HardHat, Home, Loader2, MapPin } from "lucide-react";
 
 import { usePandContour } from "@/hooks/usePandContour";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
@@ -22,11 +22,14 @@ const inputClass =
 // écht doet, dus élk antwoord vertelt de adviseur waarmee hij het gesprek opent.
 // Geen "vage" uitweg, want alle vier zijn even legitiem.
 // De labels zijn de tekst die letterlijk in de notitie bij de lead belandt.
+// De labels vullen de vraag aan ("helpen met: de aanvraag regelen") en komen zo
+// ook in de notitie bij de lead te staan. Kort en gelijk van vorm, zodat de vier
+// tegels in één oogopslag te vergelijken zijn.
 const HULPVRAGEN = [
-  { id: "subsidies", label: "Weten wat ik kan krijgen", Icon: BadgeEuro },
-  { id: "aanvraag", label: "Hulp bij de aanvraag", Icon: FileCheck },
-  { id: "uitvoerder", label: "Een uitvoerder vinden", Icon: HardHat },
-  { id: "plan", label: "Een plan voor mijn woning", Icon: Home },
+  { id: "subsidies", label: "Uitzoeken wat ik krijg", Icon: BadgeEuro },
+  { id: "aanvraag", label: "De aanvraag regelen", Icon: FileCheck },
+  { id: "uitvoerder", label: "Een goede uitvoerder", Icon: HardHat },
+  { id: "plan", label: "Een plan voor mijn huis", Icon: Home },
 ] as const;
 
 type HulpvraagId = (typeof HULPVRAGEN)[number]["id"];
@@ -233,18 +236,6 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
           </div>
         </div>
 
-        {/* Als melding vormgegeven, niet als losse zin: zo leest het als een
-            statusregel bij de kaart en niet als het overzicht zelf. "Laatste stap"
-            staat er bewust voor. Mensen versnellen naarmate ze de finish naderen
-            (goal-gradient, Kivetz e.a. 2006), en het maakt in één woord duidelijk
-            dat het echte overzicht hierna komt. */}
-        <div className="flex items-start gap-2.5 border-t border-border bg-accent/10 px-4 py-3 sm:px-5">
-          <Search size={16} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
-          <p className="text-[13.5px] leading-relaxed text-foreground/80">
-            <span className="font-semibold text-primary">Laatste stap.</span> Hierna zoeken we alle landelijke,
-            provinciale en gemeentelijke regelingen bij dit adres.
-          </p>
-        </div>
       </div>
 
       {/* Honeypot: gewoon tekstveld (géén type="hidden" — dat slaan bots juist over),

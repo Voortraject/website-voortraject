@@ -173,11 +173,12 @@ const SubsidiecheckLive = () => {
           };
     }
     if (poortAan && stap === 2) {
-      // De stap zelf opent met wát we gevonden hebben (de teaser in StapGegevens),
-      // dus de kop hoeft alleen nog te zeggen hoe dichtbij het overzicht is.
+      // De kop doet twee dingen tegelijk: laten voelen hoe dichtbij het einde is
+      // (mensen versnellen richting de finish) en voorkomen dat het woningkaartje
+      // eronder voor het overzicht zelf wordt aangezien.
       return {
-        titel: "Je overzicht staat klaar",
-        sub: "Nog twee dingen, dan zie je precies welke regelingen bij jouw woning passen.",
+        titel: "Nog één stap tot je overzicht",
+        sub: "Vul je gegevens in, dan zoeken we alle landelijke, provinciale en gemeentelijke regelingen bij jouw adres.",
       };
     }
     return { titel: "Jouw subsidieoverzicht" };
