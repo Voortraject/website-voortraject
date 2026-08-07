@@ -190,6 +190,7 @@ describe("zakelijk contactformulier", () => {
     vul(screen.getByLabelText(/Achternaam contactpersoon/), "de Vries");
     vul(screen.getByLabelText(/^E-mailadres/), "jan@bouwbedrijf.nl");
     vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
+    vul(screen.getByLabelText(/^Bericht/), "Wij lopen vast op de offerte-opvolging.");
   };
 
   it("heeft een correct opgezet honeypot-veld", () => {
@@ -215,6 +216,7 @@ describe("zakelijk contactformulier", () => {
       contactpersoon_achternaam: "de Vries",
       email: "jan@bouwbedrijf.nl",
       telefoon: "0612345678",
+      notities: "Wij lopen vast op de offerte-opvolging.",
       bron: "Voortraject",
       status: "nieuw",
     });

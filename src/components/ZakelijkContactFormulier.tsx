@@ -23,7 +23,6 @@ const cx = (...c: (string | false | undefined)[]) => c.filter(Boolean).join(" ")
 const labelClass = "block mb-2 text-[14px] font-semibold text-foreground";
 const fieldWrap = "mb-4";
 const required = <span className="text-accent ml-1" aria-hidden="true">*</span>;
-const optional = <span className="text-muted-foreground font-normal ml-1">(optioneel)</span>;
 
 const initieel = {
   bedrijfsnaam: "",
@@ -113,7 +112,9 @@ export const ZakelijkContactFormulier = () => {
     if (!tel) e.telefoonnummer = "Vul je telefoonnummer in.";
     else if (!validatePhoneNL(tel)) e.telefoonnummer = TELEFOON_FOUT;
 
-    if (velden.vragen.length > MAX_NOTES)
+    const bericht = velden.vragen.trim();
+    if (!bericht) e.vragen = "Vul je bericht in.";
+    else if (velden.vragen.length > MAX_NOTES)
       e.vragen = `Je bericht is te lang (maximaal ${MAX_NOTES} karakters).`;
 
     return e;
@@ -174,7 +175,8 @@ export const ZakelijkContactFormulier = () => {
         contactpersoon_achternaam: velden.contactpersoon_achternaam.trim(),
         email: velden.email.trim(),
         telefoon: velden.telefoonnummer.trim(),
-        notities: velden.vragen.trim() || null,
+        // Verplicht veld, dus altijd gevuld.
+        notities: velden.vragen.trim(),
         // Eigen lead van onze eigen site: bron "Voortraject". Het CRM normaliseert
         // dat (trigger `normaliseer_lead_bron`) naar de code `voortraject`.
         bron: "Voortraject",
@@ -396,12 +398,13 @@ export const ZakelijkContactFormulier = () => {
 
         <div className={fieldWrap}>
           <label htmlFor="zak-vragen" className={labelClass}>
-            Vragen of opmerkingen{optional}
-            <span className="text-muted-foreground font-normal ml-1">, max. {MAX_NOTES} tekens</span>
+            Bericht{required}
+            <span className="text-muted-foreground font-normal">, max. {MAX_NOTES} tekens</span>
           </label>
           <textarea
             id="zak-vragen"
             name="vragen"
+            aria-required="true"
             aria-invalid={!!errors.vragen}
             aria-describedby={errors.vragen ? errId("vragen") : "zak-count-vragen"}
             className={inputCls("vragen")}
