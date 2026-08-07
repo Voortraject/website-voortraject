@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Link2, Loader2 } from "lucide-react";
+import { Check, Copy, Link2, Loader2 } from "lucide-react";
 
 import { usePand3d } from "@/hooks/usePand3d";
 import { usePandContour } from "@/hooks/usePandContour";
@@ -21,7 +21,6 @@ import { MailOverzicht } from "./MailOverzicht";
 import { MobieleActiebalk } from "./MobieleActiebalk";
 import { Samenvatting } from "./Samenvatting";
 import { SubsidieCard } from "./SubsidieCard";
-import { TrajectStrip } from "./TrajectStrip";
 import { Woningpaneel } from "./Woningpaneel";
 
 interface StapResultaatProps {
@@ -295,15 +294,10 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
           energielabel={woning?.energielabel ?? null}
           energielabelBezig={woningBezig}
           onMailKlik={scrollNaarMail}
-          onDeelTool={deelTool}
-          deelGedeeld={gedeeld}
           toonMailKnop={!verbergMail}
         />
         {woningpaneel}
       </div>
-
-      {/* Endowed progress: stap 1 (overzicht) is klaar, drie stappen te gaan. */}
-      <TrajectStrip />
 
       {/* Bronvermelding — de subsidie-informatie komt uit de Energiesubsidiewijzer
           van Milieu Centraal. Staat bewust bij de getoonde regelingen. */}
@@ -360,6 +354,26 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
             <>
               <Link2 size={14} strokeWidth={2} aria-hidden="true" />
               Kopieer link naar dit overzicht
+            </>
+          )}
+        </button>
+        {/* Verhuisd van de samenvatting naar hier: delen speelt pas als je het
+            overzicht hebt gezien, en boven de vouw kostte het te veel ruimte. */}
+        <button
+          type="button"
+          onClick={deelTool}
+          aria-live="polite"
+          className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-[13px] font-medium text-primary transition-colors hover:border-primary/40 min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          {gedeeld ? (
+            <>
+              <Check size={14} strokeWidth={2.5} className="text-accent" aria-hidden="true" />
+              Link gekopieerd
+            </>
+          ) : (
+            <>
+              <Copy size={14} strokeWidth={2} aria-hidden="true" />
+              Deel de tool
             </>
           )}
         </button>

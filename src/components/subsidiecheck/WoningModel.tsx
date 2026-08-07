@@ -32,7 +32,9 @@ export const WoningModel = ({ model, isPending }: WoningModelProps) => {
   if (!isPending && !g) return null;
 
   return (
-    <div className="relative aspect-[4/3] w-full border-t border-border bg-card-soft">
+    // Mobiel staat dit blok naast de luchtfoto (scheidingslijn links), vanaf md
+    // eronder (scheidingslijn boven). Zie Woningpaneel.
+    <div className="relative aspect-[4/3] w-full border-l border-border bg-card-soft md:border-l-0 md:border-t">
       {isPending || !g ? (
         <div className="flex h-full w-full items-center justify-center" aria-live="polite" aria-busy="true">
           <Loader2 size={22} className="animate-spin text-muted-foreground" aria-hidden="true" />

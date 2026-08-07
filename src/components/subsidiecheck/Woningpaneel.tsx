@@ -43,12 +43,19 @@ export const Woningpaneel = ({ adres, input, pand, pandBezig, model, modelBezig 
   }, [adres.centroideRd, contour, pandBezig]);
 
   const wachtOpFoto = !!adres.centroideRd && pandBezig;
+  // Zelfde voorwaarde als in WoningModel: dat component rendert niets als er geen
+  // model is én er niets meer geladen wordt. Alleen dán staan de twee beelden
+  // mobiel naast elkaar; anders krijgt de luchtfoto de volle breedte.
+  const toont3d = modelBezig || !!model;
 
   return (
     <section
       aria-label="Jouw woning"
       className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-card"
     >
+      {/* Mobiel staan luchtfoto en 3D-model naast elkaar (scheelt een halve
+          schermhoogte scrollen); vanaf md weer onder elkaar in de smalle kolom. */}
+      <div className={toont3d ? "grid grid-cols-2 md:grid-cols-1" : ""}>
       {/* Luchtfoto-uitsnede met de pandcontour er overheen. */}
       <div className="relative aspect-[4/3] w-full bg-secondary">
         {wachtOpFoto ? (
@@ -82,9 +89,10 @@ export const Woningpaneel = ({ adres, input, pand, pandBezig, model, modelBezig 
                 ))}
               </svg>
             )}
-            {/* Bronvermelding in de foto, linksonder (CC-BY, verplicht). */}
+            {/* Bronvermelding in de foto, linksonder (CC-BY, verplicht). Mobiel
+                staat de foto op halve breedte, dus daar een maatje kleiner. */}
             <span
-              className="pointer-events-none absolute bottom-1.5 left-2 text-[10px] leading-none text-white/95"
+              className="pointer-events-none absolute bottom-1.5 left-2 right-1.5 text-[9px] leading-tight text-white/95 md:text-[10px] md:leading-none"
               style={{ textShadow: "0 1px 2px rgba(0,0,0,0.85)" }}
             >
               {LUCHTFOTO_ATTRIBUTIE}
@@ -98,8 +106,9 @@ export const Woningpaneel = ({ adres, input, pand, pandBezig, model, modelBezig 
         )}
       </div>
 
-      {/* Licht 3D-model onder de foto (zelfde uitlijning, noord-boven). */}
-      <WoningModel model={model} isPending={modelBezig} />
+        {/* Licht 3D-model naast (mobiel) of onder de foto, zelfde uitlijning. */}
+        <WoningModel model={model} isPending={modelBezig} />
+      </div>
 
       <div className="flex flex-1 flex-col gap-2 border-t border-border p-4 md:p-5">
         <div>

@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Mail, Share2 } from "lucide-react";
+import { ArrowRight, Check, Mail } from "lucide-react";
 
 import {
   type Bewonertype,
@@ -39,10 +39,6 @@ interface SamenvattingProps {
   /** Toon de "mail mij dit overzicht"-knop (uit bij de gegevens-poort: die
       gegevens zijn dan al binnen). */
   toonMailKnop?: boolean;
-  /** Deelt de tool (native deel-sheet / kopieer-link). */
-  onDeelTool: () => void;
-  /** Terugval "link gekopieerd"-feedback (desktop zonder deel-sheet). */
-  deelGedeeld?: boolean;
 }
 
 // Zet een uitgelicht bedrag om in leesbare copy. Subsidie bij voorkeur als
@@ -66,8 +62,6 @@ export const Samenvatting = ({
   energielabel,
   energielabelBezig,
   onMailKlik,
-  onDeelTool,
-  deelGedeeld,
   toonMailKnop = true,
 }: SamenvattingProps) => {
   const { totaal, subsidies, leningen } = data;
@@ -198,38 +192,22 @@ export const Samenvatting = ({
         ))}
       </ul>
 
-      {/* Acties: het overzicht mailen + de tool delen. */}
-      <div className="mt-8 h-px bg-border/60" role="separator" />
-      <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
-        {toonMailKnop && (
+      {/* Alleen de mailroute staat hier nog. "Deel de tool" is naar de voet van het
+          resultaat verhuisd: die kostte hier te veel ruimte, boven de vouw, terwijl
+          delen pas speelt als je het overzicht hebt gezien. */}
+      {toonMailKnop && (
+        <>
+          <div className="mt-8 h-px bg-border/60" role="separator" />
           <button
             type="button"
             onClick={onMailKlik}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-accent bg-accent/15 px-5 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:bg-accent/25 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full border border-accent bg-accent/15 px-5 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:bg-accent/25 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <Mail size={16} strokeWidth={2} aria-hidden="true" />
             Mail mij dit overzicht
           </button>
-        )}
-        <button
-          type="button"
-          onClick={onDeelTool}
-          aria-live="polite"
-          className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:border-primary/40 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          {deelGedeeld ? (
-            <>
-              <Check size={16} strokeWidth={2.5} className="text-accent" aria-hidden="true" />
-              Link gekopieerd
-            </>
-          ) : (
-            <>
-              <Share2 size={16} strokeWidth={2} aria-hidden="true" />
-              Deel de tool
-            </>
-          )}
-        </button>
-      </div>
+        </>
+      )}
     </section>
   );
 };

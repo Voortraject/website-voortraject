@@ -1,5 +1,5 @@
 import { FormEvent, useRef, useState } from "react";
-import { Check, Loader2, MessageCircle, Phone, Send } from "lucide-react";
+import { Check, Loader2, Mail, MessageCircle, Phone, Send } from "lucide-react";
 
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
@@ -286,21 +286,52 @@ export const DirectContact = ({ input, adres, overzichtUrl }: DirectContactProps
           </div>
         )}
 
-        {/* Liever gebeld worden: het telefoonveld verschijnt pas als de bezoeker
-            daarom vraagt. Zo staat er geen nummerveld in de weg bij iemand die
-            gewoon even iets wil vragen. */}
-        <label className="mt-4 flex cursor-pointer items-center gap-2.5 text-[14.5px] text-foreground">
-          <input
-            type="checkbox"
-            checked={wilGebeld}
-            onChange={(e) => {
-              setWilGebeld(e.target.checked);
-              setFout(null);
-            }}
-            className="h-[18px] w-[18px] shrink-0 accent-[hsl(var(--accent))]"
-          />
-          Ik word liever gebeld
-        </label>
+        {/* Voorkeurskanaal als twee tapbare kaarten, zelfde patroon als "Ik ben…"
+            in stap 1. Gemaild staat voor: het telefoonveld verschijnt pas als de
+            bezoeker zelf om een telefoontje vraagt. */}
+        <fieldset className="mt-5">
+          <legend className="mb-3 block text-[14px] font-semibold text-foreground">Ik word het liefst…</legend>
+          <div className="grid grid-cols-2 gap-2 sm:gap-3" role="radiogroup" aria-label="Hoe wil je antwoord?">
+            {[
+              { id: "mail", label: "Gemaild", toelichting: "Antwoord in je inbox", Icon: Mail },
+              { id: "bel", label: "Gebeld", toelichting: "We bellen je even", Icon: Phone },
+            ].map(({ id, label, toelichting, Icon }) => {
+              const actief = id === "bel" ? wilGebeld : !wilGebeld;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  role="radio"
+                  aria-checked={actief}
+                  onClick={() => {
+                    setWilGebeld(id === "bel");
+                    setFout(null);
+                  }}
+                  className={`relative flex items-start gap-2 rounded-lg border-2 px-3 py-3 text-left transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-3 sm:px-4 ${
+                    actief ? "border-accent bg-accent/10" : "border-border bg-card hover:border-primary/30"
+                  }`}
+                >
+                  <Icon size={20} strokeWidth={1.75} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
+                  <span>
+                    <span className="block text-[14px] font-semibold leading-snug text-primary sm:text-[15px]">
+                      {label}
+                    </span>
+                    {/* Toelichting kost mobiel te veel ruimte → alleen op sm+. */}
+                    <span className="mt-0.5 hidden text-[13px] text-muted-foreground sm:block">{toelichting}</span>
+                  </span>
+                  {actief && (
+                    <span
+                      className="absolute right-2.5 top-2.5 hidden h-5 w-5 items-center justify-center rounded-full bg-accent sm:flex"
+                      aria-hidden="true"
+                    >
+                      <Check size={13} strokeWidth={3} className="text-primary" />
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
         {wilGebeld && (
           <div className="mt-3 animate-fade-up">
             <label className="sr-only" htmlFor="sc-vraag-telefoon">
@@ -329,29 +360,33 @@ export const DirectContact = ({ input, adres, overzichtUrl }: DirectContactProps
           </p>
         )}
 
-        <button
-          type="submit"
-          disabled={bezig}
-          className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-70 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:w-auto"
-        >
-          {bezig ? (
-            <>
-              <Loader2 size={16} className="animate-spin" aria-hidden="true" />
-              Versturen…
-            </>
-          ) : (
-            <>
-              <Send size={16} strokeWidth={2} aria-hidden="true" />
-              Verstuur mijn vraag
-            </>
-          )}
-        </button>
+        {/* Knop en belofte naast elkaar; op mobiel onder elkaar, daar is de knop
+            volle breedte. */}
+        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+          <button
+            type="submit"
+            disabled={bezig}
+            className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-70 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:w-auto"
+          >
+            {bezig ? (
+              <>
+                <Loader2 size={16} className="animate-spin" aria-hidden="true" />
+                Versturen…
+              </>
+            ) : (
+              <>
+                <Send size={16} strokeWidth={2} aria-hidden="true" />
+                Verstuur mijn vraag
+              </>
+            )}
+          </button>
 
-        <p className="mt-3 text-[13px] text-muted-foreground">
-          {bekend
-            ? `We antwoorden binnen 24 uur op ${bekend.email}.`
-            : "We antwoorden binnen 24 uur. Geen nieuwsbrief."}
-        </p>
+          <p className="text-[13px] leading-relaxed text-muted-foreground">
+            {bekend
+              ? `We antwoorden binnen 24 uur op ${bekend.email}.`
+              : "We antwoorden binnen 24 uur. Geen nieuwsbrief."}
+          </p>
+        </div>
       </form>
 
       {snelleRoutes}

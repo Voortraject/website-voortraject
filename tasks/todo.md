@@ -74,6 +74,19 @@ inserts) en 4/4 op desktop (balk weg, zwevende knop terug, contactvelden verschi
 onbekende bezoeker). Terzijde meegenomen: `bron_fout: true` in `StapGegevens` was een bestaande
 typefout (`pushGtmEvent` neemt alleen tekst en getallen) waardoor `tsc` niet doorliep; nu `1`.
 
+**Tweaks na de eerste review (2026-08-07), doorgevoerd in dezelfde PR:**
+- "Ik word liever gebeld" (vinkje) werd "Ik word het liefst…" met twee tapbare kaarten,
+  Gemaild of Gebeld, in hetzelfde patroon als "Ik ben…" in stap 1.
+- De belofteregel staat nu naast de verzendknop (op mobiel eronder: daar is de knop volle
+  breedte, en die smaller maken kost meer dan die regel oplevert).
+- "Deel de tool" is van de samenvatting naar de voet van het resultaat verhuisd, met een
+  kopieer-icoon. Boven de vouw kostte die te veel ruimte.
+- Luchtfoto en 3D-model staan mobiel naast elkaar (scheelt bijna een halve schermhoogte); vanaf
+  md weer onder elkaar in de smalle kolom. De bronvermelding op de foto is mobiel een maatje
+  kleiner, anders bedekt die op halve breedte het halve dak.
+- `TrajectStrip` ("Jouw verduurzamingstraject") is van het resultaat gehaald. Het component
+  blijft staan voor later.
+
 **Nog nodig voor deze PR:** de edge function `subsidiecheck-mail` moet gedeployed worden door de
 opdrachtgever (Claude heeft geen Supabase-token). Zonder deploy blijft de site werken, maar dan
 levert de function geen `leadId` en wordt een vraag een tweede lead in plaats van een notitie bij
