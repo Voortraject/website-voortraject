@@ -47,14 +47,14 @@ export const ClosingCta = () => (
         Vrijblijvend · Binnen 24 uur reactie · Je hoeft niets voor te bereiden
       </p>
 
-      {/* Kleine partnerverwijzing voor uitvoerders */}
+      {/* Kleine verwijzing naar de zakelijke pagina */}
       <p className="mt-10 text-[14px] text-white/55">
-        Ben je uitvoerder en zoek je ontzorging in het voortraject?{" "}
+        Ben je uitvoerder of ander bedrijf en zoek je ontzorging in het voortraject?{" "}
         <a
-          href="/partners"
+          href="/zakelijk"
           className="font-medium text-white/85 underline underline-offset-4 hover:text-white transition-colors"
         >
-          Bekijk onze partnerpagina
+          Bekijk wat we zakelijk doen
         </a>
       </p>
     </div>

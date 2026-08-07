@@ -5,7 +5,7 @@ const navCols = [
   {
     label: "Navigatie",
     items: [
-      { href: "/partners", label: "Partners" },
+      { href: "/zakelijk", label: "Zakelijk" },
       { href: "/over-ons", label: "Over ons" },
       { href: "/contact", label: "Contact" },
     ],

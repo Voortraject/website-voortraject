@@ -7,7 +7,7 @@ import { AudienceProvider } from "@/contexts/AudienceContext";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import Index from "./pages/Index.tsx";
-import Partners from "./pages/Partners.tsx";
+import Zakelijk from "./pages/Zakelijk.tsx";
 
 import Isolatie from "./pages/maatregelen/Isolatie.tsx";
 import Warmtepomp from "./pages/maatregelen/Warmtepomp.tsx";
@@ -43,8 +43,11 @@ const App = () => (
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/partners" element={<Partners />} />
-            <Route path="/uitvoerders" element={<Navigate to="/partners" replace />} />
+            <Route path="/zakelijk" element={<Zakelijk />} />
+            {/* Oude adressen van deze pagina. Beide wijzen rechtstreeks naar
+                /zakelijk, dus geen redirect-ketting. Zie ook public/_redirects. */}
+            <Route path="/partners" element={<Navigate to="/zakelijk" replace />} />
+            <Route path="/uitvoerders" element={<Navigate to="/zakelijk" replace />} />
             <Route path="/bewoners" element={<Navigate to="/" replace />} />
             <Route path="/verduurzamen" element={<Navigate to="/" replace />} />
             <Route path="/verduurzamen/isolatie" element={<Isolatie />} />
