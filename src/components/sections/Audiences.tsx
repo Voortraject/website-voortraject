@@ -13,7 +13,7 @@ const cols = [
     title: "Groeien zonder extra personeel",
     body: "Wij helpen kleine en middelgrote uitvoerders om sneller en professioneler te werken in verduurzamingstrajecten. Van intake tot akkoord, jullie kunnen zich richten op de uitvoering.",
     cta: "Bekijk wat we voor uitvoerders doen",
-    href: "/uitvoerders",
+    href: "/zakelijk",
   },
 ];
 

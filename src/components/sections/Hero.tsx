@@ -4,6 +4,7 @@ import { CtaButton } from "@/components/CtaButton";
 import { GoogleG } from "@/components/GoogleG";
 import { Sterren } from "@/components/Sterren";
 import { useGoogleReviews } from "@/hooks/useGoogleReviews";
+import { GOOGLE_REVIEWS_URL } from "@/lib/reviews";
 import heroAdviesgesprek from "@/assets/hero-adviesgesprek.webp";
 
 const claims = [
@@ -14,7 +15,6 @@ const claims = [
 
 export const Hero = () => {
   const { stats } = useGoogleReviews();
-  const reviewsUrl = import.meta.env.VITE_GOOGLE_REVIEWS_URL as string | undefined;
   const ratingTekst =
     stats?.rating != null
       ? stats.rating.toLocaleString("nl-NL", { minimumFractionDigits: 1, maximumFractionDigits: 1 })
@@ -74,36 +74,31 @@ export const Hero = () => {
           </ul>
 
           <div className="mt-8 md:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-            <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
-            {/* Secundaire CTA naar de subsidiecheck; bellen kan nog via de
-                header-pill en de WhatsApp-knop. */}
-            <a
-              href="/subsidiecheck"
-              className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-medium border border-white/80 text-white transition-all duration-150 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-            >
+            {/* Hoofd-CTA is de subsidiecheck: laagdrempeliger instap dan direct
+                een gesprek plannen. */}
+            <CtaButton href="/subsidiecheck">
               <Search size={16} strokeWidth={2} aria-hidden="true" />
               <span>Check jouw subsidies</span>
+            </CtaButton>
+            {/* Secundaire CTA naar het contactformulier; bellen kan nog via de
+                header-pill en de WhatsApp-knop. */}
+            <a
+              href="/contact"
+              className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-medium border border-white/80 text-white transition-all duration-150 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            >
+              Plan een gratis gesprek
             </a>
           </div>
 
-          {reviewsUrl ? (
-            <a
-              href={reviewsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-flex items-center gap-2.5 rounded-full text-[15px] font-medium text-white/90 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2"
-              aria-label={`Bekijk onze beoordelingen op Google (${ratingTekst} van 5)`}
-            >
-              {badgeInhoud}
-            </a>
-          ) : (
-            <p
-              className="mt-6 inline-flex items-center gap-2.5 text-[15px] font-medium text-white/90"
-              aria-label={`Beoordeeld met ${ratingTekst} van 5 op Google`}
-            >
-              {badgeInhoud}
-            </p>
-          )}
+          <a
+            href={GOOGLE_REVIEWS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex items-center gap-2.5 rounded-full text-[15px] font-medium text-white/90 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2"
+            aria-label={`Bekijk onze beoordelingen op Google (${ratingTekst} van 5)`}
+          >
+            {badgeInhoud}
+          </a>
         </div>
       </div>
     </section>

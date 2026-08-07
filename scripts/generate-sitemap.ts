@@ -20,7 +20,7 @@ const entries: SitemapEntry[] = [
   ...(SUBSIDIECHECK_LIVE
     ? [{ path: "/subsidiecheck", changefreq: "weekly", priority: "0.9" } as SitemapEntry]
     : []),
-  { path: "/partners", changefreq: "monthly", priority: "0.9" },
+  { path: "/zakelijk", changefreq: "monthly", priority: "0.9" },
 
   { path: "/verduurzamen/isolatie", changefreq: "monthly", priority: "0.8" },
   { path: "/verduurzamen/zonnepanelen", changefreq: "monthly", priority: "0.8" },

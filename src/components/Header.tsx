@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown, Phone, Search } from "lucide-react";
+import { Menu, X, ChevronDown, Search } from "lucide-react";
 import logoVoortrajectBlauw from "@/assets/logo-voortraject-blauw.png";
 
 const pillShadow = {
@@ -41,7 +41,8 @@ const links: { href: string; label: string; dropdown?: typeof subsidiesItems }[]
   { href: "/verduurzamen/isolatie", label: "Verduurzamen", dropdown: verduurzamenItems },
   { href: "/subsidies", label: "Subsidies", dropdown: subsidiesItems },
   { href: "/over-ons", label: "Over ons" },
-  { href: "/partners", label: "Partners" },
+  { href: "/zakelijk", label: "Zakelijk" },
+  { href: "/contact", label: "Contact" },
 ];
 
 
@@ -125,19 +126,12 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
           )}
           <div className="mt-5 flex items-center gap-3">
             <a
-              href="/contact"
+              href="/subsidiecheck"
               onClick={onClose}
-              className="flex-1 inline-flex items-center justify-center rounded-full px-5 py-3 text-base font-semibold bg-accent text-primary"
+              className="flex-1 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold bg-accent text-primary"
             >
-              Contact
-            </a>
-            <a
-              href="tel:+31502112689"
-              aria-label="Bel ons: 050 211 2689"
-              className="flex-1 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold bg-white text-primary"
-            >
-              <Phone size={18} strokeWidth={2} />
-              <span>050 211 2689</span>
+              <Search size={18} strokeWidth={2} aria-hidden="true" />
+              Check jouw subsidies
             </a>
           </div>
         </nav>
@@ -243,22 +237,17 @@ export const Header = () => {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3 shrink-0">
+          {/* Hoofd-CTA van de site: de subsidiecheck, gelijk aan de hero. */}
           <a
-            href="tel:+31502112689"
-            aria-label="Bel ons: 050 211 2689"
-            className={`inline-flex items-center gap-2 ${glassPill} rounded-full px-5 py-3 text-[14px] font-semibold text-primary transition-colors hover:bg-white/80`}
-            style={pillShadow}
-          >
-            <Phone size={16} strokeWidth={2} />
-            <span>050 211 2689</span>
-          </a>
-          <a
-            href="/contact"
-            aria-label="Contact"
+            href="/subsidiecheck"
+            aria-label="Check jouw subsidies"
             className="relative overflow-hidden inline-flex items-center justify-center rounded-full py-3 px-6 text-[15px] font-semibold bg-accent text-primary"
             style={pillShadow}
           >
-            <span className="relative z-10">Plan een gratis gesprek</span>
+            <span className="relative z-10 inline-flex items-center gap-2">
+              <Search size={16} strokeWidth={2} aria-hidden="true" />
+              Check jouw subsidies
+            </span>
             <span className="absolute inset-0 overflow-hidden rounded-full pointer-events-none">
               <span
                 className="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent"

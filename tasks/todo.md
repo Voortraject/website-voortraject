@@ -2,6 +2,133 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Partners wordt Zakelijk (2026-08-07)
+
+Branch: `feat/zakelijk-pagina`, af te takken van de huidige branch
+`feat/hero-cta-subsidiecheck-primair` (want dit bouwt voort op commit `3475d1b`, waarin het
+contactformulier bewoner-only werd). PR ready-for-review, niet zelf mergen. Als de PR van de
+hero-branch eerder merget: rebasen op `main`.
+
+Aanleiding: de Partners-pagina heet straks **Zakelijk** en wordt de plek waar uitvoerende
+partijen en bedrijven in het algemeen vinden wat wij voor hen doen én hoe ze contact opnemen.
+
+Belangrijke context: in commit `3475d1b` is de uitvoerder-variant van `/contact` volledig
+verwijderd (toggle, velden, validatie en de insert naar `leads_uitvoerders`). Daarmee heeft
+de site op dit moment **geen enkele route meer voor een zakelijke lead**. Het zakelijke
+formulier komt daarom op deze pagina te staan, en de CTA's op deze pagina mogen niet meer
+naar `/contact` wijzen (die is nu puur voor bewoners).
+
+Afgestemd (2026-08-07):
+- URL gaat mee: `/partners` → `/zakelijk`, met 301-redirects.
+- Doelgroep verbreedt: uitvoerders blijven de kern, bedrijven breder erbij.
+- Volledig zakelijk contactformulier op de pagina zelf, naar `leads_uitvoerders`.
+
+### 1. Route en naam
+- [ ] `src/pages/Partners.tsx` → `git mv` naar `src/pages/Zakelijk.tsx`, export hernoemen.
+- [ ] `src/App.tsx`: route `/zakelijk`; `/partners` én `/uitvoerders` worden
+      `<Navigate to="/zakelijk" replace />` (geen redirect-ketting).
+- [ ] `public/_redirects`: `/partners /zakelijk 301` toevoegen en de bestaande regel
+      `/uitvoerders /partners 301` ombouwen naar `/uitvoerders /zakelijk 301`. De
+      www-regel blijft ongemoeid.
+- [ ] `scripts/generate-sitemap.ts`: `/partners` → `/zakelijk` (sitemap.xml wordt door
+      predev/prebuild opnieuw geschreven, niet met de hand aanpassen).
+- [ ] Label + href op `Zakelijk` in `src/components/Header.tsx` (`links`) en
+      `src/components/Footer.tsx` (`navCols`).
+- [ ] `src/components/sections/ClosingCta.tsx`: href naar `/zakelijk` en de zin
+      "Bekijk onze partnerpagina" herschrijven naar bedrijven.
+- [ ] `src/components/sections/Audiences.tsx`: href `/uitvoerders` → `/zakelijk`.
+      (Component wordt nergens gerenderd, maar houdt zo geen dode link.)
+- [ ] `<Seo>` op de pagina: `path="/zakelijk"`, titel/omschrijving richting bedrijven.
+
+Actieve staat in de header werkt op exacte href-vergelijking, dus `/zakelijk` licht vanzelf
+op zodra de href klopt. Er is verder niets href-afhankelijk in Header/Footer.
+
+### 2. Inhoud verbreden naar bedrijven
+Bestaande secties blijven staan (pijnpunten, `<Why/>`, voor/na, waarom dit werkt): die zijn
+sterk en gaan over uitvoerders. Wat verandert:
+- [ ] Hero: H1 en subkop naar bedrijven, met uitvoerders expliciet genoemd als kern.
+- [ ] Nieuwe sectie "Voor wie we werken" met korte kaarten per type bedrijf.
+
+**Te bevestigen bij het plan:** welke typen bedrijven noemen we? Voorstel, graag corrigeren
+want dit is een feitelijke uitspraak op een publieke site:
+uitvoerders/aannemers, installateurs, VvE-beheerders, woningcorporaties, makelaars,
+energieadviseurs. Wat niet klopt, haal ik eruit.
+
+### 3. Zakelijk contactformulier op de pagina
+Nieuw, zelfstandig component `src/components/ZakelijkContactFormulier.tsx`, in een sectie met
+`id="contact"` onderaan de pagina. Contact.tsx blijft volledig ongemoeid: het bewoner-only
+formulier is net opgeleverd en dat wil ik niet opnieuw aanraken.
+
+Opzet volgt het huisrecept van `src/components/subsidiecheck/StapGegevens.tsx` en het
+verwijderde uitvoerder-formulier:
+- Velden: bedrijfsnaam, contactpersoon (voornaam / tussenvoegsel / achternaam), e-mail,
+  telefoonnummer, vragen of opmerkingen (max 2000).
+- Honeypot `vt_check` (offscreen via CSS, geen `type=hidden`) + minimaal 2 seconden op de
+  pagina; honeypot gevuld betekent stil bedankscherm zonder insert.
+- Validatie met de bestaande helpers: `validatePhoneNL` / `TELEFOON_FOUT` uit
+  `src/lib/telefoon.ts`, plus de naam-, bedrijfs- en e-mailpatronen. Inclusief de tip bij een
+  gratis e-maildomein (gmail/hotmail/…), zoals het oude formulier had.
+- `pushGtmEvent("zakelijk_lead")` uit `src/lib/gtm.ts` na een geslaagde inzending, zonder PII.
+- Insert via `supabaseExternal` naar `leads_uitvoerders` met exact de kolommen die tot
+  `3475d1b` in productie werkten: `tenant_id`, `bedrijfsnaam`, `contactpersoon_voornaam`,
+  `contactpersoon_tussenvoegsel`, `contactpersoon_achternaam`, `email`, `telefoon`,
+  `notities`, `bron: "Voortraject"`, `status: "nieuw"`. De kolommen `contactpersoon` en
+  `naam` worden bewust niet meegestuurd (CRM-trigger stelt die samen), en `formulier` bestaat
+  alleen op `leads_bewoners`.
+- [ ] De drie CTA's op de pagina (`href="/contact"`) worden ankers naar `#contact`, met
+      `<OfBelOnsCta/>` ernaast voor bellen.
+
+**Let op, stale types.** `src/integrations/supabase/types.ts` beschrijft `leads_uitvoerders`
+met `naam_contactpersoon` / `telefoonnummer` / `vragen`, terwijl de live CRM-tabel
+`contactpersoon_*` / `telefoon` / `notities` gebruikt. De oude code omzeilde dat met `as any`;
+dat doe ik ook. Ik heb hier geen Supabase-token, dus de types kan ik niet regenereren:
+- [ ] Actie voor jou: `leads_uitvoerders` opnieuw laten genereren zodat code en database weer
+      in sync zijn. Geen schemawijziging op het CRM-project, alleen types.
+
+### 4. Tests
+- [ ] Nieuw `src/test/zakelijkFormulier.test.tsx`, met de cases die in `3475d1b` uit
+      `honeypot.test.tsx` / `formulierKolom.test.tsx` / `leadOpslagRuw.test.tsx` zijn
+      verwijderd, nu tegen het nieuwe component: honeypot-opzet, insert naar
+      `leads_uitvoerders`, honeypot gevuld = geen insert maar wel bedankscherm, en
+      `bron: "Voortraject"`.
+
+### 5. Verificatie
+- [ ] `bun run test` groen, `bun run lint` schoon, `bun run build` slaagt.
+- [ ] `bun run dev`: `/zakelijk` rendert, `/partners` en `/uitvoerders` leiden door,
+      header/footer tonen "Zakelijk" en lichten actief op.
+- [ ] Gegenereerde `public/sitemap.xml` bevat `/zakelijk` en niet meer `/partners`.
+- [ ] Formulier echt inzenden op dev en in het CRM controleren dat de lead binnenkomt met
+      bron "Voortraject" en een correct samengestelde contactpersoon.
+
+### Review (2026-08-07)
+Alles uit het plan is gebouwd op branch `feat/zakelijk-pagina`.
+
+- Route: `src/pages/Partners.tsx` → `Zakelijk.tsx` op `/zakelijk`. `/partners` en
+  `/uitvoerders` wijzen allebei rechtstreeks door, zowel in `public/_redirects` (301) als in
+  de SPA-router. Geen redirect-ketting.
+- Naam "Zakelijk" in header, footer en de verwijzing in `ClosingCta`; `Audiences` (dode
+  component) wijst niet langer naar het oude adres.
+- Pagina teruggebracht tot drie secties (2e ronde, op verzoek): hero, "Voor wie we werken"
+  en meteen daarna het formulier. De secties "vastlopen", `<Why/>`, "voor en na" en "waarom
+  dit werkt" zijn eruit, net als de sluit-CTA in de footer: die zou pal onder het formulier
+  nog een keer om dezelfde kennismaking vragen.
+- De "Plan een kennismaking"-CTA in de hero ankert naar `#contact` in plaats van naar
+  `/contact`, want die pagina is sinds `3475d1b` bewoner-only.
+- Gevolg: `src/components/sections/Why.tsx` wordt nu nergens meer gebruikt. Laten staan of
+  opruimen is een aparte keuze, buiten deze branch gelaten.
+- `src/components/ZakelijkContactFormulier.tsx` is nieuw en zelfstandig; `Contact.tsx` is
+  niet aangeraakt. Nieuwe code gebruikt de design tokens in plaats van hex-waarden.
+- Tests: 3 cases in `honeypot.test.tsx` (opzet, insert met de exacte kolommen + bron, gevuld
+  honeypot = bedankscherm zonder insert) en `zakelijkPagina.test.tsx` als rooktest op de
+  doelgroepen, het formulier en de CTA-hrefs.
+
+Geverifieerd: 92 tests groen (15 bestanden), `tsc --noEmit` schoon, `bun run build` slaagt en
+de gegenereerde sitemap bevat `/zakelijk` en niet meer `/partners`. ESLint blijft op exact de
+baseline van vóór deze branch (17 problemen, 9 errors) — de nieuwe bestanden voegen er nul toe.
+
+Nog open (staat hierboven aangevinkt als jouw actie): de types voor `leads_uitvoerders`
+regenereren, en één echte inzending controleren in het CRM.
+
 ## Subsidiecheck — gegevens vooraf verzamelen (tussenoplossing) (2026-07-24)
 
 Branch: `feat/subsidiecheck-gegevens-poort` (vanaf `main`). PR ready-for-review, niet zelf mergen.
