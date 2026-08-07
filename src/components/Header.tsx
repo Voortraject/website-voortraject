@@ -41,7 +41,7 @@ const links: { href: string; label: string; dropdown?: typeof subsidiesItems }[]
   { href: "/verduurzamen/isolatie", label: "Verduurzamen", dropdown: verduurzamenItems },
   { href: "/subsidies", label: "Subsidies", dropdown: subsidiesItems },
   { href: "/over-ons", label: "Over ons" },
-  { href: "/partners", label: "Partners" },
+  { href: "/zakelijk", label: "Zakelijk" },
   { href: "/contact", label: "Contact" },
 ];
 
