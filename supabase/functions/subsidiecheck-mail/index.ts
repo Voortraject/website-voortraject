@@ -103,6 +103,13 @@ const ALLE_MAATREGELEN = [
   "elektrisch-koken",
   "thuisbatterij",
 ] as const;
+// Bewonertype uit stap 1 van de check. Exact de codes van `Bewonertype` in
+// src/lib/subsidies/types.ts (ook de waarden achter `?type=` in de deel-link) en
+// exact wat de CHECK op `leads_bewoners.subsidiecheck_type_bewoner` toelaat.
+// Deno kan src/ niet importeren, dus dit is een kopie: pas ze samen aan. Iets
+// anders dan deze vier laat de insert falen, dus onbekende invoer → NULL.
+const BEWONERTYPES = ["woningeigenaar", "huurder", "vve", "verhuurder"] as const;
+
 const MAATREGEL_LABELS: Record<string, string> = {
   isolatie: "Isolatie & glas",
   warmtepomp: "Warmtepomp",
@@ -488,6 +495,11 @@ Deno.serve(async (req: Request) => {
     .map((m) => MAATREGEL_LABELS[m])
     .join(", ");
 
+  // Bewonertype gaat naar de eigen kolom. Mild bij onbekende of ontbrekende
+  // invoer (→ null, kolom valt weg): de CHECK zou een andere waarde weigeren en
+  // dan raken we de hele lead kwijt.
+  const typeBewoner = BEWONERTYPES.find((t) => t === input.bewonertype) ?? null;
+
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -514,6 +526,7 @@ Deno.serve(async (req: Request) => {
       stad,
       notities: null,
       subsidiecheck_interesses: interesses,
+      subsidiecheck_type_bewoner: typeBewoner,
       // Welk formulier de lead opleverde. n8n bepaalt hiermee de taaktitel én of
       // de bevestigingsmail uitgaat: deze bezoeker krijgt hierboven al het
       // subsidieoverzicht, dus niet nóg een "we nemen contact op"-mail. CHECK op

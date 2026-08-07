@@ -110,6 +110,11 @@ export async function schrijfSubsidiecheckLead(args: {
     stad: adres.woonplaatsnaam,
     notities: null,
     subsidiecheck_interesses: bouwSubsidiecheckInteresses(input.maatregelen),
+    // Het bewonertype uit stap 1, in de codes van het `Bewonertype`-type (ook de
+    // waarden achter `?type=` in de deel-link). CHECK op de kolom: alleen NULL of
+    // 'woningeigenaar' | 'huurder' | 'vve' | 'verhuurder' — het type dwingt dat
+    // hier al af, dus geen extra vertaling.
+    subsidiecheck_type_bewoner: input.bewonertype,
     // Welk formulier de lead opleverde. n8n bepaalt hiermee de taaktitel én of de
     // bevestigingsmail uitgaat: wie alleen de subsidiecheck deed krijgt die niet,
     // want die heeft het overzicht al. CHECK op de kolom: alleen
