@@ -326,7 +326,9 @@ const Contact = () => {
         </div>
 
         <div className="mx-auto px-6 md:px-12 mt-8 md:mt-10" style={{ maxWidth: 1200 }}>
-          <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 md:gap-10 lg:gap-12 items-start">
+          {/* items-stretch: beide kolommen even hoog, zodat het reviewblok
+              onderaan gelijk eindigt met de formulierkaart. */}
+          <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 md:gap-10 lg:gap-12 items-stretch">
             <div
               style={{
                 backgroundColor: "#FFFFFF",
@@ -714,7 +716,7 @@ const Contact = () => {
             {/* min-w-0: grid-items krijgen standaard min-width:auto, waardoor de
                 flexrij van de reviewcarrousel deze kolom breder duwde dan haar
                 2fr en het formulier samendrukte. */}
-            <div className="min-w-0">
+            <div className="min-w-0 flex flex-col">
               <h3
                 className="font-display"
                 style={{ fontSize: 22, fontWeight: 600, color: "#152C4E", marginBottom: 24 }}
@@ -767,7 +769,7 @@ const Contact = () => {
 
               {/* Vult de ruimte onder de contactgegevens, zodat de reviews op
                   desktop naast het formulier staan in plaats van eronder. */}
-              <div className="mt-3">
+              <div className="mt-3 flex-1">
                 <ReviewsCompact />
               </div>
             </div>

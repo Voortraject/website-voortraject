@@ -75,7 +75,7 @@ export const ReviewsCompact = () => {
   );
 
   return (
-    <section className="rounded-2xl bg-primary p-5" aria-labelledby="reviews-kort">
+    <section className="flex h-full flex-col rounded-2xl bg-primary p-5" aria-labelledby="reviews-kort">
       <h3 id="reviews-kort" className="font-display text-[17px] font-semibold text-white">
         Wat bewoners zeggen
       </h3>
@@ -102,9 +102,12 @@ export const ReviewsCompact = () => {
         onTouchStart={() => setGepauzeerd(true)}
       >
         <Carousel setApi={setApi} opts={{ loop: true }}>
-          <CarouselContent className="ml-0 items-start cursor-grab active:cursor-grabbing">
+          {/* -ml-4 + pl-4 zet ruimte tússen de kaarten, net als op de homepagina;
+              tijdens het schuiven zie je dus een gootje in plaats van twee
+              kaarten die tegen elkaar aan plakken. */}
+          <CarouselContent className="-ml-4 items-start cursor-grab active:cursor-grabbing">
             {kaarten.map((k) => (
-              <CarouselItem key={k.id} className="pl-0 basis-full">
+              <CarouselItem key={k.id} className="pl-4 basis-full">
                 <ReviewKaart {...k} />
               </CarouselItem>
             ))}
@@ -112,9 +115,10 @@ export const ReviewsCompact = () => {
         </Carousel>
       </div>
 
-      {/* Puntjes-indicator: positie + aantal, klikbaar. */}
+      {/* Puntjes-indicator: positie + aantal, klikbaar. mt-auto duwt ze naar de
+          onderkant van het navy vlak als de kolom meerekt met het formulier. */}
       {snaps.length > 1 && (
-        <div className="mt-4 flex items-center justify-center gap-2">
+        <div className="mt-auto flex items-center justify-center gap-2 pt-4">
           {snaps.map((_, i) => (
             <button
               key={i}
