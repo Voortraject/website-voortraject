@@ -512,18 +512,19 @@ const Contact = () => {
                       </div>
                     </div>
 
+                    {/* Adres in dezelfde verhouding als de subsidiecheck
+                        (2 / 1.2 / 1): ook op mobiel één rij, met een eigen label
+                        boven elk veld in plaats van placeholders als label. */}
                     <div className={fieldWrap}>
-                      <label className={labelClass}>
-                        Adres
-                        <span className="text-[#8B8680] font-normal ml-1">(toevoeging optioneel)</span>
-                      </label>
-                      <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr] gap-3">
+                      <div className="grid grid-cols-[2fr_1.2fr_1fr] gap-3">
                         <div>
+                          <label htmlFor="f-postcode" className={labelClass}>Postcode</label>
                           <input
+                            id="f-postcode"
                             name="postcode"
                             type="text"
-                            placeholder="Postcode"
-                            aria-label="Postcode"
+                            autoComplete="postal-code"
+                            placeholder="9711 AB"
                             aria-invalid={!!errors.postcode}
                             aria-describedby={errors.postcode ? errId("postcode") : undefined}
                             className={inputCls("postcode")}
@@ -533,11 +534,13 @@ const Contact = () => {
                           />
                         </div>
                         <div>
+                          <label htmlFor="f-huisnummer" className={labelClass}>Huisnummer</label>
                           <input
+                            id="f-huisnummer"
                             name="huisnummer"
                             type="text"
-                            placeholder="Huisnummer"
-                            aria-label="Huisnummer"
+                            inputMode="numeric"
+                            placeholder="12"
                             aria-invalid={!!errors.huisnummer}
                             aria-describedby={errors.huisnummer ? errId("huisnummer") : undefined}
                             className={inputCls("huisnummer")}
@@ -547,16 +550,22 @@ const Contact = () => {
                             maxLength={5}
                           />
                         </div>
-                        <input
-                          name="toevoeging"
-                          type="text"
-                          placeholder="Toevoeging"
-                          aria-label="Toevoeging"
-                          className={cx(baseInputClass, inputOk)}
-                          value={bewoner.toevoeging}
-                          onChange={onChangeBew("toevoeging")}
-                          maxLength={10}
-                        />
+                        <div>
+                          <label htmlFor="f-toevoeging" className={cx(labelClass, "whitespace-nowrap")}>
+                            Toevoeging
+                            <span className="hidden text-[#8B8680] font-normal ml-1 sm:inline">(optioneel)</span>
+                          </label>
+                          <input
+                            id="f-toevoeging"
+                            name="toevoeging"
+                            type="text"
+                            placeholder="A"
+                            className={cx(baseInputClass, inputOk)}
+                            value={bewoner.toevoeging}
+                            onChange={onChangeBew("toevoeging")}
+                            maxLength={10}
+                          />
+                        </div>
                       </div>
                       <div className="mt-1">
                         <FieldError name="postcode" />
