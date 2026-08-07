@@ -132,12 +132,24 @@ info@voortraject.nl).
 en `bouwjaar: 1931`. Precies dat "A+++" laat zien waarom de terugval nodig is: als er een CHECK
 op die kolom staat die zo'n waarde niet kent, gaat de lead nu niet verloren.
 
-### PR 3 — Mobiele optimalisatie van de hele flow (`feat/subsidiecheck-mobiel`)
-- [ ] Stap 1 compacter; hele stap binnen één schermhoogte inclusief knop.
-- [ ] Resultaat: samenvatting mobiel inkorten, minder scroll tot de eerste actie.
-- [ ] Laadsequentie (~3,4s) mobiel heroverwegen: waarde van de labor illusion afwegen tegen
-      afhaakkans. Meten, niet gokken.
-- [ ] Kaartenlijst en trajectstrip mobiel nalopen.
+### PR 3 — Mobiele optimalisatie van het resultaat (`feat/subsidiecheck-mobiel`) ✅
+Eerst gemeten op 390px (CDP), niet gegokt. Uitgangssituatie: resultaat 6544px = 7,8 schermen,
+samenvatting 623px, eerste regeling op y=1297, vraagblok op y=4200, elf kaarten van ~250px.
+- [x] Stap 1: **al goed**, geen wijziging nodig. De knop staat op y=625, dus ook op een iPhone
+      SE (667px hoog) binnen één scherm.
+- [x] Kaarten compacter op mobiel: padding 20 → 16, en aanbieder + "Bekijk voorwaarden" op één
+      regel in plaats van twee. Scheelt ~40px per kaart.
+- [x] Samenvatting: de acht maatregelen staan op mobiel als één doorlopende regel in plaats van
+      vier rijen met vinkjes. Zelfde informatie, ~50px korter. Op md+ blijft de vinkjeslijst.
+- [x] Resultaat: 6544 → 6015px (7,1 schermen), vraagblok van y=4200 naar y=3672. Alles blijft
+      zichtbaar; er is niets ingeklapt of weggelaten.
+- [x] Laadsequentie (~3,4s) **bewust ongemoeid gelaten**. Buell & Norton (Harvard, 2011) laten
+      zien dat zichtbaar "werk" de gewaardeerde waarde van een uitkomst verhoogt, zelfs als het
+      wachten daardoor langer duurt (operational transparency / labor illusion). De opdrachtgever
+      heeft die animatie bewust laten bouwen; hem inkorten zou precies dat effect weggooien.
+- [ ] Optie voor later, als de lijst te lang blijft voelen: groepen onder de eerste inklappen
+      met de telling zichtbaar ("Gemeente · 3"). Bewust niet gedaan zonder cijfers: het ruilt
+      zichtbare waarde in voor minder scrollen, en dat is een keuze van de opdrachtgever.
 
 ### PR 4 — Eerlijke overtuiging (`feat/subsidiecheck-bewijs`)
 - [ ] Live Google-score en reviewaantal in de poort en op het resultaat.

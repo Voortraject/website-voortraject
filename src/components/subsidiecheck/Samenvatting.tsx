@@ -197,7 +197,13 @@ export const Samenvatting = ({
       <p className="mt-4 text-[13px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
         Regelingen gevonden voor deze maatregelen
       </p>
-      <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-2">
+      {/* Mobiel als één doorlopende regel: dezelfde informatie in twee regels in
+          plaats van vier rijen met vinkjes. Op md+ blijft de vinkjeslijst, daar is
+          de ruimte er wel en leest het als bevestiging van je keuze. */}
+      <p className="mt-2.5 text-[14px] leading-relaxed text-foreground md:hidden">
+        {maatregelen.map((m) => MAATREGEL_LABELS[m]).join(", ")}
+      </p>
+      <ul className="mt-5 hidden flex-wrap gap-x-4 gap-y-2 md:flex">
         {maatregelen.map((m) => (
           <li key={m} className="inline-flex items-center gap-2 text-[14px] text-foreground">
             <span
