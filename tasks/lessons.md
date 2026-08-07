@@ -9,6 +9,21 @@ the user corrects course or a non-obvious gotcha surfaces. Review at session sta
 **Lesson:** the rule to follow next time
 -->
 
+## 2026-08-07 — Gestapelde PR's: verwijder de basisbranch pas als álles gemerged is
+**Context:** Vier PR's stonden op elkaar gestapeld (#89 → #91 → #93 → #94, elk met de vorige als
+base). Bij het mergen van #89 met `gh pr merge --delete-branch` sloot GitHub #91 automatisch: een
+PR waarvan de basisbranch verdwijnt gaat dicht, niet naar `main`. Retargeten kan daarna niet meer
+("Cannot change the base branch of a closed pull request"), en de kop van #91 was toen ineens
+CONFLICTING.
+**Lesson:**
+- Merge een stapel PR's **zonder `--delete-branch`**. Retarget eerst de volgende PR naar `main`
+  (`gh pr edit <n> --base main`), merge die, en ruim pas aan het eind alle branches op met
+  `git push origin --delete <branches>`.
+- Ging het toch mis: push de verwijderde basisbranch terug (`git push origin origin/main:refs/heads/<branch>`),
+  dan kan de PR heropend worden (`gh pr reopen`) en alsnog naar `main` worden gericht.
+- Controleer na elke merge met `gh pr view <n> --json state,baseRefName,mergeable` of de volgende
+  PR nog openstaat en op `main` wijst; wacht een paar seconden, GitHub is niet direct bij.
+
 ## 2026-07-30 — Stille terugval op voorbeelddata = onzichtbare fouten; faal eerlijk
 **Context:** De subsidiecheck viel bij een bronfout stil terug op de mock ("basisset"): één
 transiënte fout van Verbeterjehuis en de bezoeker zag 5 verzonnen regelingen in plaats van de
