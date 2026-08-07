@@ -4,6 +4,7 @@ import { CtaButton } from "@/components/CtaButton";
 import { GoogleG } from "@/components/GoogleG";
 import { Sterren } from "@/components/Sterren";
 import { useGoogleReviews } from "@/hooks/useGoogleReviews";
+import { GOOGLE_REVIEWS_URL } from "@/lib/reviews";
 import heroAdviesgesprek from "@/assets/hero-adviesgesprek.webp";
 
 const claims = [
@@ -14,7 +15,6 @@ const claims = [
 
 export const Hero = () => {
   const { stats } = useGoogleReviews();
-  const reviewsUrl = import.meta.env.VITE_GOOGLE_REVIEWS_URL as string | undefined;
   const ratingTekst =
     stats?.rating != null
       ? stats.rating.toLocaleString("nl-NL", { minimumFractionDigits: 1, maximumFractionDigits: 1 })
@@ -90,24 +90,15 @@ export const Hero = () => {
             </a>
           </div>
 
-          {reviewsUrl ? (
-            <a
-              href={reviewsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-flex items-center gap-2.5 rounded-full text-[15px] font-medium text-white/90 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2"
-              aria-label={`Bekijk onze beoordelingen op Google (${ratingTekst} van 5)`}
-            >
-              {badgeInhoud}
-            </a>
-          ) : (
-            <p
-              className="mt-6 inline-flex items-center gap-2.5 text-[15px] font-medium text-white/90"
-              aria-label={`Beoordeeld met ${ratingTekst} van 5 op Google`}
-            >
-              {badgeInhoud}
-            </p>
-          )}
+          <a
+            href={GOOGLE_REVIEWS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex items-center gap-2.5 rounded-full text-[15px] font-medium text-white/90 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2"
+            aria-label={`Bekijk onze beoordelingen op Google (${ratingTekst} van 5)`}
+          >
+            {badgeInhoud}
+          </a>
         </div>
       </div>
     </section>
