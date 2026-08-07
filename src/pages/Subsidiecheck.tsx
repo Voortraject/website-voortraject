@@ -162,7 +162,7 @@ const SubsidiecheckLive = () => {
       return bevestigdAdres
         ? {
             titel: "Nog één stap",
-            sub: "Kies waar je in geïnteresseerd bent — dan zien we meteen jouw regelingen.",
+            sub: "Kies waar je in geïnteresseerd bent, dan zien we meteen jouw regelingen.",
           }
         : {
             titel: "Waar staat jouw woning?",

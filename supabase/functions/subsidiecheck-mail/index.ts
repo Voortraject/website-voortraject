@@ -555,7 +555,7 @@ Deno.serve(async (req: Request) => {
       to: email,
       bcc: Deno.env.get("MAIL_BCC") || undefined,
       replyTo: Deno.env.get("MAIL_REPLY_TO") ?? DEFAULT_REPLY_TO,
-      subject: `Je subsidieoverzicht — ${regelingen.length} ${regelingen.length === 1 ? "regeling" : "regelingen"} voor je woning`,
+      subject: `Je subsidieoverzicht: ${regelingen.length} ${regelingen.length === 1 ? "regeling" : "regelingen"} voor je woning`,
       html,
     });
   } else {

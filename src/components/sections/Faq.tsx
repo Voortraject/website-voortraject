@@ -8,7 +8,7 @@ const faqs = [
   },
   {
     q: "Hoe verdienen jullie dan geld?",
-    a: "Heel simpel: de uitvoerder betaalt ons bij een geslaagde opdracht, voor het voorwerk dat we uit handen nemen — intake, dossier, subsidies en nazorg. Jij betaalt niets, en we vertellen je gewoon hoe dat zit. We verkopen zelf geen producten, dus in ons advies zit geen belang om je een bepaald merk of systeem aan te praten. We koppelen je alleen aan uitvoerders waarvan we weten dat ze goed werk leveren in jouw regio.",
+    a: "Heel simpel: de uitvoerder betaalt ons bij een geslaagde opdracht, voor het voorwerk dat we uit handen nemen: intake, dossier, subsidies en nazorg. Jij betaalt niets, en we vertellen je gewoon hoe dat zit. We verkopen zelf geen producten, dus in ons advies zit geen belang om je een bepaald merk of systeem aan te praten. We koppelen je alleen aan uitvoerders waarvan we weten dat ze goed werk leveren in jouw regio.",
   },
   {
     q: "Wat doet Voortraject precies?",
@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     q: "Hoe snel kan ik een gesprek?",
-    a: "Meestal binnen een paar werkdagen. Geen wachttijden van weken of maanden zoals bij sommige loketten — je kiest een moment dat jou uitkomt.",
+    a: "Meestal binnen een paar werkdagen. Geen wachttijden van weken of maanden zoals bij sommige loketten. Je kiest een moment dat jou uitkomt.",
   },
   {
     q: "Wat is het verschil met een energiecoach?",
