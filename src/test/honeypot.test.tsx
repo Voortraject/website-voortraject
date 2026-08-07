@@ -7,7 +7,7 @@ import type { PdokAdres } from "@/lib/pdok";
 import type { SubsidieCheckInput } from "@/lib/subsidies";
 
 // De honeypot-garantie voor alle drie de formulieren die een lead wegschrijven:
-// contact (bewoner + uitvoerder), de subsidiecheck-gegevenspoort en het
+// het contactformulier (bewoners), de subsidiecheck-gegevenspoort en het
 // "mail mij dit overzicht"-blok. Getest wordt telkens hetzelfde drietal:
 //   1. het veld is een CSS-verborgen tekstveld dat autofill niet herkent,
 //   2. een echte inzending levert nog steeds een lead op,
@@ -171,53 +171,6 @@ describe("contactformulier bewoners", () => {
     const { container } = render(<Contact />);
     vulIn();
     // Zoals een bot doet: het verborgen veld tóch invullen.
-    vul(honeypotVan(container), "https://spam.example");
-    wachtEvenAf();
-    fireEvent.click(screen.getByRole("button", { name: /Verstuur bericht/ }));
-
-    await screen.findByText(/Bedankt!/);
-    expect(insertMock).not.toHaveBeenCalled();
-  });
-});
-
-describe("contactformulier uitvoerders", () => {
-  const openTab = () => {
-    fireEvent.click(screen.getByRole("button", { name: /Ik ben een uitvoerder/ }));
-  };
-
-  const vulIn = () => {
-    vul(screen.getByLabelText(/^Bedrijfsnaam/), "Bouwbedrijf Test");
-    vul(screen.getByLabelText(/Voornaam contactpersoon/), "Jan");
-    vul(screen.getByLabelText(/Achternaam contactpersoon/), "de Vries");
-    vul(screen.getByLabelText(/^E-mailadres/), "jan@bouwbedrijf.nl");
-    vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
-  };
-
-  it("heeft een correct opgezet honeypot-veld", () => {
-    const { container } = render(<Contact />);
-    openTab();
-    controleerHoneypotOpzet(container);
-  });
-
-  it("schrijft een lead weg bij een normale inzending", async () => {
-    render(<Contact />);
-    openTab();
-    vulIn();
-    wachtEvenAf();
-    fireEvent.click(screen.getByRole("button", { name: /Verstuur bericht/ }));
-
-    await screen.findByText(/Bedankt!/);
-    expect(insertMock).toHaveBeenCalledTimes(1);
-    const [tabel, rij] = insertMock.mock.calls[0];
-    expect(tabel).toBe("leads_uitvoerders");
-    expect(rij).toMatchObject({ bedrijfsnaam: "Bouwbedrijf Test", email: "jan@bouwbedrijf.nl" });
-    controleerGeenHoneypotInPayload(rij);
-  });
-
-  it("slaat de insert over bij een gevuld honeypot-veld, maar toont wel het bedankscherm", async () => {
-    const { container } = render(<Contact />);
-    openTab();
-    vulIn();
     vul(honeypotVan(container), "https://spam.example");
     wachtEvenAf();
     fireEvent.click(screen.getByRole("button", { name: /Verstuur bericht/ }));

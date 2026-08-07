@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Regressie: de lead-formulieren mogen de invoer NIET HTML-escapen voordat die
-// naar `leads_bewoners` / `leads_uitvoerders` gaat. Het CRM toont die kolommen
+// naar `leads_bewoners` gaat. Het CRM toont die kolommen
 // als platte tekst, dus escapen bij opslag maakte van een apostrof letterlijk
 // `&#39;` op het scherm van de gebruiker. Escapen hoort bij het renderen.
 
@@ -86,22 +86,4 @@ describe("lead-opslag bewaart de invoer onbewerkt", () => {
     expect(rij.notities).toBe(`Voorkeur voor contact: Telefonisch: Ochtend\n${BERICHT}`);
   });
 
-  it("uitvoerderformulier: bedrijfsnaam en bericht gaan rauw naar de database", async () => {
-    render(<Contact />);
-    fireEvent.click(screen.getByRole("button", { name: /Ik ben een uitvoerder/ }));
-    // COMPANY_RE staat & en apostrof toe in een bedrijfsnaam.
-    vul(screen.getByLabelText(/^Bedrijfsnaam/), "Jansen & Zn's Bouw");
-    vul(screen.getByLabelText(/Voornaam contactpersoon/), "Jan");
-    vul(screen.getByLabelText(/Achternaam contactpersoon/), "de Vries");
-    vul(screen.getByLabelText(/^E-mailadres/), "jan@bouwbedrijf.nl");
-    vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
-    vul(screen.getByLabelText(/^Vragen of opmerkingen/), BERICHT);
-    await verstuur();
-
-    const [tabel, rij] = insertMock.mock.calls[0];
-    expect(tabel).toBe("leads_uitvoerders");
-    expect(rij.bedrijfsnaam).toBe("Jansen & Zn's Bouw");
-    expect(rij.notities).toBe(BERICHT);
-    for (const waarde of Object.values(rij)) geenEntiteiten(waarde);
-  });
 });

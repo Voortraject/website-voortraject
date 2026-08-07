@@ -10,7 +10,6 @@ import type { SubsidieCheckInput } from "@/lib/subsidies";
 // bepaalt de taaktitel én of de bevestigingsmail uitgaat. Er staat een CHECK op
 // de kolom (alleen 'contactformulier', 'subsidietool' of NULL), dus een andere
 // waarde laat de insert falen en kost de lead. Vandaar deze exacte strings.
-// `leads_uitvoerders` heeft de kolom NIET: daar mag hij niet meegestuurd worden.
 
 const { insertMock } = vi.hoisted(() => ({ insertMock: vi.fn() }));
 
@@ -82,23 +81,6 @@ describe("formulier-kolom", () => {
     const [tabel, rij] = insertMock.mock.calls[0];
     expect(tabel).toBe("leads_bewoners");
     expect(rij.formulier).toBe("contactformulier");
-  });
-
-  it("contactformulier uitvoerders stuurt de kolom niet mee (bestaat daar niet)", async () => {
-    render(<Contact />);
-    fireEvent.click(screen.getByRole("button", { name: /Ik ben een uitvoerder/ }));
-    vul(screen.getByLabelText(/^Bedrijfsnaam/), "Bouwbedrijf Test");
-    vul(screen.getByLabelText(/Voornaam contactpersoon/), "Jan");
-    vul(screen.getByLabelText(/Achternaam contactpersoon/), "de Vries");
-    vul(screen.getByLabelText(/^E-mailadres/), "jan@bouwbedrijf.nl");
-    vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
-    nu += 5_000;
-    fireEvent.click(screen.getByRole("button", { name: /Verstuur bericht/ }));
-
-    await screen.findByText(/Bedankt!/);
-    const [tabel, rij] = insertMock.mock.calls[0];
-    expect(tabel).toBe("leads_uitvoerders");
-    expect(Object.keys(rij)).not.toContain("formulier");
   });
 
   it("subsidiecheck → 'subsidietool'", async () => {
