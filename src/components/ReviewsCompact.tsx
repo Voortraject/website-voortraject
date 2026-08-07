@@ -1,19 +1,58 @@
+import { useEffect, useState } from "react";
+
 import { GoogleG } from "@/components/GoogleG";
 import { Sterren } from "@/components/Sterren";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 import { useGoogleReviews } from "@/hooks/useGoogleReviews";
 import { fallbackKaarten, initiaalVan, kleurVoor, naarKaarten, type Kaart } from "@/lib/reviews";
+import { cn } from "@/lib/utils";
 
 /**
  * Compacte variant van de reviewsectie, bedoeld voor een smalle kolom naast een
- * formulier. Geen carrousel: twee vaste citaten, zodat er niets beweegt naast
- * invoervelden en de kaart op desktop meteen in beeld staat. Data en fallback
- * komen uit dezelfde bron als de grote sectie op de homepagina.
+ * formulier. Eén citaat tegelijk in een horizontale carrousel, net als op de
+ * homepagina, maar sneller (3s) omdat er maar één kaart in beeld staat. Data en
+ * fallback komen uit dezelfde bron als de grote sectie.
  */
-export const ReviewsCompact = ({ aantalCitaten = 2 }: { aantalCitaten?: number }) => {
+export const ReviewsCompact = () => {
   const { reviews, stats } = useGoogleReviews();
+  const [api, setApi] = useState<CarouselApi>();
+  const [selected, setSelected] = useState(0);
+  const [snaps, setSnaps] = useState<number[]>([]);
+  const [gepauzeerd, setGepauzeerd] = useState(false);
+
+  // Dots: volg de huidige positie en het aantal snaps.
+  useEffect(() => {
+    if (!api) return;
+    const onSelect = () => setSelected(api.selectedScrollSnap());
+    const onReInit = () => {
+      setSnaps(api.scrollSnapList());
+      onSelect();
+    };
+    onReInit();
+    api.on("select", onSelect);
+    api.on("reInit", onReInit);
+    return () => {
+      api.off("select", onSelect);
+      api.off("reInit", onReInit);
+    };
+  }, [api]);
+
+  // Autoplay (3s): pauzeert bij hover/aanraken en respecteert
+  // 'prefers-reduced-motion'.
+  useEffect(() => {
+    if (!api || gepauzeerd) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => api.scrollNext(), 3000);
+    return () => window.clearInterval(id);
+  }, [api, gepauzeerd]);
 
   const live: Kaart[] | null = reviews ? naarKaarten(reviews) : null;
-  const kaarten = (live && live.length >= 2 ? live : fallbackKaarten).slice(0, aantalCitaten);
+  const kaarten = live && live.length >= 2 ? live : fallbackKaarten;
 
   const ratingTekst =
     stats?.rating != null
@@ -54,39 +93,71 @@ export const ReviewsCompact = ({ aantalCitaten = 2 }: { aantalCitaten?: number }
         </p>
       )}
 
-      <ul className="mt-4 flex flex-col gap-4">
-        {kaarten.map((k) => (
-          <li key={k.id} className="border-t border-border pt-4 first:border-t-0 first:pt-0">
-            <div className="flex items-center gap-3">
-              {k.foto ? (
-                <img
-                  src={k.foto}
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                  referrerPolicy="no-referrer"
-                  className="h-9 w-9 shrink-0 rounded-full object-cover"
-                />
-              ) : (
-                <span
-                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[15px] font-medium text-white"
-                  style={{ backgroundColor: k.kleur ?? kleurVoor(k.naam) }}
-                  aria-hidden="true"
-                >
-                  {initiaalVan(k.naam)}
-                </span>
+      <div
+        className="mt-4"
+        onMouseEnter={() => setGepauzeerd(true)}
+        onMouseLeave={() => setGepauzeerd(false)}
+        onTouchStart={() => setGepauzeerd(true)}
+      >
+        <Carousel setApi={setApi} opts={{ loop: true }}>
+          <CarouselContent className="ml-0 cursor-grab active:cursor-grabbing">
+            {kaarten.map((k) => (
+              <CarouselItem key={k.id} className="pl-0 basis-full">
+                {/* Vaste hoogte: anders springt de kaart bij elke wissel mee met
+                    de lengte van het citaat. */}
+                <div className="flex h-[11.5rem] flex-col">
+                  <div className="flex items-center gap-3">
+                    {k.foto ? (
+                      <img
+                        src={k.foto}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        referrerPolicy="no-referrer"
+                        className="h-9 w-9 shrink-0 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span
+                        className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[15px] font-medium text-white"
+                        style={{ backgroundColor: k.kleur ?? kleurVoor(k.naam) }}
+                        aria-hidden="true"
+                      >
+                        {initiaalVan(k.naam)}
+                      </span>
+                    )}
+                    <div className="min-w-0">
+                      <p className="truncate text-[14px] font-semibold text-primary">{k.naam}</p>
+                      <Sterren waarde={k.rating} size={13} />
+                    </div>
+                  </div>
+                  <p className="mt-2 line-clamp-6 text-[14px] leading-relaxed text-foreground">
+                    {k.tekst}
+                  </p>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      </div>
+
+      {/* Puntjes-indicator: positie + aantal, klikbaar. */}
+      {snaps.length > 1 && (
+        <div className="mt-3 flex items-center justify-center gap-2">
+          {snaps.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => api?.scrollTo(i)}
+              aria-label={`Ga naar review ${i + 1}`}
+              aria-current={i === selected}
+              className={cn(
+                "h-2 cursor-pointer rounded-full transition-all",
+                i === selected ? "w-5 bg-primary" : "w-2 bg-primary/25 hover:bg-primary/40",
               )}
-              <div className="min-w-0">
-                <p className="truncate text-[14px] font-semibold text-primary">{k.naam}</p>
-                <Sterren waarde={k.rating} size={13} />
-              </div>
-            </div>
-            <p className="mt-2 line-clamp-4 text-[14px] leading-relaxed text-foreground">
-              {k.tekst}
-            </p>
-          </li>
-        ))}
-      </ul>
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 };
