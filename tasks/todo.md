@@ -108,11 +108,14 @@ Alles uit het plan is gebouwd op branch `feat/zakelijk-pagina`.
   de SPA-router. Geen redirect-ketting.
 - Naam "Zakelijk" in header, footer en de verwijzing in `ClosingCta`; `Audiences` (dode
   component) wijst niet langer naar het oude adres.
-- Pagina: hero benoemt nu uitvoerders, installateurs en andere bedrijven; nieuwe sectie
-  "Voor wie we werken" met zes typen bedrijven; nieuwe contactsectie `#contact` met het
-  formulier links en "Wat kun je verwachten?" plus telefoon/e-mail rechts.
-- Alle drie de "Plan een kennismaking"-CTA's ankeren naar `#contact` in plaats van naar
+- Pagina teruggebracht tot drie secties (2e ronde, op verzoek): hero, "Voor wie we werken"
+  en meteen daarna het formulier. De secties "vastlopen", `<Why/>`, "voor en na" en "waarom
+  dit werkt" zijn eruit, net als de sluit-CTA in de footer: die zou pal onder het formulier
+  nog een keer om dezelfde kennismaking vragen.
+- De "Plan een kennismaking"-CTA in de hero ankert naar `#contact` in plaats van naar
   `/contact`, want die pagina is sinds `3475d1b` bewoner-only.
+- Gevolg: `src/components/sections/Why.tsx` wordt nu nergens meer gebruikt. Laten staan of
+  opruimen is een aparte keuze, buiten deze branch gelaten.
 - `src/components/ZakelijkContactFormulier.tsx` is nieuw en zelfstandig; `Contact.tsx` is
   niet aangeraakt. Nieuwe code gebruikt de design tokens in plaats van hex-waarden.
 - Tests: 3 cases in `honeypot.test.tsx` (opzet, insert met de exacte kolommen + bron, gevuld
