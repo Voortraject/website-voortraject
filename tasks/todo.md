@@ -113,8 +113,8 @@ info@voortraject.nl).
       plaats daarvan geven we terug wat we van de wóning weten: luchtfoto met pandcontour,
       bouwjaar en energielabel. Even persoonlijk, zonder de spanning weg te nemen. De regelingen
       worden nog steeds stil voorgeladen, alleen niet meer getoond.
-- [x] Voortgang toont nu een balkje met percentage ("66% voltooid"), zodat zichtbaar is hoe
-      weinig er nog te doen is.
+- [x] Voortgang: een balkje met percentage geprobeerd, op verzoek weer verwijderd. De drie
+      stappen met labels blijven zoals ze waren.
 - [x] Automatische verrijking met wat we al ophalen: energielabel (EP-Online) en bouwjaar (BAG).
       Faalt de insert mét die velden, dan gaat 'ie één keer opnieuw zónder: een lead verliezen
       om een extraatje mag nooit. Geldt in de edge function én in de client-terugval.
