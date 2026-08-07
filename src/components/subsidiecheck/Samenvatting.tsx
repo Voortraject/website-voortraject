@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Mail, MessageCircle } from "lucide-react";
+import { ArrowRight, Check, Mail } from "lucide-react";
 
 import {
   type Bewonertype,
@@ -36,8 +36,6 @@ interface SamenvattingProps {
   energielabelBezig?: boolean;
   /** Scrollt naar het mailformulier onder de lijst. */
   onMailKlik: () => void;
-  /** Springt naar het vraagblok onder het resultaat en focust het tekstvak. */
-  onVraagKlik: () => void;
   /** Toon de "mail mij dit overzicht"-knop (uit bij de gegevens-poort: die
       gegevens zijn dan al binnen). */
   toonMailKnop?: boolean;
@@ -64,7 +62,6 @@ export const Samenvatting = ({
   energielabel,
   energielabelBezig,
   onMailKlik,
-  onVraagKlik,
   toonMailKnop = true,
 }: SamenvattingProps) => {
   const { totaal, subsidies, leningen } = data;
@@ -112,31 +109,19 @@ export const Samenvatting = ({
         </p>
       )}
 
-      {/* Contactroute direct onder de uitkomst: hier is de vraag het scherpst, en
-          lang niet iedereen scrollt door de hele lijst naar het formulier onderaan.
-          Conclusie, dan actie, dan pas de details (inverted pyramid). "Deel de
-          tool" stond hier eerst en is naar de voet verhuisd: delen speelt pas als
-          je het overzicht hebt gezien. */}
-      <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
+      {/* De contactroute ("Ik heb een vraag") staat in het woningpaneel ernaast, in
+          de ruimte die daar onder de beelden tóch overblijft. Hier nam die knop te
+          veel aandacht weg van de uitkomst zelf. */}
+      {toonMailKnop && (
         <button
           type="button"
-          onClick={onVraagKlik}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-accent bg-accent/15 px-5 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:bg-accent/25 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          onClick={onMailKlik}
+          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full border border-accent bg-accent/15 px-5 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:bg-accent/25 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
-          <MessageCircle size={16} strokeWidth={2} aria-hidden="true" />
-          Ik heb een vraag
+          <Mail size={16} strokeWidth={2} aria-hidden="true" />
+          Mail mij dit overzicht
         </button>
-        {toonMailKnop && (
-          <button
-            type="button"
-            onClick={onMailKlik}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:border-primary/40 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <Mail size={16} strokeWidth={2} aria-hidden="true" />
-            Mail mij dit overzicht
-          </button>
-        )}
-      </div>
+      )}
 
       {/* Verhoudingsbalk: subsidies vs. leningen in één oogopslag. */}
       {heeftVerdeling && (
@@ -184,13 +169,18 @@ export const Samenvatting = ({
           </p>
         </>
       ) : (
-        <div className="rounded-lg border border-border p-4" style={{ backgroundColor: "var(--card-soft)" }}>
-          <p className="text-[14px] leading-relaxed text-foreground/80">
+        // Tekst en knop naast elkaar: onder elkaar nam dit blok te veel hoogte in
+        // het samenvattingskaartje. Mobiel klapt het alsnog netjes onder elkaar.
+        <div
+          className="flex flex-col gap-3 rounded-lg border border-border p-4 sm:flex-row sm:items-center sm:gap-4"
+          style={{ backgroundColor: "var(--card-soft)" }}
+        >
+          <p className="flex-1 text-[14px] leading-relaxed text-foreground/80">
             Voor deze woning vonden we geen geregistreerd energielabel. Wij kunnen dat voor je regelen.
           </p>
           <a
             href="/contact"
-            className="mt-3 inline-flex items-center gap-2 rounded-full border border-accent bg-accent/10 px-4 py-2 text-[13.5px] font-semibold text-primary transition-colors hover:bg-accent/20 min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-accent bg-accent/10 px-4 py-2 text-[13.5px] font-semibold text-primary transition-colors hover:bg-accent/20 min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             Energielabel aanvragen
             <ArrowRight size={15} strokeWidth={2} aria-hidden="true" />

@@ -155,6 +155,10 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
       pandBezig={pandBezig}
       model={model}
       modelBezig={modelBezig}
+      onVraagKlik={() => {
+        pushGtmEvent("subsidiecheck_vraag_cta", { bewonertype: input.bewonertype, plek: "woningpaneel" });
+        scrollNaarVraag();
+      }}
     />
   );
 
@@ -295,10 +299,6 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
           energielabel={woning?.energielabel ?? null}
           energielabelBezig={woningBezig}
           onMailKlik={scrollNaarMail}
-          onVraagKlik={() => {
-            pushGtmEvent("subsidiecheck_vraag_cta", { bewonertype: input.bewonertype, plek: "samenvatting" });
-            scrollNaarVraag();
-          }}
           toonMailKnop={!verbergMail}
         />
         {woningpaneel}

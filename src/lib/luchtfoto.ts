@@ -14,7 +14,10 @@ const WMS = "https://service.pdok.nl/hwh/luchtfotorgb/wms/v1_0";
 // Hoogste resolutie (8 cm, "Actueel_*" = altijd de nieuwste jaargang).
 const LAYER = "Actueel_orthoHR";
 
-export const LUCHTFOTO_ATTRIBUTIE = "Luchtfoto: PDOK, Beeldmateriaal Nederland";
+// Kort gehouden: op mobiel staat de foto op halve breedte en dekte de lange
+// variant het halve dak. PDOK is de bronhouder, dus de CC-BY-vermelding blijft
+// kloppen.
+export const LUCHTFOTO_ATTRIBUTIE = "Luchtfoto: PDOK";
 
 export type LuchtfotoFrame = {
   url: string;
