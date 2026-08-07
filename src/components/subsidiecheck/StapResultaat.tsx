@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Copy, Link2, Loader2 } from "lucide-react";
+import { Check, Copy, Link2, Loader2, MessageCircle } from "lucide-react";
 
 import { usePand3d } from "@/hooks/usePand3d";
 import { usePandContour } from "@/hooks/usePandContour";
@@ -148,19 +148,30 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
 
   // Eén woningpaneel-element, gebruikt in zowel de "geen regelingen"-tak als het
   // normale resultaat — zo verschijnt het in elke situatie (bewonertype/aantal).
+  // De contactknop staat onder het woningkaartje, buiten het witte vlak: binnenin
+  // leek "Ik heb een vraag" over de foto's te gaan.
   const woningpaneel = (
-    <Woningpaneel
-      adres={adres}
-      input={input}
-      pand={pand ?? null}
-      pandBezig={pandBezig}
-      model={model}
-      modelBezig={modelBezig}
-      onVraagKlik={() => {
-        pushGtmEvent("subsidiecheck_vraag_cta", { bewonertype: input.bewonertype, plek: "woningpaneel" });
-        scrollNaarVraag();
-      }}
-    />
+    <div className="flex flex-col gap-3">
+      <Woningpaneel
+        adres={adres}
+        input={input}
+        pand={pand ?? null}
+        pandBezig={pandBezig}
+        model={model}
+        modelBezig={modelBezig}
+      />
+      <button
+        type="button"
+        onClick={() => {
+          pushGtmEvent("subsidiecheck_vraag_cta", { bewonertype: input.bewonertype, plek: "woningpaneel" });
+          scrollNaarVraag();
+        }}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-[14px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      >
+        <MessageCircle size={16} strokeWidth={2} aria-hidden="true" />
+        Ik heb een vraag
+      </button>
+    </div>
   );
 
   // Eén event per getoond resultaat (ook bij 0 regelingen — dat is óók funnel-data).

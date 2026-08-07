@@ -18,23 +18,15 @@ interface WoningpaneelProps {
   /** 3D-model — van boven. */
   model: Model3d | null;
   modelBezig: boolean;
-  /** Springt naar het vraagblok onder het resultaat. Weglaten = geen knop. */
-  onVraagKlik?: () => void;
 }
 
 // Het persoonlijke "dit is jóuw huis"-paneel naast het resultaat: een luchtfoto
-// met de BAG-pandcontour in oker, een licht 3D-model (3D BAG), het adres en de
-// contactknop. Presentational: alle data komt van StapResultaat, zodat de fetches
-// al starten bij het klikken naar het resultaat (niet pas als dit paneel mount).
-export const Woningpaneel = ({
-  adres,
-  input,
-  pand,
-  pandBezig,
-  model,
-  modelBezig,
-  onVraagKlik,
-}: WoningpaneelProps) => {
+// met de BAG-pandcontour in oker, een licht 3D-model (3D BAG) en het adres. De
+// contactknop staat bewust búiten dit kaartje (zie StapResultaat): binnenin leek
+// "Ik heb een vraag" over de foto's te gaan. Presentational: alle data komt van
+// StapResultaat, zodat de fetches al starten bij het klikken naar het resultaat
+// (niet pas als dit paneel mount).
+export const Woningpaneel = ({ adres, input, pand, pandBezig, model, modelBezig }: WoningpaneelProps) => {
   const [beeldFout, setBeeldFout] = useState(false);
 
   const adresRegel = `${adres.straatnaam} ${input.huisnummer}${input.toevoeging ? ` ${input.toevoeging}` : ""}`;
@@ -68,28 +60,12 @@ export const Woningpaneel = ({
         <WoningModel model={model} isPending={modelBezig} />
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 border-t border-border p-4 md:p-5">
-        <div>
-          <p className="font-display text-[16px] font-semibold leading-snug text-primary">{adresRegel}</p>
-          <p className="text-[13px] text-muted-foreground">
-            {adres.woonplaatsnaam}
-            {pand?.bouwjaar ? ` · Bouwjaar ${pand.bouwjaar}` : ""}
-          </p>
-        </div>
-
-        {/* De contactroute staat hier, in de ruimte die onder de beelden tóch
-            overblijft. In de samenvatting nam dezelfde knop te veel aandacht weg
-            van de uitkomst zelf. */}
-        {onVraagKlik && (
-          <button
-            type="button"
-            onClick={onVraagKlik}
-            className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-[14px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <MessageCircle size={16} strokeWidth={2} aria-hidden="true" />
-            Ik heb een vraag
-          </button>
-        )}
+      <div className="border-t border-border p-4 md:p-5">
+        <p className="font-display text-[16px] font-semibold leading-snug text-primary">{adresRegel}</p>
+        <p className="text-[13px] text-muted-foreground">
+          {adres.woonplaatsnaam}
+          {pand?.bouwjaar ? ` · Bouwjaar ${pand.bouwjaar}` : ""}
+        </p>
       </div>
     </section>
   );
