@@ -27,7 +27,9 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
   const regionId = useId();
 
   return (
-    <article className={`rounded-lg border border-l-4 p-5 shadow-card ${TYPE_KAART[regeling.type]}`}>
+    // Mobiel iets krapper: met elf kaarten onder elkaar telt elke geschrapte
+    // pixel dubbel. Op md+ blijft de kaart ruim.
+    <article className={`rounded-lg border border-l-4 p-4 shadow-card md:p-5 ${TYPE_KAART[regeling.type]}`}>
       {/* Kicker (type) links, bedrag rechts — vaste plek, zodat je verticaal
           langs de bedragen kunt scannen en een lening nooit als subsidie leest. */}
       <div className="flex items-start justify-between gap-4">
@@ -50,19 +52,22 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
           maatregelregel); de omschrijving verhuist daar naar de uitklap. */}
       <p className="mt-1.5 hidden text-[15px] leading-relaxed text-foreground/80 md:block">{regeling.omschrijving}</p>
 
-      <p className="mt-3 flex items-center gap-1.5 text-[13px] text-muted-foreground">
+      <p className="mt-2.5 flex items-center gap-1.5 text-[13px] text-muted-foreground">
         <Tag size={13} strokeWidth={2} className="shrink-0" aria-hidden="true" />
         {maatregelTekst(regeling)}
       </p>
 
-      <div className="mt-4 flex flex-col items-start gap-2 border-t border-border/60 pt-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-        <span className="text-[13px] text-muted-foreground">{regeling.aanbieder}</span>
+      {/* Aanbieder en uitklapknop op één regel, ook op mobiel: onder elkaar kostte
+          dat per kaart een extra regel, en met elf kaarten is dat een half scherm
+          scrollen. De aanbieder mag inkorten, de knop nooit. */}
+      <div className="mt-3 flex items-center justify-between gap-3 border-t border-border/60 pt-2.5 md:mt-4 md:pt-3">
+        <span className="min-w-0 truncate text-[13px] text-muted-foreground">{regeling.aanbieder}</span>
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-controls={regionId}
-          className="inline-flex items-center gap-1.5 rounded-sm text-[14px] font-medium text-primary transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-sm text-[14px] font-medium text-primary transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           {open ? "Minder tonen" : "Bekijk voorwaarden"}
           <ChevronDown
