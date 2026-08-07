@@ -190,3 +190,26 @@ scherm. Oorzaak: een `escapeHtml`-helper in `src/pages/Contact.tsx` die de invoe
   Let op: de JSON-uitvoer van de CLI schrijft ampersand en kleiner-dan als unicode-escapes
   (backslash-u-0026 / backslash-u-003c). Dat is de JSON-encoder, niet de data: laat de
   vergelijking daarom door SQL zelf doen en lees een boolean terug.
+
+## 2026-08-07 — cn() gooit `leading-[..]` weg zodra er een `text-[size]` achteraan komt
+**Context:** Bij het toevoegen van een `compact`-variant aan `ReviewKaart`
+(`src/components/sections/Reviews.tsx`) werd de vaste klassenreeks
+`"mt-3 text-[15px] leading-[1.65] text-foreground"` omgezet naar
+`cn("mt-3 leading-[1.65] text-foreground", compact ? "text-[14px]" : "text-[15px]")`.
+Functioneel leek dat identiek, maar tailwind-merge kent de
+`text-[size]/[leading]`-syntax en beschouwt `text-[15px]` daarom als *ook* een
+line-height-setter: de eerdere `leading-[1.65]` werd stilletjes verwijderd. De
+regelafstand viel terug op de standaard, en omdat de tekst een `min-h` én een
+`line-clamp` heeft, paste er ineens een halve vijfde regel onder de clamp. Op de
+homepagina liep de tekst daardoor tegen de "Lees meer"-knop aan.
+**Lesson:**
+- `cn()` is niet "klassen aan elkaar plakken" maar tailwind-merge: latere klassen
+  verwijderen eerdere uit *dezelfde groep*, en die groepen zijn ruimer dan ze
+  lijken (`text-[..]` raakt zowel font-size als line-height, `text-*` ook kleur).
+- Voeg een variant toe door de volledige klassenreeks per variant uit te schrijven,
+  niet door één klasse via `cn()` achteraan te plakken. Dan blijft de bestaande
+  variant byte-voor-byte gelijk aan wat er al live stond.
+- Verifieer bij twijfel de daadwerkelijke uitvoer: een klein scriptje dat `cn(...)`
+  logt laat direct zien welke klasse is gesneuveld.
+- Refactor van een gedeeld component (hier: hergebruik op de contactpagina) raakt
+  ook de pagina's die je niet aan het bekijken bent. Controleer die pagina's expliciet.
