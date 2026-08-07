@@ -5,7 +5,13 @@ import { Check, ChevronDown, Loader2, MapPin } from "lucide-react";
 import { usePdokAdres } from "@/hooks/usePdokAdres";
 import { pushGtmEvent } from "@/lib/gtm";
 import { displayPostcode, normalizePostcode, POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib/pdok";
-import { ALLE_MAATREGELEN, BEWONERTYPE_LABELS, type Bewonertype, type Maatregel } from "@/lib/subsidies";
+import {
+  ALLE_MAATREGELEN,
+  BEWONERTYPE_LABELS,
+  type Bewonertype,
+  type Maatregel,
+  MAATREGEL_LABELS,
+} from "@/lib/subsidies";
 
 import { Bewijsregel } from "./Bewijsregel";
 import { BewonertypeKeuze } from "./BewonertypeKeuze";
@@ -81,17 +87,18 @@ export const StapAdres = ({
 
   // Situatie (standaard woningeigenaar) + interesses (leeg = "Alles").
   const [bewonertype, setBewonertype] = useState<Bewonertype>(initBewonertype ?? "woningeigenaar");
-  // De vier situatiekaarten zitten achter een uitklap; open als de bezoeker er
-  // expliciet naartoe kwam ("situatie aanpassen") of al iets anders koos.
-  const [situatieUit, setSituatieUit] = useState(situatieOpen || (!!initBewonertype && initBewonertype !== "woningeigenaar"));
   const [maatregelen, setMaatregelen] = useState<Maatregel[]>(
     initMaatregelen.length === ALLE_MAATREGELEN.length ? [] : initMaatregelen,
   );
-  // Interesses staan standaard op "alles"; specifieke maatregelen kiezen zit
-  // achter een uitklap (rustiger, vooral op mobiel). Open als er al een
-  // specifieke selectie is (bv. via een gedeelde link of "situatie aanpassen").
-  const [interessesUit, setInteressesUit] = useState(
-    initMaatregelen.length > 0 && initMaatregelen.length < ALLE_MAATREGELEN.length,
+  // Situatie en interesses staan allebei al goed voor verreweg de meeste
+  // bezoekers. Ze zitten daarom samen achter één rustige regel; wie iets anders
+  // is of alleen in bepaalde maatregelen geïnteresseerd is, klapt ze open. Open
+  // bij binnenkomst als de bezoeker er expliciet naartoe kwam ("situatie
+  // aanpassen") of al van de standaard afwijkt.
+  const [keuzesUit, setKeuzesUit] = useState(
+    situatieOpen ||
+      (!!initBewonertype && initBewonertype !== "woningeigenaar") ||
+      (initMaatregelen.length > 0 && initMaatregelen.length < ALLE_MAATREGELEN.length),
   );
 
   // Handmatig invulblok als PDOK het adres niet herkent (bv. nieuwbouw).
@@ -105,6 +112,14 @@ export const StapAdres = ({
   const queryClient = useQueryClient();
 
   const gekozenMaatregelen = (): Maatregel[] => (maatregelen.length === 0 ? [...ALLE_MAATREGELEN] : maatregelen);
+
+  // Korte samenvatting van de interesses voor de ingeklapte regel.
+  const maatregelSamenvatting =
+    maatregelen.length === 0
+      ? "alle maatregelen"
+      : maatregelen.length <= 2
+        ? maatregelen.map((m) => MAATREGEL_LABELS[m].toLowerCase()).join(" en ")
+        : `${maatregelen.length} maatregelen`;
 
   // Live adrescheck: een halve seconde na de laatste toetsaanslag zoeken we het
   // adres al op. Dat doet drie dingen tegelijk: de bezoeker ziet meteen dat we
@@ -330,62 +345,40 @@ export const StapAdres = ({
         </>
       )}
 
-      {/* Ik ben… — standaard ingeklapt tot één regel. Woningeigenaar is verreweg
-          de grootste groep en staat al voorgeselecteerd; vier kaarten tonen voor
-          een vraag die al beantwoord is, maakt de stap onnodig zwaar. Wie huurder,
-          VvE of verhuurder is, klapt 'm open. Zelfde patroon als de interesses
-          hieronder. Komt de bezoeker via "situatie aanpassen" binnen, of staat er
-          al iets anders dan woningeigenaar, dan staat het blok meteen open. */}
-      <fieldset className="mt-6">
-        <legend className="mb-3 block text-[14px] font-semibold text-foreground">Ik ben…</legend>
-        {situatieUit ? (
-          <div className="animate-fade-up">
+      {/* Situatie en interesses staan standaard goed, dus samen achter één rustige
+          regel. Eerder stonden hier twee blokken met elk een donkere pill; die
+          las als een knop terwijl er niets te doen viel, en trok de aandacht weg
+          van het enige dat de bezoeker hier écht moet invullen: zijn adres. */}
+      {keuzesUit ? (
+        <div className="mt-6 animate-fade-up">
+          <fieldset>
+            <legend className="mb-3 block text-[14px] font-semibold text-foreground">Ik ben…</legend>
             <BewonertypeKeuze waarde={bewonertype} onKies={setBewonertype} />
-          </div>
-        ) : (
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground">
-              <Check size={14} strokeWidth={2.5} aria-hidden="true" />
-              {BEWONERTYPE_LABELS[bewonertype]}
-            </span>
-            <button
-              type="button"
-              aria-expanded={false}
-              onClick={() => setSituatieUit(true)}
-              className="inline-flex items-center gap-1 rounded-sm text-[13.5px] font-medium text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              Huurder, VvE of verhuurder?
-              <ChevronDown size={14} aria-hidden="true" />
-            </button>
-          </div>
-        )}
-      </fieldset>
-
-      {/* Interesses — standaard "alles"; specifiek kiezen zit achter een uitklap. */}
-      <fieldset className="mt-6">
-        <legend className="mb-3 block text-[14px] font-semibold text-foreground">Waar ben je in geïnteresseerd?</legend>
-        {interessesUit ? (
-          <div className="animate-fade-up">
+          </fieldset>
+          <fieldset className="mt-6">
+            <legend className="mb-3 block text-[14px] font-semibold text-foreground">
+              Waar ben je in geïnteresseerd?
+            </legend>
             <MaatregelKeuze gekozen={maatregelen} onWijzig={setMaatregelen} />
-          </div>
-        ) : (
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground">
-              <Check size={14} strokeWidth={2.5} aria-hidden="true" />
-              Alle maatregelen
-            </span>
-            <button
-              type="button"
-              aria-expanded={false}
-              onClick={() => setInteressesUit(true)}
-              className="inline-flex items-center gap-1 rounded-sm text-[13.5px] font-medium text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              Specifiek kiezen
-              <ChevronDown size={14} aria-hidden="true" />
-            </button>
-          </div>
-        )}
-      </fieldset>
+          </fieldset>
+        </div>
+      ) : (
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 rounded-lg border border-border px-4 py-3">
+          <p className="text-[13.5px] leading-snug text-foreground sm:text-[14px]">
+            <span className="font-semibold">{BEWONERTYPE_LABELS[bewonertype]}</span>
+            <span className="text-muted-foreground"> · {maatregelSamenvatting}</span>
+          </p>
+          <button
+            type="button"
+            aria-expanded={false}
+            onClick={() => setKeuzesUit(true)}
+            className="inline-flex shrink-0 items-center gap-1 rounded-sm text-[13.5px] font-medium text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            Aanpassen
+            <ChevronDown size={14} aria-hidden="true" />
+          </button>
+        </div>
+      )}
 
       <button
         type="submit"
@@ -492,20 +485,25 @@ export const StapAdres = ({
         </div>
       )}
 
-      {/* Drie beloftes met vinkjes (zelfde patroon als de hero). */}
-      <ul className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-        {["Gratis", "Geen account nodig", "Klaar in 1 minuut"].map((belofte) => (
-          <li key={belofte} className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
-            <Check size={14} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
-            {belofte}
-          </li>
-        ))}
-      </ul>
-
-      {/* Hier geeft iemand voor het eerst iets van zichzelf prijs (zijn adres),
-          dus staat onze echte Google-score er ook. Zelfde regel als bij de twee
-          latere vraagmomenten. */}
-      <div className="mt-3 flex justify-center">
+      {/* De drie beloftes en onze echte Google-score op één regel. Op mobiel
+          vallen de vinkjes weg en scheiden puntjes de beloftes, zodat de drie
+          altijd naast elkaar blijven staan; de score zakt daar naar de regel
+          eronder. Hier geeft iemand voor het eerst iets van zichzelf prijs (zijn
+          adres), dus hoort dat bewijs juist hier. */}
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+        <ul className="flex flex-nowrap items-center gap-x-2 whitespace-nowrap text-[12px] text-muted-foreground sm:gap-x-4 sm:text-[13px]">
+          {["Gratis", "Geen account nodig", "Klaar in 1 minuut"].map((belofte, i) => (
+            <li key={belofte} className="inline-flex items-center gap-1.5">
+              {i > 0 && (
+                <span aria-hidden="true" className="text-border sm:hidden">
+                  ·
+                </span>
+              )}
+              <Check size={14} strokeWidth={2.5} className="hidden shrink-0 text-accent sm:inline" aria-hidden="true" />
+              {belofte}
+            </li>
+          ))}
+        </ul>
         <Bewijsregel />
       </div>
     </form>
