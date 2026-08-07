@@ -48,6 +48,8 @@ const KLEUR = {
 
 const TELEFOON = "050 211 26 89";
 const TELEFOON_LINK = "tel:0502112689";
+// Zelfde nummer als de knop op de site (src/lib/whatsapp.ts): zonder + en zonder 0.
+const WHATSAPP_NUMMER = "31502112689";
 const FONT_STACK = "'Inter',Arial,sans-serif";
 // Kleur per TYPE — het beslissende onderscheid: subsidie = groen (geld dat je
 // niet terugbetaalt), lening = staalblauw (geld dat je leent). Bewust géén
@@ -323,10 +325,16 @@ function bouwEmailHtml(opts: {
   aanhef: string;
   adresregel: string;
   regelingen: Regeling[];
-  siteBasis: string;
   overzichtUrl?: string;
+  /** Onze echte Google-score; weglaten = geen bewijsregel in de mail. */
+  beoordeling?: { score: string; aantal: number | null };
 }): string {
-  const { aanhef, adresregel, regelingen, siteBasis, overzichtUrl } = opts;
+  const { aanhef, adresregel, regelingen, overzichtUrl, beoordeling } = opts;
+  // WhatsApp met het adres al in het bericht: de ontvanger hoeft alleen nog zijn
+  // vraag te typen, en wij weten meteen waar het over gaat.
+  const waLink = `https://wa.me/${WHATSAPP_NUMMER}?text=${encodeURIComponent(
+    `Hallo, ik heb het subsidieoverzicht voor ${adresregel} ontvangen. Ik heb daar een vraag over:`,
+  )}`;
   const subsidies = regelingen.filter((r) => r.type !== "lening").length;
   const goedNieuws = regelingen.length >= 3 && subsidies >= 1;
   // Binnen een niveaugroep eerst de subsidies, dan de leningen (stabiele sort,
@@ -378,12 +386,28 @@ function bouwEmailHtml(opts: {
             <tr><td style="border-top:1px solid ${KLEUR.border};font-size:0;line-height:0;height:1px;">&nbsp;</td></tr>
           </table>
 
-          <!-- Conversie-blok in huisstijl (oker linkerrand) -->
+          <!-- Conversie-blok in huisstijl (oker linkerrand). Bewust dezelfde
+               drempelloze routes als op het resultaat: antwoorden op deze mail
+               (het antwoordadres is info@voortraject.nl), WhatsApp met het adres
+               al ingevuld, of bellen. Vroeger stond hier één knop naar /contact,
+               een leeg formulier dat de bezoeker al een keer had ingevuld. -->
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 8px;background:${KLEUR.achtergrond};border-left:4px solid ${KLEUR.accent};border-radius:4px;">
             <tr><td style="padding:20px 24px;">
-              <p style="font-size:15px;font-weight:700;color:${KLEUR.primary};margin:0 0 6px;">Gratis advies: wij zoeken het voor je uit</p>
-              <p style="font-size:14px;color:${KLEUR.muted};margin:0 0 16px;line-height:1.6;">Subsidies stapelen is ingewikkeld. In een gratis en vrijblijvend gesprek kijken we voor jouw adres welke regelingen je kunt combineren en helpen we je op weg met de aanvraag. Reactie binnen 24 uur.</p>
-              <a href="${escapeHtml(siteBasis)}/contact" style="display:inline-block;background:${KLEUR.accent};color:${KLEUR.primary};font-size:15px;font-weight:700;text-decoration:none;padding:12px 22px;border-radius:8px;">Plan een gratis gesprek</a>
+              <p style="font-size:15px;font-weight:700;color:${KLEUR.primary};margin:0 0 6px;">Een vraag over dit overzicht?</p>
+              <p style="font-size:14px;color:${KLEUR.muted};margin:0 0 16px;line-height:1.6;">Subsidies stapelen is ingewikkeld. <strong style="color:${KLEUR.primary};font-weight:600;">Antwoord gewoon op deze mail</strong> met je vraag, dan kijkt een van onze adviseurs naar jouw adres. Of stuur een WhatsApp-bericht, dat gaat meestal het snelst. Gratis en vrijblijvend, reactie binnen 24 uur.</p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+                <td style="padding-right:10px;">
+                  <a href="${escapeHtml(waLink)}" style="display:inline-block;background:${KLEUR.accent};color:${KLEUR.primary};font-size:15px;font-weight:700;text-decoration:none;padding:12px 22px;border-radius:8px;">Stel je vraag via WhatsApp</a>
+                </td>
+                <td>
+                  <a href="${TELEFOON_LINK}" style="display:inline-block;border:1px solid ${KLEUR.primary};color:${KLEUR.primary};font-size:15px;font-weight:700;text-decoration:none;padding:11px 20px;border-radius:8px;">Bel ${TELEFOON}</a>
+                </td>
+              </tr></table>
+              ${
+                beoordeling
+                  ? `<p style="font-size:13px;color:${KLEUR.muted};margin:14px 0 0;">&#9733;&#9733;&#9733;&#9733;&#9733; <strong style="color:${KLEUR.primary};">${beoordeling.score}</strong> op Google${beoordeling.aantal ? ` &middot; ${beoordeling.aantal} reviews` : ""}</p>`
+                  : ""
+              }
             </td></tr>
           </table>
 
@@ -510,6 +534,38 @@ async function insertLead(supabase: LeadClient, basis: Record<string, unknown>, 
 
   console.error("Lead-insert faalde mét verrijking, opnieuw zonder", eerste.error);
   return await supabase.from("leads_bewoners").insert(basis).select("id").maybeSingle();
+}
+
+// Onze echte Google-beoordeling uit de tabel die `sync-google-reviews` bijhoudt,
+// dezelfde bron als de score op de site. Faalt de query of ontbreekt de rij, dan
+// komt er geen bewijsregel in de mail. Liever niets dan een verzonnen cijfer, en
+// een hapering hier mag de mail nooit tegenhouden.
+type StatsClient = {
+  from: (tabel: string) => {
+    select: (kolommen: string) => {
+      eq: (
+        kolom: string,
+        waarde: number,
+      ) => { maybeSingle: () => Promise<{ data: { rating?: unknown; user_rating_count?: unknown } | null; error: unknown }> };
+    };
+  };
+};
+
+async function haalBeoordeling(supabase: StatsClient): Promise<{ score: string; aantal: number | null } | undefined> {
+  try {
+    const { data, error } = await supabase
+      .from("google_place_stats")
+      .select("rating, user_rating_count")
+      .eq("id", 1)
+      .maybeSingle();
+    if (error || typeof data?.rating !== "number") return undefined;
+    return {
+      score: data.rating.toLocaleString("nl-NL", { minimumFractionDigits: 1, maximumFractionDigits: 1 }),
+      aantal: typeof data.user_rating_count === "number" ? data.user_rating_count : null,
+    };
+  } catch {
+    return undefined;
+  }
 }
 
 // ---- Handler ----
@@ -758,13 +814,12 @@ Deno.serve(async (req: Request) => {
   const apiKey = Deno.env.get("RESEND_API_KEY");
   let mailed = false;
   if (apiKey) {
-    const siteBasis = (Deno.env.get("SITE_URL") ?? "https://www.voortraject.nl").replace(/\/+$/, "");
     const html = bouwEmailHtml({
       aanhef,
       adresregel: adresregel || "jouw woning",
       regelingen,
-      siteBasis,
       overzichtUrl: overzichtUrlSchoon,
+      beoordeling: await haalBeoordeling(supabase),
     });
     mailed = await verstuurMail({
       apiKey,
