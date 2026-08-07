@@ -11,15 +11,24 @@ import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
 const baseInputClass =
   "w-full rounded-lg border bg-[#FBFAF7] px-4 py-3 text-[16px] lg:text-[15px] text-[#2B2B2B] outline-none transition min-h-[44px]";
 const inputOk =
-  "border-[#D4D2CC] focus:border-[#E8B547] focus:shadow-[0_0_0_3px_rgba(232,181,71,0.15)]";
+  "border-[#E5E2DB] focus:border-[#E8B547] focus:shadow-[0_0_0_3px_rgba(232,181,71,0.15)]";
 const inputErr =
   "border-[#dc2626] focus:border-[#dc2626] focus:shadow-[0_0_0_3px_rgba(220,38,38,0.15)]";
 
 const cx = (...c: (string | false | undefined)[]) => c.filter(Boolean).join(" ");
-const labelClass = "block mb-2 text-[14px] font-semibold text-[#2B2B2B]";
-const fieldWrap = "mb-4";
-const required = <span className="text-[#E8B547] ml-1" aria-hidden="true">*</span>;
+// Labels zijn bewust lichter dan de invoer: elf vetgedrukte regels boven elkaar
+// lezen als elf kopjes en maken het formulier onrustiger dan het is. De enige
+// vette tekst in de kaart zijn nu de drie groepskoppen.
+const labelClass = "block mb-2 text-[13px] font-medium text-[#6B6B6B]";
+const groepKopClass = "font-display text-[15px] font-semibold text-[#152C4E]";
+// Verplicht is de regel, niet de uitzondering: we markeren alleen wat optioneel
+// is. Dat scheelt zes accentkleurige sterretjes die met de CTA concurreerden.
 const optional = <span className="text-[#8B8680] font-normal ml-1">(optioneel)</span>;
+// Zelfde markering, maar pas vanaf sm: in de adresrij staan drie velden naast
+// elkaar en op mobiel duwt "(optioneel)" die labels over twee regels.
+const optionalSm = (
+  <span className="hidden text-[#8B8680] font-normal ml-1 sm:inline">(optioneel)</span>
+);
 
 const expectations = [
   "We nemen binnen 24 uur contact op",
@@ -298,6 +307,17 @@ const Contact = () => {
     clearError(k);
   };
 
+  // Straat en plaats vullen we zelf in via PDOK; dan zijn het geen vragen meer
+  // maar een bevestiging. Twee readonly invoervakken tonen zou de bezoeker twee
+  // extra vakjes laten lezen voor iets wat hij niet hoeft in te vullen.
+  const adresBevestigd =
+    adresLocked && !adresEditOverride && !!bewoner.straatnaam.trim() && !!bewoner.plaatsnaam.trim();
+  // Handmatig invullen: na een mislukte lookup, of als de bezoeker zelf op
+  // "bewerken" klikt.
+  const adresHandmatig = adresEditOverride || (adresChecked && !adresLocked && !adresLoading);
+  const heeftPostcodeEnNummer = !!(bewoner.postcode.trim() && bewoner.huisnummer.trim());
+  const toonAdresBlok = heeftPostcodeEnNummer && (adresBevestigd || adresHandmatig);
+
   return (
     <div className="min-h-screen bg-background">
       <Seo
@@ -360,10 +380,6 @@ const Contact = () => {
                 </div>
               ) : (
                 <>
-                  <h3 className="font-display" style={{ fontSize: 22, fontWeight: 600, color: "#152C4E", marginBottom: 24 }}>
-                    Vertel ons over jouw situatie
-                  </h3>
-
                   {errorMsg && (
                     <div
                       role="alert"
@@ -401,14 +417,17 @@ const Contact = () => {
                       </label>
                     </div>
 
-                    {/* Naamvelden in hetzelfde raster als de lead-invoer in het CRM:
-                        aanhef (smal) naast voornaam, daaronder tussenvoegsel (smal)
-                        naast achternaam. Onder sm: 50/50 — in 2 van 6 kolommen past
-                        het woord "Tussenvoegsel" niet en liep het label buiten zijn
-                        vak. justify-end houdt de inputs op één lijn als een label
-                        over twee regels breekt. */}
-                    <div className={cx("grid grid-cols-2 sm:grid-cols-6 gap-4", fieldWrap)}>
-                      <div className="sm:col-span-2 min-w-0 flex flex-col justify-end">
+                    {/* Eén raster van 12 kolommen voor het hele formulier, zodat elke
+                        verticale naad op 33% of 67% valt. Daarvoor sprong die naad per
+                        rij (33% bij de namen, 50% bij e-mail/telefoon, 48% en 76% bij
+                        het adres) en dat las als rommel, ook al klopte elke rij op
+                        zichzelf. Onder sm: 50/50 — in 4 van 12 kolommen past het woord
+                        "Tussenvoegsel" niet en liep het label buiten zijn vak.
+                        justify-end houdt de inputs op één lijn als een label over twee
+                        regels breekt. */}
+                    <p className={groepKopClass}>Jouw gegevens</p>
+                    <div className="mt-4 grid grid-cols-2 sm:grid-cols-12 gap-4">
+                      <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
                         <label htmlFor="f-aanhef" className={labelClass}>Aanhef</label>
                         <select
                           id="f-aanhef"
@@ -425,8 +444,8 @@ const Contact = () => {
                           ))}
                         </select>
                       </div>
-                      <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
-                        <label htmlFor="f-voornaam" className={labelClass}>Voornaam{required}</label>
+                      <div className="sm:col-span-8 min-w-0 flex flex-col justify-end">
+                        <label htmlFor="f-voornaam" className={labelClass}>Voornaam</label>
                         <input
                           id="f-voornaam"
                           name="voornaam"
@@ -441,8 +460,8 @@ const Contact = () => {
                           maxLength={100}
                         />
                       </div>
-                      <div className="sm:col-span-2 min-w-0 flex flex-col justify-end">
-                        <label htmlFor="f-tussenvoegsel" className={labelClass}>Tussenvoegsel</label>
+                      <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
+                        <label htmlFor="f-tussenvoegsel" className={labelClass}>Tussenvoegsel{optional}</label>
                         <input
                           id="f-tussenvoegsel"
                           name="tussenvoegsel"
@@ -455,8 +474,8 @@ const Contact = () => {
                           maxLength={25}
                         />
                       </div>
-                      <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
-                        <label htmlFor="f-achternaam" className={labelClass}>Achternaam{required}</label>
+                      <div className="sm:col-span-8 min-w-0 flex flex-col justify-end">
+                        <label htmlFor="f-achternaam" className={labelClass}>Achternaam</label>
                         <input
                           id="f-achternaam"
                           name="achternaam"
@@ -479,9 +498,9 @@ const Contact = () => {
                         </div>
                       )}
                     </div>
-                    <div className={cx("grid grid-cols-1 sm:grid-cols-2 gap-4", fieldWrap)}>
-                      <div>
-                        <label htmlFor="f-email-b" className={labelClass}>E-mailadres{required}</label>
+                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-12 gap-4">
+                      <div className="sm:col-span-8 min-w-0">
+                        <label htmlFor="f-email-b" className={labelClass}>E-mailadres</label>
                         <input
                           id="f-email-b"
                           name="email"
@@ -496,8 +515,8 @@ const Contact = () => {
                         />
                         <FieldError name="email" />
                       </div>
-                      <div>
-                        <label htmlFor="f-tel-b" className={labelClass}>Telefoonnummer{required}</label>
+                      <div className="sm:col-span-4 min-w-0">
+                        <label htmlFor="f-tel-b" className={labelClass}>Telefoonnummer</label>
                         <input
                           id="f-tel-b"
                           name="telefoonnummer"
@@ -513,13 +532,17 @@ const Contact = () => {
                       </div>
                     </div>
 
-                    {/* Adres in dezelfde verhouding als de subsidiecheck
-                        (2 / 1.2 / 1): ook op mobiel één rij, met een eigen label
-                        boven elk veld in plaats van placeholders als label. */}
-                    <div className={fieldWrap}>
-                      <div className="grid grid-cols-[2fr_1.2fr_1fr] gap-3">
-                        <div>
-                          <label htmlFor="f-postcode" className={labelClass}>Postcode</label>
+                    {/* Adres hoort bij dezelfde groep als naam en contactgegevens, maar
+                        is als enige niet verplicht: de drie velden dragen dat zelf.
+                        Op mobiel de verhouding van de subsidiecheck (2 / 1.2 / 1) zodat
+                        het één rij blijft; vanaf sm drie gelijke blokken van 4 kolommen,
+                        waardoor de naden samenvallen met de rijen erboven. */}
+                    <div className="mt-4">
+                      <div className="grid grid-cols-[2fr_1.2fr_1fr] sm:grid-cols-12 gap-4">
+                        <div className="sm:col-span-4 min-w-0">
+                          <label htmlFor="f-postcode" className={cx(labelClass, "whitespace-nowrap")}>
+                            Postcode{optionalSm}
+                          </label>
                           <input
                             id="f-postcode"
                             name="postcode"
@@ -534,8 +557,10 @@ const Contact = () => {
                             onBlur={lookupAdres}
                           />
                         </div>
-                        <div>
-                          <label htmlFor="f-huisnummer" className={labelClass}>Huisnummer</label>
+                        <div className="sm:col-span-4 min-w-0">
+                          <label htmlFor="f-huisnummer" className={cx(labelClass, "whitespace-nowrap")}>
+                            Huisnummer{optionalSm}
+                          </label>
                           <input
                             id="f-huisnummer"
                             name="huisnummer"
@@ -551,10 +576,9 @@ const Contact = () => {
                             maxLength={5}
                           />
                         </div>
-                        <div>
+                        <div className="sm:col-span-4 min-w-0">
                           <label htmlFor="f-toevoeging" className={cx(labelClass, "whitespace-nowrap")}>
-                            Toevoeging
-                            <span className="hidden text-[#8B8680] font-normal ml-1 sm:inline">(optioneel)</span>
+                            Toevoeging{optionalSm}
                           </label>
                           <input
                             id="f-toevoeging"
@@ -582,67 +606,69 @@ const Contact = () => {
                           Geen adres gevonden bij deze combinatie van postcode en huisnummer. Controleer je invoer of vul Straatnaam en Plaatsnaam zelf in.
                         </p>
                       )}
-                    </div>
 
-                    <div
-                      className={cx(
-                        "grid transition-all duration-300 ease-in-out",
-                        (bewoner.postcode.trim() && bewoner.huisnummer.trim())
-                          ? "grid-rows-[1fr] opacity-100"
-                          : "grid-rows-[0fr] opacity-0"
-                      )}
-                      aria-hidden={!(bewoner.postcode.trim() && bewoner.huisnummer.trim())}
-                    >
-                      <div className="overflow-hidden">
-                        <div className={fieldWrap}>
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-[13px]" style={{ color: "#8B8680" }}>
-                              {adresLocked && !adresEditOverride ? "Automatisch ingevuld" : ""}
-                            </span>
-                            {adresLocked && !adresEditOverride && (
+                      {/* Gevonden adres is een bevestiging, geen vraag: één regel in
+                          plaats van twee grijze readonly-vakken. Alleen als PDOK niets
+                          vindt (of de bezoeker op "bewerken" klikt) verschijnen de twee
+                          invoervelden echt. */}
+                      <div
+                        className={cx(
+                          "grid transition-all duration-300 ease-in-out",
+                          toonAdresBlok ? "mt-4 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                        )}
+                        aria-hidden={!toonAdresBlok}
+                      >
+                        <div className="overflow-hidden">
+                          {adresBevestigd ? (
+                            <div className="flex items-start gap-3 rounded-lg border border-[#E5E2DB] bg-[#FAF5EC] px-4 py-3">
+                              <MapPin size={16} className="mt-[3px] shrink-0" style={{ color: "#152C4E" }} aria-hidden="true" />
+                              <p className="font-sans min-w-0 flex-1 text-[14px] leading-snug" style={{ color: "#2B2B2B" }}>
+                                {bewoner.straatnaam} {bewoner.huisnummer}
+                                {bewoner.toevoeging.trim() ? ` ${bewoner.toevoeging.trim()}` : ""}, {bewoner.plaatsnaam}
+                              </p>
                               <button
                                 type="button"
+                                tabIndex={toonAdresBlok ? 0 : -1}
                                 onClick={() => { setAdresEditOverride(true); setAdresLocked(false); }}
-                                className="text-[13px] underline"
+                                className="shrink-0 text-[13px] underline"
                                 style={{ color: "#152C4E" }}
                               >
                                 bewerken
                               </button>
-                            )}
-                          </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <input
-                              name="straatnaam"
-                              type="text"
-                              placeholder="Straatnaam"
-                              aria-label="Straatnaam"
-                              tabIndex={(bewoner.postcode.trim() && bewoner.huisnummer.trim()) ? 0 : -1}
-                              readOnly={adresLocked && !adresEditOverride}
-                              className={cx(baseInputClass, inputOk)}
-                              style={adresLocked && !adresEditOverride ? { backgroundColor: "#F0EEE9", cursor: "not-allowed" } : undefined}
-                              value={bewoner.straatnaam}
-                              onChange={onChangeBew("straatnaam")}
-                              maxLength={150}
-                            />
-                            <input
-                              name="plaatsnaam"
-                              type="text"
-                              placeholder="Plaatsnaam"
-                              aria-label="Plaatsnaam"
-                              tabIndex={(bewoner.postcode.trim() && bewoner.huisnummer.trim()) ? 0 : -1}
-                              readOnly={adresLocked && !adresEditOverride}
-                              className={cx(baseInputClass, inputOk)}
-                              style={adresLocked && !adresEditOverride ? { backgroundColor: "#F0EEE9", cursor: "not-allowed" } : undefined}
-                              value={bewoner.plaatsnaam}
-                              onChange={onChangeBew("plaatsnaam")}
-                              maxLength={100}
-                            />
-                          </div>
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                              <input
+                                name="straatnaam"
+                                type="text"
+                                placeholder="Straatnaam"
+                                aria-label="Straatnaam"
+                                tabIndex={toonAdresBlok ? 0 : -1}
+                                className={cx(baseInputClass, inputOk, "sm:col-span-8 min-w-0")}
+                                value={bewoner.straatnaam}
+                                onChange={onChangeBew("straatnaam")}
+                                maxLength={150}
+                              />
+                              <input
+                                name="plaatsnaam"
+                                type="text"
+                                placeholder="Plaatsnaam"
+                                aria-label="Plaatsnaam"
+                                tabIndex={toonAdresBlok ? 0 : -1}
+                                className={cx(baseInputClass, inputOk, "sm:col-span-4 min-w-0")}
+                                value={bewoner.plaatsnaam}
+                                onChange={onChangeBew("plaatsnaam")}
+                                maxLength={100}
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
 
-                    <div className={fieldWrap}>
+                    <p className={cx(groepKopClass, "mt-8")}>Jouw vraag</p>
+
+                    <div className="mt-4">
                       <label htmlFor="f-bel" className={labelClass}>Voorkeur voor contact{optional}</label>
                       <select
                         id="f-bel"
@@ -660,11 +686,11 @@ const Contact = () => {
                       </select>
                     </div>
 
-                    <div className={fieldWrap}>
+                    <div className="mt-4">
                       {/* Zelfde opbouw als het berichtblok op /zakelijk. De
                           tekenlimiet staat alleen in de teller eronder; twee
                           keer hetzelfde getal is ruis. */}
-                      <label htmlFor="f-vragen-b" className={labelClass}>Bericht{required}</label>
+                      <label htmlFor="f-vragen-b" className={labelClass}>Bericht</label>
                       <textarea
                         id="f-vragen-b"
                         name="vragen"
