@@ -24,10 +24,6 @@ vi.mock("@/lib/gtm", () => ({ pushGtmEvent: vi.fn() }));
 vi.mock("@/components/Header", () => ({ Header: () => null }));
 vi.mock("@/components/Footer", () => ({ Footer: () => null }));
 vi.mock("@/components/Seo", () => ({ Seo: () => null }));
-// De reviewcarrousel onderaan de pagina draait op IntersectionObserver; die
-// bestaat niet in jsdom en heeft niets met dit formulier te maken.
-vi.mock("@/components/sections/Reviews", () => ({ Reviews: () => null }));
-
 import { MailOverzicht } from "@/components/subsidiecheck/MailOverzicht";
 import Contact from "@/pages/Contact";
 

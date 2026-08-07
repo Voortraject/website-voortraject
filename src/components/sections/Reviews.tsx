@@ -10,53 +10,7 @@ import {
 } from "@/components/ui/carousel";
 import { GoogleG } from "@/components/GoogleG";
 import { useGoogleReviews } from "@/hooks/useGoogleReviews";
-import fotoJulian from "@/assets/review-julian.webp";
-import fotoTibbe from "@/assets/review-tibbe.webp";
-
-type Kaart = {
-  id: string;
-  naam: string;
-  foto?: string;
-  kleur?: string; // vaste avatarkleur; anders afgeleid van de naam
-  rating: number;
-  tekst: string;
-};
-
-// Fallback: getoond zolang de Google-sync nog niet actief is (of bij een fout /
-// < 2 gesynchroniseerde reviews). Letterlijke citaten — teksten niet aanpassen.
-// Eefje heeft geen foto → Google-stijl letter-avatar in haar echte roze (#D81B60).
-const fallbackKaarten: Kaart[] = [
-  {
-    id: "julian",
-    naam: "Julian Kok",
-    foto: fotoJulian,
-    rating: 5,
-    tekst:
-      "Ik had geen idee hoe ik moest beginnen met het verduurzamen van mijn huis. Voortraject heeft me daarmee geholpen. Ze regelden de subsidieaanvraag en zorgden dat alles goed op papier stond. Zelf hoefde ik weinig te doen. Dak en spouwmuren zijn nu geïsoleerd en het huis is een stuk warmer. Fijn dat er een partij is die je hier gewoon bij helpt.",
-  },
-  {
-    id: "tibbe",
-    naam: "Tibbe Froma",
-    foto: fotoTibbe,
-    rating: 5,
-    tekst:
-      "Goed geholpen door Michael. Hij heeft alles voor mij geregeld en komen ze binnenkort nieuwe kozijnen plaatsen.",
-  },
-  {
-    id: "eefje",
-    naam: "Eefje Knol",
-    kleur: "#D81B60",
-    rating: 5,
-    tekst: "Zeer tevreden. Ik kreeg deskundig advies en fijn dat ze alle subsidies regelde!",
-  },
-];
-
-// Google-stijl avatarkleuren; deterministisch gekozen op basis van de naam,
-// zodat dezelfde persoon altijd dezelfde kleur krijgt.
-const AVATAR_KLEUREN = ["#546E7A", "#00897B", "#D81B60", "#3949AB", "#00838F", "#6D4C41"];
-const kleurVoor = (naam: string) =>
-  AVATAR_KLEUREN[[...naam].reduce((som, c) => som + c.charCodeAt(0), 0) % AVATAR_KLEUREN.length];
-const initiaalVan = (naam: string) => naam.trim().charAt(0).toUpperCase() || "?";
+import { fallbackKaarten, initiaalVan, kleurVoor, naarKaarten, type Kaart } from "@/lib/reviews";
 
 // Profielfoto met vangnet: breekt de (Google-)foto-URL, dan valt 'ie terug op
 // de Google-stijl letter-avatar.
@@ -184,17 +138,7 @@ export const Reviews = () => {
   }, [api, gepauzeerd]);
 
   // Live Google-reviews indien beschikbaar (>= 2 met tekst), anders de fallback.
-  const live: Kaart[] | null = reviews
-    ? reviews
-        .map<Kaart>((r) => ({
-          id: r.id,
-          naam: r.author_name,
-          foto: r.profile_photo_url ?? undefined,
-          rating: r.rating,
-          tekst: (r.text ?? "").trim(),
-        }))
-        .filter((k) => k.tekst.length > 0)
-    : null;
+  const live: Kaart[] | null = reviews ? naarKaarten(reviews) : null;
   const kaarten = live && live.length >= 2 ? live : fallbackKaarten;
 
   const ratingTekst =
