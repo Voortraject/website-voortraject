@@ -1,11 +1,19 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, ChevronDown, Loader2, MapPin } from "lucide-react";
 
+import { usePdokAdres } from "@/hooks/usePdokAdres";
 import { pushGtmEvent } from "@/lib/gtm";
 import { displayPostcode, normalizePostcode, POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib/pdok";
-import { ALLE_MAATREGELEN, type Bewonertype, type Maatregel } from "@/lib/subsidies";
+import {
+  ALLE_MAATREGELEN,
+  BEWONERTYPE_LABELS,
+  type Bewonertype,
+  type Maatregel,
+  MAATREGEL_LABELS,
+} from "@/lib/subsidies";
 
+import { Bewijsregel } from "./Bewijsregel";
 import { BewonertypeKeuze } from "./BewonertypeKeuze";
 import { MaatregelKeuze } from "./MaatregelKeuze";
 
@@ -46,6 +54,8 @@ interface StapAdresProps {
   ) => void;
   /** Vanuit de compacte bevestiging het adres alsnog aanpassen (toont de velden). */
   onAdresWijzigen: () => void;
+  /** De bezoeker kwam via "situatie aanpassen": toon de situatiekeuze meteen open. */
+  situatieOpen?: boolean;
   /** Label van de doorknop. Met de gegevens-poort "Verder" (er volgt nog een stap). */
   knopLabel?: string;
 }
@@ -66,6 +76,7 @@ export const StapAdres = ({
   onStart,
   onHandmatig,
   onAdresWijzigen,
+  situatieOpen = false,
   knopLabel = "Bekijk mijn subsidies",
 }: StapAdresProps) => {
   const [postcode, setPostcode] = useState(displayPostcode(initPostcode));
@@ -79,11 +90,15 @@ export const StapAdres = ({
   const [maatregelen, setMaatregelen] = useState<Maatregel[]>(
     initMaatregelen.length === ALLE_MAATREGELEN.length ? [] : initMaatregelen,
   );
-  // Interesses staan standaard op "alles"; specifieke maatregelen kiezen zit
-  // achter een uitklap (rustiger, vooral op mobiel). Open als er al een
-  // specifieke selectie is (bv. via een gedeelde link of "situatie aanpassen").
-  const [interessesUit, setInteressesUit] = useState(
-    initMaatregelen.length > 0 && initMaatregelen.length < ALLE_MAATREGELEN.length,
+  // Situatie en interesses staan allebei al goed voor verreweg de meeste
+  // bezoekers. Ze zitten daarom samen achter één rustige regel; wie iets anders
+  // is of alleen in bepaalde maatregelen geïnteresseerd is, klapt ze open. Open
+  // bij binnenkomst als de bezoeker er expliciet naartoe kwam ("situatie
+  // aanpassen") of al van de standaard afwijkt.
+  const [keuzesUit, setKeuzesUit] = useState(
+    situatieOpen ||
+      (!!initBewonertype && initBewonertype !== "woningeigenaar") ||
+      (initMaatregelen.length > 0 && initMaatregelen.length < ALLE_MAATREGELEN.length),
   );
 
   // Handmatig invulblok als PDOK het adres niet herkent (bv. nieuwbouw).
@@ -97,6 +112,37 @@ export const StapAdres = ({
   const queryClient = useQueryClient();
 
   const gekozenMaatregelen = (): Maatregel[] => (maatregelen.length === 0 ? [...ALLE_MAATREGELEN] : maatregelen);
+
+  // Korte samenvatting van de interesses voor de ingeklapte regel. Staat op een
+  // eigen regel, dus met een hoofdletter.
+  const maatregelSamenvatting =
+    maatregelen.length === 0
+      ? "Alle maatregelen"
+      : maatregelen.length <= 2
+        ? maatregelen.map((m) => MAATREGEL_LABELS[m]).join(" en ")
+        : `${maatregelen.length} maatregelen`;
+
+  // Live adrescheck: een halve seconde na de laatste toetsaanslag zoeken we het
+  // adres al op. Dat doet drie dingen tegelijk: de bezoeker ziet meteen dat we
+  // zíjn huis gevonden hebben (kleine beloning voor de eerste moeite), een typefout
+  // valt op vóór het verzenden, en bij het klikken op de knop is er niets meer op
+  // te halen. Zelfde react-query-sleutel als de pagina, dus geen dubbel verkeer.
+  const [vertraagd, setVertraagd] = useState({ pc: postcode, hn: huisnummer, tv: toevoeging });
+  useEffect(() => {
+    const t = setTimeout(() => setVertraagd({ pc: postcode, hn: huisnummer, tv: toevoeging }), 500);
+    return () => clearTimeout(t);
+  }, [postcode, huisnummer, toevoeging]);
+
+  // Niet zoeken zolang er een compact bevestigd adres staat (dan zijn de velden
+  // niet eens zichtbaar) of terwijl het handmatige blok openstaat.
+  const liveUit = !!bevestigdAdres || nietGevonden;
+  const liveAdres = usePdokAdres(liveUit ? "" : vertraagd.pc, liveUit ? "" : vertraagd.hn, vertraagd.tv);
+  // Alleen tonen als de vertraagde waarden nog gelijk zijn aan wat er staat; anders
+  // hoort de uitkomst bij een oudere invoer en is 'ie misleidend.
+  const bijDeTijd = vertraagd.pc === postcode && vertraagd.hn === huisnummer && vertraagd.tv === toevoeging;
+  const gevonden = bijDeTijd && !liveUit ? (liveAdres.data ?? null) : null;
+  const zoektLive = bijDeTijd && !liveUit && liveAdres.isFetching;
+  const nietHerkend = bijDeTijd && !liveUit && !liveAdres.isFetching && liveAdres.isFetched && !liveAdres.data;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -123,9 +169,14 @@ export const StapAdres = ({
       return;
     }
 
-    setBezig(true);
-    const adres = await zoekAdres(postcode, huisnummer, toevoeging);
-    setBezig(false);
+    // Meestal heeft de live check het adres al: dan is er niets meer op te halen
+    // en gaat de knop direct door.
+    let adres = gevonden;
+    if (!adres) {
+      setBezig(true);
+      adres = await zoekAdres(postcode, huisnummer, toevoeging);
+      setBezig(false);
+    }
 
     if (!adres) {
       setFout("We konden dit adres niet vinden. Check even je postcode en huisnummer.");
@@ -265,41 +316,76 @@ export const StapAdres = ({
               {fout}
             </p>
           )}
+
+          {/* Terugkoppeling van de live check. "Niet herkend" is bewust rustig
+              gehouden (geen rood): je typt nog, en het handmatige blok vangt een
+              onbekend adres straks alsnog op. */}
+          {!fout && (zoektLive || gevonden || nietHerkend) && (
+            <p className="mt-2.5 flex items-center gap-1.5 text-[13.5px]" aria-live="polite">
+              {zoektLive ? (
+                <>
+                  <Loader2 size={14} className="animate-spin text-muted-foreground" aria-hidden="true" />
+                  <span className="text-muted-foreground">Adres controleren…</span>
+                </>
+              ) : gevonden ? (
+                <>
+                  <Check size={14} strokeWidth={2.5} className="text-[hsl(var(--subsidie))]" aria-hidden="true" />
+                  <span className="text-foreground">
+                    {gevonden.straatnaam} {huisnummer.trim()}
+                    {toevoeging.trim() ? ` ${toevoeging.trim()}` : ""}, {gevonden.woonplaatsnaam}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <MapPin size={14} className="text-muted-foreground" aria-hidden="true" />
+                  <span className="text-muted-foreground">Dit adres herkennen we nog niet.</span>
+                </>
+              )}
+            </p>
+          )}
         </>
       )}
 
-      {/* Ik ben… — situatie staat standaard uitgeklapt, bóven de interesses.
-          Woningeigenaar is voorgeselecteerd (verreweg de grootste groep). */}
-      <fieldset className="mt-6">
-        <legend className="mb-3 block text-[14px] font-semibold text-foreground">Ik ben…</legend>
-        <BewonertypeKeuze waarde={bewonertype} onKies={setBewonertype} />
-      </fieldset>
-
-      {/* Interesses — standaard "alles"; specifiek kiezen zit achter een uitklap. */}
-      <fieldset className="mt-6">
-        <legend className="mb-3 block text-[14px] font-semibold text-foreground">Waar ben je in geïnteresseerd?</legend>
-        {interessesUit ? (
-          <div className="animate-fade-up">
+      {/* Situatie en interesses staan standaard goed, dus samen achter één rustige
+          regel. Eerder stonden hier twee blokken met elk een donkere pill; die
+          las als een knop terwijl er niets te doen viel, en trok de aandacht weg
+          van het enige dat de bezoeker hier écht moet invullen: zijn adres. */}
+      {keuzesUit ? (
+        <div className="mt-6 animate-fade-up">
+          <fieldset>
+            <legend className="mb-3 block text-[14px] font-semibold text-foreground">Ik ben…</legend>
+            <BewonertypeKeuze waarde={bewonertype} onKies={setBewonertype} />
+          </fieldset>
+          <fieldset className="mt-6">
+            <legend className="mb-3 block text-[14px] font-semibold text-foreground">
+              Waar ben je in geïnteresseerd?
+            </legend>
             <MaatregelKeuze gekozen={maatregelen} onWijzig={setMaatregelen} />
-          </div>
-        ) : (
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground">
-              <Check size={14} strokeWidth={2.5} aria-hidden="true" />
-              Alle maatregelen
-            </span>
+          </fieldset>
+        </div>
+      ) : (
+        <div className="mt-6">
+          {/* Kopje erboven, anders lijkt deze regel uit de lucht te vallen. */}
+          <p className="mb-2 block text-[14px] font-semibold text-foreground">Waarop we zoeken</p>
+          {/* Nooit afbreken: de tekst mag over twee regels, "Aanpassen" blijft
+              rechts op dezelfde hoogte staan. */}
+          <div className="flex items-start justify-between gap-3 rounded-lg border border-border px-4 py-3">
+            <div className="min-w-0">
+              <p className="text-[14px] font-semibold leading-snug text-foreground">{BEWONERTYPE_LABELS[bewonertype]}</p>
+              <p className="text-[13px] leading-snug text-muted-foreground">{maatregelSamenvatting}</p>
+            </div>
             <button
               type="button"
               aria-expanded={false}
-              onClick={() => setInteressesUit(true)}
-              className="inline-flex items-center gap-1 rounded-sm text-[13.5px] font-medium text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              onClick={() => setKeuzesUit(true)}
+              className="inline-flex shrink-0 items-center gap-1 rounded-sm text-[13.5px] font-medium text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
-              Specifiek kiezen
+              Aanpassen
               <ChevronDown size={14} aria-hidden="true" />
             </button>
           </div>
-        )}
-      </fieldset>
+        </div>
+      )}
 
       <button
         type="submit"
@@ -406,15 +492,27 @@ export const StapAdres = ({
         </div>
       )}
 
-      {/* Drie beloftes met vinkjes (zelfde patroon als de hero). */}
-      <ul className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-        {["Gratis", "Geen account nodig", "Klaar in 1 minuut"].map((belofte) => (
-          <li key={belofte} className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
-            <Check size={14} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
-            {belofte}
-          </li>
-        ))}
-      </ul>
+      {/* De drie beloftes en onze echte Google-score op één regel. Op mobiel
+          vallen de vinkjes weg en scheiden puntjes de beloftes, zodat de drie
+          altijd naast elkaar blijven staan; de score zakt daar naar de regel
+          eronder. Hier geeft iemand voor het eerst iets van zichzelf prijs (zijn
+          adres), dus hoort dat bewijs juist hier. */}
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+        <ul className="flex flex-nowrap items-center gap-x-2 whitespace-nowrap text-[12px] text-muted-foreground sm:gap-x-4 sm:text-[13px]">
+          {["Gratis", "Geen account nodig", "Klaar in 1 minuut"].map((belofte, i) => (
+            <li key={belofte} className="inline-flex items-center gap-1.5">
+              {i > 0 && (
+                <span aria-hidden="true" className="text-border sm:hidden">
+                  ·
+                </span>
+              )}
+              <Check size={14} strokeWidth={2.5} className="hidden shrink-0 text-accent sm:inline" aria-hidden="true" />
+              {belofte}
+            </li>
+          ))}
+        </ul>
+        <Bewijsregel />
+      </div>
     </form>
   );
 };

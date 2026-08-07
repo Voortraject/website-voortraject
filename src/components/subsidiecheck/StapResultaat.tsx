@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Copy, Link2, Loader2 } from "lucide-react";
+import { Check, Copy, Link2, Loader2, MessageCircle } from "lucide-react";
 
 import { usePand3d } from "@/hooks/usePand3d";
 import { usePandContour } from "@/hooks/usePandContour";
@@ -16,6 +16,7 @@ import {
   topBedragen,
 } from "@/lib/subsidies";
 
+import { Bewijsregel } from "./Bewijsregel";
 import { DirectContact } from "./DirectContact";
 import { MailOverzicht } from "./MailOverzicht";
 import { MobieleActiebalk } from "./MobieleActiebalk";
@@ -147,19 +148,30 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
 
   // Eén woningpaneel-element, gebruikt in zowel de "geen regelingen"-tak als het
   // normale resultaat — zo verschijnt het in elke situatie (bewonertype/aantal).
+  // De contactknop staat onder het woningkaartje, buiten het witte vlak: binnenin
+  // leek "Ik heb een vraag" over de foto's te gaan.
   const woningpaneel = (
-    <Woningpaneel
-      adres={adres}
-      input={input}
-      pand={pand ?? null}
-      pandBezig={pandBezig}
-      model={model}
-      modelBezig={modelBezig}
-      onVraagKlik={() => {
-        pushGtmEvent("subsidiecheck_vraag_cta", { bewonertype: input.bewonertype, plek: "woningpaneel" });
-        scrollNaarVraag();
-      }}
-    />
+    <div className="flex flex-col gap-3">
+      <Woningpaneel
+        adres={adres}
+        input={input}
+        pand={pand ?? null}
+        pandBezig={pandBezig}
+        model={model}
+        modelBezig={modelBezig}
+      />
+      <button
+        type="button"
+        onClick={() => {
+          pushGtmEvent("subsidiecheck_vraag_cta", { bewonertype: input.bewonertype, plek: "woningpaneel" });
+          scrollNaarVraag();
+        }}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-[14px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      >
+        <MessageCircle size={16} strokeWidth={2} aria-hidden="true" />
+        Ik heb een vraag
+      </button>
+    </div>
   );
 
   // Eén event per getoond resultaat (ook bij 0 regelingen — dat is óók funnel-data).
@@ -412,15 +424,25 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
         <DirectContact input={input} adres={adres} overzichtUrl={overzichtUrl} />
       </div>
 
-      {/* Rustige geruststelling onder de CTA (geen verzonnen sterren). */}
-      <ul className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1">
-        {["Vrijblijvend", "Reactie binnen 24 uur", "Lokaal adviesteam"].map((belofte) => (
-          <li key={belofte} className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
-            <Check size={14} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
-            {belofte}
-          </li>
-        ))}
-      </ul>
+      {/* Rustige geruststelling onder de CTA, met onze echte Google-score ernaast.
+          Op mobiel vallen de vinkjes weg en scheiden puntjes de beloftes, zodat
+          die drie naast elkaar blijven staan. */}
+      <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+        <ul className="flex flex-nowrap items-center gap-x-2 whitespace-nowrap text-[12px] text-muted-foreground sm:gap-x-4 sm:text-[13px]">
+          {["Vrijblijvend", "Reactie binnen 24 uur", "Lokaal adviesteam"].map((belofte, i) => (
+            <li key={belofte} className="inline-flex items-center gap-1.5">
+              {i > 0 && (
+                <span aria-hidden="true" className="text-border sm:hidden">
+                  ·
+                </span>
+              )}
+              <Check size={14} strokeWidth={2.5} className="hidden shrink-0 text-accent sm:inline" aria-hidden="true" />
+              {belofte}
+            </li>
+          ))}
+        </ul>
+        <Bewijsregel />
+      </div>
 
       {/* Warm slot (peak-end): de pagina eindigt menselijk, niet juridisch. */}
       <p className="mt-6 text-center text-[15px] leading-relaxed text-foreground/70">

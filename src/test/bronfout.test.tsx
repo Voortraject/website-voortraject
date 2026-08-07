@@ -82,8 +82,8 @@ describe("energiesubsidiewijzerProvider", () => {
 
 describe("gegevens-poort bij een bronfout", () => {
   const vulIn = () => {
-    // De hulpvraag is verplicht, naast de velden.
-    fireEvent.click(screen.getByRole("radio", { name: /De aanvraag regelen/ }));
+    // Minstens één hulpvraag is verplicht, naast de velden.
+    fireEvent.click(screen.getByRole("checkbox", { name: /De aanvraag regelen/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
@@ -123,20 +123,38 @@ describe("gegevens-poort bij een bronfout", () => {
     expect(onOntgrendeld).not.toHaveBeenCalled();
   });
 
-  it("laat het telefoonnummer weg als de bezoeker het niet invult", async () => {
-    vi.mocked(subsidieProvider.check).mockRejectedValue(new Error("bron plat"));
+  it("verstuurt niets zonder telefoonnummer", async () => {
     const onOntgrendeld = vi.fn();
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
-    fireEvent.click(screen.getByRole("radio", { name: /Subsidies uitzoeken/ }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /Subsidies uitzoeken/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
     nu += 5_000;
     fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
 
+    await screen.findByRole("alert");
+    expect(insertMock).not.toHaveBeenCalled();
+    expect(onOntgrendeld).not.toHaveBeenCalled();
+  });
+
+  it("zet meerdere hulpvragen achter elkaar in de notitie", async () => {
+    vi.mocked(subsidieProvider.check).mockRejectedValue(new Error("bron plat"));
+    const onOntgrendeld = vi.fn();
+    metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
+    // Bewust in omgekeerde volgorde aanklikken: de notitie moet de volgorde van
+    // de tegels aanhouden, niet die van het klikken.
+    fireEvent.click(screen.getByRole("checkbox", { name: /Een uitvoerder vinden/ }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /Subsidies uitzoeken/ }));
+    vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
+    vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
+    vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
+    vul(screen.getByPlaceholderText(/Je telefoonnummer/), "0612345678");
+    nu += 5_000;
+    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
+
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled(), { timeout: 5_000 });
     const [, rij] = insertMock.mock.calls[0];
-    // Leeg nummer als NULL, niet als lege string.
-    expect(rij.telefoon).toBeNull();
+    expect(rij.notities).toBe("Wil hulp met: Subsidies uitzoeken, Een uitvoerder vinden");
   });
 });

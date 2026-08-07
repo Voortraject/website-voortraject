@@ -302,7 +302,13 @@ const SubsidiecheckLive = () => {
                       setSearchParams(params);
                     }}
                     onAdresWijzigen={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
-                    knopLabel={poortAan ? "Verder" : "Bekijk mijn subsidies"}
+                    // sit=1 betekent: de bezoeker klikte op "situatie aanpassen",
+                    // dus de situatiekeuze hoort meteen open te staan.
+                    situatieOpen={sitParam}
+                    // Met de poort volgt er nog een stap, dus niet "Bekijk mijn
+                    // subsidies" beloven; wél zeggen wat er gebeurt in plaats van
+                    // het nietszeggende "Verder".
+                    knopLabel={poortAan ? "Zoek mijn subsidies" : "Bekijk mijn subsidies"}
                   />
                 ) : poortAan && stap === 2 ? (
                   checkInput &&

@@ -22,11 +22,10 @@ const inputClass =
 // je aan de slag?"): daar kiest bijna iedereen de vrijblijvendste optie, en dan
 // weet het team nog niets. Deze vier zijn stuk voor stuk dingen die Voortraject
 // écht doet, dus élk antwoord vertelt de adviseur waarmee hij het gesprek opent.
-// Geen "vage" uitweg, want alle vier zijn even legitiem.
-// De labels zijn de tekst die letterlijk in de notitie bij de lead belandt.
-// De labels vullen de vraag aan ("helpen met: de aanvraag regelen") en komen zo
-// ook in de notitie bij de lead te staan. Kort en gelijk van vorm, zodat de vier
-// tegels in één oogopslag te vergelijken zijn.
+// Geen "vage" uitweg, want alle vier zijn even legitiem, en meerdere aanvinken
+// mag: wie zowel de subsidies als de aanvraag uit handen wil geven, zegt dat.
+// De labels komen letterlijk in de notitie bij de lead te staan. Kort en gelijk
+// van vorm, zodat de vier tegels in één oogopslag te vergelijken zijn.
 const HULPVRAGEN = [
   { id: "subsidies", label: "Subsidies uitzoeken", Icon: BadgeEuro },
   { id: "aanvraag", label: "De aanvraag regelen", Icon: FileCheck },
@@ -64,7 +63,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
   const [achternaam, setAchternaam] = useState("");
   const [email, setEmail] = useState("");
   const [telefoon, setTelefoon] = useState("");
-  const [hulpvraag, setHulpvraag] = useState<HulpvraagId | null>(null);
+  const [hulpvragen, setHulpvragen] = useState<HulpvraagId[]>([]);
   const [fout, setFout] = useState<string | null>(null);
   const [bezig, setBezig] = useState(false);
   const [honeypot, setHoneypot] = useState("");
@@ -100,23 +99,22 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
       return;
     }
 
-    // Telefoon is hier bewust optioneel; een ingevuld nummer moet wel kloppen.
-    const resultaat = valideerContact(
-      { voornaam, tussenvoegsel: "", achternaam, email, telefoon },
-      { telefoonVerplicht: false },
-    );
+    const resultaat = valideerContact({ voornaam, tussenvoegsel: "", achternaam, email, telefoon });
     if ("fout" in resultaat) {
       setFout(resultaat.fout);
       return;
     }
-    if (!hulpvraag) {
+    if (hulpvragen.length === 0) {
       setFout("Kies even waar we je mee kunnen helpen.");
       return;
     }
 
     // Zelfde opbouw als het contactformulier: een kopregel in `notities` die het
-    // team meteen ziet. Een latere vraag van de bezoeker komt eronder.
-    const notitie = `Wil hulp met: ${HULPVRAGEN.find((h) => h.id === hulpvraag)!.label}`;
+    // team meteen ziet. Een latere vraag van de bezoeker komt eronder. Volgorde
+    // van de tegels, niet van het aanklikken, zodat het CRM leest zoals de
+    // bezoeker het zag.
+    const gekozenLabels = HULPVRAGEN.filter((h) => hulpvragen.includes(h.id)).map((h) => h.label);
+    const notitie = `Wil hulp met: ${gekozenLabels.join(", ")}`;
     const verrijking = {
       energielabel: woning?.energielabel?.klasse,
       bouwjaar: pand?.bouwjaar,
@@ -149,7 +147,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         pushGtmEvent("subsidiecheck_lead", {
           bewonertype: input.bewonertype,
           aantal_regelingen: 0,
-          hulpvraag,
+          hulpvraag: hulpvragen.join(","),
           // 1/0 en niet true/false: pushGtmEvent neemt alleen tekst en getallen.
           bron_fout: 1,
         });
@@ -174,8 +172,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
       pushGtmEvent("subsidiecheck_lead", {
         bewonertype: input.bewonertype,
         aantal_regelingen: opgehaald.length,
-        hulpvraag,
-        telefoon_ingevuld: resultaat.waarden.telefoon ? 1 : 0,
+        hulpvraag: hulpvragen.join(","),
       });
       onOntgrendeld(); // component unmount hierna → bezig blijft bewust true
     } catch (err) {
@@ -318,19 +315,20 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
             }}
             maxLength={255}
           />
-          {/* Telefoon optioneel; dat staat in het veld zelf, zoals gebruikelijk.
-              Een verplicht nummer kost hier de meeste invullers; wie gebeld wil
-              worden, geeft het op het resultaat alsnog (of hier, vrijwillig).
-              Waaróm we ernaar vragen staat in de regel onder de knop. */}
+          {/* Telefoon is op verzoek van de opdrachtgever weer verplicht. Let op:
+              een verplicht nummer is aantoonbaar de duurste veldkeuze in een
+              formulier; als de leadaantallen teruglopen is dit de eerste knop om
+              aan te draaien. */}
           <label className="sr-only" htmlFor="sc-gg-telefoon">
-            Je telefoonnummer (optioneel)
+            Je telefoonnummer (verplicht)
           </label>
           <input
             id="sc-gg-telefoon"
             type="tel"
             autoComplete="tel"
             inputMode="tel"
-            placeholder="Je telefoonnummer (optioneel)"
+            aria-required="true"
+            placeholder="Je telefoonnummer *"
             className={`${inputClass} col-span-2 sm:col-span-1`}
             value={telefoon}
             onChange={(e) => {
@@ -342,21 +340,21 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         </div>
       </fieldset>
 
-      {/* Eén vraag, één tik. Zie de toelichting bij HULPVRAGEN hierboven: geen
-          termijn maar een hulpvraag, zodat élk antwoord het team iets vertelt. */}
+      {/* Meerdere antwoorden mogen: zie de toelichting bij HULPVRAGEN hierboven. */}
       <fieldset className="mt-6">
-        <legend className="mb-3 block text-[14px] font-semibold text-foreground">Waar kunnen we je mee helpen?</legend>
-        <div className="grid grid-cols-2 gap-2 sm:gap-3" role="radiogroup" aria-label="Waar kunnen we je mee helpen?">
+        <legend className="mb-1 block text-[14px] font-semibold text-foreground">Waar kunnen we je mee helpen?</legend>
+        <p className="mb-3 text-[13px] text-muted-foreground">Meerdere antwoorden mogelijk.</p>
+        <div className="grid grid-cols-2 gap-2 sm:gap-3" role="group" aria-label="Waar kunnen we je mee helpen?">
           {HULPVRAGEN.map(({ id, label, Icon }) => {
-            const actief = hulpvraag === id;
+            const actief = hulpvragen.includes(id);
             return (
               <button
                 key={id}
                 type="button"
-                role="radio"
+                role="checkbox"
                 aria-checked={actief}
                 onClick={() => {
-                  setHulpvraag(id);
+                  setHulpvragen((huidig) => (huidig.includes(id) ? huidig.filter((h) => h !== id) : [...huidig, id]));
                   setFout(null);
                 }}
                 className={`relative flex items-center gap-2.5 rounded-lg border-2 px-3 py-3 text-left text-[14px] font-semibold leading-snug text-primary transition-colors min-h-[56px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-3 sm:px-4 sm:text-[15px] ${

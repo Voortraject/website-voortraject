@@ -16,8 +16,10 @@ verify_jwt = false
 verify_jwt = false
 
 # "Mail mij dit overzicht": schrijft de lead (service_role) en stuurt de mail via
-# Resend. Geen JWT: wordt anoniem vanaf de site aangeroepen. Secrets: RESEND_API_KEY,
-# MAIL_FROM, MAIL_BCC (optioneel), MAIL_REPLY_TO (optioneel), SITE_URL (optioneel).
+# Resend. Behandelt ook de vraag die de bezoeker op het resultaat stelt (actie
+# "bericht"). Geen JWT: wordt anoniem vanaf de site aangeroepen. Secrets:
+# RESEND_API_KEY, MAIL_FROM, MAIL_BCC (optioneel), MAIL_TEAM (optioneel, ontvanger
+# van de vraag-mails), MAIL_REPLY_TO (optioneel).
 [functions.subsidiecheck-mail]
 verify_jwt = false
 
