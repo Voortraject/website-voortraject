@@ -9,7 +9,9 @@ import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
 import { subsidieProvider, type SubsidieCheckInput, type SubsidieRegeling } from "@/lib/subsidies";
 
+import { Bewijsregel } from "./Bewijsregel";
 import { bewaarContact } from "./contactOpslag";
+import { Energielabel } from "./Energielabel";
 import { Luchtfoto } from "./Luchtfoto";
 import { schrijfSubsidiecheckLead, valideerContact, verstuurSubsidiecheckLead } from "./leadFormulier";
 
@@ -193,15 +195,15 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         {/* Mobiel de foto als brede band bovenaan en de tekst eronder: naast
             elkaar werd de foto een smalle strook en brak elke regel in tweeën.
             Vanaf sm past het wél naast elkaar. */}
-        <div className="flex flex-col sm:flex-row sm:items-start">
+        <div className="flex flex-col sm:flex-row sm:items-stretch">
           <Luchtfoto
             adres={adres}
             adresRegel={adresKort}
             pand={pand ?? null}
             pandBezig={pandBezig}
-            // 240px breed = 160px hoog (3:2), ongeveer even hoog als het
-            // tekstblok ernaast, dus geen wit gat onder de foto.
-            className="sm:w-[240px] sm:shrink-0"
+            // Mobiel een lage band (2:1) zodat dit blok weinig hoogte kost; vanaf
+            // sm een vaste kolom die de volle kaarthoogte vult, tot aan de rand.
+            className="aspect-[2/1] sm:aspect-auto sm:w-[240px] sm:shrink-0"
             verbergBron
           />
           <div className="flex-1 p-4 sm:p-5">
@@ -218,20 +220,22 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
             </p>
 
             {/* Het energielabel is echte, opzoekbare informatie die de bezoeker
-                hier gratis krijgt. Nog aan het laden → niets tonen; geen label →
-                dat is ook een antwoord. De bron staat op een eigen regel, anders
-                breekt "EP-Online" op smalle schermen halverwege af. */}
+                hier gratis krijgt. Zelfde gekleurde schaal als op het resultaat,
+                zodat het meteen herkenbaar is. Nog aan het laden → niets tonen;
+                geen label → dat is ook een antwoord. */}
             {!woningBezig && (
-              <p className="mt-2.5 text-[13.5px] leading-snug text-foreground/80">
+              <div className="mt-4">
                 {woning?.energielabel ? (
                   <>
-                    Energielabel <span className="font-semibold text-primary">{woning.energielabel.klasse}</span>
-                    <span className="block text-[12px] text-muted-foreground">Bron: EP-Online</span>
+                    <p className="mb-1.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                      Energielabel
+                    </p>
+                    <Energielabel klasse={woning.energielabel.klasse} compact />
                   </>
                 ) : (
-                  "Nog geen geregistreerd energielabel"
+                  <p className="text-[13.5px] text-foreground/80">Nog geen geregistreerd energielabel</p>
                 )}
-              </p>
+              </div>
             )}
           </div>
         </div>
@@ -396,10 +400,18 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         )}
       </button>
 
-      <p className="mt-3 text-[12px] italic text-muted-foreground">
-        Je overzicht opent meteen en we mailen het ook naar je. Je telefoonnummer gebruiken we alleen als je liever
-        gebeld wordt. Geen nieuwsbrief.
-      </p>
+      {/* Geruststelling links, onze echte Google-score rechts: allebei bedoeld voor
+          hetzelfde moment van twijfel, dus ze horen op één regel. Op een smal
+          scherm valt de score vanzelf naar de regel eronder. Live data: is die er
+          niet, dan staat hier alleen de zin. */}
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        {/* Op mobiel korter, anders passen de zin en de score samen niet op één
+            regel en valt de score eronder. */}
+        <p className="text-[12px] italic text-muted-foreground">
+          Geen nieuwsbrief<span className="hidden sm:inline">, alleen jouw overzicht</span>.
+        </p>
+        <Bewijsregel />
+      </div>
     </form>
   );
 };

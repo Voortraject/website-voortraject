@@ -21,13 +21,13 @@ const LABEL_VAR: Record<Letter, string> = {
 // Op het volle vlak van geel/amber leest donkere inkt beter dan wit.
 const INK_DONKER: Partial<Record<Letter, boolean>> = { D: true, E: true };
 
-export const Energielabel = ({ klasse }: { klasse: string }) => {
+export const Energielabel = ({ klasse, compact = false }: { klasse: string; compact?: boolean }) => {
   const actief = (klasse.trim()[0]?.toUpperCase() ?? "") as Letter;
   const bekend = SCHAAL.includes(actief);
 
   return (
     <ol
-      className="flex items-stretch gap-1"
+      className={`flex items-stretch ${compact ? "gap-0.5" : "gap-1"}`}
       aria-label={bekend ? `Energielabel ${klasse}` : "Energielabel onbekend"}
     >
       {SCHAAL.map((letter) => {
@@ -37,9 +37,11 @@ export const Energielabel = ({ klasse }: { klasse: string }) => {
           <li
             key={letter}
             aria-current={isActief ? "true" : undefined}
-            className={`relative flex min-h-[44px] flex-1 items-center justify-center rounded-md text-[15px] font-bold leading-none transition-transform ${
-              isActief ? "z-10 ring-4 ring-accent ring-offset-1 ring-offset-card" : ""
-            }`}
+            // Compact: dunnere balk voor plekken waar het label bijzaak is, zoals
+            // het woningkaartje in de gegevens-poort.
+            className={`relative flex flex-1 items-center justify-center rounded-md font-bold leading-none transition-transform ${
+              compact ? "min-h-[30px] text-[13px]" : "min-h-[44px] text-[15px]"
+            } ${isActief ? (compact ? "z-10 ring-2 ring-accent ring-offset-1 ring-offset-card" : "z-10 ring-4 ring-accent ring-offset-1 ring-offset-card") : ""}`}
             style={
               isActief
                 ? {

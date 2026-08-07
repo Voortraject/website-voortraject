@@ -51,14 +51,12 @@ export const Luchtfoto = ({
   // "niet beschikbaar" is alleen maar ruis.
   if (!wachten && !frame) return null;
 
-  // De verhouding van het blok moet exact gelijk zijn aan die van de opgehaalde
-  // afbeelding (3:2, zie bouwLuchtfotoFrame). De contour wordt namelijk als SVG
-  // over de foto heen gelegd en uitgerekt tot het blok; wijkt de verhouding af,
-  // dan snijdt object-cover de foto bij terwijl de contour meerekt en klopt de
-  // omtrek niet meer met het dak. Daarom zit `aspect-[3/2]` hier vast en bepaalt
-  // de aanroeper alleen de breedte.
+  // Het blok mag elke verhouding hebben: de foto (object-cover) en de contour
+  // (preserveAspectRatio="xMidYMid slice") snijden allebei op exact dezelfde
+  // manier bij, dus de omtrek blijft op het dak liggen. Verhouding en hoogte
+  // komen daarom van de aanroeper.
   return (
-    <div className={`relative aspect-[3/2] w-full overflow-hidden bg-secondary ${className}`}>
+    <div className={`relative w-full overflow-hidden bg-secondary ${className}`}>
       {wachten ? (
         <div className="h-full w-full animate-pulse bg-secondary" aria-hidden="true" />
       ) : (
@@ -73,7 +71,10 @@ export const Luchtfoto = ({
           {contour && contour.length > 0 && (
             <svg
               viewBox={`0 0 ${frame!.width} ${frame!.height}`}
-              preserveAspectRatio="none"
+              // "slice" = precies wat object-cover met de foto doet: gelijkmatig
+              // schalen tot het vlak gevuld is, gecentreerd, de rest afsnijden.
+              // Zo blijven foto en contour altijd op elkaar liggen.
+              preserveAspectRatio="xMidYMid slice"
               className="pointer-events-none absolute inset-0 h-full w-full"
               aria-hidden="true"
             >

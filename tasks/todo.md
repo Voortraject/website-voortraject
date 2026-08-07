@@ -151,10 +151,17 @@ samenvatting 623px, eerste regeling op y=1297, vraagblok op y=4200, elf kaarten 
       met de telling zichtbaar ("Gemeente · 3"). Bewust niet gedaan zonder cijfers: het ruilt
       zichtbare waarde in voor minder scrollen, en dat is een keuze van de opdrachtgever.
 
-### PR 4 — Eerlijke overtuiging (`feat/subsidiecheck-bewijs`)
-- [ ] Live Google-score en reviewaantal in de poort en op het resultaat.
-- [ ] `src/config/bewijs.ts` met de vaste, houdbare claims en peildatum.
-- [ ] Peak-end-copy op het slot aanscherpen.
+### PR 4 — Eerlijke overtuiging (`feat/subsidiecheck-bewijs`) ✅
+- [x] Live Google-score en reviewaantal (`Bewijsregel`) op de twee momenten waarop we iets
+      vragen: onder de knop van de poort en naast de verzendknop van het vraagblok. Sociale
+      bewijskracht doet zijn werk op het punt van twijfel, niet ergens onderaan de pagina.
+      Data komt uit `sync-google-reviews`, dus altijd actueel en nul onderhoud. Geen data =
+      geen regel; liever niets dan een verzonnen cijfer.
+- [ ] `src/config/bewijs.ts` met vaste claims: **nog niet gemaakt**, want daar is nog geen
+      aangeleverd, verifieerbaar cijfer voor (aantal geholpen bewoners, hoogst binnengehaalde
+      subsidie). Zodra die er zijn, kan dit erbij.
+- [x] Peak-end-copy op het slot: staat al ("Veel regelingen blijven onbenut. Jij bent nu een stap
+      verder dan de meeste woningeigenaren."), ongewijzigd gelaten.
 
 ### Verificatie (elke PR)
 - [ ] `bun run test` + `bun run lint`.
