@@ -44,12 +44,12 @@ export const ReviewsCompact = () => {
     };
   }, [api]);
 
-  // Autoplay (3s): pauzeert bij hover/aanraken en respecteert
+  // Autoplay (4s): pauzeert bij hover/aanraken en respecteert
   // 'prefers-reduced-motion'.
   useEffect(() => {
     if (!api || gepauzeerd) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setInterval(() => api.scrollNext(), 3000);
+    const id = window.setInterval(() => api.scrollNext(), 4000);
     return () => window.clearInterval(id);
   }, [api, gepauzeerd]);
 
@@ -87,7 +87,9 @@ export const ReviewsCompact = () => {
         onMouseLeave={() => setGepauzeerd(false)}
         onTouchStart={() => setGepauzeerd(true)}
       >
-        <Carousel setApi={setApi} opts={{ loop: true }}>
+        {/* duration 45: embla schuift standaard op 25, dat oogt naast een
+            formulier als een schok. Hoger = trager, dus een rustige glijbeweging. */}
+        <Carousel setApi={setApi} opts={{ loop: true, duration: 45 }}>
           {/* -ml-4 + pl-4 zet ruimte tússen de kaarten, net als op de homepagina;
               tijdens het schuiven zie je dus een gootje in plaats van twee
               kaarten die tegen elkaar aan plakken. */}

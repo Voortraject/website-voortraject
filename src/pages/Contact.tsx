@@ -63,7 +63,7 @@ const initialBewoner = {
   vragen: "",
 };
 
-const MAX_NOTES = 2000;
+const MAX_NOTES = 1000;
 
 // ---------- Validators ----------
 const NAME_RE = /^[\p{L}\s'\-]+$/u;
@@ -173,7 +173,8 @@ const Contact = () => {
     if (hn && !pc) e.postcode = "Vul ook een postcode in.";
 
     if (!bewoner.vragen.trim()) e.vragen = "Vul je bericht in.";
-    else if (bewoner.vragen.length > MAX_NOTES) e.vragen = "Je bericht is te lang (maximaal 2000 karakters).";
+    else if (bewoner.vragen.length > MAX_NOTES)
+      e.vragen = `Je bericht is te lang (maximaal ${MAX_NOTES} karakters).`;
 
     return e;
   };
