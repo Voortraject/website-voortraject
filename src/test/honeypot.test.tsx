@@ -257,7 +257,7 @@ describe("subsidiecheck gegevenspoort", () => {
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
     vulIn();
     wachtEvenAf();
-    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn overzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
 
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled());
     expect(insertMock).toHaveBeenCalledTimes(1);
@@ -273,7 +273,7 @@ describe("subsidiecheck gegevenspoort", () => {
     vulIn();
     vul(honeypotVan(container), "https://spam.example");
     wachtEvenAf();
-    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn overzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
 
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled());
     expect(insertMock).not.toHaveBeenCalled();

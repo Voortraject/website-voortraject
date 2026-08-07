@@ -1,6 +1,6 @@
 import { FormEvent, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, Loader2, MapPin } from "lucide-react";
+import { BadgeEuro, Check, FileCheck, HardHat, Home, Loader2, MapPin, Search } from "lucide-react";
 
 import { usePandContour } from "@/hooks/usePandContour";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
@@ -23,10 +23,10 @@ const inputClass =
 // Geen "vage" uitweg, want alle vier zijn even legitiem.
 // De labels zijn de tekst die letterlijk in de notitie bij de lead belandt.
 const HULPVRAGEN = [
-  { id: "subsidies", label: "Weten wat ik kan krijgen" },
-  { id: "aanvraag", label: "Hulp bij de aanvraag" },
-  { id: "uitvoerder", label: "Een uitvoerder vinden" },
-  { id: "plan", label: "Een plan voor mijn woning" },
+  { id: "subsidies", label: "Weten wat ik kan krijgen", Icon: BadgeEuro },
+  { id: "aanvraag", label: "Hulp bij de aanvraag", Icon: FileCheck },
+  { id: "uitvoerder", label: "Een uitvoerder vinden", Icon: HardHat },
+  { id: "plan", label: "Een plan voor mijn woning", Icon: Home },
 ] as const;
 
 type HulpvraagId = (typeof HULPVRAGEN)[number]["id"];
@@ -233,9 +233,18 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
           </div>
         </div>
 
-        <p className="border-t border-border px-4 py-3 text-[13.5px] leading-relaxed text-muted-foreground sm:px-5">
-          Hierna zoeken we alle landelijke, provinciale en gemeentelijke regelingen bij dit adres.
-        </p>
+        {/* Als melding vormgegeven, niet als losse zin: zo leest het als een
+            statusregel bij de kaart en niet als het overzicht zelf. "Laatste stap"
+            staat er bewust voor. Mensen versnellen naarmate ze de finish naderen
+            (goal-gradient, Kivetz e.a. 2006), en het maakt in één woord duidelijk
+            dat het echte overzicht hierna komt. */}
+        <div className="flex items-start gap-2.5 border-t border-border bg-accent/10 px-4 py-3 sm:px-5">
+          <Search size={16} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
+          <p className="text-[13.5px] leading-relaxed text-foreground/80">
+            <span className="font-semibold text-primary">Laatste stap.</span> Hierna zoeken we alle landelijke,
+            provinciale en gemeentelijke regelingen bij dit adres.
+          </p>
+        </div>
       </div>
 
       {/* Honeypot: gewoon tekstveld (géén type="hidden" — dat slaan bots juist over),
@@ -259,7 +268,10 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
           Waar mogen we je overzicht naartoe sturen?
         </legend>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {/* Voor- en achternaam staan altijd naast elkaar, ook op mobiel: het zijn
+            korte velden en samen vormen ze één ding. E-mail en telefoon krijgen op
+            mobiel de volle breedte. */}
+        <div className="grid grid-cols-2 gap-3">
           <label className="sr-only" htmlFor="sc-gg-voornaam">
             Je voornaam (verplicht)
           </label>
@@ -303,7 +315,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
             autoComplete="email"
             aria-required="true"
             placeholder="Je e-mailadres *"
-            className={inputClass}
+            className={`${inputClass} col-span-2 sm:col-span-1`}
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -311,29 +323,27 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
             }}
             maxLength={255}
           />
-          {/* Telefoon optioneel, mét de reden erbij. Een verplicht nummer kost hier
-              de meeste invullers; wie gebeld wil worden, geeft het op het resultaat
-              alsnog (of hier, vrijwillig). */}
-          <div>
-            <input
-              id="sc-gg-telefoon"
-              type="tel"
-              autoComplete="tel"
-              inputMode="tel"
-              placeholder="Je telefoonnummer"
-              className={inputClass}
-              value={telefoon}
-              onChange={(e) => {
-                setTelefoon(e.target.value);
-                setFout(null);
-              }}
-              maxLength={20}
-              aria-describedby="sc-gg-telefoon-uitleg"
-            />
-            <label id="sc-gg-telefoon-uitleg" htmlFor="sc-gg-telefoon" className="mt-1.5 block text-[12.5px] text-muted-foreground">
-              Optioneel, alleen als je liever gebeld wordt
-            </label>
-          </div>
+          {/* Telefoon optioneel; dat staat in het veld zelf, zoals gebruikelijk.
+              Een verplicht nummer kost hier de meeste invullers; wie gebeld wil
+              worden, geeft het op het resultaat alsnog (of hier, vrijwillig).
+              Waaróm we ernaar vragen staat in de regel onder de knop. */}
+          <label className="sr-only" htmlFor="sc-gg-telefoon">
+            Je telefoonnummer (optioneel)
+          </label>
+          <input
+            id="sc-gg-telefoon"
+            type="tel"
+            autoComplete="tel"
+            inputMode="tel"
+            placeholder="Je telefoonnummer (optioneel)"
+            className={`${inputClass} col-span-2 sm:col-span-1`}
+            value={telefoon}
+            onChange={(e) => {
+              setTelefoon(e.target.value);
+              setFout(null);
+            }}
+            maxLength={20}
+          />
         </div>
       </fieldset>
 
@@ -342,7 +352,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
       <fieldset className="mt-6">
         <legend className="mb-3 block text-[14px] font-semibold text-foreground">Waar kunnen we je mee helpen?</legend>
         <div className="grid grid-cols-2 gap-2 sm:gap-3" role="radiogroup" aria-label="Waar kunnen we je mee helpen?">
-          {HULPVRAGEN.map(({ id, label }) => {
+          {HULPVRAGEN.map(({ id, label, Icon }) => {
             const actief = hulpvraag === id;
             return (
               <button
@@ -354,14 +364,15 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
                   setHulpvraag(id);
                   setFout(null);
                 }}
-                className={`relative flex items-center justify-center rounded-lg border-2 px-3 py-3 text-center text-[14px] font-semibold leading-snug text-primary transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:text-[15px] ${
+                className={`relative flex items-center gap-2.5 rounded-lg border-2 px-3 py-3 text-left text-[14px] font-semibold leading-snug text-primary transition-colors min-h-[56px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-3 sm:px-4 sm:text-[15px] ${
                   actief ? "border-accent bg-accent/10" : "border-border bg-card hover:border-primary/30"
                 }`}
               >
-                {label}
+                <Icon size={20} strokeWidth={1.75} className="shrink-0 text-primary" aria-hidden="true" />
+                <span>{label}</span>
                 {actief && (
                   <span
-                    className="absolute right-2.5 top-2.5 hidden h-5 w-5 items-center justify-center rounded-full bg-accent sm:flex"
+                    className="absolute right-2 top-2 hidden h-5 w-5 items-center justify-center rounded-full bg-accent sm:flex"
                     aria-hidden="true"
                   >
                     <Check size={13} strokeWidth={3} className="text-primary" />
@@ -390,13 +401,13 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
             Versturen…
           </>
         ) : (
-          "Bekijk mijn overzicht"
+          "Bekijk mijn subsidieoverzicht"
         )}
       </button>
 
       <p className="mt-3 text-[12px] italic text-muted-foreground">
-        Je overzicht opent meteen en we mailen het ook naar je. Alleen om je overzicht te sturen en vrijblijvend contact
-        op te nemen. Geen nieuwsbrief.
+        Je overzicht opent meteen en we mailen het ook naar je. Je telefoonnummer gebruiken we alleen als je liever
+        gebeld wordt. Geen nieuwsbrief.
       </p>
     </form>
   );

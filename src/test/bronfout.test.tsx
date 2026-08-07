@@ -96,7 +96,7 @@ describe("gegevens-poort bij een bronfout", () => {
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
     vulIn();
     nu += 5_000;
-    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn overzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
 
     // De poort retry't de bron één keer (met backoff) voordat hij opgeeft.
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled(), { timeout: 5_000 });
@@ -116,7 +116,7 @@ describe("gegevens-poort bij een bronfout", () => {
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
     nu += 5_000;
-    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn overzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
 
     await screen.findByRole("alert");
     expect(insertMock).not.toHaveBeenCalled();
@@ -132,7 +132,7 @@ describe("gegevens-poort bij een bronfout", () => {
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
     nu += 5_000;
-    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn overzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
 
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled(), { timeout: 5_000 });
     const [, rij] = insertMock.mock.calls[0];
