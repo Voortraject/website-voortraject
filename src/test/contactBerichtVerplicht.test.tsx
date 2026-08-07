@@ -1,10 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-// Het contactformulier schrijft de aanhef naar `leads_bewoners.aanhef` (CRM).
-// Die kolom is vrije tekst, maar het CRM zelf biedt exact drie waarden aan; een
-// afwijkende string laat de aanhef in het CRM en in de mailsjablonen rammelen.
-// Leeg moet NULL worden, niet een lege string.
+// Het berichtveld is verplicht: zonder bericht mag er geen lead ontstaan, want
+// een lead zonder context kost de adviseur een extra belronde.
 
 const { insertMock } = vi.hoisted(() => ({ insertMock: vi.fn() }));
 
@@ -19,6 +17,7 @@ vi.mock("@/lib/gtm", () => ({ pushGtmEvent: vi.fn() }));
 vi.mock("@/components/Header", () => ({ Header: () => null }));
 vi.mock("@/components/Footer", () => ({ Footer: () => null }));
 vi.mock("@/components/Seo", () => ({ Seo: () => null }));
+
 import Contact from "@/pages/Contact";
 
 // De formulieren weigeren een inzending binnen 2 seconden na laden (anti-bot).
@@ -39,45 +38,47 @@ const vul = (veld: HTMLElement, waarde: string) => {
   fireEvent.change(veld, { target: { value: waarde } });
 };
 
-const vulVerplichteVelden = () => {
+const vulNaamEnContact = () => {
   vul(screen.getByLabelText(/^Voornaam/), "Jan");
   vul(screen.getByLabelText(/^Achternaam/), "de Vries");
   vul(screen.getByLabelText(/^E-mailadres/), "jan@example.nl");
   vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
-  vul(screen.getByLabelText(/^Bericht/), "Graag advies over isolatie.");
 };
 
-const verstuur = async () => {
+const verstuur = () => {
   nu += 5_000;
   fireEvent.click(screen.getByRole("button", { name: /Verstuur bericht/ }));
-  await screen.findByText(/Bedankt!/);
 };
 
-describe("contactformulier aanhef", () => {
-  it("biedt exact de drie CRM-waarden aan", () => {
+describe("contactformulier: bericht is verplicht", () => {
+  it("weigert een lege inzending en toont een foutmelding", async () => {
     render(<Contact />);
-    const select = screen.getByLabelText(/^Aanhef/) as HTMLSelectElement;
-    const waarden = Array.from(select.options).map((o) => o.value);
-    expect(waarden).toEqual(["", "Dhr.", "Mevr.", "Fam."]);
+    vulNaamEnContact();
+    verstuur();
+
+    expect(await screen.findByText("Vul je bericht in.")).toBeInTheDocument();
+    expect(insertMock).not.toHaveBeenCalled();
   });
 
-  it("stuurt de gekozen aanhef mee naar leads_bewoners", async () => {
+  it("weigert een bericht van alleen spaties", async () => {
     render(<Contact />);
-    vul(screen.getByLabelText(/^Aanhef/), "Mevr.");
-    vulVerplichteVelden();
-    await verstuur();
+    vulNaamEnContact();
+    vul(screen.getByLabelText(/^Bericht/), "   ");
+    verstuur();
 
+    expect(await screen.findByText("Vul je bericht in.")).toBeInTheDocument();
+    expect(insertMock).not.toHaveBeenCalled();
+  });
+
+  it("verstuurt wél zodra er een bericht staat", async () => {
+    render(<Contact />);
+    vulNaamEnContact();
+    vul(screen.getByLabelText(/^Bericht/), "Graag advies over isolatie.");
+    verstuur();
+
+    await screen.findByText(/Bedankt!/);
     const [tabel, rij] = insertMock.mock.calls[0];
     expect(tabel).toBe("leads_bewoners");
-    expect(rij.aanhef).toBe("Mevr.");
-  });
-
-  it("stuurt NULL als er geen aanhef is gekozen", async () => {
-    render(<Contact />);
-    vulVerplichteVelden();
-    await verstuur();
-
-    const [, rij] = insertMock.mock.calls[0];
-    expect(rij.aanhef).toBeNull();
+    expect(rij.notities).toBe("Graag advies over isolatie.");
   });
 });

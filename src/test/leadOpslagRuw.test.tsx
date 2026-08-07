@@ -61,7 +61,7 @@ describe("lead-opslag bewaart de invoer onbewerkt", () => {
     vul(screen.getByLabelText(/^Achternaam/), "O'Brien");
     vul(screen.getByLabelText(/^E-mailadres/), "jan@example.nl");
     vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
-    vul(screen.getByLabelText(/^Vragen of opmerkingen/), BERICHT);
+    vul(screen.getByLabelText(/^Bericht/), BERICHT);
     await verstuur();
 
     const [tabel, rij] = insertMock.mock.calls[0];
@@ -78,7 +78,7 @@ describe("lead-opslag bewaart de invoer onbewerkt", () => {
     vul(screen.getByLabelText(/^E-mailadres/), "jan@example.nl");
     vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
     vul(screen.getByLabelText(/^Voorkeur voor contact/), "Telefonisch: Ochtend");
-    vul(screen.getByLabelText(/^Vragen of opmerkingen/), BERICHT);
+    vul(screen.getByLabelText(/^Bericht/), BERICHT);
     await verstuur();
 
     const [, rij] = insertMock.mock.calls[0];

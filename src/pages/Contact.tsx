@@ -172,7 +172,8 @@ const Contact = () => {
     if (pc && !hn) e.huisnummer = "Vul ook een huisnummer in.";
     if (hn && !pc) e.postcode = "Vul ook een postcode in.";
 
-    if (bewoner.vragen.length > MAX_NOTES) e.vragen = "Je bericht is te lang (maximaal 2000 karakters).";
+    if (!bewoner.vragen.trim()) e.vragen = "Vul je bericht in.";
+    else if (bewoner.vragen.length > MAX_NOTES) e.vragen = "Je bericht is te lang (maximaal 2000 karakters).";
 
     return e;
   };
@@ -333,7 +334,7 @@ const Contact = () => {
                 border: "1px solid #E5E2DB",
                 boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
               }}
-              className="p-7 md:p-10"
+              className="min-w-0 p-7 md:p-10"
             >
               {submitted ? (
                 <div
@@ -649,10 +650,11 @@ const Contact = () => {
                     </div>
 
                     <div className={fieldWrap}>
-                      <label htmlFor="f-vragen-b" className={labelClass}>Vragen of opmerkingen{optional}</label>
+                      <label htmlFor="f-vragen-b" className={labelClass}>Bericht{required}</label>
                       <textarea
                         id="f-vragen-b"
                         name="vragen"
+                        aria-required="true"
                         aria-invalid={!!errors.vragen}
                         aria-describedby={errors.vragen ? errId("vragen") : "count-vragen-b"}
                         className={inputCls("vragen")}
@@ -709,7 +711,10 @@ const Contact = () => {
               )}
             </div>
 
-            <div>
+            {/* min-w-0: grid-items krijgen standaard min-width:auto, waardoor de
+                flexrij van de reviewcarrousel deze kolom breder duwde dan haar
+                2fr en het formulier samendrukte. */}
+            <div className="min-w-0">
               <h3
                 className="font-display"
                 style={{ fontSize: 22, fontWeight: 600, color: "#152C4E", marginBottom: 24 }}

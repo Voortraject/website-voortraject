@@ -73,6 +73,7 @@ describe("formulier-kolom", () => {
     vul(screen.getByLabelText(/^Achternaam/), "de Vries");
     vul(screen.getByLabelText(/^E-mailadres/), "jan@example.nl");
     vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
+    vul(screen.getByLabelText(/^Bericht/), "Graag advies over isolatie.");
     nu += 5_000;
     fireEvent.click(screen.getByRole("button", { name: /Verstuur bericht/ }));
 
