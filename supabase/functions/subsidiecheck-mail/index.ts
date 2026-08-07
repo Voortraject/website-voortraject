@@ -488,8 +488,19 @@ async function verstuurMail(opts: {
 // (energielabel, bouwjaar) zijn een extraatje: weigert het CRM er een, bijvoorbeeld
 // door een CHECK die een labelvorm niet kent, dan proberen we het één keer opnieuw
 // zonder die velden. Een lead verliezen om een extraatje mag nooit.
-// deno-lint-ignore no-explicit-any
-async function insertLead(supabase: any, basis: Record<string, unknown>, verrijking: Record<string, unknown>) {
+// Alleen het stukje client dat we hier gebruiken; het echte type komt uit een
+// Deno-import die de eslint-config van de site niet kent.
+type LeadClient = {
+  from: (tabel: string) => {
+    insert: (rij: Record<string, unknown>) => {
+      select: (kolommen: string) => {
+        maybeSingle: () => Promise<{ data: { id?: unknown } | null; error: unknown }>;
+      };
+    };
+  };
+};
+
+async function insertLead(supabase: LeadClient, basis: Record<string, unknown>, verrijking: Record<string, unknown>) {
   const eerste = await supabase
     .from("leads_bewoners")
     .insert({ ...basis, ...verrijking })
