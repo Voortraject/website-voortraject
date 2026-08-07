@@ -74,15 +74,19 @@ export const Hero = () => {
           </ul>
 
           <div className="mt-8 md:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-            <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
-            {/* Secundaire CTA naar de subsidiecheck; bellen kan nog via de
-                header-pill en de WhatsApp-knop. */}
-            <a
-              href="/subsidiecheck"
-              className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-medium border border-white/80 text-white transition-all duration-150 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-            >
+            {/* Hoofd-CTA is de subsidiecheck: laagdrempeliger instap dan direct
+                een gesprek plannen. */}
+            <CtaButton href="/subsidiecheck">
               <Search size={16} strokeWidth={2} aria-hidden="true" />
               <span>Check jouw subsidies</span>
+            </CtaButton>
+            {/* Secundaire CTA naar het contactformulier; bellen kan nog via de
+                header-pill en de WhatsApp-knop. */}
+            <a
+              href="/contact"
+              className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-medium border border-white/80 text-white transition-all duration-150 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+            >
+              Plan een gratis gesprek
             </a>
           </div>
 
