@@ -446,7 +446,6 @@ const Contact = () => {
                           id="f-tussenvoegsel"
                           name="tussenvoegsel"
                           type="text"
-                          placeholder="van der"
                           aria-invalid={!!errors.tussenvoegsel}
                           aria-describedby={errors.tussenvoegsel ? errId("tussenvoegsel") : undefined}
                           className={inputCls("tussenvoegsel")}
@@ -769,7 +768,7 @@ const Contact = () => {
 
               {/* Vult de ruimte onder de contactgegevens, zodat de reviews op
                   desktop naast het formulier staan in plaats van eronder. */}
-              <div className="mt-3 flex-1">
+              <div className="mt-6 flex-1">
                 <ReviewsCompact />
               </div>
             </div>
