@@ -195,15 +195,15 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         {/* Mobiel de foto als brede band bovenaan en de tekst eronder: naast
             elkaar werd de foto een smalle strook en brak elke regel in tweeën.
             Vanaf sm past het wél naast elkaar. */}
-        <div className="flex flex-col sm:flex-row sm:items-start">
+        <div className="flex flex-col sm:flex-row sm:items-stretch">
           <Luchtfoto
             adres={adres}
             adresRegel={adresKort}
             pand={pand ?? null}
             pandBezig={pandBezig}
-            // 240px breed = 160px hoog (3:2), ongeveer even hoog als het
-            // tekstblok ernaast, dus geen wit gat onder de foto.
-            className="sm:w-[240px] sm:shrink-0"
+            // Mobiel een lage band (2:1) zodat dit blok weinig hoogte kost; vanaf
+            // sm een vaste kolom die de volle kaarthoogte vult, tot aan de rand.
+            className="aspect-[2/1] sm:aspect-auto sm:w-[240px] sm:shrink-0"
             verbergBron
           />
           <div className="flex-1 p-4 sm:p-5">
@@ -224,7 +224,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
                 zodat het meteen herkenbaar is. Nog aan het laden → niets tonen;
                 geen label → dat is ook een antwoord. */}
             {!woningBezig && (
-              <div className="mt-3">
+              <div className="mt-4">
                 {woning?.energielabel ? (
                   <>
                     <p className="mb-1.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
