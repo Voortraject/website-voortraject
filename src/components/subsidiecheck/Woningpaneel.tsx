@@ -84,7 +84,7 @@ export const Woningpaneel = ({
           <button
             type="button"
             onClick={onVraagKlik}
-            className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-full border border-accent bg-accent/15 px-4 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:bg-accent/25 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-[14px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <MessageCircle size={16} strokeWidth={2} aria-hidden="true" />
             Ik heb een vraag

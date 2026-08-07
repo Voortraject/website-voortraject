@@ -16,6 +16,7 @@ import {
   topBedragen,
 } from "@/lib/subsidies";
 
+import { Bewijsregel } from "./Bewijsregel";
 import { DirectContact } from "./DirectContact";
 import { MailOverzicht } from "./MailOverzicht";
 import { MobieleActiebalk } from "./MobieleActiebalk";
@@ -412,15 +413,25 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
         <DirectContact input={input} adres={adres} overzichtUrl={overzichtUrl} />
       </div>
 
-      {/* Rustige geruststelling onder de CTA (geen verzonnen sterren). */}
-      <ul className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1">
-        {["Vrijblijvend", "Reactie binnen 24 uur", "Lokaal adviesteam"].map((belofte) => (
-          <li key={belofte} className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
-            <Check size={14} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
-            {belofte}
-          </li>
-        ))}
-      </ul>
+      {/* Rustige geruststelling onder de CTA, met onze echte Google-score ernaast.
+          Op mobiel vallen de vinkjes weg en scheiden puntjes de beloftes, zodat
+          die drie naast elkaar blijven staan. */}
+      <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+        <ul className="flex flex-nowrap items-center gap-x-2 whitespace-nowrap text-[12px] text-muted-foreground sm:gap-x-4 sm:text-[13px]">
+          {["Vrijblijvend", "Reactie binnen 24 uur", "Lokaal adviesteam"].map((belofte, i) => (
+            <li key={belofte} className="inline-flex items-center gap-1.5">
+              {i > 0 && (
+                <span aria-hidden="true" className="text-border sm:hidden">
+                  ·
+                </span>
+              )}
+              <Check size={14} strokeWidth={2.5} className="hidden shrink-0 text-accent sm:inline" aria-hidden="true" />
+              {belofte}
+            </li>
+          ))}
+        </ul>
+        <Bewijsregel />
+      </div>
 
       {/* Warm slot (peak-end): de pagina eindigt menselijk, niet juridisch. */}
       <p className="mt-6 text-center text-[15px] leading-relaxed text-foreground/70">

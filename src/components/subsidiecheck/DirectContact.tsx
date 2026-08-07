@@ -121,28 +121,19 @@ export const DirectContact = ({ input, adres, overzichtUrl }: DirectContactProps
     }
   };
 
-  // Directe routes: staan onder het formulier én in de bevestiging.
-  const snelleRoutes = (
-    <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
-      <a
-        href={waLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={() => pushGtmEvent("subsidiecheck_whatsapp", { bewonertype: input.bewonertype })}
-        className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-[15px] font-semibold text-primary transition-colors hover:border-primary/40 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        <MessageCircle size={17} strokeWidth={2} aria-hidden="true" />
-        Vraag via WhatsApp
-      </a>
-      <a
-        href="tel:+31502112689"
-        onClick={() => pushGtmEvent("subsidiecheck_bellen", { bewonertype: input.bewonertype })}
-        className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-[15px] font-semibold text-primary transition-colors hover:border-primary/40 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        <Phone size={16} strokeWidth={2} aria-hidden="true" />
-        Bel 050 211 2689
-      </a>
-    </div>
+  // WhatsApp staat naast de verzendknop en blijft ook in de bevestiging staan:
+  // die route gaat buiten ons formulier om en werkt dus altijd.
+  const whatsappKnop = (
+    <a
+      href={waLink}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => pushGtmEvent("subsidiecheck_whatsapp", { bewonertype: input.bewonertype })}
+      className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-[15px] font-semibold text-primary transition-colors hover:border-primary/40 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+    >
+      <MessageCircle size={17} strokeWidth={2} aria-hidden="true" />
+      Vraag via WhatsApp
+    </a>
   );
 
   if (verstuurd) {
@@ -175,7 +166,7 @@ export const DirectContact = ({ input, adres, overzichtUrl }: DirectContactProps
             </p>
           </div>
         </div>
-        {snelleRoutes}
+        <div className="mt-5">{whatsappKnop}</div>
       </div>
     );
   }
@@ -189,12 +180,8 @@ export const DirectContact = ({ input, adres, overzichtUrl }: DirectContactProps
       <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
         Een vraag over jouw overzicht?
       </h3>
-      <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-foreground/80">
-        Stel hem hier. Een van onze adviseurs kijkt naar jouw adres en antwoordt persoonlijk. Gratis en
-        vrijblijvend, ook als je alleen even wilt weten of iets slim is.
-      </p>
 
-      <form onSubmit={handleSubmit} noValidate className="mt-5">
+      <form onSubmit={handleSubmit} noValidate className="mt-4">
         {/* Honeypot: gewoon tekstveld, alleen met CSS uit beeld. Zie StapGegevens. */}
         <div
           aria-hidden="true"
@@ -361,13 +348,13 @@ export const DirectContact = ({ input, adres, overzichtUrl }: DirectContactProps
           </p>
         )}
 
-        {/* Knop en belofte naast elkaar; op mobiel onder elkaar, daar is de knop
-            volle breedte. */}
-        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+        {/* Versturen en WhatsApp naast elkaar: twee even makkelijke routes naar
+            hetzelfde antwoord. Op mobiel onder elkaar, volle breedte. */}
+        <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
           <button
             type="submit"
             disabled={bezig}
-            className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-70 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:w-auto"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-7 py-3 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-70 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             {bezig ? (
               <>
@@ -381,21 +368,15 @@ export const DirectContact = ({ input, adres, overzichtUrl }: DirectContactProps
               </>
             )}
           </button>
-
-          <div>
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
-              {bekend
-                ? `We antwoorden binnen 24 uur op ${bekend.email}.`
-                : "We antwoorden binnen 24 uur. Geen nieuwsbrief."}
-            </p>
-            {/* Onze echte Google-score, op het moment dat iemand besluit of hij
-                een vraag durft te stellen. */}
-            <Bewijsregel className="mt-1.5" />
-          </div>
+          {whatsappKnop}
         </div>
-      </form>
 
-      {snelleRoutes}
+        <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
+          {bekend
+            ? `We antwoorden binnen 24 uur op ${bekend.email}.`
+            : "We antwoorden binnen 24 uur. Geen nieuwsbrief."}
+        </p>
+      </form>
     </div>
   );
 };
