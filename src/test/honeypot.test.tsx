@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+﻿import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -239,6 +239,8 @@ describe("zakelijk contactformulier", () => {
 
 describe("subsidiecheck gegevenspoort", () => {
   const vulIn = () => {
+    // De hulpvraag is verplicht voordat het formulier verstuurt.
+    fireEvent.click(screen.getByRole("radio", { name: /De aanvraag regelen/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
@@ -255,7 +257,7 @@ describe("subsidiecheck gegevenspoort", () => {
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
     vulIn();
     wachtEvenAf();
-    fireEvent.click(screen.getByRole("button", { name: /Mail mij dit overzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
 
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled());
     expect(insertMock).toHaveBeenCalledTimes(1);
@@ -271,7 +273,7 @@ describe("subsidiecheck gegevenspoort", () => {
     vulIn();
     vul(honeypotVan(container), "https://spam.example");
     wachtEvenAf();
-    fireEvent.click(screen.getByRole("button", { name: /Mail mij dit overzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
 
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled());
     expect(insertMock).not.toHaveBeenCalled();
@@ -316,3 +318,4 @@ describe("subsidiecheck mail-overzicht", () => {
     expect(insertMock).not.toHaveBeenCalled();
   });
 });
+

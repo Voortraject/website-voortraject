@@ -173,9 +173,12 @@ const SubsidiecheckLive = () => {
           };
     }
     if (poortAan && stap === 2) {
+      // De kop doet twee dingen tegelijk: laten voelen hoe dichtbij het einde is
+      // (mensen versnellen richting de finish) en voorkomen dat het woningkaartje
+      // eronder voor het overzicht zelf wordt aangezien.
       return {
-        titel: "Nog even je gegevens",
-        sub: "Dan sturen we jouw persoonlijke overzicht naar je toe.",
+        titel: "Nog één stap tot je overzicht",
+        sub: "Vul je gegevens in, dan zoeken we alle regelingen bij jouw adres.",
       };
     }
     return { titel: "Jouw subsidieoverzicht" };

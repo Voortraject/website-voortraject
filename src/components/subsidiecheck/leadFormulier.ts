@@ -99,15 +99,37 @@ export function bouwSubsidiecheckInteresses(maatregelen: Maatregel[]): string {
 // `notities` blijft leeg (die kolom is voor het team zelf) en
 // `gewenste_maatregelen` raken we niet aan; de aangevinkte onderwerpen gaan naar
 // de eigen kolom `subsidiecheck_interesses`.
+/**
+ * Wat we uit publieke bronnen al weten over de woning en meesturen naar het CRM,
+ * zodat het team het niet hoeft op te zoeken. Alleen kolommen die daar al bestaan.
+ */
+export interface LeadVerrijking {
+  /** Energieklasse uit EP-Online, bijv. "C". Alleen als er echt een label is. */
+  energielabel?: string;
+  /** Bouwjaar uit de BAG. */
+  bouwjaar?: number;
+}
+
+/** Laat de verrijkingsvelden weg als ze leeg zijn (geen lege kolommen schrijven). */
+function verrijkingsVelden(verrijking?: LeadVerrijking): Record<string, string | number> {
+  const velden: Record<string, string | number> = {};
+  if (verrijking?.energielabel) velden.energielabel = verrijking.energielabel;
+  if (typeof verrijking?.bouwjaar === "number") velden.bouwjaar = verrijking.bouwjaar;
+  return velden;
+}
+
 export async function schrijfSubsidiecheckLead(args: {
   waarden: ContactSchoon;
   input: SubsidieCheckInput;
   adres: Pick<PdokAdres, "straatnaam" | "woonplaatsnaam">;
-  /** Vraag van de bezoeker. Gaat als platte tekst naar `notities`. */
+  /** Vraag van de bezoeker, of de gekozen termijn. Gaat als platte tekst naar `notities`. */
   notitie?: string;
+  verrijking?: LeadVerrijking;
 }): Promise<void> {
-  const { waarden, input, adres, notitie } = args;
+  const { waarden, input, adres, notitie, verrijking } = args;
+  const extra = verrijkingsVelden(verrijking);
   const { error } = await supabaseExternal.from("leads_bewoners").insert({
+    ...extra,
     tenant_id: "00000000-0000-0000-0000-000000000001",
     voornaam: waarden.voornaam,
     tussenvoegsel: waarden.tussenvoegsel || null,
@@ -142,7 +164,16 @@ export async function schrijfSubsidiecheckLead(args: {
     bron: "Voortraject",
     status: "nieuw",
   } as never);
-  if (error) throw error;
+  if (!error) return;
+
+  // De verrijkingskolommen zijn een extraatje: als het CRM er een weigert (bijv.
+  // een CHECK op `energielabel` die "A+++" niet kent), mag dat nooit de lead
+  // kosten. Eén keer opnieuw, zonder die velden.
+  if (Object.keys(extra).length > 0) {
+    console.error("Lead-insert faalde met verrijking, opnieuw zonder", error);
+    return schrijfSubsidiecheckLead({ waarden, input, adres, notitie });
+  }
+  throw error;
 }
 
 // Productie: de edge function (VITE_SUBSIDIECHECK_MAIL_URL) schrijft de lead én
@@ -168,14 +199,17 @@ export async function verstuurSubsidiecheckLead(args: {
   input: SubsidieCheckInput;
   adres: Pick<PdokAdres, "straatnaam" | "woonplaatsnaam">;
   regelingen: SubsidieRegeling[];
+  /** Kopregel voor `notities`, bijv. de gekozen termijn uit de poort. */
+  notitie?: string;
+  verrijking?: LeadVerrijking;
   overzichtUrl?: string;
   honeypot?: string;
 }): Promise<{ leadId?: string }> {
-  const { waarden, input, adres, regelingen, overzichtUrl, honeypot } = args;
+  const { waarden, input, adres, regelingen, notitie, verrijking, overzichtUrl, honeypot } = args;
 
   if (!MAIL_FUNCTIE_URL) {
     // Terugval: alleen de lead, geen mail.
-    await schrijfSubsidiecheckLead({ waarden, input, adres });
+    await schrijfSubsidiecheckLead({ waarden, input, adres, notitie, verrijking });
     return {};
   }
 
@@ -194,6 +228,9 @@ export async function verstuurSubsidiecheckLead(args: {
       email: waarden.email,
       telefoon: waarden.telefoon,
       honeypot: honeypot ?? "",
+      notitie,
+      energielabel: verrijking?.energielabel,
+      bouwjaar: verrijking?.bouwjaar,
       input: {
         postcode: normalizePostcode(input.postcode),
         huisnummer: input.huisnummer,

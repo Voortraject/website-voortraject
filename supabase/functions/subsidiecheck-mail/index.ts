@@ -159,6 +159,11 @@ type Payload = {
   bericht?: string;
   /** Alleen bij actie "bericht": lead uit deze sessie, voorkomt een dubbele lead. */
   leadId?: string;
+  /** Kopregel voor `notities`, bijv. de gekozen termijn uit de poort. */
+  notitie?: string;
+  /** Verrijking uit publieke bronnen (EP-Online, BAG): scheelt het team opzoekwerk. */
+  energielabel?: string;
+  bouwjaar?: number;
   /** Gesplitste naamvelden (huidige site). */
   voornaam?: string;
   tussenvoegsel?: string;
@@ -479,6 +484,34 @@ async function verstuurMail(opts: {
   return true;
 }
 
+// Schrijft de lead weg en geeft het nieuwe id terug. De verrijkingskolommen
+// (energielabel, bouwjaar) zijn een extraatje: weigert het CRM er een, bijvoorbeeld
+// door een CHECK die een labelvorm niet kent, dan proberen we het één keer opnieuw
+// zonder die velden. Een lead verliezen om een extraatje mag nooit.
+// Alleen het stukje client dat we hier gebruiken; het echte type komt uit een
+// Deno-import die de eslint-config van de site niet kent.
+type LeadClient = {
+  from: (tabel: string) => {
+    insert: (rij: Record<string, unknown>) => {
+      select: (kolommen: string) => {
+        maybeSingle: () => Promise<{ data: { id?: unknown } | null; error: unknown }>;
+      };
+    };
+  };
+};
+
+async function insertLead(supabase: LeadClient, basis: Record<string, unknown>, verrijking: Record<string, unknown>) {
+  const eerste = await supabase
+    .from("leads_bewoners")
+    .insert({ ...basis, ...verrijking })
+    .select("id")
+    .maybeSingle();
+  if (!eerste.error || Object.keys(verrijking).length === 0) return eerste;
+
+  console.error("Lead-insert faalde mét verrijking, opnieuw zonder", eerste.error);
+  return await supabase.from("leads_bewoners").insert(basis).select("id").maybeSingle();
+}
+
 // ---- Handler ----
 
 Deno.serve(async (req: Request) => {
@@ -585,6 +618,22 @@ Deno.serve(async (req: Request) => {
       }
     : { naam: legacyNaam };
 
+  // Verrijking uit publieke bronnen. Mild valideren: onbruikbare invoer laten we
+  // gewoon weg, want dit is een extraatje en mag nooit een lead kosten.
+  const labelRuw = (payload.energielabel ?? "").trim().toUpperCase();
+  const energielabel = /^[A-G]\+{0,5}$/.test(labelRuw) ? labelRuw : null;
+  const bouwjaarRuw = Number(payload.bouwjaar);
+  const bouwjaar =
+    Number.isInteger(bouwjaarRuw) && bouwjaarRuw > 1000 && bouwjaarRuw <= new Date().getFullYear() + 5
+      ? bouwjaarRuw
+      : null;
+  const verrijking: Record<string, string | number> = {};
+  if (energielabel) verrijking.energielabel = energielabel;
+  if (bouwjaar) verrijking.bouwjaar = bouwjaar;
+
+  // Kopregel voor `notities` (bijv. "Wil aan de slag: Binnen 3 maanden").
+  const notitie = (payload.notitie ?? "").trim().slice(0, MAX_BERICHT) || null;
+
   // Vaste kolommen van een subsidietool-lead. Gedeeld door de gewone route en de
   // berichtroute, zodat een lead er in beide gevallen identiek uitziet.
   const leadVelden = {
@@ -651,7 +700,10 @@ Deno.serve(async (req: Request) => {
       }
 
       if (nieuweLead) {
-        const { error } = await supabase.from("leads_bewoners").insert({ ...leadVelden, notities: bericht });
+        // Geen bestaande lead: alles wat we van deze bezoeker weten in één keer,
+        // met de termijn (indien meegestuurd) boven de vraag.
+        const notities = [notitie, bericht].filter(Boolean).join("\n");
+        const { error } = await insertLead(supabase, { ...leadVelden, notities }, verrijking);
         if (error) throw error;
       }
     } catch (err) {
@@ -690,18 +742,11 @@ Deno.serve(async (req: Request) => {
 
   let leadId: string | null = null;
   try {
-    const { data: nieuweLead, error } = await supabase
-      .from("leads_bewoners")
-      .insert({
-        ...leadVelden,
-        // `notities` blijft leeg: die kolom is voor het team zelf. Alleen een
-        // vraag van de bezoeker (route "bericht" hierboven) komt erin.
-        notities: null,
-      })
-      // Het id terug naar de site: een vraag die de bezoeker straks op het
-      // resultaat stelt, landt daarmee bij déze lead in plaats van een tweede.
-      .select("id")
-      .maybeSingle();
+    // `notities` bevat hooguit de kopregel uit de poort (bijv. de termijn waarop
+    // de bewoner aan de slag wil); een latere vraag komt er via route "bericht"
+    // onder. Het id gaat terug naar de site, zodat die vraag bij déze lead landt
+    // in plaats van een tweede aan te maken.
+    const { data: nieuweLead, error } = await insertLead(supabase, { ...leadVelden, notities: notitie }, verrijking);
     if (error) throw error;
     leadId = typeof nieuweLead?.id === "string" ? nieuweLead.id : null;
   } catch (err) {
