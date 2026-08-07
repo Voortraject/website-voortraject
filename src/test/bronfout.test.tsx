@@ -82,8 +82,8 @@ describe("energiesubsidiewijzerProvider", () => {
 
 describe("gegevens-poort bij een bronfout", () => {
   const vulIn = () => {
-    // De termijn is verplicht: eerst die tik, dan de velden.
-    fireEvent.click(screen.getByRole("radio", { name: /Binnen 3 maanden/ }));
+    // De hulpvraag is verplicht, naast de velden.
+    fireEvent.click(screen.getByRole("radio", { name: /Hulp bij de aanvraag/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
@@ -105,11 +105,11 @@ describe("gegevens-poort bij een bronfout", () => {
     expect(tabel).toBe("leads_bewoners");
     expect(rij).toMatchObject({ email: "jan@example.nl", bron: "Voortraject" });
     expect(rij.subsidiecheck_interesses).toBe("Isolatie & glas");
-    // De gekozen termijn gaat als kopregel mee naar het CRM.
-    expect(rij.notities).toBe("Wil aan de slag: Binnen 3 maanden");
+    // De gekozen hulpvraag gaat als kopregel mee naar het CRM.
+    expect(rij.notities).toBe("Wil hulp met: Hulp bij de aanvraag");
   });
 
-  it("verstuurt niets zolang de termijn niet gekozen is", async () => {
+  it("verstuurt niets zolang de hulpvraag niet gekozen is", async () => {
     const onOntgrendeld = vi.fn();
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
@@ -127,7 +127,7 @@ describe("gegevens-poort bij een bronfout", () => {
     vi.mocked(subsidieProvider.check).mockRejectedValue(new Error("bron plat"));
     const onOntgrendeld = vi.fn();
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
-    fireEvent.click(screen.getByRole("radio", { name: /Ik oriënteer me/ }));
+    fireEvent.click(screen.getByRole("radio", { name: /Weten wat ik kan krijgen/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");

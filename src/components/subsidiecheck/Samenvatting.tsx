@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Mail } from "lucide-react";
+import { Check, Mail } from "lucide-react";
 
 import {
   type Bewonertype,
@@ -170,20 +170,21 @@ export const Samenvatting = ({
         </>
       ) : (
         // Tekst en knop naast elkaar: onder elkaar nam dit blok te veel hoogte in
-        // het samenvattingskaartje. Mobiel klapt het alsnog netjes onder elkaar.
+        // het samenvattingskaartje. De knop is compact gehouden (geen pijl, korter
+        // label) zodat de zin ernaast zoveel mogelijk breedte houdt. Mobiel klapt
+        // het alsnog netjes onder elkaar.
         <div
-          className="flex flex-col gap-3 rounded-lg border border-border p-4 sm:flex-row sm:items-center sm:gap-4"
+          className="flex flex-col gap-3 rounded-lg border border-border p-4 sm:flex-row sm:items-center sm:gap-3"
           style={{ backgroundColor: "var(--card-soft)" }}
         >
-          <p className="flex-1 text-[14px] leading-relaxed text-foreground/80">
+          <p className="min-w-0 flex-1 text-[14px] leading-relaxed text-foreground/80">
             Voor deze woning vonden we geen geregistreerd energielabel. Wij kunnen dat voor je regelen.
           </p>
           <a
             href="/contact"
-            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-accent bg-accent/10 px-4 py-2 text-[13.5px] font-semibold text-primary transition-colors hover:bg-accent/20 min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-full border border-accent bg-accent/10 px-3.5 py-2 text-[13.5px] font-semibold text-primary transition-colors hover:bg-accent/20 min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
-            Energielabel aanvragen
-            <ArrowRight size={15} strokeWidth={2} aria-hidden="true" />
+            Label aanvragen
           </a>
         </div>
       )}

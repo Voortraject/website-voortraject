@@ -99,9 +99,22 @@ info@voortraject.nl).
       zodat het resultaat daarna meteen staat.
 - [x] Velden: voornaam, achternaam en e-mail verplicht; tussenvoegsel eruit; telefoon optioneel
       met de reden erbij. Van vijf verplichte velden naar drie.
-- [x] Eén kwalificatievraag vóór de velden: "Wanneer wil je aan de slag?" (vier keuzes, één tik).
+- [x] Eén kwalificatievraag ná de velden: "Waar kunnen we je mee helpen?" (vier keuzes, één tik).
       Gaat als kopregel naar `notities`, zelfde patroon als de belvoorkeur op het
-      contactformulier. Dubbel nut: kwalificatie voor het team, kleine toezegging vóór de velden.
+      contactformulier.
+      **Herzien na review (2026-08-07):** eerst stond hier "Wanneer wil je aan de slag?" vóór de
+      velden. Terecht bezwaar van de opdrachtgever: bij een termijnvraag kiest bijna iedereen de
+      vrijblijvendste optie ("ik oriënteer me"), en dan weet het team nog niets. Nu vier
+      hulpvragen die stuk voor stuk een dienst van Voortraject zijn, zodat élk antwoord de
+      adviseur vertelt waarmee hij het gesprek opent en er geen vage uitweg bestaat. De vraag
+      staat nu ná de contactvelden: die velden zijn waar deze stap over gaat.
+- [x] **Teaser herzien:** geen aantallen en bedragen meer in de poort. Dat gaf de uitkomst weg en
+      maakte de zoekanimatie op het resultaat (labor illusion, bewust ingebouwd) zinloos. In
+      plaats daarvan geven we terug wat we van de wóning weten: luchtfoto met pandcontour,
+      bouwjaar en energielabel. Even persoonlijk, zonder de spanning weg te nemen. De regelingen
+      worden nog steeds stil voorgeladen, alleen niet meer getoond.
+- [x] Voortgang toont nu een balkje met percentage ("66% voltooid"), zodat zichtbaar is hoe
+      weinig er nog te doen is.
 - [x] Automatische verrijking met wat we al ophalen: energielabel (EP-Online) en bouwjaar (BAG).
       Faalt de insert mét die velden, dan gaat 'ie één keer opnieuw zónder: een lead verliezen
       om een extraatje mag nooit. Geldt in de edge function én in de client-terugval.

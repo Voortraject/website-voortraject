@@ -7,32 +7,29 @@ import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
 import { useWoningInfo } from "@/hooks/useWoningInfo";
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
-import {
-  formatEuro,
-  subsidieProvider,
-  type SubsidieCheckInput,
-  type SubsidieRegeling,
-  topBedragen,
-} from "@/lib/subsidies";
+import { subsidieProvider, type SubsidieCheckInput, type SubsidieRegeling } from "@/lib/subsidies";
 
 import { bewaarContact } from "./contactOpslag";
+import { Luchtfoto } from "./Luchtfoto";
 import { schrijfSubsidiecheckLead, valideerContact, verstuurSubsidiecheckLead } from "./leadFormulier";
 
 const inputClass =
   "w-full rounded-lg border border-input bg-background px-4 py-3.5 text-[16px] text-foreground outline-none transition min-h-[52px] focus:border-accent focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.18)]";
 
-// Wanneer wil de bewoner aan de slag? Eén tik, en het levert twee dingen op: het
-// team weet wie haast heeft, en de bezoeker doet een kleine toezegging vóór het
-// formulier (wie A zegt, zegt makkelijker B). De labels zijn de tekst die
-// letterlijk in de notitie bij de lead belandt.
-const TERMIJNEN = [
-  { id: "snel", label: "Zo snel mogelijk" },
-  { id: "kwartaal", label: "Binnen 3 maanden" },
-  { id: "jaar", label: "Dit jaar nog" },
-  { id: "orienteren", label: "Ik oriënteer me" },
+// Waar kunnen we je mee helpen? Bewust géén vraag naar een termijn ("wanneer wil
+// je aan de slag?"): daar kiest bijna iedereen de vrijblijvendste optie, en dan
+// weet het team nog niets. Deze vier zijn stuk voor stuk dingen die Voortraject
+// écht doet, dus élk antwoord vertelt de adviseur waarmee hij het gesprek opent.
+// Geen "vage" uitweg, want alle vier zijn even legitiem.
+// De labels zijn de tekst die letterlijk in de notitie bij de lead belandt.
+const HULPVRAGEN = [
+  { id: "subsidies", label: "Weten wat ik kan krijgen" },
+  { id: "aanvraag", label: "Hulp bij de aanvraag" },
+  { id: "uitvoerder", label: "Een uitvoerder vinden" },
+  { id: "plan", label: "Een plan voor mijn woning" },
 ] as const;
 
-type TermijnId = (typeof TERMIJNEN)[number]["id"];
+type HulpvraagId = (typeof HULPVRAGEN)[number]["id"];
 
 interface StapGegevensProps {
   input: SubsidieCheckInput;
@@ -43,12 +40,16 @@ interface StapGegevensProps {
 
 // De gegevens-poort: de tussenstap tussen "Jouw woning" en het resultaat.
 //
-// Opzet volgt het onderzoek naar dit soort poorten (zie tasks/todo.md): eerst een
-// stukje van de uitkomst laten zien (het aantal en het sterkste bedrag), dan één
-// kwalificatievraag, dan pas de velden. Alleen voornaam, achternaam en e-mail zijn
-// verplicht; het telefoonnummer is optioneel, want een verplicht nummer is de
-// duurste veldkeuze die er is en we vragen er op het resultaat alsnog om als
-// iemand gebeld wil worden.
+// Opzet volgt het onderzoek naar dit soort poorten (zie tasks/todo.md): eerst
+// iets geven, dan pas vragen. Wat we geven is bewust géén voorproefje van de
+// regelingen zelf, want dat haalt de spanning weg bij het resultaat (en maakt de
+// zoekanimatie daar zinloos). Wel wat we van de wóning al weten: de luchtfoto met
+// de pandcontour, het bouwjaar en het geregistreerde energielabel. Concreet,
+// persoonlijk, en het bewijst dat we naar dít adres hebben gekeken.
+//
+// Alleen voornaam, achternaam en e-mail zijn verplicht; het telefoonnummer is
+// optioneel, want een verplicht nummer is de duurste veldkeuze die er is en we
+// vragen er op het resultaat alsnog om als iemand gebeld wil worden.
 //
 // De lead gaat naar het CRM (`leads_bewoners`, bron "Voortraject", formulier
 // "subsidietool") én het overzicht gaat per mail. Faalt de bron, dan gaat de lead
@@ -58,28 +59,27 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
   const [achternaam, setAchternaam] = useState("");
   const [email, setEmail] = useState("");
   const [telefoon, setTelefoon] = useState("");
-  const [termijn, setTermijn] = useState<TermijnId | null>(null);
+  const [hulpvraag, setHulpvraag] = useState<HulpvraagId | null>(null);
   const [fout, setFout] = useState<string | null>(null);
   const [bezig, setBezig] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const geladenOp = useRef(Date.now());
   const queryClient = useQueryClient();
 
-  // De regelingen worden hier al opgehaald, niet pas bij het verzenden. Dat geeft
-  // de teaser hierboven zijn cijfers én zet de cache klaar, zodat het resultaat
-  // straks meteen staat. Zelfde querysleutel als StapResultaat.
-  const { data: regelingen, isPending: regelingenBezig, isError: regelingenFout } = useSubsidieCheck(input);
+  // De regelingen worden hier al stil opgehaald, niet pas bij het verzenden: dat
+  // zet de cache klaar zodat het resultaat straks meteen staat en de mail het
+  // echte overzicht kan meesturen. We tonen er hier bewust niets van. Zelfde
+  // querysleutel als StapResultaat.
+  useSubsidieCheck(input);
 
-  // Verrijking die we tóch al ophalen voor het woningpaneel: energielabel en
-  // bouwjaar gaan mee naar de lead, zodat het team dat niet hoeft op te zoeken.
-  // Deze hooks delen hun cache met de pagina, dus dit kost geen extra verkeer.
-  const { data: woning } = useWoningInfo(input.postcode, input.huisnummer, input.toevoeging);
-  const { data: pand } = usePandContour(adres.centroideRd);
+  // Wat we van de woning weten. Dubbel nut: het vult het kaartje hieronder én het
+  // gaat als verrijking mee naar de lead, zodat het team het niet hoeft op te
+  // zoeken. Deze hooks delen hun cache met de pagina, dus dit kost geen extra
+  // verkeer.
+  const { data: woning, isPending: woningBezig } = useWoningInfo(input.postcode, input.huisnummer, input.toevoeging);
+  const { data: pand, isPending: pandBezig } = usePandContour(adres.centroideRd);
 
-  const adresRegel = `${adres.straatnaam} ${input.huisnummer}${input.toevoeging ? ` ${input.toevoeging}` : ""}, ${adres.woonplaatsnaam}`;
-
-  const aantal = regelingen?.length ?? 0;
-  const bedragen = topBedragen(regelingen ?? []);
+  const adresKort = `${adres.straatnaam} ${input.huisnummer}${input.toevoeging ? ` ${input.toevoeging}` : ""}`;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -94,10 +94,6 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
       setFout("Even geduld. Wacht een moment voordat je verstuurt.");
       return;
     }
-    if (!termijn) {
-      setFout("Kies even wanneer je aan de slag wilt.");
-      return;
-    }
 
     // Telefoon is hier bewust optioneel; een ingevuld nummer moet wel kloppen.
     const resultaat = valideerContact(
@@ -108,10 +104,14 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
       setFout(resultaat.fout);
       return;
     }
+    if (!hulpvraag) {
+      setFout("Kies even waar we je mee kunnen helpen.");
+      return;
+    }
 
     // Zelfde opbouw als het contactformulier: een kopregel in `notities` die het
     // team meteen ziet. Een latere vraag van de bezoeker komt eronder.
-    const notitie = `Wil aan de slag: ${TERMIJNEN.find((t) => t.id === termijn)!.label}`;
+    const notitie = `Wil hulp met: ${HULPVRAGEN.find((h) => h.id === hulpvraag)!.label}`;
     const verrijking = {
       energielabel: woning?.energielabel?.klasse,
       bouwjaar: pand?.bouwjaar,
@@ -144,7 +144,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         pushGtmEvent("subsidiecheck_lead", {
           bewonertype: input.bewonertype,
           aantal_regelingen: 0,
-          termijn,
+          hulpvraag,
           // 1/0 en niet true/false: pushGtmEvent neemt alleen tekst en getallen.
           bron_fout: 1,
         });
@@ -169,7 +169,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
       pushGtmEvent("subsidiecheck_lead", {
         bewonertype: input.bewonertype,
         aantal_regelingen: opgehaald.length,
-        termijn,
+        hulpvraag,
         telefoon_ingevuld: resultaat.waarden.telefoon ? 1 : 0,
       });
       onOntgrendeld(); // component unmount hierna → bezig blijft bewust true
@@ -182,59 +182,54 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      {/* De teaser: wát we gevonden hebben staat er al, wélke regelingen dat zijn
-          volgt na deze stap. Eerst geven, dan pas vragen. Faalt de bron, dan tonen
-          we hier niets bijzonders en gaat de flow gewoon door (het resultaat toont
-          dan zelf de foutstaat). */}
-      <div className="rounded-2xl border-2 bg-card p-5 shadow-card md:p-6" style={{ borderColor: "hsl(var(--accent) / 0.8)" }}>
-        <p className="inline-flex items-center gap-2 text-[13.5px] text-muted-foreground">
-          <MapPin size={15} aria-hidden="true" />
-          {adresRegel}
-        </p>
-
-        {regelingenBezig ? (
-          <div className="mt-3 flex items-center gap-2.5 text-[15px] text-muted-foreground" aria-live="polite">
-            <Loader2 size={18} className="animate-spin text-accent" aria-hidden="true" />
-            We zoeken de regelingen voor jouw adres…
-          </div>
-        ) : regelingenFout ? (
-          <p className="mt-3 text-[15px] leading-relaxed text-foreground">
-            Je persoonlijke overzicht staat na deze stap voor je klaar.
-          </p>
-        ) : (
-          <>
-            <p className="mt-2 font-display font-bold leading-tight text-primary">
-              <span style={{ fontSize: "clamp(30px, 6vw, 42px)" }}>{aantal}</span>
-              <span className="ml-2.5 text-[17px] font-semibold md:text-[19px]">
-                {aantal === 1 ? "regeling gevonden" : "regelingen gevonden"}
-              </span>
+      {/* Wat we alvast teruggeven: de woning zelf. */}
+      <div
+        className="overflow-hidden rounded-2xl border-2 bg-card shadow-card"
+        style={{ borderColor: "hsl(var(--accent) / 0.8)" }}
+      >
+        <div className="flex items-stretch">
+          <Luchtfoto
+            adres={adres}
+            adresRegel={adresKort}
+            pand={pand ?? null}
+            pandBezig={pandBezig}
+            className="w-[112px] shrink-0 sm:w-[150px]"
+            verbergBron
+          />
+          <div className="flex-1 p-4 sm:p-5">
+            <p className="inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
+              <MapPin size={13} aria-hidden="true" />
+              We hebben jouw woning gevonden
             </p>
-            {(bedragen.subsidie || bedragen.lening) && (
-              <p className="mt-1.5 text-[15px] leading-snug text-foreground">
-                Waaronder{" "}
-                {bedragen.subsidie && (
-                  <span className="font-semibold text-[hsl(var(--subsidie))]">
-                    {bedragen.subsidie.soort === "pct"
-                      ? `tot ${bedragen.subsidie.waarde}% subsidie`
-                      : `subsidie tot € ${formatEuro(bedragen.subsidie.waarde)}`}
-                  </span>
+            <p className="mt-1 font-display text-[17px] font-semibold leading-snug text-primary sm:text-[19px]">
+              {adresKort}
+            </p>
+            <p className="text-[13px] text-muted-foreground">
+              {adres.woonplaatsnaam}
+              {pand?.bouwjaar ? ` · Bouwjaar ${pand.bouwjaar}` : ""}
+            </p>
+
+            {/* Het energielabel is echte, opzoekbare informatie die de bezoeker
+                hier gratis krijgt. Nog aan het laden → niets tonen; geen label →
+                dat is ook een antwoord. */}
+            {!woningBezig && (
+              <p className="mt-2.5 text-[13.5px] text-foreground/80">
+                {woning?.energielabel ? (
+                  <>
+                    Energielabel <span className="font-semibold text-primary">{woning.energielabel.klasse}</span> volgens
+                    EP-Online
+                  </>
+                ) : (
+                  "Nog geen geregistreerd energielabel"
                 )}
-                {bedragen.subsidie && bedragen.lening ? " en " : null}
-                {bedragen.lening && (
-                  <span className="font-semibold text-[hsl(var(--lening))]">
-                    {bedragen.lening.soort === "euro"
-                      ? `een lening tot € ${formatEuro(bedragen.lening.waarde)}`
-                      : `een lening tot ${bedragen.lening.waarde}% van de kosten`}
-                  </span>
-                )}
-                .
               </p>
             )}
-            <p className="mt-2.5 text-[14px] leading-relaxed text-muted-foreground">
-              Welke dat precies zijn en wat je kunt combineren, zie je in je overzicht.
-            </p>
-          </>
-        )}
+          </div>
+        </div>
+
+        <p className="border-t border-border px-4 py-3 text-[13.5px] leading-relaxed text-muted-foreground sm:px-5">
+          Hierna zoeken we alle landelijke, provinciale en gemeentelijke regelingen bij dit adres.
+        </p>
       </div>
 
       {/* Honeypot: gewoon tekstveld (géén type="hidden" — dat slaan bots juist over),
@@ -250,45 +245,13 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         </label>
       </div>
 
-      {/* Eén kwalificatievraag vóór de velden: goedkoop voor de bezoeker (één tik),
-          waardevol voor het team, en een kleine toezegging die het invullen van de
-          velden waarschijnlijker maakt. */}
+      {/* Eerst de gegevens: dat is waar deze stap over gaat en wat de bezoeker
+          hier verwacht. De vraag eronder voelt daarna als een laatste detail in
+          plaats van als een drempel vooraf. */}
       <fieldset className="mt-6">
-        <legend className="mb-3 block text-[14px] font-semibold text-foreground">Wanneer wil je aan de slag?</legend>
-        <div className="grid grid-cols-2 gap-2 sm:gap-3" role="radiogroup" aria-label="Wanneer wil je aan de slag?">
-          {TERMIJNEN.map(({ id, label }) => {
-            const actief = termijn === id;
-            return (
-              <button
-                key={id}
-                type="button"
-                role="radio"
-                aria-checked={actief}
-                onClick={() => {
-                  setTermijn(id);
-                  setFout(null);
-                }}
-                className={`relative flex items-center justify-center rounded-lg border-2 px-3 py-3 text-center text-[14px] font-semibold leading-snug text-primary transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:text-[15px] ${
-                  actief ? "border-accent bg-accent/10" : "border-border bg-card hover:border-primary/30"
-                }`}
-              >
-                {label}
-                {actief && (
-                  <span
-                    className="absolute right-2.5 top-2.5 hidden h-5 w-5 items-center justify-center rounded-full bg-accent sm:flex"
-                    aria-hidden="true"
-                  >
-                    <Check size={13} strokeWidth={3} className="text-primary" />
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </fieldset>
-
-      <fieldset className="mt-6">
-        <legend className="mb-3 block text-[14px] font-semibold text-foreground">Waar mogen we je overzicht naartoe sturen?</legend>
+        <legend className="mb-3 block text-[14px] font-semibold text-foreground">
+          Waar mogen we je overzicht naartoe sturen?
+        </legend>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className="sr-only" htmlFor="sc-gg-voornaam">
@@ -365,6 +328,42 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
               Optioneel, alleen als je liever gebeld wordt
             </label>
           </div>
+        </div>
+      </fieldset>
+
+      {/* Eén vraag, één tik. Zie de toelichting bij HULPVRAGEN hierboven: geen
+          termijn maar een hulpvraag, zodat élk antwoord het team iets vertelt. */}
+      <fieldset className="mt-6">
+        <legend className="mb-3 block text-[14px] font-semibold text-foreground">Waar kunnen we je mee helpen?</legend>
+        <div className="grid grid-cols-2 gap-2 sm:gap-3" role="radiogroup" aria-label="Waar kunnen we je mee helpen?">
+          {HULPVRAGEN.map(({ id, label }) => {
+            const actief = hulpvraag === id;
+            return (
+              <button
+                key={id}
+                type="button"
+                role="radio"
+                aria-checked={actief}
+                onClick={() => {
+                  setHulpvraag(id);
+                  setFout(null);
+                }}
+                className={`relative flex items-center justify-center rounded-lg border-2 px-3 py-3 text-center text-[14px] font-semibold leading-snug text-primary transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:text-[15px] ${
+                  actief ? "border-accent bg-accent/10" : "border-border bg-card hover:border-primary/30"
+                }`}
+              >
+                {label}
+                {actief && (
+                  <span
+                    className="absolute right-2.5 top-2.5 hidden h-5 w-5 items-center justify-center rounded-full bg-accent sm:flex"
+                    aria-hidden="true"
+                  >
+                    <Check size={13} strokeWidth={3} className="text-primary" />
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </fieldset>
 

@@ -7,10 +7,18 @@ interface VoortgangProps {
   onStapKlik?: () => void;
 }
 
-// Bescheiden voortgangsindicator: bolletjes met labels. Het zichtbare eindpunt
-// ("Resultaat") trekt de bezoeker door de flow heen. Werkt voor 2 of 3 stappen.
-export const Voortgang = ({ stappen, huidige, onStapKlik }: VoortgangProps) => (
-  <ol className="flex items-center justify-center gap-0" aria-label={`Stap ${huidige} van ${stappen.length}`}>
+// Bescheiden voortgangsindicator: bolletjes met labels, met daaronder een balkje
+// en een percentage. Het zichtbare eindpunt ("Resultaat") trekt de bezoeker door
+// de flow heen; het percentage maakt bovendien voelbaar hoe weinig er nog te doen
+// is (endowed progress: je begint niet op nul, je bent al onderweg).
+// Werkt voor 2 of 3 stappen.
+export const Voortgang = ({ stappen, huidige, onStapKlik }: VoortgangProps) => {
+  const percentage = Math.round((huidige / stappen.length) * 100);
+  const klaar = huidige >= stappen.length;
+
+  return (
+    <div>
+      <ol className="flex items-center justify-center gap-0" aria-label={`Stap ${huidige} van ${stappen.length}`}>
     {stappen.map((label, i) => {
       const stap = i + 1;
       const actief = stap === huidige;
@@ -62,5 +70,21 @@ export const Voortgang = ({ stappen, huidige, onStapKlik }: VoortgangProps) => (
         </li>
       );
     })}
-  </ol>
-);
+      </ol>
+
+      {/* Voortgangsbalk + percentage. Bewust smal en rustig: het is een
+          geruststelling ("je bent er bijna"), geen blikvanger. */}
+      <div className="mx-auto mt-4 max-w-[280px]">
+        <div className="h-1.5 overflow-hidden rounded-full bg-border" role="img" aria-label={`${percentage} procent voltooid`}>
+          <div
+            className="h-full rounded-full bg-accent transition-[width] duration-500 ease-out"
+            style={{ width: `${percentage}%` }}
+          />
+        </div>
+        <p className="mt-1.5 text-center text-[12px] font-medium text-muted-foreground">
+          {klaar ? "Klaar" : `${percentage}% voltooid`}
+        </p>
+      </div>
+    </div>
+  );
+};
