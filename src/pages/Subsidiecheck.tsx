@@ -173,9 +173,11 @@ const SubsidiecheckLive = () => {
           };
     }
     if (poortAan && stap === 2) {
+      // De stap zelf opent met wát we gevonden hebben (de teaser in StapGegevens),
+      // dus de kop hoeft alleen nog te zeggen hoe dichtbij het overzicht is.
       return {
-        titel: "Nog even je gegevens",
-        sub: "Dan sturen we jouw persoonlijke overzicht naar je toe.",
+        titel: "Je overzicht staat klaar",
+        sub: "Nog twee dingen, dan zie je precies welke regelingen bij jouw woning passen.",
       };
     }
     return { titel: "Jouw subsidieoverzicht" };

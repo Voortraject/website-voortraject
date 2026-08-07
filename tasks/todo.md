@@ -93,19 +93,31 @@ levert de function geen `leadId` en wordt een vraag een tweede lead in plaats va
 de bestaande. Optioneel secret: `MAIL_TEAM` (valt anders terug op `MAIL_BCC`, dan op
 info@voortraject.nl).
 
-### PR 2 — Poort opnieuw vormgeven (`feat/subsidiecheck-poort`)
-- [ ] Regelingen prefetchen zodra stap 1 klaar is, zodat de poort de echte teaser kan tonen
-      ("we vonden 7 regelingen voor jouw adres, waaronder tot 30% subsidie").
-- [ ] Velden terug naar voornaam + e-mail verplicht; telefoon optioneel met eerlijke reden.
-      Achternaam alleen behouden als de CRM-kolom dat afdwingt.
-- [ ] Optioneel vraagveld in de poort ("heb je nu al een vraag?").
-- [ ] Twee kwalificatievragen vóór de poort, gepresenteerd als verfijning van het resultaat:
-      wanneer wil je aan de slag, en wat is je grootste vraag. Dubbel nut: kwalificatie voor het
-      team, commitment voor de bezoeker.
-- [ ] Automatische verrijking van de lead met wat we al ophalen: energielabel (EP-Online) en
-      bouwjaar (BAG). Geen extra vraag aan de bezoeker.
-- [ ] `bag_verblijfsobject_id` bewust NIET vullen: wij hebben een pand-id, geen
+### PR 2 — Poort opnieuw vormgeven (`feat/subsidiecheck-poort`) ✅
+- [x] De regelingen worden nu in de poort zelf opgehaald, niet pas bij het verzenden. Dat voedt
+      de teaser ("11 regelingen gevonden, waaronder tot 100% subsidie") én zet de cache klaar,
+      zodat het resultaat daarna meteen staat.
+- [x] Velden: voornaam, achternaam en e-mail verplicht; tussenvoegsel eruit; telefoon optioneel
+      met de reden erbij. Van vijf verplichte velden naar drie.
+- [x] Eén kwalificatievraag vóór de velden: "Wanneer wil je aan de slag?" (vier keuzes, één tik).
+      Gaat als kopregel naar `notities`, zelfde patroon als de belvoorkeur op het
+      contactformulier. Dubbel nut: kwalificatie voor het team, kleine toezegging vóór de velden.
+- [x] Automatische verrijking met wat we al ophalen: energielabel (EP-Online) en bouwjaar (BAG).
+      Faalt de insert mét die velden, dan gaat 'ie één keer opnieuw zónder: een lead verliezen
+      om een extraatje mag nooit. Geldt in de edge function én in de client-terugval.
+- [x] `bag_verblijfsobject_id` bewust NIET gevuld: wij hebben een pand-id, geen
       verblijfsobject-id. Verkeerde data is erger dan geen data.
+- [x] Knoplabel "Mail mij dit overzicht" → "Bekijk mijn overzicht": dát is wat de bezoeker wil.
+- [ ] Achternaam eruit halen zodra bekend is of `leads_bewoners.achternaam` NOT NULL is. Zolang
+      dat onbekend is blijft het veld staan; een geweigerde insert kost een lead.
+- [ ] Vraagveld in de poort zelf: bewust niet gedaan. De poort heeft nu al een teaser, een
+      kwalificatievraag en vier velden; het vraagveld staat één stap verderop op het resultaat,
+      waar de bezoeker weet wát hij wil vragen.
+
+**Review PR 2.** `bun run test`: 115 groen (drie nieuwe rond de poort). CDP-doorloop op 390px:
+13/13, met in de payload `notitie: "Wil aan de slag: Binnen 3 maanden"`, `energielabel: "A+++"`
+en `bouwjaar: 1931`. Precies dat "A+++" laat zien waarom de terugval nodig is: als er een CHECK
+op die kolom staat die zo'n waarde niet kent, gaat de lead nu niet verloren.
 
 ### PR 3 — Mobiele optimalisatie van de hele flow (`feat/subsidiecheck-mobiel`)
 - [ ] Stap 1 compacter; hele stap binnen één schermhoogte inclusief knop.

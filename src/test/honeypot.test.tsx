@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+﻿import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -12,7 +12,7 @@ import type { SubsidieCheckInput } from "@/lib/subsidies";
 // telkens hetzelfde drietal:
 //   1. het veld is een CSS-verborgen tekstveld dat autofill niet herkent,
 //   2. een echte inzending levert nog steeds een lead op,
-//   3. een gevuld honeypot-veld levert het bedankscherm op, zónder lead.
+//   3. een gevuld honeypot-veld levert het bedankscherm op, zÃ³nder lead.
 
 const { insertMock } = vi.hoisted(() => ({ insertMock: vi.fn() }));
 
@@ -135,7 +135,7 @@ const controleerHoneypotOpzet = (container: HTMLElement) => {
 };
 
 // Eis 4: de honeypot mag nooit mee in de insert (die kolom bestaat niet in de
-// tabel — de insert zou er hard op falen).
+// tabel â€” de insert zou er hard op falen).
 const controleerGeenHoneypotInPayload = (rij: unknown) => {
   const sleutels = Object.keys(rij as object);
   expect(sleutels).not.toContain("vt_check");
@@ -173,7 +173,7 @@ describe("contactformulier bewoners", () => {
   it("slaat de insert over bij een gevuld honeypot-veld, maar toont wel het bedankscherm", async () => {
     const { container } = render(<Contact />);
     vulIn();
-    // Zoals een bot doet: het verborgen veld tóch invullen.
+    // Zoals een bot doet: het verborgen veld tÃ³ch invullen.
     vul(honeypotVan(container), "https://spam.example");
     wachtEvenAf();
     fireEvent.click(screen.getByRole("button", { name: /Verstuur bericht/ }));
@@ -239,6 +239,8 @@ describe("zakelijk contactformulier", () => {
 
 describe("subsidiecheck gegevenspoort", () => {
   const vulIn = () => {
+    // De termijn is verplicht voordat het formulier verstuurt.
+    fireEvent.click(screen.getByRole("radio", { name: /Binnen 3 maanden/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
@@ -255,7 +257,7 @@ describe("subsidiecheck gegevenspoort", () => {
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
     vulIn();
     wachtEvenAf();
-    fireEvent.click(screen.getByRole("button", { name: /Mail mij dit overzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn overzicht/ }));
 
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled());
     expect(insertMock).toHaveBeenCalledTimes(1);
@@ -271,7 +273,7 @@ describe("subsidiecheck gegevenspoort", () => {
     vulIn();
     vul(honeypotVan(container), "https://spam.example");
     wachtEvenAf();
-    fireEvent.click(screen.getByRole("button", { name: /Mail mij dit overzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn overzicht/ }));
 
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled());
     expect(insertMock).not.toHaveBeenCalled();
@@ -316,3 +318,4 @@ describe("subsidiecheck mail-overzicht", () => {
     expect(insertMock).not.toHaveBeenCalled();
   });
 });
+

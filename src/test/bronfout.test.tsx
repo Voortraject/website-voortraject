@@ -82,6 +82,8 @@ describe("energiesubsidiewijzerProvider", () => {
 
 describe("gegevens-poort bij een bronfout", () => {
   const vulIn = () => {
+    // De termijn is verplicht: eerst die tik, dan de velden.
+    fireEvent.click(screen.getByRole("radio", { name: /Binnen 3 maanden/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
@@ -94,7 +96,7 @@ describe("gegevens-poort bij een bronfout", () => {
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
     vulIn();
     nu += 5_000;
-    fireEvent.click(screen.getByRole("button", { name: /Mail mij dit overzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn overzicht/ }));
 
     // De poort retry't de bron één keer (met backoff) voordat hij opgeeft.
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled(), { timeout: 5_000 });
@@ -103,5 +105,38 @@ describe("gegevens-poort bij een bronfout", () => {
     expect(tabel).toBe("leads_bewoners");
     expect(rij).toMatchObject({ email: "jan@example.nl", bron: "Voortraject" });
     expect(rij.subsidiecheck_interesses).toBe("Isolatie & glas");
+    // De gekozen termijn gaat als kopregel mee naar het CRM.
+    expect(rij.notities).toBe("Wil aan de slag: Binnen 3 maanden");
+  });
+
+  it("verstuurt niets zolang de termijn niet gekozen is", async () => {
+    const onOntgrendeld = vi.fn();
+    metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
+    vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
+    vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
+    vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
+    nu += 5_000;
+    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn overzicht/ }));
+
+    await screen.findByRole("alert");
+    expect(insertMock).not.toHaveBeenCalled();
+    expect(onOntgrendeld).not.toHaveBeenCalled();
+  });
+
+  it("laat het telefoonnummer weg als de bezoeker het niet invult", async () => {
+    vi.mocked(subsidieProvider.check).mockRejectedValue(new Error("bron plat"));
+    const onOntgrendeld = vi.fn();
+    metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
+    fireEvent.click(screen.getByRole("radio", { name: /Ik oriënteer me/ }));
+    vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
+    vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
+    vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
+    nu += 5_000;
+    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn overzicht/ }));
+
+    await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled(), { timeout: 5_000 });
+    const [, rij] = insertMock.mock.calls[0];
+    // Leeg nummer als NULL, niet als lege string.
+    expect(rij.telefoon).toBeNull();
   });
 });
