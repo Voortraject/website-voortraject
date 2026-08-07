@@ -35,7 +35,9 @@ const initieel = {
   vragen: "",
 };
 
-const MAX_NOTES = 2000;
+// Ruim genoeg voor een alinea of twee ("dit zijn wij, hier lopen we tegenaan"),
+// zonder een open veld te zijn waar iemand een boek in kwijt kan.
+const MAX_NOTES = 1000;
 const FREE_EMAIL_DOMAINS = ["gmail.com", "hotmail.com", "outlook.com", "live.nl", "yahoo.com", "ziggo.nl", "kpnmail.nl"];
 
 // Bewust géén HTML-escaping op de invoer: wat we opslaan moet exact zijn wat de
@@ -111,7 +113,8 @@ export const ZakelijkContactFormulier = () => {
     if (!tel) e.telefoonnummer = "Vul je telefoonnummer in.";
     else if (!validatePhoneNL(tel)) e.telefoonnummer = TELEFOON_FOUT;
 
-    if (velden.vragen.length > MAX_NOTES) e.vragen = "Je bericht is te lang (maximaal 2000 karakters).";
+    if (velden.vragen.length > MAX_NOTES)
+      e.vragen = `Je bericht is te lang (maximaal ${MAX_NOTES} karakters).`;
 
     return e;
   };
