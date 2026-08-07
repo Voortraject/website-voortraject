@@ -5,7 +5,7 @@ import { Check, ChevronDown, Loader2, MapPin } from "lucide-react";
 import { usePdokAdres } from "@/hooks/usePdokAdres";
 import { pushGtmEvent } from "@/lib/gtm";
 import { displayPostcode, normalizePostcode, POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib/pdok";
-import { ALLE_MAATREGELEN, type Bewonertype, type Maatregel } from "@/lib/subsidies";
+import { ALLE_MAATREGELEN, BEWONERTYPE_LABELS, type Bewonertype, type Maatregel } from "@/lib/subsidies";
 
 import { Bewijsregel } from "./Bewijsregel";
 import { BewonertypeKeuze } from "./BewonertypeKeuze";
@@ -48,6 +48,8 @@ interface StapAdresProps {
   ) => void;
   /** Vanuit de compacte bevestiging het adres alsnog aanpassen (toont de velden). */
   onAdresWijzigen: () => void;
+  /** De bezoeker kwam via "situatie aanpassen": toon de situatiekeuze meteen open. */
+  situatieOpen?: boolean;
   /** Label van de doorknop. Met de gegevens-poort "Verder" (er volgt nog een stap). */
   knopLabel?: string;
 }
@@ -68,6 +70,7 @@ export const StapAdres = ({
   onStart,
   onHandmatig,
   onAdresWijzigen,
+  situatieOpen = false,
   knopLabel = "Bekijk mijn subsidies",
 }: StapAdresProps) => {
   const [postcode, setPostcode] = useState(displayPostcode(initPostcode));
@@ -78,6 +81,9 @@ export const StapAdres = ({
 
   // Situatie (standaard woningeigenaar) + interesses (leeg = "Alles").
   const [bewonertype, setBewonertype] = useState<Bewonertype>(initBewonertype ?? "woningeigenaar");
+  // De vier situatiekaarten zitten achter een uitklap; open als de bezoeker er
+  // expliciet naartoe kwam ("situatie aanpassen") of al iets anders koos.
+  const [situatieUit, setSituatieUit] = useState(situatieOpen || (!!initBewonertype && initBewonertype !== "woningeigenaar"));
   const [maatregelen, setMaatregelen] = useState<Maatregel[]>(
     initMaatregelen.length === ALLE_MAATREGELEN.length ? [] : initMaatregelen,
   );
@@ -324,11 +330,35 @@ export const StapAdres = ({
         </>
       )}
 
-      {/* Ik ben… — situatie staat standaard uitgeklapt, bóven de interesses.
-          Woningeigenaar is voorgeselecteerd (verreweg de grootste groep). */}
+      {/* Ik ben… — standaard ingeklapt tot één regel. Woningeigenaar is verreweg
+          de grootste groep en staat al voorgeselecteerd; vier kaarten tonen voor
+          een vraag die al beantwoord is, maakt de stap onnodig zwaar. Wie huurder,
+          VvE of verhuurder is, klapt 'm open. Zelfde patroon als de interesses
+          hieronder. Komt de bezoeker via "situatie aanpassen" binnen, of staat er
+          al iets anders dan woningeigenaar, dan staat het blok meteen open. */}
       <fieldset className="mt-6">
         <legend className="mb-3 block text-[14px] font-semibold text-foreground">Ik ben…</legend>
-        <BewonertypeKeuze waarde={bewonertype} onKies={setBewonertype} />
+        {situatieUit ? (
+          <div className="animate-fade-up">
+            <BewonertypeKeuze waarde={bewonertype} onKies={setBewonertype} />
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary bg-primary px-4 py-2 text-[13px] font-semibold text-primary-foreground">
+              <Check size={14} strokeWidth={2.5} aria-hidden="true" />
+              {BEWONERTYPE_LABELS[bewonertype]}
+            </span>
+            <button
+              type="button"
+              aria-expanded={false}
+              onClick={() => setSituatieUit(true)}
+              className="inline-flex items-center gap-1 rounded-sm text-[13.5px] font-medium text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              Huurder, VvE of verhuurder?
+              <ChevronDown size={14} aria-hidden="true" />
+            </button>
+          </div>
+        )}
       </fieldset>
 
       {/* Interesses — standaard "alles"; specifiek kiezen zit achter een uitklap. */}

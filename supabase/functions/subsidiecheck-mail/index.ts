@@ -441,40 +441,34 @@ function bouwTeamMailHtml(opts: {
   nieuweLead: boolean;
 }): string {
   const { naam, email, telefoon, adresregel, bericht, interesses, overzichtUrl, nieuweLead } = opts;
-  const rij = (label: string, waarde: string) =>
-    `<tr><td style="padding:4px 12px 4px 0;font-size:14px;color:${KLEUR.muted};white-space:nowrap;">${label}</td><td style="padding:4px 0;font-size:14px;color:${KLEUR.primary};font-weight:600;">${waarde}</td></tr>`;
+  // Kale opmaak, geen huisstijlkaart: dit is een werkmail voor het team zelf. Wel
+  // vetgedrukte labels, zodat je in één blik ziet wie het is en wat de vraag is.
+  const regel = (label: string, waarde: string) => `<p style="margin:0 0 4px;"><strong>${label}:</strong> ${waarde}</p>`;
 
   return `<!doctype html>
 <html lang="nl"><head><meta charset="utf-8"><title>Vraag via de subsidietool</title></head>
-<body style="margin:0;padding:24px;background:${KLEUR.achtergrond};font-family:${FONT_STACK};">
-  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:${KLEUR.kaart};border:1px solid ${KLEUR.border};border-radius:12px;">
-    <tr><td style="padding:24px;">
-      <p style="margin:0 0 4px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:${KLEUR.accent};">Vraag via de subsidietool</p>
-      <p style="margin:0 0 18px;font-size:20px;font-weight:700;color:${KLEUR.primary};">${escapeHtml(naam)}</p>
+<body style="margin:0;padding:16px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#222;">
+  <p style="margin:0 0 12px;"><strong style="font-size:17px;">Vraag via de subsidietool</strong></p>
 
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-        ${rij("Adres", escapeHtml(adresregel || "onbekend"))}
-        ${rij("E-mail", `<a href="mailto:${escapeHtml(email)}" style="color:${KLEUR.primary};">${escapeHtml(email)}</a>`)}
-        ${telefoon ? rij("Telefoon", `<a href="tel:${escapeHtml(telefoon)}" style="color:${KLEUR.primary};">${escapeHtml(telefoon)}</a>`) : ""}
-        ${interesses ? rij("Interesses", escapeHtml(interesses)) : ""}
-      </table>
+  ${regel("Naam", escapeHtml(naam))}
+  ${regel("Adres", escapeHtml(adresregel || "onbekend"))}
+  ${regel("E-mail", `<a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>`)}
+  ${telefoon ? regel("Telefoon", `<a href="tel:${escapeHtml(telefoon)}">${escapeHtml(telefoon)}</a>`) : regel("Telefoon", "niet opgegeven")}
+  ${interesses ? regel("Interesses", escapeHtml(interesses)) : ""}
 
-      <div style="margin:18px 0 0;padding:16px 18px;background:${KLEUR.achtergrond};border-left:4px solid ${KLEUR.accent};border-radius:4px;">
-        <p style="margin:0;font-size:15px;line-height:1.6;color:${KLEUR.primary};white-space:pre-wrap;">${escapeHtml(bericht)}</p>
-      </div>
+  <p style="margin:16px 0 4px;"><strong>Vraag:</strong></p>
+  <p style="margin:0;white-space:pre-wrap;">${escapeHtml(bericht)}</p>
 
-      ${
-        overzichtUrl
-          ? `<p style="margin:18px 0 0;font-size:14px;"><a href="${escapeHtml(overzichtUrl)}" style="color:${KLEUR.primary};font-weight:600;">Bekijk het overzicht dat deze bezoeker zag &rarr;</a></p>`
-          : ""
-      }
+  ${
+    overzichtUrl
+      ? `<p style="margin:16px 0 0;"><a href="${escapeHtml(overzichtUrl)}">Bekijk het overzicht dat deze bezoeker zag</a></p>`
+      : ""
+  }
 
-      <p style="margin:18px 0 0;font-size:13px;color:${KLEUR.muted};line-height:1.6;">
-        ${nieuweLead ? "Er is een nieuwe lead aangemaakt in het CRM." : "De vraag staat ook bij de notities van de bestaande lead in het CRM."}
-        Antwoorden op deze mail gaat rechtstreeks naar de bezoeker.
-      </p>
-    </td></tr>
-  </table>
+  <p style="margin:16px 0 0;font-size:13px;color:#666;">
+    ${nieuweLead ? "Er is een nieuwe lead aangemaakt in het CRM." : "De vraag staat ook bij de notities van de bestaande lead in het CRM."}
+    Antwoorden op deze mail gaat rechtstreeks naar de bezoeker.
+  </p>
 </body></html>`;
 }
 
