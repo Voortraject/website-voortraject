@@ -253,6 +253,20 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  /* Een pagina met een eigen actiebalk onderin (subsidiecheck-resultaat op
+     mobiel) zet `heeft-actiebalk` op <body>. De vaste WhatsApp-knop rechtsonder
+     verbergt zich dan: die balk biedt WhatsApp zelf al aan, en twee knoppen over
+     elkaar heen is op een klein scherm alleen maar verwarrend. Op desktop staat
+     de balk er niet, dus daar blijft de knop gewoon staan. */
+  body.heeft-actiebalk .vt-whatsapp-zwevend {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    body.heeft-actiebalk .vt-whatsapp-zwevend {
+      display: flex;
+    }
+  }
 }
 
 @property --gradient-angle {

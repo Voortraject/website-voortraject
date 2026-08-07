@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Link2, Loader2 } from "lucide-react";
 
-import { CtaButton } from "@/components/CtaButton";
 import { usePand3d } from "@/hooks/usePand3d";
 import { usePandContour } from "@/hooks/usePandContour";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
@@ -17,7 +16,9 @@ import {
   topBedragen,
 } from "@/lib/subsidies";
 
+import { DirectContact } from "./DirectContact";
 import { MailOverzicht } from "./MailOverzicht";
+import { MobieleActiebalk } from "./MobieleActiebalk";
 import { Samenvatting } from "./Samenvatting";
 import { SubsidieCard } from "./SubsidieCard";
 import { TrajectStrip } from "./TrajectStrip";
@@ -139,6 +140,10 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
   const samenvatting = useMemo(() => maakSamenvatting(regelingen ?? []), [regelingen]);
   const bedragen = useMemo(() => topBedragen(regelingen ?? []), [regelingen]);
   const adresRegel = `${adres.straatnaam} ${input.huisnummer}${input.toevoeging ? ` ${input.toevoeging}` : ""}, ${adres.woonplaatsnaam}`;
+  // Deelbare URL van dit overzicht: gaat mee naar het team, zodat een adviseur
+  // precies ziet waar de vraag over gaat.
+  const overzichtUrl = typeof window !== "undefined" ? window.location.href : undefined;
+  const whatsappBericht = `Hallo, ik heb de subsidiecheck gedaan voor ${adresRegel}. Ik heb daar een vraag over:`;
 
   // Eén woningpaneel-element, gebruikt in zowel de "geen regelingen"-tak als het
   // normale resultaat — zo verschijnt het in elke situatie (bewonertype/aantal).
@@ -240,22 +245,27 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
   const aantal = regelingen?.length ?? 0;
 
   if (aantal === 0) {
+    // Ook zonder regelingen blijft de bezoeker hier: vroeger stond hier alleen een
+    // link naar /contact en verdween de vraag (en de lead) volledig.
     return (
-      <div className="grid gap-4 md:grid-cols-[1fr_300px] md:items-start md:gap-6">
-        <div className="rounded-2xl border border-border bg-card p-6 text-center md:p-8">
-          <h3 className="font-display text-[18px] font-semibold text-primary">
-            Voor deze combinatie vonden we geen regelingen
-          </h3>
-          <p className="mx-auto mt-2 max-w-md text-[15px] leading-relaxed text-foreground/80">
-            Regelingen veranderen vaak en soms zit er meer in dan een eerste check laat zien. Wil je dat wij even
-            meekijken? Dat kost je niets.
-          </p>
-          <div className="mt-5 flex justify-center">
-            <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
+      <>
+        <div className="grid gap-4 md:grid-cols-[1fr_300px] md:items-start md:gap-6">
+          <div className="rounded-2xl border border-border bg-card p-6 text-center md:p-8">
+            <h3 className="font-display text-[18px] font-semibold text-primary">
+              Voor deze combinatie vonden we geen regelingen
+            </h3>
+            <p className="mx-auto mt-2 max-w-md text-[15px] leading-relaxed text-foreground/80">
+              Regelingen veranderen vaak en soms zit er meer in dan een eerste check laat zien. Wil je dat wij even
+              meekijken? Dat kost je niets.
+            </p>
           </div>
+          {woningpaneel}
         </div>
-        {woningpaneel}
-      </div>
+        <div className="mt-6">
+          <DirectContact input={input} adres={adres} overzichtUrl={overzichtUrl} />
+        </div>
+        <MobieleActiebalk whatsappBericht={whatsappBericht} bewonertype={input.bewonertype} />
+      </>
     );
   }
 
@@ -358,54 +368,47 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
         </p>
       </div>
 
-      {/* Conversie-afsluiting met endowed-progress: stap 1 is al gedaan. De
-          laagdrempeligste actie eerst (overzicht in de mail), dan het gesprek. */}
-      <div
-        ref={conversieRef}
-        className="mt-10 scroll-mt-24 rounded-xl border border-border p-6 md:p-8"
-        style={{ backgroundColor: "var(--card-soft)" }}
-      >
-        {/* Zachte mail-route: met de gegevens-poort (verbergMail) zijn deze
-            gegevens al vooraf opgehaald, dan slaan we dit blok over. */}
-        {!verbergMail && (
-          <>
-            <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
-              Ontvang dit overzicht in je mail
-            </h3>
-            <div className="mt-5">
-              <MailOverzicht input={input} adres={adres} regelingen={regelingen ?? []} />
-            </div>
-
-            <div className="my-6 h-px bg-border" role="separator" />
-          </>
-        )}
-
-        <p className="max-w-xl text-[15px] leading-relaxed text-foreground/80">
-          Liever direct weten wat er voor jou in zit? In een gratis gesprek zoeken we voor jouw adres uit welke
-          regelingen je kunt combineren en stapelen, en regelen we de aanvraag.
-        </p>
-        <a
-          href="/contact"
-          className="mt-4 inline-flex items-center justify-center rounded-full border border-primary px-6 py-3 text-[15px] font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      {/* Zachte mail-route: met de gegevens-poort (verbergMail) zijn deze gegevens
+          al vooraf opgehaald, dan slaan we dit blok over. */}
+      {!verbergMail && (
+        <div
+          ref={conversieRef}
+          className="mt-10 scroll-mt-24 rounded-xl border border-border p-6 md:p-8"
+          style={{ backgroundColor: "var(--card-soft)" }}
         >
-          Plan een gratis gesprek
-        </a>
+          <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
+            Ontvang dit overzicht in je mail
+          </h3>
+          <div className="mt-5">
+            <MailOverzicht input={input} adres={adres} regelingen={regelingen ?? []} />
+          </div>
+        </div>
+      )}
 
-        {/* Rustige geruststelling naast de CTA (geen verzonnen sterren). */}
-        <ul className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1">
-          {["Vrijblijvend", "Reactie binnen 24 uur", "Lokaal adviesteam"].map((belofte) => (
-            <li key={belofte} className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
-              <Check size={14} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
-              {belofte}
-            </li>
-          ))}
-        </ul>
+      {/* De contactstap: één veld voor wie door de poort kwam, plus WhatsApp en
+          bellen voor wie liever niet typt. Verving de losse "Plan een gratis
+          gesprek"-link naar /contact, waar de bezoeker álles opnieuw invulde wat
+          hij hier al had gegeven. */}
+      <div className={verbergMail ? "mt-10" : "mt-6"}>
+        <DirectContact input={input} adres={adres} overzichtUrl={overzichtUrl} />
       </div>
+
+      {/* Rustige geruststelling onder de CTA (geen verzonnen sterren). */}
+      <ul className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1">
+        {["Vrijblijvend", "Reactie binnen 24 uur", "Lokaal adviesteam"].map((belofte) => (
+          <li key={belofte} className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
+            <Check size={14} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
+            {belofte}
+          </li>
+        ))}
+      </ul>
 
       {/* Warm slot (peak-end): de pagina eindigt menselijk, niet juridisch. */}
       <p className="mt-6 text-center text-[15px] leading-relaxed text-foreground/70">
         Veel regelingen blijven onbenut. Jij bent nu een stap verder dan de meeste woningeigenaren.
       </p>
+
+      <MobieleActiebalk whatsappBericht={whatsappBericht} bewonertype={input.bewonertype} />
     </div>
   );
 };

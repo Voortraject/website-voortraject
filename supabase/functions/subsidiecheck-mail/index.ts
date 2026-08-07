@@ -11,11 +11,19 @@
 // lead verliezen. Faalt de mail, dan staat de lead er nog en volgt het team op
 // (de UI belooft "we sturen het overzicht"; dat blijft waar).
 //
+// Daarnaast is er de route `actie: "bericht"`: een vraag die de bezoeker op het
+// resultaat stelt. Die komt in `notities` bij de bestaande lead (via het `leadId`
+// dat deze function bij de eerste call teruggeeft) en gaat per mail naar het
+// team, met de bezoeker als antwoordadres. Is er nog geen lead, dan maakt de
+// function er alsnog een met de vraag erin.
+//
 // Benodigde secrets (Supabase → Edge Functions → Secrets):
 //   RESEND_API_KEY   — API-key van resend.com (verplicht voor automatische mail)
 //   MAIL_FROM        — afzender, bijv. "Voortraject <noreply@voortraject.nl>"
 //                      (moet een geverifieerd domein in Resend zijn)
 //   MAIL_BCC         — optioneel, teamkopie, bijv. "info@voortraject.nl"
+//   MAIL_TEAM        — optioneel, ontvanger van de vraag-mails; valt terug op
+//                      MAIL_BCC en daarna op info@voortraject.nl
 //   MAIL_REPLY_TO    — optioneel, antwoordadres, standaard info@voortraject.nl
 // SUPABASE_URL en SUPABASE_SERVICE_ROLE_KEY worden automatisch geïnjecteerd.
 
@@ -56,6 +64,9 @@ const LENING_VLAK = "#EEF3F9";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const NAME_RE = /^[\p{L}\s'-]+$/u;
 const POSTCODE_RE = /^[1-9][0-9]{3}[A-Z]{2}$/;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+/** Zelfde limiet als het berichtveld op het contactformulier. */
+const MAX_BERICHT = 1000;
 
 // Bewust dezelfde, ruime nummercheck als de client. Deno kan src/ niet
 // importeren, dus dit is een kopie van src/lib/telefoon.ts: pas ze samen aan.
@@ -138,6 +149,16 @@ type Regeling = {
 };
 
 type Payload = {
+  /**
+   * "bericht" = een vraag die de bezoeker op het resultaat stelt. Die vult de
+   * notitie aan bij de bestaande lead (`leadId`) en gaat per mail naar het team.
+   * Zonder actie: de gewone route (lead + subsidieoverzicht naar de bezoeker).
+   */
+  actie?: string;
+  /** Alleen bij actie "bericht": de vraag zelf. */
+  bericht?: string;
+  /** Alleen bij actie "bericht": lead uit deze sessie, voorkomt een dubbele lead. */
+  leadId?: string;
   /** Gesplitste naamvelden (huidige site). */
   voornaam?: string;
   tussenvoegsel?: string;
@@ -377,6 +398,57 @@ function bouwEmailHtml(opts: {
 </body></html>`;
 }
 
+// Teammail bij een vraag van de bezoeker. Bewust kaal en informatief: dit is een
+// werkmail, geen marketing. Het antwoordadres van deze mail is de bezoeker zelf,
+// dus "beantwoorden" komt meteen bij de juiste persoon uit.
+function bouwTeamMailHtml(opts: {
+  naam: string;
+  email: string;
+  telefoon: string | null;
+  adresregel: string;
+  bericht: string;
+  interesses: string;
+  overzichtUrl?: string;
+  nieuweLead: boolean;
+}): string {
+  const { naam, email, telefoon, adresregel, bericht, interesses, overzichtUrl, nieuweLead } = opts;
+  const rij = (label: string, waarde: string) =>
+    `<tr><td style="padding:4px 12px 4px 0;font-size:14px;color:${KLEUR.muted};white-space:nowrap;">${label}</td><td style="padding:4px 0;font-size:14px;color:${KLEUR.primary};font-weight:600;">${waarde}</td></tr>`;
+
+  return `<!doctype html>
+<html lang="nl"><head><meta charset="utf-8"><title>Vraag via de subsidietool</title></head>
+<body style="margin:0;padding:24px;background:${KLEUR.achtergrond};font-family:${FONT_STACK};">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:${KLEUR.kaart};border:1px solid ${KLEUR.border};border-radius:12px;">
+    <tr><td style="padding:24px;">
+      <p style="margin:0 0 4px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:${KLEUR.accent};">Vraag via de subsidietool</p>
+      <p style="margin:0 0 18px;font-size:20px;font-weight:700;color:${KLEUR.primary};">${escapeHtml(naam)}</p>
+
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        ${rij("Adres", escapeHtml(adresregel || "onbekend"))}
+        ${rij("E-mail", `<a href="mailto:${escapeHtml(email)}" style="color:${KLEUR.primary};">${escapeHtml(email)}</a>`)}
+        ${telefoon ? rij("Telefoon", `<a href="tel:${escapeHtml(telefoon)}" style="color:${KLEUR.primary};">${escapeHtml(telefoon)}</a>`) : ""}
+        ${interesses ? rij("Interesses", escapeHtml(interesses)) : ""}
+      </table>
+
+      <div style="margin:18px 0 0;padding:16px 18px;background:${KLEUR.achtergrond};border-left:4px solid ${KLEUR.accent};border-radius:4px;">
+        <p style="margin:0;font-size:15px;line-height:1.6;color:${KLEUR.primary};white-space:pre-wrap;">${escapeHtml(bericht)}</p>
+      </div>
+
+      ${
+        overzichtUrl
+          ? `<p style="margin:18px 0 0;font-size:14px;"><a href="${escapeHtml(overzichtUrl)}" style="color:${KLEUR.primary};font-weight:600;">Bekijk het overzicht dat deze bezoeker zag &rarr;</a></p>`
+          : ""
+      }
+
+      <p style="margin:18px 0 0;font-size:13px;color:${KLEUR.muted};line-height:1.6;">
+        ${nieuweLead ? "Er is een nieuwe lead aangemaakt in het CRM." : "De vraag staat ook bij de notities van de bestaande lead in het CRM."}
+        Antwoorden op deze mail gaat rechtstreeks naar de bezoeker.
+      </p>
+    </td></tr>
+  </table>
+</body></html>`;
+}
+
 async function verstuurMail(opts: {
   apiKey: string;
   from: string;
@@ -486,8 +558,6 @@ Deno.serve(async (req: Request) => {
   const adresregel =
     [straat, huisnummer].filter(Boolean).join(" ") + (toevoeging ? ` ${toevoeging}` : "") + (stad ? `, ${stad}` : "");
 
-  // 1) Lead opslaan (leidend — nooit verliezen).
-  // `notities` blijft leeg (die kolom is voor het team zelf) en
   // `gewenste_maatregelen` raken we niet aan; de aangevinkte onderwerpen gaan
   // als platte tekst naar `subsidiecheck_interesses`, in de volgorde van de
   // chips op de site — bijv. "Isolatie & glas, Warmtepomp, Thuisbatterij".
@@ -500,47 +570,140 @@ Deno.serve(async (req: Request) => {
   // dan raken we de hele lead kwijt.
   const typeBewoner = BEWONERTYPES.find((t) => t === input.bewonertype) ?? null;
 
-  try {
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
-    // Nieuwe pad: de drie losse delen (kolom `naam` vult de trigger). Legacy pad
-    // (oude bundle, alleen `naam`): schrijf zoals voorheen de ene kolom.
-    const naamVelden = achternaam
-      ? {
-          voornaam: voornaam || null,
-          tussenvoegsel: tussenvoegsel || null,
-          achternaam,
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+
+  // Nieuwe pad: de drie losse delen (kolom `naam` vult de trigger). Legacy pad
+  // (oude bundle, alleen `naam`): schrijf zoals voorheen de ene kolom.
+  const naamVelden = achternaam
+    ? {
+        voornaam: voornaam || null,
+        tussenvoegsel: tussenvoegsel || null,
+        achternaam,
+      }
+    : { naam: legacyNaam };
+
+  // Vaste kolommen van een subsidietool-lead. Gedeeld door de gewone route en de
+  // berichtroute, zodat een lead er in beide gevallen identiek uitziet.
+  const leadVelden = {
+    tenant_id: TENANT_ID,
+    ...naamVelden,
+    email,
+    telefoon,
+    postcode,
+    huisnummer,
+    toevoeging: toevoeging || null,
+    straat,
+    stad,
+    subsidiecheck_interesses: interesses,
+    subsidiecheck_type_bewoner: typeBewoner,
+    formulier: "subsidietool",
+    bron: "Voortraject",
+    status: "nieuw",
+  };
+
+  const volledigeNaam = [voornaam, tussenvoegsel, achternaam].filter(Boolean).join(" ") || legacyNaam;
+  const teamAdres = Deno.env.get("MAIL_TEAM") || Deno.env.get("MAIL_BCC") || DEFAULT_REPLY_TO;
+  const overzichtUrlSchoon =
+    typeof payload.overzichtUrl === "string" && /^https?:\/\//i.test(payload.overzichtUrl)
+      ? payload.overzichtUrl
+      : undefined;
+
+  // ---- Route "bericht": een vraag die de bezoeker op het resultaat stelt ----
+  // De vraag komt in `notities` op de lead en gaat per mail naar het team. Kwam de
+  // bezoeker net door de gegevens-poort, dan hebben we zijn lead-id en vullen we
+  // die lead aan; anders maken we er alsnog een. Een dubbele lead is vervelend,
+  // een verloren vraag is erger.
+  if (payload.actie === "bericht") {
+    const bericht = (payload.bericht ?? "").trim();
+    if (!bericht) return json({ error: "Vul je vraag in." }, 400);
+    if (bericht.length > MAX_BERICHT) return json({ error: "Je vraag is te lang." }, 400);
+
+    const leadId = typeof payload.leadId === "string" && UUID_RE.test(payload.leadId) ? payload.leadId : null;
+    let nieuweLead = true;
+
+    try {
+      if (leadId) {
+        // Bijwerken mag alleen als id én e-mailadres bij elkaar horen. Een uuid
+        // raden is al onbegonnen werk; het bijpassende e-mailadres raden maakt
+        // schrijven bij een vreemde lead praktisch onmogelijk.
+        const { data: bestaand, error: leesFout } = await supabase
+          .from("leads_bewoners")
+          .select("id, notities")
+          .eq("id", leadId)
+          .eq("tenant_id", TENANT_ID)
+          .eq("email", email)
+          .maybeSingle();
+        if (leesFout) console.error("Lead ophalen faalde", leesFout);
+        if (bestaand) {
+          // Aanvullen, nooit overschrijven: er kan al een eerdere vraag staan.
+          const bestaandeNotitie = (bestaand.notities ?? "").trim();
+          const notities = bestaandeNotitie ? `${bestaandeNotitie}\n\n${bericht}` : bericht;
+          const { error: updateFout } = await supabase
+            .from("leads_bewoners")
+            .update({ notities })
+            .eq("id", bestaand.id);
+          if (updateFout) throw updateFout;
+          nieuweLead = false;
         }
-      : { naam: legacyNaam };
-    const { error } = await supabase.from("leads_bewoners").insert({
-      tenant_id: TENANT_ID,
-      ...naamVelden,
-      email,
-      telefoon,
-      postcode,
-      huisnummer,
-      toevoeging: toevoeging || null,
-      straat,
-      stad,
-      notities: null,
-      subsidiecheck_interesses: interesses,
-      subsidiecheck_type_bewoner: typeBewoner,
-      // Welk formulier de lead opleverde. n8n bepaalt hiermee de taaktitel én of
-      // de bevestigingsmail uitgaat: deze bezoeker krijgt hierboven al het
-      // subsidieoverzicht, dus niet nóg een "we nemen contact op"-mail. CHECK op
-      // de kolom: alleen 'contactformulier', 'subsidietool' of NULL.
-      formulier: "subsidietool",
-      // Eigen lead uit onze eigen tool, dus bron "Voortraject". Het CRM
-      // normaliseert dit (trigger `normaliseer_lead_bron`) via de naam in
-      // `lead_bronnen` naar de code `voortraject`; vóór deze wijziging viel
-      // "Subsidiecheck" terug op `website`. Welk formulier de lead opleverde
-      // staat in `formulier` hierboven.
-      bron: "Voortraject",
-      status: "nieuw",
-    });
+      }
+
+      if (nieuweLead) {
+        const { error } = await supabase.from("leads_bewoners").insert({ ...leadVelden, notities: bericht });
+        if (error) throw error;
+      }
+    } catch (err) {
+      console.error("Vraag opslaan faalde", err);
+      return json({ error: "Er ging iets mis. Probeer het later opnieuw." }, 500);
+    }
+
+    // Mail naar het team (de vraag staat al veilig in het CRM).
+    const apiKeyTeam = Deno.env.get("RESEND_API_KEY");
+    let mailed = false;
+    if (apiKeyTeam) {
+      mailed = await verstuurMail({
+        apiKey: apiKeyTeam,
+        from: Deno.env.get("MAIL_FROM") ?? DEFAULT_FROM,
+        to: teamAdres,
+        // Antwoorden gaat rechtstreeks naar de bezoeker.
+        replyTo: email,
+        subject: `Vraag via subsidietool: ${adresregel || postcode}`,
+        html: bouwTeamMailHtml({
+          naam: volledigeNaam,
+          email,
+          telefoon,
+          adresregel,
+          bericht,
+          interesses,
+          overzichtUrl: overzichtUrlSchoon,
+          nieuweLead,
+        }),
+      });
+    } else {
+      console.warn("RESEND_API_KEY ontbreekt — vraag opgeslagen, geen teammail verstuurd.");
+    }
+
+    return json({ ok: true, mailed, nieuweLead });
+  }
+
+  let leadId: string | null = null;
+  try {
+    const { data: nieuweLead, error } = await supabase
+      .from("leads_bewoners")
+      .insert({
+        ...leadVelden,
+        // `notities` blijft leeg: die kolom is voor het team zelf. Alleen een
+        // vraag van de bezoeker (route "bericht" hierboven) komt erin.
+        notities: null,
+      })
+      // Het id terug naar de site: een vraag die de bezoeker straks op het
+      // resultaat stelt, landt daarmee bij déze lead in plaats van een tweede.
+      .select("id")
+      .maybeSingle();
     if (error) throw error;
+    leadId = typeof nieuweLead?.id === "string" ? nieuweLead.id : null;
   } catch (err) {
     console.error("Lead-insert faalde", err);
     return json({ error: "Er ging iets mis. Probeer het later opnieuw." }, 500);
@@ -551,16 +714,12 @@ Deno.serve(async (req: Request) => {
   let mailed = false;
   if (apiKey) {
     const siteBasis = (Deno.env.get("SITE_URL") ?? "https://www.voortraject.nl").replace(/\/+$/, "");
-    const overzichtUrl =
-      typeof payload.overzichtUrl === "string" && /^https?:\/\//i.test(payload.overzichtUrl)
-        ? payload.overzichtUrl
-        : undefined;
     const html = bouwEmailHtml({
       aanhef,
       adresregel: adresregel || "jouw woning",
       regelingen,
       siteBasis,
-      overzichtUrl,
+      overzichtUrl: overzichtUrlSchoon,
     });
     mailed = await verstuurMail({
       apiKey,
@@ -576,5 +735,7 @@ Deno.serve(async (req: Request) => {
   }
 
   // ok:true zolang de lead is opgeslagen; het team volgt op als de mail faalde.
-  return json({ ok: true, mailed });
+  // `leadId` mag null zijn: de site gebruikt het alleen om een latere vraag aan
+  // deze lead te koppelen en valt anders terug op een nieuwe lead.
+  return json({ ok: true, mailed, leadId });
 });
