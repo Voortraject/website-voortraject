@@ -178,7 +178,7 @@ const SubsidiecheckLive = () => {
       // eronder voor het overzicht zelf wordt aangezien.
       return {
         titel: "Nog één stap tot je overzicht",
-        sub: "Vul je gegevens in, dan zoeken we alle landelijke, provinciale en gemeentelijke regelingen bij jouw adres.",
+        sub: "Vul je gegevens in, dan zoeken we alle regelingen bij jouw adres.",
       };
     }
     return { titel: "Jouw subsidieoverzicht" };
