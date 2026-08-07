@@ -47,7 +47,7 @@ const Avatar = ({ naam, foto, kleur }: { naam: string; foto?: string; kleur?: st
 const REVIEW_KAART =
   "relative bg-card rounded-2xl border border-border p-6 flex flex-col h-full";
 
-const ReviewKaart = ({ naam, foto, kleur, rating, tekst }: Kaart) => {
+export const ReviewKaart = ({ naam, foto, kleur, rating, tekst }: Kaart) => {
   const tekstRef = useRef<HTMLParagraphElement>(null);
   const [open, setOpen] = useState(false);
   const [afkapbaar, setAfkapbaar] = useState(false);
