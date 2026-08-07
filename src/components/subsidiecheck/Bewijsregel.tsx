@@ -1,3 +1,4 @@
+import { GoogleG } from "@/components/GoogleG";
 import { Sterren } from "@/components/Sterren";
 import { useGoogleReviews } from "@/hooks/useGoogleReviews";
 import { GOOGLE_REVIEWS_URL } from "@/lib/reviews";
@@ -27,13 +28,15 @@ export const Bewijsregel = ({ className = "" }: BewijsregelProps) => {
       href={GOOGLE_REVIEWS_URL}
       target="_blank"
       rel="noopener noreferrer"
+      aria-label={`Bekijk onze beoordelingen op Google (${score} van 5${aantal != null ? `, ${aantal} reviews` : ""})`}
       className={`inline-flex flex-wrap items-center gap-x-2 gap-y-1 rounded-sm text-[13px] text-muted-foreground transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${className}`}
     >
       <Sterren waarde={stats.rating} size={14} />
-      <span>
-        <span className="font-semibold text-foreground">{score}</span> op Google
-        {aantal != null ? ` · ${aantal} ${aantal === 1 ? "review" : "reviews"}` : ""}
-      </span>
+      <span className="font-semibold text-foreground">{score}</span>
+      {/* Zelfde Google-logo als in de hero, zodat de bron herkenbaar is zonder
+          het woord "Google" erbij. */}
+      <GoogleG size={15} />
+      {aantal != null && <span>{aantal} reviews</span>}
     </a>
   );
 };

@@ -11,6 +11,7 @@ import { subsidieProvider, type SubsidieCheckInput, type SubsidieRegeling } from
 
 import { Bewijsregel } from "./Bewijsregel";
 import { bewaarContact } from "./contactOpslag";
+import { Energielabel } from "./Energielabel";
 import { Luchtfoto } from "./Luchtfoto";
 import { schrijfSubsidiecheckLead, valideerContact, verstuurSubsidiecheckLead } from "./leadFormulier";
 
@@ -219,20 +220,22 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
             </p>
 
             {/* Het energielabel is echte, opzoekbare informatie die de bezoeker
-                hier gratis krijgt. Nog aan het laden → niets tonen; geen label →
-                dat is ook een antwoord. De bron staat op een eigen regel, anders
-                breekt "EP-Online" op smalle schermen halverwege af. */}
+                hier gratis krijgt. Zelfde gekleurde schaal als op het resultaat,
+                zodat het meteen herkenbaar is. Nog aan het laden → niets tonen;
+                geen label → dat is ook een antwoord. */}
             {!woningBezig && (
-              <p className="mt-2.5 text-[13.5px] leading-snug text-foreground/80">
+              <div className="mt-3">
                 {woning?.energielabel ? (
                   <>
-                    Energielabel <span className="font-semibold text-primary">{woning.energielabel.klasse}</span>
-                    <span className="block text-[12px] text-muted-foreground">Bron: EP-Online</span>
+                    <p className="mb-1.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                      Energielabel
+                    </p>
+                    <Energielabel klasse={woning.energielabel.klasse} />
                   </>
                 ) : (
-                  "Nog geen geregistreerd energielabel"
+                  <p className="text-[13.5px] text-foreground/80">Nog geen geregistreerd energielabel</p>
                 )}
-              </p>
+              </div>
             )}
           </div>
         </div>
@@ -397,10 +400,8 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         )}
       </button>
 
-      <p className="mt-3 text-[12px] italic text-muted-foreground">
-        Je overzicht opent meteen en we mailen het ook naar je. Je telefoonnummer gebruiken we alleen als je liever
-        gebeld wordt. Geen nieuwsbrief.
-      </p>
+      {/* Kort genoeg om ook op mobiel op één regel te passen. */}
+      <p className="mt-3 text-[12px] italic text-muted-foreground">Geen nieuwsbrief, alleen jouw overzicht.</p>
 
       {/* Onze echte Google-score, precies op het moment dat we om gegevens vragen.
           Live data: als die er niet is, staat hier niets. */}
