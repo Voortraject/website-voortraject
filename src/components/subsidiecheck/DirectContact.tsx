@@ -6,6 +6,7 @@ import type { PdokAdres } from "@/lib/pdok";
 import { whatsappUrl } from "@/lib/whatsapp";
 import type { SubsidieCheckInput } from "@/lib/subsidies";
 
+import { Bewijsregel } from "./Bewijsregel";
 import { leesContact, vulContactAan } from "./contactOpslag";
 import { MAX_BERICHT, valideerBericht, valideerContact, verstuurSubsidiecheckBericht } from "./leadFormulier";
 
@@ -381,11 +382,16 @@ export const DirectContact = ({ input, adres, overzichtUrl }: DirectContactProps
             )}
           </button>
 
-          <p className="text-[13px] leading-relaxed text-muted-foreground">
-            {bekend
-              ? `We antwoorden binnen 24 uur op ${bekend.email}.`
-              : "We antwoorden binnen 24 uur. Geen nieuwsbrief."}
-          </p>
+          <div>
+            <p className="text-[13px] leading-relaxed text-muted-foreground">
+              {bekend
+                ? `We antwoorden binnen 24 uur op ${bekend.email}.`
+                : "We antwoorden binnen 24 uur. Geen nieuwsbrief."}
+            </p>
+            {/* Onze echte Google-score, op het moment dat iemand besluit of hij
+                een vraag durft te stellen. */}
+            <Bewijsregel className="mt-1.5" />
+          </div>
         </div>
       </form>
 

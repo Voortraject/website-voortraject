@@ -9,6 +9,7 @@ import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
 import { subsidieProvider, type SubsidieCheckInput, type SubsidieRegeling } from "@/lib/subsidies";
 
+import { Bewijsregel } from "./Bewijsregel";
 import { bewaarContact } from "./contactOpslag";
 import { Luchtfoto } from "./Luchtfoto";
 import { schrijfSubsidiecheckLead, valideerContact, verstuurSubsidiecheckLead } from "./leadFormulier";
@@ -400,6 +401,10 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         Je overzicht opent meteen en we mailen het ook naar je. Je telefoonnummer gebruiken we alleen als je liever
         gebeld wordt. Geen nieuwsbrief.
       </p>
+
+      {/* Onze echte Google-score, precies op het moment dat we om gegevens vragen.
+          Live data: als die er niet is, staat hier niets. */}
+      <Bewijsregel className="mt-3" />
     </form>
   );
 };
