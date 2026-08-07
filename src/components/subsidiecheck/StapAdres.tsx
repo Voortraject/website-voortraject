@@ -113,12 +113,13 @@ export const StapAdres = ({
 
   const gekozenMaatregelen = (): Maatregel[] => (maatregelen.length === 0 ? [...ALLE_MAATREGELEN] : maatregelen);
 
-  // Korte samenvatting van de interesses voor de ingeklapte regel.
+  // Korte samenvatting van de interesses voor de ingeklapte regel. Staat op een
+  // eigen regel, dus met een hoofdletter.
   const maatregelSamenvatting =
     maatregelen.length === 0
-      ? "alle maatregelen"
+      ? "Alle maatregelen"
       : maatregelen.length <= 2
-        ? maatregelen.map((m) => MAATREGEL_LABELS[m].toLowerCase()).join(" en ")
+        ? maatregelen.map((m) => MAATREGEL_LABELS[m]).join(" en ")
         : `${maatregelen.length} maatregelen`;
 
   // Live adrescheck: een halve seconde na de laatste toetsaanslag zoeken we het
@@ -363,20 +364,26 @@ export const StapAdres = ({
           </fieldset>
         </div>
       ) : (
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 rounded-lg border border-border px-4 py-3">
-          <p className="text-[13.5px] leading-snug text-foreground sm:text-[14px]">
-            <span className="font-semibold">{BEWONERTYPE_LABELS[bewonertype]}</span>
-            <span className="text-muted-foreground"> · {maatregelSamenvatting}</span>
-          </p>
-          <button
-            type="button"
-            aria-expanded={false}
-            onClick={() => setKeuzesUit(true)}
-            className="inline-flex shrink-0 items-center gap-1 rounded-sm text-[13.5px] font-medium text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            Aanpassen
-            <ChevronDown size={14} aria-hidden="true" />
-          </button>
+        <div className="mt-6">
+          {/* Kopje erboven, anders lijkt deze regel uit de lucht te vallen. */}
+          <p className="mb-2 block text-[14px] font-semibold text-foreground">Waarop we zoeken</p>
+          {/* Nooit afbreken: de tekst mag over twee regels, "Aanpassen" blijft
+              rechts op dezelfde hoogte staan. */}
+          <div className="flex items-start justify-between gap-3 rounded-lg border border-border px-4 py-3">
+            <div className="min-w-0">
+              <p className="text-[14px] font-semibold leading-snug text-foreground">{BEWONERTYPE_LABELS[bewonertype]}</p>
+              <p className="text-[13px] leading-snug text-muted-foreground">{maatregelSamenvatting}</p>
+            </div>
+            <button
+              type="button"
+              aria-expanded={false}
+              onClick={() => setKeuzesUit(true)}
+              className="inline-flex shrink-0 items-center gap-1 rounded-sm text-[13.5px] font-medium text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              Aanpassen
+              <ChevronDown size={14} aria-hidden="true" />
+            </button>
+          </div>
         </div>
       )}
 
