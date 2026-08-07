@@ -230,7 +230,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
                     <p className="mb-1.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                       Energielabel
                     </p>
-                    <Energielabel klasse={woning.energielabel.klasse} />
+                    <Energielabel klasse={woning.energielabel.klasse} compact />
                   </>
                 ) : (
                   <p className="text-[13.5px] text-foreground/80">Nog geen geregistreerd energielabel</p>
@@ -400,12 +400,18 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         )}
       </button>
 
-      {/* Kort genoeg om ook op mobiel op één regel te passen. */}
-      <p className="mt-3 text-[12px] italic text-muted-foreground">Geen nieuwsbrief, alleen jouw overzicht.</p>
-
-      {/* Onze echte Google-score, precies op het moment dat we om gegevens vragen.
-          Live data: als die er niet is, staat hier niets. */}
-      <Bewijsregel className="mt-3" />
+      {/* Geruststelling links, onze echte Google-score rechts: allebei bedoeld voor
+          hetzelfde moment van twijfel, dus ze horen op één regel. Op een smal
+          scherm valt de score vanzelf naar de regel eronder. Live data: is die er
+          niet, dan staat hier alleen de zin. */}
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        {/* Op mobiel korter, anders passen de zin en de score samen niet op één
+            regel en valt de score eronder. */}
+        <p className="text-[12px] italic text-muted-foreground">
+          Geen nieuwsbrief<span className="hidden sm:inline">, alleen jouw overzicht</span>.
+        </p>
+        <Bewijsregel />
+      </div>
     </form>
   );
 };
