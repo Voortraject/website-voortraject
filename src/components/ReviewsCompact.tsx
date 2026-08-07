@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { GoogleG } from "@/components/GoogleG";
 import { Sterren } from "@/components/Sterren";
+import { ReviewKaart } from "@/components/sections/Reviews";
 import {
   Carousel,
   CarouselContent,
@@ -9,14 +10,15 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { useGoogleReviews } from "@/hooks/useGoogleReviews";
-import { fallbackKaarten, initiaalVan, kleurVoor, naarKaarten, type Kaart } from "@/lib/reviews";
+import { fallbackKaarten, naarKaarten, type Kaart } from "@/lib/reviews";
 import { cn } from "@/lib/utils";
 
 /**
  * Compacte variant van de reviewsectie, bedoeld voor een smalle kolom naast een
- * formulier. Eén citaat tegelijk in een horizontale carrousel, net als op de
- * homepagina, maar sneller (3s) omdat er maar één kaart in beeld staat. Data en
- * fallback komen uit dezelfde bron als de grote sectie.
+ * formulier. Eén citaat tegelijk in een horizontale carrousel, sneller dan op de
+ * homepagina (3s) omdat er maar één kaart in beeld staat. De kaart zelf is
+ * letterlijk dezelfde als op de homepagina, inclusief "Lees meer", zodat er
+ * nooit een halve regel wordt afgekapt.
  */
 export const ReviewsCompact = () => {
   const { reviews, stats } = useGoogleReviews();
@@ -73,8 +75,8 @@ export const ReviewsCompact = () => {
   );
 
   return (
-    <section className="rounded-xl border border-border bg-card p-5" aria-labelledby="reviews-kort">
-      <h3 id="reviews-kort" className="font-display text-[17px] font-semibold text-primary">
+    <section className="rounded-2xl bg-primary p-5" aria-labelledby="reviews-kort">
+      <h3 id="reviews-kort" className="font-display text-[17px] font-semibold text-white">
         Wat bewoners zeggen
       </h3>
 
@@ -83,12 +85,12 @@ export const ReviewsCompact = () => {
           href={reviewsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2 inline-flex flex-wrap items-center gap-2 text-[14px] font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+          className="mt-2 inline-flex flex-wrap items-center gap-2 text-[14px] font-medium text-white/85 underline-offset-4 transition-colors hover:text-white hover:underline"
         >
           {beoordeling}
         </a>
       ) : (
-        <p className="mt-2 inline-flex flex-wrap items-center gap-2 text-[14px] font-medium text-muted-foreground">
+        <p className="mt-2 inline-flex flex-wrap items-center gap-2 text-[14px] font-medium text-white/85">
           {beoordeling}
         </p>
       )}
@@ -100,40 +102,10 @@ export const ReviewsCompact = () => {
         onTouchStart={() => setGepauzeerd(true)}
       >
         <Carousel setApi={setApi} opts={{ loop: true }}>
-          <CarouselContent className="ml-0 cursor-grab active:cursor-grabbing">
+          <CarouselContent className="ml-0 items-start cursor-grab active:cursor-grabbing">
             {kaarten.map((k) => (
               <CarouselItem key={k.id} className="pl-0 basis-full">
-                {/* Vaste hoogte: anders springt de kaart bij elke wissel mee met
-                    de lengte van het citaat. */}
-                <div className="flex h-[11.5rem] flex-col">
-                  <div className="flex items-center gap-3">
-                    {k.foto ? (
-                      <img
-                        src={k.foto}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                        referrerPolicy="no-referrer"
-                        className="h-9 w-9 shrink-0 rounded-full object-cover"
-                      />
-                    ) : (
-                      <span
-                        className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[15px] font-medium text-white"
-                        style={{ backgroundColor: k.kleur ?? kleurVoor(k.naam) }}
-                        aria-hidden="true"
-                      >
-                        {initiaalVan(k.naam)}
-                      </span>
-                    )}
-                    <div className="min-w-0">
-                      <p className="truncate text-[14px] font-semibold text-primary">{k.naam}</p>
-                      <Sterren waarde={k.rating} size={13} />
-                    </div>
-                  </div>
-                  <p className="mt-2 line-clamp-6 text-[14px] leading-relaxed text-foreground">
-                    {k.tekst}
-                  </p>
-                </div>
+                <ReviewKaart {...k} />
               </CarouselItem>
             ))}
           </CarouselContent>
@@ -142,7 +114,7 @@ export const ReviewsCompact = () => {
 
       {/* Puntjes-indicator: positie + aantal, klikbaar. */}
       {snaps.length > 1 && (
-        <div className="mt-3 flex items-center justify-center gap-2">
+        <div className="mt-4 flex items-center justify-center gap-2">
           {snaps.map((_, i) => (
             <button
               key={i}
@@ -152,7 +124,7 @@ export const ReviewsCompact = () => {
               aria-current={i === selected}
               className={cn(
                 "h-2 cursor-pointer rounded-full transition-all",
-                i === selected ? "w-5 bg-primary" : "w-2 bg-primary/25 hover:bg-primary/40",
+                i === selected ? "w-6 bg-white" : "w-2 bg-white/40 hover:bg-white/60",
               )}
             />
           ))}
