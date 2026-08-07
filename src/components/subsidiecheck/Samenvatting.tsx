@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Mail } from "lucide-react";
+import { ArrowRight, Check, Mail, MessageCircle } from "lucide-react";
 
 import {
   type Bewonertype,
@@ -36,6 +36,8 @@ interface SamenvattingProps {
   energielabelBezig?: boolean;
   /** Scrollt naar het mailformulier onder de lijst. */
   onMailKlik: () => void;
+  /** Springt naar het vraagblok onder het resultaat en focust het tekstvak. */
+  onVraagKlik: () => void;
   /** Toon de "mail mij dit overzicht"-knop (uit bij de gegevens-poort: die
       gegevens zijn dan al binnen). */
   toonMailKnop?: boolean;
@@ -62,6 +64,7 @@ export const Samenvatting = ({
   energielabel,
   energielabelBezig,
   onMailKlik,
+  onVraagKlik,
   toonMailKnop = true,
 }: SamenvattingProps) => {
   const { totaal, subsidies, leningen } = data;
@@ -108,6 +111,32 @@ export const Samenvatting = ({
           .
         </p>
       )}
+
+      {/* Contactroute direct onder de uitkomst: hier is de vraag het scherpst, en
+          lang niet iedereen scrollt door de hele lijst naar het formulier onderaan.
+          Conclusie, dan actie, dan pas de details (inverted pyramid). "Deel de
+          tool" stond hier eerst en is naar de voet verhuisd: delen speelt pas als
+          je het overzicht hebt gezien. */}
+      <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
+        <button
+          type="button"
+          onClick={onVraagKlik}
+          className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-accent bg-accent/15 px-5 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:bg-accent/25 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          <MessageCircle size={16} strokeWidth={2} aria-hidden="true" />
+          Ik heb een vraag
+        </button>
+        {toonMailKnop && (
+          <button
+            type="button"
+            onClick={onMailKlik}
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:border-primary/40 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            <Mail size={16} strokeWidth={2} aria-hidden="true" />
+            Mail mij dit overzicht
+          </button>
+        )}
+      </div>
 
       {/* Verhoudingsbalk: subsidies vs. leningen in één oogopslag. */}
       {heeftVerdeling && (
@@ -192,22 +221,6 @@ export const Samenvatting = ({
         ))}
       </ul>
 
-      {/* Alleen de mailroute staat hier nog. "Deel de tool" is naar de voet van het
-          resultaat verhuisd: die kostte hier te veel ruimte, boven de vouw, terwijl
-          delen pas speelt als je het overzicht hebt gezien. */}
-      {toonMailKnop && (
-        <>
-          <div className="mt-8 h-px bg-border/60" role="separator" />
-          <button
-            type="button"
-            onClick={onMailKlik}
-            className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full border border-accent bg-accent/15 px-5 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:bg-accent/25 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <Mail size={16} strokeWidth={2} aria-hidden="true" />
-            Mail mij dit overzicht
-          </button>
-        </>
-      )}
     </section>
   );
 };

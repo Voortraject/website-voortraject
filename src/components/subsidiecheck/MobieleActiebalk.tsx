@@ -4,6 +4,8 @@ import { MessageCircle, Send } from "lucide-react";
 import { pushGtmEvent } from "@/lib/gtm";
 import { whatsappUrl } from "@/lib/whatsapp";
 
+import { scrollNaarVraag } from "./vraagFocus";
+
 interface MobieleActiebalkProps {
   /** Vooringevuld WhatsApp-bericht (bevat het adres van de bezoeker). */
   whatsappBericht: string;
@@ -23,17 +25,6 @@ export const MobieleActiebalk = ({ whatsappBericht, bewonertype }: MobieleActieb
     return () => document.body.classList.remove("heeft-actiebalk");
   }, []);
 
-  // Naar het vraagblok springen en meteen het tekstvak scherpstellen: één tik en
-  // je bent aan het typen.
-  const naarVraag = () => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    document.getElementById("sc-vraag")?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
-    window.setTimeout(
-      () => document.getElementById("sc-vraag-tekst")?.focus({ preventScroll: true }),
-      reduced ? 0 : 450,
-    );
-  };
-
   return (
     <div
       className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur-md md:hidden"
@@ -45,7 +36,7 @@ export const MobieleActiebalk = ({ whatsappBericht, bewonertype }: MobieleActieb
       <div className="flex items-center gap-2.5 px-4 py-3">
         <button
           type="button"
-          onClick={naarVraag}
+          onClick={scrollNaarVraag}
           className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-accent px-5 py-3 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <Send size={16} strokeWidth={2} aria-hidden="true" />

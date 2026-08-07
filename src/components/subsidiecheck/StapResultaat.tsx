@@ -21,6 +21,7 @@ import { MailOverzicht } from "./MailOverzicht";
 import { MobieleActiebalk } from "./MobieleActiebalk";
 import { Samenvatting } from "./Samenvatting";
 import { SubsidieCard } from "./SubsidieCard";
+import { scrollNaarVraag } from "./vraagFocus";
 import { Woningpaneel } from "./Woningpaneel";
 
 interface StapResultaatProps {
@@ -294,6 +295,10 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
           energielabel={woning?.energielabel ?? null}
           energielabelBezig={woningBezig}
           onMailKlik={scrollNaarMail}
+          onVraagKlik={() => {
+            pushGtmEvent("subsidiecheck_vraag_cta", { bewonertype: input.bewonertype, plek: "samenvatting" });
+            scrollNaarVraag();
+          }}
           toonMailKnop={!verbergMail}
         />
         {woningpaneel}

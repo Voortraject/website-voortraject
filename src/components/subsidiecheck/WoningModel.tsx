@@ -87,10 +87,8 @@ export const WoningModel = ({ model, isPending }: WoningModelProps) => {
         </svg>
       )}
 
-      {/* Labels als overlay (blok blijft zo even groot als de foto). */}
-      <span className="pointer-events-none absolute left-2 top-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        3D-model
-      </span>
+      {/* Alleen de bronvermelding als overlay; het kopje "3D-model" is eraf, het
+          plaatje spreekt voor zich. Het blok blijft even groot als de foto. */}
       <span className="pointer-events-none absolute bottom-1.5 left-2 text-[10px] leading-none text-muted-foreground/80">
         3D BAG (TU Delft)
       </span>
