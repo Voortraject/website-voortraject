@@ -89,7 +89,7 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
               <span className="text-foreground/80">{regeling.belangrijksteVoorwaarde}</span>
             </p>
           )}
-          <p className="text-foreground/80">Vaak te combineren met andere regelingen — wij zoeken de beste combinatie voor je uit.</p>
+          <p className="text-foreground/80">Vaak te combineren met andere regelingen. Wij zoeken de beste combinatie voor je uit.</p>
           <a
             href={regeling.bronUrl}
             target="_blank"

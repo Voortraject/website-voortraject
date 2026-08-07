@@ -269,7 +269,7 @@ const Contact = () => {
     }
     // Time on page check (min 2s)
     if (Date.now() - pageLoadedAt.current < 2000) {
-      setErrorMsg("Even geduld — wacht een moment voordat je het formulier verstuurt.");
+      setErrorMsg("Even geduld, wacht een moment voordat je het formulier verstuurt.");
       return;
     }
 
