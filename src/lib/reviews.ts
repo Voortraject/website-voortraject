@@ -1,6 +1,16 @@
 import fotoJulian from "@/assets/review-julian.webp";
 import fotoTibbe from "@/assets/review-tibbe.webp";
 
+/**
+ * Link naar ons Google-reviewprofiel. Staat hier hard, zodat de beoordeling
+ * overal klikbaar is; ontbrak `VITE_GOOGLE_REVIEWS_URL` in een omgeving, dan
+ * viel de link stilletjes terug op platte tekst. De env-variabele blijft werken
+ * als override (bijvoorbeeld voor een testprofiel).
+ */
+export const GOOGLE_REVIEWS_URL =
+  (import.meta.env.VITE_GOOGLE_REVIEWS_URL as string | undefined) ||
+  "https://g.page/r/CQSAny7-yOM_EB0/review";
+
 // Gedeeld tussen de reviewsectie op de homepagina en de compacte kaart naast
 // het contactformulier. Staat los van beide componenten zodat ze dezelfde
 // fallback en dezelfde avatarkleuren gebruiken.

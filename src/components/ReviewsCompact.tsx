@@ -10,7 +10,7 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 import { useGoogleReviews } from "@/hooks/useGoogleReviews";
-import { fallbackKaarten, naarKaarten, type Kaart } from "@/lib/reviews";
+import { fallbackKaarten, GOOGLE_REVIEWS_URL, naarKaarten, type Kaart } from "@/lib/reviews";
 import { cn } from "@/lib/utils";
 
 /**
@@ -64,39 +64,25 @@ export const ReviewsCompact = () => {
   const ratingLabel =
     aantal != null ? `${ratingTekst} op Google · ${aantal} reviews` : `${ratingTekst} op Google`;
 
-  const reviewsUrl = import.meta.env.VITE_GOOGLE_REVIEWS_URL as string | undefined;
-
-  const beoordeling = (
-    <>
-      <Sterren waarde={stats?.rating ?? 5} />
-      <span>{ratingLabel}</span>
-      <GoogleG size={16} />
-    </>
-  );
-
   return (
-    <section className="flex h-full flex-col rounded-2xl bg-primary p-5" aria-labelledby="reviews-kort">
+    <section className="flex h-full flex-col rounded-2xl bg-primary p-4" aria-labelledby="reviews-kort">
       <h3 id="reviews-kort" className="font-display text-[17px] font-semibold text-white">
         Wat bewoners zeggen
       </h3>
 
-      {reviewsUrl ? (
-        <a
-          href={reviewsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-2 inline-flex flex-wrap items-center gap-2 text-[14px] font-medium text-white/85 underline-offset-4 transition-colors hover:text-white hover:underline"
-        >
-          {beoordeling}
-        </a>
-      ) : (
-        <p className="mt-2 inline-flex flex-wrap items-center gap-2 text-[14px] font-medium text-white/85">
-          {beoordeling}
-        </p>
-      )}
+      <a
+        href={GOOGLE_REVIEWS_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-2 inline-flex flex-wrap items-center gap-2 text-[14px] font-medium text-white/85 underline-offset-4 transition-colors hover:text-white hover:underline"
+      >
+        <Sterren waarde={stats?.rating ?? 5} />
+        <span>{ratingLabel}</span>
+        <GoogleG size={16} />
+      </a>
 
       <div
-        className="mt-4"
+        className="mt-3"
         onMouseEnter={() => setGepauzeerd(true)}
         onMouseLeave={() => setGepauzeerd(false)}
         onTouchStart={() => setGepauzeerd(true)}
@@ -108,7 +94,7 @@ export const ReviewsCompact = () => {
           <CarouselContent className="-ml-4 items-start cursor-grab active:cursor-grabbing">
             {kaarten.map((k) => (
               <CarouselItem key={k.id} className="pl-4 basis-full">
-                <ReviewKaart {...k} />
+                <ReviewKaart {...k} compact />
               </CarouselItem>
             ))}
           </CarouselContent>

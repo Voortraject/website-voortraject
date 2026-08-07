@@ -320,7 +320,7 @@ const Contact = () => {
                 color: "#2B2B2B",
               }}
             >
-              Ontdek gratis wat mogelijk is voor <span style={{ color: "#E8B547" }}>jouw woning</span>
+              Waar kunnen we je mee <span style={{ color: "#E8B547" }}>helpen</span>?
             </h1>
           </div>
         </div>

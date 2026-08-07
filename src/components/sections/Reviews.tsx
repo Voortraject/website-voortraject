@@ -10,7 +10,14 @@ import {
 } from "@/components/ui/carousel";
 import { GoogleG } from "@/components/GoogleG";
 import { useGoogleReviews } from "@/hooks/useGoogleReviews";
-import { fallbackKaarten, initiaalVan, kleurVoor, naarKaarten, type Kaart } from "@/lib/reviews";
+import {
+  fallbackKaarten,
+  GOOGLE_REVIEWS_URL,
+  initiaalVan,
+  kleurVoor,
+  naarKaarten,
+  type Kaart,
+} from "@/lib/reviews";
 
 // Profielfoto met vangnet: breekt de (Google-)foto-URL, dan valt 'ie terug op
 // de Google-stijl letter-avatar.
@@ -42,12 +49,20 @@ const Avatar = ({ naam, foto, kleur }: { naam: string; foto?: string; kleur?: st
   );
 };
 
-// Ingeklapte tekst reserveert deze hoogte (4 regels) → alle kaarten even hoog.
-// "Lees meer" verschijnt alleen als de tekst daadwerkelijk wordt afgekapt.
-const REVIEW_KAART =
-  "relative bg-card rounded-2xl border border-border p-6 flex flex-col h-full";
+// Ingeklapte tekst reserveert een vaste hoogte (4 regels, compact 3) → alle
+// kaarten even hoog. "Lees meer" verschijnt alleen als de tekst daadwerkelijk
+// wordt afgekapt. `compact` is voor de smalle kolom naast het contactformulier:
+// zelfde kaart, iets minder hoog.
+const REVIEW_KAART = "relative bg-card rounded-2xl border border-border flex flex-col h-full";
 
-export const ReviewKaart = ({ naam, foto, kleur, rating, tekst }: Kaart) => {
+export const ReviewKaart = ({
+  naam,
+  foto,
+  kleur,
+  rating,
+  tekst,
+  compact = false,
+}: Kaart & { compact?: boolean }) => {
   const tekstRef = useRef<HTMLParagraphElement>(null);
   const [open, setOpen] = useState(false);
   const [afkapbaar, setAfkapbaar] = useState(false);
@@ -66,7 +81,10 @@ export const ReviewKaart = ({ naam, foto, kleur, rating, tekst }: Kaart) => {
   }, [tekst, open]);
 
   return (
-    <article className={REVIEW_KAART} style={{ boxShadow: "0 4px 24px hsl(var(--primary) / 0.2)" }}>
+    <article
+      className={cn(REVIEW_KAART, compact ? "p-5" : "p-6")}
+      style={{ boxShadow: "0 4px 24px hsl(var(--primary) / 0.2)" }}
+    >
       {/* Google-logo in de hoek van de tegel */}
       <span className="absolute top-4 right-4">
         <GoogleG />
@@ -78,12 +96,18 @@ export const ReviewKaart = ({ naam, foto, kleur, rating, tekst }: Kaart) => {
         <span className="text-[15px] font-semibold text-primary truncate">{naam}</span>
       </div>
 
-      <div className="mt-4">
+      <div className={compact ? "mt-3" : "mt-4"}>
         <Sterren waarde={rating} />
       </div>
 
-      <blockquote className="mt-3 text-[15px] leading-[1.65] text-foreground">
-        <p ref={tekstRef} className={cn("min-h-[6.25rem]", !open && "line-clamp-4")}>
+      <blockquote className={cn("mt-3 leading-[1.65] text-foreground", compact ? "text-[14px]" : "text-[15px]")}>
+        <p
+          ref={tekstRef}
+          className={cn(
+            compact ? "min-h-[4.4rem]" : "min-h-[6.25rem]",
+            !open && (compact ? "line-clamp-3" : "line-clamp-4"),
+          )}
+        >
           {tekst}
         </p>
         {/* Vaste regel zodat kaarten zonder knop even hoog blijven. */}
@@ -149,8 +173,6 @@ export const Reviews = () => {
   const ratingLabel =
     aantal != null ? `${ratingTekst} op Google · ${aantal} reviews` : `${ratingTekst} op Google`;
 
-  const reviewsUrl = import.meta.env.VITE_GOOGLE_REVIEWS_URL as string | undefined;
-
   return (
     <section className="section-pad-home bg-primary" aria-labelledby="reviews-title">
       <div className="container-home">
@@ -158,24 +180,17 @@ export const Reviews = () => {
           <h2 id="reviews-title" className="h2-section !text-white">
             Wat bewoners <span className="text-accent">zeggen</span>
           </h2>
-          {/* Klikbaar naar het volledige Google-profiel (indien geconfigureerd);
-              toont het gemiddelde én het aantal reviews. */}
-          {reviewsUrl ? (
-            <a
-              href={reviewsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2.5 text-[16px] font-medium text-white/85 transition-colors hover:text-white"
-            >
-              <Sterren waarde={stats?.rating ?? 5} />
-              <span className="underline-offset-4 hover:underline">{ratingLabel}</span>
-            </a>
-          ) : (
-            <p className="mt-4 inline-flex items-center gap-2.5 text-[16px] font-medium text-white/85">
-              <Sterren waarde={stats?.rating ?? 5} />
-              <span>{ratingLabel}</span>
-            </p>
-          )}
+          {/* Klikbaar naar het volledige Google-profiel; toont het gemiddelde
+              én het aantal reviews. */}
+          <a
+            href={GOOGLE_REVIEWS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex items-center gap-2.5 text-[16px] font-medium text-white/85 transition-colors hover:text-white"
+          >
+            <Sterren waarde={stats?.rating ?? 5} />
+            <span className="underline-offset-4 hover:underline">{ratingLabel}</span>
+          </a>
         </div>
 
         {/* Oneindige, swipebare carrousel: mobiel 1 kaart, tablet 2, desktop 3.
