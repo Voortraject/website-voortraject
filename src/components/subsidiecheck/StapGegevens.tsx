@@ -6,6 +6,7 @@ import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
 import { subsidieProvider, type SubsidieCheckInput, type SubsidieRegeling } from "@/lib/subsidies";
 
+import { bewaarContact } from "./contactOpslag";
 import { schrijfSubsidiecheckLead, valideerContact, verstuurSubsidiecheckLead } from "./leadFormulier";
 
 const inputClass =
@@ -81,15 +82,19 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         // toont. Het team ziet de lead en volgt op.
         console.error("Subsidiecheck: bron faalde in de poort, lead zonder mail opgeslagen", bronFout);
         await schrijfSubsidiecheckLead({ waarden: resultaat.waarden, input, adres });
+        // Zonder lead-id: een vraag op het resultaat wordt dan een nieuwe lead.
+        // Vervelend maar acceptabel; de vraag kwijtraken is erger.
+        bewaarContact({ ...resultaat.waarden });
         pushGtmEvent("subsidiecheck_lead", {
           bewonertype: input.bewonertype,
           aantal_regelingen: 0,
-          bron_fout: true,
+          // 1/0 en niet true/false: pushGtmEvent neemt alleen tekst en getallen.
+          bron_fout: 1,
         });
         onOntgrendeld();
         return;
       }
-      await verstuurSubsidiecheckLead({
+      const { leadId } = await verstuurSubsidiecheckLead({
         waarden: resultaat.waarden,
         input,
         adres,
@@ -98,6 +103,9 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         overzichtUrl: typeof window !== "undefined" ? window.location.href : undefined,
         honeypot,
       });
+      // Onthouden voor de rest van deze sessie: het resultaat vraagt deze gegevens
+      // dan niet opnieuw, en een vraag daar landt bij dezelfde lead.
+      bewaarContact({ ...resultaat.waarden, leadId });
       // Geen persoonsgegevens in het event (privacy) — alleen grove context.
       pushGtmEvent("subsidiecheck_lead", { bewonertype: input.bewonertype, aantal_regelingen: regelingen.length });
       onOntgrendeld(); // component unmount hierna → bezig blijft bewust true

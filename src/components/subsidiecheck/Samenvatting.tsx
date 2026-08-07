@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Mail, Share2 } from "lucide-react";
+import { ArrowRight, Check, Mail } from "lucide-react";
 
 import {
   type Bewonertype,
@@ -39,10 +39,6 @@ interface SamenvattingProps {
   /** Toon de "mail mij dit overzicht"-knop (uit bij de gegevens-poort: die
       gegevens zijn dan al binnen). */
   toonMailKnop?: boolean;
-  /** Deelt de tool (native deel-sheet / kopieer-link). */
-  onDeelTool: () => void;
-  /** Terugval "link gekopieerd"-feedback (desktop zonder deel-sheet). */
-  deelGedeeld?: boolean;
 }
 
 // Zet een uitgelicht bedrag om in leesbare copy. Subsidie bij voorkeur als
@@ -66,8 +62,6 @@ export const Samenvatting = ({
   energielabel,
   energielabelBezig,
   onMailKlik,
-  onDeelTool,
-  deelGedeeld,
   toonMailKnop = true,
 }: SamenvattingProps) => {
   const { totaal, subsidies, leningen } = data;
@@ -113,6 +107,20 @@ export const Samenvatting = ({
           )}
           .
         </p>
+      )}
+
+      {/* De contactroute ("Ik heb een vraag") staat in het woningpaneel ernaast, in
+          de ruimte die daar onder de beelden tóch overblijft. Hier nam die knop te
+          veel aandacht weg van de uitkomst zelf. */}
+      {toonMailKnop && (
+        <button
+          type="button"
+          onClick={onMailKlik}
+          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full border border-accent bg-accent/15 px-5 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:bg-accent/25 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          <Mail size={16} strokeWidth={2} aria-hidden="true" />
+          Mail mij dit overzicht
+        </button>
       )}
 
       {/* Verhoudingsbalk: subsidies vs. leningen in één oogopslag. */}
@@ -161,13 +169,18 @@ export const Samenvatting = ({
           </p>
         </>
       ) : (
-        <div className="rounded-lg border border-border p-4" style={{ backgroundColor: "var(--card-soft)" }}>
-          <p className="text-[14px] leading-relaxed text-foreground/80">
+        // Tekst en knop naast elkaar: onder elkaar nam dit blok te veel hoogte in
+        // het samenvattingskaartje. Mobiel klapt het alsnog netjes onder elkaar.
+        <div
+          className="flex flex-col gap-3 rounded-lg border border-border p-4 sm:flex-row sm:items-center sm:gap-4"
+          style={{ backgroundColor: "var(--card-soft)" }}
+        >
+          <p className="flex-1 text-[14px] leading-relaxed text-foreground/80">
             Voor deze woning vonden we geen geregistreerd energielabel. Wij kunnen dat voor je regelen.
           </p>
           <a
             href="/contact"
-            className="mt-3 inline-flex items-center gap-2 rounded-full border border-accent bg-accent/10 px-4 py-2 text-[13.5px] font-semibold text-primary transition-colors hover:bg-accent/20 min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-accent bg-accent/10 px-4 py-2 text-[13.5px] font-semibold text-primary transition-colors hover:bg-accent/20 min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             Energielabel aanvragen
             <ArrowRight size={15} strokeWidth={2} aria-hidden="true" />
@@ -198,38 +211,6 @@ export const Samenvatting = ({
         ))}
       </ul>
 
-      {/* Acties: het overzicht mailen + de tool delen. */}
-      <div className="mt-8 h-px bg-border/60" role="separator" />
-      <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
-        {toonMailKnop && (
-          <button
-            type="button"
-            onClick={onMailKlik}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-accent bg-accent/15 px-5 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:bg-accent/25 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <Mail size={16} strokeWidth={2} aria-hidden="true" />
-            Mail mij dit overzicht
-          </button>
-        )}
-        <button
-          type="button"
-          onClick={onDeelTool}
-          aria-live="polite"
-          className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:border-primary/40 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          {deelGedeeld ? (
-            <>
-              <Check size={16} strokeWidth={2.5} className="text-accent" aria-hidden="true" />
-              Link gekopieerd
-            </>
-          ) : (
-            <>
-              <Share2 size={16} strokeWidth={2} aria-hidden="true" />
-              Deel de tool
-            </>
-          )}
-        </button>
-      </div>
     </section>
   );
 };

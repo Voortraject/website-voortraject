@@ -2,6 +2,130 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Subsidietool optimaliseren: contactdrempel, poort en mobiel (2026-08-07)
+
+Aanleiding: de tool wordt gebruikt, maar bezoekers nemen daarna nauwelijks contact op. Doel:
+zo laagdrempelig mogelijk een vraag kunnen stellen of contact opnemen, bezoekers zichzelf beter
+laten kwalificeren vóór het resultaat, en meer (eerlijke) overtuigingstechniek.
+
+Afgestemd met de opdrachtgever (2026-08-07):
+- Contactroutes: **WhatsApp met vooringevuld bericht** + een **vrij vraagveld**. Een bericht komt
+  in `notities` op de lead én per mail bij het team binnen.
+- Overtuiging: **alleen aantoonbaar ware claims**. Geen verzonnen schaarste of deadlines.
+- Reactiebelofte: **binnen 24 uur** (consistent met `/contact`).
+- Poort: opnieuw vormgeven op basis van onderzoek (zie hieronder).
+- Cijfers moeten **zichzelf bijwerken**; geen maandelijks handwerk.
+
+Onderzoeksconclusies die de poort sturen:
+1. Het moment klopt al: vragen vlak vóór de onthulling is het sterkste punt.
+2. Een **verplicht telefoonnummer** is de duurste veldkeuze (metingen: 5 tot ruim 50% minder
+   inzendingen). Nu verplicht, samen met voornaam, tussenvoegsel, achternaam en e-mail.
+3. **Gedeeltelijke onthulling** (eerst een echt stukje van de uitkomst tonen, dan pas vragen)
+   verslaat een harde poort in zowel aantal als leadkwaliteit.
+4. **Progressive profiling**: de rest van de gegevens ná de eerste toezegging ophalen.
+
+Bronnen voor zelf-bijwerkende cijfers (uitgezocht):
+- **Google-reviews**: score + aantal komen live binnen via `sync-google-reviews`, zie
+  `src/components/ReviewsCompact.tsx`. Nul onderhoud. Inzetten in de tool.
+- **Uit de check zelf**: aantal regelingen, hoogste percentage/bedrag via `topBedragen()`.
+- **Niet beschikbaar**: einddatums en budgetuitputting. De Energiesubsidiewijzer levert die
+  velden niet (geverifieerd in `src/lib/subsidies/energiesubsidiewijzer.ts` en de fixtures).
+  Dus géén deadline-urgentie; die zou handmatig onderhoud en verouderde claims opleveren.
+- Resterende vaste cijfers in één bestand `src/config/bewijs.ts` met peildatum, halfjaarlijks na
+  te lopen. Formuleringen kiezen die niet bederven.
+
+Openstaand bij de opdrachtgever:
+- [ ] Funnelcijfers uit het CRM (`aangemaakt_op` is de datumkolom).
+- [ ] `is_nullable` + CHECK-constraints op `leads_bewoners` (mag achternaam leeg?).
+- [ ] Akkoord op welke bestaande CRM-kolommen we mogen vullen (`energielabel`, `bouwjaar`,
+      `voorkeurskanaal`).
+- [ ] Wil n8n/CRM iets extra's met een bericht, of volstaat notitie + teammail?
+- [ ] Eventueel: read-only aggregatie-view in het CRM voor een "aantal geholpen bewoners"-getal
+      (migratie op de CRM-database, dus alleen met expliciet akkoord).
+
+### PR 1 — Contactdrempel op het resultaat (`feat/subsidiecheck-contactdrempel`) ✅
+De grootste en snelste winst: de enige actie was "Plan een gratis gesprek" naar `/contact`,
+waar de bezoeker álles opnieuw invulde wat hij in de poort al gaf.
+- [x] Inline vraagblok op het resultaat (`DirectContact.tsx`), zonder navigatie weg van het
+      resultaat. Bevestiging in beeld, geen aparte bedankpagina.
+- [x] Bericht schrijft naar `leads_bewoners.notities` en triggert een aparte teammail met
+      onderwerp "Vraag via subsidietool: <adres>", met de bezoeker als antwoordadres.
+- [x] WhatsApp-knop met vooringevuld bericht (adres van de bezoeker).
+- [x] Terugbelroute: afgeweken van het plan. In plaats van een los blok een vinkje "Ik word
+      liever gebeld" onder de vraag; het telefoonveld verschijnt pas dan (en is vooringevuld als
+      we het nummer al hebben). Eén formulier, twee uitkomsten, en het nummer wordt gevraagd op
+      het moment dat de bezoeker er zelf om vraagt.
+- [x] Mobiele actiebalk onderaan het resultaat (`MobieleActiebalk.tsx`), verbergt de zwevende
+      WhatsApp-knop zolang hij in beeld is.
+- [x] `/contact`-CTA: afgeweken van het plan. Niet vóórinvullen maar wéghalen van het resultaat.
+      `DirectContact` dekt vraag, WhatsApp, bellen en terugbelverzoek af; een tweede route naar
+      een leeg formulier voegt alleen keuzestress toe.
+- [x] Ook in de "geen regelingen"-tak, waar de lead voorheen volledig verdween.
+- [x] GTM-events: `subsidiecheck_vraag`, `subsidiecheck_whatsapp`, `subsidiecheck_bellen`.
+- [x] Geen dubbele leads: de function geeft nu het `leadId` terug, de site onthoudt dat voor de
+      sessie (`contactOpslag.ts`) en een vraag vult de notitie bij díe lead aan.
+
+**Review PR 1.** Getest met `bun run test` (113 tests, waarvan 11 nieuw in
+`src/test/subsidiecheckContact.test.ts`) en met een CDP-doorloop van de echte flow op
+390px-breedte, met alle schrijfcalls onderschept zodat er geen testlead in de productie-CRM
+belandde. Geverifieerd: 12/12 checks mobiel (poort → resultaat → vraag versturen, geen dubbele
+contactvelden, actiebalk in beeld, `actie: "bericht"` met het juiste `leadId`, nul directe
+inserts) en 4/4 op desktop (balk weg, zwevende knop terug, contactvelden verschijnen wél voor een
+onbekende bezoeker). Terzijde meegenomen: `bron_fout: true` in `StapGegevens` was een bestaande
+typefout (`pushGtmEvent` neemt alleen tekst en getallen) waardoor `tsc` niet doorliep; nu `1`.
+
+**Tweaks na de eerste review (2026-08-07), doorgevoerd in dezelfde PR:**
+- "Ik word liever gebeld" (vinkje) werd "Ik word het liefst…" met twee tapbare kaarten,
+  Gemaild of Gebeld, in hetzelfde patroon als "Ik ben…" in stap 1.
+- De belofteregel staat nu naast de verzendknop (op mobiel eronder: daar is de knop volle
+  breedte, en die smaller maken kost meer dan die regel oplevert).
+- "Deel de tool" is van de samenvatting naar de voet van het resultaat verhuisd, met een
+  kopieer-icoon. Boven de vouw kostte die te veel ruimte.
+- Luchtfoto en 3D-model staan mobiel naast elkaar (scheelt bijna een halve schermhoogte); vanaf
+  md weer onder elkaar in de smalle kolom. De bronvermelding op de foto is mobiel een maatje
+  kleiner, anders bedekt die op halve breedte het halve dak.
+- `TrajectStrip` ("Jouw verduurzamingstraject") is van het resultaat gehaald. Het component
+  blijft staan voor later.
+
+**Nog nodig voor deze PR:** de edge function `subsidiecheck-mail` moet gedeployed worden door de
+opdrachtgever (Claude heeft geen Supabase-token). Zonder deploy blijft de site werken, maar dan
+levert de function geen `leadId` en wordt een vraag een tweede lead in plaats van een notitie bij
+de bestaande. Optioneel secret: `MAIL_TEAM` (valt anders terug op `MAIL_BCC`, dan op
+info@voortraject.nl).
+
+### PR 2 — Poort opnieuw vormgeven (`feat/subsidiecheck-poort`)
+- [ ] Regelingen prefetchen zodra stap 1 klaar is, zodat de poort de echte teaser kan tonen
+      ("we vonden 7 regelingen voor jouw adres, waaronder tot 30% subsidie").
+- [ ] Velden terug naar voornaam + e-mail verplicht; telefoon optioneel met eerlijke reden.
+      Achternaam alleen behouden als de CRM-kolom dat afdwingt.
+- [ ] Optioneel vraagveld in de poort ("heb je nu al een vraag?").
+- [ ] Twee kwalificatievragen vóór de poort, gepresenteerd als verfijning van het resultaat:
+      wanneer wil je aan de slag, en wat is je grootste vraag. Dubbel nut: kwalificatie voor het
+      team, commitment voor de bezoeker.
+- [ ] Automatische verrijking van de lead met wat we al ophalen: energielabel (EP-Online) en
+      bouwjaar (BAG). Geen extra vraag aan de bezoeker.
+- [ ] `bag_verblijfsobject_id` bewust NIET vullen: wij hebben een pand-id, geen
+      verblijfsobject-id. Verkeerde data is erger dan geen data.
+
+### PR 3 — Mobiele optimalisatie van de hele flow (`feat/subsidiecheck-mobiel`)
+- [ ] Stap 1 compacter; hele stap binnen één schermhoogte inclusief knop.
+- [ ] Resultaat: samenvatting mobiel inkorten, minder scroll tot de eerste actie.
+- [ ] Laadsequentie (~3,4s) mobiel heroverwegen: waarde van de labor illusion afwegen tegen
+      afhaakkans. Meten, niet gokken.
+- [ ] Kaartenlijst en trajectstrip mobiel nalopen.
+
+### PR 4 — Eerlijke overtuiging (`feat/subsidiecheck-bewijs`)
+- [ ] Live Google-score en reviewaantal in de poort en op het resultaat.
+- [ ] `src/config/bewijs.ts` met de vaste, houdbare claims en peildatum.
+- [ ] Peak-end-copy op het slot aanscherpen.
+
+### Verificatie (elke PR)
+- [ ] `bun run test` + `bun run lint`.
+- [ ] Formulieren testen via CDP-interceptie (zie lessons 2026-07-26), nooit echte leads in de
+      productie-CRM schrijven.
+- [ ] Mobiel gecontroleerd op echte breedtes, niet alleen desktop-resize.
+- [ ] Geen gedachtestreepjes in zichtbare copy.
+
 ## Partners wordt Zakelijk (2026-08-07)
 
 Branch: `feat/zakelijk-pagina`, af te takken van de huidige branch

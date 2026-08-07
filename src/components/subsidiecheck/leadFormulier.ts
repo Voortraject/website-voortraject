@@ -48,7 +48,14 @@ export type ContactResultaat = { fout: string } | { waarden: ContactSchoon };
 // Valideert de contactvelden en geeft óf de eerste foutmelding, óf de schone
 // waarden terug. Pure functie (geen state/side effects) zodat beide formulieren
 // exact dezelfde regels delen en dit los te testen is.
-export function valideerContact(velden: ContactVelden): ContactResultaat {
+export function valideerContact(
+  velden: ContactVelden,
+  opties: {
+    /** False op de vraag-route van het resultaat: daar is bellen niet het doel. */
+    telefoonVerplicht?: boolean;
+  } = {},
+): ContactResultaat {
+  const telefoonVerplicht = opties.telefoonVerplicht ?? true;
   const voornaam = velden.voornaam.trim();
   if (!voornaam) return { fout: "Vul je voornaam in." };
   if (voornaam.length > 100 || !NAME_RE.test(voornaam)) return { fout: "Je voornaam bevat ongeldige tekens." };
@@ -65,8 +72,10 @@ export function valideerContact(velden: ContactVelden): ContactResultaat {
   if (!EMAIL_RE.test(email) || email.length > 255) return { fout: "Dit lijkt geen geldig e-mailadres." };
 
   const telefoon = velden.telefoon.trim();
-  if (!telefoon) return { fout: "Vul je telefoonnummer in." };
-  if (!validatePhoneNL(telefoon)) return { fout: TELEFOON_FOUT };
+  if (!telefoon && telefoonVerplicht) return { fout: "Vul je telefoonnummer in." };
+  // Een ingevuld nummer moet altijd kloppen, ook als het veld optioneel is: een
+  // onbruikbaar nummer in het CRM is erger dan een leeg veld.
+  if (telefoon && !validatePhoneNL(telefoon)) return { fout: TELEFOON_FOUT };
 
   return { waarden: { voornaam, tussenvoegsel, achternaam, email, telefoon } };
 }
@@ -94,21 +103,27 @@ export async function schrijfSubsidiecheckLead(args: {
   waarden: ContactSchoon;
   input: SubsidieCheckInput;
   adres: Pick<PdokAdres, "straatnaam" | "woonplaatsnaam">;
+  /** Vraag van de bezoeker. Gaat als platte tekst naar `notities`. */
+  notitie?: string;
 }): Promise<void> {
-  const { waarden, input, adres } = args;
+  const { waarden, input, adres, notitie } = args;
   const { error } = await supabaseExternal.from("leads_bewoners").insert({
     tenant_id: "00000000-0000-0000-0000-000000000001",
     voornaam: waarden.voornaam,
     tussenvoegsel: waarden.tussenvoegsel || null,
     achternaam: waarden.achternaam,
     email: waarden.email,
-    telefoon: waarden.telefoon,
+    // Leeg nummer als NULL, niet als lege string: de vraag-route op het resultaat
+    // vraagt het telefoonnummer niet verplicht.
+    telefoon: waarden.telefoon || null,
     postcode: normalizePostcode(input.postcode),
     huisnummer: input.huisnummer,
     toevoeging: input.toevoeging?.trim() || null,
     straat: adres.straatnaam,
     stad: adres.woonplaatsnaam,
-    notities: null,
+    // Normaal leeg (die kolom is voor het team zelf); alleen een vraag van de
+    // bezoeker zelf zetten we erin, ongewijzigd zoals getypt.
+    notities: notitie?.trim() || null,
     subsidiecheck_interesses: bouwSubsidiecheckInteresses(input.maatregelen),
     // Het bewonertype uit stap 1, in de codes van het `Bewonertype`-type (ook de
     // waarden achter `?type=` in de deel-link). CHECK op de kolom: alleen NULL of
@@ -144,6 +159,10 @@ export const kanOverzichtMailen = !!MAIL_FUNCTIE_URL;
 // lead-insert zonder mail (de lead gaat nooit verloren). Gedeeld door de
 // gegevens-poort (StapGegevens) en het mail-blok onderaan het resultaat
 // (MailOverzicht), zodat het maar op één plek staat.
+//
+// Geeft het lead-id terug zodra de function dat meestuurt. Daarmee kan een vraag
+// die de bezoeker later op het resultaat stelt bij dezelfde lead landen, in
+// plaats van als tweede, dubbele lead in het CRM.
 export async function verstuurSubsidiecheckLead(args: {
   waarden: ContactSchoon;
   input: SubsidieCheckInput;
@@ -151,13 +170,13 @@ export async function verstuurSubsidiecheckLead(args: {
   regelingen: SubsidieRegeling[];
   overzichtUrl?: string;
   honeypot?: string;
-}): Promise<void> {
+}): Promise<{ leadId?: string }> {
   const { waarden, input, adres, regelingen, overzichtUrl, honeypot } = args;
 
   if (!MAIL_FUNCTIE_URL) {
     // Terugval: alleen de lead, geen mail.
     await schrijfSubsidiecheckLead({ waarden, input, adres });
-    return;
+    return {};
   }
 
   const res = await fetch(MAIL_FUNCTIE_URL, {
@@ -196,4 +215,80 @@ export async function verstuurSubsidiecheckLead(args: {
     }),
   });
   if (!res.ok) throw new Error(`subsidiecheck-mail gaf status ${res.status}`);
+
+  // Het id is meegenomen sinds de function het teruggeeft; oudere versies (of een
+  // gefaalde parse) leveren gewoon niets op en dan valt een later bericht terug
+  // op een nieuwe lead. Nooit hierop laten struikelen: de lead staat al veilig.
+  try {
+    const data = (await res.json()) as { leadId?: unknown };
+    return typeof data.leadId === "string" ? { leadId: data.leadId } : {};
+  } catch {
+    return {};
+  }
+}
+
+/** Maximale lengte van een vraag, gelijk aan het bericht op het contactformulier. */
+export const MAX_BERICHT = 1000;
+
+/** Valideert een vrije vraag. Geeft de foutmelding, of null als het goed is. */
+export function valideerBericht(bericht: string): string | null {
+  const tekst = bericht.trim();
+  if (!tekst) return "Vul je vraag in.";
+  if (tekst.length > MAX_BERICHT) return `Je vraag is te lang (maximaal ${MAX_BERICHT} tekens).`;
+  return null;
+}
+
+// Stuurt een vraag die de bezoeker op het resultaat stelt. De vraag komt in
+// `notities` op de lead én per mail bij het team, met de bezoeker als
+// antwoordadres zodat "beantwoorden" meteen bij de juiste persoon uitkomt.
+//
+// Met een bekend `leadId` (de bezoeker kwam net door de gegevens-poort) vult de
+// function de notitie aan bij díe lead: geen tweede lead voor dezelfde persoon.
+// Zonder id, of zonder edge function, wordt het een nieuwe lead met de vraag in
+// `notities` — een dubbele lead is vervelend, een verloren vraag is erger.
+export async function verstuurSubsidiecheckBericht(args: {
+  waarden: ContactSchoon;
+  bericht: string;
+  input: SubsidieCheckInput;
+  adres: Pick<PdokAdres, "straatnaam" | "woonplaatsnaam">;
+  leadId?: string;
+  overzichtUrl?: string;
+  honeypot?: string;
+}): Promise<void> {
+  const { waarden, bericht, input, adres, leadId, overzichtUrl, honeypot } = args;
+
+  if (!MAIL_FUNCTIE_URL) {
+    await schrijfSubsidiecheckLead({ waarden, input, adres, notitie: bericht });
+    return;
+  }
+
+  const res = await fetch(MAIL_FUNCTIE_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: SUPABASE_EXTERNAL_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_EXTERNAL_ANON_KEY}`,
+    },
+    body: JSON.stringify({
+      actie: "bericht",
+      leadId,
+      bericht,
+      voornaam: waarden.voornaam,
+      tussenvoegsel: waarden.tussenvoegsel || undefined,
+      achternaam: waarden.achternaam,
+      email: waarden.email,
+      telefoon: waarden.telefoon || undefined,
+      honeypot: honeypot ?? "",
+      input: {
+        postcode: normalizePostcode(input.postcode),
+        huisnummer: input.huisnummer,
+        toevoeging: input.toevoeging?.trim() || undefined,
+        bewonertype: input.bewonertype,
+        maatregelen: input.maatregelen,
+      },
+      adres: { straatnaam: adres.straatnaam, woonplaatsnaam: adres.woonplaatsnaam },
+      overzichtUrl,
+    }),
+  });
+  if (!res.ok) throw new Error(`subsidiecheck-mail (bericht) gaf status ${res.status}`);
 }

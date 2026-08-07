@@ -32,7 +32,9 @@ export const WoningModel = ({ model, isPending }: WoningModelProps) => {
   if (!isPending && !g) return null;
 
   return (
-    <div className="relative aspect-[4/3] w-full border-t border-border bg-card-soft">
+    // Mobiel staat dit blok naast de luchtfoto (scheidingslijn links), vanaf md
+    // eronder (scheidingslijn boven). Zie Woningpaneel.
+    <div className="relative aspect-[4/3] w-full border-l border-border bg-card-soft md:border-l-0 md:border-t">
       {isPending || !g ? (
         <div className="flex h-full w-full items-center justify-center" aria-live="polite" aria-busy="true">
           <Loader2 size={22} className="animate-spin text-muted-foreground" aria-hidden="true" />
@@ -85,10 +87,8 @@ export const WoningModel = ({ model, isPending }: WoningModelProps) => {
         </svg>
       )}
 
-      {/* Labels als overlay (blok blijft zo even groot als de foto). */}
-      <span className="pointer-events-none absolute left-2 top-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        3D-model
-      </span>
+      {/* Alleen de bronvermelding als overlay; het kopje "3D-model" is eraf, het
+          plaatje spreekt voor zich. Het blok blijft even groot als de foto. */}
       <span className="pointer-events-none absolute bottom-1.5 left-2 text-[10px] leading-none text-muted-foreground/80">
         3D BAG (TU Delft)
       </span>

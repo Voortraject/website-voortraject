@@ -9,9 +9,14 @@
  * de huisstijl-tokens.
  *
  * Positie rechtsonder botst niet met de Axeptio cookie-widget (linksonder).
+ *
+ * Verbergt zichzelf zolang er een pagina-eigen actiebalk onderin staat (de
+ * mobiele balk op het subsidiecheck-resultaat, die WhatsApp zelf al aanbiedt).
+ * Zie `.heeft-actiebalk` in src/index.css.
  */
-const WHATSAPP_NUMBER = "31502112689"; // +31 50 211 2689 (zonder + en zonder 0)
-const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
+import { whatsappUrl } from "@/lib/whatsapp";
+
+const WHATSAPP_URL = whatsappUrl();
 
 // Zelfde zachte navy-schaduw als de header-pills (zie Header.tsx).
 const pillShadow = {
@@ -27,7 +32,7 @@ export const WhatsAppButton = () => {
       rel="noopener noreferrer"
       aria-label="Stuur ons een WhatsApp-bericht"
       title="Stuur ons een WhatsApp-bericht"
-      className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/70 backdrop-blur-xl transition-all duration-200 hover:bg-white/80 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:bottom-6 sm:right-6"
+      className="vt-whatsapp-zwevend fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white/70 backdrop-blur-xl transition-all duration-200 hover:bg-white/80 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:bottom-6 sm:right-6"
       style={pillShadow}
     >
       {/* Officieel WhatsApp-logo in merk-groen */}

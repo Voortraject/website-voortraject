@@ -5,6 +5,7 @@ import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
 import type { SubsidieCheckInput, SubsidieRegeling } from "@/lib/subsidies";
 
+import { bewaarContact } from "./contactOpslag";
 import { valideerContact, verstuurSubsidiecheckLead } from "./leadFormulier";
 
 const inputClass =
@@ -53,7 +54,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
     }
     setBezig(true);
     try {
-      await verstuurSubsidiecheckLead({
+      const { leadId } = await verstuurSubsidiecheckLead({
         waarden: resultaat.waarden,
         input,
         adres,
@@ -62,6 +63,9 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
         overzichtUrl: typeof window !== "undefined" ? window.location.href : undefined,
         honeypot,
       });
+      // Vanaf hier is de bezoeker bekend: het vraagblok eronder hoeft dan geen
+      // naam en e-mail meer te vragen en de vraag landt bij dezelfde lead.
+      bewaarContact({ ...resultaat.waarden, leadId });
       // Geen naam/e-mail in het event — alleen dat er een lead is (privacy).
       pushGtmEvent("subsidiecheck_lead", { aantal_regelingen: regelingen.length });
       setVerstuurd(true);
