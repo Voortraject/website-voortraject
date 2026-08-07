@@ -1,11 +1,13 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, ChevronDown, Loader2, MapPin } from "lucide-react";
 
+import { usePdokAdres } from "@/hooks/usePdokAdres";
 import { pushGtmEvent } from "@/lib/gtm";
 import { displayPostcode, normalizePostcode, POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib/pdok";
 import { ALLE_MAATREGELEN, type Bewonertype, type Maatregel } from "@/lib/subsidies";
 
+import { Bewijsregel } from "./Bewijsregel";
 import { BewonertypeKeuze } from "./BewonertypeKeuze";
 import { MaatregelKeuze } from "./MaatregelKeuze";
 
@@ -98,6 +100,28 @@ export const StapAdres = ({
 
   const gekozenMaatregelen = (): Maatregel[] => (maatregelen.length === 0 ? [...ALLE_MAATREGELEN] : maatregelen);
 
+  // Live adrescheck: een halve seconde na de laatste toetsaanslag zoeken we het
+  // adres al op. Dat doet drie dingen tegelijk: de bezoeker ziet meteen dat we
+  // zíjn huis gevonden hebben (kleine beloning voor de eerste moeite), een typefout
+  // valt op vóór het verzenden, en bij het klikken op de knop is er niets meer op
+  // te halen. Zelfde react-query-sleutel als de pagina, dus geen dubbel verkeer.
+  const [vertraagd, setVertraagd] = useState({ pc: postcode, hn: huisnummer, tv: toevoeging });
+  useEffect(() => {
+    const t = setTimeout(() => setVertraagd({ pc: postcode, hn: huisnummer, tv: toevoeging }), 500);
+    return () => clearTimeout(t);
+  }, [postcode, huisnummer, toevoeging]);
+
+  // Niet zoeken zolang er een compact bevestigd adres staat (dan zijn de velden
+  // niet eens zichtbaar) of terwijl het handmatige blok openstaat.
+  const liveUit = !!bevestigdAdres || nietGevonden;
+  const liveAdres = usePdokAdres(liveUit ? "" : vertraagd.pc, liveUit ? "" : vertraagd.hn, vertraagd.tv);
+  // Alleen tonen als de vertraagde waarden nog gelijk zijn aan wat er staat; anders
+  // hoort de uitkomst bij een oudere invoer en is 'ie misleidend.
+  const bijDeTijd = vertraagd.pc === postcode && vertraagd.hn === huisnummer && vertraagd.tv === toevoeging;
+  const gevonden = bijDeTijd && !liveUit ? (liveAdres.data ?? null) : null;
+  const zoektLive = bijDeTijd && !liveUit && liveAdres.isFetching;
+  const nietHerkend = bijDeTijd && !liveUit && !liveAdres.isFetching && liveAdres.isFetched && !liveAdres.data;
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (bezig) return;
@@ -123,9 +147,14 @@ export const StapAdres = ({
       return;
     }
 
-    setBezig(true);
-    const adres = await zoekAdres(postcode, huisnummer, toevoeging);
-    setBezig(false);
+    // Meestal heeft de live check het adres al: dan is er niets meer op te halen
+    // en gaat de knop direct door.
+    let adres = gevonden;
+    if (!adres) {
+      setBezig(true);
+      adres = await zoekAdres(postcode, huisnummer, toevoeging);
+      setBezig(false);
+    }
 
     if (!adres) {
       setFout("We konden dit adres niet vinden. Check even je postcode en huisnummer.");
@@ -263,6 +292,33 @@ export const StapAdres = ({
           {fout && (
             <p id="sc-adres-fout" role="alert" className="mt-3 text-[14px] text-destructive">
               {fout}
+            </p>
+          )}
+
+          {/* Terugkoppeling van de live check. "Niet herkend" is bewust rustig
+              gehouden (geen rood): je typt nog, en het handmatige blok vangt een
+              onbekend adres straks alsnog op. */}
+          {!fout && (zoektLive || gevonden || nietHerkend) && (
+            <p className="mt-2.5 flex items-center gap-1.5 text-[13.5px]" aria-live="polite">
+              {zoektLive ? (
+                <>
+                  <Loader2 size={14} className="animate-spin text-muted-foreground" aria-hidden="true" />
+                  <span className="text-muted-foreground">Adres controleren…</span>
+                </>
+              ) : gevonden ? (
+                <>
+                  <Check size={14} strokeWidth={2.5} className="text-[hsl(var(--subsidie))]" aria-hidden="true" />
+                  <span className="text-foreground">
+                    {gevonden.straatnaam} {huisnummer.trim()}
+                    {toevoeging.trim() ? ` ${toevoeging.trim()}` : ""}, {gevonden.woonplaatsnaam}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <MapPin size={14} className="text-muted-foreground" aria-hidden="true" />
+                  <span className="text-muted-foreground">Dit adres herkennen we nog niet.</span>
+                </>
+              )}
             </p>
           )}
         </>
@@ -415,6 +471,13 @@ export const StapAdres = ({
           </li>
         ))}
       </ul>
+
+      {/* Hier geeft iemand voor het eerst iets van zichzelf prijs (zijn adres),
+          dus staat onze echte Google-score er ook. Zelfde regel als bij de twee
+          latere vraagmomenten. */}
+      <div className="mt-3 flex justify-center">
+        <Bewijsregel />
+      </div>
     </form>
   );
 };
