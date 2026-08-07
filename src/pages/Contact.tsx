@@ -3,7 +3,7 @@ import { CheckCircle, Loader2, Mail, MapPin, Phone } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
-import { Reviews } from "@/components/sections/Reviews";
+import { ReviewsCompact } from "@/components/ReviewsCompact";
 import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
 import { normalizePostcode, POSTCODE_RE, zoekAdres } from "@/lib/pdok";
 import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
@@ -759,13 +759,16 @@ const Contact = () => {
                   </div>
                 ))}
               </div>
+
+              {/* Vult de ruimte onder de contactgegevens, zodat de reviews op
+                  desktop naast het formulier staan in plaats van eronder. */}
+              <div className="mt-3">
+                <ReviewsCompact />
+              </div>
             </div>
           </div>
         </div>
       </section>
-
-      {/* Dezelfde reviewsectie als op de homepagina, direct onder het formulier. */}
-      <Reviews />
 
       <Footer />
     </div>
