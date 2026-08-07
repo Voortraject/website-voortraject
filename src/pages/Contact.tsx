@@ -348,12 +348,9 @@ const Contact = () => {
                 </div>
               ) : (
                 <>
-                  <h3 className="font-display" style={{ fontSize: 22, fontWeight: 600, color: "#152C4E", marginBottom: 8 }}>
+                  <h3 className="font-display" style={{ fontSize: 22, fontWeight: 600, color: "#152C4E", marginBottom: 24 }}>
                     Vertel ons over jouw situatie
                   </h3>
-                  <p className="font-sans" style={{ fontSize: 14, color: "#6B6B6B", marginBottom: 24, lineHeight: 1.6 }}>
-                    Hoe meer we vooraf weten, hoe beter we je kunnen helpen.
-                  </p>
 
                   {errorMsg && (
                     <div
@@ -394,10 +391,12 @@ const Contact = () => {
 
                     {/* Naamvelden in hetzelfde raster als de lead-invoer in het CRM:
                         aanhef (smal) naast voornaam, daaronder tussenvoegsel (smal)
-                        naast achternaam. justify-end houdt de inputs op één lijn als
-                        een label over twee regels breekt. */}
-                    <div className={cx("grid grid-cols-6 gap-4", fieldWrap)}>
-                      <div className="col-span-2 flex flex-col justify-end">
+                        naast achternaam. Onder sm: 50/50 — in 2 van 6 kolommen past
+                        het woord "Tussenvoegsel" niet en liep het label buiten zijn
+                        vak. justify-end houdt de inputs op één lijn als een label
+                        over twee regels breekt. */}
+                    <div className={cx("grid grid-cols-2 sm:grid-cols-6 gap-4", fieldWrap)}>
+                      <div className="sm:col-span-2 min-w-0 flex flex-col justify-end">
                         <label htmlFor="f-aanhef" className={labelClass}>Aanhef</label>
                         <select
                           id="f-aanhef"
@@ -406,7 +405,7 @@ const Contact = () => {
                           value={bewoner.aanhef}
                           onChange={onChangeBew("aanhef")}
                         >
-                          <option value="">Maak een keuze</option>
+                          <option value="">—</option>
                           {aanhefOpties.map((o) => (
                             <option key={o} value={o}>
                               {o}
@@ -414,7 +413,7 @@ const Contact = () => {
                           ))}
                         </select>
                       </div>
-                      <div className="col-span-4 flex flex-col justify-end">
+                      <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
                         <label htmlFor="f-voornaam" className={labelClass}>Voornaam{required}</label>
                         <input
                           id="f-voornaam"
@@ -430,7 +429,7 @@ const Contact = () => {
                           maxLength={100}
                         />
                       </div>
-                      <div className="col-span-2 flex flex-col justify-end">
+                      <div className="sm:col-span-2 min-w-0 flex flex-col justify-end">
                         <label htmlFor="f-tussenvoegsel" className={labelClass}>Tussenvoegsel</label>
                         <input
                           id="f-tussenvoegsel"
@@ -445,7 +444,7 @@ const Contact = () => {
                           maxLength={25}
                         />
                       </div>
-                      <div className="col-span-4 flex flex-col justify-end">
+                      <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
                         <label htmlFor="f-achternaam" className={labelClass}>Achternaam{required}</label>
                         <input
                           id="f-achternaam"
