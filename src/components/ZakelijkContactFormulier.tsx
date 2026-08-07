@@ -397,10 +397,8 @@ export const ZakelijkContactFormulier = () => {
         </div>
 
         <div className={fieldWrap}>
-          <label htmlFor="zak-vragen" className={labelClass}>
-            Bericht{required}
-            <span className="text-muted-foreground font-normal">, max. {MAX_NOTES} tekens</span>
-          </label>
+          {/* Tekenlimiet staat alleen in de teller onder het veld. */}
+          <label htmlFor="zak-vragen" className={labelClass}>Bericht{required}</label>
           <textarea
             id="zak-vragen"
             name="vragen"

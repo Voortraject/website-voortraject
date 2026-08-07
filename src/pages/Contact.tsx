@@ -661,13 +661,10 @@ const Contact = () => {
                     </div>
 
                     <div className={fieldWrap}>
-                      {/* Zelfde opbouw als het berichtblok op /zakelijk:
-                          tekenlimiet in het label en een teller die altijd
-                          zichtbaar is. */}
-                      <label htmlFor="f-vragen-b" className={labelClass}>
-                        Bericht{required}
-                        <span className="text-[#8B8680] font-normal">, max. {MAX_NOTES} tekens</span>
-                      </label>
+                      {/* Zelfde opbouw als het berichtblok op /zakelijk. De
+                          tekenlimiet staat alleen in de teller eronder; twee
+                          keer hetzelfde getal is ruis. */}
+                      <label htmlFor="f-vragen-b" className={labelClass}>Bericht{required}</label>
                       <textarea
                         id="f-vragen-b"
                         name="vragen"
