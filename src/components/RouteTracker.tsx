@@ -1,10 +1,17 @@
 /**
- * Meet paginaweergaves bij navigatie binnen de SPA.
+ * Meet paginaweergaves bij navigatie die React Router client-side afhandelt.
  *
- * Waarom dit nodig is: het GTM-snippet draait één keer, bij de eerste lading.
- * React Router wisselt daarna van pagina zonder dat de browser iets herlaadt,
- * dus zonder deze component telt GA4 alleen de landingspagina en blijft de rest
- * van de sessie onzichtbaar.
+ * Let op de reikwijdte: bijna alle links op deze site zijn gewone <a href>, dus
+ * die doen een volledige herlading en worden al door de GA4-configuratietag
+ * geteld. Deze component dekt de twee plekken waar dat níet gebeurt, en waar de
+ * meting dus een gat had:
+ *
+ * 1. De subsidiecheck-CTA op de homepage. SubsidiecheckCta doet een navigate()
+ *    naar /subsidiecheck, zonder herlading. GA4 zag daardoor "/" en daarna
+ *    niets meer, terwijl dit juist het belangrijkste instappunt van de tool is.
+ * 2. De vijf <Navigate>-redirects in App.tsx (/partners, /uitvoerders,
+ *    /bewoners, /verduurzamen, /maatregelen). Daar telde GA4 het oude adres en
+ *    nooit de pagina die de bezoeker werkelijk te zien kreeg.
  *
  * Twee details die makkelijk misgaan:
  *

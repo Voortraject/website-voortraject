@@ -26,7 +26,7 @@ stilzwijgend een tag in de container. Werk dit bestand dus bij in dezelfde PR al
 
 | Event | Wanneer | Parameters | Bron |
 |---|---|---|---|
-| `virtual_page_view` | Bij navigatie binnen de SPA, niet bij de eerste lading | `page_path`, `page_title` | [`RouteTracker.tsx`](../src/components/RouteTracker.tsx) |
+| `virtual_page_view` | Bij client-side navigatie, niet bij de eerste lading | `page_path`, `page_title` | [`RouteTracker.tsx`](../src/components/RouteTracker.tsx) |
 | `whatsapp_klik` | Klik op de zwevende WhatsApp-knop | `plek` (`zwevend`) | [`WhatsAppButton.tsx`](../src/components/WhatsAppButton.tsx) |
 
 ### Formulieren
@@ -51,6 +51,17 @@ stilzwijgend een tag in de container. Werk dit bestand dus bij in dezelfde PR al
 (`StapGegevens`) is het de toegangspoort vóór het resultaat; bij `MailOverzicht` is het een
 mailverzoek ná het resultaat. Alleen de eerste stuurt `bewonertype` en `hulpvraag` mee, dus daaraan
 zijn ze in GA4 te onderscheiden.
+
+### Reikwijdte van `virtual_page_view`
+
+Bijna alle links op de site zijn gewone `<a href>` en doen dus een volledige herlading; die
+paginaweergaves telt de GA4-configuratietag al. `virtual_page_view` dekt alleen de client-side
+navigatie: de subsidiecheck-CTA op de homepage (`SubsidiecheckCta` doet `navigate()`) en de vijf
+`<Navigate>`-redirects in `App.tsx`. Klein in aantal, maar de eerste is wel het belangrijkste
+instappunt van de tool.
+
+Stapwissels binnen de subsidiecheck veranderen alleen de querystring en tellen bewust niet als
+paginaweergave; daarvoor is `subsidiecheck_stap`.
 
 ## Wat bewust in GTM zit en niet in de code
 
