@@ -21,6 +21,7 @@ import {
 import { Bewijsregel } from "./Bewijsregel";
 import { leesContact } from "./contactOpslag";
 import { DirectContact } from "./DirectContact";
+import { EersteStap } from "./EersteStap";
 import { GeenRegelingen } from "./GeenRegelingen";
 import { kanOverzichtMailen } from "./leadFormulier";
 import { MailOverzicht } from "./MailOverzicht";
@@ -296,6 +297,17 @@ export const StapResultaat = ({
           }
         />
         {woningpaneel}
+      </div>
+
+      {/* De persoonlijke eerste stap: één uitspraak over woningen uit dit
+          bouwjaar, eindigend in een vraag. Rendert niets zonder bouwjaar.
+          Hoort bij de conclusie hierboven, dus animeert met dezelfde stap mee. */}
+      <div className={beweeg ? "animate-onthul" : ""} style={beweeg ? { animationDelay: "120ms" } : undefined}>
+        <EersteStap
+          bouwjaar={pand?.bouwjaar}
+          bewonertype={input.bewonertype}
+          onVraag={(voorstel) => vraagMetVoorstel(voorstel, "eerste_stap")}
+        />
       </div>
 
       {/* Bronvermelding — de subsidie-informatie komt uit de Energiesubsidiewijzer
