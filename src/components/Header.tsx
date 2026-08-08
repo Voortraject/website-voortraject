@@ -48,6 +48,20 @@ const links: { href: string; label: string; dropdown?: typeof subsidiesItems }[]
 
 const MobileMenu = ({ onClose }: { onClose: () => void }) => {
   const [openSection, setOpenSection] = useState<string | null>(null);
+
+  // Sluiten ná de huidige event-lus, en alleen bij een klik op een link.
+  //
+  // Synchroon sluiten ontkoppelt het <a> uit de DOM terwijl de klik nog aan het
+  // bubbelen is. De klik komt dan wél bij `document` aan, maar met een target
+  // die nergens meer in het document hangt, waardoor een GTM-trigger op een
+  // CSS-selector ("header a") niet meer matcht. Een trigger op Click URL werkt
+  // dan nog wel, wat het verschil verklaarde tussen klik_contact (vuurde) en
+  // nav_klik (vuurde niet) bij één en dezelfde klik.
+  //
+  // De X-knop hieronder mag wél synchroon sluiten: daar wordt niets gemeten.
+  // Zie docs/tracking.md.
+  const sluitNaKlik = () => setTimeout(onClose, 0);
+
   return (
     <div
       className="fixed inset-0 z-50 lg:hidden flex flex-col animate-fade-up"
@@ -98,7 +112,7 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
                         <a
                           key={s.href}
                           href={s.href}
-                          onClick={onClose}
+                          onClick={sluitNaKlik}
                           className="inline-flex items-center gap-2 py-2 text-lg font-semibold text-white hover:text-accent"
                         >
                           <Search size={17} strokeWidth={2} aria-hidden="true" />
@@ -111,7 +125,7 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
                         <a
                           key={s.href}
                           href={s.href}
-                          onClick={onClose}
+                          onClick={sluitNaKlik}
                           className="py-2 text-lg text-white/80 hover:text-accent"
                         >
                           {s.label}
@@ -125,7 +139,7 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
               <a
                 key={l.href}
                 href={l.href}
-                onClick={onClose}
+                onClick={sluitNaKlik}
                 className="py-4 text-2xl font-display font-semibold tracking-tight text-white border-b border-white/10"
               >
                 {l.label}
@@ -135,7 +149,7 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
           <div className="mt-5 flex items-center gap-3">
             <a
               href="/subsidiecheck"
-              onClick={onClose}
+              onClick={sluitNaKlik}
               className="flex-1 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold bg-accent text-primary"
             >
               <Search size={18} strokeWidth={2} aria-hidden="true" />
