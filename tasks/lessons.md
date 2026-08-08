@@ -9,6 +9,37 @@ the user corrects course or a non-obvious gotcha surfaces. Review at session sta
 **Lesson:** the rule to follow next time
 -->
 
+## 2026-08-08 — Deze "SPA" navigeert bijna overal met een volledige herlading
+**Context:** Bij het opzetten van de paginameting nam ik aan wat je bij React Router mag
+aannemen: navigatie is client-side, dus GA4 telt alleen de landingspagina. Dat klopte hier niet.
+Er staat **geen enkele `<Link>` van react-router in de codebase** (de ene `<Link` die grep vindt is
+het lucide-icoon `Link2`). Header, footer en alle CTA's gebruiken gewone `<a href>`, dus normale
+navigatie is een echte paginalading die GA4 gewoon telt. Client-side navigeert alleen
+`SubsidiecheckCta` (via `useNavigate`) en de vijf `<Navigate>`-redirects in `App.tsx`.
+**Lesson:**
+- **Controleer bij alles wat met routing of meting te maken heeft eerst hóé er genavigeerd wordt**,
+  in plaats van het uit "het is een SPA" af te leiden. Eén grep: `grep -rn "<Link\|useNavigate" src`.
+- Dat verandert de conclusie wezenlijk. Het gat zat niet in "de hele sessie is onzichtbaar" maar op
+  één specifiek punt: de subsidiecheck-CTA op de homepage, het belangrijkste instappunt van de
+  tool, waar GA4 `/` zag en daarna niets.
+- Zelfde reflex geldt voor GTM-klik-triggers: bij `<a href>` verlaat de pagina, dus een trigger
+  zonder "wacht op tags" kan het event verliezen.
+
+## 2026-08-08 — Een GTM-tag die niet vuurt geeft geen foutmelding
+**Context:** De container zocht nog op navigatielabels van vóór de ombouw ("voor uitvoerders",
+"maatregelen"); van de 17 nav-items werden er nog 6 gemeten. Vijf events die de code al pushte
+hadden nooit een trigger gekregen, en alle event-parameters gingen verloren omdat er geen enkele
+dataLayer-variabele in de container zat. Niemand had het gemerkt, want er is geen enkel signaal:
+je ziet alleen een leeg of te laag rapport, en dat lees je als "weinig verkeer".
+**Lesson:**
+- **Meting heeft een test nodig, net als code.** `src/test/gtmContainer.test.ts` controleert de
+  container (`docs/gtm/`) tegen de `pushGtmEvent`-aanroepen in `src/`. Voeg je een event toe, werk
+  dan container én `docs/tracking.md` bij, anders faalt de suite.
+- **Bouw klik-triggers op de link of een `data-`attribuut, nooit op de zichtbare tekst.** Tekst is
+  copy en verandert; een URL is structuur. Dit is exact hoe de container was weggedreven.
+- **Controleer de querystring vóór je hem naar analytics stuurt.** Op `/subsidiecheck` staat het
+  adres van de bezoeker in de URL (`?pc=…&hn=…`), en dat ging ongefilterd mee als `page_location`.
+
 ## 2026-08-07 — Gestapelde PR's: verwijder de basisbranch pas als álles gemerged is
 **Context:** Vier PR's stonden op elkaar gestapeld (#89 → #91 → #93 → #94, elk met de vorige als
 base). Bij het mergen van #89 met `gh pr merge --delete-branch` sloot GitHub #91 automatisch: een
