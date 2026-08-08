@@ -107,6 +107,10 @@ const SubsidiecheckLive = () => {
       return false;
     }
   });
+  // Alleen waar op de rendering direct ná het verzenden van de poort. Bij een
+  // herlaad of een gedeelde link leest `ontgrendeld` uit sessionStorage en blijft
+  // dit false, want dan is er geen aankomst om te vieren.
+  const [netBinnen, setNetBinnen] = useState(false);
   const ontgrendel = () => {
     try {
       sessionStorage.setItem("sc_poort_ontgrendeld", "1");
@@ -114,6 +118,7 @@ const SubsidiecheckLive = () => {
       /* private mode → poort blijft binnen deze render-sessie ontgrendeld via state */
     }
     setOntgrendeld(true);
+    setNetBinnen(true);
   };
 
   // Stap 1 = adres + interesses + evt. situatie invullen. Zodra 'type' gezet is
@@ -367,6 +372,7 @@ const SubsidiecheckLive = () => {
                       // nog eens wachten op iets dat in de cache staat is pure
                       // vertraging.
                       alGezocht={poortAan}
+                      netBinnen={netBinnen}
                     />
                   )
                 )}

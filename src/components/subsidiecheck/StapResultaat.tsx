@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Link2, MessageCircle } from "lucide-react";
 
+import { isTestmodus } from "@/config/testmodus";
 import { useLaadsequentie } from "@/hooks/useLaadsequentie";
 import { usePand3d } from "@/hooks/usePand3d";
 import { usePandContour } from "@/hooks/usePandContour";
@@ -18,8 +19,10 @@ import {
 } from "@/lib/subsidies";
 
 import { Bewijsregel } from "./Bewijsregel";
+import { leesContact } from "./contactOpslag";
 import { DirectContact } from "./DirectContact";
 import { GeenRegelingen } from "./GeenRegelingen";
+import { kanOverzichtMailen } from "./leadFormulier";
 import { MailOverzicht } from "./MailOverzicht";
 import { MobieleActiebalk } from "./MobieleActiebalk";
 import { Samenvatting } from "./Samenvatting";
@@ -37,9 +40,18 @@ interface StapResultaatProps {
   /** De zoeksequentie draaide al in de poort. Hem hier herhalen zou de bezoeker
       een tweede keer laten wachten op iets dat al in de cache staat. */
   alGezocht?: boolean;
+  /** De bezoeker komt hier net vandaan de poort (niet via een herlaad of een
+      gedeelde link). Dan tonen we het aankomstmoment. */
+  netBinnen?: boolean;
 }
 
-export const StapResultaat = ({ input, adres, verbergMail = false, alGezocht = false }: StapResultaatProps) => {
+export const StapResultaat = ({
+  input,
+  adres,
+  verbergMail = false,
+  alGezocht = false,
+  netBinnen = false,
+}: StapResultaatProps) => {
   const { data: regelingen, isPending, isError, refetch } = useSubsidieCheck(input);
   const { data: woning, isPending: woningBezig } = useWoningInfo(input.postcode, input.huisnummer, input.toevoeging);
   // Pand + 3D-model op topniveau (dus vóór de vroege returns): ze starten meteen
@@ -81,6 +93,27 @@ export const StapResultaat = ({ input, adres, verbergMail = false, alGezocht = f
   // blijft: overleggen met een partner is een echte stap in dit traject, en die
   // link bevat het adres. Wie de tool zelf wil doorgeven, kan dezelfde link
   // sturen.
+
+  // Het aankomstmoment. De bezoeker heeft net zijn gegevens gegeven en krijgt
+  // waar hij op wachtte; dat kwam er tot nu toe als een harde swap in, want de
+  // regelingen stonden al in de cache. Eén regel bevestiging plus een rustige
+  // beweging maken er een aankomst van in plaats van een schermwissel.
+  //
+  // Alleen op de rendering direct na het verzenden (`netBinnen`), dus niet bij
+  // een herlaad of een gedeelde link: dan is er niets te vieren en zou het
+  // permanente ruis zijn.
+  //
+  // Bewegingsreductie respecteren we zoals elders in de check: dan geen
+  // animatieklassen, wel gewoon de bevestiging.
+  const reducedMotion = useMemo(
+    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    [],
+  );
+  const beweeg = netBinnen && !reducedMotion;
+  // De mail is alleen echt verstuurd als er een mailroute is én we niet in
+  // testmodus zitten. Beloven dat er een mail onderweg is die niet komt, is
+  // precies het soort onwaarheid dat we net overal hebben weggehaald.
+  const gemaildNaar = netBinnen && kanOverzichtMailen && !isTestmodus() ? leesContact()?.email : undefined;
 
   // Een voorstel voor het vraagveld onderaan, gezet door knoppen die iets
   // concreets vragen (zoals "Label aanvragen"). De teller telt de kliks mee,
@@ -205,10 +238,44 @@ export const StapResultaat = ({ input, adres, verbergMail = false, alGezocht = f
         </p>
       )}
 
+      {/* Het aankomstmoment: één regel, alleen direct na de poort. Zie de
+          toelichting bij `netBinnen` hierboven. */}
+      {netBinnen && (
+        <p
+          role="status"
+          className={`mb-4 flex items-center justify-center gap-2.5 rounded-full border border-border bg-card px-5 py-2.5 text-center text-[14px] text-foreground shadow-subtle ${
+            beweeg ? "animate-fade-up" : ""
+          }`}
+        >
+          <span
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent"
+            aria-hidden="true"
+          >
+            <Check size={14} strokeWidth={3} className="text-primary" />
+          </span>
+          <span>
+            <span className="font-semibold">Klaar.</span>{" "}
+            {gemaildNaar ? (
+              <>
+                We hebben je overzicht ook gemaild naar{" "}
+                <span className="font-semibold">{gemaildNaar}</span>.
+              </>
+            ) : (
+              <>Dit is jouw overzicht.</>
+            )}
+          </span>
+        </p>
+      )}
+
       {/* Split-hero: links het persoonlijke woningpaneel (luchtfoto +
           energielabel), rechts de samenvatting — die het zwaartepunt houdt
           (bredere kolom). Op mobiel onder elkaar, woningpaneel eerst. */}
-      <div className="grid gap-4 md:grid-cols-[1fr_300px] md:items-start md:gap-6">
+      <div
+        className={`grid gap-4 md:grid-cols-[1fr_300px] md:items-start md:gap-6 ${beweeg ? "animate-fade-up" : ""}`}
+        // Net na de bevestiging, zodat het overzicht eronder vandaan komt in
+        // plaats van tegelijk te verschijnen.
+        style={beweeg ? { animationDelay: "140ms" } : undefined}
+      >
         {/* De piek: conclusie eerst (inverted pyramid), dan pas de lijst. De
             foto staat rechts (smalle kolom), de samenvatting links (breed). */}
         <Samenvatting
@@ -248,28 +315,6 @@ export const StapResultaat = ({ input, adres, verbergMail = false, alGezocht = f
         </a>
         .
       </p>
-
-      {/* De combineer-uitleg, één keer. Stond eerder op élke kaart in de uitklap
-          ("Vaak te combineren met andere regelingen…"), dus twaalf keer dezelfde
-          zin. Hier staat hij op het moment dat de vraag opkomt: de bezoeker ziet
-          net een lijst en vraagt zich af of hij moet kiezen. Bewust rustig
-          vormgegeven, geen tweede CTA: de contactroute staat onder de lijst. */}
-      <div
-        className="mt-6 rounded-xl border border-border px-5 py-4 md:px-6"
-        style={{ backgroundColor: "var(--card-soft)" }}
-      >
-        <p className="text-[15px] leading-relaxed text-foreground/80">
-          <span className="font-semibold text-primary">Je hoeft hier niet uit te kiezen.</span> Veel van deze
-          regelingen zijn te combineren, maar niet allemaal en niet in elke volgorde. Wij zoeken gratis voor je uit
-          welke combinatie voor jouw woning het meeste oplevert.{" "}
-          <a
-            href="/subsidies/stapelen"
-            className="rounded-sm font-semibold text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            Hoe stapelen werkt
-          </a>
-        </p>
-      </div>
 
       {/* Groepen onder elkaar (landelijk → lokaal, layer-cake-scan), met de
           kaarten binnen een groep naast elkaar op desktop. */}
