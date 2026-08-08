@@ -431,8 +431,8 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         />
         <div className="min-w-0">
           <p className="text-[13.5px] leading-snug text-foreground">
-            <span className="font-semibold">Christian</span>, subsidiespecialist. Hij of een collega kijkt naar jouw
-            adres en neemt daarna contact met je op.
+            <span className="font-semibold">Christian</span>, subsidiespecialist. Hij of een collega belt je voor
+            gratis en vrijblijvend advies.
           </p>
           <Bewijsregel className="mt-1.5" alsLink={false} />
         </div>
