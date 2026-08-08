@@ -99,8 +99,12 @@ const NIVEAU_LABELS: Record<Niveau, string> = {
 };
 
 // Wit-transparant logo (voor de navy header). Publieke Supabase-storage-URL.
+// LET OP: bestandsnamen in de bucket `logos` zijn hoofdlettergevoelig en staan
+// hier hardcoded. Hernoem of verwijder je iets in de bucket, pas dan ook deze
+// regel aan EN de ~28 <img>-tags in de n8n-mailworkflows van het CRM. Precies
+// dat ging mis: het oude bestand verdween en deze mail hield een 400 over.
 const LOGO_URL =
-  "https://lfelnfukbrxznkevnevr.supabase.co/storage/v1/object/public/logos/Logo%20Voortraject%20Wit%20Transparant_Cropped.png";
+  "https://lfelnfukbrxznkevnevr.supabase.co/storage/v1/object/public/logos/Voortraject/voortraject-logo-wit--lageKB.png";
 
 // (Niveau-kleuren zijn bewust verwijderd: kleur = alleen het type, zie hierboven.)
 const TYPE_LABELS: Record<string, string> = { subsidie: "Subsidie", lening: "Lening" };
@@ -360,7 +364,7 @@ function bouwEmailHtml(opts: {
              dark-mode-slot: Gmail herkleurt effen achtergrondkleuren in dark
              mode (navy wordt lila), maar laat achtergrond-gradients met rust. -->
         <tr><td style="background-color:${KLEUR.primary};background-image:linear-gradient(${KLEUR.primary},${KLEUR.primary});padding:32px 24px;text-align:center;">
-          <img src="${LOGO_URL}" alt="Voortraject" style="height:60px;display:inline-block;border:0;">
+          <img src="${LOGO_URL}" alt="voortraject" width="216" height="60" style="height:60px;width:216px;display:inline-block;border:0;outline:none;text-decoration:none;color:#FFFFFF;font-size:24px;font-weight:700;font-family:Arial,Helvetica,sans-serif;">
         </td></tr>
 
         <!-- Body -->
