@@ -20,10 +20,18 @@ Object.defineProperty(globalThis, "ResizeObserver", { writable: true, value: Leg
 // inzending doet, viel er anders over met een losse "unhandled rejection".
 Object.defineProperty(Element.prototype, "scrollIntoView", { writable: true, value: () => {} });
 
+// `prefers-reduced-motion` staat in tests bewust AAN. De zoeksequentie van de
+// subsidiecheck duurt anders ruim drie seconden aan echte timers, en elke test
+// die de poort of het resultaat rendert zou daarop moeten wachten. Met deze
+// voorkeur slaat de sequentie zichzelf over, precies zoals bij een bezoeker die
+// bewegingsreductie aan heeft staan. Wie de sequentie zelf wil testen, mockt
+// matchMedia in dat testbestand.
+const REDUCED_MOTION = "prefers-reduced-motion";
+
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: (query: string) => ({
-    matches: false,
+    matches: query.includes(REDUCED_MOTION),
     media: query,
     onchange: null,
     addListener: () => {},

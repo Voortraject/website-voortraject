@@ -194,9 +194,12 @@ const SubsidiecheckLive = () => {
       // De kop doet twee dingen tegelijk: laten voelen hoe dichtbij het einde is
       // (mensen versnellen richting de finish) en voorkomen dat het woningkaartje
       // eronder voor het overzicht zelf wordt aangezien.
+      // De subregel zei eerder "dan zoeken we alle regelingen bij jouw adres".
+      // Dat klopt niet meer: het zoeken gebeurt nu zichtbaar op deze stap zelf,
+      // vóór de gegevensvraag, en het aantal staat er al boven.
       return {
         titel: "Nog één stap tot je overzicht",
-        sub: "Vul je gegevens in, dan zoeken we alle regelingen bij jouw adres.",
+        sub: "Vul je gegevens in, dan zetten we het volledige overzicht voor je klaar.",
       };
     }
     return { titel: "Jouw subsidieoverzicht" };
@@ -332,7 +335,17 @@ const SubsidiecheckLive = () => {
                   checkInput &&
                   adres && <StapGegevens input={checkInput} adres={adres} onOntgrendeld={ontgrendel} />
                 ) : (
-                  checkInput && adres && <StapResultaat input={checkInput} adres={adres} verbergMail={poortAan} />
+                  checkInput && adres && (
+                    <StapResultaat
+                      input={checkInput}
+                      adres={adres}
+                      verbergMail={poortAan}
+                      // Met de poort draaide de zoeksequentie al op stap 2; hier
+                      // nog eens wachten op iets dat in de cache staat is pure
+                      // vertraging.
+                      alGezocht={poortAan}
+                    />
+                  )
                 )}
               </div>
             </div>

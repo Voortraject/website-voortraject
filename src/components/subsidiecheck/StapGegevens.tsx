@@ -1,7 +1,8 @@
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { BadgeEuro, Check, FileCheck, HardHat, Home, Loader2, MapPin } from "lucide-react";
 
+import { useLaadsequentie } from "@/hooks/useLaadsequentie";
 import { usePandContour } from "@/hooks/usePandContour";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
 import { useWoningInfo } from "@/hooks/useWoningInfo";
@@ -14,6 +15,7 @@ import { bewaarContact } from "./contactOpslag";
 import { Energielabel } from "./Energielabel";
 import { Luchtfoto } from "./Luchtfoto";
 import { schrijfSubsidiecheckLead, valideerContact, verstuurSubsidiecheckLead } from "./leadFormulier";
+import { ZoekKaart } from "./Zoeksequentie";
 
 const inputClass =
   "w-full rounded-lg border border-input bg-background px-4 py-3.5 text-[16px] text-foreground outline-none transition min-h-[52px] focus:border-accent focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.18)]";
@@ -35,6 +37,11 @@ const HULPVRAGEN = [
 
 type HulpvraagId = (typeof HULPVRAGEN)[number]["id"];
 
+// Hoe lang de poort maximaal op de bron wacht voordat het formulier hoe dan ook
+// verschijnt. De zoeksequentie duurt zelf al ~3,4s; dit is de vangnetgrens voor
+// een hangende bron.
+const MAX_WACHT_MS = 8000;
+
 interface StapGegevensProps {
   input: SubsidieCheckInput;
   adres: PdokAdres;
@@ -45,15 +52,19 @@ interface StapGegevensProps {
 // De gegevens-poort: de tussenstap tussen "Jouw woning" en het resultaat.
 //
 // Opzet volgt het onderzoek naar dit soort poorten (zie tasks/todo.md): eerst
-// iets geven, dan pas vragen. Wat we geven is bewust géén voorproefje van de
-// regelingen zelf, want dat haalt de spanning weg bij het resultaat (en maakt de
-// zoekanimatie daar zinloos). Wel wat we van de wóning al weten: de luchtfoto met
-// de pandcontour, het bouwjaar en het geregistreerde energielabel. Concreet,
-// persoonlijk, en het bewijst dat we naar dít adres hebben gekeken.
+// iets geven, dan pas vragen. De stap geeft nu drie dingen, in deze volgorde:
+//  1. het zoeken zelf, zichtbaar (ZoekKaart), vóór de vraag in plaats van erna;
+//  2. het aantal gevonden regelingen, zónder titels of bedragen, zodat de
+//     bezoeker weet dát er iets is maar niet wát;
+//  3. wat we van de wóning weten: luchtfoto met pandcontour, bouwjaar en het
+//     geregistreerde energielabel. Concreet, persoonlijk, en het bewijst dat we
+//     naar dít adres hebben gekeken.
 //
-// Alleen voornaam, achternaam en e-mail zijn verplicht; het telefoonnummer is
-// optioneel, want een verplicht nummer is de duurste veldkeuze die er is en we
-// vragen er op het resultaat alsnog om als iemand gebeld wil worden.
+// Voornaam, achternaam, e-mail én telefoonnummer zijn verplicht. Let op: een
+// verplicht telefoonnummer is aantoonbaar de duurste veldkeuze in een formulier
+// (het hoogste verlaatpercentage na een wachtwoordveld). Het staat er op verzoek
+// van de opdrachtgever, omdat het team bewoners telefonisch opvolgt. Zakt het
+// aantal leads, dan is dit de eerste knop om aan te draaien.
 //
 // De lead gaat naar het CRM (`leads_bewoners`, bron "Voortraject", formulier
 // "subsidietool") én het overzicht gaat per mail. Faalt de bron, dan gaat de lead
@@ -68,13 +79,35 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
   const [bezig, setBezig] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const geladenOp = useRef(Date.now());
+  const bevrorenAantal = useRef<number | null>(null);
   const queryClient = useQueryClient();
 
-  // De regelingen worden hier al stil opgehaald, niet pas bij het verzenden: dat
-  // zet de cache klaar zodat het resultaat straks meteen staat en de mail het
-  // echte overzicht kan meesturen. We tonen er hier bewust niets van. Zelfde
-  // querysleutel als StapResultaat.
-  useSubsidieCheck(input);
+  // De regelingen worden hier opgehaald, niet pas bij het verzenden: dat zet de
+  // cache klaar zodat het resultaat straks meteen staat en de mail het echte
+  // overzicht kan meesturen. Zelfde querysleutel als StapResultaat.
+  //
+  // Nieuw is dat we het zoeken hier ook laten zíen, en daarna het aantal noemen.
+  // Twee redenen. Ten eerste stond de zoeksequentie eerst op het resultaat, dus
+  // ná de gegevensvraag: daar laat zichtbaar werk iemand wachten die al betaald
+  // heeft, terwijl het effect (Buell & Norton) juist zit in het opbouwen van
+  // waarde vóór de vraag. Ten tweede is het getal de reden om door te gaan: de
+  // bezoeker weet nu dát er iets is, maar niet wát. Alleen het aantal dus, geen
+  // titels of bedragen, anders is het overzicht zelf al weggegeven.
+  const { data: gevonden, isPending: zoekBezig, isError: zoekFout } = useSubsidieCheck(input);
+
+  // Bovengrens op het wachten. De zoekstap staat nu vóór de gegevensvraag, dus
+  // een trage of hangende bron houdt de bezoeker weg bij het formulier en kost
+  // dan een lead. Na MAX_WACHT_MS gaat de poort hoe dan ook open, zonder
+  // telling. De lead is leidend, altijd.
+  const [tijdOp, setTijdOp] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setTijdOp(true), MAX_WACHT_MS);
+    return () => clearTimeout(t);
+  }, []);
+
+  const overslaan = zoekFout || tijdOp;
+  const fase = useLaadsequentie(!zoekBezig, overslaan);
+  const aantal = gevonden?.length ?? 0;
 
   // Wat we van de woning weten. Dubbel nut: het vult het kaartje hieronder én het
   // gaat als verrijking mee naar de lead, zodat het team het niet hoeft op te
@@ -182,8 +215,42 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
     }
   };
 
+  // Zolang we zoeken staat alleen de zoekkaart in beeld. Bij een bronfout of na
+  // de bovengrens slaan we de sequentie over: dan valt er niets te tonen en mag
+  // de bezoeker niet blijven wachten.
+  if ((zoekBezig && !overslaan) || fase < 3) {
+    return (
+      <ZoekKaart
+        adresRegel={`${adresKort}, ${adres.woonplaatsnaam}`}
+        gemeente={input.gemeente}
+        provincie={input.provincie}
+        fase={fase}
+      />
+    );
+  }
+
+  // Bevriest de telling op het moment dat het formulier verschijnt. Een uitkomst
+  // die daarna alsnog binnenkomt zou een regel boven het formulier inschuiven
+  // terwijl de bezoeker aan het typen is.
+  if (bevrorenAantal.current === null) bevrorenAantal.current = zoekBezig || zoekFout ? 0 : aantal;
+  const telling = bevrorenAantal.current;
+
   return (
     <form onSubmit={handleSubmit} noValidate>
+      {/* De uitkomst als getal, nog zonder inhoud: dít is waarom de bezoeker
+          zijn gegevens geeft. Hij weet nu dát er iets is, maar niet wát.
+          Bij nul (of een bronfout) laten we deze regel weg: "We vonden 0
+          regelingen" vlak boven een gegevensvraag is geen aanbod. */}
+      {telling > 0 && (
+        <p className="mb-4 text-center font-display text-[19px] font-semibold leading-snug text-primary md:text-[22px]">
+          We vonden{" "}
+          <span className="text-[hsl(var(--subsidie))]">
+            {telling} {telling === 1 ? "regeling" : "regelingen"}
+          </span>{" "}
+          voor {adresKort}
+        </p>
+      )}
+
       {/* Wat we alvast teruggeven: de woning zelf. */}
       <div
         className="overflow-hidden rounded-2xl border-2 bg-card shadow-card"

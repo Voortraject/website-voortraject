@@ -247,14 +247,18 @@ describe("subsidiecheck gegevenspoort", () => {
     vul(screen.getByPlaceholderText(/Je telefoonnummer/), "0612345678");
   };
 
-  it("heeft een correct opgezet honeypot-veld", () => {
+  it("heeft een correct opgezet honeypot-veld", async () => {
     const { container } = metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={() => {}} />);
+    // De poort zoekt nu eerst (en toont dat); het formulier volgt daarna.
+    await screen.findByPlaceholderText(/Je voornaam/);
     controleerHoneypotOpzet(container);
   });
 
   it("schrijft een lead weg en ontgrendelt het resultaat", async () => {
     const onOntgrendeld = vi.fn();
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
+    // De poort zoekt nu eerst (en toont dat); het formulier volgt daarna.
+    await screen.findByPlaceholderText(/Je voornaam/);
     vulIn();
     wachtEvenAf();
     fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
@@ -270,6 +274,8 @@ describe("subsidiecheck gegevenspoort", () => {
   it("slaat de insert over bij een gevuld honeypot-veld, maar ontgrendelt wel", async () => {
     const onOntgrendeld = vi.fn();
     const { container } = metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
+    // De poort zoekt nu eerst (en toont dat); het formulier volgt daarna.
+    await screen.findByPlaceholderText(/Je voornaam/);
     vulIn();
     vul(honeypotVan(container), "https://spam.example");
     wachtEvenAf();

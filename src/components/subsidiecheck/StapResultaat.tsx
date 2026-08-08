@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Link2, Loader2, MessageCircle } from "lucide-react";
+import { Check, Link2, MessageCircle } from "lucide-react";
 
+import { useLaadsequentie } from "@/hooks/useLaadsequentie";
 import { usePand3d } from "@/hooks/usePand3d";
 import { usePandContour } from "@/hooks/usePandContour";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
@@ -25,6 +26,7 @@ import { Samenvatting } from "./Samenvatting";
 import { SubsidieCard } from "./SubsidieCard";
 import { scrollNaarVraag } from "./vraagFocus";
 import { Woningpaneel } from "./Woningpaneel";
+import { ZoekKaart } from "./Zoeksequentie";
 
 interface StapResultaatProps {
   input: SubsidieCheckInput;
@@ -32,37 +34,12 @@ interface StapResultaatProps {
   /** Met de gegevens-poort zijn naam/e-mail/telefoon al binnen: dan geen
       "mail mij dit overzicht"-blok (en -knop) meer op het resultaat. */
   verbergMail?: boolean;
+  /** De zoeksequentie draaide al in de poort. Hem hier herhalen zou de bezoeker
+      een tweede keer laten wachten op iets dat al in de cache staat. */
+  alGezocht?: boolean;
 }
 
-// Duur per zoekstap in de laadsequentie. Bewust ruim (~1,13s × 3 stappen ≈ 3,4s
-// totaal): een zichtbare, benoemde zoekstap verhoogt de gepercipieerde waarde
-// van het resultaat (labor illusion). De laatste stap wacht bovendien op de
-// echte fetch, dus bij een tragere bron duurt het vanzelf iets langer.
-const STAP_MS = 1133;
-
-// Eerlijke laadsequentie, gekoppeld aan de echte fetch: vertelt wát er
-// doorzocht wordt (landelijk → provinciaal → gemeentelijk). Bij
-// prefers-reduced-motion slaan we de sequentie over.
-const useLaadsequentie = (klaar: boolean) => {
-  const reduced = useMemo(
-    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    [],
-  );
-  const [fase, setFase] = useState(reduced ? 3 : 0);
-
-  useEffect(() => {
-    if (reduced) return;
-    if (fase >= 3) return;
-    // De laatste stap wacht op de echte fetch; de eerste twee tikken door.
-    if (fase === 2 && !klaar) return;
-    const t = setTimeout(() => setFase((f) => f + 1), STAP_MS);
-    return () => clearTimeout(t);
-  }, [fase, klaar, reduced]);
-
-  return fase;
-};
-
-export const StapResultaat = ({ input, adres, verbergMail = false }: StapResultaatProps) => {
+export const StapResultaat = ({ input, adres, verbergMail = false, alGezocht = false }: StapResultaatProps) => {
   const { data: regelingen, isPending, isError, refetch } = useSubsidieCheck(input);
   const { data: woning, isPending: woningBezig } = useWoningInfo(input.postcode, input.huisnummer, input.toevoeging);
   // Pand + 3D-model op topniveau (dus vóór de vroege returns): ze starten meteen
@@ -77,7 +54,9 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
   const { data: modelVol } = usePand3d(pand?.pandId, adres.centroideRd);
   const model = modelVol ?? modelSubject ?? null;
   const modelBezig = !model && !!pand?.pandId && subjectBezig;
-  const fase = useLaadsequentie(!isPending);
+  // Met de poort aan is er hier niets meer te zoeken: dat gebeurde al op de
+  // vorige stap en het antwoord staat in de cache.
+  const fase = useLaadsequentie(!isPending, alGezocht);
   const laden = isPending || fase < 3;
 
   // De URL bevat de volledige check-state, dus de link ís het overzicht —
@@ -191,56 +170,8 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
   }
 
   if (laden) {
-    const stappen = [
-      "Landelijke regelingen doorzoeken",
-      input.provincie ? `Provinciale regelingen voor ${input.provincie} doorzoeken` : "Provinciale regelingen doorzoeken",
-      input.gemeente ? `Regelingen van gemeente ${input.gemeente} doorzoeken` : "Gemeentelijke regelingen doorzoeken",
-    ];
-    // Eén zoekstap tegelijk, prominent in beeld; de stappen wisselen elkaar
-    // rustig kruisvervagend af (fase stuurt welke actief is).
-    const idx = Math.min(fase, stappen.length - 1);
     return (
-      <div
-        className="mx-auto max-w-[560px] animate-fade-up rounded-2xl border border-border bg-card p-8 text-center shadow-card md:p-10"
-        aria-live="polite"
-        aria-busy="true"
-      >
-        <p className="text-[13.5px] text-muted-foreground">We zoeken de regelingen voor {adresRegel}</p>
-
-        <Loader2 size={26} className="mx-auto mt-8 animate-spin text-accent" aria-hidden="true" />
-
-        {/* De actuele stap groot in beeld; absoluut gestapeld zodat ze rustig
-            in elkaar overvloeien zonder de layout te laten springen. */}
-        <div className="relative mx-auto mt-4 h-[64px]">
-          {stappen.map((label, i) => (
-            <p
-              key={i}
-              className="absolute inset-0 flex items-center justify-center px-4 text-[18px] font-semibold leading-snug text-primary transition-all duration-500 ease-out md:text-[20px]"
-              style={{
-                opacity: i === idx ? 1 : 0,
-                transform: i === idx ? "translateY(0)" : i < idx ? "translateY(-12px)" : "translateY(12px)",
-              }}
-              aria-hidden={i !== idx}
-            >
-              {label}
-            </p>
-          ))}
-        </div>
-
-        {/* Voortgangsstippen: de actieve rekt rustig uit tot een okerbalkje. */}
-        <div className="mt-7 flex items-center justify-center gap-2.5" aria-hidden="true">
-          {stappen.map((_, i) => (
-            <span
-              key={i}
-              className="h-2 rounded-full transition-all duration-500 ease-out"
-              style={{
-                width: i === idx ? 24 : 8,
-                backgroundColor: i <= idx ? "hsl(var(--accent))" : "hsl(var(--border))",
-              }}
-            />
-          ))}
-        </div>
-      </div>
+      <ZoekKaart adresRegel={adresRegel} gemeente={input.gemeente} provincie={input.provincie} fase={fase} />
     );
   }
 
