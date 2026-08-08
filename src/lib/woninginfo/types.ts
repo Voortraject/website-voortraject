@@ -13,9 +13,27 @@ export type EnergielabelData = {
   isVereenvoudigd?: boolean;
 };
 
+// Wat EP-Online over het gebóuw zegt, los van het label zelf. Bewust de ruwe
+// bronwaarden: EP-Online publiceert voor deze velden geen enum, dus vertalen
+// naar een eigen lijst zou een aanname zijn die stil fout kan gaan.
+export type GebouwData = {
+  /** EP-Online `Gebouwtype`: het woningtype. Ruwe bronwaarde. */
+  type?: string;
+  /** EP-Online `Gebouwklasse`: woning of utiliteitsgebouw. Ruwe bronwaarde. */
+  klasse?: string;
+  /** EP-Online `Gebouwsubtype`: de ligging van het appartement in het woongebouw. */
+  subtype?: string;
+};
+
 export type WoningInfo = {
   /** Geregistreerd energielabel, of null als er geen bekend is. */
   energielabel: EnergielabelData | null;
+  /**
+   * Gebouwgegevens uit EP-Online, of null zonder registratie. Alleen adressen
+   * mét een geregistreerd label hebben dit; voor de rest blijft het null en
+   * moet het woningtype ergens anders vandaan komen.
+   */
+  gebouw: GebouwData | null;
 };
 
 // 3D-massamodel (3D BAG LoD2.2): platte vlakken met een soort, gecentreerd op

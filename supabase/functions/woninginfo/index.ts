@@ -18,7 +18,7 @@
 import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { bouwModel, decodeer3dBag, kiesBuren } from "./model3d.ts";
-import { normaliseerEpOnline } from "./normaliseer.ts";
+import { normaliseerEpOnline, normaliseerGebouw } from "./normaliseer.ts";
 import type { Model3d, WoningInfo } from "./types.ts";
 
 const EP_ONLINE = "https://public.ep-online.nl/api/v5/PandEnergielabel/Adres";
@@ -281,7 +281,7 @@ Deno.serve(async (req: Request) => {
   const cached = cache.get(cacheKey);
   if (cached && Date.now() - cached.at < CACHE_TTL_MS) return json(cached.info);
 
-  const leeg: WoningInfo = { energielabel: null };
+  const leeg: WoningInfo = { energielabel: null, gebouw: null };
 
   const apiKey = Deno.env.get("EP_ONLINE_API_KEY");
   if (!apiKey) {
@@ -297,7 +297,7 @@ Deno.serve(async (req: Request) => {
   }
 
   const rows = await haalEpOnline(`${EP_ONLINE}?${params.toString()}`, apiKey);
-  const info: WoningInfo = { energielabel: normaliseerEpOnline(rows) };
+  const info: WoningInfo = { energielabel: normaliseerEpOnline(rows), gebouw: normaliseerGebouw(rows) };
 
   cache.set(cacheKey, { info, at: Date.now() });
   return json(info);
