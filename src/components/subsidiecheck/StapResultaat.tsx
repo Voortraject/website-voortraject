@@ -280,7 +280,17 @@ export const StapResultaat = ({
           data={samenvatting}
           bewonertype={input.bewonertype}
           plaats={input.gemeente ?? input.provincie}
-          maatregelen={input.maatregelen}
+          // De eerste stap staat in de samenvattingskaart zelf, op de plek waar
+          // eerder de aangevinkte maatregelen stonden. Daar sluit de piek van
+          // het scherm af met iets dat verder helpt in plaats van met een
+          // herhaling van de eigen keuze.
+          voet={
+            <EersteStap
+              bouwjaar={pand?.bouwjaar}
+              bewonertype={input.bewonertype}
+              onVraag={(voorstel) => vraagMetVoorstel(voorstel, "eerste_stap")}
+            />
+          }
           bedragen={bedragen}
           energielabel={woning?.energielabel ?? null}
           energielabelBezig={woningBezig}
@@ -297,17 +307,6 @@ export const StapResultaat = ({
           }
         />
         {woningpaneel}
-      </div>
-
-      {/* De persoonlijke eerste stap: één uitspraak over woningen uit dit
-          bouwjaar, eindigend in een vraag. Rendert niets zonder bouwjaar.
-          Hoort bij de conclusie hierboven, dus animeert met dezelfde stap mee. */}
-      <div className={beweeg ? "animate-onthul" : ""} style={beweeg ? { animationDelay: "120ms" } : undefined}>
-        <EersteStap
-          bouwjaar={pand?.bouwjaar}
-          bewonertype={input.bewonertype}
-          onVraag={(voorstel) => vraagMetVoorstel(voorstel, "eerste_stap")}
-        />
       </div>
 
       {/* Bronvermelding — de subsidie-informatie komt uit de Energiesubsidiewijzer

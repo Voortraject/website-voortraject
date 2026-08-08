@@ -1,10 +1,9 @@
-import { Check, Mail } from "lucide-react";
+import type { ReactNode } from "react";
+import { Mail } from "lucide-react";
 
 import {
   type Bewonertype,
   formatEuro,
-  type Maatregel,
-  MAATREGEL_LABELS,
   type Samenvatting as SamenvattingData,
   type TopBedrag,
 } from "@/lib/subsidies";
@@ -26,8 +25,8 @@ interface SamenvattingProps {
   bewonertype: Bewonertype;
   /** Gemeente, of anders provincie — voor de situatie-terugkoppeling. */
   plaats?: string;
-  /** De maatregelen waar de bewoner in geïnteresseerd is (kolom "wat dit dekt"). */
-  maatregelen: Maatregel[];
+  /** Sluitstuk onder de scheidingslijn (de eerste stap). Leeg → geen lijn. */
+  voet?: ReactNode;
   /** Sterkste concrete bedragen om als teaser uit te lichten (topBedragen()). */
   bedragen: { subsidie?: TopBedrag; lening?: TopBedrag };
   /** Geregistreerd energielabel (EP-Online), of null als onbekend/nog niet geladen. */
@@ -59,7 +58,7 @@ export const Samenvatting = ({
   data,
   bewonertype,
   plaats,
-  maatregelen,
+  voet,
   bedragen,
   energielabel,
   energielabelBezig,
@@ -197,35 +196,18 @@ export const Samenvatting = ({
         </div>
       )}
 
-      <div className="mt-8 h-px bg-border" role="separator" />
-
-      {/* De gekozen maatregelen waarop dit overzicht is gezocht — horizontaal
-          (wrap), i.p.v. de administratieve verdeling per overheidslaag. Bewust
-          "gevonden voor", niet "dekt": de lijst is wat de bewoner koos. */}
-      <p className="mt-4 text-[13px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        Regelingen gevonden voor deze maatregelen
-      </p>
-      {/* Mobiel als één doorlopende regel: dezelfde informatie in twee regels in
-          plaats van vier rijen met vinkjes. Op md+ blijft de vinkjeslijst, daar is
-          de ruimte er wel en leest het als bevestiging van je keuze. */}
-      <p className="mt-2.5 text-[14px] leading-relaxed text-foreground md:hidden">
-        {maatregelen.map((m) => MAATREGEL_LABELS[m]).join(", ")}
-      </p>
-      <ul className="mt-5 hidden flex-wrap gap-x-4 gap-y-2 md:flex">
-        {maatregelen.map((m) => (
-          <li key={m} className="inline-flex items-center gap-2 text-[14px] text-foreground">
-            <span
-              className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
-              style={{ backgroundColor: "hsl(var(--subsidie) / 0.12)" }}
-              aria-hidden="true"
-            >
-              <Check size={12} strokeWidth={3} className="text-[hsl(var(--subsidie))]" />
-            </span>
-            {MAATREGEL_LABELS[m]}
-          </li>
-        ))}
-      </ul>
-
+      {/* Hier stond "Regelingen gevonden voor deze maatregelen" met de lijst
+          maatregelen die de bewoner zelf had aangevinkt. Die herhaalde alleen
+          zijn eigen keuze en bracht niets nieuws; op deze plek, onderaan de
+          piek van het scherm, hoort iets dat verder helpt. Nu staat hier de
+          eerste stap (zie EersteStap): één uitspraak over woningen uit dit
+          bouwjaar, eindigend in een vraag. */}
+      {voet && (
+        <>
+          <div className="mt-8 h-px bg-border" role="separator" />
+          <div className="mt-5">{voet}</div>
+        </>
+      )}
     </section>
   );
 };

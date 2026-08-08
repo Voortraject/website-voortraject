@@ -32,7 +32,11 @@ export const EersteStap = ({ bouwjaar, bewonertype, onVraag }: EersteStapProps) 
   return (
     <section
       aria-label="Een eerste stap"
-      className="mt-6 rounded-xl border border-border border-l-4 border-l-accent p-4 sm:p-5"
+      // Geen eigen omlijning: dit blok staat binnen de samenvattingskaart, en
+      // die heeft er al een. Twee randen om elkaar heen leest als een kaartje in
+      // een kaartje. Wat blijft is de okerbalk links, genoeg om het als eigen
+      // stap te markeren, plus de zachte achtergrond tegen het wit van de kaart.
+      className="rounded-r-lg border-l-4 border-l-accent py-3.5 pl-4 pr-4 sm:pl-5"
       style={{ backgroundColor: "var(--card-soft)" }}
     >
       <p className="text-[15px] leading-relaxed text-foreground sm:text-[15.5px]">{tekst.zinnen.join(" ")}</p>
