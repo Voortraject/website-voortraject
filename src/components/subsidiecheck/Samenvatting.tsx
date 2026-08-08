@@ -39,6 +39,8 @@ interface SamenvattingProps {
   /** Toon de "mail mij dit overzicht"-knop (uit bij de gegevens-poort: die
       gegevens zijn dan al binnen). */
   toonMailKnop?: boolean;
+  /** Springt naar het vraagblok mét de labelaanvraag al ingevuld. */
+  onLabelAanvraag: () => void;
 }
 
 // Zet een uitgelicht bedrag om in leesbare copy. Subsidie bij voorkeur als
@@ -63,6 +65,7 @@ export const Samenvatting = ({
   energielabelBezig,
   onMailKlik,
   toonMailKnop = true,
+  onLabelAanvraag,
 }: SamenvattingProps) => {
   const { totaal, subsidies, leningen } = data;
   const meervoud = totaal === 1 ? "regeling" : "regelingen";
@@ -180,12 +183,17 @@ export const Samenvatting = ({
           <p className="min-w-0 flex-1 text-[14px] leading-relaxed text-foreground/80">
             Voor deze woning vonden we geen geregistreerd energielabel. Wij kunnen dat voor je regelen.
           </p>
-          <a
-            href="/contact"
+          {/* Was een link naar /contact: de bezoeker verliet het resultaat en
+              begon aan een leeg formulier, inclusief alles wat hij hier al had
+              ingevuld. Nu blijft hij op de pagina en staat de aanvraag beneden
+              al voor hem klaar. */}
+          <button
+            type="button"
+            onClick={onLabelAanvraag}
             className="inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-full border border-accent bg-accent/10 px-3.5 py-2 text-[13.5px] font-semibold text-primary transition-colors hover:bg-accent/20 min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             Label aanvragen
-          </a>
+          </button>
         </div>
       )}
 

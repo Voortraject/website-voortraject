@@ -18,6 +18,7 @@ import {
 
 import { Bewijsregel } from "./Bewijsregel";
 import { DirectContact } from "./DirectContact";
+import { GeenRegelingen } from "./GeenRegelingen";
 import { MailOverzicht } from "./MailOverzicht";
 import { MobieleActiebalk } from "./MobieleActiebalk";
 import { Samenvatting } from "./Samenvatting";
@@ -101,6 +102,18 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
   // blijft: overleggen met een partner is een echte stap in dit traject, en die
   // link bevat het adres. Wie de tool zelf wil doorgeven, kan dezelfde link
   // sturen.
+
+  // Een voorstel voor het vraagveld onderaan, gezet door knoppen die iets
+  // concreets vragen (zoals "Label aanvragen"). De teller telt de kliks mee,
+  // zodat hetzelfde voorstel opnieuw wordt ingevuld als de bezoeker het veld
+  // tussendoor heeft leeggemaakt; zonder die teller verandert het object niet
+  // en gebeurt er bij de tweede klik niets.
+  const [voorstel, setVoorstel] = useState<{ tekst: string; n: number } | undefined>();
+  const vraagMetVoorstel = (tekst: string, plek: string) => {
+    setVoorstel((huidig) => ({ tekst, n: (huidig?.n ?? 0) + 1 }));
+    pushGtmEvent("subsidiecheck_vraag_cta", { bewonertype: input.bewonertype, plek });
+    scrollNaarVraag();
+  };
 
   // Vanuit de samenvatting (bovenaan) naar het mailformulier springen.
   const conversieRef = useRef<HTMLDivElement>(null);
@@ -239,19 +252,11 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
     return (
       <>
         <div className="grid gap-4 md:grid-cols-[1fr_300px] md:items-start md:gap-6">
-          <div className="rounded-2xl border border-border bg-card p-6 text-center md:p-8">
-            <h3 className="font-display text-[18px] font-semibold text-primary">
-              Voor deze combinatie vonden we geen regelingen
-            </h3>
-            <p className="mx-auto mt-2 max-w-md text-[15px] leading-relaxed text-foreground/80">
-              Regelingen veranderen vaak en soms zit er meer in dan een eerste check laat zien. Wil je dat wij even
-              meekijken? Dat kost je niets.
-            </p>
-          </div>
+          <GeenRegelingen input={input} />
           {woningpaneel}
         </div>
         <div className="mt-6">
-          <DirectContact input={input} adres={adres} overzichtUrl={overzichtUrl} />
+          <DirectContact input={input} adres={adres} overzichtUrl={overzichtUrl} voorstel={voorstel} />
         </div>
         <MobieleActiebalk whatsappBericht={whatsappBericht} bewonertype={input.bewonertype} />
       </>
@@ -285,6 +290,15 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
           energielabelBezig={woningBezig}
           onMailKlik={scrollNaarMail}
           toonMailKnop={!verbergMail}
+          // "Label aanvragen" stuurde de bezoeker naar /contact, waar hij alles
+          // opnieuw moest invullen wat hij hier al gaf. Nu springt hij naar het
+          // vraagblok onderaan met de aanvraag al ingevuld: alleen nog versturen.
+          onLabelAanvraag={() =>
+            vraagMetVoorstel(
+              "Ik wil graag een energielabel laten aanvragen voor mijn woning. Kunnen jullie dat voor mij regelen?",
+              "energielabel",
+            )
+          }
         />
         {woningpaneel}
       </div>
@@ -396,7 +410,7 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
           gesprek"-link naar /contact, waar de bezoeker álles opnieuw invulde wat
           hij hier al had gegeven. */}
       <div className={verbergMail ? "mt-10" : "mt-6"}>
-        <DirectContact input={input} adres={adres} overzichtUrl={overzichtUrl} />
+        <DirectContact input={input} adres={adres} overzichtUrl={overzichtUrl} voorstel={voorstel} />
       </div>
 
       {/* Rustige geruststelling onder de CTA, met onze echte Google-score ernaast.
