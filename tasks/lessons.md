@@ -9,6 +9,39 @@ the user corrects course or a non-obvious gotcha surfaces. Review at session sta
 **Lesson:** the rule to follow next time
 -->
 
+## 2026-08-08 — Nooit `git stash` in een werkmap die je met iemand anders deelt
+**Context:** Er werkte een tweede terminal in dezelfde map aan een andere branch. Om te
+controleren of mijn wijzigingen nieuwe lint-fouten opleverden, deed ik `git stash -u`, draaide de
+lint, en `git stash pop`. Die stash pakte niet alleen mijn bestanden maar ook hun onafgeronde werk
+aan `Header.tsx`. Erger nog: ze wisselden ondertussen van branch, dus mijn wijzigingen stonden
+ineens op hún branch, klaar om per ongeluk in hún commit te belanden. Er ging niets verloren, maar
+dat was geluk.
+**Lesson:**
+- `git stash`, `git checkout -b` en branchwissels zijn **repo-brede** handelingen. Ze raken iedereen
+  die in diezelfde map werkt, niet alleen jouw bestanden.
+- Werk je naast een andere sessie, maak dan meteen een **eigen worktree**:
+  `git worktree add <pad> <branch>`, plus een junction naar `node_modules`
+  (`cmd //c mklink //J node_modules "C:\\dev\\website-voortraject\\node_modules"`) zodat
+  `bun run test` en `tsc` daar gewoon draaien. De dev-server pakt vanzelf een vrije poort.
+- Een lint-vergelijking met `main` hoef je niet via stash te doen: draai de lint in de worktree en
+  vergelijk het aantal met dat van de hoofdmap.
+- Ging het toch mis: leg je werk eerst veilig als patch (`git diff -- <bestanden> > patch`) vóór je
+  ook maar iets aan git-state verandert, en herstel dan pas.
+- Controleer `git status`, `git branch --show-current` én `git stash list` opnieuw ná elke
+  onderbreking. De andere sessie verandert de wereld onder je handen.
+
+## 2026-08-08 — De testomgeving moet animaties uitzetten, niet uitzitten
+**Context:** De zoeksequentie van de subsidiecheck (~3,4s) verhuisde naar de gegevens-poort.
+Daarna vielen zeven bestaande tests om: ze renderden de poort en zochten meteen het formulier, dat
+er pas na de sequentie is. De verleiding is dan om overal `waitFor` met ruime timeouts te zetten.
+**Lesson:**
+- Zet `prefers-reduced-motion` **aan** in `src/test/setup.ts` (`matches: query.includes(...)`).
+  Dat is precies de schakelaar die de code zelf al respecteert, dus tests wachten niet op timers en
+  je test bovendien het pad dat echte gebruikers met bewegingsreductie zien.
+- Let op: `retry` dat in de hook zelf staat (`useSubsidieCheck` heeft `retry: 1`) overrulet de
+  `defaultOptions` van een test-QueryClient. Bij een bewust falende bron duurt het dus altijd nog
+  een retry-cyclus; daar hoort een ruimere `findBy`-timeout, geen mock-truc.
+
 ## 2026-08-08 — Deze "SPA" navigeert bijna overal met een volledige herlading
 **Context:** Bij het opzetten van de paginameting nam ik aan wat je bij React Router mag
 aannemen: navigatie is client-side, dus GA4 telt alleen de landingspagina. Dat klopte hier niet.

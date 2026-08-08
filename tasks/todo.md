@@ -2,6 +2,96 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Subsidietool: eerlijker, geen doodlopende einden, andere volgorde (2026-08-08)
+
+Aanleiding: analyse van de hele tool op conversie en waarde. Wat de analyse als eerste opleverde
+was geen conversietruc maar een reeks beweringen die niet klopten, plus twee schermen waar de
+bezoeker letterlijk vastliep. Die gaan voor.
+
+**Meetkanttekening vooraf, en die stuurt alles.** De nulmeting is 11 leads in de week van 3
+augustus. Bij dat volume is A/B-testen wiskundig onmogelijk: een verbetering van 20% aantonen
+vraagt duizenden bezoekers per variant. Elke wijziging hieronder is daarom gekozen omdat ze op
+zichzelf verdedigbaar is (waar, minder drempel, betere volgorde), niet omdat een test het zegt.
+Reken ook niet op grote losse effecten; bij Microsoft is ruwweg een derde van goed opgezette
+experimenten positief.
+
+**Geverifieerd tegen de live bron** (edge function `subsidiecheck`, 2026-08-08), niet aangenomen:
+- 9711AB Groningen, woningeigenaar: 10 regelingen. 7811AB Emmen: 12. 1012AB Amsterdam: 9.
+- Alleen "Thuisbatterij" aanvinken: **0 regelingen**, op elk getest adres.
+- "Huurder" in Groningen: **1 regeling**. Alleen "Zonnepanelen": 7, waarvan geen enkele een
+  zonnepanelensubsidie (allemaal leningen).
+- De bron levert **geen** einddatums of budgetuitputting, en **geen** maatregelen per regeling.
+  `voorWie` komt bij geen enkele regeling meer terug; die sectie bestaat niet meer op de
+  detailpagina's van Verbeterjehuis.
+
+### PR 1 — Alleen claims die we kunnen waarmaken (`fix/subsidiecheck-eerlijke-claims`)
+- [x] Maatregelregel van de kaart. De parser vult `maatregelen` met alle acht, dus elke kaart
+      toonde "Voor vrijwel alle maatregelen", ook een isolatiesubsidie voor Emmen.
+- [x] "Geen account nodig" → "Vrijblijvend", "Klaar in 1 minuut" → "Klaar in 2 minuten", in
+      `src/config/beloftes.ts` (stond dubbel en liep uit elkaar). Stap 1 kondigt nu aan dat de
+      gegevens nog komen.
+- [x] De combineer-belofte stond op elke kaart; staat nu één keer op het resultaat, met een
+      verwijzing naar `/subsidies/stapelen`.
+- [x] Tweede deelknop weg: twee knoppen naast elkaar die allebei "Link gekopieerd" tonen.
+- [x] `MailOverzicht` NIET verwijderd. Bij nader inzien geen dode code maar flag-gestuurde,
+      geteste code (vijf testbestanden), en de enige mailroute als de poort ooit uit gaat.
+
+### PR 2 — Geen doodlopende einden (`feat/subsidiecheck-geen-doodlopend-eind`)
+- [x] `GeenRegelingen.tsx`: bij nul resultaten ná eigen filtering halen we de verbrede uitkomst op
+      en noemen het getal ("dan zijn er wél 12"), met één knop die de `m`-parameter weghaalt. Ook
+      breder niets → geen loze knop.
+- [x] "Label aanvragen" linkte naar `/contact` met een leeg formulier. Springt nu naar het
+      vraagblok mét de aanvraag ingevuld.
+- [ ] **Bewust niet gedaan:** eigen GTM-event voor het verbreden. `gtmContainer.test.ts` eist een
+      trigger én tag in `docs/gtm/`, en die container werd op dat moment elders herzien. Toevoegen
+      zodra dat werk klaar is: `subsidiecheck_verbreed` met `aantal_regelingen`.
+- [ ] **Openstaand, vraag aan de opdrachtgever:** de huurder-tak (1 regeling in Groningen). Een
+      goede tekst daarvoor doet een uitspraak over wat Voortraject voor huurders doet; die wil ik
+      bevestigd hebben voor hij live gaat.
+
+### PR 3 — Eerst zoeken en tellen, dan pas vragen (`feat/subsidiecheck-zoeken-voor-vragen`)
+- [x] Zoeksequentie van het resultaat naar de poort (`Zoeksequentie.tsx`). Hij stond áchter de
+      gegevensvraag, op een antwoord dat toen al in de cache stond.
+- [x] "We vonden 12 regelingen voor Hoofdstraat 34" boven het bestaande woningkaartje. Alleen het
+      aantal, geen titels of bedragen.
+- [x] Randgevallen: bronfout, hangende bron (8s-grens), nul regelingen, en de telling wordt
+      bevroren zodra het formulier verschijnt.
+- [x] `prefers-reduced-motion` staat aan in de testomgeving, anders wacht elke test ruim drie
+      seconden op echte timers.
+
+### PR 4 — Bewijs op het punt van twijfel (`feat/subsidiecheck-bewijs-bij-de-vraag`)
+Op basis van onderzoek naar bewijs bij formulieren. De uitkomst weersprak deels het eigen plan:
+een volledige reviewkaart op de poort is **niet** aan te raden.
+- [x] De Google-score staat niet meer onder de verzendknop maar bij de contactvelden. Baymard:
+      mensen ervaren alleen díe delen van een pagina als veilig waar het signaal staat.
+- [x] Score is daar **niet klikbaar**. Een `target="_blank"`-link vlak bij een verzendknop is een
+      uitgang op het beslismoment.
+- [x] "Geen nieuwsbrief, alleen jouw overzicht" weg. Die zin noemt het gevreesde ding; vier
+      experimenten in JCR laten zien dat een privacygarantie zorgen wekt die anders sluimerend
+      waren gebleven. Nu een positieve doelomschrijving, wat de AVG hier toch al vraagt.
+- [x] Een gezicht: Christian (subsidiespecialist), met de eerlijke mededeling dat hij of een
+      collega contact opneemt. Dat is meteen de transparantie die het verplichte telefoonnummer
+      nodig heeft. Nieuwe asset `adviseur-christian.webp` (2,9 KB; het origineel is 1,1 MB).
+- [x] Integratietest voor de labelaanvraag uit PR 2 (die leunt op de testopzet uit PR 3).
+- [ ] **Niet gedaan, wacht op akkoord:** de "persoonlijke eerste stap". Zie hieronder.
+
+### Openstaand: de persoonlijke eerste stap waterdicht maken
+De opdrachtgever wil dit, maar terecht alleen als het klopt: veel woningen hebben geen
+geregistreerd energielabel, en een label van 3+ jaar oud zegt weinig. Voorstel is om het niet op
+het label te bouwen maar op **bouwjaar** (BAG, altijd aanwezig, veroudert niet), het label alleen
+te gebruiken als het er is én recent, en nooit een uitspraak te doen over dít huis maar over de
+woningvoorraad, eindigend in een vraag. Vraagt eerst akkoord, want het zijn feitelijke uitspraken
+op een publieke site.
+
+### Juridisch: het telefoonnummer
+Aparte, urgentere kwestie. De poort vraagt een verplicht telefoonnummer onder de kop "Waar mogen we
+je overzicht naartoe sturen?", zonder belvraag. Artikel 11.7 lid 2 Telecommunicatiewet vraagt per
+persoon aantoonbare toestemming of een eigen verzoek; de ACM verwerpt een procesbeschrijving of
+bellijst uitdrukkelijk als bewijs. PR 4 maakt nu expliciet dat er contact wordt opgenomen, wat de
+transparantie flink verbetert, maar het is geen vastgelegde toestemming per lead. Zie het gesprek
+met de opdrachtgever: nummer blijft verplicht (zijn keuze, team volgt telefonisch op), maar
+toestemming vastleggen is nog te doen.
+
 ## Google-tags opschonen + indexering op orde (2026-08-08)
 
 Aanleiding: de meting is deels verouderd (de site is veranderd, de GTM-container niet) en voor de
