@@ -238,31 +238,25 @@ export const StapResultaat = ({
         </p>
       )}
 
-      {/* Het aankomstmoment: één regel, alleen direct na de poort. Zie de
-          toelichting bij `netBinnen` hierboven. */}
-      {netBinnen && (
+      {/* Het aankomstmoment. Stond hier eerder als okergele pill met "Klaar.
+          Dit is jouw overzicht." Twee dingen klopten daar niet aan. Het vierde
+          iets: een gevulde accentcirkel met een vinkje is de vormtaal van een
+          gelukte betaling, niet van een adviesbureau. En bij een bezoeker
+          zonder mail zei hij letterlijk wat de kop erboven al zegt ("Jouw
+          subsidieoverzicht"), dus dan was het een regel om een regel.
+          Nu verschijnt hij alléén als er echt iets te melden valt: dat de mail
+          onderweg is. Dat is informatie die nergens anders staat. Zonder mail
+          is de schermwissel zelf de bevestiging. */}
+      {netBinnen && gemaildNaar && (
         <p
           role="status"
-          className={`mb-4 flex items-center justify-center gap-2.5 rounded-full border border-border bg-card px-5 py-2.5 text-center text-[14px] text-foreground shadow-subtle ${
-            beweeg ? "animate-fade-up" : ""
+          className={`mb-4 flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-center text-[13.5px] text-muted-foreground ${
+            beweeg ? "animate-onthul" : ""
           }`}
         >
-          <span
-            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent"
-            aria-hidden="true"
-          >
-            <Check size={14} strokeWidth={3} className="text-primary" />
-          </span>
+          <Check size={15} strokeWidth={2.5} className="shrink-0 text-[hsl(var(--subsidie))]" aria-hidden="true" />
           <span>
-            <span className="font-semibold">Klaar.</span>{" "}
-            {gemaildNaar ? (
-              <>
-                We hebben je overzicht ook gemaild naar{" "}
-                <span className="font-semibold">{gemaildNaar}</span>.
-              </>
-            ) : (
-              <>Dit is jouw overzicht.</>
-            )}
+            Je overzicht is ook gemaild naar <span className="font-semibold text-foreground">{gemaildNaar}</span>
           </span>
         </p>
       )}
@@ -271,10 +265,12 @@ export const StapResultaat = ({
           energielabel), rechts de samenvatting — die het zwaartepunt houdt
           (bredere kolom). Op mobiel onder elkaar, woningpaneel eerst. */}
       <div
-        className={`grid gap-4 md:grid-cols-[1fr_300px] md:items-start md:gap-6 ${beweeg ? "animate-fade-up" : ""}`}
-        // Net na de bevestiging, zodat het overzicht eronder vandaan komt in
-        // plaats van tegelijk te verschijnen.
-        style={beweeg ? { animationDelay: "140ms" } : undefined}
+        className={`grid gap-4 md:grid-cols-[1fr_300px] md:items-start md:gap-6 ${beweeg ? "animate-onthul" : ""}`}
+        // Vlak na de mailregel (als die er is), zodat het overzicht eronder
+        // vandaan komt in plaats van er tegelijk mee te verschijnen. Klein
+        // verschil, want twee blokken die 300ms uit elkaar liggen lezen als
+        // twee losse gebeurtenissen.
+        style={beweeg ? { animationDelay: "80ms" } : undefined}
       >
         {/* De piek: conclusie eerst (inverted pyramid), dan pas de lijst. De
             foto staat rechts (smalle kolom), de samenvatting links (breed). */}

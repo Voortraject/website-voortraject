@@ -39,7 +39,7 @@ const HULPVRAGEN = [
 type HulpvraagId = (typeof HULPVRAGEN)[number]["id"];
 
 // Hoe lang de poort maximaal op de bron wacht voordat het formulier hoe dan ook
-// verschijnt. De zoeksequentie duurt zelf al ~3,4s; dit is de vangnetgrens voor
+// verschijnt. De zoeksequentie duurt zelf 3s; dit is de vangnetgrens voor
 // een hangende bron.
 const MAX_WACHT_MS = 8000;
 
@@ -431,8 +431,8 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         />
         <div className="min-w-0">
           <p className="text-[13.5px] leading-snug text-foreground">
-            <span className="font-semibold">Christian</span>, subsidiespecialist. Hij of een collega belt je voor
-            gratis en vrijblijvend advies.
+            <span className="font-semibold">Christian</span>, subsidiespecialist. Hij of een collega denkt gratis en
+            vrijblijvend met je mee.
           </p>
           <Bewijsregel className="mt-1.5" alsLink={false} />
         </div>
@@ -440,9 +440,12 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
 
       {/* Meerdere antwoorden mogen: zie de toelichting bij HULPVRAGEN hierboven. */}
       <fieldset className="mt-6">
-        <legend className="mb-1 block text-[14px] font-semibold text-foreground">Waar kunnen we je mee helpen?</legend>
-        <p className="mb-3 text-[13px] text-muted-foreground">Meerdere antwoorden mogelijk.</p>
-        <div className="grid grid-cols-2 gap-2 sm:gap-3" role="group" aria-label="Waar kunnen we je mee helpen?">
+        {/* "Meerdere antwoorden mogelijk" staat er niet meer. De tegels zijn
+            checkboxes (role="checkbox"), dus wie er twee aanklikt ziet gewoon
+            dat het kan; wie er één aanklikt mist niets. De regel loste een
+            probleem op dat de bezoeker niet heeft. */}
+        <legend className="mb-3 block text-[14px] font-semibold text-foreground">Waar kunnen we je mee helpen?</legend>
+        <div className="grid grid-cols-2 gap-2 sm:gap-3" role="group" aria-label="Waar kunnen we je mee helpen? Meerdere antwoorden mogelijk.">
           {HULPVRAGEN.map(({ id, label, Icon }) => {
             const actief = hulpvragen.includes(id);
             return (
@@ -504,8 +507,16 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
           de gegevens voor gebruiken. Dat is meteen wat de AVG hier vraagt.
 
           De score staat niet meer onder de knop maar bij de velden hierboven. */}
+      {/* "Blijven bij ons" is bewust drie woorden en geen alinea. In deze markt
+          verkopen de offertesites je gegevens door aan tot zes bedrijven, en hun
+          recensies staan vol met bezoekers die daarna door onbekende nummers
+          werden gebeld. Wij doen dat niet: de lead gaat naar ons eigen CRM en
+          verder nergens heen. Dat is dus een ware claim, en een die de
+          concurrent niet kan maken. Kort houden, want een uitgebreide
+          privacybelofte wekt juist de zorg die ze wil wegnemen. */}
       <p className="mt-3 text-[12px] text-muted-foreground">
-        Je gegevens gebruiken we voor jouw overzicht en om je verder te helpen met je verduurzaming.
+        Je gegevens blijven bij ons: we gebruiken ze voor jouw overzicht en om je verder te helpen met je
+        verduurzaming.
       </p>
     </form>
   );

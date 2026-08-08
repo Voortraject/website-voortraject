@@ -10,10 +10,9 @@ import { useEffect, useMemo, useState } from "react";
 // vraag bouwt zichtbaar werk geen waarde meer op; het laat iemand wachten die
 // al betaald heeft, op een antwoord dat dan al in de cache staat.
 
-// Duur per zoekstap. Bewust ruim (~1,13s x 3 ≈ 3,4s totaal); de laatste stap
-// wacht bovendien op de echte fetch, dus bij een tragere bron duurt het vanzelf
-// iets langer.
-const STAP_MS = 1133;
+// Duur per zoekstap: 1s x 3 = 3s totaal. De laatste stap wacht bovendien op de
+// echte fetch, dus bij een tragere bron duurt het vanzelf iets langer.
+const STAP_MS = 1000;
 
 /**
  * Fase 0..3 van de zoeksequentie. 3 = klaar. Bij prefers-reduced-motion begint
