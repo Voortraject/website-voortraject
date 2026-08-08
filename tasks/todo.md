@@ -8,9 +8,8 @@ Vervolg op het traject van 2026-08-08 (PR's #106 t/m #111, allemaal gemerged). V
 adviseursblok inkorten, gebouwtype uit EP-Online meenemen, een persoonlijke eerste stap op het
 resultaat, en onderzoek naar best practice.
 
-Stand: **#113 gemerged** (gebouwtype, wacht nog op de handmatige deploy). **#112, #114 en #115
-open.** #115 staat gestapeld op #112: eerst #112 mergen, dan #115 retargeten naar `main`, en pas
-daarna de branches opruimen.
+Stand: **alles gemerged** (#112, #113, #114, #115) en de edge function is gedeployed. Wat er nog
+openstaat, staat onderaan deze sectie.
 
 ### PR 1 — Poort: minder ruis, andere geruststelling, rustiger aankomst (#112)
 
@@ -69,8 +68,8 @@ Bewegingsreductie slaat alles over.
 - [x] `normaliseerGebouw()` naast `normaliseerEpOnline()`, met een eigen rijselectie
 - [x] `WoningInfo.gebouw` aan beide kanten van de brug (edge function + `src/lib/woninginfo`)
 - [x] 5 unittests; 163 tests groen (was 158)
-- [ ] **Edge function deployen op het CRM-project `lfelnfukbrxznkevnevr`** (handmatig, opdrachtgever)
-- [ ] Ná de deploy: de echte waarden van `Gebouwtype` / `Gebouwklasse` uitlezen en hier noteren
+- [x] **Edge function gedeployed op het CRM-project `lfelnfukbrxznkevnevr`** (2026-08-09, handmatig)
+- [x] Ná de deploy: de echte waarden uitgelezen
 
 Bevestigd in het schema `PandEnergielabelV5` (public.ep-online.nl/swagger/v5/swagger.json): de
 velden `Gebouwklasse` ("Het soort gebouw: een woning of een utiliteitsgebouw"), `Gebouwtype` ("Het
@@ -79,6 +78,35 @@ drie, als string, **zonder enum**. De waarden gaan daarom ruw door, alleen getri
 vertaallijst zou gokwerk zijn dat stil de verkeerde kant op valt.
 
 Zolang het veld leeg is verandert er zichtbaar niets, en er is nog geen consument in de UI.
+
+#### Wat de bron werkelijk teruggeeft (9766PJ 15, live na de deploy)
+
+```json
+"gebouw": {
+  "type": "Twee-onder-een-kap / rijwoning hoek",
+  "klasse": "Woningbouw",
+  "subtype": "Twee-onder-een-kap"
+}
+```
+
+Drie dingen die je hier niet uit de swagger had kunnen halen, en die de keuze om niet te vertalen
+achteraf bevestigen:
+
+1. **`Gebouwtype` is geen enkelvoudig type maar een samengesteld label met een schuine streep.**
+   "Twee-onder-een-kap / rijwoning hoek" is één waarde, niet twee. Een naïeve mapping op
+   `type === "Rijwoning"` had hier dus niets herkend, en een `includes("rijwoning")` zou een
+   twee-onder-een-kap als rijwoning classificeren. Wie hierop wil filteren, moet eerst een reeks
+   adressen verzamelen en de échte lijst opbouwen.
+2. **`Gebouwsubtype` doet iets anders dan de swagger beweert.** Daar staat "de ligging van het
+   appartement in het woongebouw", maar bij dit eengezinshuis staat er `"Twee-onder-een-kap"`: het
+   veld kiest hier één kant van de schuine streep in `Gebouwtype`. Het is dus (ook) een
+   *disambiguatie* van het samengestelde type, niet alleen een appartementpositie.
+   **Dat maakt `subtype` waarschijnlijk het bruikbaardere veld van de twee**, precies het veld dat
+   buiten de oorspronkelijke opdracht viel en er "voor het geval dat" bij is gezet.
+3. **`Gebouwklasse` is `"Woningbouw"`,** voluit, niet een code als `W` of `Woning`.
+
+Nog onbekend: de volledige lijst waarden, en wat er bij een utiliteitsgebouw of een appartement
+staat. Verzamel dat uit echte adressen voordat je er logica op bouwt.
 
 ### Feiten voor de persoonlijke eerste stap (geverifieerd bij Milieu Centraal)
 
@@ -152,6 +180,10 @@ anders (1991 vs 1992); we houden 1992 aan, de conservatieve kant. Een woning uit
   probleem blijft wel staan: 1 regeling in Groningen is een mager resultaat op zichzelf.
 - **Toestemming per lead** voor telefonische opvolging (art. 11.7 lid 2 Telecommunicatiewet). Raakt
   het CRM.
+- **De waardenlijst van `Gebouwtype` / `Gebouwsubtype`.** Nu bekend van één adres (zie hierboven).
+  Voordat er logica op gebouwd wordt: verzamel de waarden van een reeks adressen, inclusief een
+  appartement en een utiliteitsgebouw. `Gebouwtype` blijkt samengesteld ("Twee-onder-een-kap /
+  rijwoning hoek"), dus matchen op losse woorden gaat mis.
 - **GTM-event `subsidiecheck_verbreed`** bij het verbreden na 0 regelingen. Kan pas als de
   container in `docs/gtm/` weer stabiel is, want `gtmContainer.test.ts` eist trigger én tag.
 
