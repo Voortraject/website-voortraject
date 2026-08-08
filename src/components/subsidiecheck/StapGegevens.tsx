@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { BadgeEuro, Check, FileCheck, HardHat, Home, Loader2, MapPin } from "lucide-react";
 
+import adviseurFoto from "@/assets/adviseur-christian.webp";
 import { useLaadsequentie } from "@/hooks/useLaadsequentie";
 import { usePandContour } from "@/hooks/usePandContour";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
@@ -319,10 +320,40 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         </label>
       </div>
 
+      {/* Geruststelling hoort bij de velden die de twijfel veroorzaken, niet
+          onderaan de pagina. Baymard ziet in zijn checkout-onderzoek dat mensen
+          alleen díe delen van een pagina als veilig ervaren waar het signaal
+          staat, en beveelt aan het pal naast de gevoelige velden te zetten. Hier
+          stond het bewijs onder de verzendknop; daar komt de twijfel te laat.
+          De score staat er bewust zónder link: zie Bewijsregel.
+
+          Het gezicht en de zin erbij doen nog iets tweeds. Deze stap vraagt een
+          telefoonnummer omdat het team bewoners telefonisch opvolgt, en dan hoort
+          de bezoeker vóór het invullen te weten dat er iemand belt. Dat is niet
+          alleen netjes, het is ook wat het nummer van een drempel in een dienst
+          verandert. */}
+      <div className="mt-6 flex items-center gap-3 rounded-xl border border-border p-3.5" style={{ backgroundColor: "var(--card-soft)" }}>
+        <img
+          src={adviseurFoto}
+          alt=""
+          width={44}
+          height={44}
+          loading="lazy"
+          className="h-11 w-11 shrink-0 rounded-full object-cover"
+        />
+        <div className="min-w-0">
+          <p className="text-[13.5px] leading-snug text-foreground">
+            <span className="font-semibold">Christian</span>, subsidiespecialist. Hij of een collega kijkt naar jouw
+            adres en neemt daarna contact met je op.
+          </p>
+          <Bewijsregel className="mt-1.5" alsLink={false} />
+        </div>
+      </div>
+
       {/* Eerst de gegevens: dat is waar deze stap over gaat en wat de bezoeker
           hier verwacht. De vraag eronder voelt daarna als een laatste detail in
           plaats van als een drempel vooraf. */}
-      <fieldset className="mt-6">
+      <fieldset className="mt-4">
         <legend className="mb-3 block text-[14px] font-semibold text-foreground">
           Waar mogen we je overzicht naartoe sturen?
         </legend>
@@ -465,18 +496,17 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         )}
       </button>
 
-      {/* Geruststelling links, onze echte Google-score rechts: allebei bedoeld voor
-          hetzelfde moment van twijfel, dus ze horen op één regel. Op een smal
-          scherm valt de score vanzelf naar de regel eronder. Live data: is die er
-          niet, dan staat hier alleen de zin. */}
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        {/* Op mobiel korter, anders passen de zin en de score samen niet op één
-            regel en valt de score eronder. */}
-        <p className="text-[12px] italic text-muted-foreground">
-          Geen nieuwsbrief<span className="hidden sm:inline">, alleen jouw overzicht</span>.
-        </p>
-        <Bewijsregel />
-      </div>
+      {/* Hier stond "Geen nieuwsbrief, alleen jouw overzicht." Die zin nóemt het
+          gevreesde ding, en dat is precies het patroon dat averechts werkt: vier
+          experimenten in de Journal of Consumer Research laten zien dat een
+          privacygarantie zorgen wekt "which, without assurances, would have
+          remained dormant". Dus geen ontkenning meer, maar gewoon zeggen waar we
+          de gegevens voor gebruiken. Dat is meteen wat de AVG hier vraagt.
+
+          De score staat niet meer onder de knop maar bij de velden hierboven. */}
+      <p className="mt-3 text-[12px] text-muted-foreground">
+        Je gegevens gebruiken we voor jouw overzicht en om je verder te helpen met je verduurzaming.
+      </p>
     </form>
   );
 };
