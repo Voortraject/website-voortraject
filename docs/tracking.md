@@ -45,7 +45,7 @@ stilzwijgend een tag in de container. Werk dit bestand dus bij in dezelfde PR al
 | `subsidiecheck_lead` | Gegevens ingevuld bij de poort, of overzicht per mail aangevraagd | `bewonertype`, `aantal_regelingen`, `hulpvraag`, `bron_fout` (1/0, alleen bij een bronstoring) | [`StapGegevens.tsx`](../src/components/subsidiecheck/StapGegevens.tsx), [`MailOverzicht.tsx`](../src/components/subsidiecheck/MailOverzicht.tsx) |
 | `subsidiecheck_voltooid` | Resultaat succesvol geladen | `aantal_regelingen`, `bewonertype`, `gemeente`, `provincie` | [`StapResultaat.tsx`](../src/components/subsidiecheck/StapResultaat.tsx) |
 | `subsidiecheck_vraag_cta` | Klik op een knop die naar het vraagblok springt | `bewonertype`, `plek` (`woningpaneel` = "Ik heb een vraag", `energielabel` = "Label aanvragen") | [`StapResultaat.tsx`](../src/components/subsidiecheck/StapResultaat.tsx) |
-| `subsidiecheck_vraag` | Vraag daadwerkelijk verstuurd | `bewonertype`, `wil_gebeld` (1/0), `bekend_contact` (1/0) | [`DirectContact.tsx`](../src/components/subsidiecheck/DirectContact.tsx) |
+| `subsidiecheck_vraag` | Vraag daadwerkelijk verstuurd | `bewonertype`, `bekend_contact` (1/0) | [`DirectContact.tsx`](../src/components/subsidiecheck/DirectContact.tsx) |
 | `subsidiecheck_whatsapp` | Klik op WhatsApp binnen de check | `bewonertype`, `plek` (`actiebalk`) | [`DirectContact.tsx`](../src/components/subsidiecheck/DirectContact.tsx), [`MobieleActiebalk.tsx`](../src/components/subsidiecheck/MobieleActiebalk.tsx) |
 
 Let op het verschil tussen `subsidiecheck_stap` en `subsidiecheck_start`. Het eerste meet dat een

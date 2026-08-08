@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { Check, Loader2, Mail, MessageCircle, Phone, Send } from "lucide-react";
+import { Check, Loader2, MessageCircle, Send } from "lucide-react";
 
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
@@ -7,7 +7,7 @@ import { whatsappUrl } from "@/lib/whatsapp";
 import type { SubsidieCheckInput } from "@/lib/subsidies";
 
 import { Bewijsregel } from "./Bewijsregel";
-import { leesContact, vulContactAan } from "./contactOpslag";
+import { leesContact } from "./contactOpslag";
 import { MAX_BERICHT, valideerBericht, valideerContact, verstuurSubsidiecheckBericht } from "./leadFormulier";
 
 const inputClass =
@@ -29,9 +29,9 @@ interface DirectContactProps {
 // /contact, waar de bezoeker álles opnieuw moest invullen wat hij in de poort al
 // had gegeven. Wie door de poort kwam heeft hier nog maar één veld: zijn vraag.
 //
-// Daarnaast twee directe routes voor wie liever niet typt: WhatsApp (met het
-// adres al in het bericht) en bellen. Die gaan buiten ons systeem om en zijn
-// daarom altijd zichtbaar, ook als het formulier net gefaald is.
+// Daarnaast WhatsApp (met het adres al in het bericht) voor wie liever niet
+// typt. Die route gaat buiten ons formulier om en is daarom altijd zichtbaar,
+// ook als het versturen net gefaald is.
 export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectContactProps) => {
   // Eén keer lezen bij het mounten: wisselt niet meer binnen dit scherm.
   const [bekend] = useState(() => leesContact());
@@ -48,8 +48,12 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
   const [voornaam, setVoornaam] = useState("");
   const [achternaam, setAchternaam] = useState("");
   const [email, setEmail] = useState("");
-  const [wilGebeld, setWilGebeld] = useState(false);
-  const [telefoon, setTelefoon] = useState(bekend?.telefoon ?? "");
+  // Hier stond de keuze "Ik word het liefst gemaild of gebeld", met een
+  // telefoonveld dat verscheen zodra je "Gebeld" koos. Eruit: dit blok gaat over
+  // één ding, je vraag stellen, en elke extra keuze leidt daarvan af. Wie door
+  // de poort kwam heeft zijn nummer al gegeven, dus het team kan hoe dan ook
+  // bellen of mailen.
+  const telefoon = bekend?.telefoon ?? "";
   const [fout, setFout] = useState<string | null>(null);
   const [bezig, setBezig] = useState(false);
   const [verstuurd, setVerstuurd] = useState(false);
@@ -86,8 +90,8 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
     }
 
     // Wie door de poort kwam is al bekend; anders vragen we het minimum om te
-    // kunnen antwoorden. Een telefoonnummer alleen als de bezoeker gebeld wil
-    // worden, en dan wél verplicht: zonder nummer kunnen we dat niet waarmaken.
+    // kunnen antwoorden. Het telefoonnummer is nooit verplicht: er staat hier
+    // geen telefoonveld meer.
     const resultaat = valideerContact(
       {
         voornaam: bekend?.voornaam ?? voornaam,
@@ -96,7 +100,7 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
         email: bekend?.email ?? email,
         telefoon,
       },
-      { telefoonVerplicht: wilGebeld },
+      { telefoonVerplicht: false },
     );
     if ("fout" in resultaat) {
       setFout(resultaat.fout);
@@ -105,24 +109,17 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
 
     setBezig(true);
     try {
-      // De belvoorkeur staat vóór de vraag in de notitie, zodat het team het
-      // meteen ziet. Zelfde opbouw als het contactformulier.
-      const notitie = wilGebeld ? `Wil graag gebeld worden.\n${bericht.trim()}` : bericht.trim();
       await verstuurSubsidiecheckBericht({
         waarden: resultaat.waarden,
-        bericht: notitie,
+        bericht: bericht.trim(),
         input,
         adres,
         leadId: bekend?.leadId,
         overzichtUrl,
         honeypot,
       });
-      // Een nummer dat hier voor het eerst binnenkomt onthouden we voor de rest
-      // van de sessie.
-      if (resultaat.waarden.telefoon) vulContactAan({ telefoon: resultaat.waarden.telefoon });
       pushGtmEvent("subsidiecheck_vraag", {
         bewonertype: input.bewonertype,
-        wil_gebeld: wilGebeld ? 1 : 0,
         bekend_contact: bekend ? 1 : 0,
       });
       setVerstuurd(true);
@@ -166,6 +163,9 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
             <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
               Je vraag is bij ons binnen
             </h3>
+            {/* De punt staat op dezelfde regel als de sluitende accolade. Op een
+                eigen regel voegt JSX er een spatie voor in, en dan lees je
+                "…@voorbeeld.nl . Je hoeft niets voor te bereiden." */}
             <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-foreground/80">
               We reageren binnen 24 uur
               {antwoordAdres ? (
@@ -173,8 +173,7 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
                   {" "}
                   op <span className="font-semibold text-foreground">{antwoordAdres}</span>
                 </>
-              ) : null}
-              {wilGebeld ? ", en we bellen je." : "."} Je hoeft niets voor te bereiden.
+              ) : null}. Je hoeft niets voor te bereiden.
             </p>
           </div>
         </div>
@@ -280,74 +279,6 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
               maxLength={255}
               onChange={(e) => {
                 setEmail(e.target.value);
-                setFout(null);
-              }}
-            />
-          </div>
-        )}
-
-        {/* Voorkeurskanaal als twee tapbare kaarten, zelfde patroon als "Ik ben…"
-            in stap 1. Gemaild staat voor: het telefoonveld verschijnt pas als de
-            bezoeker zelf om een telefoontje vraagt. */}
-        <fieldset className="mt-5">
-          <legend className="mb-3 block text-[14px] font-semibold text-foreground">Ik word het liefst…</legend>
-          <div className="grid grid-cols-2 gap-2 sm:gap-3" role="radiogroup" aria-label="Hoe wil je antwoord?">
-            {[
-              { id: "mail", label: "Gemaild", toelichting: "Antwoord in je inbox", Icon: Mail },
-              { id: "bel", label: "Gebeld", toelichting: "We bellen je even", Icon: Phone },
-            ].map(({ id, label, toelichting, Icon }) => {
-              const actief = id === "bel" ? wilGebeld : !wilGebeld;
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  role="radio"
-                  aria-checked={actief}
-                  onClick={() => {
-                    setWilGebeld(id === "bel");
-                    setFout(null);
-                  }}
-                  className={`relative flex items-start gap-2 rounded-lg border-2 px-3 py-3 text-left transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-3 sm:px-4 ${
-                    actief ? "border-accent bg-accent/10" : "border-border bg-card hover:border-primary/30"
-                  }`}
-                >
-                  <Icon size={20} strokeWidth={1.75} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
-                  <span>
-                    <span className="block text-[14px] font-semibold leading-snug text-primary sm:text-[15px]">
-                      {label}
-                    </span>
-                    {/* Toelichting kost mobiel te veel ruimte → alleen op sm+. */}
-                    <span className="mt-0.5 hidden text-[13px] text-muted-foreground sm:block">{toelichting}</span>
-                  </span>
-                  {actief && (
-                    <span
-                      className="absolute right-2.5 top-2.5 hidden h-5 w-5 items-center justify-center rounded-full bg-accent sm:flex"
-                      aria-hidden="true"
-                    >
-                      <Check size={13} strokeWidth={3} className="text-primary" />
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </fieldset>
-        {wilGebeld && (
-          <div className="mt-3 animate-fade-up">
-            <label className="sr-only" htmlFor="sc-vraag-telefoon">
-              Je telefoonnummer
-            </label>
-            <input
-              id="sc-vraag-telefoon"
-              type="tel"
-              autoComplete="tel"
-              inputMode="tel"
-              placeholder="Je telefoonnummer *"
-              className={inputClass}
-              value={telefoon}
-              maxLength={20}
-              onChange={(e) => {
-                setTelefoon(e.target.value);
                 setFout(null);
               }}
             />

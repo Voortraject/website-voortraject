@@ -52,7 +52,14 @@ export function leesContact(): BekendContact | null {
   }
 }
 
-/** Vult het bewaarde contact aan, bijvoorbeeld met een later opgegeven nummer. */
+/**
+ * Vult het bewaarde contact aan, bijvoorbeeld met een later opgegeven nummer.
+ *
+ * Op dit moment roept geen enkel scherm dit aan: het vraagblok op het resultaat
+ * vroeg om een telefoonnummer zodra je "Gebeld" koos, en die keuze is eruit
+ * gehaald. De functie blijft staan omdat de poort het enige punt is waar een
+ * nummer binnenkomt en een tweede invoerpunt zo weer aan te sluiten is.
+ */
 export function vulContactAan(velden: Partial<BekendContact>): void {
   const huidig = leesContact();
   if (!huidig) return;

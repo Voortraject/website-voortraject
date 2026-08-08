@@ -320,36 +320,6 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         </label>
       </div>
 
-      {/* Geruststelling hoort bij de velden die de twijfel veroorzaken, niet
-          onderaan de pagina. Baymard ziet in zijn checkout-onderzoek dat mensen
-          alleen díe delen van een pagina als veilig ervaren waar het signaal
-          staat, en beveelt aan het pal naast de gevoelige velden te zetten. Hier
-          stond het bewijs onder de verzendknop; daar komt de twijfel te laat.
-          De score staat er bewust zónder link: zie Bewijsregel.
-
-          Het gezicht en de zin erbij doen nog iets tweeds. Deze stap vraagt een
-          telefoonnummer omdat het team bewoners telefonisch opvolgt, en dan hoort
-          de bezoeker vóór het invullen te weten dat er iemand belt. Dat is niet
-          alleen netjes, het is ook wat het nummer van een drempel in een dienst
-          verandert. */}
-      <div className="mt-6 flex items-center gap-3 rounded-xl border border-border p-3.5" style={{ backgroundColor: "var(--card-soft)" }}>
-        <img
-          src={adviseurFoto}
-          alt=""
-          width={44}
-          height={44}
-          loading="lazy"
-          className="h-11 w-11 shrink-0 rounded-full object-cover"
-        />
-        <div className="min-w-0">
-          <p className="text-[13.5px] leading-snug text-foreground">
-            <span className="font-semibold">Christian</span>, subsidiespecialist. Hij of een collega kijkt naar jouw
-            adres en neemt daarna contact met je op.
-          </p>
-          <Bewijsregel className="mt-1.5" alsLink={false} />
-        </div>
-      </div>
-
       {/* Eerst de gegevens: dat is waar deze stap over gaat en wat de bezoeker
           hier verwacht. De vraag eronder voelt daarna als een laatste detail in
           plaats van als een drempel vooraf. */}
@@ -437,6 +407,36 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
           />
         </div>
       </fieldset>
+
+      {/* Geruststelling hoort bij de velden die de twijfel veroorzaken, niet
+          onderaan de pagina. Baymard ziet in zijn checkout-onderzoek dat mensen
+          alleen díe delen van een pagina als veilig ervaren waar het signaal
+          staat, en beveelt aan het pal naast de gevoelige velden te zetten. Hier
+          stond het bewijs onder de verzendknop; daar komt de twijfel te laat.
+          De score staat er bewust zónder link: zie Bewijsregel.
+
+          Het gezicht en de zin erbij doen nog iets tweeds. Deze stap vraagt een
+          telefoonnummer omdat het team bewoners telefonisch opvolgt, en dan hoort
+          de bezoeker vóór het invullen te weten dat er iemand belt. Dat is niet
+          alleen netjes, het is ook wat het nummer van een drempel in een dienst
+          verandert. */}
+      <div className="mt-6 flex items-center gap-3 rounded-xl border border-border p-3.5" style={{ backgroundColor: "var(--card-soft)" }}>
+        <img
+          src={adviseurFoto}
+          alt=""
+          width={44}
+          height={44}
+          loading="lazy"
+          className="h-11 w-11 shrink-0 rounded-full object-cover"
+        />
+        <div className="min-w-0">
+          <p className="text-[13.5px] leading-snug text-foreground">
+            <span className="font-semibold">Christian</span>, subsidiespecialist. Hij of een collega kijkt naar jouw
+            adres en neemt daarna contact met je op.
+          </p>
+          <Bewijsregel className="mt-1.5" alsLink={false} />
+        </div>
+      </div>
 
       {/* Meerdere antwoorden mogen: zie de toelichting bij HULPVRAGEN hierboven. */}
       <fieldset className="mt-6">
