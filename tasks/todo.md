@@ -2,6 +2,106 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Subsidietool: adviseursblok, gebouwtype en de persoonlijke eerste stap (2026-08-09)
+
+Vervolg op het traject van 2026-08-08 (PR's #106 t/m #111, allemaal gemerged). Vier opdrachten:
+adviseursblok inkorten, gebouwtype uit EP-Online meenemen, een persoonlijke eerste stap op het
+resultaat, en onderzoek naar best practice.
+
+### PR 1 — Adviseursblok korter (#112)
+
+- [x] Tekst naar "Christian, subsidiespecialist. Hij of een collega belt je voor gratis en
+      vrijblijvend advies." Plek blijft onder de contactvelden.
+- [x] Gemeten op 390px (headless Chrome, mobiele emulatie, testmodus-URL)
+
+Meting voor/na, en die is het vermelden waard omdat de uitkomst tegenviel:
+
+| | voor | na |
+|---|---|---|
+| hoogte adviseursblok | 114px | 114px |
+| tekstregels | 3 | 3 |
+| afstand telefoonveld → verzendknop | 384px | 384px |
+
+De zin is korter in tekens, maar breekt bij 390px nog steeds op drie regels: de foto van 44px plus
+de marges laten ongeveer 270px tekstbreedte over. Het blok wordt dus niet zwaarder, maar ook niet
+lichter. Wie het blok écht lichter wil, moet de zin onder de ~85 tekens krijgen of de foto kleiner
+maken; dat is een aparte keuze.
+
+**Variant B, gebouwd en gemeten maar niet ingediend:** hetzelfde blok ná de hulpvraag en pal boven
+de verzendknop. Formulierhoogte identiek (1132px), alleen de volgorde verschilt. Afweging:
+- variant A (huidig) zet het bewijs pal onder het telefoonveld dat de twijfel veroorzaakt. Dat is
+  wat Baymard aanbeveelt, en het is de enige plek waar de bezoeker het leest vóórdat hij zijn
+  nummer typt.
+- variant B geeft een ononderbroken loop door velden en tegels, maar het "we bellen je"-signaal
+  komt dan ná het invullen. Dat ondermijnt de reden dat het blok er staat.
+
+Gekozen: A. Omzetten naar B is één verplaatsing van een blok.
+
+### PR 2 — Gebouwtype en gebouwklasse uit EP-Online (#113)
+
+- [x] `normaliseerGebouw()` naast `normaliseerEpOnline()`, met een eigen rijselectie
+- [x] `WoningInfo.gebouw` aan beide kanten van de brug (edge function + `src/lib/woninginfo`)
+- [x] 5 unittests; 163 tests groen (was 158)
+- [ ] **Edge function deployen op het CRM-project `lfelnfukbrxznkevnevr`** (handmatig, opdrachtgever)
+- [ ] Ná de deploy: de echte waarden van `Gebouwtype` / `Gebouwklasse` uitlezen en hier noteren
+
+Bevestigd in het schema `PandEnergielabelV5` (public.ep-online.nl/swagger/v5/swagger.json): de
+velden `Gebouwklasse` ("Het soort gebouw: een woning of een utiliteitsgebouw"), `Gebouwtype` ("Het
+woningtype") en `Gebouwsubtype` ("de ligging van het appartement in het woongebouw") bestaan alle
+drie, als string, **zonder enum**. De waarden gaan daarom ruw door, alleen getrimd: een eigen
+vertaallijst zou gokwerk zijn dat stil de verkeerde kant op valt.
+
+Zolang het veld leeg is verandert er zichtbaar niets, en er is nog geen consument in de UI.
+
+### Feiten voor de persoonlijke eerste stap (geverifieerd bij Milieu Centraal)
+
+Voorwaarde die de opdrachtgever stelde: nooit een uitspraak over dít huis (we weten niet wat er al
+gedaan is), wél over de woningvoorraad, eindigend in een vraag. Onderstaande citaten komen
+letterlijk van milieucentraal.nl (opgehaald 2026-08-09, pagina's laatst gewijzigd 8 juli 2026).
+
+**Spouwmuur** (`/energie-besparen/isoleren-en-besparen/spouwmuurisolatie/`):
+- "Ongeveer 1 van de 4 woningen heeft nog géén geïsoleerde buitenmuren."
+- vóór 1920: "Dan heeft het waarschijnlijk geen spouwmuur."
+- na 1920: "Dan is de kans groot dat het bij de bouw buitenmuren met een spouw heeft gekregen."
+- 1920 tot 1975: "Grote kans dat het bij de bouw buitenmuren met een spouw heeft gekregen, maar nog
+  zonder isolatie. De spouwmuur kan wel na-geïsoleerd zijn."
+- 1975 tot 1991: "In deze periode werden buitenmuren bijna altijd geïsoleerd, meestal in de spouw.
+  Maar de isolatiewaarde van deze huizen kan beter."
+- na 1991: "Dan heeft het al goede gevelisolatie (Rc van 2,5 of hoger) en dat hoef je niet verder
+  te verbeteren."
+
+**Dak** (`/energie-besparen/isoleren-en-besparen/dakisolatie/`):
+- "Meer dan 85% van de woningen heeft al een isolatielaag. Vaak is dat een dunne laag met een
+  matige isolatiewaarde." En: "Veel mensen denken 'mijn dak is al geïsoleerd, dus ik hoef niks meer
+  te doen', maar het tegendeel is vaak waar."
+- vóór 1975: "Bij de bouw is geen isolatie aangebracht."
+- 1975 tot 1992: "waarschijnlijk een matige isolatielaag van 3 tot 5 centimeter"
+- 1992 of later: "redelijke tot goede isolatie meegekregen (8 tot 10 centimeter of meer)"
+
+Twee dingen vallen op en die sturen de tekst:
+1. **Milieu Centraal schrijft zelf al in kansen** ("grote kans", "waarschijnlijk", "bijna altijd").
+   Dat is precies de vorm die we nodig hebben: een uitspraak over de voorraad, niet over dit huis.
+2. **De dak-zin is de sterkste**, want die werkt óók als het dak al geïsoleerd is. "85% heeft al
+   een laag, meestal te dun" is geen gok over deze woning maar een feit over alle woningen, en het
+   raakt precies de reden waarom mensen niets doen.
+
+Grenzen die hieruit volgen: **1920 / 1975 / 1992**. Niet zelf verzonnen, maar de indeling die
+Milieu Centraal zelf hanteert.
+
+- [ ] Conceptteksten voorleggen aan de opdrachtgever (staat klaar, nog niet goedgekeurd)
+- [ ] Woningtype uit de BAG-geometrie afleiden en controleren tegen bekende adressen (nog niet
+      begonnen; de buurpanden worden al opgehaald voor het 3D-model, dus de data is er)
+- [ ] Pas bouwen na goedkeuring van de teksten
+
+### Nog open, vraagt een beslissing van de opdrachtgever
+
+- **Huurder-tak.** 1 regeling in Groningen is een demotiverend resultaat. Elke goede tekst doet een
+  uitspraak over wat Voortraject vóór huurders doet; dat moet eerst bevestigd worden.
+- **Toestemming per lead** voor telefonische opvolging (art. 11.7 lid 2 Telecommunicatiewet). Raakt
+  het CRM.
+- **GTM-event `subsidiecheck_verbreed`** bij het verbreden na 0 regelingen. Kan pas als de
+  container in `docs/gtm/` weer stabiel is, want `gtmContainer.test.ts` eist trigger én tag.
+
 ## Subsidietool: eerlijker, geen doodlopende einden, andere volgorde (2026-08-08)
 
 Aanleiding: analyse van de hele tool op conversie en waarde. Wat de analyse als eerste opleverde
