@@ -39,9 +39,25 @@ const HULPVRAGEN = [
 type HulpvraagId = (typeof HULPVRAGEN)[number]["id"];
 
 // Hoe lang de poort maximaal op de bron wacht voordat het formulier hoe dan ook
-// verschijnt. De zoeksequentie duurt zelf al ~3,4s; dit is de vangnetgrens voor
+// verschijnt. De zoeksequentie duurt zelf 3s; dit is de vangnetgrens voor
 // een hangende bron.
 const MAX_WACHT_MS = 8000;
+
+// Ondergrens voor het overdrachtsmoment tussen "verzenden" en het resultaat.
+//
+// Er gebeurt op dit moment écht iets: de lead wordt weggeschreven en de mail met
+// het overzicht gaat de deur uit. Alleen duurt dat soms 200ms en soms 1500ms, en
+// bij die 200ms zag de bezoeker een spinner opflitsen en stond het hele resultaat
+// er ineens. Dat las als een schermwissel, niet als een overdracht.
+//
+// Deze grens verlengt geen verzonnen werk; hij zorgt dat het echte werk lang
+// genoeg zichtbaar is om als stap te lezen. Duurt het langer, dan wachten we
+// niets extra's.
+const MIN_OVERDRACHT_MS = 750;
+
+/** Wacht tot `vanaf` minstens MIN_OVERDRACHT_MS geleden is. */
+const rondOverdrachtAf = (vanaf: number) =>
+  new Promise<void>((klaar) => setTimeout(klaar, Math.max(0, MIN_OVERDRACHT_MS - (Date.now() - vanaf))));
 
 interface StapGegevensProps {
   input: SubsidieCheckInput;
@@ -155,6 +171,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
     };
 
     setBezig(true);
+    const verzondenOp = Date.now();
     try {
       // De regelingen staan meestal al in de cache (de hook hierboven); zo niet,
       // dan halen we ze nu op. `retry: 1` gelijk aan useSubsidieCheck; de
@@ -185,6 +202,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
           // 1/0 en niet true/false: pushGtmEvent neemt alleen tekst en getallen.
           bron_fout: 1,
         });
+        await rondOverdrachtAf(verzondenOp);
         onOntgrendeld();
         return;
       }
@@ -208,6 +226,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         aantal_regelingen: opgehaald.length,
         hulpvraag: hulpvragen.join(","),
       });
+      await rondOverdrachtAf(verzondenOp);
       onOntgrendeld(); // component unmount hierna → bezig blijft bewust true
     } catch (err) {
       console.error("Subsidiecheck poort-lead submit failed", err);
@@ -236,6 +255,12 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
   if (bevrorenAantal.current === null) bevrorenAantal.current = zoekBezig || zoekFout ? 0 : aantal;
   const telling = bevrorenAantal.current;
 
+  // Tijdens het klaarzetten zakt alles wat de bezoeker net heeft ingevuld naar
+  // de achtergrond, zodat de aandacht bij de knop en zijn melding ligt. Het
+  // formulier is dan toch niet meer aan te raken (de knop staat op disabled).
+  // Alleen de knop en de regel eronder houden hun volle dekking.
+  const naarAchtergrond = `transition-opacity duration-500 ease-out ${bezig ? "opacity-45" : "opacity-100"}`;
+
   return (
     <form onSubmit={handleSubmit} noValidate>
       {/* De uitkomst als getal, nog zonder inhoud: dít is waarom de bezoeker
@@ -243,7 +268,9 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
           Bij nul (of een bronfout) laten we deze regel weg: "We vonden 0
           regelingen" vlak boven een gegevensvraag is geen aanbod. */}
       {telling > 0 && (
-        <p className="mb-4 text-center font-display text-[19px] font-semibold leading-snug text-primary md:text-[22px]">
+        <p
+          className={`mb-4 text-center font-display text-[19px] font-semibold leading-snug text-primary md:text-[22px] ${naarAchtergrond}`}
+        >
           We vonden{" "}
           <span className="text-[hsl(var(--subsidie))]">
             {telling} {telling === 1 ? "regeling" : "regelingen"}
@@ -254,7 +281,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
 
       {/* Wat we alvast teruggeven: de woning zelf. */}
       <div
-        className="overflow-hidden rounded-2xl border-2 bg-card shadow-card"
+        className={`overflow-hidden rounded-2xl border-2 bg-card shadow-card ${naarAchtergrond}`}
         style={{ borderColor: "hsl(var(--accent) / 0.8)" }}
       >
         {/* Mobiel de foto als brede band bovenaan en de tekst eronder: naast
@@ -323,7 +350,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
       {/* Eerst de gegevens: dat is waar deze stap over gaat en wat de bezoeker
           hier verwacht. De vraag eronder voelt daarna als een laatste detail in
           plaats van als een drempel vooraf. */}
-      <fieldset className="mt-4">
+      <fieldset className={`mt-4 ${naarAchtergrond}`}>
         <legend className="mb-3 block text-[14px] font-semibold text-foreground">
           Waar mogen we je overzicht naartoe sturen?
         </legend>
@@ -420,7 +447,10 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
           de bezoeker vóór het invullen te weten dat er iemand belt. Dat is niet
           alleen netjes, het is ook wat het nummer van een drempel in een dienst
           verandert. */}
-      <div className="mt-6 flex items-center gap-3 rounded-xl border border-border p-3.5" style={{ backgroundColor: "var(--card-soft)" }}>
+      <div
+        className={`mt-6 flex items-center gap-3 rounded-xl border border-border p-3.5 ${naarAchtergrond}`}
+        style={{ backgroundColor: "var(--card-soft)" }}
+      >
         <img
           src={adviseurFoto}
           alt=""
@@ -431,18 +461,21 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         />
         <div className="min-w-0">
           <p className="text-[13.5px] leading-snug text-foreground">
-            <span className="font-semibold">Christian</span>, subsidiespecialist. Hij of een collega kijkt naar jouw
-            adres en neemt daarna contact met je op.
+            <span className="font-semibold">Christian</span>, subsidiespecialist. Hij of een collega denkt gratis en
+            vrijblijvend met je mee.
           </p>
           <Bewijsregel className="mt-1.5" alsLink={false} />
         </div>
       </div>
 
       {/* Meerdere antwoorden mogen: zie de toelichting bij HULPVRAGEN hierboven. */}
-      <fieldset className="mt-6">
-        <legend className="mb-1 block text-[14px] font-semibold text-foreground">Waar kunnen we je mee helpen?</legend>
-        <p className="mb-3 text-[13px] text-muted-foreground">Meerdere antwoorden mogelijk.</p>
-        <div className="grid grid-cols-2 gap-2 sm:gap-3" role="group" aria-label="Waar kunnen we je mee helpen?">
+      <fieldset className={`mt-6 ${naarAchtergrond}`}>
+        {/* "Meerdere antwoorden mogelijk" staat er niet meer. De tegels zijn
+            checkboxes (role="checkbox"), dus wie er twee aanklikt ziet gewoon
+            dat het kan; wie er één aanklikt mist niets. De regel loste een
+            probleem op dat de bezoeker niet heeft. */}
+        <legend className="mb-3 block text-[14px] font-semibold text-foreground">Waar kunnen we je mee helpen?</legend>
+        <div className="grid grid-cols-2 gap-2 sm:gap-3" role="group" aria-label="Waar kunnen we je mee helpen? Meerdere antwoorden mogelijk.">
           {HULPVRAGEN.map(({ id, label, Icon }) => {
             const actief = hulpvragen.includes(id);
             return (
@@ -484,12 +517,20 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
       <button
         type="submit"
         disabled={bezig}
-        className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-70 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        // Bewust géén `disabled:opacity-70`. De knop is tijdens het klaarzetten
+        // wel uitgeschakeld, maar hij draagt op dat moment de enige melding op
+        // het scherm; alles eromheen staat al op 45%. Zou hij ook vervagen, dan
+        // is het belangrijkste element het zwakste en leest het scherm als
+        // "er is iets misgegaan" in plaats van "er wordt gewerkt".
+        className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover disabled:cursor-not-allowed min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         {bezig ? (
           <>
             <Loader2 size={16} className="animate-spin" aria-hidden="true" />
-            Versturen…
+            {/* Niet "Versturen…", want dat beschrijft wat de bezoeker doet.
+                Dit beschrijft wat wij doen, en het is waar: op dit moment gaat
+                de lead naar het team en vertrekt de mail met het overzicht. */}
+            Je overzicht wordt klaargezet…
           </>
         ) : (
           "Bekijk mijn subsidieoverzicht"
@@ -504,8 +545,16 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
           de gegevens voor gebruiken. Dat is meteen wat de AVG hier vraagt.
 
           De score staat niet meer onder de knop maar bij de velden hierboven. */}
+      {/* "Blijven bij ons" is bewust drie woorden en geen alinea. In deze markt
+          verkopen de offertesites je gegevens door aan tot zes bedrijven, en hun
+          recensies staan vol met bezoekers die daarna door onbekende nummers
+          werden gebeld. Wij doen dat niet: de lead gaat naar ons eigen CRM en
+          verder nergens heen. Dat is dus een ware claim, en een die de
+          concurrent niet kan maken. Kort houden, want een uitgebreide
+          privacybelofte wekt juist de zorg die ze wil wegnemen. */}
       <p className="mt-3 text-[12px] text-muted-foreground">
-        Je gegevens gebruiken we voor jouw overzicht en om je verder te helpen met je verduurzaming.
+        Je gegevens blijven bij ons: we gebruiken ze voor jouw overzicht en om je verder te helpen met je
+        verduurzaming.
       </p>
     </form>
   );

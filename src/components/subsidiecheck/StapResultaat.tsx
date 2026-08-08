@@ -21,6 +21,7 @@ import {
 import { Bewijsregel } from "./Bewijsregel";
 import { leesContact } from "./contactOpslag";
 import { DirectContact } from "./DirectContact";
+import { EersteStap } from "./EersteStap";
 import { GeenRegelingen } from "./GeenRegelingen";
 import { kanOverzichtMailen } from "./leadFormulier";
 import { MailOverzicht } from "./MailOverzicht";
@@ -238,31 +239,25 @@ export const StapResultaat = ({
         </p>
       )}
 
-      {/* Het aankomstmoment: één regel, alleen direct na de poort. Zie de
-          toelichting bij `netBinnen` hierboven. */}
-      {netBinnen && (
+      {/* Het aankomstmoment. Stond hier eerder als okergele pill met "Klaar.
+          Dit is jouw overzicht." Twee dingen klopten daar niet aan. Het vierde
+          iets: een gevulde accentcirkel met een vinkje is de vormtaal van een
+          gelukte betaling, niet van een adviesbureau. En bij een bezoeker
+          zonder mail zei hij letterlijk wat de kop erboven al zegt ("Jouw
+          subsidieoverzicht"), dus dan was het een regel om een regel.
+          Nu verschijnt hij alléén als er echt iets te melden valt: dat de mail
+          onderweg is. Dat is informatie die nergens anders staat. Zonder mail
+          is de schermwissel zelf de bevestiging. */}
+      {netBinnen && gemaildNaar && (
         <p
           role="status"
-          className={`mb-4 flex items-center justify-center gap-2.5 rounded-full border border-border bg-card px-5 py-2.5 text-center text-[14px] text-foreground shadow-subtle ${
-            beweeg ? "animate-fade-up" : ""
+          className={`mb-4 flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-center text-[13.5px] text-muted-foreground ${
+            beweeg ? "animate-onthul" : ""
           }`}
         >
-          <span
-            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent"
-            aria-hidden="true"
-          >
-            <Check size={14} strokeWidth={3} className="text-primary" />
-          </span>
+          <Check size={15} strokeWidth={2.5} className="shrink-0 text-[hsl(var(--subsidie))]" aria-hidden="true" />
           <span>
-            <span className="font-semibold">Klaar.</span>{" "}
-            {gemaildNaar ? (
-              <>
-                We hebben je overzicht ook gemaild naar{" "}
-                <span className="font-semibold">{gemaildNaar}</span>.
-              </>
-            ) : (
-              <>Dit is jouw overzicht.</>
-            )}
+            Je overzicht is ook gemaild naar <span className="font-semibold text-foreground">{gemaildNaar}</span>
           </span>
         </p>
       )}
@@ -271,10 +266,13 @@ export const StapResultaat = ({
           energielabel), rechts de samenvatting — die het zwaartepunt houdt
           (bredere kolom). Op mobiel onder elkaar, woningpaneel eerst. */}
       <div
-        className={`grid gap-4 md:grid-cols-[1fr_300px] md:items-start md:gap-6 ${beweeg ? "animate-fade-up" : ""}`}
-        // Net na de bevestiging, zodat het overzicht eronder vandaan komt in
-        // plaats van tegelijk te verschijnen.
-        style={beweeg ? { animationDelay: "140ms" } : undefined}
+        className={`grid gap-4 md:grid-cols-[1fr_300px] md:items-start md:gap-6 ${beweeg ? "animate-onthul" : ""}`}
+        // Het overzicht bouwt zich op in drie korte stappen: bevestiging (0ms),
+        // de conclusie met het woningpaneel (120ms), en daaronder de lijst met
+        // regelingen (260ms). Niet groter maken: blokken die verder dan een
+        // halve seconde uit elkaar liggen lezen als losse gebeurtenissen in
+        // plaats van als één scherm dat zich opbouwt.
+        style={beweeg ? { animationDelay: "120ms" } : undefined}
       >
         {/* De piek: conclusie eerst (inverted pyramid), dan pas de lijst. De
             foto staat rechts (smalle kolom), de samenvatting links (breed). */}
@@ -301,6 +299,17 @@ export const StapResultaat = ({
         {woningpaneel}
       </div>
 
+      {/* De persoonlijke eerste stap: één uitspraak over woningen uit dit
+          bouwjaar, eindigend in een vraag. Rendert niets zonder bouwjaar.
+          Hoort bij de conclusie hierboven, dus animeert met dezelfde stap mee. */}
+      <div className={beweeg ? "animate-onthul" : ""} style={beweeg ? { animationDelay: "120ms" } : undefined}>
+        <EersteStap
+          bouwjaar={pand?.bouwjaar}
+          bewonertype={input.bewonertype}
+          onVraag={(voorstel) => vraagMetVoorstel(voorstel, "eerste_stap")}
+        />
+      </div>
+
       {/* Bronvermelding — de subsidie-informatie komt uit de Energiesubsidiewijzer
           van Milieu Centraal. Staat bewust bij de getoonde regelingen. */}
       <p className="mt-6 text-center text-[12.5px] leading-relaxed text-muted-foreground">
@@ -317,8 +326,12 @@ export const StapResultaat = ({
       </p>
 
       {/* Groepen onder elkaar (landelijk → lokaal, layer-cake-scan), met de
-          kaarten binnen een groep naast elkaar op desktop. */}
-      <div className="mt-8 flex flex-col gap-8">
+          kaarten binnen een groep naast elkaar op desktop. Derde en laatste
+          stap van de aankomst; zie de toelichting bij de hero hierboven. */}
+      <div
+        className={`mt-8 flex flex-col gap-8 ${beweeg ? "animate-onthul" : ""}`}
+        style={beweeg ? { animationDelay: "260ms" } : undefined}
+      >
         {groepen.map(({ niveau, regelingen: groep }) => (
           <section key={niveau} aria-label={NIVEAU_LABELS[niveau]}>
             <h2 className="mb-3 flex items-center gap-2 text-[14px] font-semibold uppercase tracking-[0.08em] text-primary">
@@ -327,10 +340,15 @@ export const StapResultaat = ({
             </h2>
             <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
               {groep.map((regeling, i) => (
+                // Bij de aankomst animeert de groep als geheel (hierboven), dus
+                // dan niet ook nog per kaart: twee geneste animaties over
+                // elkaar heen maken de opbouw troebel. Bij een herlaad of een
+                // gedeelde link beweegt de groep niet en doen de kaarten hun
+                // eigen trapje, precies zoals voorheen.
                 <div
                   key={regeling.id}
-                  className="animate-fade-up"
-                  style={{ animationDelay: `${Math.min(i * 50, 300)}ms` }}
+                  className={beweeg ? "" : "animate-fade-up"}
+                  style={beweeg ? undefined : { animationDelay: `${Math.min(i * 50, 300)}ms` }}
                 >
                   <SubsidieCard regeling={regeling} />
                 </div>
