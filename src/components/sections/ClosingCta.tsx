@@ -49,7 +49,7 @@ export const ClosingCta = () => (
 
       {/* Kleine verwijzing naar de zakelijke pagina */}
       <p className="mt-10 text-[14px] text-white/55">
-        Ben je uitvoerder of ander bedrijf en zoek je ontzorging in het voortraject?{" "}
+        Ben je een bedrijf en wil je samenwerken?{" "}
         <a
           href="/zakelijk"
           className="font-medium text-white/85 underline underline-offset-4 hover:text-white transition-colors"
