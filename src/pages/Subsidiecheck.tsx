@@ -27,6 +27,15 @@ import { isTestmodus, leesTestmodusUitUrl } from "@/config/testmodus";
 
 const BEWONERTYPES: Bewonertype[] = ["woningeigenaar", "huurder", "vve", "verhuurder"];
 
+// Hoe lang het ingevulde formulier nog in beeld blijft terwijl het wegvaagt,
+// voordat het resultaat de plek overneemt.
+//
+// Samen met MIN_OVERDRACHT_MS in StapGegevens (750ms klaarzetten) en de
+// gefaseerde onthulling op het resultaat (0 / 120 / 260ms) is de hele overgang
+// zo'n anderhalve seconde. Dat is bewust: bij 600ms las het als een
+// schermwissel, hoe netjes de fade ook was.
+const UITLOOP_MS = 340;
+
 // De volledige stap-state leeft in de URL (?pc=…&hn=…&type=…&m=…): de
 // back-button werkt gewoon, een herlaad houdt je resultaat vast en het
 // overzicht is deelbaar. Geen m-parameter = alle maatregelen.
@@ -111,14 +120,34 @@ const SubsidiecheckLive = () => {
   // herlaad of een gedeelde link leest `ontgrendeld` uit sessionStorage en blijft
   // dit false, want dan is er geen aankomst om te vieren.
   const [netBinnen, setNetBinnen] = useState(false);
+  // Het formulier is aan het weggaan, het resultaat staat er nog niet. Zonder
+  // dit tussenmoment knipt het scherm: het formulier verdwijnt in één frame en
+  // het overzicht staat er al terwijl het nog aan het invaden is. Een korte
+  // uitloop maakt er een overdracht van in plaats van een schermwissel.
+  const [afscheid, setAfscheid] = useState(false);
+  const reducedMotion = useMemo(
+    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    [],
+  );
   const ontgrendel = () => {
     try {
       sessionStorage.setItem("sc_poort_ontgrendeld", "1");
     } catch {
       /* private mode → poort blijft binnen deze render-sessie ontgrendeld via state */
     }
-    setOntgrendeld(true);
-    setNetBinnen(true);
+    if (reducedMotion) {
+      setOntgrendeld(true);
+      setNetBinnen(true);
+      return;
+    }
+    setAfscheid(true);
+    // Iets korter dan de uitloop zelf, zodat het overzicht begint te verschijnen
+    // terwijl het formulier de laatste procenten dekking verliest. Twee losse
+    // bewegingen die elkaar niet raken lezen als haperen.
+    window.setTimeout(() => {
+      setOntgrendeld(true);
+      setNetBinnen(true);
+    }, UITLOOP_MS);
   };
 
   // Stap 1 = adres + interesses + evt. situatie invullen. Zodra 'type' gezet is
@@ -209,13 +238,12 @@ const SubsidiecheckLive = () => {
       // De kop doet twee dingen tegelijk: laten voelen hoe dichtbij het einde is
       // (mensen versnellen richting de finish) en voorkomen dat het woningkaartje
       // eronder voor het overzicht zelf wordt aangezien.
-      // De subregel zei eerder "dan zoeken we alle regelingen bij jouw adres".
-      // Dat klopt niet meer: het zoeken gebeurt nu zichtbaar op deze stap zelf,
-      // vóór de gegevensvraag, en het aantal staat er al boven.
-      return {
-        titel: "Nog één stap tot je overzicht",
-        sub: "Vul je gegevens in, dan zetten we het volledige overzicht voor je klaar.",
-      };
+      // Geen subregel meer. Hij zei alleen wat de titel al zegt en wat de
+      // legenda boven de velden ("Waar mogen we je overzicht naartoe sturen?")
+      // nóg een keer zegt. Drie keer dezelfde mededeling boven één formulier is
+      // ruis; de regel eronder telt de gevonden regelingen en dát is de reden
+      // om door te gaan.
+      return { titel: "Nog één stap tot je overzicht" };
     }
     return { titel: "Jouw subsidieoverzicht" };
   };
@@ -361,7 +389,18 @@ const SubsidiecheckLive = () => {
                   />
                 ) : poortAan && stap === 2 ? (
                   checkInput &&
-                  adres && <StapGegevens input={checkInput} adres={adres} onOntgrendeld={ontgrendel} />
+                  adres && (
+                    // De uitloop: het formulier vaagt weg en zakt een paar pixels
+                    // terug terwijl het overzicht al onderweg is. `pointer-events-none`
+                    // omdat een half zichtbaar formulier geen tweede klik mag vangen.
+                    <div
+                      className={`transition-all duration-300 ease-out ${
+                        afscheid ? "pointer-events-none translate-y-1 opacity-0" : "translate-y-0 opacity-100"
+                      }`}
+                    >
+                      <StapGegevens input={checkInput} adres={adres} onOntgrendeld={ontgrendel} />
+                    </div>
+                  )
                 ) : (
                   checkInput && adres && (
                     <StapResultaat

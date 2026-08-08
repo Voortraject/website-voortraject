@@ -78,6 +78,13 @@ export default {
           "0%": { opacity: "0", transform: "translateY(12px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        // Ingetogener dan fade-up: minder afstand, korter. Voor de aankomst op
+        // het resultaat, waar meerdere blokken kort na elkaar verschijnen. Met
+        // 12px over 0,6s per blok schuift het hele scherm als één plaat.
+        "onthul": {
+          "0%": { opacity: "0", transform: "translateY(6px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
         "tech-pulse": {
           "0%, 100%": { transform: "scale(1)" },
           "50%": { transform: "scale(1.02)" },
@@ -95,6 +102,7 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-up": "fade-up 0.6s ease-out both",
+        "onthul": "onthul 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both",
         "tech-pulse": "tech-pulse 4s ease-in-out infinite",
         "blink": "blink 1s steps(2, start) infinite",
         "swipe-hint": "swipe-hint 1.8s ease-in-out infinite",
