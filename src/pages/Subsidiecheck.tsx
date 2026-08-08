@@ -23,6 +23,7 @@ import {
   type SubsidieCheckInput,
 } from "@/lib/subsidies";
 import { SUBSIDIECHECK_GEGEVENS_POORT, SUBSIDIECHECK_LIVE } from "@/config/features";
+import { isTestmodus, leesTestmodusUitUrl } from "@/config/testmodus";
 
 const BEWONERTYPES: Bewonertype[] = ["woningeigenaar", "huurder", "vve", "verhuurder"];
 
@@ -31,6 +32,15 @@ const BEWONERTYPES: Bewonertype[] = ["woningeigenaar", "huurder", "vve", "verhuu
 // overzicht is deelbaar. Geen m-parameter = alle maatregelen.
 const SubsidiecheckLive = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+
+  // Testmodus (?test=1, nooit op het productiedomein): de hele flow werkt, maar
+  // er gaat niets naar het CRM en er vertrekt geen mail. Eén keer uitlezen bij
+  // binnenkomst; daarna staat de keuze in sessionStorage, want de stappen
+  // herschrijven de queryparameters.
+  const [testmodus] = useState(() => {
+    leesTestmodusUitUrl();
+    return isTestmodus();
+  });
 
   const pc = searchParams.get("pc") ?? "";
   const hn = searchParams.get("hn") ?? "";
@@ -224,6 +234,19 @@ const SubsidiecheckLive = () => {
                 ruimte zodat groepen naast elkaar kunnen staan. De interesses
                 staan standaard ingeklapt, dus stap 1 kan compacter dan voorheen. */}
             <div className="mx-auto w-full" style={{ maxWidth: stap === resultaatStap ? 1040 : 640 }}>
+              {/* Onmiskenbaar in beeld: anders denk je dat je een echte lead hebt
+                  aangemaakt terwijl er niets is opgeslagen, of andersom. */}
+              {testmodus && (
+                <p
+                  role="status"
+                  className="mb-4 rounded-lg border-2 border-dashed border-accent px-4 py-2.5 text-center text-[13.5px] font-semibold text-primary"
+                  style={{ backgroundColor: "hsl(var(--accent) / 0.12)" }}
+                >
+                  Testmodus. Je kunt alles invullen en versturen: er komt niets in het CRM en er gaat geen mail uit.
+                  Uitzetten met <code>?test=0</code>.
+                </p>
+              )}
+
               <Voortgang
                 stappen={stappen}
                 huidige={stap}
