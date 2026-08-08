@@ -78,6 +78,18 @@ code wel kent en GTM niet.
 De zwevende WhatsApp-knop doet dat juist wél in code, omdat een generieke klik-trigger op `wa.me`
 ook de knoppen ín de subsidiecheck zou vangen. Die pushen al hun eigen event, en dan tel je dubbel.
 
+### Voorwaarde: klikken moeten `document` bereiken
+
+Een klik-trigger in GTM luistert op `document`. Roep dus nooit `stopPropagation()` aan in een
+klikhandler die boven een link zit, want dan meet je die link nergens meer. Let op de valkuil met
+React: die koppelt zijn listeners op de root-container, dus een `stopPropagation()` in een
+React-handler houdt óók het native event tegen.
+
+Dit is één keer misgegaan in het mobiele menu, waar het paneel een `stopPropagation()` had om te
+voorkomen dat de achtergrond-klik het menu sloot. Gevolg: geen enkele klik in het mobiele menu
+werd gemeten. Gebruik in plaats daarvan `e.target === e.currentTarget` op de achtergrond, zoals nu
+in `Header.tsx`. `src/test/mobielMenuKlik.test.tsx` bewaakt dit.
+
 ## Consent
 
 De veilige startwaarde (`gtag('consent', 'default', …)` met alles op `denied`) staat inline
