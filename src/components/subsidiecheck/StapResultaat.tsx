@@ -266,11 +266,12 @@ export const StapResultaat = ({
           (bredere kolom). Op mobiel onder elkaar, woningpaneel eerst. */}
       <div
         className={`grid gap-4 md:grid-cols-[1fr_300px] md:items-start md:gap-6 ${beweeg ? "animate-onthul" : ""}`}
-        // Vlak na de mailregel (als die er is), zodat het overzicht eronder
-        // vandaan komt in plaats van er tegelijk mee te verschijnen. Klein
-        // verschil, want twee blokken die 300ms uit elkaar liggen lezen als
-        // twee losse gebeurtenissen.
-        style={beweeg ? { animationDelay: "80ms" } : undefined}
+        // Het overzicht bouwt zich op in drie korte stappen: bevestiging (0ms),
+        // de conclusie met het woningpaneel (120ms), en daaronder de lijst met
+        // regelingen (260ms). Niet groter maken: blokken die verder dan een
+        // halve seconde uit elkaar liggen lezen als losse gebeurtenissen in
+        // plaats van als één scherm dat zich opbouwt.
+        style={beweeg ? { animationDelay: "120ms" } : undefined}
       >
         {/* De piek: conclusie eerst (inverted pyramid), dan pas de lijst. De
             foto staat rechts (smalle kolom), de samenvatting links (breed). */}
@@ -313,8 +314,12 @@ export const StapResultaat = ({
       </p>
 
       {/* Groepen onder elkaar (landelijk → lokaal, layer-cake-scan), met de
-          kaarten binnen een groep naast elkaar op desktop. */}
-      <div className="mt-8 flex flex-col gap-8">
+          kaarten binnen een groep naast elkaar op desktop. Derde en laatste
+          stap van de aankomst; zie de toelichting bij de hero hierboven. */}
+      <div
+        className={`mt-8 flex flex-col gap-8 ${beweeg ? "animate-onthul" : ""}`}
+        style={beweeg ? { animationDelay: "260ms" } : undefined}
+      >
         {groepen.map(({ niveau, regelingen: groep }) => (
           <section key={niveau} aria-label={NIVEAU_LABELS[niveau]}>
             <h2 className="mb-3 flex items-center gap-2 text-[14px] font-semibold uppercase tracking-[0.08em] text-primary">
@@ -323,10 +328,15 @@ export const StapResultaat = ({
             </h2>
             <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
               {groep.map((regeling, i) => (
+                // Bij de aankomst animeert de groep als geheel (hierboven), dus
+                // dan niet ook nog per kaart: twee geneste animaties over
+                // elkaar heen maken de opbouw troebel. Bij een herlaad of een
+                // gedeelde link beweegt de groep niet en doen de kaarten hun
+                // eigen trapje, precies zoals voorheen.
                 <div
                   key={regeling.id}
-                  className="animate-fade-up"
-                  style={{ animationDelay: `${Math.min(i * 50, 300)}ms` }}
+                  className={beweeg ? "" : "animate-fade-up"}
+                  style={beweeg ? undefined : { animationDelay: `${Math.min(i * 50, 300)}ms` }}
                 >
                   <SubsidieCard regeling={regeling} />
                 </div>

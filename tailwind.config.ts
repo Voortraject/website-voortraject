@@ -102,7 +102,7 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-up": "fade-up 0.6s ease-out both",
-        "onthul": "onthul 0.42s cubic-bezier(0.22, 0.61, 0.36, 1) both",
+        "onthul": "onthul 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both",
         "tech-pulse": "tech-pulse 4s ease-in-out infinite",
         "blink": "blink 1s steps(2, start) infinite",
         "swipe-hint": "swipe-hint 1.8s ease-in-out infinite",

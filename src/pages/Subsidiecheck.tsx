@@ -28,9 +28,13 @@ import { isTestmodus, leesTestmodusUitUrl } from "@/config/testmodus";
 const BEWONERTYPES: Bewonertype[] = ["woningeigenaar", "huurder", "vve", "verhuurder"];
 
 // Hoe lang het ingevulde formulier nog in beeld blijft terwijl het wegvaagt,
-// voordat het resultaat de plek overneemt. Kort genoeg om niet als wachten te
-// voelen, lang genoeg om de knip weg te halen.
-const UITLOOP_MS = 220;
+// voordat het resultaat de plek overneemt.
+//
+// Samen met MIN_OVERDRACHT_MS in StapGegevens (750ms klaarzetten) en de
+// gefaseerde onthulling op het resultaat (0 / 120 / 260ms) is de hele overgang
+// zo'n anderhalve seconde. Dat is bewust: bij 600ms las het als een
+// schermwissel, hoe netjes de fade ook was.
+const UITLOOP_MS = 340;
 
 // De volledige stap-state leeft in de URL (?pc=…&hn=…&type=…&m=…): de
 // back-button werkt gewoon, een herlaad houdt je resultaat vast en het
@@ -390,7 +394,7 @@ const SubsidiecheckLive = () => {
                     // terug terwijl het overzicht al onderweg is. `pointer-events-none`
                     // omdat een half zichtbaar formulier geen tweede klik mag vangen.
                     <div
-                      className={`transition-all duration-200 ease-out ${
+                      className={`transition-all duration-300 ease-out ${
                         afscheid ? "pointer-events-none translate-y-1 opacity-0" : "translate-y-0 opacity-100"
                       }`}
                     >
