@@ -51,12 +51,20 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
   return (
     <div
       className="fixed inset-0 z-50 lg:hidden flex flex-col animate-fade-up"
-      onClick={onClose}
+      // Sluit alleen bij een klik op de achtergrond zelf, niet op het paneel
+      // erbinnen. Dit stond eerder als een stopPropagation() op het paneel,
+      // maar dat brak de meting: React koppelt zijn listeners op de
+      // root-container, dus stopPropagation() daar houdt óók het native event
+      // tegen en dan bereikt de klik `document` nooit. Precies daar luistert
+      // Google Tag Manager, waardoor geen enkele klik in het mobiele menu nog
+      // gemeten werd. Zie docs/tracking.md.
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <div
         className="relative flex flex-col max-h-full overflow-y-auto pt-[env(safe-area-inset-top)]"
         style={{ backgroundColor: "hsl(var(--primary) / 0.95)", backdropFilter: "blur(8px)" }}
-        onClick={(e) => e.stopPropagation()}
       >
         <button
           className="absolute top-[calc(0.75rem_+_env(safe-area-inset-top))] right-3 p-2 text-white z-10"
