@@ -14,6 +14,16 @@ import {
 // (MailOverzicht). Eén plek voor de validatie én voor de `leads_bewoners`-insert
 // zodat de kolommen niet uiteenlopen (data-integriteit, CLAUDE.md-regel 2).
 
+// Alle schrijfroutes naar het CRM lopen door dit bestand: de poort, het
+// mailblok en het vraagblok. Daarom zit de testmodus-check hier en niet in de
+// componenten. Eén plek, geen pad dat er per ongeluk langs kan.
+import { isTestmodus } from "@/config/testmodus";
+
+/** Logt wat er in testmodus níet is weggeschreven, zodat je het toch kunt nalezen. */
+function meldTestmodus(wat: string, payload: unknown): void {
+  console.info(`[subsidiecheck testmodus] ${wat}. Dit zou naar het CRM zijn gegaan:`, payload);
+}
+
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 export const NAME_RE = /^[\p{L}\s'-]+$/u;
 
@@ -127,6 +137,7 @@ export async function schrijfSubsidiecheckLead(args: {
   verrijking?: LeadVerrijking;
 }): Promise<void> {
   const { waarden, input, adres, notitie, verrijking } = args;
+  if (isTestmodus()) return void meldTestmodus("lead-insert overgeslagen", { waarden, input, notitie });
   const extra = verrijkingsVelden(verrijking);
   const { error } = await supabaseExternal.from("leads_bewoners").insert({
     ...extra,
@@ -206,6 +217,11 @@ export async function verstuurSubsidiecheckLead(args: {
   honeypot?: string;
 }): Promise<{ leadId?: string }> {
   const { waarden, input, adres, regelingen, notitie, verrijking, overzichtUrl, honeypot } = args;
+
+  if (isTestmodus()) {
+    meldTestmodus("lead + overzichtmail overgeslagen", { waarden, input, notitie, aantalRegelingen: regelingen.length });
+    return {};
+  }
 
   if (!MAIL_FUNCTIE_URL) {
     // Terugval: alleen de lead, geen mail.
@@ -293,6 +309,8 @@ export async function verstuurSubsidiecheckBericht(args: {
   honeypot?: string;
 }): Promise<void> {
   const { waarden, bericht, input, adres, leadId, overzichtUrl, honeypot } = args;
+
+  if (isTestmodus()) return meldTestmodus("vraag niet verstuurd", { waarden, input, bericht });
 
   if (!MAIL_FUNCTIE_URL) {
     await schrijfSubsidiecheckLead({ waarden, input, adres, notitie: bericht });
