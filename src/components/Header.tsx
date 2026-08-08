@@ -13,7 +13,7 @@ const glassPill = "bg-white/70 backdrop-blur-xl";
 // Dropdown panels hang over a busier/darker part of the hero than the slim header
 // bar (and, being nested inside the nav's own backdrop-filter, blur weaker), so they
 // need a higher white opacity to read as the *same* frosted surface as the pills.
-const glassPanel = "bg-white/90 backdrop-blur-xl";
+const glassPanel = "bg-white/95 backdrop-blur-xl";
 
 type DropdownItem = { href: string; label: string; tool?: boolean };
 
