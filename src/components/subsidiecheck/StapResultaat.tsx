@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Copy, Link2, Loader2, MessageCircle } from "lucide-react";
+import { Check, Link2, Loader2, MessageCircle } from "lucide-react";
 
 import { usePand3d } from "@/hooks/usePand3d";
 import { usePandContour } from "@/hooks/usePandContour";
@@ -95,39 +95,12 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
     }
   };
 
-  // Deel de tool zelf (niet dit overzicht): op mobiel via de native deel-sheet
-  // (Web Share API: WhatsApp, mail, enz.); op desktop kopiëren we de link.
-  const [gedeeld, setGedeeld] = useState(false);
-  const deelTimer = useRef<ReturnType<typeof setTimeout>>();
-  useEffect(() => () => clearTimeout(deelTimer.current), []);
-  const deelTool = async () => {
-    const url = `${window.location.origin}/subsidiecheck`;
-    // Native deel-sheet alleen op touch-apparaten (mobiel): daar toont WhatsApp de
-    // rijke kaart betrouwbaar. Op desktop opent de OS-deelsheet WhatsApp Web, dat
-    // de preview bij het delen vaak niet genereert; daar kopiëren we de link
-    // (plakken toont de kaart wél). Web Share bestaat namelijk óók op
-    // desktop-Edge/Chrome, dus we checken expliciet op een touch-pointer.
-    const kanNatiefDelen =
-      typeof navigator.share === "function" &&
-      typeof window.matchMedia === "function" &&
-      window.matchMedia("(pointer: coarse)").matches;
-    if (kanNatiefDelen) {
-      try {
-        await navigator.share({ url });
-      } catch {
-        /* door de gebruiker geannuleerd */
-      }
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(url);
-      setGedeeld(true);
-      clearTimeout(deelTimer.current);
-      deelTimer.current = setTimeout(() => setGedeeld(false), 2500);
-    } catch {
-      /* clipboard geweigerd */
-    }
-  };
+  // Hier stond een tweede knop "Deel de tool" naast "Kopieer link naar dit
+  // overzicht". Twee deelknoppen naast elkaar die bij het klikken allebei "Link
+  // gekopieerd" tonen, terwijl ze een andere link kopiëren. Die van het overzicht
+  // blijft: overleggen met een partner is een echte stap in dit traject, en die
+  // link bevat het adres. Wie de tool zelf wil doorgeven, kan dezelfde link
+  // sturen.
 
   // Vanuit de samenvatting (bovenaan) naar het mailformulier springen.
   const conversieRef = useRef<HTMLDivElement>(null);
@@ -331,6 +304,28 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
         .
       </p>
 
+      {/* De combineer-uitleg, één keer. Stond eerder op élke kaart in de uitklap
+          ("Vaak te combineren met andere regelingen…"), dus twaalf keer dezelfde
+          zin. Hier staat hij op het moment dat de vraag opkomt: de bezoeker ziet
+          net een lijst en vraagt zich af of hij moet kiezen. Bewust rustig
+          vormgegeven, geen tweede CTA: de contactroute staat onder de lijst. */}
+      <div
+        className="mt-6 rounded-xl border border-border px-5 py-4 md:px-6"
+        style={{ backgroundColor: "var(--card-soft)" }}
+      >
+        <p className="text-[15px] leading-relaxed text-foreground/80">
+          <span className="font-semibold text-primary">Je hoeft hier niet uit te kiezen.</span> Veel van deze
+          regelingen zijn te combineren, maar niet allemaal en niet in elke volgorde. Wij zoeken gratis voor je uit
+          welke combinatie voor jouw woning het meeste oplevert.{" "}
+          <a
+            href="/subsidies/stapelen"
+            className="rounded-sm font-semibold text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            Hoe stapelen werkt
+          </a>
+        </p>
+      </div>
+
       {/* Groepen onder elkaar (landelijk → lokaal, layer-cake-scan), met de
           kaarten binnen een groep naast elkaar op desktop. */}
       <div className="mt-8 flex flex-col gap-8">
@@ -371,26 +366,6 @@ export const StapResultaat = ({ input, adres, verbergMail = false }: StapResulta
             <>
               <Link2 size={14} strokeWidth={2} aria-hidden="true" />
               Kopieer link naar dit overzicht
-            </>
-          )}
-        </button>
-        {/* Verhuisd van de samenvatting naar hier: delen speelt pas als je het
-            overzicht hebt gezien, en boven de vouw kostte het te veel ruimte. */}
-        <button
-          type="button"
-          onClick={deelTool}
-          aria-live="polite"
-          className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-[13px] font-medium text-primary transition-colors hover:border-primary/40 min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          {gedeeld ? (
-            <>
-              <Check size={14} strokeWidth={2.5} className="text-accent" aria-hidden="true" />
-              Link gekopieerd
-            </>
-          ) : (
-            <>
-              <Copy size={14} strokeWidth={2} aria-hidden="true" />
-              Deel de tool
             </>
           )}
         </button>

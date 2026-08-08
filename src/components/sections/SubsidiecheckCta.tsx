@@ -2,6 +2,7 @@ import { FormEvent, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Check } from "lucide-react";
 
+import { SUBSIDIECHECK_BELOFTES } from "@/config/beloftes";
 import { normalizePostcode, POSTCODE_RE } from "@/lib/pdok";
 
 // Typt mee met de gebruiker: hoofdletters, alleen geldige tekens.
@@ -123,9 +124,11 @@ export const SubsidiecheckCta = () => {
             )}
           </form>
 
-          {/* Drie beloftes met vinkjes — zelfde patroon als de hero. */}
+          {/* Drie beloftes met vinkjes — zelfde patroon als de hero. De teksten
+              staan in src/config/beloftes.ts, gedeeld met stap 1 van de check,
+              met daar de toelichting waarom ze zijn zoals ze zijn. */}
           <ul className="mt-5 flex flex-nowrap items-center justify-center gap-x-2.5 sm:gap-x-5">
-            {["Gratis", "Geen account nodig", "Klaar in 1 minuut"].map((belofte) => (
+            {SUBSIDIECHECK_BELOFTES.map((belofte) => (
               <li
                 key={belofte}
                 className="inline-flex items-center gap-1 whitespace-nowrap text-[12px] text-muted-foreground sm:gap-2 sm:text-[15px]"
