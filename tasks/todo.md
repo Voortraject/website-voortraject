@@ -2,6 +2,191 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Subsidietool: adviseursblok, gebouwtype en de persoonlijke eerste stap (2026-08-09)
+
+Vervolg op het traject van 2026-08-08 (PR's #106 t/m #111, allemaal gemerged). Vier opdrachten:
+adviseursblok inkorten, gebouwtype uit EP-Online meenemen, een persoonlijke eerste stap op het
+resultaat, en onderzoek naar best practice.
+
+Stand: **alles gemerged** (#112, #113, #114, #115) en de edge function is gedeployed. Wat er nog
+openstaat, staat onderaan deze sectie.
+
+### PR 1 — Poort: minder ruis, andere geruststelling, rustiger aankomst (#112)
+
+- [x] Subregel boven het formulier weg (zei wat de titel en de legenda al zeggen)
+- [x] "Meerdere antwoorden mogelijk" weg; blijft in het `aria-label`, want een screenreader kan het
+      niet aan de vorm zien
+- [x] Adviseurszin naar "Hij of een collega denkt gratis en vrijblijvend met je mee"
+- [x] "Je gegevens blijven bij ons" vooraan de privacyregel
+- [x] Zoeksequentie naar 3s (3 × 1000ms)
+- [x] De overgang van poort naar resultaat
+
+**Over de adviseurszin.** Eerst stond er "belt je voor gratis en vrijblijvend advies". Die noemde
+wél gratis en vrijblijvend, maar kondigde nog steeds een telefoontje aan, en niet iedereen wil dat.
+"Denkt met je mee" zegt hetzelfde zonder de bezoeker een gesprek in te duwen dat hij nog niet
+gevraagd heeft.
+
+Meting op 390px, voor en na alle tekstingrepen:
+
+| | voor | na |
+|---|---|---|
+| hoogte formulier | 1132px | 1108px |
+| telefoonveld → verzendknop | 384px | 360px |
+| hoogte adviseursblok | 114px | 114px |
+
+Het adviseursblok blijft even hoog: elke variant van de zin breekt bij 390px op drie regels, want de
+foto van 44px plus marges laat maar ~270px tekstbreedte over. Wie het blok écht lichter wil, moet
+onder de ~85 tekens komen of de foto kleiner maken.
+
+**Variant B, gebouwd en gemeten maar niet ingediend:** hetzelfde blok ná de hulpvraag en pal boven
+de verzendknop. Formulierhoogte identiek, alleen de volgorde verschilt. Variant A (huidig) zet het
+bewijs pal onder het telefoonveld dat de twijfel veroorzaakt; in B leest de bezoeker "we denken met
+je mee" pas ná het invullen, en dat ondermijnt de reden dat het blok er staat. Gekozen: A.
+
+**Over de overgang naar het resultaat.** Twee rondes nodig. De eerste maakte de wissel netter (fade
+van 12px/0,6s naar 6px/0,42s, uitloop van het formulier, geen feestpill meer) maar niet trager, en
+het bleef als een knip lezen. De oorzaak zat niet in de animatie: het échte wachtmoment was
+onzichtbaar. Bij het verzenden gaat de lead naar het team en vertrekt de mail, maar dat zat weggestopt
+in een spinner van 16px in de knop, duurde soms 200ms, en daarna verscheen het hele resultaat in één
+keer. Nu:
+
+- de knop zegt wat er gebeurt ("Je overzicht wordt klaargezet…") in plaats van wat de bezoeker deed;
+- alles wat de bezoeker net invulde zakt naar 45%, de knop blijft juist op volle sterkte (zijn
+  `disabled:opacity-70` is eruit: een vervaagde knop met de enige tekst op het scherm leest als
+  "er ging iets mis");
+- ondergrens van 750ms op dat moment, zodat het niet opflitst als de calls snel zijn. Dat verlengt
+  geen verzonnen werk, het geeft echt werk de tijd om als stap gelezen te worden;
+- uitloop van het formulier 340ms, daarna bouwt het resultaat zich op in drie stappen (0 / 120 /
+  260ms). De kaarten binnen een groep doen bij de aankomst niet meer hun eigen trapje: twee geneste
+  animaties over elkaar maken de opbouw troebel. Bij een herlaad blijft dat trapje wel staan.
+
+Samen ongeveer anderhalve seconde, met onderweg de smooth scroll terug naar de kop die er al was.
+Bewegingsreductie slaat alles over.
+
+### PR 2 — Gebouwtype en gebouwklasse uit EP-Online (#113)
+
+- [x] `normaliseerGebouw()` naast `normaliseerEpOnline()`, met een eigen rijselectie
+- [x] `WoningInfo.gebouw` aan beide kanten van de brug (edge function + `src/lib/woninginfo`)
+- [x] 5 unittests; 163 tests groen (was 158)
+- [x] **Edge function gedeployed op het CRM-project `lfelnfukbrxznkevnevr`** (2026-08-09, handmatig)
+- [x] Ná de deploy: de echte waarden uitgelezen
+
+Bevestigd in het schema `PandEnergielabelV5` (public.ep-online.nl/swagger/v5/swagger.json): de
+velden `Gebouwklasse` ("Het soort gebouw: een woning of een utiliteitsgebouw"), `Gebouwtype` ("Het
+woningtype") en `Gebouwsubtype` ("de ligging van het appartement in het woongebouw") bestaan alle
+drie, als string, **zonder enum**. De waarden gaan daarom ruw door, alleen getrimd: een eigen
+vertaallijst zou gokwerk zijn dat stil de verkeerde kant op valt.
+
+Zolang het veld leeg is verandert er zichtbaar niets, en er is nog geen consument in de UI.
+
+#### Wat de bron werkelijk teruggeeft (9766PJ 15, live na de deploy)
+
+```json
+"gebouw": {
+  "type": "Twee-onder-een-kap / rijwoning hoek",
+  "klasse": "Woningbouw",
+  "subtype": "Twee-onder-een-kap"
+}
+```
+
+Drie dingen die je hier niet uit de swagger had kunnen halen, en die de keuze om niet te vertalen
+achteraf bevestigen:
+
+1. **`Gebouwtype` is geen enkelvoudig type maar een samengesteld label met een schuine streep.**
+   "Twee-onder-een-kap / rijwoning hoek" is één waarde, niet twee. Een naïeve mapping op
+   `type === "Rijwoning"` had hier dus niets herkend, en een `includes("rijwoning")` zou een
+   twee-onder-een-kap als rijwoning classificeren. Wie hierop wil filteren, moet eerst een reeks
+   adressen verzamelen en de échte lijst opbouwen.
+2. **`Gebouwsubtype` doet iets anders dan de swagger beweert.** Daar staat "de ligging van het
+   appartement in het woongebouw", maar bij dit eengezinshuis staat er `"Twee-onder-een-kap"`: het
+   veld kiest hier één kant van de schuine streep in `Gebouwtype`. Het is dus (ook) een
+   *disambiguatie* van het samengestelde type, niet alleen een appartementpositie.
+   **Dat maakt `subtype` waarschijnlijk het bruikbaardere veld van de twee**, precies het veld dat
+   buiten de oorspronkelijke opdracht viel en er "voor het geval dat" bij is gezet.
+3. **`Gebouwklasse` is `"Woningbouw"`,** voluit, niet een code als `W` of `Woning`.
+
+Nog onbekend: de volledige lijst waarden, en wat er bij een utiliteitsgebouw of een appartement
+staat. Verzamel dat uit echte adressen voordat je er logica op bouwt.
+
+### Feiten voor de persoonlijke eerste stap (geverifieerd bij Milieu Centraal)
+
+Voorwaarde die de opdrachtgever stelde: nooit een uitspraak over dít huis (we weten niet wat er al
+gedaan is), wél over de woningvoorraad, eindigend in een vraag. Onderstaande citaten komen
+letterlijk van milieucentraal.nl (opgehaald 2026-08-09, pagina's laatst gewijzigd 8 juli 2026).
+
+**Spouwmuur** (`/energie-besparen/isoleren-en-besparen/spouwmuurisolatie/`):
+- "Ongeveer 1 van de 4 woningen heeft nog géén geïsoleerde buitenmuren."
+- vóór 1920: "Dan heeft het waarschijnlijk geen spouwmuur."
+- na 1920: "Dan is de kans groot dat het bij de bouw buitenmuren met een spouw heeft gekregen."
+- 1920 tot 1975: "Grote kans dat het bij de bouw buitenmuren met een spouw heeft gekregen, maar nog
+  zonder isolatie. De spouwmuur kan wel na-geïsoleerd zijn."
+- 1975 tot 1991: "In deze periode werden buitenmuren bijna altijd geïsoleerd, meestal in de spouw.
+  Maar de isolatiewaarde van deze huizen kan beter."
+- na 1991: "Dan heeft het al goede gevelisolatie (Rc van 2,5 of hoger) en dat hoef je niet verder
+  te verbeteren."
+
+**Dak** (`/energie-besparen/isoleren-en-besparen/dakisolatie/`):
+- "Meer dan 85% van de woningen heeft al een isolatielaag. Vaak is dat een dunne laag met een
+  matige isolatiewaarde." En: "Veel mensen denken 'mijn dak is al geïsoleerd, dus ik hoef niks meer
+  te doen', maar het tegendeel is vaak waar."
+- vóór 1975: "Bij de bouw is geen isolatie aangebracht."
+- 1975 tot 1992: "waarschijnlijk een matige isolatielaag van 3 tot 5 centimeter"
+- 1992 of later: "redelijke tot goede isolatie meegekregen (8 tot 10 centimeter of meer)"
+
+Twee dingen vallen op en die sturen de tekst:
+1. **Milieu Centraal schrijft zelf al in kansen** ("grote kans", "waarschijnlijk", "bijna altijd").
+   Dat is precies de vorm die we nodig hebben: een uitspraak over de voorraad, niet over dit huis.
+2. **De dak-zin is de sterkste**, want die werkt óók als het dak al geïsoleerd is. "85% heeft al
+   een laag, meestal te dun" is geen gok over deze woning maar een feit over alle woningen, en het
+   raakt precies de reden waarom mensen niets doen.
+
+Grenzen die hieruit volgen: **1920 / 1975 / 1992**. Niet zelf verzonnen, maar de indeling die
+Milieu Centraal zelf hanteert.
+
+### PR 3 — De persoonlijke eerste stap (#115, gestapeld op #112)
+
+- [x] Conceptteksten goedgekeurd door de opdrachtgever
+- [x] `eersteStapTekst.ts` (pure logica) + `EersteStap.tsx`, onder de conclusie en boven de lijst
+- [x] 9 tests; 171 tests groen. Twee daarvan bewaken de inhoudelijke regels: geen bewering over
+      "jouw huis/woning/muren/dak" na de openingszin, en geen maatregel bij naam
+- [x] Drie varianten live nagelopen (1935, 2007, huurder), inclusief de klik die het vraagveld vult
+- [x] Meting via het bestaande `subsidiecheck_vraag_cta` met `plek: eerste_stap`, dus **zonder**
+      wijziging in de GTM-container
+- [ ] Beslissen: op mobiel staat het blok pal onder de navy knop "Ik heb een vraag", die naar
+      dezelfde plek gaat. Blok naar boven verplaatsen, generieke knop weg, of laten staan?
+
+**Waarom de eerdere twee opzetten sneuvelden.** Versie A hing aan de spouwmuur, versie B aan het
+dak. Allebei kozen ze één maatregel en dus één verhaal, terwijl we niet weten welke maatregel voor
+deze woning speelt. Wat bouwjaar maatregelonafhankelijk vertelt is **wat er bij de bouw in ging**,
+en dat dekt muren, dak, vloer en glas tegelijk.
+
+De zin "Wat er daarna is gedaan verschilt per woning" doet het eigenlijke werk: die zegt hardop dat
+we het niet weten, en precies daarom is de vraag erna een logisch vervolg in plaats van een
+verkooptruc.
+
+**Bijvangst:** de BAG-geometrie is hiervoor niet meer nodig. Het woningtype voegde aan dit verhaal
+niets toe, dus het hele stuk waarin uit de buurpanden afgeleid moest worden of het een rijwoning is,
+met alle kans op fouten, vervalt. Dat was het risicovolste deel van het oorspronkelijke plan.
+
+**Grenzen:** 1975 en 1992. De dak- en spouwmuurpagina van Milieu Centraal leggen hun bovengrens net
+anders (1991 vs 1992); we houden 1992 aan, de conservatieve kant. Een woning uit 1991 valt dan in de
+"dunne laag"-groep, en dat is bij twijfel de uitspraak die niemand tekortdoet.
+
+### Nog open, vraagt een beslissing van de opdrachtgever
+
+- ~~**Huurder-tak.**~~ **Beantwoord (2026-08-09):** Voortraject kan ook voor huurders altijd kijken
+  wat er mogelijk is. Verwerkt in de eerste stap (#115): huurders krijgen dezelfde uitspraak over de
+  woningvoorraad, maar de slotvraag wordt "wat er in jouw situatie mogelijk is". Het onderliggende
+  probleem blijft wel staan: 1 regeling in Groningen is een mager resultaat op zichzelf.
+- **Toestemming per lead** voor telefonische opvolging (art. 11.7 lid 2 Telecommunicatiewet). Raakt
+  het CRM.
+- **De waardenlijst van `Gebouwtype` / `Gebouwsubtype`.** Nu bekend van één adres (zie hierboven).
+  Voordat er logica op gebouwd wordt: verzamel de waarden van een reeks adressen, inclusief een
+  appartement en een utiliteitsgebouw. `Gebouwtype` blijkt samengesteld ("Twee-onder-een-kap /
+  rijwoning hoek"), dus matchen op losse woorden gaat mis.
+- **GTM-event `subsidiecheck_verbreed`** bij het verbreden na 0 regelingen. Kan pas als de
+  container in `docs/gtm/` weer stabiel is, want `gtmContainer.test.ts` eist trigger én tag.
+
 ## Subsidietool: eerlijker, geen doodlopende einden, andere volgorde (2026-08-08)
 
 Aanleiding: analyse van de hele tool op conversie en waarde. Wat de analyse als eerste opleverde
