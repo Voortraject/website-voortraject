@@ -14,6 +14,7 @@ import { usePand3d } from "@/hooks/usePand3d";
 import { usePandContour } from "@/hooks/usePandContour";
 import { usePdokAdres } from "@/hooks/usePdokAdres";
 import { useWoningInfo } from "@/hooks/useWoningInfo";
+import { pushGtmEvent } from "@/lib/gtm";
 import { normalizePostcode, type PdokAdres, POSTCODE_RE } from "@/lib/pdok";
 import {
   ALLE_MAATREGELEN,
@@ -110,9 +111,12 @@ const SubsidiecheckLive = () => {
   // anders meteen het resultaat. De situatie staat standaard op woningeigenaar,
   // dus er is geen aparte situatiestap.
   const stap1Actief = editParam || sitParam || !paramsGeldig || adresNietGevonden || !bewonertype;
-  const stappen = poortAan
-    ? (["Jouw woning", "Je gegevens", "Resultaat"] as const)
-    : (["Jouw woning", "Resultaat"] as const);
+  // Gememoïseerd omdat de funnel-meting hieronder ervan afhangt: een nieuwe
+  // array per render zou dat effect bij elke render opnieuw laten vuren.
+  const stappen: readonly string[] = useMemo(
+    () => (poortAan ? ["Jouw woning", "Je gegevens", "Resultaat"] : ["Jouw woning", "Resultaat"]),
+    [poortAan],
+  );
   const resultaatStap = stappen.length; // 3 met poort, anders 2
   const stap = stap1Actief ? 1 : poortAan && !ontgrendeld ? 2 : resultaatStap;
 
@@ -153,6 +157,20 @@ const SubsidiecheckLive = () => {
     }
     kopRef.current?.focus({ preventScroll: false });
   }, [stap]);
+
+  // Funnel: elke stap die de bezoeker te zien krijgt, inclusief stap 1. Zonder
+  // die noemer is uitval niet te berekenen — subsidiecheck_start meet pas het
+  // afrónden van stap 1, niet hoeveel mensen eraan begonnen. Bewust ook op de
+  // eerste render: wie via een gedeelde link of de homepage binnenkomt, begint
+  // meteen op stap 2 of 3, en dat is een echte instap die mee moet tellen.
+  useEffect(() => {
+    pushGtmEvent("subsidiecheck_stap", {
+      stap,
+      stap_naam: stappen[stap - 1] ?? "",
+      // Houdt de cijfers vergelijkbaar als de gegevens-poort ooit uitgaat.
+      poort: poortAan ? 1 : 0,
+    });
+  }, [stap, stappen, poortAan]);
 
   // Het resultaat heeft bewust géén subregel: de samenvatting in StapResultaat
   // vertelt daar het verhaal. De stap-1-kop past zich aan: met een al bekend
