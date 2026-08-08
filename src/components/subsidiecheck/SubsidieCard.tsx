@@ -1,20 +1,18 @@
 import { useId, useState } from "react";
-import { ChevronDown, ExternalLink, Tag } from "lucide-react";
+import { ChevronDown, ExternalLink } from "lucide-react";
 
-import { ALLE_MAATREGELEN, MAATREGEL_LABELS, TYPE_LABELS, type SubsidieRegeling } from "@/lib/subsidies";
+import { TYPE_LABELS, type SubsidieRegeling } from "@/lib/subsidies";
 
 import { TYPE_KAART, TYPE_PILL } from "./niveauKleuren";
 
-// Maatregel-samenvatting als rustige leesregel (géén chips: die lijken op de
-// klikbare filterchips uit stap 2). Dekt een regeling vrijwel alles, dan één
-// zin; anders een opsomming met een teller.
-const MAX_TAGS = 4;
-const maatregelTekst = (regeling: SubsidieRegeling): string => {
-  if (regeling.maatregelen.length >= ALLE_MAATREGELEN.length - 1) return "Voor vrijwel alle maatregelen";
-  const labels = regeling.maatregelen.map((m) => MAATREGEL_LABELS[m]);
-  if (labels.length <= MAX_TAGS) return `Voor ${labels.join(", ")}`;
-  return `Voor ${labels.slice(0, MAX_TAGS).join(", ")} en ${labels.length - MAX_TAGS} meer`;
-};
+// Hier stond een maatregelregel ("Voor isolatie & glas, ventilatie …"). Die is
+// weg omdat hij niet waar te maken is: de Energiesubsidiewijzer levert per
+// regeling geen maatregelenlijst, dus de parser vult `regeling.maatregelen`
+// met álle acht (zie energiesubsidiewijzer.ts). Elke kaart toonde daardoor
+// dezelfde zin "Voor vrijwel alle maatregelen", ook een regeling die alleen
+// over isolatie gaat. Twaalf identieke, onjuiste regels op de pagina waar we
+// geloofwaardigheid moeten verdienen. Liever niets dan iets wat niet klopt.
+// Terug te zetten zodra de bron per regeling wél maatregelen levert.
 
 // Eén regeling in het resultaat. Gesloten toont de kaart alles om te beslissen
 // (type, titel, bedrag rechtsboven, één regel uitleg, maatregelen). De uitklap
@@ -51,11 +49,6 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
       {/* Op mobiel blijft de gesloten kaart compact (badge, titel, bedrag,
           maatregelregel); de omschrijving verhuist daar naar de uitklap. */}
       <p className="mt-1.5 hidden text-[15px] leading-relaxed text-foreground/80 md:block">{regeling.omschrijving}</p>
-
-      <p className="mt-2.5 flex items-center gap-1.5 text-[13px] text-muted-foreground">
-        <Tag size={13} strokeWidth={2} className="shrink-0" aria-hidden="true" />
-        {maatregelTekst(regeling)}
-      </p>
 
       {/* Aanbieder en uitklapknop op één regel, ook op mobiel: onder elkaar kostte
           dat per kaart een extra regel, en met elf kaarten is dat een half scherm
@@ -94,7 +87,10 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
               <span className="text-foreground/80">{regeling.belangrijksteVoorwaarde}</span>
             </p>
           )}
-          <p className="text-foreground/80">Vaak te combineren met andere regelingen. Wij zoeken de beste combinatie voor je uit.</p>
+          {/* De zin "Vaak te combineren met andere regelingen…" stond hier op
+              élke kaart. Twaalf keer dezelfde belofte leest als behang, niet als
+              uitleg. Hij staat nu één keer op het resultaat, waar de vraag "moet
+              ik hieruit kiezen?" ook echt opkomt. */}
           <a
             href={regeling.bronUrl}
             target="_blank"
