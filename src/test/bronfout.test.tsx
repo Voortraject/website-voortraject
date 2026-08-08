@@ -94,6 +94,10 @@ describe("gegevens-poort bij een bronfout", () => {
     vi.mocked(subsidieProvider.check).mockRejectedValue(new Error("bron plat"));
     const onOntgrendeld = vi.fn();
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
+    // De poort zoekt nu eerst (en toont dat); het formulier volgt daarna. Bij een
+    // bronfout gaat daar de retry van react-query (retry: 1) overheen, vandaar de
+    // ruimere wachttijd dan de standaard van één seconde.
+    await screen.findByPlaceholderText(/Je voornaam/, {}, { timeout: 5000 });
     vulIn();
     nu += 5_000;
     fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
@@ -112,6 +116,10 @@ describe("gegevens-poort bij een bronfout", () => {
   it("verstuurt niets zolang de hulpvraag niet gekozen is", async () => {
     const onOntgrendeld = vi.fn();
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
+    // De poort zoekt nu eerst (en toont dat); het formulier volgt daarna. Bij een
+    // bronfout gaat daar de retry van react-query (retry: 1) overheen, vandaar de
+    // ruimere wachttijd dan de standaard van één seconde.
+    await screen.findByPlaceholderText(/Je voornaam/, {}, { timeout: 5000 });
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
@@ -126,6 +134,10 @@ describe("gegevens-poort bij een bronfout", () => {
   it("verstuurt niets zonder telefoonnummer", async () => {
     const onOntgrendeld = vi.fn();
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
+    // De poort zoekt nu eerst (en toont dat); het formulier volgt daarna. Bij een
+    // bronfout gaat daar de retry van react-query (retry: 1) overheen, vandaar de
+    // ruimere wachttijd dan de standaard van één seconde.
+    await screen.findByPlaceholderText(/Je voornaam/, {}, { timeout: 5000 });
     fireEvent.click(screen.getByRole("checkbox", { name: /Subsidies uitzoeken/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
@@ -142,6 +154,10 @@ describe("gegevens-poort bij een bronfout", () => {
     vi.mocked(subsidieProvider.check).mockRejectedValue(new Error("bron plat"));
     const onOntgrendeld = vi.fn();
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
+    // De poort zoekt nu eerst (en toont dat); het formulier volgt daarna. Bij een
+    // bronfout gaat daar de retry van react-query (retry: 1) overheen, vandaar de
+    // ruimere wachttijd dan de standaard van één seconde.
+    await screen.findByPlaceholderText(/Je voornaam/, {}, { timeout: 5000 });
     // Bewust in omgekeerde volgorde aanklikken: de notitie moet de volgorde van
     // de tegels aanhouden, niet die van het klikken.
     fireEvent.click(screen.getByRole("checkbox", { name: /Een uitvoerder vinden/ }));
