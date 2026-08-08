@@ -2,6 +2,7 @@ import { useState, useRef, FormEvent, ChangeEvent } from "react";
 import { CheckCircle, Loader2, Mail, MapPin, Phone } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
+import { pushGtmEvent } from "@/lib/gtm";
 import { Footer } from "@/components/Footer";
 import { ReviewsCompact } from "@/components/ReviewsCompact";
 import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
@@ -271,6 +272,14 @@ const Contact = () => {
         status: "nieuw",
       } as any);
       if (error) throw error;
+      // Tegenhanger van zakelijk_lead in ZakelijkContactFormulier. Geen
+      // persoonsgegevens mee, alleen of de optionele blokken zijn ingevuld:
+      // daarmee valt te zien of het adresblok en het vragenveld de inzending
+      // helpen of juist afremmen.
+      pushGtmEvent("bewoner_lead", {
+        heeft_adres: bewoner.postcode.trim() ? 1 : 0,
+        heeft_vraag: opmerkingen ? 1 : 0,
+      });
       setBewoner(initialBewoner);
       setAdresLocked(false);
       setAdresChecked(false);
