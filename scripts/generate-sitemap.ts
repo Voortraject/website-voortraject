@@ -9,45 +9,47 @@ const BASE_URL = "https://voortraject.nl";
 
 interface SitemapEntry {
   path: string;
-  changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
-  priority?: string;
+  /**
+   * Datum van de laatste inhoudelijke wijziging (YYYY-MM-DD).
+   *
+   * Bewust handmatig en niet de builddatum: als élke pagina bij elke deploy
+   * "vandaag" claimt, is het signaal waardeloos en gaat Google het negeren.
+   * Werk deze datum bij wanneer je de tekst of inhoud van een pagina
+   * betekenisvol wijzigt (een styling-tweak telt niet).
+   *
+   * changefreq en priority staan hier bewust niet meer in: Google gebruikt ze
+   * niet, lastmod wél.
+   */
+  lastmod: string;
 }
 
 const entries: SitemapEntry[] = [
-  { path: "/", changefreq: "weekly", priority: "1.0" },
+  { path: "/", lastmod: "2026-07-13" },
   // De subsidiecheck valt uit de sitemap zolang hij nog niet live is (de pagina
   // staat dan op noindex) — zie src/config/features.ts.
-  ...(SUBSIDIECHECK_LIVE
-    ? [{ path: "/subsidiecheck", changefreq: "weekly", priority: "0.9" } as SitemapEntry]
-    : []),
-  { path: "/zakelijk", changefreq: "monthly", priority: "0.9" },
+  ...(SUBSIDIECHECK_LIVE ? [{ path: "/subsidiecheck", lastmod: "2026-08-07" } as SitemapEntry] : []),
+  { path: "/zakelijk", lastmod: "2026-08-07" },
 
-  { path: "/verduurzamen/isolatie", changefreq: "monthly", priority: "0.8" },
-  { path: "/verduurzamen/zonnepanelen", changefreq: "monthly", priority: "0.8" },
-  { path: "/verduurzamen/warmtepomp", changefreq: "monthly", priority: "0.8" },
-  { path: "/verduurzamen/thuisbatterij", changefreq: "monthly", priority: "0.8" },
-  { path: "/verduurzamen/airco", changefreq: "monthly", priority: "0.7" },
-  { path: "/verduurzamen/laadpaal", changefreq: "monthly", priority: "0.7" },
-  { path: "/verduurzamen/onderhoud", changefreq: "monthly", priority: "0.7" },
-  { path: "/subsidies/nij-begun", changefreq: "monthly", priority: "0.8" },
-  { path: "/subsidies/landelijk", changefreq: "monthly", priority: "0.8" },
-  { path: "/subsidies/regionaal", changefreq: "monthly", priority: "0.8" },
-  { path: "/over-ons", changefreq: "monthly", priority: "0.7" },
-  { path: "/contact", changefreq: "monthly", priority: "0.7" },
+  { path: "/verduurzamen/isolatie", lastmod: "2026-07-03" },
+  { path: "/verduurzamen/zonnepanelen", lastmod: "2026-07-02" },
+  { path: "/verduurzamen/warmtepomp", lastmod: "2026-07-02" },
+  { path: "/verduurzamen/thuisbatterij", lastmod: "2026-06-12" },
+  { path: "/verduurzamen/airco", lastmod: "2026-07-02" },
+  { path: "/verduurzamen/laadpaal", lastmod: "2026-06-11" },
+  { path: "/verduurzamen/onderhoud", lastmod: "2026-07-03" },
+  { path: "/subsidies/nij-begun", lastmod: "2026-07-03" },
+  { path: "/subsidies/landelijk", lastmod: "2026-07-03" },
+  { path: "/subsidies/regionaal", lastmod: "2026-07-03" },
+  { path: "/subsidies/stapelen", lastmod: "2026-07-07" },
+  { path: "/over-ons", lastmod: "2026-07-16" },
+  { path: "/contact", lastmod: "2026-08-07" },
+  { path: "/privacy", lastmod: "2026-07-14" },
+  { path: "/cookieverklaring", lastmod: "2026-06-10" },
 ];
-
 
 function generateSitemap(entries: SitemapEntry[]) {
   const urls = entries.map((e) =>
-    [
-      `  <url>`,
-      `    <loc>${BASE_URL}${e.path}</loc>`,
-      e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
-      e.priority ? `    <priority>${e.priority}</priority>` : null,
-      `  </url>`,
-    ]
-      .filter(Boolean)
-      .join("\n"),
+    [`  <url>`, `    <loc>${BASE_URL}${e.path}</loc>`, `    <lastmod>${e.lastmod}</lastmod>`, `  </url>`].join("\n"),
   );
 
   return [
