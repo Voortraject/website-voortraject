@@ -9,6 +9,28 @@ the user corrects course or a non-obvious gotcha surfaces. Review at session sta
 **Lesson:** the rule to follow next time
 -->
 
+## 2026-08-09 — Twee bestanden die alleen in hoofdletters verschillen: op Windows importeert het component zichzelf
+**Context:** Voor de eerste stap op het resultaat kwamen er twee bestanden in dezelfde map:
+`EersteStap.tsx` (het component) en `eersteStap.ts` (de pure tekstlogica). Dat volgt de conventie
+in deze map, waar componenten PascalCase zijn en modules camelCase. Alleen: Windows heeft een
+hoofdletterongevoelig bestandssysteem, dus `import { eersteStapTekst } from "./eersteStap"` in
+`EersteStap.tsx` resolvet naar **het component zelf**. Resultaat: het component importeert zichzelf,
+`EersteStap` is `undefined` bij het renderen, en de enige melding is
+`Element type is invalid ... but got: undefined` op een bestaande test die verder niets met de
+wijziging te maken had. `tsc` klaagt niet, de dev-server klaagt niet, en de pagina wordt gewoon wit.
+**Lesson:**
+- **Laat twee bestanden in dezelfde map nooit alleen in hoofdlettergebruik verschillen.** Noem de
+  logicamodule anders (hier: `eersteStapTekst.ts`), niet dezelfde naam in een ander casing-patroon.
+  Dit is op Linux (CI, Cloudflare-build) wél in orde, dus het is precies het soort verschil dat
+  lokaal en in productie anders uitpakt.
+- **Herken de melding.** `Element type is invalid … got: undefined` in een component dat je net hebt
+  toegevoegd betekent bijna altijd een importprobleem, niet een exportfout. Controleer eerst of het
+  pad naar iets anders wijst dan je denkt.
+- **Vite komt hier niet vanzelf van bij.** Na de hernoeming bleef de dev-server een wit scherm
+  serveren zonder enige console-fout, terwijl de losse modules met een 200 werden geserveerd. Een
+  verse dev-server (en `rm -rf node_modules/.vite`) loste het op. Draai bij onverklaarbaar
+  renderloos gedrag na een hernoeming eerst de server opnieuw voordat je de code gaat zoeken.
+
 ## 2026-08-08 — Nooit `git stash` in een werkmap die je met iemand anders deelt
 **Context:** Er werkte een tweede terminal in dezelfde map aan een andere branch. Om te
 controleren of mijn wijzigingen nieuwe lint-fouten opleverden, deed ik `git stash -u`, draaide de

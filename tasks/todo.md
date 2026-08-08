@@ -8,34 +8,61 @@ Vervolg op het traject van 2026-08-08 (PR's #106 t/m #111, allemaal gemerged). V
 adviseursblok inkorten, gebouwtype uit EP-Online meenemen, een persoonlijke eerste stap op het
 resultaat, en onderzoek naar best practice.
 
-### PR 1 — Adviseursblok korter (#112)
+Stand: **#113 gemerged** (gebouwtype, wacht nog op de handmatige deploy). **#112, #114 en #115
+open.** #115 staat gestapeld op #112: eerst #112 mergen, dan #115 retargeten naar `main`, en pas
+daarna de branches opruimen.
 
-- [x] Tekst naar "Christian, subsidiespecialist. Hij of een collega belt je voor gratis en
-      vrijblijvend advies." Plek blijft onder de contactvelden.
-- [x] Gemeten op 390px (headless Chrome, mobiele emulatie, testmodus-URL)
+### PR 1 — Poort: minder ruis, andere geruststelling, rustiger aankomst (#112)
 
-Meting voor/na, en die is het vermelden waard omdat de uitkomst tegenviel:
+- [x] Subregel boven het formulier weg (zei wat de titel en de legenda al zeggen)
+- [x] "Meerdere antwoorden mogelijk" weg; blijft in het `aria-label`, want een screenreader kan het
+      niet aan de vorm zien
+- [x] Adviseurszin naar "Hij of een collega denkt gratis en vrijblijvend met je mee"
+- [x] "Je gegevens blijven bij ons" vooraan de privacyregel
+- [x] Zoeksequentie naar 3s (3 × 1000ms)
+- [x] De overgang van poort naar resultaat
+
+**Over de adviseurszin.** Eerst stond er "belt je voor gratis en vrijblijvend advies". Die noemde
+wél gratis en vrijblijvend, maar kondigde nog steeds een telefoontje aan, en niet iedereen wil dat.
+"Denkt met je mee" zegt hetzelfde zonder de bezoeker een gesprek in te duwen dat hij nog niet
+gevraagd heeft.
+
+Meting op 390px, voor en na alle tekstingrepen:
 
 | | voor | na |
 |---|---|---|
+| hoogte formulier | 1132px | 1108px |
+| telefoonveld → verzendknop | 384px | 360px |
 | hoogte adviseursblok | 114px | 114px |
-| tekstregels | 3 | 3 |
-| afstand telefoonveld → verzendknop | 384px | 384px |
 
-De zin is korter in tekens, maar breekt bij 390px nog steeds op drie regels: de foto van 44px plus
-de marges laten ongeveer 270px tekstbreedte over. Het blok wordt dus niet zwaarder, maar ook niet
-lichter. Wie het blok écht lichter wil, moet de zin onder de ~85 tekens krijgen of de foto kleiner
-maken; dat is een aparte keuze.
+Het adviseursblok blijft even hoog: elke variant van de zin breekt bij 390px op drie regels, want de
+foto van 44px plus marges laat maar ~270px tekstbreedte over. Wie het blok écht lichter wil, moet
+onder de ~85 tekens komen of de foto kleiner maken.
 
 **Variant B, gebouwd en gemeten maar niet ingediend:** hetzelfde blok ná de hulpvraag en pal boven
-de verzendknop. Formulierhoogte identiek (1132px), alleen de volgorde verschilt. Afweging:
-- variant A (huidig) zet het bewijs pal onder het telefoonveld dat de twijfel veroorzaakt. Dat is
-  wat Baymard aanbeveelt, en het is de enige plek waar de bezoeker het leest vóórdat hij zijn
-  nummer typt.
-- variant B geeft een ononderbroken loop door velden en tegels, maar het "we bellen je"-signaal
-  komt dan ná het invullen. Dat ondermijnt de reden dat het blok er staat.
+de verzendknop. Formulierhoogte identiek, alleen de volgorde verschilt. Variant A (huidig) zet het
+bewijs pal onder het telefoonveld dat de twijfel veroorzaakt; in B leest de bezoeker "we denken met
+je mee" pas ná het invullen, en dat ondermijnt de reden dat het blok er staat. Gekozen: A.
 
-Gekozen: A. Omzetten naar B is één verplaatsing van een blok.
+**Over de overgang naar het resultaat.** Twee rondes nodig. De eerste maakte de wissel netter (fade
+van 12px/0,6s naar 6px/0,42s, uitloop van het formulier, geen feestpill meer) maar niet trager, en
+het bleef als een knip lezen. De oorzaak zat niet in de animatie: het échte wachtmoment was
+onzichtbaar. Bij het verzenden gaat de lead naar het team en vertrekt de mail, maar dat zat weggestopt
+in een spinner van 16px in de knop, duurde soms 200ms, en daarna verscheen het hele resultaat in één
+keer. Nu:
+
+- de knop zegt wat er gebeurt ("Je overzicht wordt klaargezet…") in plaats van wat de bezoeker deed;
+- alles wat de bezoeker net invulde zakt naar 45%, de knop blijft juist op volle sterkte (zijn
+  `disabled:opacity-70` is eruit: een vervaagde knop met de enige tekst op het scherm leest als
+  "er ging iets mis");
+- ondergrens van 750ms op dat moment, zodat het niet opflitst als de calls snel zijn. Dat verlengt
+  geen verzonnen werk, het geeft echt werk de tijd om als stap gelezen te worden;
+- uitloop van het formulier 340ms, daarna bouwt het resultaat zich op in drie stappen (0 / 120 /
+  260ms). De kaarten binnen een groep doen bij de aankomst niet meer hun eigen trapje: twee geneste
+  animaties over elkaar maken de opbouw troebel. Bij een herlaad blijft dat trapje wel staan.
+
+Samen ongeveer anderhalve seconde, met onderweg de smooth scroll terug naar de kop die er al was.
+Bewegingsreductie slaat alles over.
 
 ### PR 2 — Gebouwtype en gebouwklasse uit EP-Online (#113)
 
@@ -88,15 +115,41 @@ Twee dingen vallen op en die sturen de tekst:
 Grenzen die hieruit volgen: **1920 / 1975 / 1992**. Niet zelf verzonnen, maar de indeling die
 Milieu Centraal zelf hanteert.
 
-- [ ] Conceptteksten voorleggen aan de opdrachtgever (staat klaar, nog niet goedgekeurd)
-- [ ] Woningtype uit de BAG-geometrie afleiden en controleren tegen bekende adressen (nog niet
-      begonnen; de buurpanden worden al opgehaald voor het 3D-model, dus de data is er)
-- [ ] Pas bouwen na goedkeuring van de teksten
+### PR 3 — De persoonlijke eerste stap (#115, gestapeld op #112)
+
+- [x] Conceptteksten goedgekeurd door de opdrachtgever
+- [x] `eersteStapTekst.ts` (pure logica) + `EersteStap.tsx`, onder de conclusie en boven de lijst
+- [x] 9 tests; 171 tests groen. Twee daarvan bewaken de inhoudelijke regels: geen bewering over
+      "jouw huis/woning/muren/dak" na de openingszin, en geen maatregel bij naam
+- [x] Drie varianten live nagelopen (1935, 2007, huurder), inclusief de klik die het vraagveld vult
+- [x] Meting via het bestaande `subsidiecheck_vraag_cta` met `plek: eerste_stap`, dus **zonder**
+      wijziging in de GTM-container
+- [ ] Beslissen: op mobiel staat het blok pal onder de navy knop "Ik heb een vraag", die naar
+      dezelfde plek gaat. Blok naar boven verplaatsen, generieke knop weg, of laten staan?
+
+**Waarom de eerdere twee opzetten sneuvelden.** Versie A hing aan de spouwmuur, versie B aan het
+dak. Allebei kozen ze één maatregel en dus één verhaal, terwijl we niet weten welke maatregel voor
+deze woning speelt. Wat bouwjaar maatregelonafhankelijk vertelt is **wat er bij de bouw in ging**,
+en dat dekt muren, dak, vloer en glas tegelijk.
+
+De zin "Wat er daarna is gedaan verschilt per woning" doet het eigenlijke werk: die zegt hardop dat
+we het niet weten, en precies daarom is de vraag erna een logisch vervolg in plaats van een
+verkooptruc.
+
+**Bijvangst:** de BAG-geometrie is hiervoor niet meer nodig. Het woningtype voegde aan dit verhaal
+niets toe, dus het hele stuk waarin uit de buurpanden afgeleid moest worden of het een rijwoning is,
+met alle kans op fouten, vervalt. Dat was het risicovolste deel van het oorspronkelijke plan.
+
+**Grenzen:** 1975 en 1992. De dak- en spouwmuurpagina van Milieu Centraal leggen hun bovengrens net
+anders (1991 vs 1992); we houden 1992 aan, de conservatieve kant. Een woning uit 1991 valt dan in de
+"dunne laag"-groep, en dat is bij twijfel de uitspraak die niemand tekortdoet.
 
 ### Nog open, vraagt een beslissing van de opdrachtgever
 
-- **Huurder-tak.** 1 regeling in Groningen is een demotiverend resultaat. Elke goede tekst doet een
-  uitspraak over wat Voortraject vóór huurders doet; dat moet eerst bevestigd worden.
+- ~~**Huurder-tak.**~~ **Beantwoord (2026-08-09):** Voortraject kan ook voor huurders altijd kijken
+  wat er mogelijk is. Verwerkt in de eerste stap (#115): huurders krijgen dezelfde uitspraak over de
+  woningvoorraad, maar de slotvraag wordt "wat er in jouw situatie mogelijk is". Het onderliggende
+  probleem blijft wel staan: 1 regeling in Groningen is een mager resultaat op zichzelf.
 - **Toestemming per lead** voor telefonische opvolging (art. 11.7 lid 2 Telecommunicatiewet). Raakt
   het CRM.
 - **GTM-event `subsidiecheck_verbreed`** bij het verbreden na 0 regelingen. Kan pas als de
