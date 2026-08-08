@@ -159,13 +159,20 @@ export const StapResultaat = ({
         model={model}
         modelBezig={modelBezig}
       />
+      {/* Alleen vanaf md. Op mobiel staat onderaan het scherm permanent de
+          actiebalk met "Stel je vraag", die precies hetzelfde doet en die altijd
+          in beeld is. Deze knop erbij maakte het de derde of vierde route naar
+          hetzelfde vraagblok binnen één telefoonscherm (label aanvragen, de
+          eerste stap, deze knop, en de balk), en dat las als een opeenstapeling
+          van oproepen in plaats van als één duidelijke volgende stap. Op desktop
+          bestaat die balk niet, dus daar blijft de knop nodig. */}
       <button
         type="button"
         onClick={() => {
           pushGtmEvent("subsidiecheck_vraag_cta", { bewonertype: input.bewonertype, plek: "woningpaneel" });
           scrollNaarVraag();
         }}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-[14px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="hidden w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-[14px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:inline-flex"
       >
         <MessageCircle size={16} strokeWidth={2} aria-hidden="true" />
         Ik heb een vraag

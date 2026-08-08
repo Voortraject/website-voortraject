@@ -20,9 +20,11 @@ interface EersteStapProps {
 // regelingen. Op die plek is de aandacht het hoogst, en het kadert de lijst die
 // eronder volgt: hier staat waaróm die regelingen relevant kunnen zijn.
 //
-// Vorm bewust rustig: geen kaart met rand en schaduw die met de samenvatting
-// erboven concurreert, maar een zachte strook met een accentlijn. De vraag is
-// de enige klikbare tekst, zodat er precies één ding te doen is.
+// Vorm: geen vlak, geen rand, geen balk. Dit blok stond eerst in een zachte
+// strook met een okeraccent, maar binnen de samenvattingskaart staat op mobiel
+// óók al het energielabel-blok in een eigen vlak, en dan wordt de kaart een
+// stapel doosjes. De scheidingslijn erboven markeert het al genoeg; wat overblijft
+// is een alinea met één klikbare zin eronder, en dat is precies wat het is.
 //
 // Voor de inhoud en de bronnen: zie eersteStapTekst.ts.
 export const EersteStap = ({ bouwjaar, bewonertype, onVraag }: EersteStapProps) => {
@@ -30,15 +32,7 @@ export const EersteStap = ({ bouwjaar, bewonertype, onVraag }: EersteStapProps) 
   if (!tekst) return null;
 
   return (
-    <section
-      aria-label="Een eerste stap"
-      // Geen eigen omlijning: dit blok staat binnen de samenvattingskaart, en
-      // die heeft er al een. Twee randen om elkaar heen leest als een kaartje in
-      // een kaartje. Wat blijft is de okerbalk links, genoeg om het als eigen
-      // stap te markeren, plus de zachte achtergrond tegen het wit van de kaart.
-      className="rounded-r-lg border-l-4 border-l-accent py-3.5 pl-4 pr-4 sm:pl-5"
-      style={{ backgroundColor: "var(--card-soft)" }}
-    >
+    <section aria-label="Een eerste stap">
       <p className="text-[15px] leading-relaxed text-foreground sm:text-[15.5px]">{tekst.zinnen.join(" ")}</p>
       <button
         type="button"
