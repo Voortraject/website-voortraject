@@ -40,12 +40,17 @@ stilzwijgend een tag in de container. Werk dit bestand dus bij in dezelfde PR al
 
 | Event | Wanneer | Parameters | Bron |
 |---|---|---|---|
+| `subsidiecheck_stap` | Elke stap die de bezoeker te zien krijgt, ook stap 1 en ook bij binnenkomst halverwege | `stap` (1-3), `stap_naam`, `poort` (1/0) | [`Subsidiecheck.tsx`](../src/pages/Subsidiecheck.tsx) |
 | `subsidiecheck_start` | Adres bevestigd, stap 1 afgerond | `gemeente`, `provincie` | [`StapAdres.tsx`](../src/components/subsidiecheck/StapAdres.tsx) |
 | `subsidiecheck_lead` | Gegevens ingevuld bij de poort, of overzicht per mail aangevraagd | `bewonertype`, `aantal_regelingen`, `hulpvraag`, `bron_fout` (1/0, alleen bij een bronstoring) | [`StapGegevens.tsx`](../src/components/subsidiecheck/StapGegevens.tsx), [`MailOverzicht.tsx`](../src/components/subsidiecheck/MailOverzicht.tsx) |
 | `subsidiecheck_voltooid` | Resultaat succesvol geladen | `aantal_regelingen`, `bewonertype`, `gemeente`, `provincie` | [`StapResultaat.tsx`](../src/components/subsidiecheck/StapResultaat.tsx) |
 | `subsidiecheck_vraag_cta` | Klik op "Ik heb een vraag" | `bewonertype`, `plek` | [`StapResultaat.tsx`](../src/components/subsidiecheck/StapResultaat.tsx) |
 | `subsidiecheck_vraag` | Vraag daadwerkelijk verstuurd | `bewonertype`, `wil_gebeld` (1/0), `bekend_contact` (1/0) | [`DirectContact.tsx`](../src/components/subsidiecheck/DirectContact.tsx) |
 | `subsidiecheck_whatsapp` | Klik op WhatsApp binnen de check | `bewonertype`, `plek` (`actiebalk`) | [`DirectContact.tsx`](../src/components/subsidiecheck/DirectContact.tsx), [`MobieleActiebalk.tsx`](../src/components/subsidiecheck/MobieleActiebalk.tsx) |
+
+Let op het verschil tussen `subsidiecheck_stap` en `subsidiecheck_start`. Het eerste meet dat een
+stap getóónd is (de noemer), het tweede dat stap 1 is afgerond (de teller). Zonder allebei valt
+uitval niet te berekenen.
 
 `subsidiecheck_lead` komt uit twee plekken met een verschillende betekenis. Bij de gegevens-poort
 (`StapGegevens`) is het de toegangspoort vóór het resultaat; bij `MailOverzicht` is het een

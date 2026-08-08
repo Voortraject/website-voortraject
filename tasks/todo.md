@@ -35,24 +35,50 @@ Afgestemd met de opdrachtgever (2026-08-08):
 - Eventnamen: **behouden wat leeft**, alleen `klik_uitvoerder` en `klik_bewoner` eruit. Nieuwe
   events krijgen een consistente naam. Historische GA4-data blijft zo vergelijkbaar.
 
-### PR 1 — SEO-basis (branch `seo/sitemap-en-robots-basis`)
-- [ ] `Sitemap:`-regel in `public/robots.txt`
-- [ ] `/subsidies/stapelen`, `/privacy`, `/cookieverklaring` in de sitemap (route bestaat, ontbrak)
-- [ ] `lastmod` per pagina (uit git-historie), `changefreq`/`priority` eruit (Google negeert die)
+### PR 1 — SEO-basis (#99, gemerged)
+- [x] `Sitemap:`-regel in `public/robots.txt`
+- [x] `/subsidies/stapelen`, `/privacy`, `/cookieverklaring` in de sitemap (route bestaat, ontbrak)
+- [x] `lastmod` per pagina (uit git-historie), `changefreq`/`priority` eruit (Google negeert die)
 
-### PR 2 — Tracking-fundament (branch `feat/tracking-fundament`)
-- [ ] Consent-default inline bovenaan `<head>`, vóór het GTM-snippet
-- [ ] `RouteTracker`: `virtual_page_view` bij routewissel, ná de Helmet-titelupdate
-- [ ] `bewoner_lead` op het contactformulier (meet nu niets)
-- [ ] `whatsapp_klik` op de zwevende knop, `telefoon_klik` / `mail_klik` op tel- en mailto-links
-- [ ] `docs/tracking.md` als contract tussen code en GTM
+### PR 2 — Tracking-fundament (#100, gemerged)
+- [x] Consent-default inline bovenaan `<head>`, vóór het GTM-snippet
+- [x] `RouteTracker`: `virtual_page_view` bij routewissel, ná de Helmet-titelupdate
+- [x] `bewoner_lead` op het contactformulier (meet nu niets)
+- [x] `whatsapp_klik` op de zwevende knop, `telefoon_klik` / `mail_klik` op tel- en mailto-links
+- [x] `docs/tracking.md` als contract tussen code en GTM
 
-### PR 3 — Subsidiecheck-funnel (branch `feat/subsidiecheck-funnel-events`)
-- [ ] `subsidiecheck_stap` bij elke stapwissel (geeft de ontbrekende noemer voor uitval per stap)
+### PR 3 — Subsidiecheck-funnel (#101, gemerged)
+- [x] `subsidiecheck_stap` bij elke stapwissel (geeft de ontbrekende noemer voor uitval per stap)
 
-### GTM + indexering (buiten het repo)
-- [ ] Container-JSON v6 opleveren
-- [ ] Search Console: domain property, sitemap indienen (niet per pagina handmatig)
+### PR 4 — GTM-container (#102, gemerged)
+- [x] Container-JSON v6 in `docs/gtm/`, met importprocedure in `docs/gtm/README.md`
+- [x] `src/test/gtmContainer.test.ts` bewaakt dat container en code niet wegdrijven
+
+### Buiten het repo (opdrachtgever)
+- [ ] Search Console: domain property verifiëren, sitemap indienen (niet per pagina handmatig)
+- [ ] Container v6 importeren (Overschrijven, nieuwe werkruimte) en publiceren
+- [ ] GA4: 15 aangepaste dimensies, 2 statistieken, 3 sleutelgebeurtenissen (lijst in `docs/gtm/README.md`)
+
+## Review (2026-08-08)
+
+Alle vier de PR's gemerged en live. 130 tests groen op `main` (22 bestanden, 14 nieuw).
+
+In productie geverifieerd na de deploy:
+- `robots.txt` bevat de `Sitemap:`-regel
+- `sitemap.xml` serveert 18 URL's mét `lastmod`, inclusief `/subsidies/stapelen`
+- In de live `<head>` staat de consent-default (regel 17) vóór het GTM-snippet (regel 32) en
+  vóór Axeptio (regel 99)
+
+Wat de audit onderweg nog opleverde, buiten de oorspronkelijke opzet:
+- **Een adres-lek naar GA4.** De GA4-configuratie stuurde de kale URL mee als `page_location`,
+  inclusief `?pc=…&hn=…` van de subsidiecheck. Opgelost met een variabele die alleen de
+  adresparameters strippt en utm laat staan.
+- **Een verkeerde aanname van mijzelf.** Ik ging uit van client-side navigatie omdat dit een SPA
+  is. Er staat geen enkele react-router `Link` in de codebase; alles is `<a href>`. Het echte gat
+  zat bij `SubsidiecheckCta`, die wél `navigate()` doet. Zie `tasks/lessons.md`.
+
+Wat bewust níet is opgelost: de scroll-trigger start op `WINDOW_LOAD` en telt daardoor niet
+opnieuw na de paar client-side navigaties. Kleine winst, meer onderhoud dan het waard is.
 
 ## Subsidietool optimaliseren: contactdrempel, poort en mobiel (2026-08-07)
 
