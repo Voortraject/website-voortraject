@@ -12,3 +12,8 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# Standaardmanier waarop crawlers de sitemap vinden, ook zonder Search Console.
+# Absolute URL is verplicht. De sitemap wordt gegenereerd bij dev/build,
+# zie scripts/generate-sitemap.ts.
+Sitemap: https://voortraject.nl/sitemap.xml

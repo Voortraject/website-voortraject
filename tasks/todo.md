@@ -2,6 +2,58 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Google-tags opschonen + indexering op orde (2026-08-08)
+
+Aanleiding: de meting is deels verouderd (de site is veranderd, de GTM-container niet) en voor de
+subsidietool komt er nauwelijks iets aan in GA4. Daarnaast moeten alle pagina's nog geïndexeerd.
+
+Audit van de container (export v1 t/m v5 + workspace 6, GA4 `G-VQL43876VN`). Draft = v5, dus er
+staat niets ongepubliceerd klaar. Bevindingen:
+
+1. **Nav-trigger verouderd.** Regex 11 zoekt op `voor uitvoerders|voor bewoners|maatregelen|…`;
+   die drie labels bestaan niet meer (`/uitvoerders` en `/partners` → `/zakelijk`, `/maatregelen`
+   → `/`). Van de 17 nav-items in `Header.tsx` matchen er nog 6. Gemist: Verduurzamen, Zakelijk,
+   Contact, Subsidiecheck en de hele Verduurzamen-dropdown (7 maatregelpagina's).
+2. **`klik_uitvoerder` / `klik_bewoner` zijn dood.** Geen van beide woorden staat nog in header of
+   footer. Het zijn "alle elementen"-klik-triggers, dus ze vuren nu op lopende tekst (Privacy
+   bevat "uitvoerder" 9×). Meten ruis, niet gedrag.
+3. **Consent-risico.** GA4-config vuurt op trigger `2147479573` (Consent Initialization, door
+   Google gereserveerd voor de CMP zelf). De Consent Mode-default wordt in `index.html` pas ná het
+   GTM-snippet gezet, via de async Axeptio-SDK. Een nog niet gezet signaal geldt als *granted*, dus
+   er is een venster waarin GA4 cookies kan zetten vóór toestemming.
+4. **Alle event-parameters gaan verloren.** Nul zelfgedefinieerde variabelen in de container,
+   terwijl de code gemeente, provincie, bewonertype, aantal_regelingen, hulpvraag, bron_fout, plek,
+   wil_gebeld en bekend_contact meestuurt.
+5. **5 van de 7 dataLayer-events hebben geen trigger** (`subsidiecheck_start`, `_vraag`,
+   `_vraag_cta`, `_whatsapp`, `zakelijk_lead`). Funnel dus niet te maken terwijl de data er is.
+6. Geen page_view bij routewissels (SPA); scroll-trigger staat op `WINDOW_LOAD` en is na de eerste
+   navigatie onbetrouwbaar.
+
+Afgestemd met de opdrachtgever (2026-08-08):
+- GTM-kant als **importeerbare container-JSON** (nieuwe workspace, merge/overwrite, zelf publiceren
+  na Preview; v5 blijft rollback).
+- Eventnamen: **behouden wat leeft**, alleen `klik_uitvoerder` en `klik_bewoner` eruit. Nieuwe
+  events krijgen een consistente naam. Historische GA4-data blijft zo vergelijkbaar.
+
+### PR 1 — SEO-basis (branch `seo/sitemap-en-robots-basis`)
+- [ ] `Sitemap:`-regel in `public/robots.txt`
+- [ ] `/subsidies/stapelen`, `/privacy`, `/cookieverklaring` in de sitemap (route bestaat, ontbrak)
+- [ ] `lastmod` per pagina (uit git-historie), `changefreq`/`priority` eruit (Google negeert die)
+
+### PR 2 — Tracking-fundament (branch `feat/tracking-fundament`)
+- [ ] Consent-default inline bovenaan `<head>`, vóór het GTM-snippet
+- [ ] `RouteTracker`: `virtual_page_view` bij routewissel, ná de Helmet-titelupdate
+- [ ] `bewoner_lead` op het contactformulier (meet nu niets)
+- [ ] `whatsapp_klik` op de zwevende knop, `telefoon_klik` / `mail_klik` op tel- en mailto-links
+- [ ] `docs/tracking.md` als contract tussen code en GTM
+
+### PR 3 — Subsidiecheck-funnel (branch `feat/subsidiecheck-funnel-events`)
+- [ ] `subsidiecheck_stap` bij elke stapwissel (geeft de ontbrekende noemer voor uitval per stap)
+
+### GTM + indexering (buiten het repo)
+- [ ] Container-JSON v6 opleveren
+- [ ] Search Console: domain property, sitemap indienen (niet per pagina handmatig)
+
 ## Subsidietool optimaliseren: contactdrempel, poort en mobiel (2026-08-07)
 
 Aanleiding: de tool wordt gebruikt, maar bezoekers nemen daarna nauwelijks contact op. Doel:
