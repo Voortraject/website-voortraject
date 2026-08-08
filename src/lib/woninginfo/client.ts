@@ -11,7 +11,7 @@ import type { Model3d, WoningInfo } from "./types";
 // zodat het subsidieoverzicht nooit breekt.
 const FUNCTIE_URL = import.meta.env.VITE_WONINGINFO_URL as string | undefined;
 
-const LEEG: WoningInfo = { energielabel: null };
+const LEEG: WoningInfo = { energielabel: null, gebouw: null };
 
 export async function haalWoningInfo(
   postcode: string,
@@ -35,7 +35,9 @@ export async function haalWoningInfo(
     });
     if (!res.ok) return LEEG;
     const data = (await res.json()) as Partial<WoningInfo>;
-    return { energielabel: data.energielabel ?? null };
+    // `gebouw` ontbreekt zolang de function nog niet opnieuw is uitgerold. Dat
+    // mag: dan is het gewoon null, net als bij een adres zonder registratie.
+    return { energielabel: data.energielabel ?? null, gebouw: data.gebouw ?? null };
   } catch {
     return LEEG;
   }
