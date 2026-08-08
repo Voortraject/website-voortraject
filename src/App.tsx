@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AudienceProvider } from "@/contexts/AudienceContext";
+import { RouteTracker } from "@/components/RouteTracker";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import Index from "./pages/Index.tsx";
@@ -41,6 +42,7 @@ const App = () => (
             vult bij het scrollen (i.p.v. een vaste balk). */}
         <BrowserRouter>
           <ScrollToTop />
+          <RouteTracker />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/zakelijk" element={<Zakelijk />} />
