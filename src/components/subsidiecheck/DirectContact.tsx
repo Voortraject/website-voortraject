@@ -1,4 +1,4 @@
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { Check, Loader2, Mail, MessageCircle, Phone, Send } from "lucide-react";
 
 import { pushGtmEvent } from "@/lib/gtm";
@@ -18,6 +18,10 @@ interface DirectContactProps {
   adres: PdokAdres;
   /** Deelbare URL van dit overzicht, gaat mee in de mail naar het team. */
   overzichtUrl?: string;
+  /** Voorgestelde vraagtekst, gezet door een knop elders op het resultaat
+      (bijvoorbeeld "Label aanvragen"). `n` telt de kliks, zodat hetzelfde
+      voorstel opnieuw geplaatst wordt als de bezoeker het veld leegde. */
+  voorstel?: { tekst: string; n: number };
 }
 
 // Het contactblok onder het resultaat: één vraag stellen zonder de pagina te
@@ -28,11 +32,19 @@ interface DirectContactProps {
 // Daarnaast twee directe routes voor wie liever niet typt: WhatsApp (met het
 // adres al in het bericht) en bellen. Die gaan buiten ons systeem om en zijn
 // daarom altijd zichtbaar, ook als het formulier net gefaald is.
-export const DirectContact = ({ input, adres, overzichtUrl }: DirectContactProps) => {
+export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectContactProps) => {
   // Eén keer lezen bij het mounten: wisselt niet meer binnen dit scherm.
   const [bekend] = useState(() => leesContact());
 
   const [bericht, setBericht] = useState("");
+
+  // Een voorstel van elders op het resultaat vult het veld alleen als de
+  // bezoeker er zelf nog niets in heeft gezet. Zijn eigen tekst overschrijven
+  // zou erger zijn dan het voorstel missen; hij is dan toch al hier.
+  useEffect(() => {
+    if (!voorstel?.tekst) return;
+    setBericht((huidig) => (huidig.trim() === "" ? voorstel.tekst : huidig));
+  }, [voorstel]);
   const [voornaam, setVoornaam] = useState("");
   const [achternaam, setAchternaam] = useState("");
   const [email, setEmail] = useState("");
