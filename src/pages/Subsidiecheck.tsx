@@ -237,7 +237,11 @@ const SubsidiecheckLive = () => {
             // verduurzaming": dat veronderstelt dat de bewoner nog moet
             // beginnen, terwijl een deel al van alles heeft gedaan.
             titel: "Welke subsidies zijn er voor jouw huis?",
-            sub: "Vul je adres in, dan zoeken we alle landelijke en regionale regelingen bij elkaar.",
+            // Kort genoeg om op een telefoon op één regel te blijven. De kop
+            // loopt daar al over twee regels; een subregel die dat ook doet
+            // maakt er een blok van vier regels tekst van, en dan valt geen van
+            // beide meer op.
+            sub: "Vul je adres in, dan zoeken we alle regelingen bij elkaar.",
           };
     }
     if (stap === 2) {

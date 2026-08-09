@@ -1954,3 +1954,34 @@ Praktische gotcha's:
   (de 9 bestaande lint-errors staan in niet-geraakte pagina's), productiebuild ok.
 - Nog open: het cijfer is een momentopname. Verandert het subsidieaanbod, dan
   script opnieuw draaien en `GEMIDDELD_AANTAL_SUBSIDIES` bijstellen.
+
+### Review (2026-08-09, tweede ronde) — feedback op stap 1 verwerkt
+- (1) Voortgang was onzichtbaar: de verbindingslijn was 1px, dus 20% vulling zag
+  je niet. Nu een balkje van 3px met ronde hoeken; het meelopende deel is accent
+  (de kleur van "hier sta je nu"), afgeronde stappen blijven primary.
+- (2) Het cijfer is nu een badge met een lampje op zandkleur i.p.v. weer een
+  grijze regel. En de regio is eruit: iemand uit Friesland of Overijssel hoort
+  zich niet uitgesloten te voelen. Dat betekende wél opnieuw meten, want zonder
+  regio moet het getal ook landelijk kloppen.
+  - Meetscript herschreven: het haalt nu per plaats een écht adres bij PDOK op
+    (`q=*` + filter op `woonplaatsnaam`). De oude vrije zoekopdracht vond voor de
+    meeste steden niets en koos bij "Vries" een adres in de provincie Groningen.
+  - Nieuwe meting, 51 adressen door heel Nederland: regelingen gemiddeld 9,12
+    (min 5, max 13), waarvan subsidies 4,41. In het werkgebied ligt het hoger:
+    10,27 regelingen en 5,38 subsidies over 26 adressen.
+  - Gevolg: "Gemiddeld 5 subsidies per adres" kon niet blijven staan, want
+    landelijk is dat 4,4. Nu "Gemiddeld 9 regelingen per adres": het landelijke
+    getal naar beneden afgerond, en "regelingen" is precies het woord dat de
+    resultaatpagina zelf gebruikt (leningen zitten erin, en een lening is geen
+    subsidie).
+- (3) "Je adres gebruiken we om de regelingen op te zoeken." verwijderd: ruis.
+- (4) Subregel ingekort tot "Vul je adres in, dan zoeken we alle regelingen bij
+  elkaar." op elk formaat, zodat kop en subregel op mobiel niet allebei twee
+  regels vullen.
+- (5) Vinkjes en Google-score staan weer op mobiel. Kon nu, doordat de regel uit
+  punt 3 weg is en de stapel onder de knop dus niet te hoog wordt. De score staat
+  bewust als `alsLink={false}`: een link met target="_blank" pal naast de
+  verzendknop is een uitgang precies waar we er geen willen (staat zo ook in de
+  toelichting van Bewijsregel zelf).
+- 34 testbestanden / 195 tests groen, lint schoon op de gewijzigde bestanden,
+  productiebuild ok.

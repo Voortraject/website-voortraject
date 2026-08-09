@@ -52,14 +52,23 @@ export const Voortgang = ({ stappen, huidige, deel = 0, onStapKlik }: VoortgangP
           {i > 0 && (
             <span
               aria-hidden="true"
-              // mt = halve bolhoogte (10px), zodat de lijn precies door het
-              // midden van de bolletjes loopt i.p.v. tussen bol en label.
-              className={`relative mx-2 sm:mx-3 mt-[5px] h-px w-8 sm:w-14 ${afgerond || actief ? "bg-primary/50" : "bg-border"}`}
+              // Een balkje van 3px in plaats van een haarlijn van 1px. Op een
+              // haarlijn is een vulling van 20% simpelweg onzichtbaar, en dan
+              // doet de voortgang zijn werk niet.
+              //
+              // mt = halve bolhoogte (10px) min halve balkhoogte, zodat de balk
+              // precies door het midden van de bolletjes loopt.
+              className={`relative mx-2 mt-[3.5px] h-[3px] w-8 overflow-hidden rounded-full sm:mx-3 sm:w-14 ${
+                afgerond || actief ? "bg-primary/50" : "bg-border"
+              }`}
             >
-              {/* Het lijntje ná de huidige stap loopt alvast een stukje mee. */}
+              {/* Het balkje ná de huidige stap loopt alvast een stukje mee. In
+                  accent, dezelfde kleur als het bolletje van de stap waar de
+                  bezoeker nu staat: het hoort bij het hier-en-nu, terwijl
+                  primary staat voor wat al af is. */}
               {stap === huidige + 1 && deel > 0 && (
                 <span
-                  className="absolute inset-y-0 left-0 bg-primary/50 transition-[width] duration-500 ease-out"
+                  className="absolute inset-y-0 left-0 rounded-full bg-accent transition-[width] duration-700 ease-out"
                   style={{ width: `${Math.min(Math.max(deel, 0), 1) * 100}%` }}
                 />
               )}

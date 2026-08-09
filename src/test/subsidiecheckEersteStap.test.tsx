@@ -14,12 +14,12 @@ import { Header } from "@/components/Header";
 import { StapAdres } from "@/components/subsidiecheck/StapAdres";
 import { Voortgang } from "@/components/subsidiecheck/Voortgang";
 import {
-  CIJFER_WERKGEBIED,
-  GEMIDDELD_AANTAL_SUBSIDIES,
-  GEMIDDELDE_SUBSIDIES_KOP,
-  GEMIDDELDE_SUBSIDIES_STAART,
-  GEMIDDELDE_SUBSIDIES_ZIN,
+  GEMIDDELD_AANTAL_REGELINGEN,
+  GEMIDDELDE_REGELINGEN_KOP,
+  GEMIDDELDE_REGELINGEN_STAART,
+  GEMIDDELDE_REGELINGEN_ZIN,
 } from "@/config/cijfers";
+import { SUBSIDIECHECK_BELOFTES } from "@/config/beloftes";
 import type { Bewonertype } from "@/lib/subsidies";
 
 const toon = (ui: ReactElement) =>
@@ -65,25 +65,30 @@ describe("de compacte header van de check", () => {
   });
 });
 
-describe("het cijfer op stap 1", () => {
+describe("het feitje op stap 1", () => {
   it("houdt getal en zin bij elkaar", () => {
-    expect(GEMIDDELDE_SUBSIDIES_KOP).toBe(`Gemiddeld ${GEMIDDELD_AANTAL_SUBSIDIES} subsidies`);
-    expect(GEMIDDELDE_SUBSIDIES_STAART).toBe(`per adres in ${CIJFER_WERKGEBIED}`);
-    expect(GEMIDDELDE_SUBSIDIES_ZIN).toBe(`${GEMIDDELDE_SUBSIDIES_KOP} ${GEMIDDELDE_SUBSIDIES_STAART}`);
+    expect(GEMIDDELDE_REGELINGEN_KOP).toBe(`Gemiddeld ${GEMIDDELD_AANTAL_REGELINGEN} regelingen`);
+    expect(GEMIDDELDE_REGELINGEN_ZIN).toBe(`${GEMIDDELDE_REGELINGEN_KOP} ${GEMIDDELDE_REGELINGEN_STAART}`);
   });
 
   it("blijft een heel getal: we tonen het gemeten gemiddelde naar beneden afgerond", () => {
-    expect(Number.isInteger(GEMIDDELD_AANTAL_SUBSIDIES)).toBe(true);
-    expect(GEMIDDELD_AANTAL_SUBSIDIES).toBeGreaterThan(0);
+    expect(Number.isInteger(GEMIDDELD_AANTAL_REGELINGEN)).toBe(true);
+    expect(GEMIDDELD_AANTAL_REGELINGEN).toBeGreaterThan(0);
+  });
+
+  it("noemt geen regio, zodat niemand buiten het werkgebied zich uitgesloten voelt", () => {
+    // Het getal is landelijk gemeten (zie src/config/cijfers.ts). Zodra hier een
+    // provincie in de zin sluipt, klopt het getal niet meer met wat het belooft.
+    expect(GEMIDDELDE_REGELINGEN_ZIN).not.toMatch(/Groningen|Drenthe|Friesland|Frysl/i);
   });
 
   it("staat boven de velden, dus vóór de eerste inspanning", () => {
     const { container } = stapAdres();
 
-    const zin = screen.getByText(GEMIDDELDE_SUBSIDIES_KOP);
+    const zin = screen.getByText(GEMIDDELDE_REGELINGEN_KOP);
     const postcode = container.querySelector("#sc-postcode");
     expect(postcode).not.toBeNull();
-    // DOCUMENT_POSITION_FOLLOWING = het postcodeveld komt ná de cijferregel.
+    // DOCUMENT_POSITION_FOLLOWING = het postcodeveld komt ná het feitje.
     expect(zin.compareDocumentPosition(postcode!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
@@ -92,26 +97,35 @@ describe("het cijfer op stap 1", () => {
     // voor de andere groepen zou dit een niet-nagemeten belofte zijn.
     for (const type of ["huurder", "vve", "verhuurder"] as Bewonertype[]) {
       const { unmount } = stapAdres({ initBewonertype: type });
-      expect(screen.queryByText(GEMIDDELDE_SUBSIDIES_KOP)).toBeNull();
+      expect(screen.queryByText(GEMIDDELDE_REGELINGEN_KOP)).toBeNull();
       unmount();
     }
   });
 
   it("noemt het cijfer wél bij de standaardsituatie (woningeigenaar)", () => {
     stapAdres({ initBewonertype: "woningeigenaar" });
-    expect(screen.getByText(GEMIDDELDE_SUBSIDIES_KOP)).toBeInTheDocument();
+    expect(screen.getByText(GEMIDDELDE_REGELINGEN_KOP)).toBeInTheDocument();
   });
 });
 
-describe("geruststelling over het adres", () => {
-  it("staat bij de velden die de vraag oproepen, niet pas onder de knop", () => {
+describe("bewijs bij de knop", () => {
+  it("toont de drie beloftes met een vinkje, ook op een telefoon", () => {
     const { container } = stapAdres();
 
-    const regel = screen.getByText(/Je adres gebruiken we om de regelingen op te zoeken/i);
-    const knop = screen.getByRole("button", { name: /subsidies/i });
-    // De geruststelling hoort vóór de verzendknop te staan.
-    expect(regel.compareDocumentPosition(knop) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(container.querySelector("#sc-toevoeging")).not.toBeNull();
+    for (const belofte of SUBSIDIECHECK_BELOFTES) {
+      expect(screen.getByText(belofte)).toBeInTheDocument();
+    }
+    // Er staat een vinkje bij elke belofte...
+    const vinkjes = container.querySelectorAll(".lucide-check");
+    expect(vinkjes).toHaveLength(SUBSIDIECHECK_BELOFTES.length);
+    // ...en geen enkele is verborgen. Eerder stond er `hidden sm:inline` op,
+    // waardoor een telefoon puntjes zag in plaats van vinkjes.
+    for (const vinkje of vinkjes) expect(vinkje.classList.contains("hidden")).toBe(false);
+  });
+
+  it("laat geen ruisregel over het adres meer staan", () => {
+    stapAdres();
+    expect(screen.queryByText(/Je adres gebruiken we/i)).toBeNull();
   });
 });
 

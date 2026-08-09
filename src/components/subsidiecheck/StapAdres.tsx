@@ -1,9 +1,9 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, ChevronDown, Loader2, MapPin } from "lucide-react";
+import { Check, ChevronDown, Lightbulb, Loader2, MapPin } from "lucide-react";
 
 import { SUBSIDIECHECK_BELOFTES } from "@/config/beloftes";
-import { GEMIDDELDE_SUBSIDIES_KOP, GEMIDDELDE_SUBSIDIES_STAART } from "@/config/cijfers";
+import { GEMIDDELDE_REGELINGEN_KOP, GEMIDDELDE_REGELINGEN_STAART } from "@/config/cijfers";
 import { usePdokAdres } from "@/hooks/usePdokAdres";
 import { pushGtmEvent } from "@/lib/gtm";
 import { displayPostcode, normalizePostcode, POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib/pdok";
@@ -246,20 +246,25 @@ export const StapAdres = ({
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      {/* Eén hard cijfer vóór de eerste inspanning. Zonder anker weet de bezoeker
-          niet of dit overzicht tweehonderd euro of achtduizend waard is, en dan
-          is drie velden invullen al te duur. Het getal is gemeten, niet geschat
-          (zie src/config/cijfers.ts en scripts/meet-subsidieaantal.mjs), naar
-          beneden afgerond, en het telt alleen échte subsidies — leningen zitten
-          er bewust niet in.
+      {/* Eén hard cijfer vóór de eerste inspanning, als feitje in beeld gebracht
+          en niet als zoveelste grijze regel. Zonder anker weet de bezoeker niet
+          of dit overzicht tweehonderd euro of achtduizend waard is, en dan is
+          drie velden invullen al te duur.
+
+          Het getal is gemeten en niet geschat (zie src/config/cijfers.ts en
+          scripts/meet-subsidieaantal.mjs), naar beneden afgerond, en het is het
+          landelijke gemiddelde: bewust zonder regio, zodat iemand uit Friesland
+          of Overijssel zich niet buitengesloten voelt.
 
           Alleen voor woningeigenaren: dat is de groep waarop gemeten is én de
           standaard hier. Een huurder krijgt een andere lijst, en dan zou dit
           cijfer een belofte zijn die we niet hebben nagemeten. */}
       {!bevestigdAdres && bewonertype === "woningeigenaar" && (
-        <p className="mb-5 text-center text-[13px] leading-relaxed text-muted-foreground sm:text-[13.5px]">
-          <span className="font-semibold text-foreground">{GEMIDDELDE_SUBSIDIES_KOP}</span>{" "}
-          {GEMIDDELDE_SUBSIDIES_STAART}
+        <p className="mx-auto mb-6 flex w-fit items-center gap-2 rounded-full bg-secondary px-4 py-1.5 text-[13px] text-foreground sm:text-[13.5px]">
+          <Lightbulb size={15} strokeWidth={2} className="shrink-0 text-accent" aria-hidden="true" />
+          <span>
+            <span className="font-semibold">{GEMIDDELDE_REGELINGEN_KOP}</span> {GEMIDDELDE_REGELINGEN_STAART}
+          </span>
         </p>
       )}
 
@@ -378,14 +383,6 @@ export const StapAdres = ({
               )}
             </p>
           )}
-
-          {/* De twijfel ("wat gaan jullie met mijn adres doen?") ontstaat hier,
-              bij het invullen, niet onder de knop. Daar stond de enige
-              geruststelling die stap 1 had, en dus ná het moment waarop ze nodig
-              is. Deze regel staat pal onder de velden die de vraag oproepen. */}
-          <p className="mt-2.5 text-[12.5px] leading-relaxed text-muted-foreground">
-            Je adres gebruiken we om de regelingen op te zoeken.
-          </p>
         </>
       )}
 
@@ -547,32 +544,28 @@ export const StapAdres = ({
         <span className="hidden sm:inline">, zodat we het overzicht naar je kunnen mailen</span>.
       </p>
 
-      {/* De drie beloftes en onze echte Google-score op één regel. Op mobiel
-          vallen de vinkjes weg en scheiden puntjes de beloftes, zodat de drie
-          altijd naast elkaar blijven staan. De teksten staan in
+      {/* De drie beloftes en onze echte Google-score. De teksten staan in
           src/config/beloftes.ts, gedeeld met de CTA op de homepage.
 
-          De score staat vanaf sm; op mobiel zakte die naar een eigen regel en
-          werd het onder de knop een opsomming van vier regels. Het bewijs is daar
-          niet weg: op de volgende stap staat het pal naast de velden waar de
-          bezoeker zijn gegevens invult, en dat is het moment van de twijfel. */}
+          Op mobiel stonden hier eerder puntjes in plaats van vinkjes en was de
+          score helemaal verborgen, omdat het onder de knop een stapel van vier
+          regels werd. Die stapel is er niet meer (de geruststelling over het
+          adres is weg), dus vinkjes en score kunnen terug: het bewijs hoort bij
+          de knop, en op een telefoon niet minder dan op een laptop.
+
+          Bewust `alsLink={false}`: een link met target="_blank" pal naast de
+          verzendknop is een uitgang precies waar we er geen willen. Zie de
+          toelichting in Bewijsregel zelf. */}
       <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-        <ul className="flex flex-nowrap items-center gap-x-2 whitespace-nowrap text-[12px] text-muted-foreground sm:gap-x-4 sm:text-[13px]">
-          {SUBSIDIECHECK_BELOFTES.map((belofte, i) => (
-            <li key={belofte} className="inline-flex items-center gap-1.5">
-              {i > 0 && (
-                <span aria-hidden="true" className="text-border sm:hidden">
-                  ·
-                </span>
-              )}
-              <Check size={14} strokeWidth={2.5} className="hidden shrink-0 text-accent sm:inline" aria-hidden="true" />
+        <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[12px] text-muted-foreground sm:gap-x-4 sm:text-[13px]">
+          {SUBSIDIECHECK_BELOFTES.map((belofte) => (
+            <li key={belofte} className="inline-flex items-center gap-1.5 whitespace-nowrap">
+              <Check size={13} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
               {belofte}
             </li>
           ))}
         </ul>
-        <div className="hidden sm:block">
-          <Bewijsregel />
-        </div>
+        <Bewijsregel alsLink={false} />
       </div>
     </form>
   );
