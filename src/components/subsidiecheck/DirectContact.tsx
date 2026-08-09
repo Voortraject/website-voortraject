@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { Check, Loader2, MessageCircle, Send } from "lucide-react";
+import { Check, Loader2, Send } from "lucide-react";
 
+import { WhatsAppLogo } from "@/components/WhatsAppLogo";
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
 import { whatsappUrl } from "@/lib/whatsapp";
@@ -140,7 +141,7 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
       onClick={() => pushGtmEvent("subsidiecheck_whatsapp", { bewonertype: input.bewonertype })}
       className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-[15px] font-semibold text-primary transition-colors hover:border-primary/40 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
-      <MessageCircle size={17} strokeWidth={2} aria-hidden="true" />
+      <WhatsAppLogo size={18} />
       Vraag via WhatsApp
     </a>
   );

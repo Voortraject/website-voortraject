@@ -406,7 +406,7 @@ export const StapResultaat = ({
           regelingen blijven onbenut…"); die vroeg niets en is vervangen door de
           enige actie die op deze plek nog logisch is: geef de check door. Ná het
           adviesblok, zodat de twee niet om dezelfde aandacht vechten. */}
-      <DeelDeCheck aantalRegelingen={regelingen?.length ?? 0} bewonertype={input.bewonertype} />
+      <DeelDeCheck bewonertype={input.bewonertype} />
 
       <MobieleActiebalk whatsappBericht={whatsappBericht} bewonertype={input.bewonertype} />
     </div>

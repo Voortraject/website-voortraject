@@ -23,6 +23,22 @@ Vervolg op de sectie hieronder, zelfde dag. Vier opdrachten van de opdrachtgever
 - [x] **Deelregel in de mail.** De mail is het enige deel van de check dat wordt bewaard en
       doorgestuurd; daar hoort een link in waarmee de ontvanger zijn eigen adres invult.
 
+Na de eerste ronde nog drie correcties van de opdrachtgever:
+
+- [x] **Eén WhatsApp-logo op de hele site.** De zwevende knop rechtsonder had het officiële
+      merk-logo inline staan; de WhatsApp-knoppen in de check gebruikten een generiek
+      tekstballonnetje. Dezelfde actie zag er dus op twee plekken anders uit. Nu één
+      component `WhatsAppLogo`, gebruikt door de zwevende knop, "Vraag via WhatsApp" en de
+      mobiele actiebalk (die op het resultaat de zwevende knop vervángt, dus daar hoort
+      hetzelfde logo).
+- [x] **"Deel via WhatsApp" eruit.** Eén knop is genoeg: de gekopieerde link werkt in élk
+      kanaal, en de pagina heeft al twee WhatsApp-knoppen. Daarmee vervielen ook het
+      voorgeschreven WhatsApp-bericht, het kanaal `whatsapp` in de utm-tags en de
+      GTM-variabele `dlv - kanaal` — het event houdt alleen `bewonertype` over.
+- [x] **Tekst korter, en familie erbij.** "Je buren, je familie, iemand uit je straat." De
+      uitleg over bouwjaren en gratis checken eronder is geschrapt; wie de link doorstuurt
+      weet zelf wel waarom.
+
 **Gemeten in een headless Chrome, met Arial (het lettertype dat mailclients pakken als Inter
 ontbreekt — de ongunstigste variant):** de twee knoppen staan op één regel bij een
 mailbreedte van 320 t/m 430px, en houden ~48px over binnen het blok. Ter vergelijking: de

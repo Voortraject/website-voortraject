@@ -12,8 +12,12 @@ import { SITE_URL } from "@/lib/site";
 // ("bekijk of deel je volledige overzicht online"), waar hij hoort, want daar is
 // de ontvanger de bezoeker zelf.
 
-/** Kanaal waarlangs gedeeld wordt; komt terug in de meting en in de utm-tags. */
-export type DeelKanaal = "whatsapp" | "link" | "mail";
+/**
+ * Waar de gedeelde link vandaan komt: gekopieerd van het resultaat, of
+ * aangeklikt in de overzichtsmail. Alleen voor de utm-tags — aan de ontvangkant
+ * is dat het enige verschil dat we kunnen zien.
+ */
+export type DeelKanaal = "link" | "mail";
 
 /**
  * De deelbare link naar de check, met utm-tags zodat binnenkomend verkeer uit
@@ -26,21 +30,3 @@ export type DeelKanaal = "whatsapp" | "link" | "mail";
  */
 export const deelUrl = (kanaal: DeelKanaal): string =>
   `${SITE_URL}/subsidiecheck?utm_source=deel&utm_medium=${kanaal}`;
-
-/**
- * Het bericht dat al klaarstaat in WhatsApp. De bezoeker hoeft alleen nog een
- * ontvanger te kiezen.
- *
- * Het aantal is dat van de deler zelf en dus waar; het is ook precies wat de
- * boodschap concreet maakt ("10 regelingen" zegt meer dan "handige tool").
- * Bewust in de ik-vorm: dit is een bericht van hem aan zijn buurman, geen
- * advertentie van ons.
- */
-export const deelBericht = (aantalRegelingen: number): string => {
-  const aantal = `${aantalRegelingen} ${aantalRegelingen === 1 ? "regeling" : "regelingen"}`;
-  return `Ik heb net gecheckt welke subsidies er voor mijn huis zijn: ${aantal}. Doe 'm ook voor je eigen adres, het duurt 2 minuten en het is gratis: ${deelUrl("whatsapp")}`;
-};
-
-/** WhatsApp zonder nummer: opent de contactkiezer i.p.v. een gesprek met ons. */
-export const deelViaWhatsappUrl = (aantalRegelingen: number): string =>
-  `https://wa.me/?text=${encodeURIComponent(deelBericht(aantalRegelingen))}`;
