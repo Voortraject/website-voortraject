@@ -1097,6 +1097,76 @@
                 "consentSettings": {
                     "consentStatus": "NOT_SET"
                 }
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "tagId": "31",
+                "name": "Event - Subsidiecheck deel",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "kanaal"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{dlv - kanaal}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "bewonertype"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{dlv - bewonertype}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "subsidiecheck_deel"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-VQL43876VN"
+                    }
+                ],
+                "firingTriggerId": [
+                    "31"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
             }
         ],
         "trigger": [
@@ -1578,6 +1648,30 @@
                         ]
                     }
                 ]
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "triggerId": "31",
+                "name": "Event | subsidiecheck_deel",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "subsidiecheck_deel"
+                            }
+                        ]
+                    }
+                ]
             }
         ],
         "variable": [
@@ -1957,6 +2051,30 @@
                         "type": "TEMPLATE",
                         "key": "javascript",
                         "value": "function() {\n  // Haalt het adres van de bezoeker uit de URL voordat die naar GA4 gaat.\n  // Op /subsidiecheck staat de volledige invoer in de querystring\n  // (?pc=9711AB&hn=5&tv=a of ?str=…&pl=… bij een handmatig adres). Dat is\n  // een persoonsgegeven en hoort niet in analytics.\n  //\n  // De overige parameters blijven staan, zodat utm-attributie blijft werken.\n  var ADRES_PARAMS = ['pc', 'hn', 'tv', 'str', 'pl'];\n  try {\n    var url = new URL(String(window.location.href));\n    for (var i = 0; i < ADRES_PARAMS.length; i++) {\n      url.searchParams.delete(ADRES_PARAMS[i]);\n    }\n    return url.toString();\n  } catch (e) {\n    // Kan de URL niet geparsed worden, dan liever de hele querystring kwijt\n    // dan het risico dat er een adres doorheen glipt.\n    return String(window.location.href).split('?')[0];\n  }\n}"
+                    }
+                ]
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "variableId": "18",
+                "name": "dlv - kanaal",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "kanaal"
                     }
                 ]
             }

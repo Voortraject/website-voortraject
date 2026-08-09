@@ -47,6 +47,13 @@ stilzwijgend een tag in de container. Werk dit bestand dus bij in dezelfde PR al
 | `subsidiecheck_vraag_cta` | Klik op een knop die naar het vraagblok springt | `bewonertype`, `plek` (`woningpaneel` = "Ik heb een vraag", `energielabel` = "Label aanvragen", `eerste_stap` = de bouwjaarvraag onder de conclusie) | [`StapResultaat.tsx`](../src/components/subsidiecheck/StapResultaat.tsx) |
 | `subsidiecheck_vraag` | Vraag daadwerkelijk verstuurd | `bewonertype`, `bekend_contact` (1/0) | [`DirectContact.tsx`](../src/components/subsidiecheck/DirectContact.tsx) |
 | `subsidiecheck_whatsapp` | Klik op WhatsApp binnen de check | `bewonertype`, `plek` (`actiebalk`) | [`DirectContact.tsx`](../src/components/subsidiecheck/DirectContact.tsx), [`MobieleActiebalk.tsx`](../src/components/subsidiecheck/MobieleActiebalk.tsx) |
+| `subsidiecheck_deel` | Bezoeker geeft de check door | `kanaal` (`whatsapp` / `link`), `bewonertype` | [`DeelDeCheck.tsx`](../src/components/subsidiecheck/DeelDeCheck.tsx) |
+
+**Delen meet je aan twee kanten.** `subsidiecheck_deel` telt de verzendkant: hoeveel bezoekers de
+check doorgeven. De ontvangkant komt niet uit dit event maar uit de utm-tags in de gedeelde link
+(`utm_source=deel`, `utm_medium=whatsapp` of `link`, en `mail` vanuit de overzichtsmail). WhatsApp
+stuurt geen referrer mee, dus zonder die tags zou elke doorgestuurde bezoeker als direct verkeer
+binnenkomen en was het effect van delen onzichtbaar. In GA4 staan ze gewoon onder Bron/Medium.
 
 Let op het verschil tussen `subsidiecheck_stap` en `subsidiecheck_start`. Het eerste meet dat een
 stap getóónd is (de noemer), het tweede dat stap 1 is afgerond (de teller). Zonder allebei valt

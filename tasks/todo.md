@@ -2,6 +2,44 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Subsidietool: de check doorgeven, en het mailblok op orde (2026-08-09)
+
+Vervolg op de sectie hieronder, zelfde dag. Vier opdrachten van de opdrachtgever.
+
+- [x] **Slotzin weg.** "Veel regelingen blijven onbenut. Jij bent nu een stap verder dan de
+      meeste woningeigenaren." De pagina eindigde met een compliment dat niets vroeg.
+- [x] **Delen gaat over de tool, niet over dit overzicht.** De knop "Kopieer link naar dit
+      overzicht" kopieerde `window.location.href`, mét postcode en huisnummer. Wie dat naar
+      de buurman stuurde deelde zijn eigen adres, en de buurman keek naar het verkeerde huis.
+      Nieuw blok `DeelDeCheck` op de plek van de slotzin: WhatsApp (contactkiezer, geen
+      nummer van ons) en kopieer-link, allebei naar `voortraject.nl/subsidiecheck`.
+- [x] **Meting aan twee kanten.** Verzendkant: nieuw event `subsidiecheck_deel` met `kanaal`.
+      Ontvangkant: utm-tags in de gedeelde link. Zonder die tags is WhatsApp-verkeer
+      onzichtbaar (geen referrer), en telt een doorgestuurde bezoeker als direct verkeer.
+      Container bijgewerkt (variabele `dlv - kanaal`, trigger + tag 31).
+- [x] **Mailblok "een vraag over dit overzicht"** opnieuw opgezet: knoppen met één woord
+      plus icoon en `white-space:nowrap`, zodat ze op één regel passen. "op Google" is nu
+      het Google-logo, met alt-tekst "Google" als terugval bij geblokkeerde afbeeldingen.
+- [x] **Deelregel in de mail.** De mail is het enige deel van de check dat wordt bewaard en
+      doorgestuurd; daar hoort een link in waarmee de ontvanger zijn eigen adres invult.
+
+**Gemeten in een headless Chrome, met Arial (het lettertype dat mailclients pakken als Inter
+ontbreekt — de ongunstigste variant):** de twee knoppen staan op één regel bij een
+mailbreedte van 320 t/m 430px, en houden ~48px over binnen het blok. Ter vergelijking: de
+oude knoppen braken op 390px allebei over twee tot drie regels.
+
+**Reviews in de mail zijn niet statisch.** `haalBeoordeling()` leest `google_place_stats` bij
+élke verzending, en die tabel wordt dagelijks om 06:00 UTC ververst door de cron op
+`sync-google-reviews`. Nagekeken op 2026-08-09: `synced_at` stond op die dag 06:00:01Z,
+rating 4,9 bij 14 reviews. Staat er geen rij, dan valt de hele bewijsregel weg — liever geen
+cijfer dan een oud cijfer.
+
+**Iconen staan in `public/mail/`,** niet in de storage-bucket waar het logo staat. Zo horen
+ze bij de code die ze gebruikt en gaan ze mee in dezelfde PR. Gevolg: **deploy de site vóór
+de edge function**, anders wijst de mail even naar een plaatje dat nog niet bestaat (de
+alt-tekst vangt dat op). Ze zijn gerenderd op 96px voor schermen met hoge pixeldichtheid en
+worden op 14-16px getoond.
+
 ## Subsidietool: rustiger op de telefoon, eerlijker subregel, andere CTA (2026-08-09)
 
 Zes losse opmerkingen van de opdrachtgever, na het doorlopen van de check op een telefoon.

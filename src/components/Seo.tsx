@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
 
-const SITE_URL = "https://voortraject.nl";
+import { SITE_URL } from "@/lib/site";
+
 // Standaard deel-afbeelding (1200×630, op ons eigen domein). Social-crawlers
 // draaien geen JS, dus voor de crawler telt de statische kopie in index.html;
 // deze tags houden de client-side DOM consistent en dekken JS-uitvoerende bots.

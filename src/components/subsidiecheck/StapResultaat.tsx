@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Link2, MessageCircle } from "lucide-react";
+import { Check, MessageCircle } from "lucide-react";
 
 import { isTestmodus } from "@/config/testmodus";
 import { useLaadsequentie } from "@/hooks/useLaadsequentie";
@@ -20,6 +20,7 @@ import {
 
 import { Bewijsregel } from "./Bewijsregel";
 import { leesContact } from "./contactOpslag";
+import { DeelDeCheck } from "./DeelDeCheck";
 import { DirectContact } from "./DirectContact";
 import { EersteStap } from "./EersteStap";
 import { GeenRegelingen } from "./GeenRegelingen";
@@ -72,28 +73,11 @@ export const StapResultaat = ({
   const fase = useLaadsequentie(!isPending, alGezocht);
   const laden = isPending || fase < 3;
 
-  // De URL bevat de volledige check-state, dus de link ís het overzicht —
-  // handig om te delen met partner of buren.
-  const [gekopieerd, setGekopieerd] = useState(false);
-  const kopieerTimer = useRef<ReturnType<typeof setTimeout>>();
-  useEffect(() => () => clearTimeout(kopieerTimer.current), []);
-  const kopieerLink = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setGekopieerd(true);
-      clearTimeout(kopieerTimer.current);
-      kopieerTimer.current = setTimeout(() => setGekopieerd(false), 2500);
-    } catch {
-      /* clipboard geweigerd → knop doet stil niets */
-    }
-  };
-
-  // Hier stond een tweede knop "Deel de tool" naast "Kopieer link naar dit
-  // overzicht". Twee deelknoppen naast elkaar die bij het klikken allebei "Link
-  // gekopieerd" tonen, terwijl ze een andere link kopiëren. Die van het overzicht
-  // blijft: overleggen met een partner is een echte stap in dit traject, en die
-  // link bevat het adres. Wie de tool zelf wil doorgeven, kan dezelfde link
-  // sturen.
+  // Delen zit nu in DeelDeCheck onderaan de pagina: dat deelt de kále tool, niet
+  // deze URL. De URL van dit overzicht bevat postcode en huisnummer, dus wie hem
+  // doorstuurde deelde zijn eigen adres en liet de ander naar het verkeerde huis
+  // kijken. Voor de bezoeker zelf blijft die link gewoon bestaan — hij staat in
+  // zijn mail ("bekijk of deel je volledige overzicht online").
 
   // Het aankomstmoment. De bezoeker heeft net zijn gegevens gegeven en krijgt
   // waar hij op wachtte; dat kwam er tot nu toe als een harde swap in, want de
@@ -369,29 +353,9 @@ export const StapResultaat = ({
         ))}
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2">
-        <button
-          type="button"
-          onClick={kopieerLink}
-          className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-[13px] font-medium text-primary transition-colors hover:border-primary/40 min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          aria-live="polite"
-        >
-          {gekopieerd ? (
-            <>
-              <Check size={14} strokeWidth={2.5} className="text-accent" aria-hidden="true" />
-              Link gekopieerd
-            </>
-          ) : (
-            <>
-              <Link2 size={14} strokeWidth={2} aria-hidden="true" />
-              Kopieer link naar dit overzicht
-            </>
-          )}
-        </button>
-        <p className="text-[12px] italic text-muted-foreground">
-          Indicatief overzicht op basis van je postcode. Aan dit overzicht kunnen geen rechten worden ontleend.
-        </p>
-      </div>
+      <p className="mt-6 text-[12px] italic text-muted-foreground">
+        Indicatief overzicht op basis van je postcode. Aan dit overzicht kunnen geen rechten worden ontleend.
+      </p>
 
       {/* Zachte mail-route: met de gegevens-poort (verbergMail) zijn deze gegevens
           al vooraf opgehaald, dan slaan we dit blok over. */}
@@ -438,10 +402,11 @@ export const StapResultaat = ({
         <Bewijsregel />
       </div>
 
-      {/* Warm slot (peak-end): de pagina eindigt menselijk, niet juridisch. */}
-      <p className="mt-6 text-center text-[15px] leading-relaxed text-foreground/70">
-        Veel regelingen blijven onbenut. Jij bent nu een stap verder dan de meeste woningeigenaren.
-      </p>
+      {/* Het slot van de pagina. Stond hier eerder als één warme zin ("veel
+          regelingen blijven onbenut…"); die vroeg niets en is vervangen door de
+          enige actie die op deze plek nog logisch is: geef de check door. Ná het
+          adviesblok, zodat de twee niet om dezelfde aandacht vechten. */}
+      <DeelDeCheck aantalRegelingen={regelingen?.length ?? 0} bewonertype={input.bewonertype} />
 
       <MobieleActiebalk whatsappBericht={whatsappBericht} bewonertype={input.bewonertype} />
     </div>
