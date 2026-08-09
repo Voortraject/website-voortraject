@@ -60,12 +60,18 @@ export const Woningpaneel = ({ adres, input, pand, pandBezig, model, modelBezig 
         <WoningModel model={model} isPending={modelBezig} />
       </div>
 
+      {/* Adres en plaats/bouwjaar stonden onder elkaar. Op een telefoon kost dat
+          twee regels voor drie korte stukjes tekst, terwijl ze samen op één
+          regel passen. Vanaf md weer onder elkaar: daar is de kolom smal (het
+          paneel staat naast de samenvatting) en breekt één regel juist wél. */}
       <div className="border-t border-border p-4 md:p-5">
-        <p className="font-display text-[16px] font-semibold leading-snug text-primary">{adresRegel}</p>
-        <p className="text-[13px] text-muted-foreground">
-          {adres.woonplaatsnaam}
-          {pand?.bouwjaar ? ` · Bouwjaar ${pand.bouwjaar}` : ""}
-        </p>
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 md:block">
+          <p className="font-display text-[16px] font-semibold leading-snug text-primary">{adresRegel}</p>
+          <p className="text-[13px] text-muted-foreground">
+            {adres.woonplaatsnaam}
+            {pand?.bouwjaar ? ` · Bouwjaar ${pand.bouwjaar}` : ""}
+          </p>
+        </div>
       </div>
     </section>
   );

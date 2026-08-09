@@ -159,13 +159,20 @@ export const StapResultaat = ({
         model={model}
         modelBezig={modelBezig}
       />
+      {/* Alleen vanaf md. Op mobiel staat onderaan het scherm permanent de
+          actiebalk met "Stel je vraag", die precies hetzelfde doet en die altijd
+          in beeld is. Deze knop erbij maakte het de derde of vierde route naar
+          hetzelfde vraagblok binnen één telefoonscherm (label aanvragen, de
+          eerste stap, deze knop, en de balk), en dat las als een opeenstapeling
+          van oproepen in plaats van als één duidelijke volgende stap. Op desktop
+          bestaat die balk niet, dus daar blijft de knop nodig. */}
       <button
         type="button"
         onClick={() => {
           pushGtmEvent("subsidiecheck_vraag_cta", { bewonertype: input.bewonertype, plek: "woningpaneel" });
           scrollNaarVraag();
         }}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-[14px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="hidden w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-[14px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:inline-flex"
       >
         <MessageCircle size={16} strokeWidth={2} aria-hidden="true" />
         Ik heb een vraag
@@ -280,7 +287,17 @@ export const StapResultaat = ({
           data={samenvatting}
           bewonertype={input.bewonertype}
           plaats={input.gemeente ?? input.provincie}
-          maatregelen={input.maatregelen}
+          // De eerste stap staat in de samenvattingskaart zelf, op de plek waar
+          // eerder de aangevinkte maatregelen stonden. Daar sluit de piek van
+          // het scherm af met iets dat verder helpt in plaats van met een
+          // herhaling van de eigen keuze.
+          voet={
+            <EersteStap
+              bouwjaar={pand?.bouwjaar}
+              bewonertype={input.bewonertype}
+              onVraag={(voorstel) => vraagMetVoorstel(voorstel, "eerste_stap")}
+            />
+          }
           bedragen={bedragen}
           energielabel={woning?.energielabel ?? null}
           energielabelBezig={woningBezig}
@@ -297,17 +314,6 @@ export const StapResultaat = ({
           }
         />
         {woningpaneel}
-      </div>
-
-      {/* De persoonlijke eerste stap: één uitspraak over woningen uit dit
-          bouwjaar, eindigend in een vraag. Rendert niets zonder bouwjaar.
-          Hoort bij de conclusie hierboven, dus animeert met dezelfde stap mee. */}
-      <div className={beweeg ? "animate-onthul" : ""} style={beweeg ? { animationDelay: "120ms" } : undefined}>
-        <EersteStap
-          bouwjaar={pand?.bouwjaar}
-          bewonertype={input.bewonertype}
-          onVraag={(voorstel) => vraagMetVoorstel(voorstel, "eerste_stap")}
-        />
       </div>
 
       {/* Bronvermelding — de subsidie-informatie komt uit de Energiesubsidiewijzer

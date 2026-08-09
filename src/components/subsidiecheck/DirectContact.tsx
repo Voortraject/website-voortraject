@@ -314,11 +314,12 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
           {whatsappKnop}
         </div>
 
-        <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
-          {bekend
-            ? `We antwoorden binnen 24 uur op ${bekend.email}.`
-            : "We antwoorden binnen 24 uur. Geen nieuwsbrief."}
-        </p>
+        {/* Hier stond "We antwoorden binnen 24 uur op <e-mailadres>." Twee
+            redenen om die weg te halen. De belofte komt na het verzenden
+            sowieso ("Je vraag is bij ons binnen · We reageren binnen 24 uur op
+            …"), dus vooraf is het een herhaling. En het terugkaatsen van het
+            e-mailadres van de bezoeker, vlak onder de knop, leest als een
+            bevestiging van iets wat nog niet gebeurd is. */}
       </form>
     </div>
   );
