@@ -331,3 +331,24 @@ homepagina liep de tekst daardoor tegen de "Lees meer"-knop aan.
   logt laat direct zien welke klasse is gesneuveld.
 - Refactor van een gedeeld component (hier: hergebruik op de contactpagina) raakt
   ook de pagina's die je niet aan het bekijken bent. Controleer die pagina's expliciet.
+
+## 2026-08-09 — een feature-flag omzetten om te kunnen screenshotten, terwijl de opdrachtgever meekijkt op dezelfde dev-server
+**Context:** Om de resultaatpagina te kunnen fotograferen zonder telkens de gegevens-poort te
+doorlopen, is `SUBSIDIECHECK_GEGEVENS_POORT` in `src/config/features.ts` tijdelijk op `false`
+gezet, met een dev-server op `localhost:8080`. De opdrachtgever testte in dat tijdvak zelf in
+een incognitovenster op diezelfde server, kwam zonder gegevens bij het resultaat, en dacht
+dat de poort lek was. Twee dingen maakten het erger: de dev-server bleef als weesproces
+draaien nadat de achtergrondtaak was gestopt (vite overleeft het stoppen van de wrapper), en
+"even omzetten en terugzetten" is onzichtbaar voor iemand anders die op dezelfde poort kijkt.
+**Lesson:**
+- Zet nooit een feature-flag om om je eigen werk te kunnen bekijken. Gebruik de weg die de
+  applicatie zelf al biedt: hier `sessionStorage.setItem("sc_poort_ontgrendeld", "1")` in de
+  console, of gewoon de flow doorlopen. Dat raakt de code niet en dus ook niemand anders.
+- Kan het echt niet anders, meld het dan vooraf en herstel het vóór je iets anders doet, niet
+  na de volgende screenshot.
+- Controleer na een achtergrond-`bun run dev` of de poort echt vrij is
+  (`Get-NetTCPConnection -LocalPort 8080`); het stoppen van de taak laat het node-proces vaak
+  staan. Een weesserver serveert je halve werkkopie aan wie er toevallig langskomt.
+- Bij een melding "de poort laat me door": kijk eerst welke *bron* de gebruiker zag
+  (localhost of productie) en welke waarde die bron op dat moment serveerde
+  (`curl localhost:8080/src/config/features.ts`), vóór je in de logica gaat zoeken.
