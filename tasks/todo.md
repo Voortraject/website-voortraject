@@ -97,16 +97,52 @@ achteraf bevestigen:
    `type === "Rijwoning"` had hier dus niets herkend, en een `includes("rijwoning")` zou een
    twee-onder-een-kap als rijwoning classificeren. Wie hierop wil filteren, moet eerst een reeks
    adressen verzamelen en de échte lijst opbouwen.
-2. **`Gebouwsubtype` doet iets anders dan de swagger beweert.** Daar staat "de ligging van het
-   appartement in het woongebouw", maar bij dit eengezinshuis staat er `"Twee-onder-een-kap"`: het
-   veld kiest hier één kant van de schuine streep in `Gebouwtype`. Het is dus (ook) een
-   *disambiguatie* van het samengestelde type, niet alleen een appartementpositie.
-   **Dat maakt `subtype` waarschijnlijk het bruikbaardere veld van de twee**, precies het veld dat
-   buiten de oorspronkelijke opdracht viel en er "voor het geval dat" bij is gezet.
+2. **`Gebouwsubtype` doet bij dit adres iets anders dan de swagger beweert.** Daar staat "de ligging
+   van het appartement in het woongebouw", maar bij dit eengezinshuis staat er
+   `"Twee-onder-een-kap"`: het veld kiest één kant van de schuine streep in `Gebouwtype`.
 3. **`Gebouwklasse` is `"Woningbouw"`,** voluit, niet een code als `W` of `Woning`.
 
-Nog onbekend: de volledige lijst waarden, en wat er bij een utiliteitsgebouw of een appartement
-staat. Verzamel dat uit echte adressen voordat je er logica op bouwt.
+#### De waardenlijst, uit 203 adressen (2026-08-09)
+
+Verzameld door adressen uit 21 postcodes in Groningen en Drenthe langs de function te halen; 110
+daarvan hebben een geregistreerd label en dus gebouwgegevens.
+
+**`Gebouwklasse`** — twee waarden: `Woningbouw` (95) en `Utiliteitsbouw` (15).
+
+**`Gebouwtype`** — bij utiliteitsbouw altijd leeg. Bij woningbouw negen waarden:
+
+| aantal | waarde |
+|---|---|
+| 28 | `Appartement` |
+| 24 | `Flatwoning (overig)` |
+| 13 | `Twee-onder-een-kap / rijwoning hoek` |
+| 11 | `Vrijstaande woning` |
+| 8 | `Rijwoning tussen` |
+| 4 | `Woonwagen` |
+| 3 | `Maisonnette` |
+| 3 | `Twee-onder-één-kap` |
+| 1 | `Rijwoning hoek` |
+
+**`Gebouwsubtype`** — leeg bij grondgebonden woningen, gevuld bij gestapelde bouw:
+`Tussenmidden` (20), `Hoekdak` (10), `Hoekmidden` (10), `Tussendak` (10), `Tussendakvloer` (2),
+`Hoekvloer` (2), `Hoekdakvloer` (1). Plus 13× `Twee-onder-een-kap`, uitsluitend bij het
+samengestelde type hierboven.
+
+Drie dingen om te onthouden voordat er ooit logica op komt:
+
+- **Er zijn twee spellingen van hetzelfde woningtype.** `Twee-onder-een-kap / rijwoning hoek` (13×,
+  mét subtype) naast `Twee-onder-één-kap` (3×, zonder subtype, met een é). Dezelfde woning, twee
+  registratiewijzen. Elke vergelijking op tekst moet allebei kennen, of normaliseren op accenten.
+- **`Gebouwsubtype` heeft twee betekenissen.** Bij `Appartement`, `Flatwoning (overig)` en
+  `Maisonnette` is het de positie in het gebouw (hoek/tussen × dak/vloer/midden), precies zoals de
+  swagger zegt. Alleen bij het samengestelde type is het een disambiguatie. De eerdere conclusie
+  hierboven dat subtype "waarschijnlijk het bruikbaardere veld" is, klopte dus niet: het is
+  aanvullend, niet vervangend.
+- **`Rijwoning hoek` bestaat als losse waarde én verstopt in het samengestelde type.** Wie hoekhuizen
+  wil tellen, mist er dus dertien als hij alleen op de losse waarde kijkt.
+
+Nog onbekend: of er buiten Groningen en Drenthe andere waarden voorkomen, en wat er staat bij
+woonboten en monumenten.
 
 ### Feiten voor de persoonlijke eerste stap (geverifieerd bij Milieu Centraal)
 
@@ -172,18 +208,45 @@ met alle kans op fouten, vervalt. Dat was het risicovolste deel van het oorspron
 anders (1991 vs 1992); we houden 1992 aan, de conservatieve kant. Een woning uit 1991 valt dan in de
 "dunne laag"-groep, en dat is bij twijfel de uitspraak die niemand tekortdoet.
 
+### PR 4 — Toestemming voor telefonisch opvolgen (#117)
+
+Sinds 1 juli 2021 mag telemarketing richting consumenten alleen met toestemming vooraf (art. 11.7
+lid 2 Telecommunicatiewet; het bel-me-niet-register verviel toen). De ACM verlangt dat je die per
+persoon kunt aantónen. Een telefoonnummer in een formulier is op zichzelf geen toestemming: er moet
+staan waar de bezoeker ja tegen zegt, op het moment dat hij het zegt.
+
+- [x] Eén regel onder de verzendknop: "Je gegevens blijven bij ons. Door te versturen mogen wij je
+      mailen of bellen over jouw verduurzaming."
+- [x] Het bewijs gaat mee de lead in: moment plus de letterlijke tekst die op dat scherm stond
+- [x] Eén bron voor beide (`toestemming.ts`), zodat er nooit licht zit tussen wat de bezoeker las en
+      wat wij bewaren, ook niet als de copy later verandert
+- [x] Test die dat verband bewaakt, ook op het noodpad bij een bronfout
+
+**Bewust géén aanvinkvakje.** Dat is juridisch het sterkst, maar het is een extra handeling vlak
+voor de knop, en bij 11 leads per week is dat een dure ingreep die we niet kunnen meten. Dit is het
+zwaarste dat zonder extra handeling kan: de tekst staat pal bij de knop, is specifiek over kanaal en
+onderwerp, en het versturen zelf is de actieve handeling. Wil je het waterdicht, dan is het vakje de
+volgende stap; dat is een keuze tussen bewijskracht en leadvolume.
+
 ### Nog open, vraagt een beslissing van de opdrachtgever
 
 - ~~**Huurder-tak.**~~ **Beantwoord (2026-08-09):** Voortraject kan ook voor huurders altijd kijken
   wat er mogelijk is. Verwerkt in de eerste stap (#115): huurders krijgen dezelfde uitspraak over de
   woningvoorraad, maar de slotvraag wordt "wat er in jouw situatie mogelijk is". Het onderliggende
   probleem blijft wel staan: 1 regeling in Groningen is een mager resultaat op zichzelf.
-- **Toestemming per lead** voor telefonische opvolging (art. 11.7 lid 2 Telecommunicatiewet). Raakt
-  het CRM.
-- **De waardenlijst van `Gebouwtype` / `Gebouwsubtype`.** Nu bekend van één adres (zie hierboven).
-  Voordat er logica op gebouwd wordt: verzamel de waarden van een reeks adressen, inclusief een
-  appartement en een utiliteitsgebouw. `Gebouwtype` blijkt samengesteld ("Twee-onder-een-kap /
-  rijwoning hoek"), dus matchen op losse woorden gaat mis.
+- ~~**De waardenlijst van `Gebouwtype` / `Gebouwsubtype`.**~~ **Gedaan (2026-08-09):** uit 203
+  adressen, zie hierboven.
+- ~~**Een eigen kolom voor de toestemming in het CRM.**~~ **Akkoord (2026-08-10), zit in #117.**
+  Migratie `20260810000000_leads_bewoners_toestemming.sql` staat klaar. Uitvoeren vraagt twee
+  handelingen van de opdrachtgever, in deze volgorde:
+  1. de migratie draaien op het CRM-project `lfelnfukbrxznkevnevr`;
+  2. de edge function opnieuw uitrollen:
+     `bunx supabase functions deploy subsidiecheck-mail --project-ref lfelnfukbrxznkevnevr`
+     (vanuit de repo-root, zodat `config.toml` `verify_jwt = false` meegeeft).
+
+  Volgorde maakt niet uit voor de werking, alleen voor wanneer de kolommen vullen. Gebeurt geen van
+  beide, dan blijft alles werken: de insert valt terug op de basisvelden en het bewijs staat dan nog
+  steeds als regel in `notities`.
 - **GTM-event `subsidiecheck_verbreed`** bij het verbreden na 0 regelingen. Kan pas als de
   container in `docs/gtm/` weer stabiel is, want `gtmContainer.test.ts` eist trigger én tag.
 
