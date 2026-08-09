@@ -158,26 +158,70 @@ describe("de keuzeregel boven de knop", () => {
   });
 });
 
-describe("voortgang op stap 1", () => {
-  const lijn = (container: HTMLElement) =>
+describe("voortgangsindicator", () => {
+  const STAPPEN = ["Jouw woning", "Je gegevens", "Resultaat"];
+
+  const balk = (container: HTMLElement) =>
     // Het meelopende stukje is het enige element met een inline breedte.
     container.querySelector<HTMLElement>("span[style*='width']");
 
   it("begint niet op nul: wie de check opent is al begonnen", () => {
-    const { container } = render(<Voortgang stappen={["Jouw woning", "Je gegevens", "Resultaat"]} huidige={1} deel={0.2} />);
+    const { container } = render(<Voortgang stappen={STAPPEN} huidige={1} deel={0.3} />);
 
-    expect(lijn(container)?.style.width).toBe("20%");
+    expect(balk(container)?.style.width).toBe("30%");
   });
 
   it("loopt verder zodra het adres herkend is", () => {
-    const { container } = render(<Voortgang stappen={["Jouw woning", "Je gegevens", "Resultaat"]} huidige={1} deel={0.7} />);
+    const { container } = render(<Voortgang stappen={STAPPEN} huidige={1} deel={0.7} />);
 
-    expect(lijn(container)?.style.width).toBe("70%");
+    expect(balk(container)?.style.width).toBe("70%");
   });
 
   it("houdt de balk leeg als er niets te melden valt", () => {
-    const { container } = render(<Voortgang stappen={["Jouw woning", "Je gegevens", "Resultaat"]} huidige={3} />);
+    const { container } = render(<Voortgang stappen={STAPPEN} huidige={3} />);
 
-    expect(lijn(container)).toBeNull();
+    expect(balk(container)).toBeNull();
+  });
+
+  it("nummert de stappen, zodat je ziet waar je bent en hoeveel er zijn", () => {
+    const { container } = render(<Voortgang stappen={STAPPEN} huidige={1} />);
+
+    // Losse bolletjes zeiden niets; genummerde cirkels wel.
+    const tekst = container.textContent ?? "";
+    expect(tekst).toContain("1");
+    expect(tekst).toContain("2");
+    expect(tekst).toContain("3");
+  });
+
+  it("zet een vinkje bij wat af is en een nummer bij wat nog komt", () => {
+    const { container } = render(<Voortgang stappen={STAPPEN} huidige={2} />);
+
+    // Stap 1 is af: vinkje in plaats van het cijfer 1.
+    expect(container.querySelectorAll(".lucide-check")).toHaveLength(1);
+    expect(container.textContent).not.toContain("1");
+    expect(container.textContent).toContain("3");
+  });
+
+  it("laat de huidige stap er anders uitzien dan afgerond én dan nog te doen", () => {
+    // De expliciete USWDS-regel: de huidige stap moet zich van allebei de andere
+    // toestanden onderscheiden, anders weet de bezoeker niet waar hij staat.
+    const { container } = render(<Voortgang stappen={STAPPEN} huidige={2} />);
+    // h-7 onderscheidt de cirkels van de verbindingsbalkjes.
+    const cirkels = container.querySelectorAll("span[aria-hidden='true'][class*='h-7']");
+
+    const klassen = [...cirkels].map((c) => c.className);
+    const [afgerond, actief, komend] = klassen;
+    expect(afgerond).toContain("bg-primary");
+    expect(actief).toContain("bg-accent");
+    expect(komend).toContain("border-border");
+    expect(new Set(klassen).size).toBe(klassen.length);
+  });
+
+  it("vertelt een screenreader per stap wat de status is", () => {
+    render(<Voortgang stappen={STAPPEN} huidige={2} />);
+
+    expect(screen.getByText(/afgerond/)).toBeInTheDocument();
+    expect(screen.getByText(/huidige stap/)).toBeInTheDocument();
+    expect(screen.getByText(/nog te doen/)).toBeInTheDocument();
   });
 });

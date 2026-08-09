@@ -530,19 +530,12 @@ export const StapAdres = ({
         </div>
       )}
 
-      {/* Zeggen wat er hierna komt. Zonder deze regel loopt de bezoeker van een
-          scherm dat "geen account nodig" belooft zó een scherm in dat om naam,
-          e-mail en telefoon vraagt; die verrassing valt precies op het moment
-          dat we vertrouwen nodig hebben. Vooraf aankondigen kost misschien een
-          enkele klik op stap 1, maar haalt de omgekeerde belofte uit de poort.
-
-          Op mobiel valt de bijzin weg: daar liep deze regel over twee regels en
-          stond er onder de knop een stapel van vier regels tekst. De aankondiging
-          zelf blijft staan, want die doet het werk. */}
-      <p className="mt-3 text-center text-[12.5px] leading-relaxed text-muted-foreground">
-        Daarna vragen we kort je gegevens
-        <span className="hidden sm:inline">, zodat we het overzicht naar je kunnen mailen</span>.
-      </p>
+      {/* Hier stond "Daarna vragen we kort je gegevens…". Die regel kwam uit een
+          tijd waarin stap 1 nog "geen account nodig" beloofde: dan is het
+          gegevensscherm erna een onaangename verrassing. Die belofte is
+          verdwenen (zie src/config/beloftes.ts) en daarmee de tegenspraak.
+          Wat er hierna komt staat bovendien gewoon in de voortgangsindicator:
+          stap 2 heet "Je gegevens". Een derde keer hetzelfde zeggen is ruis. */}
 
       {/* De drie beloftes en onze echte Google-score. De teksten staan in
           src/config/beloftes.ts, gedeeld met de CTA op de homepage.

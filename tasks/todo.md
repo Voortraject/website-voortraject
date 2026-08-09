@@ -1985,3 +1985,29 @@ Praktische gotcha's:
   toelichting van Bewijsregel zelf).
 - 34 testbestanden / 195 tests groen, lint schoon op de gewijzigde bestanden,
   productiebuild ok.
+
+### Review (2026-08-09, derde ronde) — voortgangsindicator herzien
+- "Daarna vragen we kort je gegevens…" verwijderd. Die regel kwam uit de tijd dat
+  stap 1 nog "geen account nodig" beloofde; die belofte staat er niet meer, dus
+  de tegenspraak die hij moest opvangen bestaat niet meer. Wat er hierna komt
+  staat bovendien in de voortgangsindicator ("Je gegevens").
+- Voortgangsindicator opnieuw ontworpen. De bolletjes van 10px vielen niet op en
+  een balkje van 3px alleen was nog te subtiel. Nagezocht wat gangbaar is
+  (USWDS-designsysteem, checkout-onderzoek Baymard, NN/g-wizardrichtlijnen) en
+  daaruit overgenomen:
+  - genummerde cirkels van 28px in plaats van kale bolletjes: het nummer zegt
+    waar je bent én hoeveel stappen er zijn, zonder extra regel tekst;
+  - drie duidelijk verschillende toestanden, met de HUIDIGE stap het meest
+    opvallend (expliciete USWDS-regel): afgerond = primary met vinkje, huidig =
+    accent met ring, nog te doen = randje met grijs nummer;
+  - vinkje bij wat af is, want dat leest sneller dan een nummer;
+  - toegankelijkheid: cirkels op aria-hidden, aria-current="step" op de huidige,
+    en per stap verborgen tekst met de status (afgerond / huidige stap / nog te
+    doen).
+- Basisvulling van het balkje van 20% naar 30%, zodat de "je bent al begonnen"-
+  vulling ook echt zichtbaar is. Bij een herkend adres nog steeds 70%.
+- Bewust NIET toegevoegd: een aparte regel "Stap 1 van 3". USWDS raadt die aan,
+  maar de nummers in de cirkels dragen dat al, en er is deze ronde juist gesnoeid
+  in kleine grijze regels. Screenreaders krijgen het via de aria-label van de lijst.
+- 34 testbestanden / 199 tests groen (4 nieuwe voor de indicator), lint schoon op
+  de gewijzigde bestanden, productiebuild ok.

@@ -267,7 +267,7 @@ const SubsidiecheckLive = () => {
   // er een volgende stap is: wie hier staat is begonnen (zie Voortgang). Op stap
   // 1 loopt het door zodra we het adres herkennen, want dan is er ook echt iets
   // gebeurd.
-  const deelVoortgang = stap === RESULTAAT_STAP ? 0 : stap === 1 && (adresHerkend || !!bevestigdAdres) ? 0.7 : 0.2;
+  const deelVoortgang = stap === RESULTAAT_STAP ? 0 : stap === 1 && (adresHerkend || !!bevestigdAdres) ? 0.7 : 0.3;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
