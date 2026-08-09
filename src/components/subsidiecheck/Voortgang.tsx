@@ -85,9 +85,18 @@ export const Voortgang = ({ stappen, huidige, deel = 0, onStapKlik }: VoortgangP
               // haarlijn is een vulling van een kwart simpelweg onzichtbaar, en
               // dan doet de voortgang zijn werk niet.
               //
+              // De breedte loopt op met het scherm, want een langer balkje maakt
+              // die gedeeltelijke vulling beter afleesbaar (30% van 96px is 29
+              // pixels, van 32px maar 10). Waarom niet overal breed: op mobiel
+              // bepalen de labels de breedte. De drie labels zijn samen zo'n
+              // 194px, en op een telefoon van 360px is er na de paginamarges
+              // 312px te verdelen. Bij 32px per balkje zit je dan al op 290px;
+              // breder gaat daar dus niet passen. Vanaf 400px is die ruimte er
+              // wel, en vanaf sm ruimschoots.
+              //
               // mt = halve cirkelhoogte (14px) min halve balkhoogte, zodat de
               // balk precies door het midden van de cirkels loopt.
-              className={`relative mx-2 mt-[12.5px] h-[3px] w-8 overflow-hidden rounded-full sm:mx-3 sm:w-14 ${
+              className={`relative mx-2 mt-[12.5px] h-[3px] w-8 overflow-hidden rounded-full min-[400px]:w-12 sm:mx-3 sm:w-24 ${
                 afgerond || actief ? "bg-primary/50" : "bg-border"
               }`}
             >

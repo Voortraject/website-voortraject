@@ -2011,3 +2011,20 @@ Praktische gotcha's:
   in kleine grijze regels. Screenreaders krijgen het via de aria-label van de lijst.
 - 34 testbestanden / 199 tests groen (4 nieuwe voor de indicator), lint schoon op
   de gewijzigde bestanden, productiebuild ok.
+
+### Review (2026-08-09, vierde ronde) — bredere voortgangsbalk, subregel op één regel
+- Balkjes tussen de stappen verbreed: 32px → 48px vanaf 400px schermbreedte →
+  96px vanaf sm. Een langer balkje maakt de gedeeltelijke vulling beter
+  afleesbaar (30% van 96px is 29px, van 32px maar 10px).
+  - Bewust NIET verbreed onder de 400px. De labels bepalen daar de breedte: de
+    drie labels zijn samen zo'n 194px en op een telefoon van 360px blijft er na
+    px-6 nog 312px over. Met 32px per balkje zit je dan al op ~290px; breder
+    past er domweg niet bij zonder dat de labels gaan breken.
+  - Gecontroleerd dat de arbitraire breakpoint `min-[400px]:` echt meecompileert
+    (staat als `min-width: 400px` in de gebouwde CSS). Tailwind is 3.4.
+- Subregel ingekort tot "Vul je adres in, dan zoeken we alle regelingen." (47
+  tekens). Budget: op 360px blijft 312px over en Manrope op 14px doet ~6,3px per
+  teken, dus ~49 tekens passen op één regel. Met "bij elkaar" erachter waren het
+  er 58 en brak de zin. Het tekenbudget staat als comment bij de tekst, zodat een
+  volgende tekstwijziging niet stilletjes weer twee regels oplevert.
+- 34 testbestanden / 199 tests groen, lint schoon, productiebuild ok.

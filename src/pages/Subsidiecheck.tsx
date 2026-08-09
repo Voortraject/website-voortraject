@@ -237,11 +237,15 @@ const SubsidiecheckLive = () => {
             // verduurzaming": dat veronderstelt dat de bewoner nog moet
             // beginnen, terwijl een deel al van alles heeft gedaan.
             titel: "Welke subsidies zijn er voor jouw huis?",
-            // Kort genoeg om op een telefoon op één regel te blijven. De kop
-            // loopt daar al over twee regels; een subregel die dat ook doet
-            // maakt er een blok van vier regels tekst van, en dan valt geen van
-            // beide meer op.
-            sub: "Vul je adres in, dan zoeken we alle regelingen bij elkaar.",
+            // Moet op een telefoon op één regel passen. De kop loopt daar al
+            // over twee regels; een subregel die dat ook doet maakt er een blok
+            // van vier regels tekst van, en dan valt geen van beide meer op.
+            //
+            // Wat "past" betekent, in cijfers: op een scherm van 360px blijft er
+            // na de paginamarges (px-6) 312px over, en Manrope op 14px doet zo'n
+            // 6,3px per teken. Dat is grofweg 49 tekens. Deze zin heeft er 47;
+            // met "bij elkaar" erachter waren het er 58 en brak hij dus.
+            sub: "Vul je adres in, dan zoeken we alle regelingen.",
           };
     }
     if (stap === 2) {
