@@ -1,3 +1,4 @@
+import { readFileSync } from "fs";
 import { describe, expect, it } from "vitest";
 
 import { eersteStapTekst } from "../components/subsidiecheck/eersteStapTekst";
@@ -62,5 +63,29 @@ describe("eersteStapTekst", () => {
   it("geeft een voorstel dat het bouwjaar meeneemt, zodat het team context heeft", () => {
     expect(eersteStapTekst(1962, "woningeigenaar")?.voorstel).toContain("1962");
     expect(eersteStapTekst(2007, "woningeigenaar")?.voorstel).toContain("2007");
+  });
+});
+
+// De overzichtsmail zegt hetzelfde als het resultaat. De edge function draait op
+// Deno en kan niets uit src/ importeren, dus staat die tekst daar noodgedwongen
+// een tweede keer. Deze test faalt zodra de twee uit elkaar lopen: dan leest de
+// bewoner op de site iets anders dan in zijn mail, over hetzelfde huis.
+describe("eersteStapTekst in de overzichtsmail", () => {
+  const mail = readFileSync("supabase/functions/subsidiecheck-mail/index.ts", "utf8");
+
+  it("gebruikt letterlijk dezelfde uitspraken over de woningvoorraad", () => {
+    for (const jaar of [1900, 1980, 2000]) {
+      // De openingszin bevat het bouwjaar en staat daar als template; de rest is
+      // vaste tekst en moet woord voor woord kloppen.
+      for (const zin of eersteStapTekst(jaar, "woningeigenaar")!.zinnen.slice(1)) {
+        expect(mail).toContain(zin);
+      }
+    }
+  });
+
+  it("houdt dezelfde openingszin en periodegrenzen aan", () => {
+    expect(mail).toContain("Jouw huis is uit ${bouwjaar}.");
+    expect(mail).toMatch(/bouwjaar >= 1992/);
+    expect(mail).toMatch(/bouwjaar >= 1975/);
   });
 });

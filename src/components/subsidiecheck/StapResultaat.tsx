@@ -148,7 +148,12 @@ export const StapResultaat = ({
   // Eén woningpaneel-element, gebruikt in zowel de "geen regelingen"-tak als het
   // normale resultaat — zo verschijnt het in elke situatie (bewonertype/aantal).
   // De contactknop staat onder het woningkaartje, buiten het witte vlak: binnenin
-  // leek "Ik heb een vraag" over de foto's te gaan.
+  // leek de knop over de foto's te gaan.
+  //
+  // Het label was "Ik heb een vraag". Dat vraagt de bezoeker om zelf al een vraag
+  // te hebben, en op dit punt heeft hij vooral een lijst gezien waar hij nog geen
+  // weg in weet. "Ik wil gratis advies" biedt aan wat Voortraject werkelijk doet,
+  // en gratis en vrijblijvend is het ook echt.
   const woningpaneel = (
     <div className="flex flex-col gap-3">
       <Woningpaneel
@@ -175,7 +180,7 @@ export const StapResultaat = ({
         className="hidden w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-[14px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:inline-flex"
       >
         <MessageCircle size={16} strokeWidth={2} aria-hidden="true" />
-        Ik heb een vraag
+        Ik wil gratis advies
       </button>
     </div>
   );

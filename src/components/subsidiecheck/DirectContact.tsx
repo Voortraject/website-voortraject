@@ -188,8 +188,12 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
       className="scroll-mt-24 rounded-xl border border-border p-6 md:p-8"
       style={{ backgroundColor: "var(--card-soft)" }}
     >
+      {/* Dekt beide routes hierheen: de knop "Ik wil gratis advies" bij het
+          woningpaneel en "Stel je vraag" in de mobiele actiebalk. Stond hier
+          eerder als "Een vraag over jouw overzicht?"; dat sloot de bezoeker uit
+          die geen vraag heeft maar wel wil weten wat hij nu het beste doet. */}
       <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
-        Een vraag over jouw overzicht?
+        Gratis advies over jouw overzicht
       </h3>
 
       <form onSubmit={handleSubmit} noValidate className="mt-4">
@@ -239,7 +243,7 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
               type="text"
               autoComplete="given-name"
               aria-required="true"
-              placeholder="Je voornaam *"
+              placeholder="Je voornaam"
               className={inputClass}
               value={voornaam}
               maxLength={100}
@@ -256,7 +260,7 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
               type="text"
               autoComplete="family-name"
               aria-required="true"
-              placeholder="Je achternaam *"
+              placeholder="Je achternaam"
               className={inputClass}
               value={achternaam}
               maxLength={100}
@@ -273,7 +277,7 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
               type="email"
               autoComplete="email"
               aria-required="true"
-              placeholder="Je e-mailadres *"
+              placeholder="Je e-mailadres"
               className={`${inputClass} sm:col-span-2`}
               value={email}
               maxLength={255}

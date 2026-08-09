@@ -497,17 +497,25 @@ export const StapAdres = ({
           scherm dat "geen account nodig" belooft zó een scherm in dat om naam,
           e-mail en telefoon vraagt; die verrassing valt precies op het moment
           dat we vertrouwen nodig hebben. Vooraf aankondigen kost misschien een
-          enkele klik op stap 1, maar haalt de omgekeerde belofte uit de poort. */}
+          enkele klik op stap 1, maar haalt de omgekeerde belofte uit de poort.
+
+          Op mobiel valt de bijzin weg: daar liep deze regel over twee regels en
+          stond er onder de knop een stapel van vier regels tekst. De aankondiging
+          zelf blijft staan, want die doet het werk. */}
       <p className="mt-3 text-center text-[12.5px] leading-relaxed text-muted-foreground">
-        Daarna vragen we kort je gegevens, zodat we het overzicht naar je kunnen mailen.
+        Daarna vragen we kort je gegevens
+        <span className="hidden sm:inline">, zodat we het overzicht naar je kunnen mailen</span>.
       </p>
 
       {/* De drie beloftes en onze echte Google-score op één regel. Op mobiel
           vallen de vinkjes weg en scheiden puntjes de beloftes, zodat de drie
-          altijd naast elkaar blijven staan; de score zakt daar naar de regel
-          eronder. Hier geeft iemand voor het eerst iets van zichzelf prijs (zijn
-          adres), dus hoort dat bewijs juist hier. De teksten staan in
-          src/config/beloftes.ts, gedeeld met de CTA op de homepage. */}
+          altijd naast elkaar blijven staan. De teksten staan in
+          src/config/beloftes.ts, gedeeld met de CTA op de homepage.
+
+          De score staat vanaf sm; op mobiel zakte die naar een eigen regel en
+          werd het onder de knop een opsomming van vier regels. Het bewijs is daar
+          niet weg: op de volgende stap staat het pal naast de velden waar de
+          bezoeker zijn gegevens invult, en dat is het moment van de twijfel. */}
       <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
         <ul className="flex flex-nowrap items-center gap-x-2 whitespace-nowrap text-[12px] text-muted-foreground sm:gap-x-4 sm:text-[13px]">
           {SUBSIDIECHECK_BELOFTES.map((belofte, i) => (
@@ -522,7 +530,9 @@ export const StapAdres = ({
             </li>
           ))}
         </ul>
-        <Bewijsregel />
+        <div className="hidden sm:block">
+          <Bewijsregel />
+        </div>
       </div>
     </form>
   );

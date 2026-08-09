@@ -115,7 +115,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
           type="text"
           autoComplete="given-name"
           aria-required="true"
-          placeholder="Je voornaam *"
+          placeholder="Je voornaam"
           className={`${inputClass} col-span-2 sm:col-span-1`}
           value={voornaam}
           onChange={(e) => {
@@ -147,7 +147,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
           type="text"
           autoComplete="family-name"
           aria-required="true"
-          placeholder="Je achternaam *"
+          placeholder="Je achternaam"
           className={inputClass}
           value={achternaam}
           onChange={(e) => {
@@ -168,7 +168,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
           type="email"
           autoComplete="email"
           aria-required="true"
-          placeholder="Je e-mailadres *"
+          placeholder="Je e-mailadres"
           className={inputClass}
           value={email}
           onChange={(e) => {
@@ -186,7 +186,7 @@ export const MailOverzicht = ({ input, adres, regelingen }: MailOverzichtProps) 
           autoComplete="tel"
           inputMode="tel"
           aria-required="true"
-          placeholder="Je telefoonnummer *"
+          placeholder="Je telefoonnummer"
           className={inputClass}
           value={telefoon}
           onChange={(e) => {

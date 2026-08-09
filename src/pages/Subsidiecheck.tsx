@@ -219,7 +219,7 @@ const SubsidiecheckLive = () => {
   // Het resultaat heeft bewust géén subregel: de samenvatting in StapResultaat
   // vertelt daar het verhaal. De stap-1-kop past zich aan: met een al bekend
   // adres ligt de nadruk op de interesses.
-  const kopVoorStap = (): { titel: string; sub?: string; subVerbergMobiel?: boolean } => {
+  const kopVoorStap = (): { titel: string; sub?: string } => {
     if (stap === 1) {
       return bevestigdAdres
         ? {
@@ -228,10 +228,12 @@ const SubsidiecheckLive = () => {
           }
         : {
             titel: "Waar staat jouw woning?",
-            sub: "We zoeken de regelingen die bij jouw adres passen, als startpunt voor je verduurzaming.",
-            // Op mobiel verbergen: scheelt verticale ruimte zodat de knop onderaan
-            // makkelijker binnen één scherm valt. Op sm+ blijft de regel staan.
-            subVerbergMobiel: true,
+            // Kort genoeg om ook op een telefoon op één regel te passen, zodat de
+            // subregel daar niet meer verborgen hoeft te worden. Bewust zonder
+            // "als startpunt voor je verduurzaming": dat veronderstelt dat de
+            // bewoner nog moet beginnen, terwijl een deel al van alles heeft
+            // gedaan. Wat we beloven is de lijst, niet waar iemand staat.
+            sub: "Alle regelingen die bij jouw adres passen.",
           };
     }
     if (poortAan && stap === 2) {
@@ -295,11 +297,7 @@ const SubsidiecheckLive = () => {
                 {kop.titel}
               </h1>
               {kop.sub && (
-                <p
-                  className={`mx-auto mt-2 max-w-md text-center text-[15px] leading-relaxed text-muted-foreground${
-                    kop.subVerbergMobiel ? " hidden sm:block" : ""
-                  }`}
-                >
+                <p className="mx-auto mt-2 max-w-md text-center text-[14px] leading-relaxed text-muted-foreground sm:text-[15px]">
                   {kop.sub}
                 </p>
               )}

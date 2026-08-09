@@ -332,16 +332,40 @@ function bouwSamenvattingBlok(regelingen: Regeling[]): string {
     </table>`;
 }
 
+// De uitspraak over de woningvoorraad bij dit bouwjaar — dezelfde tekst als "de
+// eerste stap" op het resultaat. Zie src/components/subsidiecheck/eersteStapTekst.ts
+// voor de bronnen (Milieu Centraal) en de grenzen 1975/1992. Bewust gedupliceerd:
+// een edge function draait op Deno en kan niets uit src/ importeren. Wijzigt de
+// tekst daar, dan hier mee — src/test/eersteStap.test.ts bewaakt dat.
+//
+// De regel die alles stuurt: nooit een uitspraak over dít huis, alleen over
+// woningen uit die bouwperiode. Wat er sindsdien is gedaan weten we niet.
+function eersteStapZin(bouwjaar: number | null): string | null {
+  if (!bouwjaar || bouwjaar < 1500 || bouwjaar > new Date().getFullYear()) return null;
+  const opening = `Jouw huis is uit ${bouwjaar}.`;
+  if (bouwjaar >= 1992) {
+    return `${opening} Woningen uit die tijd kregen bij de bouw al redelijke isolatie mee. De winst zit dan meestal niet in de schil maar in verwarming en opwek.`;
+  }
+  const kern =
+    bouwjaar >= 1975
+      ? "Woningen uit die jaren kregen bij de bouw een dunne laag isolatie, naar de maatstaven van nu bescheiden."
+      : "Woningen uit die tijd kregen bij de bouw geen isolatie mee.";
+  return `${opening} ${kern} Wat er daarna is gedaan verschilt per woning.`;
+}
+
 function bouwEmailHtml(opts: {
   /** Volledige aanhefregel zonder komma, bijv. "Hallo Jan" of "Beste heer/mevrouw De Vries". */
   aanhef: string;
   adresregel: string;
   regelingen: Regeling[];
   overzichtUrl?: string;
+  /** Bouwjaar uit de BAG; ontbreekt het, dan blijft de woningvoorraad-zin weg. */
+  bouwjaar?: number | null;
   /** Onze echte Google-score; weglaten = geen bewijsregel in de mail. */
   beoordeling?: { score: string; aantal: number | null };
 }): string {
-  const { aanhef, adresregel, regelingen, overzichtUrl, beoordeling } = opts;
+  const { aanhef, adresregel, regelingen, overzichtUrl, bouwjaar, beoordeling } = opts;
+  const bouwjaarZin = eersteStapZin(bouwjaar ?? null);
   // WhatsApp met het adres al in het bericht: de ontvanger hoeft alleen nog zijn
   // vraag te typen, en wij weten meteen waar het over gaat.
   const waLink = `https://wa.me/${WHATSAPP_NUMMER}?text=${encodeURIComponent(
@@ -381,6 +405,11 @@ function bouwEmailHtml(opts: {
           <p style="font-size:16px;margin:0 0 20px;">Hier is je persoonlijke subsidieoverzicht voor <strong>${escapeHtml(adresregel)}</strong>.</p>
 
           ${bouwSamenvattingBlok(regelingen)}
+          ${
+            bouwjaarZin
+              ? `<p style="font-size:15px;margin:0 0 20px;line-height:1.6;">${escapeHtml(bouwjaarZin)}</p>`
+              : ""
+          }
           <p style="font-size:15px;margin:0 0 20px;line-height:1.6;">${goedNieuws ? "Dat is meer dan de meeste mensen denken. " : ""}Je hoeft niets te kiezen: veel regelingen zijn te combineren, en wij zoeken gratis voor je uit welke voor jouw woning het meeste opleveren.</p>
           ${
             overzichtUrl
@@ -839,6 +868,8 @@ Deno.serve(async (req: Request) => {
       adresregel: adresregel || "jouw woning",
       regelingen,
       overzichtUrl: overzichtUrlSchoon,
+      // Zelfde bouwjaar dat als verrijking bij de lead gaat (BAG, via de site).
+      bouwjaar,
       beoordeling: await haalBeoordeling(supabase),
     });
     mailed = await verstuurMail({
