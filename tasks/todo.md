@@ -456,9 +456,11 @@ een volledige reviewkaart op de poort is **niet** aan te raden.
 - [x] "Geen nieuwsbrief, alleen jouw overzicht" weg. Die zin noemt het gevreesde ding; vier
       experimenten in JCR laten zien dat een privacygarantie zorgen wekt die anders sluimerend
       waren gebleven. Nu een positieve doelomschrijving, wat de AVG hier toch al vraagt.
-- [x] Een gezicht: Christian (subsidiespecialist), met de eerlijke mededeling dat hij of een
+- [x] Een gezicht: Tim (bewonersadviseur), met de eerlijke mededeling dat hij of een
       collega contact opneemt. Dat is meteen de transparantie die het verplichte telefoonnummer
-      nodig heeft. Nieuwe asset `adviseur-christian.webp` (2,9 KB; het origineel is 1,1 MB).
+      nodig heeft. Nieuwe asset `adviseur-tim.webp` (2,9 KB; het origineel is 1,7 MB).
+      Stond eerst op Christian (subsidiespecialist); op verzoek gewisseld naar Tim, en
+      daarmee ook de functie mee, want Tim staat op Over ons als bewonersadviseur.
 - [x] Integratietest voor de labelaanvraag uit PR 2 (die leunt op de testopzet uit PR 3).
 - [ ] **Niet gedaan, wacht op akkoord:** de "persoonlijke eerste stap". Zie hieronder.
 

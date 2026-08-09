@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { BadgeEuro, Check, FileCheck, HardHat, Home, Loader2 } from "lucide-react";
 
-import adviseurFoto from "@/assets/adviseur-christian.webp";
+import adviseurFoto from "@/assets/adviseur-tim.webp";
 import { useLaadsequentie } from "@/hooks/useLaadsequentie";
 import { usePandContour } from "@/hooks/usePandContour";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
@@ -474,7 +474,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         />
         <div className="min-w-0">
           <p className="text-[13.5px] leading-snug text-foreground">
-            <span className="font-semibold">Christian</span>, subsidiespecialist. Hij of een collega denkt gratis en
+            <span className="font-semibold">Tim</span>, bewonersadviseur. Hij of een collega denkt gratis en
             vrijblijvend met je mee.
           </p>
           <Bewijsregel className="mt-1.5" alsLink={false} />
