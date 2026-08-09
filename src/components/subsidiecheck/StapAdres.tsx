@@ -1,14 +1,15 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, ChevronDown, Loader2, MapPin } from "lucide-react";
+import { Check, ChevronDown, Lightbulb, Loader2, MapPin } from "lucide-react";
 
 import { SUBSIDIECHECK_BELOFTES } from "@/config/beloftes";
+import { GEMIDDELDE_REGELINGEN_KOP, GEMIDDELDE_REGELINGEN_STAART } from "@/config/cijfers";
 import { usePdokAdres } from "@/hooks/usePdokAdres";
 import { pushGtmEvent } from "@/lib/gtm";
 import { displayPostcode, normalizePostcode, POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib/pdok";
 import {
   ALLE_MAATREGELEN,
-  BEWONERTYPE_LABELS,
+  BEWONERTYPE_MEERVOUD,
   type Bewonertype,
   type Maatregel,
   MAATREGEL_LABELS,
@@ -57,6 +58,13 @@ interface StapAdresProps {
   onAdresWijzigen: () => void;
   /** De bezoeker kwam via "situatie aanpassen": toon de situatiekeuze meteen open. */
   situatieOpen?: boolean;
+  /**
+   * Meldt of de live adrescheck op dit moment een bestaand adres herkent.
+   *
+   * Alleen voor de voortgangsbalk op de pagina: die loopt door zodra we het huis
+   * gevonden hebben. Het adres zelf gaat gewoon via `onStart` en de URL.
+   */
+  onAdresHerkend?: (herkend: boolean) => void;
   /** Label van de doorknop. Met de gegevens-poort "Verder" (er volgt nog een stap). */
   knopLabel?: string;
 }
@@ -78,6 +86,7 @@ export const StapAdres = ({
   onHandmatig,
   onAdresWijzigen,
   situatieOpen = false,
+  onAdresHerkend,
   knopLabel = "Bekijk mijn subsidies",
 }: StapAdresProps) => {
   const [postcode, setPostcode] = useState(displayPostcode(initPostcode));
@@ -114,11 +123,12 @@ export const StapAdres = ({
 
   const gekozenMaatregelen = (): Maatregel[] => (maatregelen.length === 0 ? [...ALLE_MAATREGELEN] : maatregelen);
 
-  // Korte samenvatting van de interesses voor de ingeklapte regel. Staat op een
-  // eigen regel, dus met een hoofdletter.
+  // Korte samenvatting van de interesses voor de ingeklapte regel. Staat
+  // middenin een zin ("We zoeken voor woningeigenaren op …"), dus zonder
+  // hoofdletter; de maatregellabels zelf houden hun eigen schrijfwijze.
   const maatregelSamenvatting =
     maatregelen.length === 0
-      ? "Alle maatregelen"
+      ? "alle maatregelen"
       : maatregelen.length <= 2
         ? maatregelen.map((m) => MAATREGEL_LABELS[m]).join(" en ")
         : `${maatregelen.length} maatregelen`;
@@ -144,6 +154,13 @@ export const StapAdres = ({
   const gevonden = bijDeTijd && !liveUit ? (liveAdres.data ?? null) : null;
   const zoektLive = bijDeTijd && !liveUit && liveAdres.isFetching;
   const nietHerkend = bijDeTijd && !liveUit && !liveAdres.isFetching && liveAdres.isFetched && !liveAdres.data;
+
+  // Doorgeven aan de pagina zodat de voortgangsbalk meebeweegt zodra we het huis
+  // herkennen. Een compact bevestigd adres telt ook mee: dan staat het er al.
+  const adresHerkend = !!gevonden || !!bevestigdAdres;
+  useEffect(() => {
+    onAdresHerkend?.(adresHerkend);
+  }, [adresHerkend, onAdresHerkend]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -229,6 +246,28 @@ export const StapAdres = ({
 
   return (
     <form onSubmit={handleSubmit} noValidate>
+      {/* Eén hard cijfer vóór de eerste inspanning, als feitje in beeld gebracht
+          en niet als zoveelste grijze regel. Zonder anker weet de bezoeker niet
+          of dit overzicht tweehonderd euro of achtduizend waard is, en dan is
+          drie velden invullen al te duur.
+
+          Het getal is gemeten en niet geschat (zie src/config/cijfers.ts en
+          scripts/meet-subsidieaantal.mjs), naar beneden afgerond, en het is het
+          landelijke gemiddelde: bewust zonder regio, zodat iemand uit Friesland
+          of Overijssel zich niet buitengesloten voelt.
+
+          Alleen voor woningeigenaren: dat is de groep waarop gemeten is én de
+          standaard hier. Een huurder krijgt een andere lijst, en dan zou dit
+          cijfer een belofte zijn die we niet hebben nagemeten. */}
+      {!bevestigdAdres && bewonertype === "woningeigenaar" && (
+        <p className="mx-auto mb-6 flex w-fit items-center gap-2 rounded-full bg-secondary px-4 py-1.5 text-[13px] text-foreground sm:text-[13.5px]">
+          <Lightbulb size={15} strokeWidth={2} className="shrink-0 text-accent" aria-hidden="true" />
+          <span>
+            <span className="font-semibold">{GEMIDDELDE_REGELINGEN_KOP}</span> {GEMIDDELDE_REGELINGEN_STAART}
+          </span>
+        </p>
+      )}
+
       {/* Adres: compacte bevestiging (bv. vanaf de homepage) of invulvelden. */}
       {bevestigdAdres ? (
         <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-card px-4 py-3 shadow-subtle">
@@ -365,27 +404,25 @@ export const StapAdres = ({
           </fieldset>
         </div>
       ) : (
-        <div className="mt-6">
-          {/* Kopje erboven, anders lijkt deze regel uit de lucht te vallen. */}
-          <p className="mb-2 block text-[14px] font-semibold text-foreground">Waarop we zoeken</p>
-          {/* Nooit afbreken: de tekst mag over twee regels, "Aanpassen" blijft
-              rechts op dezelfde hoogte staan. */}
-          <div className="flex items-start justify-between gap-3 rounded-lg border border-border px-4 py-3">
-            <div className="min-w-0">
-              <p className="text-[14px] font-semibold leading-snug text-foreground">{BEWONERTYPE_LABELS[bewonertype]}</p>
-              <p className="text-[13px] leading-snug text-muted-foreground">{maatregelSamenvatting}</p>
-            </div>
-            <button
-              type="button"
-              aria-expanded={false}
-              onClick={() => setKeuzesUit(true)}
-              className="inline-flex shrink-0 items-center gap-1 rounded-sm text-[13.5px] font-medium text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              Aanpassen
-              <ChevronDown size={14} aria-hidden="true" />
-            </button>
-          </div>
-        </div>
+        // Eén zin in plaats van een omkaderd blok met een kopje. Dit stond
+        // precies tussen het laatste veld en de knop, dus in de blikrichting
+        // naar de CTA, terwijl er voor verreweg de meeste bezoekers niets te
+        // kiezen valt: de standaard klopt al. Een omkaderd blok met een kop
+        // leest als "hier moet ik iets", en dat is elke keer weer een kleine
+        // rem vlak voor de belangrijkste klik van de pagina. Wie het wél wil
+        // aanpassen ziet de link nog gewoon staan.
+        <p className="mt-5 text-[13.5px] leading-relaxed text-muted-foreground">
+          We zoeken voor {BEWONERTYPE_MEERVOUD[bewonertype]} op {maatregelSamenvatting}.{" "}
+          <button
+            type="button"
+            aria-expanded={false}
+            onClick={() => setKeuzesUit(true)}
+            className="inline-flex items-center gap-1 rounded-sm font-medium text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            Aanpassen
+            <ChevronDown size={13} aria-hidden="true" />
+          </button>
+        </p>
       )}
 
       <button
@@ -493,46 +530,35 @@ export const StapAdres = ({
         </div>
       )}
 
-      {/* Zeggen wat er hierna komt. Zonder deze regel loopt de bezoeker van een
-          scherm dat "geen account nodig" belooft zó een scherm in dat om naam,
-          e-mail en telefoon vraagt; die verrassing valt precies op het moment
-          dat we vertrouwen nodig hebben. Vooraf aankondigen kost misschien een
-          enkele klik op stap 1, maar haalt de omgekeerde belofte uit de poort.
+      {/* Hier stond "Daarna vragen we kort je gegevens…". Die regel kwam uit een
+          tijd waarin stap 1 nog "geen account nodig" beloofde: dan is het
+          gegevensscherm erna een onaangename verrassing. Die belofte is
+          verdwenen (zie src/config/beloftes.ts) en daarmee de tegenspraak.
+          Wat er hierna komt staat bovendien gewoon in de voortgangsindicator:
+          stap 2 heet "Je gegevens". Een derde keer hetzelfde zeggen is ruis. */}
 
-          Op mobiel valt de bijzin weg: daar liep deze regel over twee regels en
-          stond er onder de knop een stapel van vier regels tekst. De aankondiging
-          zelf blijft staan, want die doet het werk. */}
-      <p className="mt-3 text-center text-[12.5px] leading-relaxed text-muted-foreground">
-        Daarna vragen we kort je gegevens
-        <span className="hidden sm:inline">, zodat we het overzicht naar je kunnen mailen</span>.
-      </p>
-
-      {/* De drie beloftes en onze echte Google-score op één regel. Op mobiel
-          vallen de vinkjes weg en scheiden puntjes de beloftes, zodat de drie
-          altijd naast elkaar blijven staan. De teksten staan in
+      {/* De drie beloftes en onze echte Google-score. De teksten staan in
           src/config/beloftes.ts, gedeeld met de CTA op de homepage.
 
-          De score staat vanaf sm; op mobiel zakte die naar een eigen regel en
-          werd het onder de knop een opsomming van vier regels. Het bewijs is daar
-          niet weg: op de volgende stap staat het pal naast de velden waar de
-          bezoeker zijn gegevens invult, en dat is het moment van de twijfel. */}
+          Op mobiel stonden hier eerder puntjes in plaats van vinkjes en was de
+          score helemaal verborgen, omdat het onder de knop een stapel van vier
+          regels werd. Die stapel is er niet meer (de geruststelling over het
+          adres is weg), dus vinkjes en score kunnen terug: het bewijs hoort bij
+          de knop, en op een telefoon niet minder dan op een laptop.
+
+          Bewust `alsLink={false}`: een link met target="_blank" pal naast de
+          verzendknop is een uitgang precies waar we er geen willen. Zie de
+          toelichting in Bewijsregel zelf. */}
       <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-        <ul className="flex flex-nowrap items-center gap-x-2 whitespace-nowrap text-[12px] text-muted-foreground sm:gap-x-4 sm:text-[13px]">
-          {SUBSIDIECHECK_BELOFTES.map((belofte, i) => (
-            <li key={belofte} className="inline-flex items-center gap-1.5">
-              {i > 0 && (
-                <span aria-hidden="true" className="text-border sm:hidden">
-                  ·
-                </span>
-              )}
-              <Check size={14} strokeWidth={2.5} className="hidden shrink-0 text-accent sm:inline" aria-hidden="true" />
+        <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[12px] text-muted-foreground sm:gap-x-4 sm:text-[13px]">
+          {SUBSIDIECHECK_BELOFTES.map((belofte) => (
+            <li key={belofte} className="inline-flex items-center gap-1.5 whitespace-nowrap">
+              <Check size={13} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
               {belofte}
             </li>
           ))}
         </ul>
-        <div className="hidden sm:block">
-          <Bewijsregel />
-        </div>
+        <Bewijsregel alsLink={false} />
       </div>
     </form>
   );

@@ -50,6 +50,15 @@ export const BEWONERTYPE_LABELS: Record<Bewonertype, string> = {
   verhuurder: "Verhuurder",
 };
 
+// Meervoud, voor waar het label middenin een zin staat ("We zoeken voor
+// woningeigenaren op alle maatregelen").
+export const BEWONERTYPE_MEERVOUD: Record<Bewonertype, string> = {
+  woningeigenaar: "woningeigenaren",
+  huurder: "huurders",
+  vve: "VvE's",
+  verhuurder: "verhuurders",
+};
+
 // --- Bron-koppeling: Energiesubsidiewijzer (Verbeterjehuis) ---
 // Verbeterjehuis filtert server-side op bewonertype (`type-of-resident`) én
 // maatregel (`filter=<id>`). We mappen onze types 1-op-1 op hun waarden, zodat

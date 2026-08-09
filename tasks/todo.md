@@ -1914,3 +1914,117 @@ Praktische gotcha's:
   (snn.nl / svn.nl). Breed herverifieerd: 52 regelingen, 14 postcodes, 0 PDF's,
   0 ministerie-links. "Energiebespaarlening Fryslân" → warmtefonds.nl/vve is conform
   de bron (enige externe link op die pagina).
+
+### Review (2026-08-09) — conversie eerste stap subsidiecheck
+- Aanleiding: aan de tool zelf is veel verbeterd, aan stap 1 (het adresscherm)
+  nog nauwelijks. Zes van de tien voorgestelde ingrepen zijn gekozen; 4 (preview
+  van het resultaat), 8 (mobiele veldindeling), 9 (testimonials) en 10 (urgentie)
+  bewust niet gedaan.
+- (1) Compacte header op /subsidiecheck: alleen het logo. De nav, de dropdowns en
+  een "Check jouw subsidies"-knop die naar de eigen pagina wees waren op een
+  funnelpagina louter uitgang (attention ratio). Volledige navigatie staat nog
+  gewoon in de footer. `<Header compact />`; de "binnenkort"-variant houdt de
+  normale header, want dat is een doodlopend eind en geen funnel.
+- (2) Kop belooft de uitkomst: "Welke subsidies zijn er voor jouw huis?" i.p.v.
+  "Waar staat jouw woning?" (dat beschreef de taak, die de veldlabels al doen).
+  Bewust "zijn er voor" en niet "krijg jij": wij tonen wat van toepassing is,
+  niet wat toegekend wordt.
+- (3) Hard cijfer boven de velden: "Gemiddeld 5 subsidies per adres in Groningen
+  en Drenthe". Gemeten, niet geschat: `scripts/meet-subsidieaantal.mjs` roept
+  dezelfde productie-edge-function aan voor één bestaand adres per gemeente in
+  alle 22 gemeenten (27 adressen, PDOK-geverifieerd). Uitkomst 2026-08-09:
+  subsidies gem. 5,41 (min 4, max 7), leningen gem. 4,85, totaal gem. 10,26.
+  We tonen 5: naar beneden afgerond én zonder leningen, want een lening is geen
+  subsidie. Alleen zichtbaar voor woningeigenaren, want dat is de gemeten groep.
+- (5) Endowed progress: het lijntje naar stap 2 begint op 20% en loopt naar 70%
+  zodra de live adrescheck het huis herkent. StapAdres meldt dat via
+  `onAdresHerkend`; de balk beweegt dus op échte voortgang.
+- (6) Geruststelling verplaatst naar pal onder de adresvelden: "Je adres
+  gebruiken we om de regelingen op te zoeken." Stond eerder alleen ónder de knop,
+  dus ná het moment van de twijfel.
+- (7) Keuzeblok "Waarop we zoeken" terug naar één zin ("We zoeken voor
+  woningeigenaren op alle maatregelen. Aanpassen"). Het omkaderde blok stond in
+  de blikrichting naar de CTA terwijl er voor de meeste bezoekers niets te kiezen
+  valt.
+- Bewaakt door `src/test/subsidiecheckEersteStap.test.tsx` (14 tests): cijfer en
+  zin blijven synchroon, het cijfer verschijnt niet bij huurders/VvE's/
+  verhuurders, de geruststelling staat vóór de knop, de compacte header heeft
+  precies één link, en de voortgangsbalk begint niet op nul.
+- 34 testbestanden / 193 tests groen, lint schoon op de gewijzigde bestanden
+  (de 9 bestaande lint-errors staan in niet-geraakte pagina's), productiebuild ok.
+- Nog open: het cijfer is een momentopname. Verandert het subsidieaanbod, dan
+  script opnieuw draaien en `GEMIDDELD_AANTAL_SUBSIDIES` bijstellen.
+
+### Review (2026-08-09, tweede ronde) — feedback op stap 1 verwerkt
+- (1) Voortgang was onzichtbaar: de verbindingslijn was 1px, dus 20% vulling zag
+  je niet. Nu een balkje van 3px met ronde hoeken; het meelopende deel is accent
+  (de kleur van "hier sta je nu"), afgeronde stappen blijven primary.
+- (2) Het cijfer is nu een badge met een lampje op zandkleur i.p.v. weer een
+  grijze regel. En de regio is eruit: iemand uit Friesland of Overijssel hoort
+  zich niet uitgesloten te voelen. Dat betekende wél opnieuw meten, want zonder
+  regio moet het getal ook landelijk kloppen.
+  - Meetscript herschreven: het haalt nu per plaats een écht adres bij PDOK op
+    (`q=*` + filter op `woonplaatsnaam`). De oude vrije zoekopdracht vond voor de
+    meeste steden niets en koos bij "Vries" een adres in de provincie Groningen.
+  - Nieuwe meting, 51 adressen door heel Nederland: regelingen gemiddeld 9,12
+    (min 5, max 13), waarvan subsidies 4,41. In het werkgebied ligt het hoger:
+    10,27 regelingen en 5,38 subsidies over 26 adressen.
+  - Gevolg: "Gemiddeld 5 subsidies per adres" kon niet blijven staan, want
+    landelijk is dat 4,4. Nu "Gemiddeld 9 regelingen per adres": het landelijke
+    getal naar beneden afgerond, en "regelingen" is precies het woord dat de
+    resultaatpagina zelf gebruikt (leningen zitten erin, en een lening is geen
+    subsidie).
+- (3) "Je adres gebruiken we om de regelingen op te zoeken." verwijderd: ruis.
+- (4) Subregel ingekort tot "Vul je adres in, dan zoeken we alle regelingen bij
+  elkaar." op elk formaat, zodat kop en subregel op mobiel niet allebei twee
+  regels vullen.
+- (5) Vinkjes en Google-score staan weer op mobiel. Kon nu, doordat de regel uit
+  punt 3 weg is en de stapel onder de knop dus niet te hoog wordt. De score staat
+  bewust als `alsLink={false}`: een link met target="_blank" pal naast de
+  verzendknop is een uitgang precies waar we er geen willen (staat zo ook in de
+  toelichting van Bewijsregel zelf).
+- 34 testbestanden / 195 tests groen, lint schoon op de gewijzigde bestanden,
+  productiebuild ok.
+
+### Review (2026-08-09, derde ronde) — voortgangsindicator herzien
+- "Daarna vragen we kort je gegevens…" verwijderd. Die regel kwam uit de tijd dat
+  stap 1 nog "geen account nodig" beloofde; die belofte staat er niet meer, dus
+  de tegenspraak die hij moest opvangen bestaat niet meer. Wat er hierna komt
+  staat bovendien in de voortgangsindicator ("Je gegevens").
+- Voortgangsindicator opnieuw ontworpen. De bolletjes van 10px vielen niet op en
+  een balkje van 3px alleen was nog te subtiel. Nagezocht wat gangbaar is
+  (USWDS-designsysteem, checkout-onderzoek Baymard, NN/g-wizardrichtlijnen) en
+  daaruit overgenomen:
+  - genummerde cirkels van 28px in plaats van kale bolletjes: het nummer zegt
+    waar je bent én hoeveel stappen er zijn, zonder extra regel tekst;
+  - drie duidelijk verschillende toestanden, met de HUIDIGE stap het meest
+    opvallend (expliciete USWDS-regel): afgerond = primary met vinkje, huidig =
+    accent met ring, nog te doen = randje met grijs nummer;
+  - vinkje bij wat af is, want dat leest sneller dan een nummer;
+  - toegankelijkheid: cirkels op aria-hidden, aria-current="step" op de huidige,
+    en per stap verborgen tekst met de status (afgerond / huidige stap / nog te
+    doen).
+- Basisvulling van het balkje van 20% naar 30%, zodat de "je bent al begonnen"-
+  vulling ook echt zichtbaar is. Bij een herkend adres nog steeds 70%.
+- Bewust NIET toegevoegd: een aparte regel "Stap 1 van 3". USWDS raadt die aan,
+  maar de nummers in de cirkels dragen dat al, en er is deze ronde juist gesnoeid
+  in kleine grijze regels. Screenreaders krijgen het via de aria-label van de lijst.
+- 34 testbestanden / 199 tests groen (4 nieuwe voor de indicator), lint schoon op
+  de gewijzigde bestanden, productiebuild ok.
+
+### Review (2026-08-09, vierde ronde) — bredere voortgangsbalk, subregel op één regel
+- Balkjes tussen de stappen verbreed: 32px → 48px vanaf 400px schermbreedte →
+  96px vanaf sm. Een langer balkje maakt de gedeeltelijke vulling beter
+  afleesbaar (30% van 96px is 29px, van 32px maar 10px).
+  - Bewust NIET verbreed onder de 400px. De labels bepalen daar de breedte: de
+    drie labels zijn samen zo'n 194px en op een telefoon van 360px blijft er na
+    px-6 nog 312px over. Met 32px per balkje zit je dan al op ~290px; breder
+    past er domweg niet bij zonder dat de labels gaan breken.
+  - Gecontroleerd dat de arbitraire breakpoint `min-[400px]:` echt meecompileert
+    (staat als `min-width: 400px` in de gebouwde CSS). Tailwind is 3.4.
+- Subregel ingekort tot "Vul je adres in, dan zoeken we alle regelingen." (47
+  tekens). Budget: op 360px blijft 312px over en Manrope op 14px doet ~6,3px per
+  teken, dus ~49 tekens passen op één regel. Met "bij elkaar" erachter waren het
+  er 58 en brak de zin. Het tekenbudget staat als comment bij de tekst, zodat een
+  volgende tekstwijziging niet stilletjes weer twee regels oplevert.
+- 34 testbestanden / 199 tests groen, lint schoon, productiebuild ok.

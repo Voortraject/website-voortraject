@@ -225,13 +225,27 @@ const SubsidiecheckLive = () => {
             sub: "Kies waar je in geïnteresseerd bent, dan zien we meteen jouw regelingen.",
           }
         : {
-            titel: "Waar staat jouw woning?",
-            // Kort genoeg om ook op een telefoon op één regel te passen, zodat de
-            // subregel daar niet meer verborgen hoeft te worden. Bewust zonder
-            // "als startpunt voor je verduurzaming": dat veronderstelt dat de
-            // bewoner nog moet beginnen, terwijl een deel al van alles heeft
-            // gedaan. Wat we beloven is de lijst, niet waar iemand staat.
-            sub: "Alle regelingen die bij jouw adres passen.",
+            // De kop belooft de uitkomst, niet het werk. "Waar staat jouw
+            // woning?" beschreef de taak van de bezoeker, terwijl de veldlabels
+            // ("Postcode", "Huisnummer") dat al doen; de reden om te beginnen
+            // stond zo alleen in de kleine grijze subregel.
+            //
+            // Bewust "zijn er voor" en niet "krijg jij": we tonen welke
+            // regelingen op dit adres van toepassing zijn, niet wat iemand
+            // toegekend krijgt. Dat laatste zou een belofte zijn die wij niet
+            // kunnen doen. Ook bewust zonder "als startpunt voor je
+            // verduurzaming": dat veronderstelt dat de bewoner nog moet
+            // beginnen, terwijl een deel al van alles heeft gedaan.
+            titel: "Welke subsidies zijn er voor jouw huis?",
+            // Moet op een telefoon op één regel passen. De kop loopt daar al
+            // over twee regels; een subregel die dat ook doet maakt er een blok
+            // van vier regels tekst van, en dan valt geen van beide meer op.
+            //
+            // Wat "past" betekent, in cijfers: op een scherm van 360px blijft er
+            // na de paginamarges (px-6) 312px over, en Manrope op 14px doet zo'n
+            // 6,3px per teken. Dat is grofweg 49 tekens. Deze zin heeft er 47;
+            // met "bij elkaar" erachter waren het er 58 en brak hij dus.
+            sub: "Vul je adres in, dan zoeken we alle regelingen.",
           };
     }
     if (stap === 2) {
@@ -249,6 +263,16 @@ const SubsidiecheckLive = () => {
   };
   const kop = kopVoorStap();
 
+  // Herkende PDOK-adres op stap 1, gemeld door StapAdres zelf (die typt live
+  // mee). Alleen voor de voortgangsbalk: het adres zelf loopt gewoon via de URL.
+  const [adresHerkend, setAdresHerkend] = useState(false);
+
+  // Hoe ver het lijntje naar de volgende stap alvast meeloopt. Nooit nul zolang
+  // er een volgende stap is: wie hier staat is begonnen (zie Voortgang). Op stap
+  // 1 loopt het door zodra we het adres herkennen, want dan is er ook echt iets
+  // gebeurd.
+  const deelVoortgang = stap === RESULTAAT_STAP ? 0 : stap === 1 && (adresHerkend || !!bevestigdAdres) ? 0.7 : 0.3;
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Seo
@@ -256,7 +280,11 @@ const SubsidiecheckLive = () => {
         description="Voortraject begeleidt bewoners door het verduurzamingstraject. Doe de gratis check op jouw adres en krijg inzicht in de subsidies en regelingen die bij jouw woning passen, als startpunt voor persoonlijk advies. Subsidie-informatie in samenwerking met Milieu Centraal."
         path="/subsidiecheck"
       />
-      <Header />
+      {/* Compacte header: de check is een funnel met precies één doel. De
+          volledige navigatie (plus een "Check jouw subsidies"-knop die hiernaar
+          verwijst) is op deze pagina louter uitgang; ze staat gewoon in de
+          footer voor wie er toch langs wil. */}
+      <Header compact />
 
       <main className="flex-1">
         {/* Compact verticaal ritme: de hele stap moet op één laptopscherm
@@ -283,6 +311,7 @@ const SubsidiecheckLive = () => {
               <Voortgang
                 stappen={STAPPEN}
                 huidige={stap}
+                deel={deelVoortgang}
                 onStapKlik={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
               />
 
@@ -378,6 +407,7 @@ const SubsidiecheckLive = () => {
                     // sit=1 betekent: de bezoeker klikte op "situatie aanpassen",
                     // dus de situatiekeuze hoort meteen open te staan.
                     situatieOpen={sitParam}
+                    onAdresHerkend={setAdresHerkend}
                     // Met de poort volgt er nog een stap, dus niet "Bekijk mijn
                     // subsidies" beloven; wél zeggen wat er gebeurt in plaats van
                     // het nietszeggende "Verder".
