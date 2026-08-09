@@ -2,6 +2,53 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Subsidietool: rustiger op de telefoon, eerlijker subregel, andere CTA (2026-08-09)
+
+Zes losse opmerkingen van de opdrachtgever, na het doorlopen van de check op een telefoon.
+
+- [x] **Stap 1, onder de knop rustiger op mobiel.** Daar stonden vier regels tekst onder
+      "Zoek mijn subsidies": de aankondiging van de gegevensvraag (twee regels), de drie
+      beloftes, en de Google-score. De bijzin van de aankondiging vervalt op mobiel
+      ("Daarna vragen we kort je gegevens." — één regel) en de score staat nu vanaf `sm`.
+      Twee regels in plaats van vier. Het bewijs is niet weg: op stap 2 staat het pal naast
+      de velden, precies op het moment van de twijfel.
+- [x] **Subregel klopte niet.** "…als startpunt voor je verduurzaming" veronderstelt dat de
+      bewoner nog moet beginnen, terwijl een deel al van alles heeft gedaan. Nu: "Alle
+      regelingen die bij jouw adres passen." Kort genoeg om ook op een telefoon op één
+      regel te passen, dus `subVerbergMobiel` kon eruit — die vlag bestond alleen voor deze
+      ene regel.
+- [x] **"We hebben jouw woning gevonden" weg** (stap 2). Stond tussen "We vonden 10
+      regelingen voor …" en het adres met foto en bouwjaar: drie keer hetzelfde.
+- [x] **Kop van stap 2 naar "voor jouw woning"** in plaats van het adres. Het exacte adres
+      staat een handbreedte lager al in het kaartje.
+- [x] **Sterretjes bij de velden weg.** Alles is verplicht, dus onderscheiden ze niets. In
+      alle drie de formulieren van de check (poort, vraagblok, mail-mij-overzicht), anders
+      staat er op de ene plek wel een sterretje en op de andere niet. Voor screenreaders
+      verandert er niets: de `sr-only`-labels zeggen nog steeds "(verplicht)" en
+      `aria-required` blijft staan.
+- [x] **CTA "Ik heb een vraag" → "Ik wil gratis advies".** De oude tekst vraagt de bezoeker
+      om zelf al een vraag te hebben; op dat punt heeft hij vooral een lijst gezien waar hij
+      nog geen weg in weet. De kop van het blok waar de knop heen springt werd mee
+      aangepast ("Gratis advies over jouw overzicht"), anders belooft de knop iets anders
+      dan wat de bezoeker aantreft.
+- [x] **De bouwjaarzin ook in de overzichtsmail.** Dezelfde tekst als "de eerste stap" op
+      het resultaat, direct onder het samenvattingskaartje. Het bouwjaar zat al in de
+      payload (het gaat als verrijking mee naar de lead), dus er hoefde niets extra's
+      opgehaald te worden.
+
+**Meting (Chrome, Manrope):** de nieuwe subregel en de ingekorte aankondiging passen allebei
+op één regel bij een schermbreedte van 320, 360 en 390px.
+
+**Gedupliceerde tekst, en hoe die niet wegloopt.** De edge function draait op Deno en kan
+niets uit `src/` importeren, dus staat de bouwjaartekst daar een tweede keer. Dat is precies
+het soort duplicaat dat stilletjes uit elkaar groeit: de bewoner leest dan op de site iets
+anders dan in zijn mail, over hetzelfde huis. `src/test/eersteStap.test.ts` vergelijkt daarom
+de zinnen uit `eersteStapTekst.ts` letterlijk met de inhoud van de edge function.
+
+**Nog te doen:** `subsidiecheck-mail` handmatig deployen (Supabase-dashboard, CRM-project
+`lfelnfukbrxznkevnevr`). Tot dat moment staat de bouwjaarzin wel op de site maar nog niet in
+de mail.
+
 ## Subsidietool: adviseursblok, gebouwtype en de persoonlijke eerste stap (2026-08-09)
 
 Vervolg op het traject van 2026-08-08 (PR's #106 t/m #111, allemaal gemerged). Vier opdrachten:

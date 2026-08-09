@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { BadgeEuro, Check, FileCheck, HardHat, Home, Loader2, MapPin } from "lucide-react";
+import { BadgeEuro, Check, FileCheck, HardHat, Home, Loader2 } from "lucide-react";
 
 import adviseurFoto from "@/assets/adviseur-christian.webp";
 import { useLaadsequentie } from "@/hooks/useLaadsequentie";
@@ -276,7 +276,11 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
       {/* De uitkomst als getal, nog zonder inhoud: dít is waarom de bezoeker
           zijn gegevens geeft. Hij weet nu dát er iets is, maar niet wát.
           Bij nul (of een bronfout) laten we deze regel weg: "We vonden 0
-          regelingen" vlak boven een gegevensvraag is geen aanbod. */}
+          regelingen" vlak boven een gegevensvraag is geen aanbod.
+
+          "Jouw woning" en niet het adres: het exacte adres staat in het kaartje
+          eronder, met foto en bouwjaar erbij. Twee keer hetzelfde adres binnen
+          een handbreedte las als herhaling. */}
       {telling > 0 && (
         <p
           className={`mb-4 text-center font-display text-[19px] font-semibold leading-snug text-primary md:text-[22px] ${naarAchtergrond}`}
@@ -285,7 +289,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
           <span className="text-[hsl(var(--subsidie))]">
             {telling} {telling === 1 ? "regeling" : "regelingen"}
           </span>{" "}
-          voor {adresKort}
+          voor jouw woning.
         </p>
       )}
 
@@ -309,11 +313,10 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
             verbergBron
           />
           <div className="flex-1 p-4 sm:p-5">
-            <p className="inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
-              <MapPin size={13} aria-hidden="true" />
-              We hebben jouw woning gevonden
-            </p>
-            <p className="mt-1 font-display text-[17px] font-semibold leading-snug text-primary sm:text-[19px]">
+            {/* Hier stond "We hebben jouw woning gevonden". Dat zei de regel
+                erboven ("We vonden … voor jouw woning") al, en de foto met het
+                adres eronder laat het gewoon zien. */}
+            <p className="font-display text-[17px] font-semibold leading-snug text-primary sm:text-[19px]">
               {adresKort}
             </p>
             <p className="text-[13px] text-muted-foreground">
@@ -377,7 +380,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
             type="text"
             autoComplete="given-name"
             aria-required="true"
-            placeholder="Je voornaam *"
+            placeholder="Je voornaam"
             className={inputClass}
             value={voornaam}
             onChange={(e) => {
@@ -394,7 +397,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
             type="text"
             autoComplete="family-name"
             aria-required="true"
-            placeholder="Je achternaam *"
+            placeholder="Je achternaam"
             className={inputClass}
             value={achternaam}
             onChange={(e) => {
@@ -411,7 +414,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
             type="email"
             autoComplete="email"
             aria-required="true"
-            placeholder="Je e-mailadres *"
+            placeholder="Je e-mailadres"
             className={`${inputClass} col-span-2 sm:col-span-1`}
             value={email}
             onChange={(e) => {
@@ -433,7 +436,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
             autoComplete="tel"
             inputMode="tel"
             aria-required="true"
-            placeholder="Je telefoonnummer *"
+            placeholder="Je telefoonnummer"
             className={`${inputClass} col-span-2 sm:col-span-1`}
             value={telefoon}
             onChange={(e) => {
