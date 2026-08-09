@@ -179,8 +179,12 @@ export const Samenvatting = ({
           className="flex flex-col gap-3 rounded-lg border border-border p-4 sm:flex-row sm:items-center sm:gap-3"
           style={{ backgroundColor: "var(--card-soft)" }}
         >
+          {/* "Voor deze woning vonden we" kon eruit: dit staat onder de kop
+              ENERGIELABEL, in de kaart van dít adres, dus dat is al gezegd.
+              Dezelfde formulering als in de gegevens-poort, zodat het twee keer
+              hetzelfde leest in plaats van twee keer net anders. */}
           <p className="min-w-0 flex-1 text-[14px] leading-relaxed text-foreground/80">
-            Voor deze woning vonden we geen geregistreerd energielabel. Wij kunnen dat voor je regelen.
+            Nog geen geregistreerd energielabel. Wij kunnen dat voor je regelen.
           </p>
           {/* Was een link naar /contact: de bezoeker verliet het resultaat en
               begon aan een leeg formulier, inclusief alles wat hij hier al had
