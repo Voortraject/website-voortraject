@@ -390,8 +390,6 @@ function bouwEmailHtml(opts: {
   const waLink = `https://wa.me/${WHATSAPP_NUMMER}?text=${encodeURIComponent(
     `Hallo, ik heb het subsidieoverzicht voor ${adresregel} ontvangen. Ik heb daar een vraag over:`,
   )}`;
-  const subsidies = regelingen.filter((r) => r.type !== "lening").length;
-  const goedNieuws = regelingen.length >= 3 && subsidies >= 1;
   // Binnen een niveaugroep eerst de subsidies, dan de leningen (stabiele sort,
   // dus bronvolgorde binnen één type blijft). Zelfde ordening als de website.
   const typeRang = (t?: string) => (t === "lening" ? 1 : 0);
@@ -425,11 +423,16 @@ function bouwEmailHtml(opts: {
 
           ${bouwSamenvattingBlok(regelingen)}
           ${
+            // Hieronder stond nog een alinea: "Dat is meer dan de meeste mensen
+            // denken. Je hoeft niets te kiezen: veel regelingen zijn te
+            // combineren, en wij zoeken gratis voor je uit welke voor jouw
+            // woning het meeste opleveren." Eruit op verzoek: het aanbod om mee
+            // te kijken staat verderop al in het adviesblok, en hier stond het
+            // tussen de uitkomst en de lijst in.
             bouwjaarZin
               ? `<p style="font-size:15px;margin:0 0 20px;line-height:1.6;">${escapeHtml(bouwjaarZin)}</p>`
               : ""
           }
-          <p style="font-size:15px;margin:0 0 20px;line-height:1.6;">${goedNieuws ? "Dat is meer dan de meeste mensen denken. " : ""}Je hoeft niets te kiezen: veel regelingen zijn te combineren, en wij zoeken gratis voor je uit welke voor jouw woning het meeste opleveren.</p>
           ${
             overzichtUrl
               ? `<p style="text-align:center;margin:0 0 24px;font-size:14px;"><a href="${escapeHtml(overzichtUrl)}" style="color:${KLEUR.primary};font-weight:600;text-decoration:none;">Bekijk of deel je volledige overzicht online &rarr;</a></p>`
