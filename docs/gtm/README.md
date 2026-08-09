@@ -1,6 +1,6 @@
 # GTM-container
 
-`GTM-P6W5MNN4_v6.json` is de volledige containerconfiguratie voor **GTM-P6W5MNN4**
+`GTM-P6W5MNN4_v7.json` is de volledige containerconfiguratie voor **GTM-P6W5MNN4**
 (Voortraject.nl), gekoppeld aan GA4-property **G-VQL43876VN**.
 
 De container staat hier in versiebeheer zodat hij samen met de code te reviewen is en niet
@@ -13,14 +13,14 @@ events zelf.
 Doe dit **pas nadat de bijbehorende code live staat**, anders vuren de nieuwe triggers nog nergens op.
 
 1. GTM → **Beheer** → **Container importeren**
-2. Kies `GTM-P6W5MNN4_v6.json`
-3. Werkruimte: **Nieuw** (noem hem bijvoorbeeld "v6 - opschoning en subsidietool")
+2. Kies `GTM-P6W5MNN4_v7.json`
+3. Werkruimte: **Nieuw** (noem hem naar wat je importeert, bijvoorbeeld "v7 - delen")
 4. Importoptie: **Overschrijven**
 
-   Bewust overschrijven en niet samenvoegen: alleen zo verdwijnen de tags die eruit moeten.
-   Samenvoegen laat ze staan. Je verliest niets, want v5 blijft als versie bestaan en is met
-   één klik terug te zetten via **Versies** → v5 → **Publiceren**.
-5. Controleer in het overzicht dat er 17 tags, 16 triggers en 16 variabelen staan
+   Bewust overschrijven en niet samenvoegen: alleen zo verdwijnen de tags en variabelen die eruit
+   moeten. Samenvoegen laat ze staan. Je verliest niets, want de vorige versie blijft bestaan en is
+   met één klik terug te zetten via **Versies** → de vorige → **Publiceren**.
+5. Controleer in het overzicht dat er **18 tags, 17 triggers en 15 variabelen** staan
 6. **Preview** en loop de controlelijst hieronder af
 7. Publiceren
 
@@ -29,6 +29,17 @@ Doe dit **pas nadat de bijbehorende code live staat**, anders vuren de nieuwe tr
 De tag **GA4 - Configuratie** hoort te vuren op **Initialization - All Pages**. In v5 stond die
 op *Consent Initialization*, en die trigger is door Google gereserveerd voor de cookiebanner zelf.
 Als het veld er na de import anders uitziet, zet het dan handmatig goed.
+
+## Wat er verandert ten opzichte van v6
+
+| Wat | Waarom |
+|---|---|
+| **Nieuw:** `Event - Subsidiecheck deel` + trigger `Event \| subsidiecheck_deel` | Meet dat een bezoeker de link naar de check kopieert om door te geven. Parameter: `bewonertype`. |
+| **Weg:** variabele `dlv - poort` en de parameter `poort` op `Event - Subsidiecheck stap` | De gegevens-poort is niet meer uit te zetten, dus dat veld stond in élke rij op 1. |
+
+De ontvangkant van delen zit niet in de container maar in utm-tags op de gedeelde link
+(`utm_source=deel`, `utm_medium=link` of `mail`). Die komen in GA4 vanzelf onder Bron/Medium
+terecht. Zie [`../tracking.md`](../tracking.md).
 
 ## Wat er verandert ten opzichte van v5
 
@@ -70,8 +81,11 @@ ze nergens terug in de rapporten.
 bereik *Gebeurtenis*:
 
 `gemeente`, `provincie`, `bewonertype`, `hulpvraag`, `plek`, `stap_naam`, `nav_item`,
-`nav_bestemming`, `bron_fout`, `poort`, `wil_gebeld`, `bekend_contact`, `heeft_adres`,
-`heeft_vraag`, `scroll_percentage`
+`nav_bestemming`, `bron_fout`, `wil_gebeld`, `bekend_contact`, `heeft_adres`, `heeft_vraag`,
+`scroll_percentage`
+
+(`poort` stond hier ook; die parameter bestaat niet meer. Een dimensie die je al aangemaakt hebt
+kan gewoon blijven staan, hij vult zich alleen niet meer.)
 
 Dat zijn alle parameters die de container meestuurt, op `page_location` en `page_title` na: die
 kent GA4 al standaard.
