@@ -170,6 +170,14 @@ type Payload = {
   /** Verrijking uit publieke bronnen (EP-Online, BAG): scheelt het team opzoekwerk. */
   energielabel?: string;
   bouwjaar?: number;
+  /**
+   * Bewijs van toestemming voor opvolging per mail of telefoon (art. 11.7 lid 2
+   * Telecommunicatiewet). `toestemmingTekst` is de letterlijke zin die de
+   * bezoeker op dat moment zag, niet een versienummer: verandert de copy later,
+   * dan blijft bij oude leads staan waar zíj ja tegen zeiden.
+   */
+  toestemmingOp?: string;
+  toestemmingTekst?: string;
   /** Gesplitste naamvelden (huidige site). */
   voornaam?: string;
   tussenvoegsel?: string;
@@ -684,6 +692,20 @@ Deno.serve(async (req: Request) => {
   const verrijking: Record<string, string | number> = {};
   if (energielabel) verrijking.energielabel = energielabel;
   if (bouwjaar) verrijking.bouwjaar = bouwjaar;
+
+  // Toestemming voor opvolging. Rijdt mee op `verrijking` en dus op dezelfde
+  // terugval: draait de migratie nog niet op het CRM, dan weigert Postgres de
+  // onbekende kolom, valt de insert terug op de basisvelden, en gaat de lead
+  // gewoon door. Het leesbare bewijs staat sowieso in `notities`.
+  //
+  // Alleen een echte ISO-datum wordt overgenomen: een onzinwaarde in een
+  // timestamptz-kolom laat de hele insert falen, en dan kost een detail een lead.
+  const toestemmingOp = typeof payload.toestemmingOp === "string" ? Date.parse(payload.toestemmingOp) : NaN;
+  const toestemmingTekst = (payload.toestemmingTekst ?? "").trim().slice(0, MAX_BERICHT);
+  if (Number.isFinite(toestemmingOp) && toestemmingTekst) {
+    verrijking.toestemming_op = new Date(toestemmingOp).toISOString();
+    verrijking.toestemming_tekst = toestemmingTekst;
+  }
 
   // Kopregel voor `notities` (bijv. "Wil aan de slag: Binnen 3 maanden").
   const notitie = (payload.notitie ?? "").trim().slice(0, MAX_BERICHT) || null;

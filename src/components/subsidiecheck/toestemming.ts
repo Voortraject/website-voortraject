@@ -35,7 +35,20 @@ export const TOESTEMMING_TEKST =
 /**
  * De regel die bij de lead wordt bewaard als bewijs. Bevat het moment en de
  * letterlijke tekst die op dat moment op het scherm stond.
+ *
+ * Blijft bestaan naast de kolommen hieronder: dit is de terugval. Weigert het
+ * CRM de kolommen (bijvoorbeeld omdat de migratie nog niet gedraaid is), dan
+ * valt de insert terug op de basisvelden, en dan is deze regel het enige bewijs
+ * dat er nog staat. Twee keer hetzelfde vastleggen is hier geen verspilling maar
+ * het verschil tussen wel en geen bewijs.
  */
 export function toestemmingBewijs(op: Date = new Date()): string {
   return `Toestemming mailen/bellen: gegeven bij verzenden op ${op.toISOString()}. Getoonde tekst: "${TOESTEMMING_TEKST}"`;
+}
+
+/** De kolomwaarden voor `leads_bewoners` (zie de migratie van 2026-08-10). */
+export type ToestemmingVelden = { toestemming_op: string; toestemming_tekst: string };
+
+export function toestemmingVelden(op: Date = new Date()): ToestemmingVelden {
+  return { toestemming_op: op.toISOString(), toestemming_tekst: TOESTEMMING_TEKST };
 }

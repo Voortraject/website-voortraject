@@ -236,11 +236,17 @@ volgende stap; dat is een keuze tussen bewijskracht en leadvolume.
   probleem blijft wel staan: 1 regeling in Groningen is een mager resultaat op zichzelf.
 - ~~**De waardenlijst van `Gebouwtype` / `Gebouwsubtype`.**~~ **Gedaan (2026-08-09):** uit 203
   adressen, zie hierboven.
-- **Een eigen kolom voor de toestemming in het CRM.** De toestemming wordt nu vastgelegd als regel
-  in `notities` (zie hieronder). Dat is een echte, doorzoekbare vastlegging per lead, maar een eigen
-  kolom (`toestemming_op timestamptz`, `toestemming_tekst text`) is netter: filterbaar, en niet te
-  overschrijven door iemand die de notitie bijwerkt. Raakt het CRM-schema, dus alleen na expliciete
-  bevestiging en via een migratie.
+- ~~**Een eigen kolom voor de toestemming in het CRM.**~~ **Akkoord (2026-08-10), zit in #117.**
+  Migratie `20260810000000_leads_bewoners_toestemming.sql` staat klaar. Uitvoeren vraagt twee
+  handelingen van de opdrachtgever, in deze volgorde:
+  1. de migratie draaien op het CRM-project `lfelnfukbrxznkevnevr`;
+  2. de edge function opnieuw uitrollen:
+     `bunx supabase functions deploy subsidiecheck-mail --project-ref lfelnfukbrxznkevnevr`
+     (vanuit de repo-root, zodat `config.toml` `verify_jwt = false` meegeeft).
+
+  Volgorde maakt niet uit voor de werking, alleen voor wanneer de kolommen vullen. Gebeurt geen van
+  beide, dan blijft alles werken: de insert valt terug op de basisvelden en het bewijs staat dan nog
+  steeds als regel in `notities`.
 - **GTM-event `subsidiecheck_verbreed`** bij het verbreden na 0 regelingen. Kan pas als de
   container in `docs/gtm/` weer stabiel is, want `gtmContainer.test.ts` eist trigger én tag.
 

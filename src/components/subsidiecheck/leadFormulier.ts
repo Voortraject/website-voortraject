@@ -18,6 +18,7 @@ import {
 // mailblok en het vraagblok. Daarom zit de testmodus-check hier en niet in de
 // componenten. Eén plek, geen pad dat er per ongeluk langs kan.
 import { isTestmodus } from "@/config/testmodus";
+import type { ToestemmingVelden } from "./toestemming";
 
 /** Logt wat er in testmodus níet is weggeschreven, zodat je het toch kunt nalezen. */
 function meldTestmodus(wat: string, payload: unknown): void {
@@ -128,6 +129,15 @@ function verrijkingsVelden(verrijking?: LeadVerrijking): Record<string, string |
   return velden;
 }
 
+// De toestemmingskolommen liften mee op dezelfde "extra"-bak als de verrijking,
+// en dat is bewust: die bak heeft al een terugval waarbij de insert het zonder
+// die velden opnieuw probeert. Draait de migratie nog niet op het CRM, dan
+// weigert Postgres de onbekende kolom, valt de insert terug, en gaat de lead
+// gewoon door. Het bewijs staat dan nog steeds in `notities`.
+function toestemmingsVelden(toestemming?: ToestemmingVelden): Record<string, string> {
+  return toestemming ? { ...toestemming } : {};
+}
+
 export async function schrijfSubsidiecheckLead(args: {
   waarden: ContactSchoon;
   input: SubsidieCheckInput;
@@ -135,10 +145,12 @@ export async function schrijfSubsidiecheckLead(args: {
   /** Vraag van de bezoeker, of de gekozen termijn. Gaat als platte tekst naar `notities`. */
   notitie?: string;
   verrijking?: LeadVerrijking;
+  /** Bewijs van toestemming voor opvolging; zie toestemming.ts. */
+  toestemming?: ToestemmingVelden;
 }): Promise<void> {
-  const { waarden, input, adres, notitie, verrijking } = args;
+  const { waarden, input, adres, notitie, verrijking, toestemming } = args;
   if (isTestmodus()) return void meldTestmodus("lead-insert overgeslagen", { waarden, input, notitie });
-  const extra = verrijkingsVelden(verrijking);
+  const extra = { ...verrijkingsVelden(verrijking), ...toestemmingsVelden(toestemming) };
   const { error } = await supabaseExternal.from("leads_bewoners").insert({
     ...extra,
     tenant_id: "00000000-0000-0000-0000-000000000001",
@@ -213,10 +225,12 @@ export async function verstuurSubsidiecheckLead(args: {
   /** Kopregel voor `notities`, bijv. de gekozen termijn uit de poort. */
   notitie?: string;
   verrijking?: LeadVerrijking;
+  /** Bewijs van toestemming voor opvolging; zie toestemming.ts. */
+  toestemming?: ToestemmingVelden;
   overzichtUrl?: string;
   honeypot?: string;
 }): Promise<{ leadId?: string }> {
-  const { waarden, input, adres, regelingen, notitie, verrijking, overzichtUrl, honeypot } = args;
+  const { waarden, input, adres, regelingen, notitie, verrijking, toestemming, overzichtUrl, honeypot } = args;
 
   if (isTestmodus()) {
     meldTestmodus("lead + overzichtmail overgeslagen", { waarden, input, notitie, aantalRegelingen: regelingen.length });
@@ -225,7 +239,7 @@ export async function verstuurSubsidiecheckLead(args: {
 
   if (!MAIL_FUNCTIE_URL) {
     // Terugval: alleen de lead, geen mail.
-    await schrijfSubsidiecheckLead({ waarden, input, adres, notitie, verrijking });
+    await schrijfSubsidiecheckLead({ waarden, input, adres, notitie, verrijking, toestemming });
     return {};
   }
 
@@ -247,6 +261,11 @@ export async function verstuurSubsidiecheckLead(args: {
       notitie,
       energielabel: verrijking?.energielabel,
       bouwjaar: verrijking?.bouwjaar,
+      // Toestemming voor opvolging. De function schrijft dit naar de eigen
+      // kolommen; de leesbare regel staat sowieso al in `notitie`, dus ook een
+      // oudere, nog niet opnieuw uitgerolde function verliest het bewijs niet.
+      toestemmingOp: toestemming?.toestemming_op,
+      toestemmingTekst: toestemming?.toestemming_tekst,
       input: {
         postcode: normalizePostcode(input.postcode),
         huisnummer: input.huisnummer,

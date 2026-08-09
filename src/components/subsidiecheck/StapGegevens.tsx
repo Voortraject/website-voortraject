@@ -16,7 +16,7 @@ import { bewaarContact } from "./contactOpslag";
 import { Energielabel } from "./Energielabel";
 import { Luchtfoto } from "./Luchtfoto";
 import { schrijfSubsidiecheckLead, valideerContact, verstuurSubsidiecheckLead } from "./leadFormulier";
-import { TOESTEMMING_TEKST, toestemmingBewijs } from "./toestemming";
+import { TOESTEMMING_TEKST, toestemmingBewijs, toestemmingVelden } from "./toestemming";
 import { ZoekKaart } from "./Zoeksequentie";
 
 const inputClass =
@@ -169,7 +169,11 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
     // het gesprek over gaat. Dit is het bewijs dat de ACM per persoon verlangt
     // (zie toestemming.ts) en het reist mee langs beide schrijfpaden, de edge
     // function én de directe insert bij een bronfout.
-    const notitie = `Wil hulp met: ${gekozenLabels.join(", ")}\n${toestemmingBewijs()}`;
+    // Eén moment voor beide vastleggingen, zodat de kolom en de regel in
+    // `notities` niet een seconde uit elkaar kunnen lopen.
+    const toestemmingOp = new Date();
+    const notitie = `Wil hulp met: ${gekozenLabels.join(", ")}\n${toestemmingBewijs(toestemmingOp)}`;
+    const toestemming = toestemmingVelden(toestemmingOp);
     const verrijking = {
       energielabel: woning?.energielabel?.klasse,
       bouwjaar: pand?.bouwjaar,
@@ -196,7 +200,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         // resultaat, dat zelf de eerlijke foutstaat met "Opnieuw proberen"
         // toont. Het team ziet de lead en volgt op.
         console.error("Subsidiecheck: bron faalde in de poort, lead zonder mail opgeslagen", bronFout);
-        await schrijfSubsidiecheckLead({ waarden: resultaat.waarden, input, adres, notitie, verrijking });
+        await schrijfSubsidiecheckLead({ waarden: resultaat.waarden, input, adres, notitie, verrijking, toestemming });
         // Zonder lead-id: een vraag op het resultaat wordt dan een nieuwe lead.
         // Vervelend maar acceptabel; de vraag kwijtraken is erger.
         bewaarContact({ ...resultaat.waarden });
@@ -218,6 +222,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         regelingen: opgehaald,
         notitie,
         verrijking,
+        toestemming,
         // Deelbare URL van dit resultaat (voor de "bekijk online"-link in de mail).
         overzichtUrl: typeof window !== "undefined" ? window.location.href : undefined,
         honeypot,

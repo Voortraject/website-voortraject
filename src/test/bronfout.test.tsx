@@ -121,6 +121,11 @@ describe("gegevens-poort bij een bronfout", () => {
     // uiteenlopen, dan bewijst het bewaarde iets anders dan wat er gevraagd is.
     expect(regels[1]).toContain(`Getoonde tekst: "${TOESTEMMING_TEKST}"`);
     expect(screen.getByText(new RegExp(TOESTEMMING_TEKST.slice(0, 40)))).toBeTruthy();
+    // Dezelfde toestemming gaat óók naar de eigen kolommen. Beide vastleggingen
+    // moeten van hetzelfde moment zijn; liepen ze uiteen, dan zou het bewijs
+    // twee verschillende tijdstippen noemen.
+    expect(rij.toestemming_tekst).toBe(TOESTEMMING_TEKST);
+    expect(regels[1]).toContain(rij.toestemming_op as string);
   });
 
   it("verstuurt niets zolang de hulpvraag niet gekozen is", async () => {
