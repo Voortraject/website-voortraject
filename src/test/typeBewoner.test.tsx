@@ -23,7 +23,7 @@ vi.mock("@/integrations/supabase/external-client", () => ({
 
 vi.mock("@/lib/gtm", () => ({ pushGtmEvent: vi.fn() }));
 
-import { MailOverzicht } from "@/components/subsidiecheck/MailOverzicht";
+import { valideerContact, verstuurSubsidiecheckLead } from "@/components/subsidiecheck/leadFormulier";
 
 const adres: PdokAdres = {
   straatnaam: "Grote Markt",
@@ -65,14 +65,23 @@ const vul = (veld: HTMLElement, waarde: string) => {
 };
 
 const verstuur = async (bewonertype: Bewonertype) => {
-  metQuery(<MailOverzicht input={maakInput(bewonertype)} adres={adres} regelingen={[]} />);
-  vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
-  vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
-  vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
-  vul(screen.getByPlaceholderText(/Je telefoonnummer/), "0612345678");
-  nu += 5_000;
-  fireEvent.click(screen.getByRole("button", { name: /Mail mij dit overzicht/ }));
-  await screen.findByText(/Dankjewel!/);
+  // Rechtstreeks, want het formulier dat deze test eerder gebruikte ("mail mij
+  // dit overzicht") hoorde bij de flow zonder gegevens-poort en bestaat niet
+  // meer. Wat getest wordt is de waarde in de kolom.
+  const uitkomst = valideerContact({
+    voornaam: "Jan",
+    tussenvoegsel: "",
+    achternaam: "de Vries",
+    email: "jan@example.nl",
+    telefoon: "0612345678",
+  });
+  if ("fout" in uitkomst) throw new Error(uitkomst.fout);
+  await verstuurSubsidiecheckLead({
+    waarden: uitkomst.waarden,
+    input: maakInput(bewonertype),
+    adres,
+    regelingen: [],
+  });
   return insertMock.mock.calls[0];
 };
 

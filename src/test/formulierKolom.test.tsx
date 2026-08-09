@@ -24,7 +24,7 @@ vi.mock("@/lib/gtm", () => ({ pushGtmEvent: vi.fn() }));
 vi.mock("@/components/Header", () => ({ Header: () => null }));
 vi.mock("@/components/Footer", () => ({ Footer: () => null }));
 vi.mock("@/components/Seo", () => ({ Seo: () => null }));
-import { MailOverzicht } from "@/components/subsidiecheck/MailOverzicht";
+import { valideerContact, verstuurSubsidiecheckLead } from "@/components/subsidiecheck/leadFormulier";
 import Contact from "@/pages/Contact";
 
 const input: SubsidieCheckInput = {
@@ -66,6 +66,21 @@ const vul = (veld: HTMLElement, waarde: string) => {
   fireEvent.change(veld, { target: { value: waarde } });
 };
 
+// De insert wordt hier rechtstreeks aangeroepen. Het formulier dat deze test
+// eerder gebruikte ("mail mij dit overzicht") hoorde bij de flow zonder
+// gegevens-poort en bestaat niet meer; wat getest wordt is de kolomwaarde.
+const contact = () => {
+  const uitkomst = valideerContact({
+    voornaam: "Jan",
+    tussenvoegsel: "",
+    achternaam: "de Vries",
+    email: "jan@example.nl",
+    telefoon: "0612345678",
+  });
+  if ("fout" in uitkomst) throw new Error(uitkomst.fout);
+  return uitkomst.waarden;
+};
+
 describe("formulier-kolom", () => {
   it("contactformulier bewoners → 'contactformulier'", async () => {
     render(<Contact />);
@@ -84,15 +99,8 @@ describe("formulier-kolom", () => {
   });
 
   it("subsidiecheck → 'subsidietool'", async () => {
-    metQuery(<MailOverzicht input={input} adres={adres} regelingen={[]} />);
-    vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
-    vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
-    vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
-    vul(screen.getByPlaceholderText(/Je telefoonnummer/), "0612345678");
-    nu += 5_000;
-    fireEvent.click(screen.getByRole("button", { name: /Mail mij dit overzicht/ }));
+    await verstuurSubsidiecheckLead({ waarden: contact(), input, adres, regelingen: [] });
 
-    await screen.findByText(/Dankjewel!/);
     const [tabel, rij] = insertMock.mock.calls[0];
     expect(tabel).toBe("leads_bewoners");
     expect(rij.formulier).toBe("subsidietool");

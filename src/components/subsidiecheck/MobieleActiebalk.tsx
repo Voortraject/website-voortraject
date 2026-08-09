@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-import { MessageCircle, Send } from "lucide-react";
+import { Send } from "lucide-react";
 
+import { WhatsAppLogo } from "@/components/WhatsAppLogo";
 import { pushGtmEvent } from "@/lib/gtm";
 import { whatsappUrl } from "@/lib/whatsapp";
 
@@ -50,7 +51,9 @@ export const MobieleActiebalk = ({ whatsappBericht, bewonertype }: MobieleActieb
           onClick={() => pushGtmEvent("subsidiecheck_whatsapp", { bewonertype, plek: "actiebalk" })}
           className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-border bg-card text-primary transition-colors hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
-          <MessageCircle size={20} strokeWidth={2} aria-hidden="true" />
+          {/* Deze balk vervangt op het resultaat de zwevende WhatsApp-knop, dus
+              hoort hier hetzelfde logo te staan als daar. */}
+          <WhatsAppLogo size={22} />
         </a>
       </div>
     </div>

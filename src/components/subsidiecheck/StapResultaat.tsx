@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Link2, MessageCircle } from "lucide-react";
+import { Check, MessageCircle } from "lucide-react";
 
 import { isTestmodus } from "@/config/testmodus";
 import { useLaadsequentie } from "@/hooks/useLaadsequentie";
@@ -20,11 +20,11 @@ import {
 
 import { Bewijsregel } from "./Bewijsregel";
 import { leesContact } from "./contactOpslag";
+import { DeelDeCheck } from "./DeelDeCheck";
 import { DirectContact } from "./DirectContact";
 import { EersteStap } from "./EersteStap";
 import { GeenRegelingen } from "./GeenRegelingen";
 import { kanOverzichtMailen } from "./leadFormulier";
-import { MailOverzicht } from "./MailOverzicht";
 import { MobieleActiebalk } from "./MobieleActiebalk";
 import { Samenvatting } from "./Samenvatting";
 import { SubsidieCard } from "./SubsidieCard";
@@ -35,24 +35,12 @@ import { ZoekKaart } from "./Zoeksequentie";
 interface StapResultaatProps {
   input: SubsidieCheckInput;
   adres: PdokAdres;
-  /** Met de gegevens-poort zijn naam/e-mail/telefoon al binnen: dan geen
-      "mail mij dit overzicht"-blok (en -knop) meer op het resultaat. */
-  verbergMail?: boolean;
-  /** De zoeksequentie draaide al in de poort. Hem hier herhalen zou de bezoeker
-      een tweede keer laten wachten op iets dat al in de cache staat. */
-  alGezocht?: boolean;
   /** De bezoeker komt hier net vandaan de poort (niet via een herlaad of een
       gedeelde link). Dan tonen we het aankomstmoment. */
   netBinnen?: boolean;
 }
 
-export const StapResultaat = ({
-  input,
-  adres,
-  verbergMail = false,
-  alGezocht = false,
-  netBinnen = false,
-}: StapResultaatProps) => {
+export const StapResultaat = ({ input, adres, netBinnen = false }: StapResultaatProps) => {
   const { data: regelingen, isPending, isError, refetch } = useSubsidieCheck(input);
   const { data: woning, isPending: woningBezig } = useWoningInfo(input.postcode, input.huisnummer, input.toevoeging);
   // Pand + 3D-model op topniveau (dus vóór de vroege returns): ze starten meteen
@@ -67,33 +55,17 @@ export const StapResultaat = ({
   const { data: modelVol } = usePand3d(pand?.pandId, adres.centroideRd);
   const model = modelVol ?? modelSubject ?? null;
   const modelBezig = !model && !!pand?.pandId && subjectBezig;
-  // Met de poort aan is er hier niets meer te zoeken: dat gebeurde al op de
-  // vorige stap en het antwoord staat in de cache.
-  const fase = useLaadsequentie(!isPending, alGezocht);
+  // Hier valt niets meer te zoeken: dat gebeurde al zichtbaar op de poortstap en
+  // het antwoord staat in de cache. De sequentie hier herhalen zou de bezoeker
+  // een tweede keer laten wachten op iets dat er al is.
+  const fase = useLaadsequentie(!isPending, true);
   const laden = isPending || fase < 3;
 
-  // De URL bevat de volledige check-state, dus de link ís het overzicht —
-  // handig om te delen met partner of buren.
-  const [gekopieerd, setGekopieerd] = useState(false);
-  const kopieerTimer = useRef<ReturnType<typeof setTimeout>>();
-  useEffect(() => () => clearTimeout(kopieerTimer.current), []);
-  const kopieerLink = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setGekopieerd(true);
-      clearTimeout(kopieerTimer.current);
-      kopieerTimer.current = setTimeout(() => setGekopieerd(false), 2500);
-    } catch {
-      /* clipboard geweigerd → knop doet stil niets */
-    }
-  };
-
-  // Hier stond een tweede knop "Deel de tool" naast "Kopieer link naar dit
-  // overzicht". Twee deelknoppen naast elkaar die bij het klikken allebei "Link
-  // gekopieerd" tonen, terwijl ze een andere link kopiëren. Die van het overzicht
-  // blijft: overleggen met een partner is een echte stap in dit traject, en die
-  // link bevat het adres. Wie de tool zelf wil doorgeven, kan dezelfde link
-  // sturen.
+  // Delen zit nu in DeelDeCheck onderaan de pagina: dat deelt de kále tool, niet
+  // deze URL. De URL van dit overzicht bevat postcode en huisnummer, dus wie hem
+  // doorstuurde deelde zijn eigen adres en liet de ander naar het verkeerde huis
+  // kijken. Voor de bezoeker zelf blijft die link gewoon bestaan — hij staat in
+  // zijn mail ("bekijk of deel je volledige overzicht online").
 
   // Het aankomstmoment. De bezoeker heeft net zijn gegevens gegeven en krijgt
   // waar hij op wachtte; dat kwam er tot nu toe als een harde swap in, want de
@@ -126,14 +98,6 @@ export const StapResultaat = ({
     setVoorstel((huidig) => ({ tekst, n: (huidig?.n ?? 0) + 1 }));
     pushGtmEvent("subsidiecheck_vraag_cta", { bewonertype: input.bewonertype, plek });
     scrollNaarVraag();
-  };
-
-  // Vanuit de samenvatting (bovenaan) naar het mailformulier springen.
-  const conversieRef = useRef<HTMLDivElement>(null);
-  const scrollNaarMail = () => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    conversieRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
-    window.setTimeout(() => document.getElementById("sc-mail-email")?.focus({ preventScroll: true }), reduced ? 0 : 450);
   };
 
   const groepen = useMemo(() => groepeerPerNiveau(regelingen ?? []), [regelingen]);
@@ -306,8 +270,6 @@ export const StapResultaat = ({
           bedragen={bedragen}
           energielabel={woning?.energielabel ?? null}
           energielabelBezig={woningBezig}
-          onMailKlik={scrollNaarMail}
-          toonMailKnop={!verbergMail}
           // "Label aanvragen" stuurde de bezoeker naar /contact, waar hij alles
           // opnieuw moest invullen wat hij hier al gaf. Nu springt hij naar het
           // vraagblok onderaan met de aanvraag al ingevuld: alleen nog versturen.
@@ -369,52 +331,20 @@ export const StapResultaat = ({
         ))}
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2">
-        <button
-          type="button"
-          onClick={kopieerLink}
-          className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-[13px] font-medium text-primary transition-colors hover:border-primary/40 min-h-[40px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          aria-live="polite"
-        >
-          {gekopieerd ? (
-            <>
-              <Check size={14} strokeWidth={2.5} className="text-accent" aria-hidden="true" />
-              Link gekopieerd
-            </>
-          ) : (
-            <>
-              <Link2 size={14} strokeWidth={2} aria-hidden="true" />
-              Kopieer link naar dit overzicht
-            </>
-          )}
-        </button>
-        <p className="text-[12px] italic text-muted-foreground">
-          Indicatief overzicht op basis van je postcode. Aan dit overzicht kunnen geen rechten worden ontleend.
-        </p>
-      </div>
-
-      {/* Zachte mail-route: met de gegevens-poort (verbergMail) zijn deze gegevens
-          al vooraf opgehaald, dan slaan we dit blok over. */}
-      {!verbergMail && (
-        <div
-          ref={conversieRef}
-          className="mt-10 scroll-mt-24 rounded-xl border border-border p-6 md:p-8"
-          style={{ backgroundColor: "var(--card-soft)" }}
-        >
-          <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
-            Ontvang dit overzicht in je mail
-          </h3>
-          <div className="mt-5">
-            <MailOverzicht input={input} adres={adres} regelingen={regelingen ?? []} />
-          </div>
-        </div>
-      )}
+      <p className="mt-6 text-[12px] italic text-muted-foreground">
+        Indicatief overzicht op basis van je postcode. Aan dit overzicht kunnen geen rechten worden ontleend.
+      </p>
 
       {/* De contactstap: één veld voor wie door de poort kwam, plus WhatsApp en
           bellen voor wie liever niet typt. Verving de losse "Plan een gratis
           gesprek"-link naar /contact, waar de bezoeker álles opnieuw invulde wat
-          hij hier al had gegeven. */}
-      <div className={verbergMail ? "mt-10" : "mt-6"}>
+          hij hier al had gegeven.
+
+          Hierboven stond ook nog "Ontvang dit overzicht in je mail". Dat blok
+          vroeg naam, e-mail en telefoon — precies wat de poort een stap eerder al
+          heeft opgehaald. Het bestond alleen voor de flow zónder poort, en die
+          bestaat niet meer. */}
+      <div className="mt-10">
         <DirectContact input={input} adres={adres} overzichtUrl={overzichtUrl} voorstel={voorstel} />
       </div>
 
@@ -438,10 +368,11 @@ export const StapResultaat = ({
         <Bewijsregel />
       </div>
 
-      {/* Warm slot (peak-end): de pagina eindigt menselijk, niet juridisch. */}
-      <p className="mt-6 text-center text-[15px] leading-relaxed text-foreground/70">
-        Veel regelingen blijven onbenut. Jij bent nu een stap verder dan de meeste woningeigenaren.
-      </p>
+      {/* Het slot van de pagina. Stond hier eerder als één warme zin ("veel
+          regelingen blijven onbenut…"); die vroeg niets en is vervangen door de
+          enige actie die op deze plek nog logisch is: geef de check door. Ná het
+          adviesblok, zodat de twee niet om dezelfde aandacht vechten. */}
+      <DeelDeCheck bewonertype={input.bewonertype} />
 
       <MobieleActiebalk whatsappBericht={whatsappBericht} bewonertype={input.bewonertype} />
     </div>

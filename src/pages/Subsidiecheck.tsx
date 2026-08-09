@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Binnenkort } from "@/components/subsidiecheck/Binnenkort";
+import { leesContact } from "@/components/subsidiecheck/contactOpslag";
 import { StapAdres } from "@/components/subsidiecheck/StapAdres";
 import { StapGegevens } from "@/components/subsidiecheck/StapGegevens";
 import { StapResultaat } from "@/components/subsidiecheck/StapResultaat";
@@ -22,10 +23,15 @@ import {
   type Maatregel,
   type SubsidieCheckInput,
 } from "@/lib/subsidies";
-import { SUBSIDIECHECK_GEGEVENS_POORT, SUBSIDIECHECK_LIVE } from "@/config/features";
+import { SUBSIDIECHECK_LIVE } from "@/config/features";
 import { isTestmodus, leesTestmodusUitUrl } from "@/config/testmodus";
 
 const BEWONERTYPES: Bewonertype[] = ["woningeigenaar", "huurder", "vve", "verhuurder"];
+
+// Buiten de component, want de funnel-meting hangt ervan af: een nieuwe array per
+// render zou het stap-event bij élke render opnieuw laten vuren.
+const STAPPEN = ["Jouw woning", "Je gegevens", "Resultaat"] as const;
+const RESULTAAT_STAP = STAPPEN.length;
 
 // Hoe lang het ingevulde formulier nog in beeld blijft terwijl het wegvaagt,
 // voordat het resultaat de plek overneemt.
@@ -103,19 +109,21 @@ const SubsidiecheckLive = () => {
   usePand3d(prefetchPand.data?.pandId, adres?.centroideRd); // + buurpanden
   useWoningInfo(paramsGeldig ? pc : "", paramsGeldig ? hn : "", tv);
 
-  // De gegevens-poort (tussenoplossing): staat die aan, dan zit er tussen "Jouw
-  // woning" en het resultaat een extra stap "Je gegevens". Bewust client-state en
-  // niet in de URL: een gedeelde of ververste link vraagt zo opnieuw om gegevens
-  // (meer leads). sessionStorage verzacht: binnen dezelfde sessie niet dubbel.
-  const poortAan = SUBSIDIECHECK_GEGEVENS_POORT;
-  const [ontgrendeld, setOntgrendeld] = useState(() => {
-    if (!poortAan) return true;
-    try {
-      return sessionStorage.getItem("sc_poort_ontgrendeld") === "1";
-    } catch {
-      return false;
-    }
-  });
+  // De gegevens-poort: tussen "Jouw woning" en het resultaat zit de stap "Je
+  // gegevens". Bewust client-state en niet in de URL: een gedeelde of ververste
+  // link vraagt zo opnieuw om gegevens (meer leads).
+  //
+  // Er zat hier een schakelaar (SUBSIDIECHECK_GEGEVENS_POORT) waarmee de poort
+  // uit kon. Die is weg: de poort is geen experiment meer maar hoe de check
+  // werkt, en zolang de schakelaar bestond kon één verkeerd gezette boolean het
+  // hele overzicht weggeven. Er is nu geen stand van de code waarin dat kan.
+  //
+  // Wat de poort openzet is óók geen losse vlag meer. Dat was
+  // `sc_poort_ontgrendeld = "1"`: één regel in de console van elke browser en je
+  // was binnen. Nu is het het bewaarde contact zelf — naam en e-mailadres van wie
+  // het formulier heeft ingevuld (zie contactOpslag). Wie dat wil nabootsen moet
+  // die gegevens alsnog invullen, en dan is precies gebeurd wat de poort vraagt.
+  const [ontgrendeld, setOntgrendeld] = useState(() => !!leesContact());
   // Alleen waar op de rendering direct ná het verzenden van de poort. Bij een
   // herlaad of een gedeelde link leest `ontgrendeld` uit sessionStorage en blijft
   // dit false, want dan is er geen aankomst om te vieren.
@@ -129,12 +137,11 @@ const SubsidiecheckLive = () => {
     () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     [],
   );
+  // De poort gaat alleen hier open, en alleen nadat StapGegevens het contact heeft
+  // weggeschreven. Blijft die opslag leeg (private mode, volle opslag), dan werkt
+  // deze sessie gewoon door op de state hieronder; alleen een herlaad vraagt de
+  // gegevens dan opnieuw. Dat is de goede kant om op te falen.
   const ontgrendel = () => {
-    try {
-      sessionStorage.setItem("sc_poort_ontgrendeld", "1");
-    } catch {
-      /* private mode → poort blijft binnen deze render-sessie ontgrendeld via state */
-    }
     if (reducedMotion) {
       setOntgrendeld(true);
       setNetBinnen(true);
@@ -155,14 +162,7 @@ const SubsidiecheckLive = () => {
   // anders meteen het resultaat. De situatie staat standaard op woningeigenaar,
   // dus er is geen aparte situatiestap.
   const stap1Actief = editParam || sitParam || !paramsGeldig || adresNietGevonden || !bewonertype;
-  // Gememoïseerd omdat de funnel-meting hieronder ervan afhangt: een nieuwe
-  // array per render zou dat effect bij elke render opnieuw laten vuren.
-  const stappen: readonly string[] = useMemo(
-    () => (poortAan ? ["Jouw woning", "Je gegevens", "Resultaat"] : ["Jouw woning", "Resultaat"]),
-    [poortAan],
-  );
-  const resultaatStap = stappen.length; // 3 met poort, anders 2
-  const stap = stap1Actief ? 1 : poortAan && !ontgrendeld ? 2 : resultaatStap;
+  const stap = stap1Actief ? 1 : !ontgrendeld ? 2 : RESULTAAT_STAP;
 
   // Bouwt de queryparams opnieuw op met behoud van situatie/maatregelen.
   const paramsMetKeuzes = (nieuwPc: string, nieuwHn: string, nieuwTv = tv): Record<string, string> => {
@@ -210,11 +210,9 @@ const SubsidiecheckLive = () => {
   useEffect(() => {
     pushGtmEvent("subsidiecheck_stap", {
       stap,
-      stap_naam: stappen[stap - 1] ?? "",
-      // Houdt de cijfers vergelijkbaar als de gegevens-poort ooit uitgaat.
-      poort: poortAan ? 1 : 0,
+      stap_naam: STAPPEN[stap - 1] ?? "",
     });
-  }, [stap, stappen, poortAan]);
+  }, [stap]);
 
   // Het resultaat heeft bewust géén subregel: de samenvatting in StapResultaat
   // vertelt daar het verhaal. De stap-1-kop past zich aan: met een al bekend
@@ -236,7 +234,7 @@ const SubsidiecheckLive = () => {
             sub: "Alle regelingen die bij jouw adres passen.",
           };
     }
-    if (poortAan && stap === 2) {
+    if (stap === 2) {
       // De kop doet twee dingen tegelijk: laten voelen hoe dichtbij het einde is
       // (mensen versnellen richting de finish) en voorkomen dat het woningkaartje
       // eronder voor het overzicht zelf wordt aangezien.
@@ -268,7 +266,7 @@ const SubsidiecheckLive = () => {
             {/* Stap 1 blijft smal (focus op de invoer); het resultaat krijgt de
                 ruimte zodat groepen naast elkaar kunnen staan. De interesses
                 staan standaard ingeklapt, dus stap 1 kan compacter dan voorheen. */}
-            <div className="mx-auto w-full" style={{ maxWidth: stap === resultaatStap ? 1040 : 640 }}>
+            <div className="mx-auto w-full" style={{ maxWidth: stap === RESULTAAT_STAP ? 1040 : 640 }}>
               {/* Onmiskenbaar in beeld: anders denk je dat je een echte lead hebt
                   aangemaakt terwijl er niets is opgeslagen, of andersom. */}
               {testmodus && (
@@ -283,7 +281,7 @@ const SubsidiecheckLive = () => {
               )}
 
               <Voortgang
-                stappen={stappen}
+                stappen={STAPPEN}
                 huidige={stap}
                 onStapKlik={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
               />
@@ -304,7 +302,7 @@ const SubsidiecheckLive = () => {
 
               {/* Bevestigd adres als subtiele pill boven stap 2 en 3 —
                   visueel te onderscheiden van de content eromheen. */}
-              {stap === resultaatStap && adres && (
+              {stap === RESULTAAT_STAP && adres && (
                 <div className="mt-4 flex justify-center">
                   <p className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full border border-border bg-card px-4 py-2 text-[13.5px] text-foreground/80 shadow-subtle">
                     <span className="inline-flex items-center gap-1.5">
@@ -383,9 +381,9 @@ const SubsidiecheckLive = () => {
                     // Met de poort volgt er nog een stap, dus niet "Bekijk mijn
                     // subsidies" beloven; wél zeggen wat er gebeurt in plaats van
                     // het nietszeggende "Verder".
-                    knopLabel={poortAan ? "Zoek mijn subsidies" : "Bekijk mijn subsidies"}
+                    knopLabel="Zoek mijn subsidies"
                   />
-                ) : poortAan && stap === 2 ? (
+                ) : stap === 2 ? (
                   checkInput &&
                   adres && (
                     // De uitloop: het formulier vaagt weg en zakt een paar pixels
@@ -401,16 +399,7 @@ const SubsidiecheckLive = () => {
                   )
                 ) : (
                   checkInput && adres && (
-                    <StapResultaat
-                      input={checkInput}
-                      adres={adres}
-                      verbergMail={poortAan}
-                      // Met de poort draaide de zoeksequentie al op stap 2; hier
-                      // nog eens wachten op iets dat in de cache staat is pure
-                      // vertraging.
-                      alGezocht={poortAan}
-                      netBinnen={netBinnen}
-                    />
+                    <StapResultaat input={checkInput} adres={adres} netBinnen={netBinnen} />
                   )
                 )}
               </div>

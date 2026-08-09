@@ -106,6 +106,25 @@ const NIVEAU_LABELS: Record<Niveau, string> = {
 const LOGO_URL =
   "https://lfelnfukbrxznkevnevr.supabase.co/storage/v1/object/public/logos/Voortraject/voortraject-logo-wit--lageKB.png";
 
+// Iconen in de knoppen en bij de Google-score. Deze staan wél op de website
+// (`public/mail/`, meegebouwd door Cloudflare Pages) en niet in de storage-bucket
+// hierboven: dan horen ze bij de code die ze gebruikt en gaan ze mee met dezelfde
+// PR. Ze zijn 96px voor schermen met een hoge pixeldichtheid en worden op 14-16px
+// getoond. LET OP: ze bestaan pas op het moment dat de site gedeployed is —
+// deploy de site dus vóór deze function, anders staat er in de mail even een
+// gebroken plaatje (de alt-tekst vangt dat op).
+const ICOON = {
+  whatsapp: "https://voortraject.nl/mail/wa.png",
+  telefoon: "https://voortraject.nl/mail/tel.png",
+  google: "https://voortraject.nl/mail/google.png",
+};
+
+// De check zonder adres, om door te sturen naar buren of familie. De utm-tags
+// zijn dezelfde als op de site (zie src/components/subsidiecheck/delen.ts), zodat
+// doorgestuurde bezoekers in GA4 onder Bron/Medium terugkomen in plaats van als
+// direct verkeer.
+const DEEL_URL = "https://voortraject.nl/subsidiecheck?utm_source=deel&utm_medium=mail";
+
 // (Niveau-kleuren zijn bewust verwijderd: kleur = alleen het type, zie hierboven.)
 const TYPE_LABELS: Record<string, string> = { subsidie: "Subsidie", lening: "Lening" };
 // Volgorde van de chips op de site; bepaalt ook de volgorde in
@@ -431,26 +450,45 @@ function bouwEmailHtml(opts: {
                drempelloze routes als op het resultaat: antwoorden op deze mail
                (het antwoordadres is info@voortraject.nl), WhatsApp met het adres
                al ingevuld, of bellen. Vroeger stond hier één knop naar /contact,
-               een leeg formulier dat de bezoeker al een keer had ingevuld. -->
+               een leeg formulier dat de bezoeker al een keer had ingevuld.
+
+               De twee knoppen stonden eerder met hun volle tekst naast elkaar
+               ("Stel je vraag via WhatsApp" en "Bel 050 211 26 89"). In de
+               mail-app op een telefoon is de kolom nog geen 300px breed, dus
+               brak élk label over twee of drie regels en werd het blok een
+               kluwen. Nu: één woord per knop plus een icoon, met nowrap, zodat
+               ze gegarandeerd naast elkaar op één regel passen. Het nummer is
+               niet verdwenen — het staat voluit in de voettekst. -->
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 8px;background:${KLEUR.achtergrond};border-left:4px solid ${KLEUR.accent};border-radius:4px;">
             <tr><td style="padding:20px 24px;">
-              <p style="font-size:15px;font-weight:700;color:${KLEUR.primary};margin:0 0 6px;">Een vraag over dit overzicht?</p>
-              <p style="font-size:14px;color:${KLEUR.muted};margin:0 0 16px;line-height:1.6;">Subsidies stapelen is ingewikkeld. <strong style="color:${KLEUR.primary};font-weight:600;">Antwoord gewoon op deze mail</strong> met je vraag, dan kijkt een van onze adviseurs naar jouw adres. Of stuur een WhatsApp-bericht, dat gaat meestal het snelst. Gratis en vrijblijvend, reactie binnen 24 uur.</p>
+              <p style="font-size:15px;font-weight:700;color:${KLEUR.primary};margin:0 0 6px;">Gratis advies over jouw overzicht</p>
+              <p style="font-size:14px;color:${KLEUR.muted};margin:0 0 16px;line-height:1.6;"><strong style="color:${KLEUR.primary};font-weight:600;">Antwoord op deze mail</strong> met je vraag, of stuur een WhatsApp-bericht. Een van onze adviseurs kijkt dan naar jouw adres. Gratis en vrijblijvend, reactie binnen 24 uur.</p>
               <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
                 <td style="padding-right:10px;">
-                  <a href="${escapeHtml(waLink)}" style="display:inline-block;background:${KLEUR.accent};color:${KLEUR.primary};font-size:15px;font-weight:700;text-decoration:none;padding:12px 22px;border-radius:8px;">Stel je vraag via WhatsApp</a>
+                  <a href="${escapeHtml(waLink)}" style="display:inline-block;background:${KLEUR.accent};color:${KLEUR.primary};font-size:14px;font-weight:700;text-decoration:none;padding:11px 16px;border-radius:8px;white-space:nowrap;"><img src="${ICOON.whatsapp}" alt="" width="16" height="16" style="width:16px;height:16px;vertical-align:-3px;border:0;"> &nbsp;WhatsApp</a>
                 </td>
                 <td>
-                  <a href="${TELEFOON_LINK}" style="display:inline-block;border:1px solid ${KLEUR.primary};color:${KLEUR.primary};font-size:15px;font-weight:700;text-decoration:none;padding:11px 20px;border-radius:8px;">Bel ${TELEFOON}</a>
+                  <a href="${TELEFOON_LINK}" style="display:inline-block;border:1px solid ${KLEUR.primary};color:${KLEUR.primary};font-size:14px;font-weight:700;text-decoration:none;padding:10px 15px;border-radius:8px;white-space:nowrap;"><img src="${ICOON.telefoon}" alt="" width="16" height="16" style="width:16px;height:16px;vertical-align:-3px;border:0;"> &nbsp;Bel ons</a>
                 </td>
               </tr></table>
               ${
                 beoordeling
-                  ? `<p style="font-size:13px;color:${KLEUR.muted};margin:14px 0 0;">&#9733;&#9733;&#9733;&#9733;&#9733; <strong style="color:${KLEUR.primary};">${beoordeling.score}</strong> op Google${beoordeling.aantal ? ` &middot; ${beoordeling.aantal} reviews` : ""}</p>`
+                  ? // "op Google" wordt het Google-logo zelf. Blokkeert de mail-app
+                    // afbeeldingen (Outlook doet dat standaard), dan valt de alt-tekst
+                    // "Google" op precies dezelfde plek in — de regel blijft dus in elk
+                    // geval leesbaar.
+                    `<p style="font-size:13px;color:${KLEUR.muted};margin:14px 0 0;">&#9733;&#9733;&#9733;&#9733;&#9733; <strong style="color:${KLEUR.primary};">${beoordeling.score}</strong> op <img src="${ICOON.google}" alt="Google" width="14" height="14" style="width:14px;height:14px;vertical-align:-2px;border:0;">${beoordeling.aantal ? ` &middot; ${beoordeling.aantal} reviews` : ""}</p>`
                   : ""
               }
             </td></tr>
           </table>
+
+          <!-- Doorgeven aan de buren. De mail is het enige stuk van de check dat
+               buiten het scherm van de bezoeker voortleeft: hij wordt bewaard en
+               doorgestuurd. Dan hoort er ook een link in te staan waarmee de
+               ontvanger zijn éígen adres kan invullen — de rest van deze mail
+               gaat over één huis. -->
+          <p style="font-size:14px;color:${KLEUR.muted};margin:20px 0 0;line-height:1.6;">Ken je iemand die dit ook moet doen? Huizen uit dezelfde tijd komen vaak voor dezelfde regelingen in aanmerking. Stuur ze <a href="${DEEL_URL}" style="color:${KLEUR.primary};font-weight:600;">de check voor hun eigen adres</a>.</p>
 
           <p style="font-size:16px;margin:24px 0 4px;">Met vriendelijke groet,</p>
           <p style="font-size:16px;margin:0;font-weight:600;">Team Voortraject</p>

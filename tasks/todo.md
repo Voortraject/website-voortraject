@@ -2,6 +2,98 @@
 
 Planning & progress tracking for the Voortraject website. One section per task/change.
 
+## Subsidietool: de check doorgeven, en het mailblok op orde (2026-08-09)
+
+Vervolg op de sectie hieronder, zelfde dag. Vier opdrachten van de opdrachtgever.
+
+- [x] **Slotzin weg.** "Veel regelingen blijven onbenut. Jij bent nu een stap verder dan de
+      meeste woningeigenaren." De pagina eindigde met een compliment dat niets vroeg.
+- [x] **Delen gaat over de tool, niet over dit overzicht.** De knop "Kopieer link naar dit
+      overzicht" kopieerde `window.location.href`, mét postcode en huisnummer. Wie dat naar
+      de buurman stuurde deelde zijn eigen adres, en de buurman keek naar het verkeerde huis.
+      Nieuw blok `DeelDeCheck` op de plek van de slotzin: WhatsApp (contactkiezer, geen
+      nummer van ons) en kopieer-link, allebei naar `voortraject.nl/subsidiecheck`.
+- [x] **Meting aan twee kanten.** Verzendkant: nieuw event `subsidiecheck_deel` met `kanaal`.
+      Ontvangkant: utm-tags in de gedeelde link. Zonder die tags is WhatsApp-verkeer
+      onzichtbaar (geen referrer), en telt een doorgestuurde bezoeker als direct verkeer.
+      Container bijgewerkt (variabele `dlv - kanaal`, trigger + tag 31).
+- [x] **Mailblok "een vraag over dit overzicht"** opnieuw opgezet: knoppen met één woord
+      plus icoon en `white-space:nowrap`, zodat ze op één regel passen. "op Google" is nu
+      het Google-logo, met alt-tekst "Google" als terugval bij geblokkeerde afbeeldingen.
+- [x] **Deelregel in de mail.** De mail is het enige deel van de check dat wordt bewaard en
+      doorgestuurd; daar hoort een link in waarmee de ontvanger zijn eigen adres invult.
+
+Na de eerste ronde nog drie correcties van de opdrachtgever:
+
+- [x] **Eén WhatsApp-logo op de hele site.** De zwevende knop rechtsonder had het officiële
+      merk-logo inline staan; de WhatsApp-knoppen in de check gebruikten een generiek
+      tekstballonnetje. Dezelfde actie zag er dus op twee plekken anders uit. Nu één
+      component `WhatsAppLogo`, gebruikt door de zwevende knop, "Vraag via WhatsApp" en de
+      mobiele actiebalk (die op het resultaat de zwevende knop vervángt, dus daar hoort
+      hetzelfde logo).
+- [x] **"Deel via WhatsApp" eruit.** Eén knop is genoeg: de gekopieerde link werkt in élk
+      kanaal, en de pagina heeft al twee WhatsApp-knoppen. Daarmee vervielen ook het
+      voorgeschreven WhatsApp-bericht, het kanaal `whatsapp` in de utm-tags en de
+      GTM-variabele `dlv - kanaal` — het event houdt alleen `bewonertype` over.
+- [x] **Tekst korter, en familie erbij.** De uitleg over bouwjaren en gratis checken eronder
+      is geschrapt; wie de link doorstuurt weet zelf wel waarom.
+- [x] **En daarna nog compacter, plus een andere toon.** Vier regels onder elkaar (kop,
+      regel, knop, privacyregel) is te veel gewicht voor een terzijde: het woog zwaarder dan
+      het adviesblok erboven. Tekst en knop staan nu naast elkaar, op mobiel onder elkaar, en
+      het zijn er twee. De kop was "Ken je iemand die dit ook moet doen?" — niemand moet
+      iets. Het is een tip die de ander geld kan schelen, dus wie hem doorgeeft bewijst een
+      dienst, en dát is ook precies waarom mensen zoiets doorsturen. Nu: "Ken je buren of
+      familie die hier wat aan hebben?"
+- [x] **Laatste ronde:** de regel "Je deelt voortraject.nl/subsidiecheck, niet jouw gegevens"
+      eruit, en de knop heet "Deel de tool". Wat overblijft is één vraag met één knop.
+      `deelDeCheck.test.tsx` bewaakt sindsdien wat die knop op het klembord zet: de kale
+      check, zonder `pc`, `hn`, `tv`, `str` of `pl`. Die garantie stond eerst alleen in de
+      copy die nu weg is.
+
+### De poort dicht, structureel (opdracht: "nooit iemand zonder gegevens bij het resultaat")
+
+Aanleiding: de opdrachtgever kwam in een incognitovenster zonder gegevens bij het resultaat.
+Oorzaak was niet de code op `main` maar de dev-server: `SUBSIDIECHECK_GEGEVENS_POORT` stond
+lokaal even op `false` om te kunnen screenshotten. Zie `tasks/lessons.md`. De opdracht daarna
+was breder: zorg dat dit niet kán. Twee dingen weggehaald die het mogelijk maakten.
+
+- [x] **De schakelaar is weg.** `SUBSIDIECHECK_GEGEVENS_POORT` bestaat niet meer; de poort is
+      geen tussenoplossing maar hoe de check werkt. Er is dus geen stand van de code waarin
+      het overzicht zonder gegevens verschijnt. Daarmee vervielen ook de tweestapsflow, het
+      blok "Ontvang dit overzicht in je mail" (`MailOverzicht`, verwijderd), de knop "Mail mij
+      dit overzicht" in de samenvatting en de props `verbergMail` / `alGezocht`.
+- [x] **De ontsnappingssleutel is weg.** De poort ging open bij
+      `sessionStorage.sc_poort_ontgrendeld === "1"`: één regel in de console van elke browser.
+      Nu telt alleen het bewaarde contact zelf (`sc_contact`, met een geldig e-mailadres én een
+      voornaam — zie `contactOpslag`). Wie dat wil nabootsen vult die gegevens alsnog in.
+- [x] `src/test/poortDicht.test.tsx` legt het vast: gedeelde link toont de gegevensstap, de
+      oude vlag doet niets, halve of onzinnige gegevens tellen niet, en een compleet contact
+      mag door.
+- [x] Meting: het veld `poort` op `subsidiecheck_stap` is vervallen (stond in elke rij op 1).
+      Variabele `dlv - poort` en de tagparameter zijn uit de container gehaald.
+
+**Wat dit niet is.** Een bezoeker die zelf een `sc_contact` in de opslag zet, komt er nog
+steeds door: het overzicht wordt client-side opgebouwd uit een publieke bron. Echt afdwingen
+vraagt een server-side sleutel op de regelingen-endpoint. Wat hier verdwenen is, is de
+onbedoelde route: een verkeerd gezette vlag, en een sleutel die letterlijk "1" was.
+
+**Gemeten in een headless Chrome, met Arial (het lettertype dat mailclients pakken als Inter
+ontbreekt — de ongunstigste variant):** de twee knoppen staan op één regel bij een
+mailbreedte van 320 t/m 430px, en houden ~48px over binnen het blok. Ter vergelijking: de
+oude knoppen braken op 390px allebei over twee tot drie regels.
+
+**Reviews in de mail zijn niet statisch.** `haalBeoordeling()` leest `google_place_stats` bij
+élke verzending, en die tabel wordt dagelijks om 06:00 UTC ververst door de cron op
+`sync-google-reviews`. Nagekeken op 2026-08-09: `synced_at` stond op die dag 06:00:01Z,
+rating 4,9 bij 14 reviews. Staat er geen rij, dan valt de hele bewijsregel weg — liever geen
+cijfer dan een oud cijfer.
+
+**Iconen staan in `public/mail/`,** niet in de storage-bucket waar het logo staat. Zo horen
+ze bij de code die ze gebruikt en gaan ze mee in dezelfde PR. Gevolg: **deploy de site vóór
+de edge function**, anders wijst de mail even naar een plaatje dat nog niet bestaat (de
+alt-tekst vangt dat op). Ze zijn gerenderd op 96px voor schermen met hoge pixeldichtheid en
+worden op 14-16px getoond.
+
 ## Subsidietool: rustiger op de telefoon, eerlijker subregel, andere CTA (2026-08-09)
 
 Zes losse opmerkingen van de opdrachtgever, na het doorlopen van de check op een telefoon.
