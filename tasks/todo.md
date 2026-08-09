@@ -35,9 +35,15 @@ Na de eerste ronde nog drie correcties van de opdrachtgever:
       kanaal, en de pagina heeft al twee WhatsApp-knoppen. Daarmee vervielen ook het
       voorgeschreven WhatsApp-bericht, het kanaal `whatsapp` in de utm-tags en de
       GTM-variabele `dlv - kanaal` — het event houdt alleen `bewonertype` over.
-- [x] **Tekst korter, en familie erbij.** "Je buren, je familie, iemand uit je straat." De
-      uitleg over bouwjaren en gratis checken eronder is geschrapt; wie de link doorstuurt
-      weet zelf wel waarom.
+- [x] **Tekst korter, en familie erbij.** De uitleg over bouwjaren en gratis checken eronder
+      is geschrapt; wie de link doorstuurt weet zelf wel waarom.
+- [x] **En daarna nog compacter, plus een andere toon.** Vier regels onder elkaar (kop,
+      regel, knop, privacyregel) is te veel gewicht voor een terzijde: het woog zwaarder dan
+      het adviesblok erboven. Tekst en knop staan nu naast elkaar, op mobiel onder elkaar, en
+      het zijn er twee. De kop was "Ken je iemand die dit ook moet doen?" — niemand moet
+      iets. Het is een tip die de ander geld kan schelen, dus wie hem doorgeeft bewijst een
+      dienst, en dát is ook precies waarom mensen zoiets doorsturen. Nu: "Ken je buren of
+      familie die hier wat aan hebben?"
 
 **Gemeten in een headless Chrome, met Arial (het lettertype dat mailclients pakken als Inter
 ontbreekt — de ongunstigste variant):** de twee knoppen staan op één regel bij een

@@ -48,22 +48,29 @@ export const DeelDeCheck = ({ bewonertype }: DeelDeCheckProps) => {
   // vragen. Een scheidingslijn markeert genoeg dat er iets nieuws begint.
   return (
     <section aria-label="Deel de subsidiecheck" className="mt-10 border-t border-border pt-8">
-      <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
-        Ken je iemand die dit ook moet doen?
-      </h3>
-      {/* Kort houden. Wie de link doorstuurt weet zelf wel waarom; uitleggen
-          waaróm de buren er iets aan hebben maakte er een alinea van waar één
-          regel volstaat. */}
-      <p className="mt-2 text-[15px] leading-relaxed text-foreground/80">
-        Je buren, je familie, iemand uit je straat.
-      </p>
+      {/* Tekst en knop naast elkaar: onder elkaar werden dit vier regels op rij
+          voor een terzijde, en dan weegt het zwaarder dan het adviesblok erboven.
+          Op mobiel klapt het alsnog netjes onder elkaar. */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+        <div className="min-w-0">
+          {/* Geen "moet doen": niemand moet iets. Dit is een tip die de ander
+              geld kan schelen, dus wie hem doorgeeft bewijst een dienst — dat is
+              ook precies de reden dat mensen zoiets doorsturen. */}
+          <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
+            Ken je buren of familie die hier wat aan hebben?
+          </h3>
+          {/* De link zichtbaar maken laat zien dat er géén adres in zit. */}
+          <p className="mt-1.5 text-[13.5px] text-muted-foreground">
+            Je deelt <span className="font-medium text-foreground">voortraject.nl/subsidiecheck</span>, niet jouw
+            gegevens.
+          </p>
+        </div>
 
-      <div className="mt-5">
         <button
           type="button"
           onClick={kopieer}
           aria-live="polite"
-          className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-[15px] font-semibold text-primary transition-colors hover:border-primary/40 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-full border border-border bg-card px-5 py-3 text-[15px] font-semibold text-primary transition-colors hover:border-primary/40 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:self-auto"
         >
           {gekopieerd ? (
             <>
@@ -78,12 +85,6 @@ export const DeelDeCheck = ({ bewonertype }: DeelDeCheckProps) => {
           )}
         </button>
       </div>
-
-      {/* De link zichtbaar maken doet twee dingen: het laat zien dat er géén
-          adres in zit, en het is kort genoeg om te onthouden of voor te lezen. */}
-      <p className="mt-3 text-[13px] text-muted-foreground">
-        Je deelt <span className="font-medium text-foreground">voortraject.nl/subsidiecheck</span>, niet jouw gegevens.
-      </p>
     </section>
   );
 };
