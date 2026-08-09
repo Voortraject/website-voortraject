@@ -13,7 +13,7 @@ import { describe, expect, it } from "vitest";
 // Deze test faalt zodra iemand een pushGtmEvent toevoegt zonder de container bij
 // te werken, of andersom. Werk bij een wijziging ook docs/tracking.md bij.
 
-const CONTAINER = "docs/gtm/GTM-P6W5MNN4_v7.json";
+const CONTAINER = "docs/gtm/GTM-P6W5MNN4_v8.json";
 
 interface Parameter {
   key: string;
