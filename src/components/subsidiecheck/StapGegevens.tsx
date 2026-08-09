@@ -16,6 +16,7 @@ import { bewaarContact } from "./contactOpslag";
 import { Energielabel } from "./Energielabel";
 import { Luchtfoto } from "./Luchtfoto";
 import { schrijfSubsidiecheckLead, valideerContact, verstuurSubsidiecheckLead } from "./leadFormulier";
+import { TOESTEMMING_TEKST, toestemmingBewijs } from "./toestemming";
 import { ZoekKaart } from "./Zoeksequentie";
 
 const inputClass =
@@ -164,7 +165,11 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
     // van de tegels, niet van het aanklikken, zodat het CRM leest zoals de
     // bezoeker het zag.
     const gekozenLabels = HULPVRAGEN.filter((h) => hulpvragen.includes(h.id)).map((h) => h.label);
-    const notitie = `Wil hulp met: ${gekozenLabels.join(", ")}`;
+    // De toestemmingsregel komt eronder, niet erboven: het team leest eerst waar
+    // het gesprek over gaat. Dit is het bewijs dat de ACM per persoon verlangt
+    // (zie toestemming.ts) en het reist mee langs beide schrijfpaden, de edge
+    // function én de directe insert bij een bronfout.
+    const notitie = `Wil hulp met: ${gekozenLabels.join(", ")}\n${toestemmingBewijs()}`;
     const verrijking = {
       energielabel: woning?.energielabel?.klasse,
       bouwjaar: pand?.bouwjaar,
@@ -553,8 +558,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
           concurrent niet kan maken. Kort houden, want een uitgebreide
           privacybelofte wekt juist de zorg die ze wil wegnemen. */}
       <p className="mt-3 text-[12px] text-muted-foreground">
-        Je gegevens blijven bij ons: we gebruiken ze voor jouw overzicht en om je verder te helpen met je
-        verduurzaming.
+        Je gegevens blijven bij ons. {TOESTEMMING_TEKST}
       </p>
     </form>
   );

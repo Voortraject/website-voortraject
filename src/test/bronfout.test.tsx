@@ -29,6 +29,7 @@ vi.mock("@/lib/subsidies", async (importOriginal) => ({
 }));
 
 import { StapGegevens } from "@/components/subsidiecheck/StapGegevens";
+import { TOESTEMMING_TEKST } from "@/components/subsidiecheck/toestemming";
 import { subsidieProvider } from "@/lib/subsidies";
 import { energiesubsidiewijzerProvider } from "@/lib/subsidies/energiesubsidiewijzerProvider";
 
@@ -110,7 +111,16 @@ describe("gegevens-poort bij een bronfout", () => {
     expect(rij).toMatchObject({ email: "jan@example.nl", bron: "Voortraject" });
     expect(rij.subsidiecheck_interesses).toBe("Isolatie & glas");
     // De gekozen hulpvraag gaat als kopregel mee naar het CRM.
-    expect(rij.notities).toBe("Wil hulp met: De aanvraag regelen");
+    const regels = (rij.notities as string).split("\n");
+    expect(regels[0]).toBe("Wil hulp met: De aanvraag regelen");
+    // En daaronder het toestemmingsbewijs. Dit is de reden dat het bestaat: ook
+    // als de bron faalt en de lead langs het noodpad wordt weggeschreven, moet
+    // aantoonbaar zijn waar deze persoon ja tegen zei (art. 11.7 lid 2 Tw).
+    expect(regels[1]).toContain("Toestemming bellen/mailen: gegeven bij verzenden op");
+    // De bewaarde tekst is letterlijk de tekst die op het scherm stond; zou dat
+    // uiteenlopen, dan bewijst het bewaarde iets anders dan wat er gevraagd is.
+    expect(regels[1]).toContain(`Getoonde tekst: "${TOESTEMMING_TEKST}"`);
+    expect(screen.getByText(new RegExp(TOESTEMMING_TEKST.slice(0, 40)))).toBeTruthy();
   });
 
   it("verstuurt niets zolang de hulpvraag niet gekozen is", async () => {
@@ -171,6 +181,8 @@ describe("gegevens-poort bij een bronfout", () => {
 
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled(), { timeout: 5_000 });
     const [, rij] = insertMock.mock.calls[0];
-    expect(rij.notities).toBe("Wil hulp met: Subsidies uitzoeken, Een uitvoerder vinden");
+    expect((rij.notities as string).split("\n")[0]).toBe(
+      "Wil hulp met: Subsidies uitzoeken, Een uitvoerder vinden",
+    );
   });
 });
