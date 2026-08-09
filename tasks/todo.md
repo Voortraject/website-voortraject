@@ -44,6 +44,17 @@ Na de eerste ronde nog drie correcties van de opdrachtgever:
       iets. Het is een tip die de ander geld kan schelen, dus wie hem doorgeeft bewijst een
       dienst, en dát is ook precies waarom mensen zoiets doorsturen. Nu: "Ken je buren of
       familie die hier wat aan hebben?"
+- [x] **Laatste ronde:** de regel "Je deelt voortraject.nl/subsidiecheck, niet jouw gegevens"
+      eruit, en de knop heet "Deel de tool". Wat overblijft is één vraag met één knop.
+      `deelDeCheck.test.tsx` bewaakt sindsdien wat die knop op het klembord zet: de kale
+      check, zonder `pc`, `hn`, `tv`, `str` of `pl`. Die garantie stond eerst alleen in de
+      copy die nu weg is.
+
+**Let op bij het testen op localhost.** Om het resultaat te kunnen bekijken zonder de poort
+te doorlopen is `SUBSIDIECHECK_GEGEVENS_POORT` tijdens het werk even op `false` gezet. Wie in
+dat tijdvak op de dev-server keek, kwam zonder gegevens bij het resultaat. De vlag staat in
+alle commits op `true`; productie is nooit anders geweest. Beter alternatief voor de volgende
+keer: `sessionStorage.sc_poort_ontgrendeld = "1"` in de browserconsole, dat raakt de code niet.
 
 **Gemeten in een headless Chrome, met Arial (het lettertype dat mailclients pakken als Inter
 ontbreekt — de ongunstigste variant):** de twee knoppen staan op één regel bij een

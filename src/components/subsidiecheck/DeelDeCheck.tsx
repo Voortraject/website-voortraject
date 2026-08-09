@@ -48,23 +48,17 @@ export const DeelDeCheck = ({ bewonertype }: DeelDeCheckProps) => {
   // vragen. Een scheidingslijn markeert genoeg dat er iets nieuws begint.
   return (
     <section aria-label="Deel de subsidiecheck" className="mt-10 border-t border-border pt-8">
-      {/* Tekst en knop naast elkaar: onder elkaar werden dit vier regels op rij
-          voor een terzijde, en dan weegt het zwaarder dan het adviesblok erboven.
-          Op mobiel klapt het alsnog netjes onder elkaar. */}
+      {/* Vraag en knop naast elkaar, dus twee regels in plaats van vier. Onder
+          elkaar woog dit terzijde zwaarder dan het adviesblok erboven, en dat is
+          de stap die er zakelijk toe doet. Op mobiel klapt het netjes onder
+          elkaar. */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-        <div className="min-w-0">
-          {/* Geen "moet doen": niemand moet iets. Dit is een tip die de ander
-              geld kan schelen, dus wie hem doorgeeft bewijst een dienst — dat is
-              ook precies de reden dat mensen zoiets doorsturen. */}
-          <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
-            Ken je buren of familie die hier wat aan hebben?
-          </h3>
-          {/* De link zichtbaar maken laat zien dat er géén adres in zit. */}
-          <p className="mt-1.5 text-[13.5px] text-muted-foreground">
-            Je deelt <span className="font-medium text-foreground">voortraject.nl/subsidiecheck</span>, niet jouw
-            gegevens.
-          </p>
-        </div>
+        {/* Geen "moet doen": niemand moet iets. Dit is een tip die de ander geld
+            kan schelen, dus wie hem doorgeeft bewijst een dienst, en dat is ook
+            precies de reden dat mensen zoiets doorsturen. */}
+        <h3 className="min-w-0 font-display text-[19px] font-semibold text-primary md:text-[21px]">
+          Ken je buren of familie die hier wat aan hebben?
+        </h3>
 
         <button
           type="button"
@@ -80,7 +74,7 @@ export const DeelDeCheck = ({ bewonertype }: DeelDeCheckProps) => {
           ) : (
             <>
               <Link2 size={17} strokeWidth={2} aria-hidden="true" />
-              Kopieer de link
+              Deel de tool
             </>
           )}
         </button>
