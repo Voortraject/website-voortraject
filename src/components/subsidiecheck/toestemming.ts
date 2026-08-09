@@ -11,7 +11,7 @@
 // het is ook een extra handeling vlak voor de knop, en bij 11 leads per week is
 // dat een dure ingreep die we niet kunnen meten. Wat we wél doen is het
 // zwaarste dat zonder extra handeling kan: de tekst staat pal bij de knop, hij
-// is specifiek over het kanaal (bellen of mailen) en over het onderwerp, en het
+// is specifiek over het kanaal (mailen of bellen) en over het onderwerp, en het
 // versturen zelf is de actieve handeling.
 //
 // Het bewijs is het punt. `TOESTEMMING_TEKST` wordt op twee plekken gebruikt:
@@ -24,13 +24,18 @@
  * verandert automatisch ook wat er bij nieuwe leads wordt vastgelegd, en blijven
  * bestaande leads staan met de tekst die zíj destijds zagen.
  */
+// Mailen staat vooraan, bellen erachter. Beide kanalen staan er even hard in,
+// dus juridisch verandert er niets, maar het eerste woord bepaalt wel waar de
+// bezoeker aan denkt. Mail is het kanaal dat hij net zelf heeft gekozen (zijn
+// overzicht komt per mail), bellen is de verrassing. In die volgorde leest de
+// zin als een aanvulling in plaats van als een aankondiging.
 export const TOESTEMMING_TEKST =
-  "Door te versturen mogen wij je bellen of mailen over jouw verduurzaming.";
+  "Door te versturen mogen wij je mailen of bellen over jouw verduurzaming.";
 
 /**
  * De regel die bij de lead wordt bewaard als bewijs. Bevat het moment en de
  * letterlijke tekst die op dat moment op het scherm stond.
  */
 export function toestemmingBewijs(op: Date = new Date()): string {
-  return `Toestemming bellen/mailen: gegeven bij verzenden op ${op.toISOString()}. Getoonde tekst: "${TOESTEMMING_TEKST}"`;
+  return `Toestemming mailen/bellen: gegeven bij verzenden op ${op.toISOString()}. Getoonde tekst: "${TOESTEMMING_TEKST}"`;
 }

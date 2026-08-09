@@ -116,7 +116,7 @@ describe("gegevens-poort bij een bronfout", () => {
     // En daaronder het toestemmingsbewijs. Dit is de reden dat het bestaat: ook
     // als de bron faalt en de lead langs het noodpad wordt weggeschreven, moet
     // aantoonbaar zijn waar deze persoon ja tegen zei (art. 11.7 lid 2 Tw).
-    expect(regels[1]).toContain("Toestemming bellen/mailen: gegeven bij verzenden op");
+    expect(regels[1]).toContain("Toestemming mailen/bellen: gegeven bij verzenden op");
     // De bewaarde tekst is letterlijk de tekst die op het scherm stond; zou dat
     // uiteenlopen, dan bewijst het bewaarde iets anders dan wat er gevraagd is.
     expect(regels[1]).toContain(`Getoonde tekst: "${TOESTEMMING_TEKST}"`);

@@ -216,7 +216,7 @@ persoon kunt aantónen. Een telefoonnummer in een formulier is op zichzelf geen 
 staan waar de bezoeker ja tegen zegt, op het moment dat hij het zegt.
 
 - [x] Eén regel onder de verzendknop: "Je gegevens blijven bij ons. Door te versturen mogen wij je
-      bellen of mailen over jouw verduurzaming."
+      mailen of bellen over jouw verduurzaming."
 - [x] Het bewijs gaat mee de lead in: moment plus de letterlijke tekst die op dat scherm stond
 - [x] Eén bron voor beide (`toestemming.ts`), zodat er nooit licht zit tussen wat de bezoeker las en
       wat wij bewaren, ook niet als de copy later verandert
