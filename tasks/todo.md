@@ -1914,3 +1914,43 @@ Praktische gotcha's:
   (snn.nl / svn.nl). Breed herverifieerd: 52 regelingen, 14 postcodes, 0 PDF's,
   0 ministerie-links. "Energiebespaarlening Fryslân" → warmtefonds.nl/vve is conform
   de bron (enige externe link op die pagina).
+
+### Review (2026-08-09) — conversie eerste stap subsidiecheck
+- Aanleiding: aan de tool zelf is veel verbeterd, aan stap 1 (het adresscherm)
+  nog nauwelijks. Zes van de tien voorgestelde ingrepen zijn gekozen; 4 (preview
+  van het resultaat), 8 (mobiele veldindeling), 9 (testimonials) en 10 (urgentie)
+  bewust niet gedaan.
+- (1) Compacte header op /subsidiecheck: alleen het logo. De nav, de dropdowns en
+  een "Check jouw subsidies"-knop die naar de eigen pagina wees waren op een
+  funnelpagina louter uitgang (attention ratio). Volledige navigatie staat nog
+  gewoon in de footer. `<Header compact />`; de "binnenkort"-variant houdt de
+  normale header, want dat is een doodlopend eind en geen funnel.
+- (2) Kop belooft de uitkomst: "Welke subsidies zijn er voor jouw huis?" i.p.v.
+  "Waar staat jouw woning?" (dat beschreef de taak, die de veldlabels al doen).
+  Bewust "zijn er voor" en niet "krijg jij": wij tonen wat van toepassing is,
+  niet wat toegekend wordt.
+- (3) Hard cijfer boven de velden: "Gemiddeld 5 subsidies per adres in Groningen
+  en Drenthe". Gemeten, niet geschat: `scripts/meet-subsidieaantal.mjs` roept
+  dezelfde productie-edge-function aan voor één bestaand adres per gemeente in
+  alle 22 gemeenten (27 adressen, PDOK-geverifieerd). Uitkomst 2026-08-09:
+  subsidies gem. 5,41 (min 4, max 7), leningen gem. 4,85, totaal gem. 10,26.
+  We tonen 5: naar beneden afgerond én zonder leningen, want een lening is geen
+  subsidie. Alleen zichtbaar voor woningeigenaren, want dat is de gemeten groep.
+- (5) Endowed progress: het lijntje naar stap 2 begint op 20% en loopt naar 70%
+  zodra de live adrescheck het huis herkent. StapAdres meldt dat via
+  `onAdresHerkend`; de balk beweegt dus op échte voortgang.
+- (6) Geruststelling verplaatst naar pal onder de adresvelden: "Je adres
+  gebruiken we om de regelingen op te zoeken." Stond eerder alleen ónder de knop,
+  dus ná het moment van de twijfel.
+- (7) Keuzeblok "Waarop we zoeken" terug naar één zin ("We zoeken voor
+  woningeigenaren op alle maatregelen. Aanpassen"). Het omkaderde blok stond in
+  de blikrichting naar de CTA terwijl er voor de meeste bezoekers niets te kiezen
+  valt.
+- Bewaakt door `src/test/subsidiecheckEersteStap.test.tsx` (14 tests): cijfer en
+  zin blijven synchroon, het cijfer verschijnt niet bij huurders/VvE's/
+  verhuurders, de geruststelling staat vóór de knop, de compacte header heeft
+  precies één link, en de voortgangsbalk begint niet op nul.
+- 34 testbestanden / 193 tests groen, lint schoon op de gewijzigde bestanden
+  (de 9 bestaande lint-errors staan in niet-geraakte pagina's), productiebuild ok.
+- Nog open: het cijfer is een momentopname. Verandert het subsidieaanbod, dan
+  script opnieuw draaien en `GEMIDDELD_AANTAL_SUBSIDIES` bijstellen.

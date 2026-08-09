@@ -162,7 +162,20 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
-export const Header = () => {
+interface HeaderProps {
+  /**
+   * Alleen het logo, geen navigatie en geen CTA.
+   *
+   * Voor pagina's met precies één doel (de subsidiecheck). Elke link in de
+   * header is daar een uitgang: de nav, de dropdowns én een "Check jouw
+   * subsidies"-knop die naar de pagina wijst waar je al staat. Wat overblijft
+   * is het logo, zodat de bezoeker altijd terug naar huis kan; de volledige
+   * navigatie staat gewoon in de footer.
+   */
+  compact?: boolean;
+}
+
+export const Header = ({ compact = false }: HeaderProps) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -171,6 +184,26 @@ export const Header = () => {
       document.body.style.overflow = "";
     };
   }, [open]);
+
+  if (compact) {
+    return (
+      <>
+        <div aria-hidden className="bg-primary" style={{ height: "env(safe-area-inset-top)" }} />
+        <header className="sticky top-[env(safe-area-inset-top)] z-50">
+          <div className="container-content flex items-center h-20">
+            <a
+              href="/"
+              className={`shrink-0 inline-flex items-center ${glassPill} rounded-full px-5 py-2.5 hover:bg-white/80 transition-colors`}
+              style={pillShadow}
+              aria-label="Voortraject home"
+            >
+              <img src={logoVoortrajectBlauw} alt="Voortraject" className="h-8 w-auto" />
+            </a>
+          </div>
+        </header>
+      </>
+    );
+  }
 
   return (
     <>
