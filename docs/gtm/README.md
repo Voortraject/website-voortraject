@@ -1,6 +1,6 @@
 # GTM-container
 
-`GTM-P6W5MNN4_v7.json` is de volledige containerconfiguratie voor **GTM-P6W5MNN4**
+`GTM-P6W5MNN4_v8.json` is de volledige containerconfiguratie voor **GTM-P6W5MNN4**
 (Voortraject.nl), gekoppeld aan GA4-property **G-VQL43876VN**.
 
 De container staat hier in versiebeheer zodat hij samen met de code te reviewen is en niet
@@ -13,8 +13,8 @@ events zelf.
 Doe dit **pas nadat de bijbehorende code live staat**, anders vuren de nieuwe triggers nog nergens op.
 
 1. GTM → **Beheer** → **Container importeren**
-2. Kies `GTM-P6W5MNN4_v7.json`
-3. Werkruimte: **Nieuw** (noem hem naar wat je importeert, bijvoorbeeld "v7 - delen")
+2. Kies `GTM-P6W5MNN4_v8.json`
+3. Werkruimte: **Nieuw** (noem hem naar wat je importeert, bijvoorbeeld "v8 - delen")
 4. Importoptie: **Overschrijven**
 
    Bewust overschrijven en niet samenvoegen: alleen zo verdwijnen de tags en variabelen die eruit
@@ -26,11 +26,29 @@ Doe dit **pas nadat de bijbehorende code live staat**, anders vuren de nieuwe tr
 
 ### Meteen na de import controleren
 
-De tag **GA4 - Configuratie** hoort te vuren op **Initialization - All Pages**. In v5 stond die
-op *Consent Initialization*, en die trigger is door Google gereserveerd voor de cookiebanner zelf.
-Als het veld er na de import anders uitziet, zet het dan handmatig goed.
+De tag **GA4 - Configuratie** hoort te vuren op **Initialization - All Pages**. *Consent
+Initialization* is door Google gereserveerd voor tags die de consent-status zetten, zoals de
+cookiebanner zelf; daar hoort de GA4-configuratie niet op.
 
-## Wat er verandert ten opzichte van v6
+Let op de twee ingebouwde trigger-IDs in de export. Ze lijken op elkaar en zijn precies één keer
+verwisseld geraakt (in v6, waardoor v6 én v7 de tag op de verkeerde trigger zetten):
+
+| ID in de export | Trigger in GTM |
+|---|---|
+| `2147479572` | Consent Initialization - All Pages — **niet gebruiken** voor gewone tags |
+| `2147479573` | Initialization - All Pages — hier hoort `GA4 - Configuratie` op |
+
+Controleer dit dus na élke import, en werk dit bestand bij zodra je iets in GTM handmatig
+verandert. Anders draait de volgende import je correctie terug; dat is precies wat er tussen v6 en
+v8 gebeurd is.
+
+## Wat er verandert ten opzichte van v7
+
+`GA4 - Configuratie` staat weer op **Initialization - All Pages** in plaats van op *Consent
+Initialization*. Verder identiek aan v7. Deze export komt rechtstreeks uit GTM (versie 8), dus hij
+is één op één wat er live draait.
+
+## Wat v7 veranderde ten opzichte van v6
 
 | Wat | Waarom |
 |---|---|
@@ -54,7 +72,7 @@ terecht. Zie [`../tracking.md`](../tracking.md).
 
 | Wat | Van | Naar |
 |---|---|---|
-| `GA4 - Configuratie` trigger | Consent Initialization | Initialization - All Pages |
+| `GA4 - Configuratie` trigger | Initialization - All Pages | *bedoeld* was hetzelfde te houden, maar v6 zette hem per ongeluk op Consent Initialization — hersteld in v8, zie hierboven |
 | `GA4 - Configuratie` page_location | kale URL, inclusief het adres uit de subsidiecheck | `{{js - page_location zonder adres}}` |
 | Nav-trigger | klik-tekst, met drie labels die niet meer bestaan | linkklik binnen `header a`, plus `nav_bestemming` als parameter |
 | `Klik contactlink` | elk element met "contact" in de tekst | linkklik naar een URL met `/contact` |

@@ -1,9 +1,13 @@
 {
     "exportFormatVersion": 2,
+    "exportTime": "2026-08-09 11:38:10",
     "containerVersion": {
+        "path": "accounts/6354173500/containers/251808898/versions/8",
         "accountId": "6354173500",
         "containerId": "251808898",
+        "containerVersionId": "8",
         "container": {
+            "path": "accounts/6354173500/containers/251808898",
             "accountId": "6354173500",
             "containerId": "251808898",
             "name": "Voortraject.nl",
@@ -11,231 +15,29 @@
             "usageContext": [
                 "WEB"
             ],
+            "fingerprint": "1778234173754",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/6354173500/containers/251808898/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true,
+                "supportTransformations": false
+            },
             "tagIds": [
                 "GTM-P6W5MNN4"
             ]
         },
         "tag": [
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "tagId": "4",
-                "name": "GA4 - Configuratie",
-                "type": "googtag",
-                "parameter": [
-                    {
-                        "type": "TEMPLATE",
-                        "key": "tagId",
-                        "value": "G-VQL43876VN"
-                    },
-                    {
-                        "type": "LIST",
-                        "key": "configSettingsTable",
-                        "list": [
-                            {
-                                "type": "MAP",
-                                "map": [
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameter",
-                                        "value": "page_location"
-                                    },
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameterValue",
-                                        "value": "{{js - page_location zonder adres}}"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ],
-                "firingTriggerId": [
-                    "2147479572"
-                ],
-                "tagFiringOption": "ONCE_PER_EVENT",
-                "monitoringMetadata": {
-                    "type": "MAP"
-                },
-                "consentSettings": {
-                    "consentStatus": "NOT_SET"
-                }
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "tagId": "20",
-                "name": "GA4 - Virtuele paginaweergave",
-                "type": "gaawe",
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "sendEcommerceData",
-                        "value": "false"
-                    },
-                    {
-                        "type": "LIST",
-                        "key": "eventSettingsTable",
-                        "list": [
-                            {
-                                "type": "MAP",
-                                "map": [
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameter",
-                                        "value": "page_location"
-                                    },
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameterValue",
-                                        "value": "{{js - page_location zonder adres}}"
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "MAP",
-                                "map": [
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameter",
-                                        "value": "page_title"
-                                    },
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameterValue",
-                                        "value": "{{dlv - page_title}}"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "eventName",
-                        "value": "page_view"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "measurementIdOverride",
-                        "value": "G-VQL43876VN"
-                    }
-                ],
-                "fingerprint": "1",
-                "firingTriggerId": [
-                    "20"
-                ],
-                "tagFiringOption": "ONCE_PER_EVENT",
-                "monitoringMetadata": {
-                    "type": "MAP"
-                },
-                "consentSettings": {
-                    "consentStatus": "NOT_SET"
-                }
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "tagId": "13",
-                "name": "Event - Nav klik",
-                "type": "gaawe",
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "sendEcommerceData",
-                        "value": "false"
-                    },
-                    {
-                        "type": "LIST",
-                        "key": "eventSettingsTable",
-                        "list": [
-                            {
-                                "type": "MAP",
-                                "map": [
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameter",
-                                        "value": "nav_item"
-                                    },
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameterValue",
-                                        "value": "{{Click Text}}"
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "MAP",
-                                "map": [
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameter",
-                                        "value": "nav_bestemming"
-                                    },
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameterValue",
-                                        "value": "{{Click URL}}"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "eventName",
-                        "value": "nav_klik"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "measurementIdOverride",
-                        "value": "G-VQL43876VN"
-                    }
-                ],
-                "firingTriggerId": [
-                    "11"
-                ],
-                "tagFiringOption": "ONCE_PER_EVENT",
-                "monitoringMetadata": {
-                    "type": "MAP"
-                },
-                "consentSettings": {
-                    "consentStatus": "NOT_SET"
-                }
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "tagId": "10",
-                "name": "Event - Klik contact",
-                "type": "gaawe",
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "sendEcommerceData",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "eventName",
-                        "value": "klik_contact"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "measurementIdOverride",
-                        "value": "G-VQL43876VN"
-                    }
-                ],
-                "firingTriggerId": [
-                    "9"
-                ],
-                "tagFiringOption": "ONCE_PER_EVENT",
-                "monitoringMetadata": {
-                    "type": "MAP"
-                },
-                "consentSettings": {
-                    "consentStatus": "NOT_SET"
-                }
-            },
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
@@ -280,6 +82,7 @@
                         "value": "G-VQL43876VN"
                     }
                 ],
+                "fingerprint": "1778236787133",
                 "firingTriggerId": [
                     "12"
                 ],
@@ -294,234 +97,7 @@
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "tagId": "29",
-                "name": "Event - Telefoon klik",
-                "type": "gaawe",
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "sendEcommerceData",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "eventName",
-                        "value": "telefoon_klik"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "measurementIdOverride",
-                        "value": "G-VQL43876VN"
-                    }
-                ],
-                "firingTriggerId": [
-                    "29"
-                ],
-                "tagFiringOption": "ONCE_PER_EVENT",
-                "monitoringMetadata": {
-                    "type": "MAP"
-                },
-                "consentSettings": {
-                    "consentStatus": "NOT_SET"
-                }
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "tagId": "30",
-                "name": "Event - Mail klik",
-                "type": "gaawe",
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "sendEcommerceData",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "eventName",
-                        "value": "mail_klik"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "measurementIdOverride",
-                        "value": "G-VQL43876VN"
-                    }
-                ],
-                "firingTriggerId": [
-                    "30"
-                ],
-                "tagFiringOption": "ONCE_PER_EVENT",
-                "monitoringMetadata": {
-                    "type": "MAP"
-                },
-                "consentSettings": {
-                    "consentStatus": "NOT_SET"
-                }
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "tagId": "28",
-                "name": "Event - WhatsApp klik",
-                "type": "gaawe",
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "sendEcommerceData",
-                        "value": "false"
-                    },
-                    {
-                        "type": "LIST",
-                        "key": "eventSettingsTable",
-                        "list": [
-                            {
-                                "type": "MAP",
-                                "map": [
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameter",
-                                        "value": "plek"
-                                    },
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameterValue",
-                                        "value": "{{dlv - plek}}"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "eventName",
-                        "value": "whatsapp_klik"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "measurementIdOverride",
-                        "value": "G-VQL43876VN"
-                    }
-                ],
-                "firingTriggerId": [
-                    "28"
-                ],
-                "tagFiringOption": "ONCE_PER_EVENT",
-                "monitoringMetadata": {
-                    "type": "MAP"
-                },
-                "consentSettings": {
-                    "consentStatus": "NOT_SET"
-                }
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "tagId": "27",
-                "name": "Event - Bewoner lead",
-                "type": "gaawe",
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "sendEcommerceData",
-                        "value": "false"
-                    },
-                    {
-                        "type": "LIST",
-                        "key": "eventSettingsTable",
-                        "list": [
-                            {
-                                "type": "MAP",
-                                "map": [
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameter",
-                                        "value": "heeft_adres"
-                                    },
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameterValue",
-                                        "value": "{{dlv - heeft_adres}}"
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "MAP",
-                                "map": [
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameter",
-                                        "value": "heeft_vraag"
-                                    },
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameterValue",
-                                        "value": "{{dlv - heeft_vraag}}"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "eventName",
-                        "value": "bewoner_lead"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "measurementIdOverride",
-                        "value": "G-VQL43876VN"
-                    }
-                ],
-                "firingTriggerId": [
-                    "27"
-                ],
-                "tagFiringOption": "ONCE_PER_EVENT",
-                "monitoringMetadata": {
-                    "type": "MAP"
-                },
-                "consentSettings": {
-                    "consentStatus": "NOT_SET"
-                }
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "tagId": "26",
-                "name": "Event - Zakelijk lead",
-                "type": "gaawe",
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "sendEcommerceData",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "eventName",
-                        "value": "zakelijk_lead"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "measurementIdOverride",
-                        "value": "G-VQL43876VN"
-                    }
-                ],
-                "firingTriggerId": [
-                    "26"
-                ],
-                "tagFiringOption": "ONCE_PER_EVENT",
-                "monitoringMetadata": {
-                    "type": "MAP"
-                },
-                "consentSettings": {
-                    "consentStatus": "NOT_SET"
-                }
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "tagId": "21",
+                "tagId": "31",
                 "name": "Event - Subsidiecheck start",
                 "type": "gaawe",
                 "parameter": [
@@ -577,6 +153,42 @@
                         "value": "G-VQL43876VN"
                     }
                 ],
+                "fingerprint": "1786201387885",
+                "firingTriggerId": [
+                    "28"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "tagId": "36",
+                "name": "Event - Klik contact",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "klik_contact"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-VQL43876VN"
+                    }
+                ],
+                "fingerprint": "1786201387885",
                 "firingTriggerId": [
                     "21"
                 ],
@@ -591,8 +203,8 @@
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "tagId": "22",
-                "name": "Event - Subsidiecheck stap",
+                "tagId": "42",
+                "name": "GA4 - Virtuele paginaweergave",
                 "type": "gaawe",
                 "parameter": [
                     {
@@ -610,12 +222,12 @@
                                     {
                                         "type": "TEMPLATE",
                                         "key": "parameter",
-                                        "value": "stap"
+                                        "value": "page_location"
                                     },
                                     {
                                         "type": "TEMPLATE",
                                         "key": "parameterValue",
-                                        "value": "{{dlv - stap}}"
+                                        "value": "{{js - page_location zonder adres}}"
                                     }
                                 ]
                             },
@@ -625,12 +237,12 @@
                                     {
                                         "type": "TEMPLATE",
                                         "key": "parameter",
-                                        "value": "stap_naam"
+                                        "value": "page_title"
                                     },
                                     {
                                         "type": "TEMPLATE",
                                         "key": "parameterValue",
-                                        "value": "{{dlv - stap_naam}}"
+                                        "value": "{{dlv - page_title}}"
                                     }
                                 ]
                             }
@@ -639,7 +251,7 @@
                     {
                         "type": "TEMPLATE",
                         "key": "eventName",
-                        "value": "subsidiecheck_stap"
+                        "value": "page_view"
                     },
                     {
                         "type": "TEMPLATE",
@@ -647,8 +259,9 @@
                         "value": "G-VQL43876VN"
                     }
                 ],
+                "fingerprint": "1786201387886",
                 "firingTriggerId": [
-                    "22"
+                    "41"
                 ],
                 "tagFiringOption": "ONCE_PER_EVENT",
                 "monitoringMetadata": {
@@ -661,8 +274,8 @@
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "tagId": "17",
-                "name": "Event - subsidiecheck ingevuld",
+                "tagId": "44",
+                "name": "Event - Nav klik",
                 "type": "gaawe",
                 "parameter": [
                     {
@@ -680,15 +293,71 @@
                                     {
                                         "type": "TEMPLATE",
                                         "key": "parameter",
-                                        "value": "aantal_regelingen"
+                                        "value": "nav_item"
                                     },
                                     {
                                         "type": "TEMPLATE",
                                         "key": "parameterValue",
-                                        "value": "{{dlv - aantal_regelingen}}"
+                                        "value": "{{Click Text}}"
                                     }
                                 ]
                             },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "nav_bestemming"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{Click URL}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "nav_klik"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-VQL43876VN"
+                    }
+                ],
+                "fingerprint": "1786201387886",
+                "firingTriggerId": [
+                    "43"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "tagId": "46",
+                "name": "Event - Subsidiecheck WhatsApp",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventSettingsTable",
+                        "list": [
                             {
                                 "type": "MAP",
                                 "map": [
@@ -710,27 +379,12 @@
                                     {
                                         "type": "TEMPLATE",
                                         "key": "parameter",
-                                        "value": "gemeente"
+                                        "value": "plek"
                                     },
                                     {
                                         "type": "TEMPLATE",
                                         "key": "parameterValue",
-                                        "value": "{{dlv - gemeente}}"
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "MAP",
-                                "map": [
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameter",
-                                        "value": "provincie"
-                                    },
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameterValue",
-                                        "value": "{{dlv - provincie}}"
+                                        "value": "{{dlv - plek}}"
                                     }
                                 ]
                             }
@@ -739,7 +393,7 @@
                     {
                         "type": "TEMPLATE",
                         "key": "eventName",
-                        "value": "subsidiecheck_voltooid"
+                        "value": "subsidiecheck_whatsapp"
                     },
                     {
                         "type": "TEMPLATE",
@@ -747,8 +401,9 @@
                         "value": "G-VQL43876VN"
                     }
                 ],
+                "fingerprint": "1786201387886",
                 "firingTriggerId": [
-                    "16"
+                    "39"
                 ],
                 "tagFiringOption": "ONCE_PER_EVENT",
                 "monitoringMetadata": {
@@ -761,7 +416,93 @@
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "tagId": "19",
+                "tagId": "51",
+                "name": "Event - Subsidiecheck vraag",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "bewonertype"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{dlv - bewonertype}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "wil_gebeld"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{dlv - wil_gebeld}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "bekend_contact"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{dlv - bekend_contact}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "subsidiecheck_vraag"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-VQL43876VN"
+                    }
+                ],
+                "fingerprint": "1786201387886",
+                "firingTriggerId": [
+                    "49"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "tagId": "55",
                 "name": "Event - subsidiecheck lead",
                 "type": "gaawe",
                 "parameter": [
@@ -847,6 +588,7 @@
                         "value": "G-VQL43876VN"
                     }
                 ],
+                "fingerprint": "1786201387886",
                 "firingTriggerId": [
                     "18"
                 ],
@@ -861,8 +603,43 @@
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "tagId": "23",
-                "name": "Event - Subsidiecheck vraag",
+                "tagId": "56",
+                "name": "Event - Mail klik",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "mail_klik"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-VQL43876VN"
+                    }
+                ],
+                "fingerprint": "1786201387886",
+                "firingTriggerId": [
+                    "47"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "tagId": "57",
+                "name": "Event - WhatsApp klik",
                 "type": "gaawe",
                 "parameter": [
                     {
@@ -880,42 +657,12 @@
                                     {
                                         "type": "TEMPLATE",
                                         "key": "parameter",
-                                        "value": "bewonertype"
+                                        "value": "plek"
                                     },
                                     {
                                         "type": "TEMPLATE",
                                         "key": "parameterValue",
-                                        "value": "{{dlv - bewonertype}}"
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "MAP",
-                                "map": [
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameter",
-                                        "value": "wil_gebeld"
-                                    },
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameterValue",
-                                        "value": "{{dlv - wil_gebeld}}"
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "MAP",
-                                "map": [
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameter",
-                                        "value": "bekend_contact"
-                                    },
-                                    {
-                                        "type": "TEMPLATE",
-                                        "key": "parameterValue",
-                                        "value": "{{dlv - bekend_contact}}"
+                                        "value": "{{dlv - plek}}"
                                     }
                                 ]
                             }
@@ -924,7 +671,7 @@
                     {
                         "type": "TEMPLATE",
                         "key": "eventName",
-                        "value": "subsidiecheck_vraag"
+                        "value": "whatsapp_klik"
                     },
                     {
                         "type": "TEMPLATE",
@@ -932,8 +679,9 @@
                         "value": "G-VQL43876VN"
                     }
                 ],
+                "fingerprint": "1786201387886",
                 "firingTriggerId": [
-                    "23"
+                    "34"
                 ],
                 "tagFiringOption": "ONCE_PER_EVENT",
                 "monitoringMetadata": {
@@ -946,7 +694,42 @@
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "tagId": "24",
+                "tagId": "59",
+                "name": "Event - Zakelijk lead",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "zakelijk_lead"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-VQL43876VN"
+                    }
+                ],
+                "fingerprint": "1786201387886",
+                "firingTriggerId": [
+                    "58"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "tagId": "60",
                 "name": "Event - Subsidiecheck vraag CTA",
                 "type": "gaawe",
                 "parameter": [
@@ -1002,8 +785,9 @@
                         "value": "G-VQL43876VN"
                     }
                 ],
+                "fingerprint": "1786201387887",
                 "firingTriggerId": [
-                    "24"
+                    "20"
                 ],
                 "tagFiringOption": "ONCE_PER_EVENT",
                 "monitoringMetadata": {
@@ -1016,8 +800,8 @@
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "tagId": "25",
-                "name": "Event - Subsidiecheck WhatsApp",
+                "tagId": "62",
+                "name": "Event - Bewoner lead",
                 "type": "gaawe",
                 "parameter": [
                     {
@@ -1029,6 +813,92 @@
                         "type": "LIST",
                         "key": "eventSettingsTable",
                         "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "heeft_adres"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{dlv - heeft_adres}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "heeft_vraag"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{dlv - heeft_vraag}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "bewoner_lead"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-VQL43876VN"
+                    }
+                ],
+                "fingerprint": "1786201387887",
+                "firingTriggerId": [
+                    "61"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "tagId": "63",
+                "name": "Event - subsidiecheck ingevuld",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "aantal_regelingen"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{dlv - aantal_regelingen}}"
+                                    }
+                                ]
+                            },
                             {
                                 "type": "MAP",
                                 "map": [
@@ -1050,12 +920,27 @@
                                     {
                                         "type": "TEMPLATE",
                                         "key": "parameter",
-                                        "value": "plek"
+                                        "value": "gemeente"
                                     },
                                     {
                                         "type": "TEMPLATE",
                                         "key": "parameterValue",
-                                        "value": "{{dlv - plek}}"
+                                        "value": "{{dlv - gemeente}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "provincie"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{dlv - provincie}}"
                                     }
                                 ]
                             }
@@ -1064,7 +949,7 @@
                     {
                         "type": "TEMPLATE",
                         "key": "eventName",
-                        "value": "subsidiecheck_whatsapp"
+                        "value": "subsidiecheck_voltooid"
                     },
                     {
                         "type": "TEMPLATE",
@@ -1072,8 +957,9 @@
                         "value": "G-VQL43876VN"
                     }
                 ],
+                "fingerprint": "1786201387887",
                 "firingTriggerId": [
-                    "25"
+                    "16"
                 ],
                 "tagFiringOption": "ONCE_PER_EVENT",
                 "monitoringMetadata": {
@@ -1086,7 +972,159 @@
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "tagId": "31",
+                "tagId": "64",
+                "name": "Event - Telefoon klik",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "telefoon_klik"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-VQL43876VN"
+                    }
+                ],
+                "fingerprint": "1786201387887",
+                "firingTriggerId": [
+                    "37"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "tagId": "65",
+                "name": "GA4 - Configuratie",
+                "type": "googtag",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "tagId",
+                        "value": "G-VQL43876VN"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "configSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "page_location"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{js - page_location zonder adres}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1786275228560",
+                "firingTriggerId": [
+                    "2147479573"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "tagId": "67",
+                "name": "Event - Subsidiecheck stap",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "stap"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{dlv - stap}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "stap_naam"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{dlv - stap_naam}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "subsidiecheck_stap"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-VQL43876VN"
+                    }
+                ],
+                "fingerprint": "1786274760113",
+                "firingTriggerId": [
+                    "24"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "tagId": "68",
                 "name": "Event - Subsidiecheck deel",
                 "type": "gaawe",
                 "parameter": [
@@ -1127,8 +1165,9 @@
                         "value": "G-VQL43876VN"
                     }
                 ],
+                "fingerprint": "1786274760113",
                 "firingTriggerId": [
-                    "31"
+                    "66"
                 ],
                 "tagFiringOption": "ONCE_PER_EVENT",
                 "monitoringMetadata": {
@@ -1140,88 +1179,6 @@
             }
         ],
         "trigger": [
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "triggerId": "9",
-                "name": "Klik contactlink",
-                "type": "LINK_CLICK",
-                "filter": [
-                    {
-                        "type": "CONTAINS",
-                        "parameter": [
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg0",
-                                "value": "{{Click URL}}"
-                            },
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg1",
-                                "value": "/contact"
-                            }
-                        ]
-                    }
-                ],
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "waitForTags",
-                        "value": "false"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "checkValidation",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "waitForTagsTimeout",
-                        "value": "2000"
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "triggerId": "11",
-                "name": "Klik navigatielink",
-                "type": "LINK_CLICK",
-                "filter": [
-                    {
-                        "type": "CSS_SELECTOR",
-                        "parameter": [
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg0",
-                                "value": "{{Click Element}}"
-                            },
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg1",
-                                "value": "header a"
-                            }
-                        ]
-                    }
-                ],
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "waitForTags",
-                        "value": "false"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "checkValidation",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "waitForTagsTimeout",
-                        "value": "2000"
-                    }
-                ]
-            },
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
@@ -1245,6 +1202,7 @@
                         ]
                     }
                 ],
+                "fingerprint": "1778236548877",
                 "parameter": [
                     {
                         "type": "TEMPLATE",
@@ -1276,112 +1234,6 @@
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "triggerId": "29",
-                "name": "Klik telefoonlink",
-                "type": "LINK_CLICK",
-                "filter": [
-                    {
-                        "type": "STARTS_WITH",
-                        "parameter": [
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg0",
-                                "value": "{{Click URL}}"
-                            },
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg1",
-                                "value": "tel:"
-                            }
-                        ]
-                    }
-                ],
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "waitForTags",
-                        "value": "false"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "checkValidation",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "waitForTagsTimeout",
-                        "value": "2000"
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "triggerId": "30",
-                "name": "Klik e-maillink",
-                "type": "LINK_CLICK",
-                "filter": [
-                    {
-                        "type": "STARTS_WITH",
-                        "parameter": [
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg0",
-                                "value": "{{Click URL}}"
-                            },
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg1",
-                                "value": "mailto:"
-                            }
-                        ]
-                    }
-                ],
-                "parameter": [
-                    {
-                        "type": "BOOLEAN",
-                        "key": "waitForTags",
-                        "value": "false"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "checkValidation",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "waitForTagsTimeout",
-                        "value": "2000"
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "triggerId": "20",
-                "name": "Event | virtual_page_view",
-                "type": "CUSTOM_EVENT",
-                "customEventFilter": [
-                    {
-                        "type": "EQUALS",
-                        "parameter": [
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg0",
-                                "value": "{{_event}}"
-                            },
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg1",
-                                "value": "virtual_page_view"
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
                 "triggerId": "16",
                 "name": "Event | subsidiecheck_voltooid",
                 "type": "CUSTOM_EVENT",
@@ -1401,7 +1253,8 @@
                             }
                         ]
                     }
-                ]
+                ],
+                "fingerprint": "1784626322465"
             },
             {
                 "accountId": "6354173500",
@@ -1425,84 +1278,13 @@
                             }
                         ]
                     }
-                ]
+                ],
+                "fingerprint": "1784626384214"
             },
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "triggerId": "21",
-                "name": "Event | subsidiecheck_start",
-                "type": "CUSTOM_EVENT",
-                "customEventFilter": [
-                    {
-                        "type": "EQUALS",
-                        "parameter": [
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg0",
-                                "value": "{{_event}}"
-                            },
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg1",
-                                "value": "subsidiecheck_start"
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "triggerId": "22",
-                "name": "Event | subsidiecheck_stap",
-                "type": "CUSTOM_EVENT",
-                "customEventFilter": [
-                    {
-                        "type": "EQUALS",
-                        "parameter": [
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg0",
-                                "value": "{{_event}}"
-                            },
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg1",
-                                "value": "subsidiecheck_stap"
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "triggerId": "23",
-                "name": "Event | subsidiecheck_vraag",
-                "type": "CUSTOM_EVENT",
-                "customEventFilter": [
-                    {
-                        "type": "EQUALS",
-                        "parameter": [
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg0",
-                                "value": "{{_event}}"
-                            },
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg1",
-                                "value": "subsidiecheck_vraag"
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "triggerId": "24",
+                "triggerId": "20",
                 "name": "Event | subsidiecheck_vraag_cta",
                 "type": "CUSTOM_EVENT",
                 "customEventFilter": [
@@ -1521,13 +1303,51 @@
                             }
                         ]
                     }
-                ]
+                ],
+                "fingerprint": "1786201387884"
             },
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "triggerId": "25",
-                "name": "Event | subsidiecheck_whatsapp",
+                "triggerId": "21",
+                "name": "Klik contactlink",
+                "type": "LINK_CLICK",
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Click URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "/contact"
+                            }
+                        ]
+                    }
+                ],
+                "waitForTags": {
+                    "type": "TEMPLATE"
+                },
+                "checkValidation": {
+                    "type": "TEMPLATE"
+                },
+                "waitForTagsTimeout": {
+                    "type": "TEMPLATE"
+                },
+                "uniqueTriggerId": {
+                    "type": "TEMPLATE"
+                },
+                "fingerprint": "1786201387884"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "triggerId": "24",
+                "name": "Event | subsidiecheck_stap",
                 "type": "CUSTOM_EVENT",
                 "customEventFilter": [
                     {
@@ -1541,64 +1361,42 @@
                             {
                                 "type": "TEMPLATE",
                                 "key": "arg1",
-                                "value": "subsidiecheck_whatsapp"
+                                "value": "subsidiecheck_stap"
                             }
                         ]
                     }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "triggerId": "26",
-                "name": "Event | zakelijk_lead",
-                "type": "CUSTOM_EVENT",
-                "customEventFilter": [
-                    {
-                        "type": "EQUALS",
-                        "parameter": [
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg0",
-                                "value": "{{_event}}"
-                            },
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg1",
-                                "value": "zakelijk_lead"
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "triggerId": "27",
-                "name": "Event | bewoner_lead",
-                "type": "CUSTOM_EVENT",
-                "customEventFilter": [
-                    {
-                        "type": "EQUALS",
-                        "parameter": [
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg0",
-                                "value": "{{_event}}"
-                            },
-                            {
-                                "type": "TEMPLATE",
-                                "key": "arg1",
-                                "value": "bewoner_lead"
-                            }
-                        ]
-                    }
-                ]
+                ],
+                "fingerprint": "1786201387884"
             },
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
                 "triggerId": "28",
+                "name": "Event | subsidiecheck_start",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "subsidiecheck_start"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1786201387885"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "triggerId": "34",
                 "name": "Event | whatsapp_klik",
                 "type": "CUSTOM_EVENT",
                 "customEventFilter": [
@@ -1617,12 +1415,249 @@
                             }
                         ]
                     }
-                ]
+                ],
+                "fingerprint": "1786201387885"
             },
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "triggerId": "31",
+                "triggerId": "37",
+                "name": "Klik telefoonlink",
+                "type": "LINK_CLICK",
+                "filter": [
+                    {
+                        "type": "STARTS_WITH",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Click URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "tel:"
+                            }
+                        ]
+                    }
+                ],
+                "waitForTags": {
+                    "type": "TEMPLATE"
+                },
+                "checkValidation": {
+                    "type": "TEMPLATE"
+                },
+                "waitForTagsTimeout": {
+                    "type": "TEMPLATE"
+                },
+                "uniqueTriggerId": {
+                    "type": "TEMPLATE"
+                },
+                "fingerprint": "1786201387885"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "triggerId": "39",
+                "name": "Event | subsidiecheck_whatsapp",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "subsidiecheck_whatsapp"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1786201387885"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "triggerId": "41",
+                "name": "Event | virtual_page_view",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "virtual_page_view"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1786201387885"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "triggerId": "43",
+                "name": "Klik navigatielink",
+                "type": "LINK_CLICK",
+                "filter": [
+                    {
+                        "type": "CSS_SELECTOR",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Click Element}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "header a"
+                            }
+                        ]
+                    }
+                ],
+                "waitForTags": {
+                    "type": "TEMPLATE"
+                },
+                "checkValidation": {
+                    "type": "TEMPLATE"
+                },
+                "waitForTagsTimeout": {
+                    "type": "TEMPLATE"
+                },
+                "uniqueTriggerId": {
+                    "type": "TEMPLATE"
+                },
+                "fingerprint": "1786201387886"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "triggerId": "47",
+                "name": "Klik e-maillink",
+                "type": "LINK_CLICK",
+                "filter": [
+                    {
+                        "type": "STARTS_WITH",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Click URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "mailto:"
+                            }
+                        ]
+                    }
+                ],
+                "waitForTags": {
+                    "type": "TEMPLATE"
+                },
+                "checkValidation": {
+                    "type": "TEMPLATE"
+                },
+                "waitForTagsTimeout": {
+                    "type": "TEMPLATE"
+                },
+                "uniqueTriggerId": {
+                    "type": "TEMPLATE"
+                },
+                "fingerprint": "1786201387886"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "triggerId": "49",
+                "name": "Event | subsidiecheck_vraag",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "subsidiecheck_vraag"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1786201387886"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "triggerId": "58",
+                "name": "Event | zakelijk_lead",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "zakelijk_lead"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1786201387886"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "triggerId": "61",
+                "name": "Event | bewoner_lead",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "bewoner_lead"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1786201387887"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "triggerId": "66",
                 "name": "Event | subsidiecheck_deel",
                 "type": "CUSTOM_EVENT",
                 "customEventFilter": [
@@ -1641,14 +1676,80 @@
                             }
                         ]
                     }
-                ]
+                ],
+                "fingerprint": "1786274760113"
             }
         ],
         "variable": [
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "variableId": "1",
+                "variableId": "22",
+                "name": "dlv - stap_naam",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "stap_naam"
+                    }
+                ],
+                "fingerprint": "1786201387884"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "variableId": "25",
+                "name": "dlv - stap",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "stap"
+                    }
+                ],
+                "fingerprint": "1786201387884"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "variableId": "27",
+                "name": "js - page_location zonder adres",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function() {\n  // Haalt het adres van de bezoeker uit de URL voordat die naar GA4 gaat.\n  // Op /subsidiecheck staat de volledige invoer in de querystring\n  // (?pc=9711AB&hn=5&tv=a of ?str=…&pl=… bij een handmatig adres). Dat is\n  // een persoonsgegeven en hoort niet in analytics.\n  //\n  // De overige parameters blijven staan, zodat utm-attributie blijft werken.\n  var ADRES_PARAMS = ['pc', 'hn', 'tv', 'str', 'pl'];\n  try {\n    var url = new URL(String(window.location.href));\n    for (var i = 0; i < ADRES_PARAMS.length; i++) {\n      url.searchParams.delete(ADRES_PARAMS[i]);\n    }\n    return url.toString();\n  } catch (e) {\n    // Kan de URL niet geparsed worden, dan liever de hele querystring kwijt\n    // dan het risico dat er een adres doorheen glipt.\n    return String(window.location.href).split('?')[0];\n  }\n}"
+                    }
+                ],
+                "fingerprint": "1786201387885"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "variableId": "29",
                 "name": "dlv - gemeente",
                 "type": "v",
                 "parameter": [
@@ -1667,12 +1768,13 @@
                         "key": "name",
                         "value": "gemeente"
                     }
-                ]
+                ],
+                "fingerprint": "1786201387885"
             },
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "variableId": "2",
+                "variableId": "30",
                 "name": "dlv - provincie",
                 "type": "v",
                 "parameter": [
@@ -1691,60 +1793,13 @@
                         "key": "name",
                         "value": "provincie"
                     }
-                ]
+                ],
+                "fingerprint": "1786201387885"
             },
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "variableId": "3",
-                "name": "dlv - bewonertype",
-                "type": "v",
-                "parameter": [
-                    {
-                        "type": "INTEGER",
-                        "key": "dataLayerVersion",
-                        "value": "2"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "setDefaultValue",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "name",
-                        "value": "bewonertype"
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "variableId": "4",
-                "name": "dlv - aantal_regelingen",
-                "type": "v",
-                "parameter": [
-                    {
-                        "type": "INTEGER",
-                        "key": "dataLayerVersion",
-                        "value": "2"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "setDefaultValue",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "name",
-                        "value": "aantal_regelingen"
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "variableId": "5",
+                "variableId": "32",
                 "name": "dlv - hulpvraag",
                 "type": "v",
                 "parameter": [
@@ -1763,12 +1818,213 @@
                         "key": "name",
                         "value": "hulpvraag"
                     }
-                ]
+                ],
+                "fingerprint": "1786201387885"
             },
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "variableId": "6",
+                "variableId": "33",
+                "name": "dlv - heeft_vraag",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "heeft_vraag"
+                    }
+                ],
+                "fingerprint": "1786201387885"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "variableId": "35",
+                "name": "dlv - aantal_regelingen",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "aantal_regelingen"
+                    }
+                ],
+                "fingerprint": "1786201387885"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "variableId": "38",
+                "name": "dlv - plek",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "plek"
+                    }
+                ],
+                "fingerprint": "1786201387885"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "variableId": "40",
+                "name": "dlv - page_title",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "page_title"
+                    }
+                ],
+                "fingerprint": "1786201387885"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "variableId": "45",
+                "name": "dlv - bewonertype",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "bewonertype"
+                    }
+                ],
+                "fingerprint": "1786201387886"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "variableId": "48",
+                "name": "dlv - bekend_contact",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "bekend_contact"
+                    }
+                ],
+                "fingerprint": "1786201387886"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "variableId": "50",
+                "name": "dlv - wil_gebeld",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "wil_gebeld"
+                    }
+                ],
+                "fingerprint": "1786201387886"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "variableId": "53",
+                "name": "dlv - heeft_adres",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "heeft_adres"
+                    }
+                ],
+                "fingerprint": "1786201387886"
+            },
+            {
+                "accountId": "6354173500",
+                "containerId": "251808898",
+                "variableId": "54",
                 "name": "dlv - bron_fout",
                 "type": "v",
                 "parameter": [
@@ -1792,213 +2048,8 @@
                         "key": "name",
                         "value": "bron_fout"
                     }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "variableId": "7",
-                "name": "dlv - plek",
-                "type": "v",
-                "parameter": [
-                    {
-                        "type": "INTEGER",
-                        "key": "dataLayerVersion",
-                        "value": "2"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "setDefaultValue",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "name",
-                        "value": "plek"
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "variableId": "8",
-                "name": "dlv - wil_gebeld",
-                "type": "v",
-                "parameter": [
-                    {
-                        "type": "INTEGER",
-                        "key": "dataLayerVersion",
-                        "value": "2"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "setDefaultValue",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "name",
-                        "value": "wil_gebeld"
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "variableId": "9",
-                "name": "dlv - bekend_contact",
-                "type": "v",
-                "parameter": [
-                    {
-                        "type": "INTEGER",
-                        "key": "dataLayerVersion",
-                        "value": "2"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "setDefaultValue",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "name",
-                        "value": "bekend_contact"
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "variableId": "10",
-                "name": "dlv - stap",
-                "type": "v",
-                "parameter": [
-                    {
-                        "type": "INTEGER",
-                        "key": "dataLayerVersion",
-                        "value": "2"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "setDefaultValue",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "name",
-                        "value": "stap"
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "variableId": "11",
-                "name": "dlv - stap_naam",
-                "type": "v",
-                "parameter": [
-                    {
-                        "type": "INTEGER",
-                        "key": "dataLayerVersion",
-                        "value": "2"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "setDefaultValue",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "name",
-                        "value": "stap_naam"
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "variableId": "13",
-                "name": "dlv - page_title",
-                "type": "v",
-                "parameter": [
-                    {
-                        "type": "INTEGER",
-                        "key": "dataLayerVersion",
-                        "value": "2"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "setDefaultValue",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "name",
-                        "value": "page_title"
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "variableId": "15",
-                "name": "dlv - heeft_adres",
-                "type": "v",
-                "parameter": [
-                    {
-                        "type": "INTEGER",
-                        "key": "dataLayerVersion",
-                        "value": "2"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "setDefaultValue",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "name",
-                        "value": "heeft_adres"
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "variableId": "16",
-                "name": "dlv - heeft_vraag",
-                "type": "v",
-                "parameter": [
-                    {
-                        "type": "INTEGER",
-                        "key": "dataLayerVersion",
-                        "value": "2"
-                    },
-                    {
-                        "type": "BOOLEAN",
-                        "key": "setDefaultValue",
-                        "value": "false"
-                    },
-                    {
-                        "type": "TEMPLATE",
-                        "key": "name",
-                        "value": "heeft_vraag"
-                    }
-                ]
-            },
-            {
-                "accountId": "6354173500",
-                "containerId": "251808898",
-                "variableId": "17",
-                "name": "js - page_location zonder adres",
-                "type": "jsm",
-                "parameter": [
-                    {
-                        "type": "TEMPLATE",
-                        "key": "javascript",
-                        "value": "function() {\n  // Haalt het adres van de bezoeker uit de URL voordat die naar GA4 gaat.\n  // Op /subsidiecheck staat de volledige invoer in de querystring\n  // (?pc=9711AB&hn=5&tv=a of ?str=\u2026&pl=\u2026 bij een handmatig adres). Dat is\n  // een persoonsgegeven en hoort niet in analytics.\n  //\n  // De overige parameters blijven staan, zodat utm-attributie blijft werken.\n  var ADRES_PARAMS = ['pc', 'hn', 'tv', 'str', 'pl'];\n  try {\n    var url = new URL(String(window.location.href));\n    for (var i = 0; i < ADRES_PARAMS.length; i++) {\n      url.searchParams.delete(ADRES_PARAMS[i]);\n    }\n    return url.toString();\n  } catch (e) {\n    // Kan de URL niet geparsed worden, dan liever de hele querystring kwijt\n    // dan het risico dat er een adres doorheen glipt.\n    return String(window.location.href).split('?')[0];\n  }\n}"
-                    }
-                ]
+                ],
+                "fingerprint": "1786201387886"
             }
         ],
         "builtInVariable": [
@@ -2053,14 +2104,14 @@
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "type": "CLICK_TEXT",
-                "name": "Click Text"
+                "type": "CLICK_URL",
+                "name": "Click URL"
             },
             {
                 "accountId": "6354173500",
                 "containerId": "251808898",
-                "type": "CLICK_URL",
-                "name": "Click URL"
+                "type": "CLICK_TEXT",
+                "name": "Click Text"
             },
             {
                 "accountId": "6354173500",
@@ -2074,6 +2125,8 @@
                 "type": "SCROLL_DEPTH_UNITS",
                 "name": "Scroll Depth Units"
             }
-        ]
+        ],
+        "fingerprint": "1786275242842",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6354173500/containers/251808898/versions/8?apiLink=version"
     }
 }
