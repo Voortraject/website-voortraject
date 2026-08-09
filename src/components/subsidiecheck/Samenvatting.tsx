@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { Mail } from "lucide-react";
 
 import {
   type Bewonertype,
@@ -33,11 +32,6 @@ interface SamenvattingProps {
   energielabel?: EnergielabelData | null;
   /** Label wordt nog opgehaald → toon een laadplaatshouder i.p.v. de "geen label"-staat. */
   energielabelBezig?: boolean;
-  /** Scrollt naar het mailformulier onder de lijst. */
-  onMailKlik: () => void;
-  /** Toon de "mail mij dit overzicht"-knop (uit bij de gegevens-poort: die
-      gegevens zijn dan al binnen). */
-  toonMailKnop?: boolean;
   /** Springt naar het vraagblok mét de labelaanvraag al ingevuld. */
   onLabelAanvraag: () => void;
 }
@@ -62,8 +56,6 @@ export const Samenvatting = ({
   bedragen,
   energielabel,
   energielabelBezig,
-  onMailKlik,
-  toonMailKnop = true,
   onLabelAanvraag,
 }: SamenvattingProps) => {
   const { totaal, subsidies, leningen } = data;
@@ -111,19 +103,10 @@ export const Samenvatting = ({
         </p>
       )}
 
-      {/* De contactroute ("Ik heb een vraag") staat in het woningpaneel ernaast, in
-          de ruimte die daar onder de beelden tóch overblijft. Hier nam die knop te
-          veel aandacht weg van de uitkomst zelf. */}
-      {toonMailKnop && (
-        <button
-          type="button"
-          onClick={onMailKlik}
-          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full border border-accent bg-accent/15 px-5 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:bg-accent/25 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          <Mail size={16} strokeWidth={2} aria-hidden="true" />
-          Mail mij dit overzicht
-        </button>
-      )}
+      {/* Hier stond "Mail mij dit overzicht". Die knop hoorde bij de flow zonder
+          gegevens-poort; nu komt het overzicht sowieso per mail binnen, dus zou
+          hij iets aanbieden wat al gebeurd is. De contactroute staat in het
+          woningpaneel ernaast, in de ruimte die daar onder de beelden overblijft. */}
 
       {/* Verhoudingsbalk: subsidies vs. leningen in één oogopslag. */}
       {heeftVerdeling && (

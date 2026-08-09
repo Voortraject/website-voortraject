@@ -40,9 +40,9 @@ stilzwijgend een tag in de container. Werk dit bestand dus bij in dezelfde PR al
 
 | Event | Wanneer | Parameters | Bron |
 |---|---|---|---|
-| `subsidiecheck_stap` | Elke stap die de bezoeker te zien krijgt, ook stap 1 en ook bij binnenkomst halverwege | `stap` (1-3), `stap_naam`, `poort` (1/0) | [`Subsidiecheck.tsx`](../src/pages/Subsidiecheck.tsx) |
+| `subsidiecheck_stap` | Elke stap die de bezoeker te zien krijgt, ook stap 1 en ook bij binnenkomst halverwege | `stap` (1-3), `stap_naam` | [`Subsidiecheck.tsx`](../src/pages/Subsidiecheck.tsx) |
 | `subsidiecheck_start` | Adres bevestigd, stap 1 afgerond | `gemeente`, `provincie` | [`StapAdres.tsx`](../src/components/subsidiecheck/StapAdres.tsx) |
-| `subsidiecheck_lead` | Gegevens ingevuld bij de poort, of overzicht per mail aangevraagd | `bewonertype`, `aantal_regelingen`, `hulpvraag`, `bron_fout` (1/0, alleen bij een bronstoring) | [`StapGegevens.tsx`](../src/components/subsidiecheck/StapGegevens.tsx), [`MailOverzicht.tsx`](../src/components/subsidiecheck/MailOverzicht.tsx) |
+| `subsidiecheck_lead` | Gegevens ingevuld bij de poort | `bewonertype`, `aantal_regelingen`, `hulpvraag`, `bron_fout` (1/0, alleen bij een bronstoring) | [`StapGegevens.tsx`](../src/components/subsidiecheck/StapGegevens.tsx) |
 | `subsidiecheck_voltooid` | Resultaat succesvol geladen | `aantal_regelingen`, `bewonertype`, `gemeente`, `provincie` | [`StapResultaat.tsx`](../src/components/subsidiecheck/StapResultaat.tsx) |
 | `subsidiecheck_vraag_cta` | Klik op een knop die naar het vraagblok springt | `bewonertype`, `plek` (`woningpaneel` = "Ik heb een vraag", `energielabel` = "Label aanvragen", `eerste_stap` = de bouwjaarvraag onder de conclusie) | [`StapResultaat.tsx`](../src/components/subsidiecheck/StapResultaat.tsx) |
 | `subsidiecheck_vraag` | Vraag daadwerkelijk verstuurd | `bewonertype`, `bekend_contact` (1/0) | [`DirectContact.tsx`](../src/components/subsidiecheck/DirectContact.tsx) |
@@ -60,10 +60,10 @@ Let op het verschil tussen `subsidiecheck_stap` en `subsidiecheck_start`. Het ee
 stap getóónd is (de noemer), het tweede dat stap 1 is afgerond (de teller). Zonder allebei valt
 uitval niet te berekenen.
 
-`subsidiecheck_lead` komt uit twee plekken met een verschillende betekenis. Bij de gegevens-poort
-(`StapGegevens`) is het de toegangspoort vóór het resultaat; bij `MailOverzicht` is het een
-mailverzoek ná het resultaat. Alleen de eerste stuurt `bewonertype` en `hulpvraag` mee, dus daaraan
-zijn ze in GA4 te onderscheiden.
+`subsidiecheck_lead` kwam eerder uit twee plekken: de gegevens-poort en een los "mail mij dit
+overzicht"-blok ná het resultaat. Dat tweede blok is weg, samen met de schakelaar waarmee de poort
+uit kon. Elke lead uit de check komt nu dus uit de poort, en het `poort`-veld op
+`subsidiecheck_stap` is daarmee vervallen (het stond in élke rij op 1).
 
 ### Reikwijdte van `virtual_page_view`
 

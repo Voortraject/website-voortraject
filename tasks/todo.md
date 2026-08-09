@@ -50,11 +50,32 @@ Na de eerste ronde nog drie correcties van de opdrachtgever:
       check, zonder `pc`, `hn`, `tv`, `str` of `pl`. Die garantie stond eerst alleen in de
       copy die nu weg is.
 
-**Let op bij het testen op localhost.** Om het resultaat te kunnen bekijken zonder de poort
-te doorlopen is `SUBSIDIECHECK_GEGEVENS_POORT` tijdens het werk even op `false` gezet. Wie in
-dat tijdvak op de dev-server keek, kwam zonder gegevens bij het resultaat. De vlag staat in
-alle commits op `true`; productie is nooit anders geweest. Beter alternatief voor de volgende
-keer: `sessionStorage.sc_poort_ontgrendeld = "1"` in de browserconsole, dat raakt de code niet.
+### De poort dicht, structureel (opdracht: "nooit iemand zonder gegevens bij het resultaat")
+
+Aanleiding: de opdrachtgever kwam in een incognitovenster zonder gegevens bij het resultaat.
+Oorzaak was niet de code op `main` maar de dev-server: `SUBSIDIECHECK_GEGEVENS_POORT` stond
+lokaal even op `false` om te kunnen screenshotten. Zie `tasks/lessons.md`. De opdracht daarna
+was breder: zorg dat dit niet kán. Twee dingen weggehaald die het mogelijk maakten.
+
+- [x] **De schakelaar is weg.** `SUBSIDIECHECK_GEGEVENS_POORT` bestaat niet meer; de poort is
+      geen tussenoplossing maar hoe de check werkt. Er is dus geen stand van de code waarin
+      het overzicht zonder gegevens verschijnt. Daarmee vervielen ook de tweestapsflow, het
+      blok "Ontvang dit overzicht in je mail" (`MailOverzicht`, verwijderd), de knop "Mail mij
+      dit overzicht" in de samenvatting en de props `verbergMail` / `alGezocht`.
+- [x] **De ontsnappingssleutel is weg.** De poort ging open bij
+      `sessionStorage.sc_poort_ontgrendeld === "1"`: één regel in de console van elke browser.
+      Nu telt alleen het bewaarde contact zelf (`sc_contact`, met een geldig e-mailadres én een
+      voornaam — zie `contactOpslag`). Wie dat wil nabootsen vult die gegevens alsnog in.
+- [x] `src/test/poortDicht.test.tsx` legt het vast: gedeelde link toont de gegevensstap, de
+      oude vlag doet niets, halve of onzinnige gegevens tellen niet, en een compleet contact
+      mag door.
+- [x] Meting: het veld `poort` op `subsidiecheck_stap` is vervallen (stond in elke rij op 1).
+      Variabele `dlv - poort` en de tagparameter zijn uit de container gehaald.
+
+**Wat dit niet is.** Een bezoeker die zelf een `sc_contact` in de opslag zet, komt er nog
+steeds door: het overzicht wordt client-side opgebouwd uit een publieke bron. Echt afdwingen
+vraagt een server-side sleutel op de regelingen-endpoint. Wat hier verdwenen is, is de
+onbedoelde route: een verkeerd gezette vlag, en een sleutel die letterlijk "1" was.
 
 **Gemeten in een headless Chrome, met Arial (het lettertype dat mailclients pakken als Inter
 ontbreekt — de ongunstigste variant):** de twee knoppen staan op één regel bij een

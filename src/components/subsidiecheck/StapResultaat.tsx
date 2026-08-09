@@ -25,7 +25,6 @@ import { DirectContact } from "./DirectContact";
 import { EersteStap } from "./EersteStap";
 import { GeenRegelingen } from "./GeenRegelingen";
 import { kanOverzichtMailen } from "./leadFormulier";
-import { MailOverzicht } from "./MailOverzicht";
 import { MobieleActiebalk } from "./MobieleActiebalk";
 import { Samenvatting } from "./Samenvatting";
 import { SubsidieCard } from "./SubsidieCard";
@@ -36,24 +35,12 @@ import { ZoekKaart } from "./Zoeksequentie";
 interface StapResultaatProps {
   input: SubsidieCheckInput;
   adres: PdokAdres;
-  /** Met de gegevens-poort zijn naam/e-mail/telefoon al binnen: dan geen
-      "mail mij dit overzicht"-blok (en -knop) meer op het resultaat. */
-  verbergMail?: boolean;
-  /** De zoeksequentie draaide al in de poort. Hem hier herhalen zou de bezoeker
-      een tweede keer laten wachten op iets dat al in de cache staat. */
-  alGezocht?: boolean;
   /** De bezoeker komt hier net vandaan de poort (niet via een herlaad of een
       gedeelde link). Dan tonen we het aankomstmoment. */
   netBinnen?: boolean;
 }
 
-export const StapResultaat = ({
-  input,
-  adres,
-  verbergMail = false,
-  alGezocht = false,
-  netBinnen = false,
-}: StapResultaatProps) => {
+export const StapResultaat = ({ input, adres, netBinnen = false }: StapResultaatProps) => {
   const { data: regelingen, isPending, isError, refetch } = useSubsidieCheck(input);
   const { data: woning, isPending: woningBezig } = useWoningInfo(input.postcode, input.huisnummer, input.toevoeging);
   // Pand + 3D-model op topniveau (dus vóór de vroege returns): ze starten meteen
@@ -68,9 +55,10 @@ export const StapResultaat = ({
   const { data: modelVol } = usePand3d(pand?.pandId, adres.centroideRd);
   const model = modelVol ?? modelSubject ?? null;
   const modelBezig = !model && !!pand?.pandId && subjectBezig;
-  // Met de poort aan is er hier niets meer te zoeken: dat gebeurde al op de
-  // vorige stap en het antwoord staat in de cache.
-  const fase = useLaadsequentie(!isPending, alGezocht);
+  // Hier valt niets meer te zoeken: dat gebeurde al zichtbaar op de poortstap en
+  // het antwoord staat in de cache. De sequentie hier herhalen zou de bezoeker
+  // een tweede keer laten wachten op iets dat er al is.
+  const fase = useLaadsequentie(!isPending, true);
   const laden = isPending || fase < 3;
 
   // Delen zit nu in DeelDeCheck onderaan de pagina: dat deelt de kále tool, niet
@@ -110,14 +98,6 @@ export const StapResultaat = ({
     setVoorstel((huidig) => ({ tekst, n: (huidig?.n ?? 0) + 1 }));
     pushGtmEvent("subsidiecheck_vraag_cta", { bewonertype: input.bewonertype, plek });
     scrollNaarVraag();
-  };
-
-  // Vanuit de samenvatting (bovenaan) naar het mailformulier springen.
-  const conversieRef = useRef<HTMLDivElement>(null);
-  const scrollNaarMail = () => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    conversieRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
-    window.setTimeout(() => document.getElementById("sc-mail-email")?.focus({ preventScroll: true }), reduced ? 0 : 450);
   };
 
   const groepen = useMemo(() => groepeerPerNiveau(regelingen ?? []), [regelingen]);
@@ -290,8 +270,6 @@ export const StapResultaat = ({
           bedragen={bedragen}
           energielabel={woning?.energielabel ?? null}
           energielabelBezig={woningBezig}
-          onMailKlik={scrollNaarMail}
-          toonMailKnop={!verbergMail}
           // "Label aanvragen" stuurde de bezoeker naar /contact, waar hij alles
           // opnieuw moest invullen wat hij hier al gaf. Nu springt hij naar het
           // vraagblok onderaan met de aanvraag al ingevuld: alleen nog versturen.
@@ -357,28 +335,16 @@ export const StapResultaat = ({
         Indicatief overzicht op basis van je postcode. Aan dit overzicht kunnen geen rechten worden ontleend.
       </p>
 
-      {/* Zachte mail-route: met de gegevens-poort (verbergMail) zijn deze gegevens
-          al vooraf opgehaald, dan slaan we dit blok over. */}
-      {!verbergMail && (
-        <div
-          ref={conversieRef}
-          className="mt-10 scroll-mt-24 rounded-xl border border-border p-6 md:p-8"
-          style={{ backgroundColor: "var(--card-soft)" }}
-        >
-          <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
-            Ontvang dit overzicht in je mail
-          </h3>
-          <div className="mt-5">
-            <MailOverzicht input={input} adres={adres} regelingen={regelingen ?? []} />
-          </div>
-        </div>
-      )}
-
       {/* De contactstap: één veld voor wie door de poort kwam, plus WhatsApp en
           bellen voor wie liever niet typt. Verving de losse "Plan een gratis
           gesprek"-link naar /contact, waar de bezoeker álles opnieuw invulde wat
-          hij hier al had gegeven. */}
-      <div className={verbergMail ? "mt-10" : "mt-6"}>
+          hij hier al had gegeven.
+
+          Hierboven stond ook nog "Ontvang dit overzicht in je mail". Dat blok
+          vroeg naam, e-mail en telefoon — precies wat de poort een stap eerder al
+          heeft opgehaald. Het bestond alleen voor de flow zónder poort, en die
+          bestaat niet meer. */}
+      <div className="mt-10">
         <DirectContact input={input} adres={adres} overzichtUrl={overzichtUrl} voorstel={voorstel} />
       </div>
 

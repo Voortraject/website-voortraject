@@ -21,8 +21,11 @@ vi.mock("@/integrations/supabase/external-client", () => ({
 
 vi.mock("@/lib/gtm", () => ({ pushGtmEvent: vi.fn() }));
 
-import { MailOverzicht } from "@/components/subsidiecheck/MailOverzicht";
-import { bouwSubsidiecheckInteresses } from "@/components/subsidiecheck/leadFormulier";
+import {
+  bouwSubsidiecheckInteresses,
+  valideerContact,
+  verstuurSubsidiecheckLead,
+} from "@/components/subsidiecheck/leadFormulier";
 
 const adres: PdokAdres = {
   straatnaam: "Grote Markt",
@@ -60,8 +63,20 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-const vul = (veld: HTMLElement, waarde: string) => {
-  fireEvent.change(veld, { target: { value: waarde } });
+// De insert wordt nu rechtstreeks aangeroepen in plaats van via een formulier.
+// Het formulier dat deze test eerder gebruikte ("mail mij dit overzicht") hoorde
+// bij de flow zonder gegevens-poort en bestaat niet meer; wat hier getest wordt
+// is de kolom-afbeelding, en die zit in leadFormulier.
+const contact = () => {
+  const uitkomst = valideerContact({
+    voornaam: "Jan",
+    tussenvoegsel: "",
+    achternaam: "de Vries",
+    email: "jan@example.nl",
+    telefoon: "0612345678",
+  });
+  if ("fout" in uitkomst) throw new Error(uitkomst.fout);
+  return uitkomst.waarden;
 };
 
 describe("bouwSubsidiecheckInteresses", () => {
@@ -83,15 +98,8 @@ describe("bouwSubsidiecheckInteresses", () => {
 
 describe("subsidiecheck-lead", () => {
   it("schrijft de interesses naar de eigen kolom en laat notities leeg", async () => {
-    metQuery(<MailOverzicht input={input} adres={adres} regelingen={[]} />);
-    vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
-    vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
-    vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
-    vul(screen.getByPlaceholderText(/Je telefoonnummer/), "0612345678");
-    nu += 5_000;
-    fireEvent.click(screen.getByRole("button", { name: /Mail mij dit overzicht/ }));
+    await verstuurSubsidiecheckLead({ waarden: contact(), input, adres, regelingen: [] });
 
-    await screen.findByText(/Dankjewel!/);
     const [tabel, rij] = insertMock.mock.calls[0];
     expect(tabel).toBe("leads_bewoners");
     expect(rij.subsidiecheck_interesses).toBe("Isolatie & glas, Warmtepomp, Thuisbatterij");

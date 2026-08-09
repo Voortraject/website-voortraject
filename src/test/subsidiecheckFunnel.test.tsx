@@ -68,7 +68,6 @@ describe("subsidiecheck funnel", () => {
       event: "subsidiecheck_stap",
       stap: 1,
       stap_naam: "Jouw woning",
-      poort: 1,
     });
   });
 
@@ -80,8 +79,13 @@ describe("subsidiecheck funnel", () => {
     expect(stapEvents()[0]).toMatchObject({ stap: 2, stap_naam: "Je gegevens" });
   });
 
-  it("meldt het resultaat wanneer de poort al ontgrendeld is", async () => {
-    sessionStorage.setItem("sc_poort_ontgrendeld", "1");
+  it("meldt het resultaat wanneer het contact van deze sessie al bekend is", async () => {
+    // Wat de poort openzet is het bewaarde contact, niet een losse vlag. Een
+    // verzonnen sleutel in sessionStorage laat de bezoeker dus niet meer door.
+    sessionStorage.setItem(
+      "sc_contact",
+      JSON.stringify({ voornaam: "Jan", achternaam: "de Vries", email: "jan@example.nl" }),
+    );
     toon(`/subsidiecheck?${ADRES_PARAMS}`);
 
     await screen.findByText("stap-resultaat");

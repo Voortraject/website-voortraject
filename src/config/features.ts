@@ -17,17 +17,9 @@
  */
 export const SUBSIDIECHECK_LIVE = true;
 
-/**
- * Tussenoplossing: vraagt de bezoeker eerst zijn gegevens (naam, e-mail,
- * telefoon) als extra stap "Je gegevens" tussen "Jouw woning" en het resultaat.
- * Zo verzamelen we alvast leads terwijl de echte lancering (afscherming) nog
- * een paar weken weg is.
- *
- * - `true`  → flow is 3 stappen: Jouw woning → Je gegevens (poort) → Resultaat.
- *   Het "mail mij dit overzicht"-blok onderaan het resultaat vervalt (die
- *   gegevens zijn dan al binnen).
- * - `false` → de gewone 2-stappenflow (adres → resultaat), zonder poort.
- *
- * Zet deze op `false` bij de echte launch als de poort dan niet meer gewenst is.
- */
-export const SUBSIDIECHECK_GEGEVENS_POORT = true;
+// Hier stond SUBSIDIECHECK_GEGEVENS_POORT, waarmee de gegevensstap tussen "Jouw
+// woning" en het resultaat uit kon. Die schakelaar is verwijderd. De poort is
+// geen tussenoplossing meer maar hoe de check werkt, en zolang de vlag bestond
+// kon één verkeerd gezette boolean het hele overzicht weggeven zonder dat er ook
+// maar iemand iets had ingevuld. Wie hem terug wil, haalt hem uit de historie —
+// dan hoort daar ook opnieuw een besluit bij.

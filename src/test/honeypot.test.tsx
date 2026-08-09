@@ -37,7 +37,6 @@ vi.mock("@/lib/subsidies", async (importOriginal) => ({
 }));
 
 import { ZakelijkContactFormulier } from "@/components/ZakelijkContactFormulier";
-import { MailOverzicht } from "@/components/subsidiecheck/MailOverzicht";
 import { StapGegevens } from "@/components/subsidiecheck/StapGegevens";
 import { subsidieProvider } from "@/lib/subsidies";
 import Contact from "@/pages/Contact";
@@ -285,43 +284,3 @@ describe("subsidiecheck gegevenspoort", () => {
     expect(insertMock).not.toHaveBeenCalled();
   });
 });
-
-describe("subsidiecheck mail-overzicht", () => {
-  const vulIn = () => {
-    vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
-    vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
-    vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
-    vul(screen.getByPlaceholderText(/Je telefoonnummer/), "0612345678");
-  };
-
-  it("heeft een correct opgezet honeypot-veld", () => {
-    const { container } = metQuery(<MailOverzicht input={input} adres={adres} regelingen={[]} />);
-    controleerHoneypotOpzet(container);
-  });
-
-  it("schrijft een lead weg bij een normale inzending", async () => {
-    metQuery(<MailOverzicht input={input} adres={adres} regelingen={[]} />);
-    vulIn();
-    wachtEvenAf();
-    fireEvent.click(screen.getByRole("button", { name: /Mail mij dit overzicht/ }));
-
-    await screen.findByText(/Dankjewel!/);
-    expect(insertMock).toHaveBeenCalledTimes(1);
-    const [tabel, rij] = insertMock.mock.calls[0];
-    expect(tabel).toBe("leads_bewoners");
-    expect(rij).toMatchObject({ email: "jan@example.nl", bron: "Voortraject" });
-    controleerGeenHoneypotInPayload(rij);
-  });
-
-  it("slaat de insert over bij een gevuld honeypot-veld, maar toont wel het bedankscherm", async () => {
-    const { container } = metQuery(<MailOverzicht input={input} adres={adres} regelingen={[]} />);
-    vulIn();
-    vul(honeypotVan(container), "https://spam.example");
-    wachtEvenAf();
-    fireEvent.click(screen.getByRole("button", { name: /Mail mij dit overzicht/ }));
-
-    await screen.findByText(/Dankjewel!/);
-    expect(insertMock).not.toHaveBeenCalled();
-  });
-});
-
