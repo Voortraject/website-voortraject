@@ -9,6 +9,55 @@ the user corrects course or a non-obvious gotcha surfaces. Review at session sta
 **Lesson:** the rule to follow next time
 -->
 
+## 2026-08-10 — Twee sessies in één werkmap: commits pakken elkaars bestanden, en HEAD schuift onder je hand weg
+**Context:** Tijdens het werk aan de verduurzamen-pagina's werkte er een tweede sessie in
+dezelfde map aan `fix/verrijking-race`. Wat er gebeurde, uit de reflog gereconstrueerd:
+zij maakten een branch, committeerden met `git add -A` (waardoor **mijn** halve isolatiewerk
+in **hun** commit `e746780` belandde), deden `git reset HEAD~1`, en schoven ondertussen HEAD
+terug naar mijn `feat/verduurzamen-fundament`. Mijn daaropvolgende `git commit` landde
+daardoor op de fundament-branch in plaats van op de isolatie-branch die ik net had gemaakt,
+terwijl `git branch --show-current` bij het aanmaken nog wél goed stond. Kort daarna was hun
+werk uit de werkmap verdwenen en wees hun branch naar `main`; de commit hing alleen nog in de
+reflog.
+**Lesson:**
+- **Controleer `git branch --show-current` vlak vóór élke commit, niet alleen bij het
+  aanmaken van de branch.** Tussen `checkout -b` en `commit` kan HEAD verplaatst zijn.
+  Verifieer ná de commit met `git log --oneline -1 <branch>` dat hij op de bedoelde branch
+  staat, en met `git ls-remote origin <branch>` dat de push daar ook echt terechtkwam.
+  "Everything up-to-date" bij een push betekent niet dat jouw commit er staat.
+- **Gebruik nooit `git add -A` in een gedeelde werkmap.** Stage expliciet je eigen bestanden.
+  Deze fout ging hier twee kanten op: hun commit bevatte mijn bestanden en mijn eerste
+  `git add -A` pakte de hunne.
+- **Repareren kan zonder iemands bestanden aan te raken:** `git branch -f <branch> <sha>` op
+  een branch waar je niet op staat, plus een gewone `checkout`. Geen `reset --hard`, geen
+  `stash`, want die vernietigen het werk van de ander in de werkmap.
+- **Een dangling commit is te redden zolang de reflog hem kent:** zet er meteen een branch op
+  (`git branch reddingsboei/<naam> <sha>`) voordat garbage collection langskomt.
+- De structurele oplossing staat al in de les van 2026-08-08: werk je naast een andere
+  sessie, maak dan meteen een **eigen worktree**. Ik heb dat hier niet gedaan en dit is
+  precies de rekening.
+
+## 2026-08-10 — Een sectie die op elke pagina hetzelfde is, hoort geen sectie te zijn
+**Context:** Bij het herbouwen van de maatregelpagina's kreeg elke pagina de sectie "Zo
+pakken wij het voor je op" met drie processtappen. Reactie van de opdrachtgever: "mag altijd
+weg". Ook "Wat valt hieronder?" kreeg een volle sectiekop in een eigen kolom, wat een derde
+van de breedte aan witruimte kostte voor drie woorden. En "Waar wij in de praktijk op letten"
+stond als raster van losse kaarten: bij drie punten valt er een gat en de korte teksten
+zwemmen in te brede kaarten.
+**Lesson:**
+- **Identiek op elke pagina betekent: het hoort niet op de pagina.** Het proces van
+  Voortraject is één keer uitleggen waard, niet zeven keer. Zo'n blok vult ruimte en verdunt
+  waar de pagina echt over gaat.
+- **Kopgrootte hoort bij het gewicht van de inhoud.** Een afbakening ("wat valt hieronder")
+  is geen hoofdstuk: een klein bovenschrift boven een strip over de volle breedte doet
+  hetzelfde werk in een vijfde van de ruimte.
+- **Kies een rasterindeling pas als je weet hoeveel items er zijn, en anders een lijst.** Een
+  doorlopende, genummerde lijst oogt compleet bij drie, vier of vijf punten; een raster van
+  kaarten laat bij oneven aantallen altijd een gat vallen.
+- Bijvangst: doordat bijna elke sectie optioneel is, kan het wisselen van
+  achtergrondkleuren op één pagina omvallen zonder dat je het ziet. Dat is nu een test
+  (`maatregelPagina.test.tsx`) in plaats van iets wat je per ongeluk ontdekt.
+
 ## 2026-08-10 — Een nuance van de gebruiker is input voor de tekst, geen tekst
 **Context:** De homepage beloofde "diegene blijft jouw aanspreekpunt van het eerste gesprek tot de
 oplevering". De gebruiker corrigeerde: het is niet altijd één persoon, soms twee, maar altijd één
