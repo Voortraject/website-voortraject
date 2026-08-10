@@ -4,18 +4,18 @@ import waaromVertrouwen from "@/assets/waarom-vertrouwen2.webp";
 import { TrustCardList } from "./TrustCardList";
 
 // Drie trust-pijlers, elk een andere vertrouwenslever en bewust géén herhaling van
-// wat eerder op de pagina staat: eerlijkheid (verdienmodel), autonomie (geen
-// verplichting) en risico-overname (wij toetsen de uitvoerders vooraf).
+// wat eerder op de pagina staat: autonomie (geen verplichting), eerlijkheid
+// (verdienmodel) en risico-overname (wij toetsen de uitvoerders vooraf).
 const redenen = [
-  {
-    icon: HandCoins,
-    title: "Je weet precies hoe wij verdienen",
-    body: "De uitvoerder betaalt ons voor het voorwerk dat we overnemen. Voor jou is het advies gratis.",
-  },
   {
     icon: Compass,
     title: "Je zit nergens aan vast",
     body: "Advies zonder verplichting. Jij bepaalt wat je doet en in welk tempo. Wil je niet verder, dan stopt het, zonder gedoe.",
+  },
+  {
+    icon: HandCoins,
+    title: "Je weet precies hoe wij verdienen",
+    body: "De uitvoerder betaalt ons voor het voorwerk dat we overnemen. Voor jou is het advies gratis.",
   },
   {
     icon: BadgeCheck,
