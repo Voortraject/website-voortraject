@@ -7,6 +7,7 @@ import { useLaadsequentie } from "@/hooks/useLaadsequentie";
 import { pandContourOpties, usePandContour } from "@/hooks/usePandContour";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
 import { useWoningInfo, woningInfoGeldig, woningInfoOpties } from "@/hooks/useWoningInfo";
+import { formulierFoutMelding } from "@/lib/formulierFout";
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
 import { subsidieProvider, type SubsidieCheckInput, type SubsidieRegeling } from "@/lib/subsidies";
@@ -288,7 +289,12 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
       onOntgrendeld(); // component unmount hierna → bezig blijft bewust true
     } catch (err) {
       console.error("Subsidiecheck poort-lead submit failed", err);
-      setFout("Er ging iets mis. Probeer het later nog eens of mail ons op info@voortraject.nl.");
+      // De volumerem (PT429 op de directe insert, HTTP 429 van de mailfunctie)
+      // krijgt een eigen melding mét telefoonnummer: dit is precies het moment
+      // waarop je een échte lead kwijtraakt.
+      setFout(
+        formulierFoutMelding(err, "Er ging iets mis. Probeer het later nog eens of mail ons op info@voortraject.nl."),
+      );
       setBezig(false);
     }
   };

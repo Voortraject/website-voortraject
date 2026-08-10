@@ -2,6 +2,7 @@ import { useState, useRef, FormEvent, ChangeEvent } from "react";
 import { CheckCircle, Loader2, Mail, MapPin, Phone } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
+import { formulierFoutMelding } from "@/lib/formulierFout";
 import { pushGtmEvent } from "@/lib/gtm";
 import { Footer } from "@/components/Footer";
 import { ReviewsCompact } from "@/components/ReviewsCompact";
@@ -313,8 +314,14 @@ const Contact = () => {
       setSubmitted(true);
     } catch (err) {
       console.error("Lead submit failed", err);
+      // De volumerem van het CRM (PT429) is geen storing en verdient een eigen,
+      // eerlijke melding: wachten helpt pas over een uur, dus bellen is dan de
+      // route die wél werkt.
       setErrorMsg(
-        "Er ging iets mis bij het versturen. Probeer het later nog eens of mail ons direct op info@voortraject.nl.",
+        formulierFoutMelding(
+          err,
+          "Er ging iets mis bij het versturen. Probeer het later nog eens of mail ons direct op info@voortraject.nl.",
+        ),
       );
     } finally {
       setSubmitting(false);

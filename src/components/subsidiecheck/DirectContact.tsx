@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { Check, Loader2, Send } from "lucide-react";
 
 import { WhatsAppLogo } from "@/components/WhatsAppLogo";
+import { formulierFoutMelding } from "@/lib/formulierFout";
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
 import { whatsappUrl } from "@/lib/whatsapp";
@@ -126,7 +127,9 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
       setVerstuurd(true);
     } catch (err) {
       console.error("Subsidiecheck vraag versturen faalde", err);
-      setFout("Er ging iets mis. Probeer het nog eens, of stuur ons een WhatsApp-bericht.");
+      // Bij de volumerem heeft "probeer het nog eens" geen zin; dan is bellen de
+      // route die wel werkt. WhatsApp blijft sowieso naast de knop staan.
+      setFout(formulierFoutMelding(err, "Er ging iets mis. Probeer het nog eens, of stuur ons een WhatsApp-bericht."));
       setBezig(false);
     }
   };
