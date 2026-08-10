@@ -27,6 +27,8 @@ vi.mock("@/components/Seo", () => ({
   ),
 }));
 
+import { Plug } from "lucide-react";
+import { MaatregelPagina, type MaatregelPaginaProps } from "@/components/MaatregelPagina";
 import Isolatie from "@/pages/maatregelen/Isolatie";
 import Warmtepomp from "@/pages/maatregelen/Warmtepomp";
 import Laadpaal from "@/pages/maatregelen/Laadpaal";
@@ -35,13 +37,36 @@ import Airco from "@/pages/maatregelen/Airco";
 
 const toon = (pagina: ReactElement) => render(<MemoryRouter>{pagina}</MemoryRouter>);
 
+/**
+ * Een kale pagina om losse template-props mee te controleren. Nodig sinds geen
+ * van de herbouwde pagina's `watValtEronder` nog gebruikt: waar die strip stond
+ * staat nu een sectie die dezelfde vraag beter beantwoordt. Het template
+ * ondersteunt de prop wel, dus die blijft hier bewaakt.
+ */
+const Sjabloon = (props: Partial<MaatregelPaginaProps>) => (
+  <MaatregelPagina
+    slug="laadpaal"
+    icon={Plug}
+    seoTitle=""
+    seoDescription=""
+    heroTitle=""
+    heroSub=""
+    heroIntro=""
+    pastBij={[]}
+    minderUrgent={[]}
+    kostenItems={[]}
+    faqs={[]}
+    finalCtaKop=""
+    finalCtaTekst=""
+    {...props}
+  />
+);
+
 describe("maatregelpagina's tonen alle aangeleverde content", () => {
   it("toont wat er onder de maatregel valt", () => {
-    // Isolatie gebruikt deze prop niet meer: daar doet de doorsnede met de
-    // ISDE-tabel hetzelfde werk, maar beter.
-    toon(<Laadpaal />);
-    expect(screen.getByText(/1-fase laadpaal voor een eenvoudige aansluiting/)).toBeInTheDocument();
-    expect(screen.getByText(/Load balancing, dat het vermogen veilig verdeelt/)).toBeInTheDocument();
+    toon(<Sjabloon watValtEronder={["Een eerste onderdeel", "En een tweede onderdeel"]} />);
+    expect(screen.getByText("Een eerste onderdeel")).toBeInTheDocument();
+    expect(screen.getByText("En een tweede onderdeel")).toBeInTheDocument();
   });
 
   it("toont de plek in de verduurzamingsroute", () => {
