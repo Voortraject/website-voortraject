@@ -9,6 +9,22 @@ the user corrects course or a non-obvious gotcha surfaces. Review at session sta
 **Lesson:** the rule to follow next time
 -->
 
+## 2026-08-10 — Een nuance van de gebruiker is input voor de tekst, geen tekst
+**Context:** De homepage beloofde "diegene blijft jouw aanspreekpunt van het eerste gesprek tot de
+oplevering". De gebruiker corrigeerde: het is niet altijd één persoon, soms twee, maar altijd één
+van de vier. Ik zette die uitleg vrijwel letterlijk in de sitetekst ("soms begeleidt één van hen je
+..., soms spreek je er twee"). Reactie: "je hebt het nu te letterlijk overgenomen". De bedoeling was
+alleen dat de tekst één aanspreekpunt niet meer moet *beloofd of uitgesloten* worden. Oplossing:
+"vaste gezichten die jouw situatie kennen" — de belofte weg, zonder de uitzondering te benoemen.
+**Lesson:**
+- **Een correctie over de werkelijkheid is een randvoorwaarde, geen zinsvoorstel.** Vertaal het naar
+  de kleinst mogelijke ingreep in de bestaande toon in plaats van de uitleg van de gebruiker te
+  parafraseren.
+- **Marketingtekst hoeft een uitzondering niet te benoemen om waar te zijn.** Vaag genoeg formuleren
+  dat beide gevallen kloppen is beter dan de uitzondering uitspellen; dat laatste vestigt juist
+  aandacht op wat je níét biedt.
+- Zelfde reflex als bij scope: doe wat er gevraagd wordt, niet wat er letterlijk gezegd wordt.
+
 ## 2026-08-09 — Een veldbeschrijving in een swagger is geen contract over de waarden
 **Context:** EP-Online v5 beschrijft `Gebouwsubtype` als "het woningsubtype: de ligging van het
 appartement in het woongebouw". Bij een eengezinshuis staat er in werkelijkheid `"Twee-onder-een-kap"`.
