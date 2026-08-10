@@ -73,11 +73,15 @@ describe("maatregelpagina's tonen alle aangeleverde content", () => {
   });
 
   it("toont de keurmerken en certificeringen", () => {
+    // Op warmtepomp staan ze niet meer in de losse keurmerkensectie maar in de
+    // eigen sectie over geluid, plaatsing en vakmanschap: certificering is daar
+    // onderdeel van "hoe zorg je dat het goed gebeurt". De inhoud is bij die
+    // verhuizing ook gecorrigeerd, zie warmtepompPagina.test.tsx.
     toon(<Warmtepomp />);
     expect(screen.getByText(/BRL 6000-21/)).toBeInTheDocument();
-    expect(screen.getByText(/STEK, verplichte certificering/)).toBeInTheDocument();
+    expect(screen.getByText(/STEK Warmtepomp-module D/)).toBeInTheDocument();
     expect(
-      screen.getByText(/Wij koppelen je alleen aan uitvoerders die deze certificeringen/),
+      screen.getByText(/Wij koppelen je alleen aan uitvoerders die dit op orde hebben/),
     ).toBeInTheDocument();
   });
 
@@ -144,6 +148,21 @@ describe("het achtergrondritme klopt bij elke combinatie van secties", () => {
     ["airco", <Airco key="a" />],
     ["laadpaal", <Laadpaal key="l" />],
   ];
+
+  it("houdt een herbouwde pagina op maximaal zes secties plus de FAQ", () => {
+    // Afspraak met de opdrachtgever: zes inhoudelijke secties per pagina. De
+    // hero telt niet mee, de subsidiecheck-band ook niet (die heeft geen
+    // data-bg, want hij brengt zijn eigen kleur mee) en de FAQ staat er los
+    // naast. Pagina's schuiven hier aan zodra ze herbouwd zijn; isolatie staat
+    // nu nog op zeven en gaat in een eigen PR mee.
+    const { container } = toon(<Warmtepomp />);
+    const metAchtergrond = Array.from(container.querySelectorAll("main > section")).filter((s) =>
+      s.hasAttribute("data-bg"),
+    );
+    // Eerste is de hero, laatste de FAQ.
+    const inhoudelijk = metAchtergrond.slice(1, -1);
+    expect(inhoudelijk.length).toBeLessThanOrEqual(6);
+  });
 
   it.each(paginas)("%s heeft geen twee gelijke achtergronden op rij", (naam, pagina) => {
     const { container } = toon(pagina);
