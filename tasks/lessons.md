@@ -30,6 +30,25 @@ zelf wel een rem, maar die stond in een `Map` in het geheugen van de edge-isolat
 - **Neem het láátste element van `x-forwarded-for`, niet het eerste.** Het eerste kan de client
   zelf meesturen; dan kiest de aanvaller zijn eigen emmer en is de rem gratis te omzeilen.
 
+## 2026-08-10 — Een rem per IP telt het hele kantoor als één bezoeker
+**Context:** Bij het verifiëren van de volumerem bleek de `ip_hash` van deze terminal gelijk aan
+die van de CRM-terminal: beide zitten op het kantoornetwerk (één publiek IP). Daarmee was ook de
+eerdere waarneming verklaard waar geen van beide kanten een conclusie uit durfde te trekken:
+"6 rijen, 1 unieke hash" was één tester op datzelfde adres, niet een aanwijzing dat alle
+bezoekers op één hash vielen.
+**Lesson:**
+- **Wie vanaf kantoor formulieren test, deelt één emmer met iedereen daar.** De grenzen zijn 5
+  per uur (contactformulieren, via de trigger) en 8 per uur (subsidiecheck, via
+  `rem_publieke_route`), samen begrensd door 30 per uur voor de hele site. Twee collega's die
+  tegelijk testen lopen daar zo doorheen, en dat ziet er dan uit als een storing.
+- **Ruim testrijen op na een remtest:** `delete from publieke_inzendingen where ip_hash = … and
+  doeltabel = … and aangemaakt_op > now() - interval '20 minutes'`. Anders eten ze een uur lang
+  uit de gedeelde emmer van 30 en kost je test een échte lead.
+- **Een gedeeld IP maakt "twee bezoekers, twee hashes" een zwakke test.** De sterke variant is
+  narekenen dát de hash klopt: `md5(<het echte publieke IP> || salt)` vergelijken met de
+  opgeslagen waarde. Die toont niet alleen dat hashes verschillen maar dat de waarde juist is,
+  en daar heb je maar één client voor nodig.
+
 ## 2026-08-10 — Zoek bij onbegrensde groei naar de sléútel, niet naar het aantal records
 **Context:** De publieke `woninginfo`-function schrijft met service_role in `pand_3d_cache`.
 Ingeschat als "ongelimiteerde rijgroei, hooguit zoveel rijen als er panden zijn". Bij het
