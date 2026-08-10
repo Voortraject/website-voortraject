@@ -9,6 +9,29 @@ the user corrects course or a non-obvious gotcha surfaces. Review at session sta
 **Lesson:** the rule to follow next time
 -->
 
+## 2026-08-10 — Een tabelvak is geen alinea, en een rij die een andere sectie al beantwoordt hoort weg
+**Context:** De eerste versie van de warmtepomppagina kreeg als reactie: "wat te uitgebreid en
+visueel nog niet altijd overzichtelijk", plus "kolom Past als kan weg want die wordt al benoemd in
+sectie Past dit bij jouw woning". Dat klopte allebei. De vergelijkingstabel had zeven rijen waarin
+elk vak een alinea van twee à drie regels was, dus veertien alinea's die je stuk voor stuk moest
+lezen om twee dingen te vergelijken. En het antwoord op "past dit bij mij" stond twee secties uit
+elkaar twee keer.
+**Lesson:**
+- **Splits elk vak in een kern en een toelichting.** Een korte vetgedrukte regel (het antwoord) met
+  daaronder dunne, kleinere uitleg. Dan kun je de tabel scannen op alleen de vette regels en pas
+  doorlezen waar je blijft hangen. In deze codebase is dat het type `Cel` in `src/data/warmtepomp.ts`.
+  Zonder die tweedeling wordt elke tabel een lap tekst, hoe goed de inhoud ook is.
+- **Controleer bij elke rij of een andere sectie hem al beantwoordt.** Dezelfde reflex als de les
+  hieronder over identieke secties, maar dan binnen één pagina: herhaling voelt bij het schrijven
+  als grondigheid en bij het lezen als ruis.
+- **Meet het inkorten.** Sectiehoogtes vóór en ná (hier 1457 naar 1142, 1313 naar 1191, 1588 naar
+  1167 px) laten zien of je echt hebt gesnoeid of alleen woorden hebt verplaatst.
+- **Zet bij twee kolommen naast elkaar het zware element onderaan uitgelijnd** (`md:mt-auto` in een
+  flexkolom). Loopt de ene omschrijving over twee regels en de andere niet, dan staan de bedragen
+  anders scheef, en dat leest als slordigheid precies waar de vergelijking het scherpst moet zijn.
+- Bijvangst: reageer niet op "te uitgebreid" door ergens anders iets toe te voegen. Ik wilde er een
+  FAQ over radiatoren bij zetten en heb die er weer uit gehaald; de vraag was snoeien, niet ruilen.
+
 ## 2026-08-10 — Twee sessies in één werkmap: commits pakken elkaars bestanden, en HEAD schuift onder je hand weg
 **Context:** Tijdens het werk aan de verduurzamen-pagina's werkte er een tweede sessie in
 dezelfde map aan `fix/verrijking-race`. Wat er gebeurde, uit de reflog gereconstrueerd:
