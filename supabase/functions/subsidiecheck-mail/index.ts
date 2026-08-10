@@ -70,6 +70,24 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 /** Zelfde limiet als het berichtveld op het contactformulier. */
 const MAX_BERICHT = 1000;
 
+// Grenzen op de adresvelden die ongewijzigd de CRM-database in gaan. Deno kan
+// niets uit src/ importeren, dus dit is een kopie van `ADRES_MAX` in
+// src/lib/adresVelden.ts; `src/test/adresVelden.test.ts` bewaakt dat de twee
+// gelijk blijven. De waarden zijn gelijk aan de `maxLength` op de invoervelden,
+// dus een normale inzending raakt ze nooit.
+const ADRES_MAX = { straat: 150, stad: 100, huisnummer: 5, toevoeging: 10 } as const;
+
+/**
+ * Trimt de waarde en geeft "" terug zodra hij buiten de grens valt of een `<` of
+ * `>` bevat. Weren in plaats van afkappen: een half afgekapte straatnaam ziet er
+ * geloofwaardig uit en is dan juist misleidend in het CRM.
+ */
+function binnenGrens(waarde: string | undefined, max: number): string {
+  const schoon = (waarde ?? "").trim();
+  if (schoon.length > max || /[<>]/.test(schoon)) return "";
+  return schoon;
+}
+
 // Bewust dezelfde, ruime nummercheck als de client. Deno kan src/ niet
 // importeren, dus dit is een kopie van src/lib/telefoon.ts: pas ze samen aan.
 // Wijkt deze af, dan zet de check hieronder een geldig nummer op null en raakt
@@ -716,10 +734,19 @@ Deno.serve(async (req: Request) => {
   const regelingen = Array.isArray(payload.regelingen) ? payload.regelingen.slice(0, 60) : [];
   const maatregelen = Array.isArray(input.maatregelen) ? input.maatregelen : [];
 
-  const straat = (adres.straatnaam ?? "").trim();
-  const stad = (adres.woonplaatsnaam ?? "").trim();
-  const huisnummer = (input.huisnummer ?? "").trim();
-  const toevoeging = (input.toevoeging ?? "").trim();
+  // De adresvelden gaan ongewijzigd de CRM-database in en komen daarna in de
+  // mail en de CSV-export terecht. De client begrenst ze al, maar die aanroep is
+  // met de publieke anon-key na te bootsen, dus dit is de laag die telt.
+  //
+  // Mild, net als bij energielabel, bouwjaar en telefoon hierboven: wat niet
+  // door de grens komt laten we weg in plaats van de hele aanvraag te weigeren.
+  // Een echte bezoeker raakt dit nooit (de grenzen zijn gelijk aan de
+  // `maxLength` op de invoervelden), en een lead verliezen om een adresdetail
+  // mag niet.
+  const straat = binnenGrens(adres.straatnaam, ADRES_MAX.straat);
+  const stad = binnenGrens(adres.woonplaatsnaam, ADRES_MAX.stad);
+  const huisnummer = binnenGrens(input.huisnummer, ADRES_MAX.huisnummer);
+  const toevoeging = binnenGrens(input.toevoeging, ADRES_MAX.toevoeging);
   const adresregel =
     [straat, huisnummer].filter(Boolean).join(" ") + (toevoeging ? ` ${toevoeging}` : "") + (stad ? `, ${stad}` : "");
 

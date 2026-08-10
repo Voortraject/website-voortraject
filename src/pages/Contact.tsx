@@ -6,6 +6,13 @@ import { pushGtmEvent } from "@/lib/gtm";
 import { Footer } from "@/components/Footer";
 import { ReviewsCompact } from "@/components/ReviewsCompact";
 import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
+import {
+  ADRES_MAX,
+  huisnummerGeldig,
+  stadGeldig,
+  straatGeldig,
+  toevoegingGeldig,
+} from "@/lib/adresVelden";
 import { normalizePostcode, POSTCODE_RE, zoekAdres } from "@/lib/pdok";
 import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
 
@@ -178,9 +185,25 @@ const Contact = () => {
     const pc = bewoner.postcode.trim();
     const hn = bewoner.huisnummer.trim();
     if (pc && !POSTCODE_RE.test(pc)) e.postcode = "Vul een geldige postcode in (bijvoorbeeld 1234 AB).";
-    if (hn && (!/^[0-9]/.test(hn) || hn.length > 5)) e.huisnummer = "Huisnummer moet beginnen met een cijfer (max 5 karakters).";
+    if (hn && !huisnummerGeldig(hn)) e.huisnummer = "Huisnummer moet beginnen met een cijfer (max 5 karakters).";
     if (pc && !hn) e.huisnummer = "Vul ook een huisnummer in.";
     if (hn && !pc) e.postcode = "Vul ook een postcode in.";
+
+    // Straat, plaats en toevoeging staan normaal via PDOK ingevuld, maar zijn
+    // met de hand te overschrijven. De `maxLength` op het invoerveld is alleen
+    // een suggestie: de insert gaat rechtstreeks naar Supabase en die aanroep is
+    // met de publieke anon-key na te bootsen. Dus ook hier een echte regel.
+    const tv = bewoner.toevoeging.trim();
+    if (tv && !toevoegingGeldig(tv))
+      e.toevoeging = `Toevoeging mag maximaal ${ADRES_MAX.toevoeging} karakters zijn.`;
+
+    const straat = bewoner.straatnaam.trim();
+    if (straat && !straatGeldig(straat))
+      e.straatnaam = `Straatnaam mag maximaal ${ADRES_MAX.straat} karakters zijn, zonder < of >.`;
+
+    const plaats = bewoner.plaatsnaam.trim();
+    if (plaats && !stadGeldig(plaats))
+      e.plaatsnaam = `Plaatsnaam mag maximaal ${ADRES_MAX.stad} karakters zijn, zonder < of >.`;
 
     if (!bewoner.vragen.trim()) e.vragen = "Vul je bericht in.";
     else if (bewoner.vragen.length > MAX_NOTES)
@@ -198,6 +221,7 @@ const Contact = () => {
       "telefoonnummer",
       "postcode",
       "huisnummer",
+      "toevoeging",
       "straatnaam",
       "plaatsnaam",
       "vragen",
@@ -597,11 +621,12 @@ const Contact = () => {
                             name="toevoeging"
                             type="text"
                             placeholder="A"
-                            className={cx(baseInputClass, inputOk)}
+                            className={inputCls("toevoeging")}
                             value={bewoner.toevoeging}
                             onChange={onChangeBew("toevoeging")}
-                            maxLength={10}
+                            maxLength={ADRES_MAX.toevoeging}
                           />
+                          <FieldError name="toevoeging" />
                         </div>
                       </div>
                       <div className="mt-1">
@@ -656,10 +681,10 @@ const Contact = () => {
                                 placeholder="Straatnaam"
                                 aria-label="Straatnaam"
                                 tabIndex={toonAdresBlok ? 0 : -1}
-                                className={cx(baseInputClass, inputOk, "sm:col-span-8 min-w-0")}
+                                className={cx(inputCls("straatnaam"), "sm:col-span-8 min-w-0")}
                                 value={bewoner.straatnaam}
                                 onChange={onChangeBew("straatnaam")}
-                                maxLength={150}
+                                maxLength={ADRES_MAX.straat}
                               />
                               <input
                                 name="plaatsnaam"
@@ -667,11 +692,15 @@ const Contact = () => {
                                 placeholder="Plaatsnaam"
                                 aria-label="Plaatsnaam"
                                 tabIndex={toonAdresBlok ? 0 : -1}
-                                className={cx(baseInputClass, inputOk, "sm:col-span-4 min-w-0")}
+                                className={cx(inputCls("plaatsnaam"), "sm:col-span-4 min-w-0")}
                                 value={bewoner.plaatsnaam}
                                 onChange={onChangeBew("plaatsnaam")}
-                                maxLength={100}
+                                maxLength={ADRES_MAX.stad}
                               />
+                              <div className="sm:col-span-12">
+                                <FieldError name="straatnaam" />
+                                <FieldError name="plaatsnaam" />
+                              </div>
                             </div>
                           )}
                         </div>

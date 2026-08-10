@@ -15,6 +15,7 @@ import { usePand3d } from "@/hooks/usePand3d";
 import { usePandContour } from "@/hooks/usePandContour";
 import { usePdokAdres } from "@/hooks/usePdokAdres";
 import { useWoningInfo } from "@/hooks/useWoningInfo";
+import { huisnummerGeldig, stadGeldig, straatGeldig, toevoegingGeldig } from "@/lib/adresVelden";
 import { pushGtmEvent } from "@/lib/gtm";
 import { normalizePostcode, type PdokAdres, POSTCODE_RE } from "@/lib/pdok";
 import {
@@ -69,7 +70,14 @@ const SubsidiecheckLive = () => {
   // met het adres als compacte bevestiging en de situatie-uitklap open.
   const sitParam = searchParams.get("sit") === "1";
 
-  const paramsGeldig = POSTCODE_RE.test(pc) && /^[0-9]/.test(hn.trim());
+  // Alles wat hier uit de URL komt kan de bezoeker zelf verzinnen en belandt via
+  // de lead-insert in het CRM. Vandaar dezelfde grenzen als op het
+  // contactformulier: een onbruikbaar huisnummer of een absurde toevoeging maakt
+  // de parameters ongeldig, en dan vraagt stap 1 het adres gewoon opnieuw.
+  // Bewust niet stil afkappen: dan zou er een ander adres in de lead staan dan
+  // de bezoeker denkt.
+  const paramsGeldig =
+    POSTCODE_RE.test(pc) && huisnummerGeldig(hn.trim()) && toevoegingGeldig(tv.trim());
   const bewonertype: Bewonertype | null = BEWONERTYPES.includes(typeParam as Bewonertype)
     ? (typeParam as Bewonertype)
     : null;
@@ -82,9 +90,21 @@ const SubsidiecheckLive = () => {
   // Handmatig adres (str/pl in de URL): gebruikt als PDOK het adres niet herkent
   // (bv. nieuwbouw). Geen coördinaten → geen luchtfoto/3D, maar het overzicht
   // werkt gewoon op basis van de postcode.
+  //
+  // Deze twee gaan als `straat` en `stad` de CRM-database in, dus ze krijgen
+  // dezelfde grenzen als de invoervelden op het contactformulier. Valt een
+  // waarde buiten de grens, dan telt het adres simpelweg niet als handmatig
+  // ingevuld en valt de check terug op de PDOK-opzoeking (en anders op de nette
+  // "adres niet gevonden"-route). Zo kan een geprepareerde deel-link er geen
+  // willekeurige tekst meer doorheen duwen.
   const handmatigStraat = searchParams.get("str") ?? "";
   const handmatigPlaats = searchParams.get("pl") ?? "";
-  const handmatig = paramsGeldig && handmatigStraat.trim() !== "" && handmatigPlaats.trim() !== "";
+  const handmatig =
+    paramsGeldig &&
+    handmatigStraat.trim() !== "" &&
+    handmatigPlaats.trim() !== "" &&
+    straatGeldig(handmatigStraat.trim()) &&
+    stadGeldig(handmatigPlaats.trim());
   const adres: PdokAdres | null = useMemo(
     () =>
       handmatig
