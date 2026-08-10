@@ -26,6 +26,22 @@
 //                      MAIL_BCC en daarna op info@voortraject.nl
 //   MAIL_REPLY_TO    — optioneel, antwoordadres, standaard info@voortraject.nl
 // SUPABASE_URL en SUPABASE_SERVICE_ROLE_KEY worden automatisch geïnjecteerd.
+//
+// Benodigde databasefunctie (levert het CRM, niet deze repo):
+//
+//   public.rem_publieke_route(p_ip text, p_doel text) returns void
+//
+// Telt de aanvraag mee in `publieke_inzendingen` en gooit SQLSTATE 'PT429' zodra
+// de grens is bereikt. `p_ip` is het ruwe adres; de functie hasht het zelf met
+// dezelfde salt als `rem_publieke_lead_inserts`, zodat de subsidiecheck en de
+// contactformulieren één emmer per bezoeker delen in plaats van twee losse.
+//
+// Waarom dit nodig is: deze function schrijft met service_role en valt daarmee
+// buiten de trigger `rem_publieke_lead_inserts` (die slaat service_role over,
+// zodat n8n niet in zijn eigen rem loopt). Zonder deze aanroep is de
+// subsidiecheck de enige publieke schrijfroute zónder rem, en dat is meteen de
+// belangrijkste leadroute. Bestaat de functie nog niet, dan valt deze function
+// terug op een ruime rem in het geheugen van de isolate en logt dat.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -69,6 +85,12 @@ const POSTCODE_RE = /^[1-9][0-9]{3}[A-Z]{2}$/;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 /** Zelfde limiet als het berichtveld op het contactformulier. */
 const MAX_BERICHT = 1000;
+
+// Bovengrens op het hele `notities`-veld van een lead. Ruim: er kunnen meerdere
+// vragen van de bezoeker in staan én notities van het team zelf. Wordt die grens
+// geraakt, dan laten we het veld met rust in plaats van andermans tekst af te
+// kappen; zie de update-route hieronder.
+const MAX_NOTITIES = 8000;
 
 // Grenzen op de adresvelden die ongewijzigd de CRM-database in gaan. Deno kan
 // niets uit src/ importeren, dus dit is een kopie van `ADRES_MAX` in
@@ -175,9 +197,25 @@ const MAATREGEL_LABELS: Record<string, string> = {
   thuisbatterij: "Thuisbatterij",
 };
 
-// Simpele best-effort throttle per IP (naast de client-honeypot/timing).
-const RATE_WINDOW_MS = 10 * 60 * 1000;
-const RATE_MAX = 6;
+// ---- Volumerem ----
+//
+// De echte rem zit in de database, in `public.rem_publieke_route` (geleverd door
+// het CRM). Waarom daar en niet hier: deze function schrijft met service_role en
+// valt daarmee buiten de trigger `rem_publieke_lead_inserts` die de rem op de
+// contactformulieren doet. Zonder deze aanroep is de subsidiecheck, de
+// belangrijkste leadroute, dus de enige publieke route zónder rem.
+//
+// De teller hoort niet in het geheugen van een edge-isolate te zitten: die
+// overleeft geen herstart en geldt per isolate, dus als rem telt hij niet. Door
+// dezelfde databasefunctie aan te roepen die de contactformulieren al begrenzen,
+// deelt de subsidiecheck één emmer met de rest van de site in plaats van er een
+// eigen naast te zetten.
+const REM_FUNCTIE = "rem_publieke_route";
+
+// Terugval voor de periode dat `rem_publieke_route` nog niet bestaat, en voor het
+// geval de aanroep hapert. Bewust ruim: dit is een vangnet, niet het beleid.
+const TERUGVAL_VENSTER_MS = 10 * 60 * 1000;
+const TERUGVAL_MAX = 6;
 const rateHits = new Map<string, number[]>();
 
 type Regeling = {
@@ -259,12 +297,59 @@ function normalizePostcode(raw: string): string {
   return raw.replace(/\s+/g, "").toUpperCase();
 }
 
+/** Terugvalrem in het geheugen van deze isolate. Alleen als de database het niet doet. */
 function throttled(ip: string): boolean {
   const nu = Date.now();
-  const recent = (rateHits.get(ip) ?? []).filter((t) => nu - t < RATE_WINDOW_MS);
+  const recent = (rateHits.get(ip) ?? []).filter((t) => nu - t < TERUGVAL_VENSTER_MS);
   recent.push(nu);
   rateHits.set(ip, recent);
-  return recent.length > RATE_MAX;
+  return recent.length > TERUGVAL_MAX;
+}
+
+/** Het IP zoals de Supabase-edge het aanlevert; de databasefunctie hasht het zelf. */
+function bezoekerIp(req: Request): string {
+  const cf = req.headers.get("cf-connecting-ip")?.trim();
+  if (cf) return cf;
+  // Laatste element van x-forwarded-for: dat is het door de edge toegevoegde,
+  // betrouwbare adres. Alles daarvoor kan de client zelf hebben meegestuurd.
+  const xff = req.headers.get("x-forwarded-for");
+  const delen = (xff ?? "").split(",").map((d) => d.trim()).filter(Boolean);
+  return delen.length > 0 ? delen[delen.length - 1] : "onbekend";
+}
+
+// Alleen het stukje client dat we hier gebruiken, net als LeadClient hieronder.
+// Let op `PromiseLike` en niet `Promise`: `rpc()` levert een thenable builder op,
+// geen kale Promise, en met `Promise` sluit dit type niet aan op de echte client.
+type RemClient = {
+  rpc: (
+    naam: string,
+    args: Record<string, unknown>,
+  ) => PromiseLike<{ error: { code?: string; message?: string } | null }>;
+};
+
+/**
+ * Vraagt de database of deze aanvraag nog binnen de rem valt.
+ *
+ * - "ok"       → doorgaan (de databasefunctie heeft de aanvraag geteld)
+ * - "te-druk"  → de rem is geraakt (SQLSTATE PT429)
+ * - "onbekend" → de rem kon niet worden geraadpleegd
+ *
+ * Bij "onbekend" gaat de aanroeper door met de terugvalrem hierboven. Dat is
+ * bewust fail-open: de functie bestaat nog niet op het moment dat deze code wordt
+ * uitgerold (het CRM levert hem apart), en een lead verliezen omdat de rem zelf
+ * hapert is erger dan een aanvraag te veel doorlaten.
+ */
+async function remControle(supabase: RemClient, ip: string): Promise<"ok" | "te-druk" | "onbekend"> {
+  try {
+    const { error } = await supabase.rpc(REM_FUNCTIE, { p_ip: ip, p_doel: "subsidiecheck-mail" });
+    if (!error) return "ok";
+    if (error.code === "PT429") return "te-druk";
+    console.error(`Volumerem niet raadpleegbaar (${error.code}): ${error.message}`);
+    return "onbekend";
+  } catch (err) {
+    console.error("Volumerem niet raadpleegbaar", err);
+    return "onbekend";
+  }
 }
 
 // ---- E-mail opbouwen ----
@@ -272,7 +357,12 @@ function throttled(ip: string): boolean {
 function regelingRij(r: Regeling): string {
   const typeKleur = r.type === "lening" ? LENING_KLEUR : SUBSIDIE_KLEUR;
   const typeVlak = r.type === "lening" ? LENING_VLAK : SUBSIDIE_VLAK;
-  const typeLabel = TYPE_LABELS[r.type ?? "subsidie"] ?? "Subsidie";
+  // `r.type` komt uit de payload, en een gewone objectlookup vindt ook geërfde
+  // sleutels: `type: "toString"` gaf de prototypefunctie terug in plaats van
+  // undefined, waarna de `??`-terugval niet aansloeg en de functiebron
+  // ongeëscaped in de mail belandde. Rommel, geen injectie (er komt geen `<` in),
+  // maar `hasOwn` kost één woord.
+  const typeLabel = (r.type && Object.hasOwn(TYPE_LABELS, r.type) ? TYPE_LABELS[r.type] : null) ?? "Subsidie";
   const titel = escapeHtml(r.titel ?? "Regeling");
   const bedrag = r.bedragIndicatie
     ? `<span style="white-space:nowrap;font-weight:700;font-size:15px;color:${KLEUR.primary};">${escapeHtml(r.bedragIndicatie)}</span>`
@@ -668,8 +758,7 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS });
   if (req.method !== "POST") return json({ error: "Alleen POST" }, 405);
 
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "onbekend";
-  if (throttled(ip)) return json({ error: "Te veel verzoeken. Probeer het later opnieuw." }, 429);
+  const ip = bezoekerIp(req);
 
   let payload: Payload;
   try {
@@ -766,6 +855,16 @@ Deno.serve(async (req: Request) => {
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
+
+  // Volumerem. Bewust hier: ná de validatie, dus een kapotte of vervalste
+  // aanvraag verbruikt geen ruimte van een echte bezoeker, en vóór beide
+  // schrijfroutes (de gewone lead én de vraag-route), zodat er geen pad omheen
+  // loopt. De melding is dezelfde die de site bij PT429 toont.
+  const rem = await remControle(supabase, ip);
+  const teDruk = rem === "te-druk" || (rem === "onbekend" && throttled(ip));
+  if (teDruk) {
+    return json({ error: "We ontvangen op dit moment veel aanvragen. Probeer het over een uur nog eens." }, 429);
+  }
 
   // Nieuwe pad: de drie losse delen (kolom `naam` vult de trigger). Legacy pad
   // (oude bundle, alleen `naam`): schrijf zoals voorheen de ene kolom.
@@ -868,14 +967,34 @@ Deno.serve(async (req: Request) => {
           .maybeSingle();
         if (leesFout) console.error("Lead ophalen faalde", leesFout);
         if (bestaand) {
-          // Aanvullen, nooit overschrijven: er kan al een eerdere vraag staan.
+          // Aanvullen, nooit overschrijven: er kan al een eerdere vraag staan, en
+          // een medewerker kan er zelf notities bij hebben gezet. Dit veld komt in
+          // mails en in de CSV-export terecht, dus er zitten twee harde regels op:
+          //
+          //  1. nooit leegmaken. `bericht` is hierboven al op niet-leeg
+          //     gecontroleerd, maar de regel staat er expliciet zodat een latere
+          //     wijziging hem niet per ongeluk weghaalt.
+          //  2. nooit inkorten wat er al stond. Past de vraag er niet meer bij
+          //     binnen MAX_NOTITIES, dan laten we het veld met rust in plaats van
+          //     andermans tekst af te kappen. De vraag gaat sowieso voluit naar het
+          //     team per mail, dus er raakt niets zoek.
           const bestaandeNotitie = (bestaand.notities ?? "").trim();
-          const notities = bestaandeNotitie ? `${bestaandeNotitie}\n\n${bericht}` : bericht;
-          const { error: updateFout } = await supabase
-            .from("leads_bewoners")
-            .update({ notities })
-            .eq("id", bestaand.id);
-          if (updateFout) throw updateFout;
+          const nieuweNotitie = bestaandeNotitie ? `${bestaandeNotitie}\n\n${bericht}` : bericht;
+
+          if (!nieuweNotitie.trim()) {
+            console.error("Notitie-update overgeslagen: resultaat zou leeg zijn");
+          } else if (nieuweNotitie.length > MAX_NOTITIES) {
+            console.warn(
+              `Notitie-update overgeslagen: ${nieuweNotitie.length} tekens past niet binnen ${MAX_NOTITIES}. ` +
+                "De vraag staat wel in de teammail.",
+            );
+          } else {
+            const { error: updateFout } = await supabase
+              .from("leads_bewoners")
+              .update({ notities: nieuweNotitie })
+              .eq("id", bestaand.id);
+            if (updateFout) throw updateFout;
+          }
           nieuweLead = false;
         }
       }
