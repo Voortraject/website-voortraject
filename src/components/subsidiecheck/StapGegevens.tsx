@@ -4,9 +4,9 @@ import { BadgeEuro, Check, FileCheck, HardHat, Home, Loader2 } from "lucide-reac
 
 import adviseurFoto from "@/assets/adviseur-tim.webp";
 import { useLaadsequentie } from "@/hooks/useLaadsequentie";
-import { usePandContour } from "@/hooks/usePandContour";
+import { pandContourOpties, usePandContour } from "@/hooks/usePandContour";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
-import { useWoningInfo } from "@/hooks/useWoningInfo";
+import { useWoningInfo, woningInfoGeldig, woningInfoOpties } from "@/hooks/useWoningInfo";
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
 import { subsidieProvider, type SubsidieCheckInput, type SubsidieRegeling } from "@/lib/subsidies";
@@ -15,7 +15,12 @@ import { Bewijsregel } from "./Bewijsregel";
 import { bewaarContact } from "./contactOpslag";
 import { Energielabel } from "./Energielabel";
 import { Luchtfoto } from "./Luchtfoto";
-import { schrijfSubsidiecheckLead, valideerContact, verstuurSubsidiecheckLead } from "./leadFormulier";
+import {
+  schrijfSubsidiecheckLead,
+  valideerContact,
+  verstuurSubsidiecheckLead,
+  type LeadVerrijking,
+} from "./leadFormulier";
 import { TOESTEMMING_TEKST, toestemmingBewijs, toestemmingVelden } from "./toestemming";
 import { ZoekKaart } from "./Zoeksequentie";
 
@@ -59,6 +64,19 @@ const MIN_OVERDRACHT_MS = 750;
 /** Wacht tot `vanaf` minstens MIN_OVERDRACHT_MS geleden is. */
 const rondOverdrachtAf = (vanaf: number) =>
   new Promise<void>((klaar) => setTimeout(klaar, Math.max(0, MIN_OVERDRACHT_MS - (Date.now() - vanaf))));
+
+// Hoe lang het verzenden hooguit op de woninggegevens wacht (energielabel en
+// bouwjaar). Staan ze al in de cache, wat normaal zo is omdat stap 1 ze
+// prefetcht, dan kost dit niets. Ze lopen bovendien parallel aan het ophalen van
+// de regelingen, dus in de praktijk voegt deze grens zelden wachttijd toe.
+const VERRIJKING_WACHT_MS = 2500;
+
+/** Wacht hooguit VERRIJKING_WACHT_MS op een belofte; tijd op of fout → undefined. */
+const metGrens = <T,>(belofte: Promise<T>): Promise<T | undefined> =>
+  Promise.race([
+    belofte.catch(() => undefined),
+    new Promise<undefined>((klaar) => setTimeout(() => klaar(undefined), VERRIJKING_WACHT_MS)),
+  ]);
 
 interface StapGegevensProps {
   input: SubsidieCheckInput;
@@ -134,6 +152,30 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
   const { data: woning, isPending: woningBezig } = useWoningInfo(input.postcode, input.huisnummer, input.toevoeging);
   const { data: pand, isPending: pandBezig } = usePandContour(adres.centroideRd);
 
+  // De verrijking voor de lead, opgehaald op het moment van verzenden.
+  //
+  // Bewust niet rechtstreeks de hookwaarden hierboven: die zijn nog leeg zolang
+  // EP-Online en de BAG laden, en wie snel invult drukt op verzenden voordat ze
+  // binnen zijn. Dan verdwenen beide velden geruisloos uit de lead, zonder fout
+  // en zonder dat iemand het zag. `fetchQuery` gebruikt dezelfde sleutels als de
+  // hooks, dus normaal komt dit direct uit de cache (stap 1 prefetcht het al) en
+  // wacht het alleen als het écht nog niet binnen is.
+  //
+  // Wachten mag nooit een lead kosten: na VERRIJKING_WACHT_MS gaat het door met
+  // wat er dan is, en een bron die faalt levert simpelweg niets op.
+  const haalVerrijking = async (): Promise<LeadVerrijking> => {
+    const [verseWoning, versPand] = await Promise.all([
+      woningInfoGeldig(input.postcode, input.huisnummer)
+        ? metGrens(queryClient.fetchQuery(woningInfoOpties(input.postcode, input.huisnummer, input.toevoeging)))
+        : undefined,
+      adres.centroideRd ? metGrens(queryClient.fetchQuery(pandContourOpties(adres.centroideRd))) : undefined,
+    ]);
+    return {
+      energielabel: (verseWoning ?? woning)?.energielabel?.klasse,
+      bouwjaar: (versPand ?? pand)?.bouwjaar,
+    };
+  };
+
   const adresKort = `${adres.straatnaam} ${input.huisnummer}${input.toevoeging ? ` ${input.toevoeging}` : ""}`;
 
   const handleSubmit = async (e: FormEvent) => {
@@ -174,13 +216,12 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
     const toestemmingOp = new Date();
     const notitie = `Wil hulp met: ${gekozenLabels.join(", ")}\n${toestemmingBewijs(toestemmingOp)}`;
     const toestemming = toestemmingVelden(toestemmingOp);
-    const verrijking = {
-      energielabel: woning?.energielabel?.klasse,
-      bouwjaar: pand?.bouwjaar,
-    };
 
     setBezig(true);
     const verzondenOp = Date.now();
+    // Nu vast starten: dit loopt parallel aan het ophalen van de regelingen
+    // hieronder, dus in het normale geval kost het geen extra wachttijd.
+    const verrijkingBelofte = haalVerrijking();
     try {
       // De regelingen staan meestal al in de cache (de hook hierboven); zo niet,
       // dan halen we ze nu op. `retry: 1` gelijk aan useSubsidieCheck; de
@@ -200,7 +241,14 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         // resultaat, dat zelf de eerlijke foutstaat met "Opnieuw proberen"
         // toont. Het team ziet de lead en volgt op.
         console.error("Subsidiecheck: bron faalde in de poort, lead zonder mail opgeslagen", bronFout);
-        await schrijfSubsidiecheckLead({ waarden: resultaat.waarden, input, adres, notitie, verrijking, toestemming });
+        await schrijfSubsidiecheckLead({
+          waarden: resultaat.waarden,
+          input,
+          adres,
+          notitie,
+          verrijking: await verrijkingBelofte,
+          toestemming,
+        });
         // Zonder lead-id: een vraag op het resultaat wordt dan een nieuwe lead.
         // Vervelend maar acceptabel; de vraag kwijtraken is erger.
         bewaarContact({ ...resultaat.waarden });
@@ -221,7 +269,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         adres,
         regelingen: opgehaald,
         notitie,
-        verrijking,
+        verrijking: await verrijkingBelofte,
         toestemming,
         // Deelbare URL van dit resultaat (voor de "bekijk online"-link in de mail).
         overzichtUrl: typeof window !== "undefined" ? window.location.href : undefined,

@@ -2028,3 +2028,44 @@ Praktische gotcha's:
   er 58 en brak de zin. Het tekenbudget staat als comment bij de tekst, zodat een
   volgende tekstwijziging niet stilletjes weer twee regels oplevert.
 - 34 testbestanden / 199 tests groen, lint schoon, productiebuild ok.
+
+## Verrijking van de lead: energielabel en bouwjaar kwamen niet altijd mee (2026-08-10)
+
+Aanleiding: de vraag of energielabel en bouwjaar wel goed in het CRM landen.
+
+### Wat de CRM-data liet zien (30 dagen, `formulier = 'subsidietool'`)
+16 leads, 11 met energielabel, 15 met bouwjaar. Vijf gaten nagelopen tegen de bronnen zelf:
+- 9581KE 5, 9742EV 87, 9744ED 28 en 9744HT 3 geven bij EP-Online `energielabel: null`. Leeg is
+  daar het juiste antwoord: die woningen hebben geen geregistreerd label.
+- 9744BJ 83 (8 aug, 09:09) miste beide velden, terwijl EP-Online label **B** heeft (geregistreerd
+  13-12-2016) en de BAG bouwjaar **1958** (pand 0014100010933940). Die twee komen via totaal
+  verschillende backends binnen, dus een bronstoring verklaart het niet: dit is de race.
+
+Los daarvan: leads van vóór 7 aug 17:19 (het moment dat de verrijking live ging) hebben óók een
+label en bouwjaar. Er vult dus nog iets anders deze kolommen in het CRM, vermoedelijk een n8n-flow.
+Aan een gevulde kolom kun je daarom niet aflezen of de website zijn werk deed.
+
+### De oorzaak
+`StapGegevens` las `woning`/`pand` uit de hooks op het moment van verzenden. Waren EP-Online of de
+BAG dan nog bezig, dan waren beide `undefined` en liet `verrijkingsVelden()` ze weg. Geen fout,
+geen spoor, en de terugval-insert maakt het onzichtbaar.
+
+### Wat er nu staat
+- [x] De queryopties van `useWoningInfo` en `usePandContour` staan los van de hooks
+      (`woningInfoOpties` / `pandContourOpties`), zodat de poort bij het verzenden `fetchQuery` kan
+      doen met exact dezelfde sleutel. Andere sleutel = tweede netwerkcall + waardeloze cache.
+- [x] `haalVerrijking()` haalt beide op bij het verzenden. Staat het in de cache (normaal: stap 1
+      prefetcht het), dan kost het niets; anders wacht het alsnog.
+- [x] Harde grens van 2,5s (`VERRIJKING_WACHT_MS`) en de belofte start parallel aan het ophalen van
+      de regelingen. Wachten mag nooit een lead kosten.
+- [x] `src/test/verrijking.test.tsx`: de velden gaan mee als de bronnen pas ná het indrukken
+      binnenkomen, en een hangende bron levert nog steeds een lead op. Geverifieerd dat de eerste
+      test faalt op de oude code (`expected undefined to be 'B'`).
+- [x] `honeypot.test.tsx` en `bronfout.test.tsx` mocken nu `@/lib/woninginfo`. Vitest laadt `.env`,
+      dus die tests deden een echte call naar de woninginfo-function. Dat viel niet op zolang
+      niemand erop wachtte; sinds deze fix wél.
+
+### Review
+37 testbestanden / 224 tests groen, `tsc --noEmit` schoon, lint op de basislijn van 17.
+Niet aangeraakt (bekend, apart te wegen): de vraagroute (`verstuurSubsidiecheckBericht`) stuurt geen
+verrijking mee, en beide inserts vallen bij een fout stil terug op de basisvelden.
