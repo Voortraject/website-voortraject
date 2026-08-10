@@ -226,10 +226,15 @@ describe("zakelijk contactformulier", () => {
       telefoon: "0612345678",
       notities: "Wij lopen vast op de offerte-opvolging.",
       bron: "Voortraject",
-      status: "nieuw",
     });
     // `contactpersoon` wordt door een CRM-trigger samengesteld, niet door ons.
     expect(Object.keys(rij as object)).not.toContain("contactpersoon");
+    // De website heeft niets te zeggen over de opvolging: `status` (DEFAULT
+    // 'nieuw'), `prioriteit` en `toegewezen_aan` horen niet in de payload. Het
+    // CRM zet ze bij een anonieme insert toch terug.
+    for (const kolom of ["status", "prioriteit", "toegewezen_aan"]) {
+      expect(Object.keys(rij as object)).not.toContain(kolom);
+    }
     controleerGeenHoneypotInPayload(rij);
   });
 
