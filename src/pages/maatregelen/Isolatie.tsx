@@ -5,11 +5,25 @@ import { Ventilatie } from "@/components/maatregel/isolatie/Ventilatie";
 import isolatieImage from "@/assets/helpen-isolatie.webp";
 
 /**
- * De achtergronden van de eigen secties zijn zo gekozen dat het ritme van de
- * pagina blijft kloppen. De volgorde wordt:
- * zand, wit, warm, navy, zand, warm, zand(CTA), wit, warm, zand.
- * src/test/maatregelPagina.test.tsx bewaakt dat er nooit twee dezelfde
- * achtergronden naast elkaar komen.
+ * Zes inhoudelijke secties plus de FAQ, zoals afgesproken voor alle pagina's
+ * onder /verduurzamen:
+ *
+ *   1 maak de schil van je woning dicht (eigen configurator)
+ *   2 past dit bij jouw woning
+ *   3 waar dit staat in de route
+ *   4 wat je investering oplevert
+ *   5 goed isoleren vraagt om goed ventileren (eigen)
+ *     subsidiecheck
+ *   6 waar wij in de praktijk op letten
+ *
+ * De subsidiesectie is vervallen: de configurator zegt al dat er geen subsidie
+ * in de bedragen zit en dat het van je adres afhangt, en daar horen de
+ * regelingen dus ook bij te staan. Als losse sectie stond hetzelfde verhaal een
+ * paar schermen verderop nog een keer.
+ *
+ * De achtergronden worden: zand, wit, warm, navy, zand, warm, sand(CTA), warm,
+ * zand. src/test/maatregelPagina.test.tsx bewaakt dat er nooit twee dezelfde
+ * naast elkaar komen; src/test/isolatiePagina.test.tsx bewaakt het aantal.
  */
 const Isolatie = () => (
   <MaatregelPagina
@@ -94,12 +108,6 @@ const Isolatie = () => (
       "Goed isoleren zonder goed ventileren geeft vocht en schimmel. Behandel ze altijd samen.",
       "Begin bij de maatregel met de kortste terugverdientijd, vaak dak of spouw, niet bij de duurste.",
       "De kwaliteit van uitvoering bepaalt het resultaat. Een goed product, slecht aangebracht, levert weinig op.",
-    ]}
-    subsidiesIntro="Isolatie is een van de best gesubsidieerde maatregelen. Welke regeling voor jou geldt hangt af van je adres, en vaak zijn ze te combineren:"
-    subsidiesItems={[
-      "Nij Begun, tot 100 procent vergoed voor eigenaar-bewoners in Groningen en Noord-Drenthe",
-      "De landelijke isolatiesubsidie, die verdubbelt bij twee of meer maatregelen",
-      "Gemeentelijke regelingen, stapelbaar bovenop bovenstaande",
     ]}
     faqs={[
       {

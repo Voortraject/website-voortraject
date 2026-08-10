@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Check } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
 import {
   BRON,
@@ -31,6 +31,16 @@ import { WoningTekening } from "./WoningTekening";
  * woningtype maar aan wat er nu in zit: van enkel glas naar isolerend glas
  * levert vier keer zoveel op als van gewoon dubbel glas.
  */
+/**
+ * De routes die voor isolatie kunnen gelden. Bewust zonder bedragen: welke van
+ * de drie voor deze bezoeker opgaat, hangt van het adres af.
+ */
+const REGELINGEN = [
+  "Nij Begun, tot 100 procent vergoed voor eigenaar-bewoners in Groningen en Noord-Drenthe",
+  "De landelijke isolatiesubsidie, die verdubbelt bij twee of meer maatregelen",
+  "Gemeentelijke regelingen, stapelbaar bovenop bovenstaande",
+];
+
 const besparingVan = (
   m: (typeof ISOLATIE_MAATREGELEN)[number],
   woningtype: Woningtype,
@@ -307,6 +317,9 @@ export const WoningSchil = () => {
         </div>
       </div>
 
+      {/* De regelingen horen hier, bij de bedragen waar ze nog niet in zitten.
+          Ze stonden ook als losse sectie een paar schermen verderop, en dat was
+          hetzelfde verhaal een tweede keer. */}
       <div
         className="mt-8 rounded-2xl p-5 md:p-6"
         style={{
@@ -315,11 +328,43 @@ export const WoningSchil = () => {
         }}
       >
         <p className="text-[15px] leading-relaxed" style={{ color: KLEUR.navy, margin: 0 }}>
-          <strong>Hier staat nog geen subsidie in.</strong> Welke regeling voor jou geldt hangt
-          af van je adres: in Groningen en Noord-Drenthe loopt dat anders dan in de rest van
-          het land, en gemeenten hebben er vaak nog een eigen regeling naast. Dat zoeken wij
-          voor je uit, en de subsidiecheck hieronder geeft je alvast een beeld.
+          <strong>Hier staat nog geen subsidie in.</strong> Isolatie is wel een van de best
+          gesubsidieerde maatregelen die er zijn. Welke regeling voor jou geldt hangt af van je
+          adres: in Groningen en Noord-Drenthe loopt dat anders dan in de rest van het land, en
+          gemeenten hebben er vaak nog een eigen regeling naast.
         </p>
+        <ul
+          className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-2.5"
+          style={{ listStyle: "none", padding: 0, margin: "16px 0 0 0" }}
+        >
+          {REGELINGEN.map((regeling) => (
+            <li key={regeling} className="flex items-start gap-2.5">
+              <Check
+                size={16}
+                className="mt-[3px] shrink-0"
+                style={{ color: KLEUR.navy }}
+                strokeWidth={2.5}
+                aria-hidden="true"
+              />
+              <span style={{ fontSize: 14.5, lineHeight: 1.5, color: KLEUR.navy, opacity: 0.85 }}>
+                {regeling}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
+          <a
+            href="/subsidies/stapelen"
+            className="inline-flex items-center gap-2 text-[15px] font-semibold underline-offset-4 transition-colors hover:underline"
+            style={{ color: KLEUR.navy }}
+          >
+            Bekijk hoe je subsidies stapelt
+            <ArrowRight size={16} aria-hidden="true" />
+          </a>
+          <span className="text-[14px]" style={{ color: KLEUR.navy, opacity: 0.7 }}>
+            Of doe de subsidiecheck hieronder, dan zie je wat er voor jouw adres is.
+          </span>
+        </div>
       </div>
 
       <p className="mt-4 text-[13px]" style={{ color: KLEUR.navy, opacity: 0.55 }}>
