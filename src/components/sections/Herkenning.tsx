@@ -26,7 +26,7 @@ const stappen = [
   {
     nummer: "01",
     title: "Gratis gesprek",
-    body: "Bij jou thuis of telefonisch. We kijken naar jouw woning, situatie en wensen. Duurt 30 tot 45 minuten.",
+    body: "Bij jou thuis of telefonisch. We kijken naar jouw woning, situatie en wensen.",
   },
   {
     nummer: "02",
