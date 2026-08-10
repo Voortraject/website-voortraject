@@ -17,6 +17,7 @@
 
 import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+import { bouwCacheSleutel, leesRdCoord } from "./cachesleutel.ts";
 import { bouwModel, decodeer3dBag, kiesBuren } from "./model3d.ts";
 import { normaliseerEpOnline, normaliseerGebouw } from "./normaliseer.ts";
 import type { Model3d, WoningInfo } from "./types.ts";
@@ -52,6 +53,42 @@ const MODEL_CACHE_LEEG = "public, max-age=60";
 // oude rijen vanzelf genegeerd i.p.v. verkeerd-gevormde modellen te serveren.
 const MODEL_VERSION = "v1";
 const MODEL_CACHE_TTL_MS = 90 * 24 * 60 * 60 * 1000; // 90 dagen; gebouwen wijzigen zelden
+
+// ---- Rem op deze route ----
+//
+// Deze function is publiek en anoniem aanroepbaar (verify_jwt = false) en schrijft
+// met service_role in `pand_3d_cache`, een tabel in de CRM-database. Daarmee is
+// het rijgroei die door willekeurige bezoekers wordt aangestuurd, en dat hoort
+// begrensd te zijn.
+//
+// Het gat zat niet in het aantal panden maar in de cachesleutel. Die was
+// `${pandid}@${Math.round(x)},${Math.round(y)}`, met x en y rechtstreeks uit de
+// queryparameters. Eén geldige pand-id plus een x die per verzoek één meter
+// opschuift, leverde dus onbeperkt véle rijen op voor hetzelfde gebouw, elk met
+// een volledig 3D-model erin. Drie maatregelen, van structureel naar vangnet:
+//
+//  1. coördinaten moeten binnen Nederland vallen (Rijksdriehoek), anders tellen
+//     ze niet mee en valt de sleutel terug op de kale pand-id;
+//  2. de sleutel gebruikt een rooster van 10 meter in plaats van de rauwe
+//     coördinaat, zodat er per pand hooguit een handvol sleutels bestaat in
+//     plaats van oneindig veel;
+//  3. een schrijfbudget per uur op de tabel zelf, als vangnet voor alles wat we
+//     niet hebben bedacht.
+//
+// De coördinaatgrenzen en het rooster staan in `cachesleutel.ts`: puur, en
+// daardoor testbaar vanuit vitest (src/test/cachesleutel.test.ts).
+//
+// Schrijfbudget op `pand_3d_cache`, per uur, over alle bezoekers samen. Ruim
+// bemeten voor normaal verkeer (een bezoeker vult hooguit een paar sleutels), maar
+// het verschil tussen begrensd en onbegrensd.
+const SCHRIJF_BUDGET_PER_UUR = 200;
+
+// Ruime rem per IP op de route zelf. Eén adrescheck kost een handvol aanroepen
+// (label, subject-model, model met buren), dus dit raakt geen echte bezoeker,
+// ook niet als een kantoor achter één adres zit.
+const ROUTE_VENSTER_MS = 10 * 60 * 1000;
+const ROUTE_MAX = 240;
+const routeHits = new Map<string, number[]>();
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -93,6 +130,50 @@ function getModelDb(): SupabaseClient | null {
 
 const dbSleutel = (cacheKey: string) => `${MODEL_VERSION}:${cacheKey}`;
 
+/** Ruime rem per IP op deze route. True = te veel verzoeken. */
+function routeThrottled(ip: string): boolean {
+  const nu = Date.now();
+  const recent = (routeHits.get(ip) ?? []).filter((t) => nu - t < ROUTE_VENSTER_MS);
+  recent.push(nu);
+  routeHits.set(ip, recent);
+  return recent.length > ROUTE_MAX;
+}
+
+function bezoekerIp(req: Request): string {
+  const cf = req.headers.get("cf-connecting-ip")?.trim();
+  if (cf) return cf;
+  // Het láátste element van x-forwarded-for is het door de edge toegevoegde
+  // adres; alles daarvoor kan de client zelf hebben meegestuurd.
+  const delen = (req.headers.get("x-forwarded-for") ?? "").split(",").map((d) => d.trim()).filter(Boolean);
+  return delen.length > 0 ? delen[delen.length - 1] : "onbekend";
+}
+
+/**
+ * True als het schrijfbudget voor dit uur op is. Telt alle rijen die het laatste
+ * uur zijn geschreven of ververst.
+ *
+ * Bij een fout geven we `true` terug, dus dan schrijven we níet. Dat mag hier:
+ * de persistente cache is expliciet best-effort (bij een miss haalt de function
+ * gewoon vers op), en een rem die uitvalt zodra de database hapert is geen rem.
+ */
+async function budgetOp(db: SupabaseClient): Promise<boolean> {
+  const sinds = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  try {
+    const { count, error } = await db
+      .from("pand_3d_cache")
+      .select("cache_key", { count: "exact", head: true })
+      .gt("updated_at", sinds);
+    if (error) {
+      console.error("Schrijfbudget niet te bepalen, cacheschrijven overgeslagen", error);
+      return true;
+    }
+    return (count ?? 0) >= SCHRIJF_BUDGET_PER_UUR;
+  } catch (err) {
+    console.error("Schrijfbudget niet te bepalen, cacheschrijven overgeslagen", err);
+    return true;
+  }
+}
+
 // Leest het model uit de persistente cache. `null` bij een miss, verlopen entry
 // of welke hapering dan ook (tabel bestaat niet, geen client, netwerkfout) —
 // de aanroeper haalt dan gewoon vers op. We bewaren alleen niet-lege modellen,
@@ -119,6 +200,9 @@ async function leesModelCache(cacheKey: string): Promise<Model3d | null> {
 async function schrijfModelCache(cacheKey: string, model: Model3d): Promise<void> {
   const db = getModelDb();
   if (!db) return;
+  // Budget op: niet schrijven. De bezoeker merkt er niets van (hij heeft zijn
+  // model al); alleen de vólgende bezoeker van dit pand haalt het opnieuw op.
+  if (await budgetOp(db)) return;
   try {
     await db
       .from("pand_3d_cache")
@@ -236,6 +320,13 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS });
   if (req.method !== "GET") return json({ error: "Alleen GET" }, 405);
 
+  // Ruime rem per IP. De echte begrenzing van de rijgroei zit in de cachesleutel
+  // en het schrijfbudget; dit is de goedkope eerste lijn, en het beschermt
+  // meteen de bronnen erachter (EP-Online, 3dbag, PDOK).
+  if (routeThrottled(bezoekerIp(req))) {
+    return json({ error: "Te veel verzoeken. Probeer het later opnieuw." }, 429);
+  }
+
   const url = new URL(req.url);
 
   // Tak 2: 3D-model op basis van de BAG-pand-ID (16 cijfers). Aparte input dan
@@ -243,9 +334,13 @@ Deno.serve(async (req: Request) => {
   const pandid = url.searchParams.get("pandid");
   if (pandid) {
     if (!/^\d{16}$/.test(pandid)) return json({ error: "Ongeldige pand-id." }, 400);
-    const x = Number(url.searchParams.get("x"));
-    const y = Number(url.searchParams.get("y"));
-    const cacheKey = Number.isFinite(x) && Number.isFinite(y) ? `${pandid}@${Math.round(x)},${Math.round(y)}` : pandid;
+    // Eén keer afronden en daarna overal dezelfde waarden gebruiken: zo is het
+    // model een deterministische functie van de cachesleutel, in plaats van dat
+    // het afhangt van welk verzoek er toevallig als eerste was.
+    const coord = leesRdCoord(url.searchParams);
+    const x = coord?.x ?? Number.NaN;
+    const y = coord?.y ?? Number.NaN;
+    const cacheKey = bouwCacheSleutel(pandid, coord);
     // 1) In-memory (per instance, snelst): dekt herhaalde hits binnen deze instance.
     const cached = model3dCache.get(cacheKey);
     if (cached && Date.now() - cached.at < CACHE_TTL_MS) return model3dResponse(cached.model);
