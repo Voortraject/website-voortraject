@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { ArrowRight, ChevronDown, Check, Wrench, X } from "lucide-react";
 import { BorderRotate } from "@/components/ui/animated-gradient-border";
 import type { LucideIcon } from "lucide-react";
@@ -21,7 +22,7 @@ import { Kruimelpad } from "@/components/maatregel/Kruimelpad";
 import { RouteStrip } from "@/components/maatregel/RouteStrip";
 import { maatregelJsonLd } from "@/components/maatregel/jsonLd";
 import { Accent, Kaart, KaartTekst, KaartTitel, Sectie, SectieKop } from "@/components/maatregel/primitieven";
-import { KLEUR } from "@/components/maatregel/stijl";
+import { KLEUR, type SectieBg } from "@/components/maatregel/stijl";
 
 export type RouteStep = RouteStap;
 
@@ -54,6 +55,22 @@ export type KeurmerkenBlock = KeurmerkenData;
 export interface ProcesStap {
   title: string;
   body: string;
+}
+
+/**
+ * Een sectie die alleen op één maatregelpagina hoort. Het gedeelde template
+ * levert het ritme en de chrome; de inhoud die een maatregel écht onderscheidt
+ * komt van de pagina zelf.
+ *
+ * `na` bepaalt waar hij landt. `bg` hoort mee te bewegen met het ritme van de
+ * pagina: src/test/maatregelPagina.test.tsx controleert dat er nooit twee
+ * gelijke achtergronden naast elkaar komen.
+ */
+export interface EigenSectie {
+  na: "hero" | "route" | "kosten" | "subsidies";
+  bg: SectieBg;
+  inhoud: ReactNode;
+  id?: string;
 }
 
 export interface MaatregelPaginaProps {
@@ -140,6 +157,9 @@ export interface MaatregelPaginaProps {
   procesStappen?: ProcesStap[];
   certificeringen?: string[];
 
+  /** Pagina-eigen secties, ingevoegd op een vast aantal ankerpunten. */
+  eigenSecties?: EigenSectie[];
+
   // FAQ
   faqs: MaatregelFaq[];
 
@@ -190,6 +210,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
     extraInfo,
     onderhoud,
     combineren,
+    eigenSecties = [],
     faqs,
     finalCtaKop,
     finalCtaTekst,
@@ -198,6 +219,15 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
   } = props;
 
   const label = MAATREGELEN[slug].label;
+
+  const eigen = (anker: EigenSectie["na"]) =>
+    eigenSecties
+      .filter((sectie) => sectie.na === anker)
+      .map((sectie, i) => (
+        <Sectie key={`${anker}-${i}`} bg={sectie.bg} id={sectie.id}>
+          {sectie.inhoud}
+        </Sectie>
+      ));
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: KLEUR.zand }}>
@@ -280,6 +310,8 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
             optioneel is, is de reeks zo gekozen dat er in élke combinatie van
             aanwezige blokken nooit twee dezelfde achtergronden naast elkaar
             komen. src/test/maatregelPagina.test.tsx bewaakt dat. */}
+
+        {eigen("hero")}
 
         {/* 2 — WAT VALT HIERONDER */}
         {watValtEronder && watValtEronder.length > 0 && (
@@ -387,6 +419,8 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
           </Sectie>
         )}
 
+        {eigen("route")}
+
         {/* 6 — WAT HET KOST EN OPLEVERT */}
         <Sectie bg="zand">
           <SectieKop center><Accent tekst="Wat je investering [[oplevert]]" /></SectieKop>
@@ -433,6 +467,8 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
           </p>
         </Sectie>
 
+        {eigen("kosten")}
+
         {/* 7 — SUBSIDIECHECK (conversie, halverwege de pagina) */}
         <SubsidiecheckCta />
 
@@ -447,6 +483,8 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
             />
           </Sectie>
         )}
+
+        {eigen("subsidies")}
 
         {/* 9 — WAAR WIJ OP LETTEN */}
         {aandachtspunten && aandachtspunten.length > 0 && (

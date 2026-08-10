@@ -37,9 +37,11 @@ const toon = (pagina: ReactElement) => render(<MemoryRouter>{pagina}</MemoryRout
 
 describe("maatregelpagina's tonen alle aangeleverde content", () => {
   it("toont wat er onder de maatregel valt", () => {
-    toon(<Isolatie />);
-    expect(screen.getByText(/Spouwmuurisolatie, relatief goedkoop/)).toBeInTheDocument();
-    expect(screen.getByText(/^Ventilatie: natuurlijk, mechanisch/)).toBeInTheDocument();
+    // Isolatie gebruikt deze prop niet meer: daar doet de doorsnede met de
+    // ISDE-tabel hetzelfde werk, maar beter.
+    toon(<Laadpaal />);
+    expect(screen.getByText(/1-fase laadpaal voor een eenvoudige aansluiting/)).toBeInTheDocument();
+    expect(screen.getByText(/Load balancing, dat het vermogen veilig verdeelt/)).toBeInTheDocument();
   });
 
   it("toont de plek in de verduurzamingsroute", () => {
