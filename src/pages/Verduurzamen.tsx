@@ -11,6 +11,7 @@ import { KLEUR } from "@/components/maatregel/stijl";
 import { MAATREGEL_VOLGORDE, MAATREGELEN, ROUTE, type MaatregelSlug } from "@/data/maatregelen";
 import { SITE_URL } from "@/lib/site";
 
+import heroImage from "@/assets/helpen-subsidies.webp";
 import isolatieImage from "@/assets/maatregel-isolatie.webp";
 import zonnepanelenImage from "@/assets/maatregel-zonnepanelen.webp";
 import warmtepompImage from "@/assets/maatregel-warmtepomp.webp";
@@ -163,7 +164,11 @@ const Verduurzamen = () => (
               </li>
             </ol>
           </nav>
-          <div className="max-w-[760px]">
+          {/* Zelfde opzet als de hero van de zeven maatregelpagina's: tekst
+              links, beeld rechts in 4/3. Zo herkent de bezoeker de sectie
+              meteen als hij van een maatregelpagina naar de hub gaat. */}
+          <div className="flex flex-col md:flex-row md:items-center gap-10 md:gap-12">
+            <div className="md:flex-1 min-w-0">
             <h1
               className="font-display"
               style={{
@@ -179,7 +184,7 @@ const Verduurzamen = () => (
             </h1>
             <p
               className="mt-5 text-base md:text-lg leading-relaxed"
-              style={{ color: KLEUR.navy, opacity: 0.85 }}
+              style={{ color: KLEUR.navy, opacity: 0.85, maxWidth: 560 }}
             >
               De volgorde bepaalt wat je overhoudt. Zonnepanelen op een tochtig huis leveren minder
               op dan dezelfde panelen op een geïsoleerd huis, en een warmtepomp in een slecht
@@ -199,6 +204,20 @@ const Verduurzamen = () => (
                 Of plan een gratis gesprek
                 <ArrowRight size={15} aria-hidden="true" />
               </a>
+            </div>
+            </div>
+            <div
+              className="md:flex-1 overflow-hidden rounded-2xl"
+              style={{ border: `1px solid ${KLEUR.rand}`, aspectRatio: "4 / 3" }}
+            >
+              <img
+                src={heroImage}
+                alt="Adviseur van Voortraject bespreekt de mogelijkheden met een bewoner aan tafel"
+                className="w-full h-full object-cover"
+                style={{ objectPosition: "center 58%" }}
+                width={1200}
+                height={900}
+              />
             </div>
           </div>
         </div>
@@ -295,38 +314,10 @@ const Verduurzamen = () => (
         </div>
       </Sectie>
 
-      {/* 4 — WAAR BEGIN IK */}
-      <Sectie bg="warm" id="waar-begin-ik">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-8 md:gap-12 items-start">
-          <div className="md:col-span-2">
-            <SectieKop>
-              <Accent tekst="Waar begin [[ik]]?" />
-            </SectieKop>
-          </div>
-          <div className="md:col-span-3">
-            <p
-              className="text-base leading-relaxed"
-              style={{ color: KLEUR.navy, opacity: 0.85, margin: 0 }}
-            >
-              Bij je eigen woning, niet bij een maatregel. Bouwjaar, wat er al aan isolatie in zit,
-              hoe je nu verwarmt en wat er in je meterkast binnenkomt bepalen samen welke stap het
-              meeste oplevert. Voor de meeste woningen in Noord-Nederland is dat isolatie, maar niet
-              voor alle.
-            </p>
-            <p
-              className="text-base leading-relaxed"
-              style={{ color: KLEUR.navy, opacity: 0.85, margin: "16px 0 0 0" }}
-            >
-              De snelste manier om erachter te komen wat er voor jouw adres geldt, is de
-              subsidiecheck: die kijkt naar je postcode en huisnummer en laat zien welke regelingen
-              er voor jouw woning zijn. Wil je het liever samen doornemen, plan dan een gratis
-              gesprek. Wij verkopen zelf niets en zijn niet gebonden aan een merk of leverancier.
-            </p>
-          </div>
-        </div>
-      </Sectie>
-
-      {/* 5 — SUBSIDIECHECK */}
+      {/* 4 — SUBSIDIECHECK
+          De sectie "Waar begin ik" stond hier tussen. Die is er op verzoek uit:
+          de route bovenaan beantwoordt die vraag al, en de subsidiecheck geeft
+          het antwoord voor het eigen adres beter dan een alinea erover. */}
       <SubsidiecheckCta />
     </main>
     <Footer
