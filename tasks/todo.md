@@ -1,56 +1,56 @@
-# Todo — securityopdracht CRM-audit (2026-08-10)
+# Securityopdracht CRM-audit (2026-08-10) — afgerond
 
 Bevindingen en onderbouwing: `tasks/security-crm-audit-2026-08-10.md`.
+Lessen: `tasks/lessons.md` (twee entries van 2026-08-10).
 
-## PR's en merge-volgorde
+**Status: klaar en live.** Zeven PR's gemerged, beide edge functions uitgerold, de volumerem in
+productie geverifieerd. Niets meer open aan beide kanten.
 
-Drie PR's raken hetzelfde bestand en zijn daarom gestapeld. Merge in deze volgorde en
-**zonder `--delete-branch`** (zie `tasks/lessons.md`, 2026-08-07): retarget de volgende PR
-eerst naar `main` (`gh pr edit <n> --base main`), ruim de branches pas aan het eind op.
+## Wat er is gebouwd
 
-```
-main ─┬─ #142 status-eruit ── #143 adresvalidatie ─┬─ #144 PT429-melding
-      │                                            └─ #145 subsidiecheck-mail rem + hardening
-      ├─ #146 woninginfo-rem     (los)
-      └─ #147 docs schemawijzigingen  (los)
-```
+| PR | Wat |
+| --- | --- |
+| #142 | `status` uit de vier lead-inserts (kolom heeft DEFAULT `'nieuw'`, dus gedragsneutraal) |
+| #143 | Grenzen op straat/plaats/huisnummer/toevoeging, client én serverside. Dicht het `?str=`/`?pl=`-gat in de deel-link |
+| #144 | PT429 herkennen en eerlijk melden, met telefoonnummer, op alle vier de formulierpaden |
+| #145 | Duurzame rem via `rem_publieke_route`, `notities`-UPDATE begrensd, `TYPE_LABELS`-nit |
+| #146 | Rooster + RD-grenzen + schrijfbudget op `pand_3d_cache` |
+| #147 | Schemawijzigingen alleen nog vanuit het CRM |
+| #148 | Datumkopje boven een vraag van de bezoeker in `notities` |
 
-- [x] **#142** `fix/lead-insert-status-eruit` — `status` uit de vier inserts. Geverifieerd dat
-      de kolom DEFAULT 'nieuw' heeft, dus gedragsneutraal.
-- [x] **#143** `fix/adresvelden-validatie` — grenzen op straat/plaats/huisnummer/toevoeging,
-      client én serverside. Dicht het `?str=`/`?pl=`-gat in de deel-link.
-- [x] **#144** `feat/rate-limit-melding` — PT429 herkennen en eerlijk melden, met telefoonnummer.
-- [x] **#145** `feat/subsidiecheck-mail-rem` — duurzame rem via `rem_publieke_route`,
-      `notities`-UPDATE begrensd, `TYPE_LABELS`-nit.
-- [x] **#146** `feat/woninginfo-rem` — rooster + RD-grenzen + schrijfbudget op `pand_3d_cache`.
-- [x] **#147** `docs/schemawijzigingen-via-crm` — schema alleen nog vanuit het CRM.
+Edge functions live: `subsidiecheck-mail` v41, `woninginfo` v17.
 
-## Ligt bij het CRM
+## Verificatie in productie
 
-- [ ] `public.rem_publieke_route(p_ip text, p_doel text)` leveren. Voorgestelde SQL staat in
-      #145; sleutel = **IP** (e-mail is gratis te variëren en dus geen rem). Zolang de functie
-      niet bestaat valt `subsidiecheck-mail` terug op de geheugen-rem en logt dat, dus #145 kan
-      er zonder problemen vóór live.
-- [ ] Opruimtaak op `pand_3d_cache.updated_at` (pg_cron), zoals afgesproken. Ruimt meteen de
-      rijen op met de oude, fijnmazige sleutel.
-- [ ] Controleren of twee verschillende bezoekers ook twee verschillende `ip_hash` opleveren in
-      `publieke_inzendingen`. Nu staan er 6 rijen met 1 unieke hash; dat ziet eruit als één
-      tester, maar het is geen bewijs. Zo niet, dan delen álle bezoekers één emmer van 5 per uur.
+Alles hieronder is gemeten, niet aangenomen.
 
-## Review
+- **De rem werkt end-to-end.** Negen aanroepen op een rij: acht door, de negende een HTTP 429 met
+  de nette melding. Uitgevoerd met `actie: "bericht"` en een lege vraag, want de remcontrole zit
+  vóór de berichtvalidatie: zo'n verzoek verbruikt een plek in de emmer en stopt daarna, dus
+  **nul testleads en nul mails**.
+- **De 429 kwam aantoonbaar uit de database, niet uit de terugval.** De geheugen-rem staat op 6
+  per 10 minuten; was de RPC nog onbereikbaar geweest, dan was de zevende geweigerd. Het waren er
+  acht, exact `c_max_per_ip = 8`.
+- **`cf-connecting-ip` komt door.** De opgeslagen `ip_hash` bleek gelijk aan
+  `md5(<ons echte publieke IP> || salt)`, niet aan de `'onbekend'`-hash. Het CRM heeft daarna
+  hetzelfde aangetoond voor het trigger-pad (contactformulieren), met een tijdelijke RPC die
+  `current_setting('request.headers')` echode.
+- **De rastersleutel is live.** Aanroep met `x=231528&y=583469` levert
+  `v1:…@231530,583470` op. Aanroep zonder coördinaten levert de kale pand-id op in plaats van het
+  oude `@0,0`.
+- **Mailafbeeldingen:** logo en de drie iconen geven alle vier HTTP 200.
 
-Wat er is gebouwd staat per PR in de beschrijving. Twee dingen die onderweg afweken van het
-oorspronkelijke plan, beide bewust:
+## Twee dingen die afweken van het oorspronkelijke plan
 
-1. **Geen terugval op de directe insert bij een 429** (#144). Dat stond wel in het
-   bevindingenrapport, maar die insert is juist de route die de rem moet tegenhouden;
-   erop terugvallen zou de rem om zeep helpen.
-2. **Het `pand_3d_cache`-gat was scherper dan gerapporteerd** (#146). Niet "postcodes maal
-   modellen", maar een cachesleutel met de rauwe `x`/`y` uit de query erin: één pand-id plus
-   een coördinaat die per verzoek een meter opschuift gaf onbeperkt véle rijen. Daarom een
-   rooster in de sleutel en niet alleen een volumerem.
+1. **Geen terugval op de directe insert bij een 429.** Dat stond wel in het bevindingenrapport,
+   maar die insert is juist de route die de rem moet tegenhouden.
+2. **Het `pand_3d_cache`-gat was scherper dan gerapporteerd.** Niet "postcodes maal modellen",
+   maar een cachesleutel met de rauwe `x`/`y` uit de query erin. Zie de les in `lessons.md`.
 
-Verificatie: `bun run test` groen op elke branch (320 → 332 tests, 12 nieuwe), `bun run build`
-ok, `deno check` op beide edge functions zonder nieuwe fouten. De databasefeiten (kolomdefaults,
-triggerdefinities, SQLSTATE, inhoud van `publieke_inzendingen`) zijn tegen de live database
-gecontroleerd, niet aangenomen.
+## Twee aannames die onjuist bleken
+
+- De audit ging ervan uit dat de website alleen in de twee leadtabellen schrijft. Er waren drie
+  extra paden, waaronder een UPSERT in `pand_3d_cache` met service_role.
+- De opdrachtbrief noemde `email-check` als derde bron van mailsjablonen. Die function bestaat,
+  maar in de CRM-repo, en het is adresverificatie zonder één regel HTML. Er zijn twee
+  sjabloonbronnen, niet drie.

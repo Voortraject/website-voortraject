@@ -1,11 +1,15 @@
 # Securityopdracht CRM-audit — bevindingen website-repo
 
 **Datum:** 2026-08-10 · **Bron:** `website-security-opdracht-2026-08-10.md` (CRM-repo)
-**Status:** onderzoek afgerond én uitgevoerd. Zes PR's: #142 t/m #147, zie `tasks/todo.md`
-voor de merge-volgorde. Twee dingen weken onderweg af van dit rapport, beide bewust en
-toegelicht in de review-sectie van `tasks/todo.md`: er komt géén terugval op de directe insert
-bij een 429, en het `pand_3d_cache`-gat bleek scherper dan hieronder beschreven (de cachesleutel
-bevatte de rauwe `x`/`y` uit de query, dus de groei was niet begrensd door het aantal panden).
+**Status:** afgerond, uitgevoerd en in productie geverifieerd. Zeven PR's (#142 t/m #148); de
+eindstand en het bewijsmateriaal staan in `tasks/todo.md`.
+
+Wat hieronder volgt is het bevindingenrapport zoals het bij de start van het werk is
+opgeleverd. Het blijft ongewijzigd staan als vastlegging van wat er is aangetroffen. Twee dingen
+weken tijdens het bouwen af van dit rapport, beide bewust: er is géén terugval op de directe
+insert bij een 429 gekomen (die insert is juist wat de rem moet tegenhouden), en het
+`pand_3d_cache`-gat bleek scherper dan hier beschreven, doordat de cachesleutel de rauwe `x`/`y`
+uit de query bevatte en de groei dus niet begrensd was door het aantal panden.
 **Code onderzocht op:** `main` @ `e326ab5` (lokale main liep 119 commits achter en is eerst
 bijgewerkt; de conclusies hieronder gelden voor de code die nu live staat).
 
