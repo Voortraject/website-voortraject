@@ -29,7 +29,6 @@ import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 import { CtaButton } from "@/components/CtaButton";
-import { euro, ISDE_ISOLATIE } from "@/data/isde";
 
 // Page-scoped palette (identical to Nij Begun page)
 const C = {
@@ -53,14 +52,14 @@ const ISDE = {
   zonneboilerMin: "€300",
   warmtepompMin: "€500",
   warmtepompMax: "€13.000",
-  // Bedragen komen uit src/data/isde.ts, dezelfde bron als de isolatiepagina,
-  // zodat ze niet uit elkaar kunnen lopen. Glas heeft daar een eigen regel en
-  // staat hieronder niet in deze tabel.
-  isolatie: ISDE_ISOLATIE.filter((m) => m.deel !== "glas").map((m) => ({
-    naam: m.naam,
-    een: `${euro(m.perM2)} / m²`,
-    twee: `${euro(m.perM2Dubbel)} / m²`,
-  })),
+  isolatie: [
+    { naam: "Spouwmuurisolatie", een: "€5,25 / m²", twee: "€10,50 / m²" },
+    { naam: "Dakisolatie", een: "€16,25 / m²", twee: "€32,50 / m²" },
+    { naam: "Gevelisolatie (binnen of buiten)", een: "€20,25 / m²", twee: "€40,50 / m²" },
+    { naam: "Vloerisolatie", een: "€5,50 / m²", twee: "€11,00 / m²" },
+    { naam: "Bodemisolatie", een: "€3,00 / m²", twee: "€6,00 / m²" },
+    { naam: "Zolder- en vlieringisolatie", een: "€4,00 / m²", twee: "€8,00 / m²" },
+  ],
 };
 
 const faqs: { q: string; a: string }[] = [

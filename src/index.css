@@ -16,6 +16,15 @@
   .btn-sheen { animation: none; }
 }
 
+/* Isolatieconfigurator: de bouwdelen en warmtepijlen faden in en uit
+   (zie WoningTekening). Zonder overgang schiet de tekening in beeld. */
+.schil-overgang {
+  transition: opacity 320ms ease, fill 320ms ease, stroke 320ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .schil-overgang { transition: none; }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

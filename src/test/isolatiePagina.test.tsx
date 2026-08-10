@@ -1,19 +1,16 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import type { ReactElement } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 /**
- * De isolatiepagina zet harde cijfers op een publieke site. Die mogen niet
- * stilletjes verkeerd raken.
+ * De isolatiepagina zet cijfers over besparing op een publieke site. Die mogen
+ * niet stilletjes verkeerd raken.
  *
- * Twee soorten bewaking:
- * 1. De bedragen komen uit één module (src/data/isde.ts) en worden ook echt
- *    daaruit gerenderd, dus tabel en rekenvoorbeeld kunnen niet uit elkaar
- *    lopen.
- * 2. De verdubbelingsregel klopt rekenkundig én de uitzondering staat er
- *    (ventilatie telt niet mee als tweede maatregel). Dat laatste is de
- *    valkuil waar bezoekers geld op verliezen.
+ * Let op wat hier bewust NIET staat: subsidiebedragen. Welke regeling voor een
+ * bezoeker geldt hangt van het adres af (Nij Begun in Groningen en
+ * Noord-Drenthe, elders landelijk en gemeentelijk). Een landelijk bedrag als
+ * uitgangspunt nemen klopt voor een groot deel van het werkgebied niet.
  */
 
 vi.mock("@/components/Header", () => ({ Header: () => null }));
@@ -23,71 +20,87 @@ vi.mock("@/components/Footer", () => ({
 vi.mock("@/components/Seo", () => ({ Seo: () => null }));
 
 import Isolatie from "@/pages/maatregelen/Isolatie";
-import { ISDE_ISOLATIE, euro } from "@/data/isde";
+import { ISOLATIE_MAATREGELEN, euro } from "@/data/isolatie";
 
 const toon = () => render(<MemoryRouter><Isolatie /></MemoryRouter>);
 
-describe("isolatiepagina: de schil met ISDE-bedragen", () => {
-  it("zet elke isolatiemaatregel met eis, ondergrens en beide bedragen in de tabel", () => {
+const dak = ISOLATIE_MAATREGELEN.find((m) => m.id === "dak")!;
+const gevel = ISOLATIE_MAATREGELEN.find((m) => m.id === "gevel")!;
+
+describe("isolatiepagina: de configurator", () => {
+  it("begint op nul, zonder gekozen maatregelen", () => {
     toon();
-    const tabel = screen.getByRole("table");
-
-    for (const m of ISDE_ISOLATIE) {
-      const rij = within(tabel).getByText(m.naam).closest("tr");
-      expect(rij, `rij voor ${m.naam} ontbreekt`).not.toBeNull();
-
-      const cellen = within(rij as HTMLElement).getAllByRole("cell").map((c) => c.textContent ?? "");
-      expect(cellen.join(" | ")).toContain(m.eis);
-      expect(cellen.join(" | ")).toContain(`${m.vanafM2} m²`);
-      expect(cellen.join(" | ")).toContain(euro(m.perM2));
-      expect(cellen.join(" | ")).toContain(euro(m.perM2Dubbel));
-    }
+    expect(screen.getByText("Zet hiernaast een maatregel aan")).toBeInTheDocument();
+    expect(screen.getByText(euro(0))).toBeInTheDocument();
   });
 
-  it("houdt het dubbele bedrag precies twee keer het enkele", () => {
-    // Rekenkundige controle op de brondata zelf: als iemand een bedrag bijwerkt
-    // en de andere kolom vergeet, staat er een verkeerde belofte op de site.
-    for (const m of ISDE_ISOLATIE) {
-      expect(m.perM2Dubbel, `${m.naam}: dubbel bedrag klopt niet`).toBeCloseTo(m.perM2 * 2, 2);
-    }
+  it("telt de besparing op als je maatregelen aanzet", () => {
+    toon();
+
+    // Standaard staat de hoekwoning aan.
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(dak.naam) }));
+    expect(screen.getByText(euro(dak.perType.hoekwoning.euro))).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(gevel.naam) }));
+    const samen = dak.perType.hoekwoning.euro + gevel.perType.hoekwoning.euro;
+    expect(screen.getByText(euro(samen))).toBeInTheDocument();
   });
 
-  it("noemt de uitzondering dat ventilatie niet meetelt als tweede maatregel", () => {
+  it("rekent opnieuw als je een ander woningtype kiest", () => {
     toon();
+
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(dak.naam) }));
+    fireEvent.click(screen.getByRole("button", { name: "Vrijstaand" }));
+
+    expect(screen.getByText(euro(dak.perType.vrijstaand.euro))).toBeInTheDocument();
+    // Het cijfer van de hoekwoning hoort dan weg te zijn als totaal.
+    expect(dak.perType.vrijstaand.euro).not.toBe(dak.perType.hoekwoning.euro);
+  });
+
+  it("laat de tekening meebewegen met wat er aan staat", () => {
+    const { container } = toon();
+
+    const tekening = () => container.querySelector('svg[role="img"]')!;
+    expect(tekening().getAttribute("aria-label")).toMatch(/zonder isolatie/);
+
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(dak.naam) }));
+    expect(tekening().getAttribute("aria-label")).toMatch(/met isolatie in: dak/);
+  });
+
+  it("toont per maatregel het uitgangspunt zodra je hem aanzet", () => {
+    toon();
+
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(gevel.naam) }));
+    // Zonder dit voorbehoud is de belofte niet waar: spouwisolatie kan alleen
+    // als er een spouw is en die nog leeg is.
+    expect(screen.getByText(new RegExp(gevel.noot!.slice(0, 40)))).toBeInTheDocument();
+  });
+});
+
+describe("isolatiepagina: eerlijk over subsidie", () => {
+  it("presenteert de cijfers vóór subsidie en verwijst naar het adres", () => {
+    toon();
+    expect(screen.getByText(/Hier staat nog geen subsidie in/)).toBeInTheDocument();
     expect(
-      screen.getAllByText(/ventilatie.*verdubbelt.*niet|verdubbelt.*niet.*ventilatie/i).length,
-    ).toBeGreaterThan(0);
+      screen.getByText(/in Groningen en Noord-Drenthe loopt dat anders dan in de rest van het land/),
+    ).toBeInTheDocument();
+  });
+
+  it("neemt geen landelijk subsidiebedrag als uitgangspunt", () => {
+    const { container } = toon();
+    // ISDE geldt niet voor een groot deel van het werkgebied, dus de pagina
+    // hoort er niet op te leunen.
+    expect(container.textContent).not.toMatch(/ISDE/);
   });
 
   it("verwijst naar de bron met een controledatum", () => {
     const { container } = toon();
-    const bronlink = Array.from(container.querySelectorAll<HTMLAnchorElement>("a")).find((a) =>
-      a.href.includes("rvo.nl"),
+    const bron = Array.from(container.querySelectorAll<HTMLAnchorElement>("a")).find((a) =>
+      a.href.includes("milieucentraal.nl"),
     );
-    expect(bronlink).toBeDefined();
-    expect(screen.getAllByText(/gecontroleerd op 10 augustus 2026/).length).toBeGreaterThan(0);
-  });
-});
-
-describe("isolatiepagina: het rekenvoorbeeld", () => {
-  it("rekent de verdubbeling goed door", () => {
-    toon();
-    const spouw = ISDE_ISOLATIE.find((m) => m.deel === "spouw")!;
-    const dak = ISDE_ISOLATIE.find((m) => m.deel === "dak")!;
-
-    // 50 m² spouw en 40 m² dak, de oppervlaktes uit het voorbeeld.
-    const los = 50 * spouw.perM2 + 40 * dak.perM2;
-    const samen = 50 * spouw.perM2Dubbel + 40 * dak.perM2Dubbel;
-
-    expect(screen.getAllByText(euro(los)).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(euro(samen)).length).toBeGreaterThan(0);
-    // Het verschil is de kern van het voorbeeld.
-    expect(screen.getByText(new RegExp(`${euro(samen - los)} meer subsidie`))).toBeInTheDocument();
-  });
-
-  it("presenteert de oppervlaktes als voorbeeld, niet als gemiddelde", () => {
-    toon();
-    expect(screen.getByText(/Rekenvoorbeeld met gekozen oppervlaktes/)).toBeInTheDocument();
+    expect(bron).toBeDefined();
+    expect(screen.getByText(/gecontroleerd op 10 augustus 2026/)).toBeInTheDocument();
+    expect(screen.getByText(/gasprijs van € 1,37 per m³/)).toBeInTheDocument();
   });
 });
 
@@ -99,11 +112,35 @@ describe("isolatiepagina: het ventilatieblok", () => {
     expect(screen.getByText("Balansventilatie met WTW")).toBeInTheDocument();
   });
 
-  it("noemt het vochtrisico en de ventilatiesubsidie van 2026", () => {
+  it("noemt het vochtrisico", () => {
     toon();
     // Staat bewust op meer plekken: het ventilatieblok, de aandachtspunten en de FAQ.
     expect(screen.getAllByText(/vocht en schimmel/).length).toBeGreaterThan(1);
-    expect(screen.getByText(/Nieuw in 2026:/)).toBeInTheDocument();
-    expect(screen.getByText(/€ 400/)).toBeInTheDocument();
+  });
+});
+
+describe("isolatiegegevens", () => {
+  it("heeft voor elk woningtype een besparing en een investering", () => {
+    for (const m of ISOLATIE_MAATREGELEN) {
+      for (const [type, waarden] of Object.entries(m.perType)) {
+        expect(waarden.euro, `${m.naam} / ${type}: besparing ontbreekt`).toBeGreaterThan(0);
+        expect(waarden.m3, `${m.naam} / ${type}: gasbesparing ontbreekt`).toBeGreaterThan(0);
+        expect(waarden.kosten, `${m.naam} / ${type}: kosten ontbreken`).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it("houdt de euro's in lijn met de kubieke meters gas", () => {
+    // Milieu Centraal rekent met € 1,37 per m³. Een regel die daar ver naast
+    // zit is een overtypfout, niet een afwijkend geval.
+    for (const m of ISOLATIE_MAATREGELEN) {
+      for (const [type, w] of Object.entries(m.perType)) {
+        const verwacht = w.m3 * 1.37;
+        expect(
+          Math.abs(w.euro - verwacht) / verwacht,
+          `${m.naam} / ${type}: ${euro(w.euro)} past niet bij ${w.m3} m³`,
+        ).toBeLessThan(0.12);
+      }
+    }
   });
 });

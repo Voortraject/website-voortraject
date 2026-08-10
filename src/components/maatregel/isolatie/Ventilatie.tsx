@@ -1,6 +1,5 @@
-import { AlertTriangle, ArrowLeftRight, ArrowRight, Fan, Wind } from "lucide-react";
+import { AlertTriangle, ArrowLeftRight, Fan, Wind } from "lucide-react";
 
-import { euro, ISDE_BRON, ISDE_VENTILATIE_BEDRAG } from "@/data/isde";
 import { Accent, SectieKop } from "@/components/maatregel/primitieven";
 import { KLEUR } from "@/components/maatregel/stijl";
 
@@ -9,7 +8,7 @@ import { KLEUR } from "@/components/maatregel/stijl";
  *
  * Dit is het onderdeel waar de meeste bewoners de mist in gaan: hoe beter je
  * isoleert, hoe luchtdichter de woning, en zonder bewuste luchtverversing komt
- * daar vocht en schimmel van. Sinds 2026 zit er ook een ISDE-bedrag op.
+ * daar vocht en schimmel van.
  */
 
 const SOORTEN = [
@@ -112,42 +111,23 @@ export const Ventilatie = () => (
       ))}
     </div>
 
-    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-      <div
-        className="rounded-2xl p-5 flex items-start gap-4"
-        style={{
-          backgroundColor: "hsl(var(--accent) / 0.12)",
-          border: `1px solid hsl(var(--accent) / 0.4)`,
-        }}
+    <div
+      className="mt-6 rounded-2xl p-5 flex items-start gap-4"
+      style={{ backgroundColor: "#FEF7F7", border: "1px solid #F5D9D9" }}
+    >
+      <span
+        className="inline-flex items-center justify-center rounded-full shrink-0"
+        style={{ width: 34, height: 34, backgroundColor: "#F8E5E5" }}
       >
-        <span
-          className="inline-flex items-center justify-center rounded-full shrink-0"
-          style={{ width: 34, height: 34, backgroundColor: "hsl(var(--accent) / 0.35)" }}
-        >
-          <ArrowRight size={18} color={KLEUR.navy} aria-hidden="true" />
-        </span>
-        <p className="text-[15px] leading-relaxed" style={{ color: KLEUR.navy, margin: 0 }}>
-          <strong>Nieuw in 2026:</strong> voor een energiezuinig ventilatiesysteem geldt een
-          vast ISDE-bedrag van {euro(ISDE_VENTILATIE_BEDRAG)}, mits je het combineert met
-          isolatie. Bron: {ISDE_BRON.naam}, gecontroleerd op {ISDE_BRON.gecontroleerd}.
-        </p>
-      </div>
-      <div
-        className="rounded-2xl p-5 flex items-start gap-4"
-        style={{ backgroundColor: "#FEF7F7", border: "1px solid #F5D9D9" }}
-      >
-        <span
-          className="inline-flex items-center justify-center rounded-full shrink-0"
-          style={{ width: 34, height: 34, backgroundColor: "#F8E5E5" }}
-        >
-          <AlertTriangle size={18} color="#C0392B" aria-hidden="true" />
-        </span>
-        <p className="text-[15px] leading-relaxed" style={{ color: KLEUR.navy, margin: 0 }}>
-          <strong>Let op de valkuil:</strong> ventilatie telt niet mee als tweede
-          isolatiemaatregel. Combineer je isolatie alléén met ventilatie, dan verdubbelt je
-          bedrag per m² niet.
-        </p>
-      </div>
+        <AlertTriangle size={18} color="#C0392B" aria-hidden="true" />
+      </span>
+      <p className="text-[15px] leading-relaxed" style={{ color: KLEUR.navy, margin: 0 }}>
+        <strong>De valkuil:</strong> ventilatie wordt vaak pas bedacht als de woning al dicht
+        zit en de eerste vochtplekken verschijnen. Neem het mee in hetzelfde plan als de
+        isolatie, niet als los klusje achteraf. Voor ventilatie bestaan bovendien eigen
+        regelingen, die per adres verschillen.
+      </p>
     </div>
+
   </>
 );

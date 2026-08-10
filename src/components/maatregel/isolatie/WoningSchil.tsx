@@ -1,301 +1,258 @@
-import { useId, useState } from "react";
+import { useMemo, useState } from "react";
+import { Check } from "lucide-react";
 
-import { euro, ISDE_BRON, ISDE_ISOLATIE, ISDE_VERDUBBELING, type IsdeMaatregel } from "@/data/isde";
+import {
+  BRON,
+  euro,
+  ISOLATIE_MAATREGELEN,
+  WONINGTYPES,
+  type MaatregelId,
+  type Woningtype,
+} from "@/data/isolatie";
 import { Accent, SectieKop } from "@/components/maatregel/primitieven";
 import { KLEUR } from "@/components/maatregel/stijl";
+import { WoningTekening } from "./WoningTekening";
 
 /**
- * De schil van de woning als doorsnede, gekoppeld aan de ISDE-eisen en
- * -bedragen per bouwdeel.
+ * De schil van de woning als configurator.
  *
- * Bewust geen percentages warmteverlies per vlak: Milieu Centraal noemt die
- * niet en de cijfers die je online vindt spreken elkaar tegen. Wat hier staat
- * is wél controleerbaar (bron: RVO) en bovendien concreter: per bouwdeel de
- * isolatie-eis, het minimale oppervlak en het bedrag per m².
+ * Je begint met een woning zonder isolatie, waar de warmte zichtbaar uit
+ * ontsnapt. Zet je een maatregel aan, dan krijgt dat bouwdeel een isolatielaag
+ * en verdwijnen de warmtepijlen daar. Onderin loopt de besparing per jaar mee.
  *
- * De tabel toont alles tegelijk; de doorsnede voegt alleen het ruimtelijk
- * begrip toe. Zo staat er niets achter een klik verstopt, ook niet voor Google.
+ * Bewust geen subsidiebedragen: welke regeling voor jou geldt hangt van je
+ * adres af (Nij Begun in Groningen en Noord-Drenthe, elders landelijk en
+ * gemeentelijk). Alles is vóór subsidie gerekend en de vraag "wat krijg ik"
+ * gaat naar de subsidiecheck.
  */
-
-type Deel = IsdeMaatregel["deel"];
-
-const DEEL_LABEL: Record<Deel, string> = {
-  dak: "Dak",
-  zolder: "Zoldervloer",
-  gevel: "Gevel",
-  spouw: "Spouwmuur",
-  vloer: "Vloer",
-  bodem: "Bodem",
-  glas: "Ramen",
-};
-
 export const WoningSchil = () => {
-  const [actief, setActief] = useState<Deel | null>(null);
-  const tabelId = useId();
+  const [woningtype, setWoningtype] = useState<Woningtype>("hoekwoning");
+  const [gekozen, setGekozen] = useState<Set<MaatregelId>>(new Set());
 
-  const isAan = (d: Deel) => actief === d;
-  // Gevel en spouw zitten op hetzelfde vlak in de doorsnede.
-  const vlakAan = (d: Deel) => isAan(d) || (d === "gevel" && isAan("spouw")) || (d === "spouw" && isAan("gevel"));
+  const wissel = (id: MaatregelId) =>
+    setGekozen((vorige) => {
+      const volgende = new Set(vorige);
+      if (volgende.has(id)) volgende.delete(id);
+      else volgende.add(id);
+      return volgende;
+    });
 
-  const vulling = (d: Deel) => (vlakAan(d) ? "hsl(var(--accent) / 0.55)" : "hsl(var(--accent) / 0.16)");
-  const lijn = (d: Deel) => (vlakAan(d) ? "hsl(var(--accent))" : "hsl(var(--primary) / 0.25)");
+  const totaal = useMemo(() => {
+    let euroPerJaar = 0;
+    let m3PerJaar = 0;
+    let kosten = 0;
+    for (const m of ISOLATIE_MAATREGELEN) {
+      if (!gekozen.has(m.id)) continue;
+      const t = m.perType[woningtype];
+      euroPerJaar += t.euro;
+      m3PerJaar += t.m3;
+      kosten += t.kosten;
+    }
+    return { euroPerJaar, m3PerJaar, kosten };
+  }, [gekozen, woningtype]);
+
+  const alles = () =>
+    setGekozen(
+      gekozen.size === ISOLATIE_MAATREGELEN.length
+        ? new Set()
+        : new Set(ISOLATIE_MAATREGELEN.map((m) => m.id)),
+    );
 
   return (
     <>
       <div className="text-center">
         <SectieKop center>
-          <Accent tekst="De [[schil]] van je woning" />
+          <Accent tekst="Maak de schil van je woning [[dicht]]" />
         </SectieKop>
         <p
           className="mt-4 mx-auto text-base leading-relaxed"
-          style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 680 }}
+          style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 700 }}
         >
-          Isoleren gaat over de schil: alles wat je verwarmde ruimte scheidt van de kou. Per
-          onderdeel gelden eigen eisen en eigen bedragen. Beweeg over een regel om te zien
-          waar in de woning die zit.
+          Isoleren gaat over de schil: alles wat je verwarmde ruimte scheidt van de kou. Kies
+          hieronder je woningtype en zet maatregelen aan om te zien wat er met de warmte, en
+          met je energierekening, gebeurt.
         </p>
       </div>
 
-      <div className="mt-10 grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-10 items-stretch">
-        {/* Doorsnede */}
+      {/* Woningtype */}
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+        <span
+          className="mr-1 text-[13px] font-semibold"
+          style={{ color: KLEUR.navy, opacity: 0.6 }}
+        >
+          Mijn woning is een
+        </span>
+        {WONINGTYPES.map((t) => {
+          const aan = t.id === woningtype;
+          return (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setWoningtype(t.id)}
+              aria-pressed={aan}
+              className="rounded-full px-4 py-2 text-[14px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              style={{
+                backgroundColor: aan ? KLEUR.navy : KLEUR.wit,
+                color: aan ? KLEUR.wit : KLEUR.navy,
+                border: `1px solid ${aan ? KLEUR.navy : KLEUR.rand}`,
+              }}
+            >
+              {t.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
+        {/* Tekening plus teller */}
         <div
-          className="lg:col-span-2 rounded-2xl p-5 flex flex-col justify-center"
+          className="rounded-2xl p-5 md:p-6 lg:sticky lg:top-24"
           style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
         >
-          <svg
-            viewBox="0 0 320 312"
-            className="w-full h-auto"
-            role="img"
-            aria-labelledby={`${tabelId}-svg-titel`}
-          >
-            <title id={`${tabelId}-svg-titel`}>
-              Doorsnede van een woning met dak, zoldervloer, gevel, spouwmuur, raam, vloer en
-              bodem
-            </title>
-
-            {/* Binnenruimte, als rustpunt achter de schil */}
-            <rect x="64" y="126" width="192" height="126" fill="hsl(var(--primary) / 0.035)" />
-
-            {/* Dak, sluit aan op de gevels */}
-            <path
-              d="M160 22 L296 110 L296 126 L160 42 L24 126 L24 110 Z"
-              fill={vulling("dak")}
-              stroke={lijn("dak")}
-              strokeWidth={2}
-              strokeLinejoin="round"
-            />
-            {/* Zoldervloer, tussen de gevels */}
-            <rect
-              x="64" y="126" width="192" height="12"
-              fill={vulling("zolder")}
-              stroke={lijn("zolder")}
-              strokeWidth={2}
-            />
-            {/* Gevels, links en rechts. De spouw ligt in hetzelfde vlak. */}
-            <rect
-              x="44" y="120" width="20" height="144"
-              fill={vulling("gevel")}
-              stroke={lijn("gevel")}
-              strokeWidth={2}
-            />
-            <rect
-              x="256" y="120" width="20" height="144"
-              fill={vulling("gevel")}
-              stroke={lijn("gevel")}
-              strokeWidth={2}
-            />
-            {/* Raam in de rechtergevel */}
-            <rect
-              x="254" y="164" width="24" height="52"
-              rx="2"
-              fill={vulling("glas")}
-              stroke={lijn("glas")}
-              strokeWidth={2}
-            />
-            {/* Vloer */}
-            <rect
-              x="64" y="252" width="192" height="12"
-              fill={vulling("vloer")}
-              stroke={lijn("vloer")}
-              strokeWidth={2}
-            />
-            {/* Kruipruimte, daaronder de bodem */}
-            <rect
-              x="64" y="282" width="192" height="12"
-              fill={vulling("bodem")}
-              stroke={lijn("bodem")}
-              strokeWidth={2}
-            />
-            <line
-              x1="24" y1="294" x2="296" y2="294"
-              stroke="hsl(var(--primary) / 0.18)"
-              strokeWidth={1.5}
-            />
-
-            {/* Labels, met een aanwijslijn waar het vlak zelf te smal is */}
-            {[
-              { d: "dak" as Deel, x: 160, y: 92, anchor: "middle" as const },
-              { d: "zolder" as Deel, x: 160, y: 155, anchor: "middle" as const },
-              { d: "vloer" as Deel, x: 160, y: 244, anchor: "middle" as const },
-              { d: "bodem" as Deel, x: 160, y: 308, anchor: "middle" as const },
-              { d: "gevel" as Deel, x: 34, y: 196, anchor: "end" as const, lijn: [37, 192, 44, 192] },
-              { d: "glas" as Deel, x: 286, y: 194, anchor: "start" as const, lijn: [278, 190, 284, 190] },
-            ].map(({ d, x, y, anchor, lijn: pijl }) => (
-              <g key={d}>
-                {pijl && (
-                  <line
-                    x1={pijl[0]} y1={pijl[1]} x2={pijl[2]} y2={pijl[3]}
-                    stroke={vlakAan(d) ? "hsl(var(--accent))" : "hsl(var(--primary) / 0.3)"}
-                    strokeWidth={1.5}
-                  />
-                )}
-                <text
-                  x={x}
-                  y={y}
-                  textAnchor={anchor}
-                  style={{
-                    fontSize: 11,
-                    fontWeight: vlakAan(d) ? 700 : 500,
-                    fill: vlakAan(d) ? "hsl(var(--primary))" : "hsl(var(--primary) / 0.55)",
-                  }}
-                >
-                  {DEEL_LABEL[d]}
-                </text>
-              </g>
-            ))}
-          </svg>
-          <p
-            className="mt-2 text-center text-[12px]"
-            style={{ color: KLEUR.navy, opacity: 0.5 }}
-          >
-            Spouwmuurisolatie zit in de gevel, tussen het binnen- en buitenblad.
-          </p>
-        </div>
-
-        {/* Tabel */}
-        <div className="lg:col-span-3 min-w-0">
-          <div
-            className="overflow-x-auto rounded-2xl"
-            style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-          >
-            <table className="w-full" style={{ borderCollapse: "collapse", minWidth: 520 }}>
-              <caption className="sr-only">
-                ISDE-eisen en subsidiebedragen per isolatiemaatregel in {ISDE_BRON.geldigVoor}
-              </caption>
-              <thead>
-                <tr style={{ backgroundColor: KLEUR.zand }}>
-                  <Th align="left">Maatregel</Th>
-                  <Th>Eis</Th>
-                  <Th>Vanaf</Th>
-                  <Th>Per m²</Th>
-                  <Th>Bij 2 of meer</Th>
-                </tr>
-              </thead>
-              <tbody>
-                {ISDE_ISOLATIE.map((m) => (
-                  <tr
-                    key={m.naam}
-                    onMouseEnter={() => setActief(m.deel)}
-                    onMouseLeave={() => setActief(null)}
-                    onFocus={() => setActief(m.deel)}
-                    onBlur={() => setActief(null)}
-                    tabIndex={0}
-                    style={{
-                      borderTop: `1px solid ${KLEUR.rand}`,
-                      backgroundColor: isAan(m.deel) ? "hsl(var(--accent) / 0.08)" : undefined,
-                      outline: "none",
-                    }}
-                  >
-                    <Td align="left">
-                      <span style={{ fontWeight: 600, color: KLEUR.navy }}>{m.naam}</span>
-                      {m.noot && (
-                        <span
-                          className="block text-[12px] leading-snug mt-0.5"
-                          style={{ color: KLEUR.navy, opacity: 0.55 }}
-                        >
-                          {m.noot}
-                        </span>
-                      )}
-                    </Td>
-                    <Td>{m.eis}</Td>
-                    <Td>{m.vanafM2} m²</Td>
-                    <Td>{euro(m.perM2)}</Td>
-                    <Td>
-                      <span style={{ fontWeight: 700, color: KLEUR.navy }}>
-                        {euro(m.perM2Dubbel)}
-                      </span>
-                    </Td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <WoningTekening gekozen={gekozen} />
 
           <div
-            className="mt-4 rounded-2xl p-5"
+            className="mt-5 rounded-xl p-5 text-center"
             style={{
-              backgroundColor: "hsl(var(--accent) / 0.12)",
-              border: `1px solid hsl(var(--accent) / 0.4)`,
+              backgroundColor: gekozen.size > 0 ? "hsl(var(--accent) / 0.14)" : KLEUR.zand,
+              border: `1px solid ${gekozen.size > 0 ? "hsl(var(--accent) / 0.45)" : KLEUR.rand}`,
+              transition: "background-color 250ms ease, border-color 250ms ease",
             }}
           >
-            <p
-              className="text-[15px] leading-relaxed"
-              style={{ color: KLEUR.navy, margin: 0 }}
+            <span
+              className="text-[12px] font-bold uppercase tracking-wider"
+              style={{ color: KLEUR.navy, opacity: 0.6 }}
             >
-              <strong>{ISDE_VERDUBBELING.regel}</strong>
-            </p>
-            <p
-              className="mt-2 text-[15px] leading-relaxed"
-              style={{ color: KLEUR.navy, opacity: 0.8, margin: "8px 0 0 0" }}
+              Besparing per jaar
+            </span>
+            <div
+              className="font-display mt-1 tabular-nums"
+              style={{ color: KLEUR.navy, fontWeight: 700, fontSize: 40, lineHeight: 1.1 }}
             >
-              {ISDE_VERDUBBELING.uitzondering}
+              {euro(totaal.euroPerJaar)}
+            </div>
+            <p className="mt-1 text-[14px]" style={{ color: KLEUR.navy, opacity: 0.7 }}>
+              {gekozen.size === 0
+                ? "Zet hiernaast een maatregel aan"
+                : `${totaal.m3PerJaar.toLocaleString("nl-NL")} m³ gas minder, investering ${euro(totaal.kosten)} vóór subsidie`}
             </p>
           </div>
+        </div>
 
-          <p className="mt-4 text-[13px]" style={{ color: KLEUR.navy, opacity: 0.55 }}>
-            Bedragen en eisen gelden voor {ISDE_BRON.geldigVoor}. Bron:{" "}
-            <a
-              href={ISDE_BRON.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-2"
-            >
-              {ISDE_BRON.naam}
-            </a>
-            , gecontroleerd op {ISDE_BRON.gecontroleerd}. Er geldt ook een maximaal aantal
-            vierkante meters per maatregel; wij rekenen dat voor je adres uit.
-          </p>
+        {/* Maatregelen */}
+        <div className="flex flex-col gap-3">
+          {ISOLATIE_MAATREGELEN.map((m) => {
+            const aan = gekozen.has(m.id);
+            const t = m.perType[woningtype];
+            return (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => wissel(m.id)}
+                aria-pressed={aan}
+                className="w-full rounded-2xl p-5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                style={{
+                  backgroundColor: aan ? "hsl(var(--accent) / 0.12)" : KLEUR.wit,
+                  border: `1px solid ${aan ? "hsl(var(--accent) / 0.5)" : KLEUR.rand}`,
+                }}
+              >
+                <span className="flex items-start gap-4">
+                  <span
+                    className="mt-0.5 flex items-center justify-center rounded-full shrink-0 transition-colors"
+                    style={{
+                      width: 26,
+                      height: 26,
+                      backgroundColor: aan ? KLEUR.goud : "transparent",
+                      border: `2px solid ${aan ? KLEUR.goud : "hsl(var(--primary) / 0.25)"}`,
+                    }}
+                  >
+                    {aan && <Check size={15} color={KLEUR.navy} strokeWidth={3} aria-hidden="true" />}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                      <span
+                        className="text-[17px] font-semibold"
+                        style={{ color: KLEUR.navy }}
+                      >
+                        {m.naam}
+                      </span>
+                      <span
+                        className="text-[15px] font-bold tabular-nums whitespace-nowrap"
+                        style={{ color: aan ? KLEUR.navy : "hsl(var(--primary) / 0.6)" }}
+                      >
+                        {euro(t.euro)} per jaar
+                      </span>
+                    </span>
+                    <span
+                      className="mt-1.5 block text-[14px] leading-relaxed"
+                      style={{ color: KLEUR.navy, opacity: 0.75 }}
+                    >
+                      {m.kort}
+                    </span>
+                    {aan && (
+                      <span className="mt-3 block">
+                        <span
+                          className="block text-[14px] leading-relaxed"
+                          style={{ color: KLEUR.navy, opacity: 0.85 }}
+                        >
+                          <strong>Wat je merkt:</strong> {m.merkbaar}
+                        </span>
+                        <span
+                          className="mt-2 block text-[13px] leading-relaxed"
+                          style={{ color: KLEUR.navy, opacity: 0.6 }}
+                        >
+                          {t.m3} m³ gas per jaar. Investering {euro(t.kosten)} vóór subsidie.{" "}
+                          {m.uitgangspunt}
+                          {m.noot ? ` ${m.noot}` : ""}
+                        </span>
+                      </span>
+                    )}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+
+          <button
+            type="button"
+            onClick={alles}
+            className="self-start text-[14px] font-semibold underline underline-offset-4 transition-colors"
+            style={{ color: KLEUR.navy, opacity: 0.7 }}
+          >
+            {gekozen.size === ISOLATIE_MAATREGELEN.length ? "Alles uitzetten" : "Alles aanzetten"}
+          </button>
         </div>
       </div>
+
+      <div
+        className="mt-8 rounded-2xl p-5 md:p-6"
+        style={{
+          backgroundColor: "hsl(var(--accent) / 0.12)",
+          border: `1px solid hsl(var(--accent) / 0.4)`,
+        }}
+      >
+        <p className="text-[15px] leading-relaxed" style={{ color: KLEUR.navy, margin: 0 }}>
+          <strong>Hier staat nog geen subsidie in.</strong> Welke regeling voor jou geldt hangt
+          af van je adres: in Groningen en Noord-Drenthe loopt dat anders dan in de rest van
+          het land, en gemeenten hebben er vaak nog een eigen regeling naast. Dat zoeken wij
+          voor je uit, en de subsidiecheck hieronder geeft je alvast een beeld.
+        </p>
+      </div>
+
+      <p className="mt-4 text-[13px]" style={{ color: KLEUR.navy, opacity: 0.55 }}>
+        Besparingen en kosten zijn gemiddelden van{" "}
+        <a
+          href={BRON.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline underline-offset-2"
+        >
+          {BRON.naam}
+        </a>
+        , gecontroleerd op {BRON.gecontroleerd}, bij een gasprijs van € 1,37 per m³ (het
+        gemiddelde dat Milieu Centraal voor 2026 tot 2040 aanhoudt). Wat jouw woning oplevert
+        hangt af van bouwjaar, huidige isolatie en stookgedrag.
+      </p>
     </>
   );
 };
-
-const Th = ({ children, align = "right" }: { children: React.ReactNode; align?: "left" | "right" }) => (
-  <th
-    scope="col"
-    className="text-[12px] font-semibold uppercase tracking-wider"
-    style={{
-      color: `hsl(var(--primary) / 0.6)`,
-      textAlign: align,
-      padding: "12px 16px",
-      whiteSpace: "nowrap",
-    }}
-  >
-    {children}
-  </th>
-);
-
-const Td = ({ children, align = "right" }: { children: React.ReactNode; align?: "left" | "right" }) => (
-  <td
-    className="text-[14px]"
-    style={{
-      color: `hsl(var(--primary) / 0.85)`,
-      textAlign: align,
-      padding: "14px 16px",
-      whiteSpace: align === "right" ? "nowrap" : undefined,
-    }}
-  >
-    {children}
-  </td>
-);

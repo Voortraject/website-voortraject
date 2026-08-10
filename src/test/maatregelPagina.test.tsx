@@ -65,7 +65,7 @@ describe("maatregelpagina's tonen alle aangeleverde content", () => {
   it("toont de subsidie-informatie met een link naar de subsidiepagina's", () => {
     const { container } = toon(<Isolatie />);
     expect(screen.getByText(/best gesubsidieerde maatregelen/)).toBeInTheDocument();
-    expect(screen.getByText(/ISDE \(landelijk\), verdubbelt/)).toBeInTheDocument();
+    expect(screen.getByText(/Nij Begun, tot 100 procent vergoed/)).toBeInTheDocument();
     const link = Array.from(container.querySelectorAll<HTMLAnchorElement>("a")).find((a) =>
       /subsidies stapelt/i.test(a.textContent ?? ""),
     );
