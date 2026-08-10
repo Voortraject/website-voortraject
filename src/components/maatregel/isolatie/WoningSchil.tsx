@@ -5,6 +5,7 @@ import {
   BRON,
   euro,
   ISOLATIE_MAATREGELEN,
+  SLUIT_UIT,
   WONINGTYPES,
   type MaatregelId,
   type Woningtype,
@@ -32,8 +33,14 @@ export const WoningSchil = () => {
   const wissel = (id: MaatregelId) =>
     setGekozen((vorige) => {
       const volgende = new Set(vorige);
-      if (volgende.has(id)) volgende.delete(id);
-      else volgende.add(id);
+      if (volgende.has(id)) {
+        volgende.delete(id);
+      } else {
+        volgende.add(id);
+        // Spouw en gevel sluiten elkaar uit: je doet het één of het ander.
+        const botst = SLUIT_UIT[id];
+        if (botst) volgende.delete(botst);
+      }
       return volgende;
     });
 
@@ -51,12 +58,15 @@ export const WoningSchil = () => {
     return { euroPerJaar, m3PerJaar, kosten };
   }, [gekozen, woningtype]);
 
-  const alles = () =>
-    setGekozen(
-      gekozen.size === ISOLATIE_MAATREGELEN.length
-        ? new Set()
-        : new Set(ISOLATIE_MAATREGELEN.map((m) => m.id)),
-    );
+  // Alles aanzetten slaat de tweede helft van een uitsluitend paar over, anders
+  // zou de teller een besparing optellen die je in werkelijkheid niet krijgt.
+  const alleMogelijk = ISOLATIE_MAATREGELEN.reduce<MaatregelId[]>((lijst, m) => {
+    const botst = SLUIT_UIT[m.id];
+    if (botst && lijst.includes(botst)) return lijst;
+    return [...lijst, m.id];
+  }, []);
+  const allesAan = alleMogelijk.every((id) => gekozen.has(id));
+  const alles = () => setGekozen(allesAan ? new Set() : new Set(alleMogelijk));
 
   return (
     <>
@@ -219,7 +229,7 @@ export const WoningSchil = () => {
             className="self-start text-[14px] font-semibold underline underline-offset-4 transition-colors"
             style={{ color: KLEUR.navy, opacity: 0.7 }}
           >
-            {gekozen.size === ISOLATIE_MAATREGELEN.length ? "Alles uitzetten" : "Alles aanzetten"}
+            {allesAan ? "Alles uitzetten" : "Alles aanzetten"}
           </button>
         </div>
       </div>

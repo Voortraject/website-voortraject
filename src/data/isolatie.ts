@@ -31,7 +31,18 @@ export const WONINGTYPES: { id: Woningtype; label: string; kort: string }[] = [
   { id: "vrijstaand", label: "Vrijstaand", kort: "Vrijstaand" },
 ];
 
-export type MaatregelId = "dak" | "gevel" | "vloer" | "glas";
+export type MaatregelId = "dak" | "spouw" | "gevel" | "vloer" | "glas";
+
+/**
+ * Maatregelen die elkaar uitsluiten. Spouwmuurisolatie kan alleen als er een
+ * spouw is en die nog leeg is; is dat niet zo, dan isoleer je de gevel aan de
+ * binnen- of buitenkant. Allebei tegelijk kiezen zou een besparing optellen die
+ * je in werkelijkheid niet twee keer krijgt.
+ */
+export const SLUIT_UIT: Partial<Record<MaatregelId, MaatregelId>> = {
+  spouw: "gevel",
+  gevel: "spouw",
+};
 
 interface PerType {
   /** Besparing in kubieke meter gas per jaar. */
@@ -71,7 +82,7 @@ export const ISOLATIE_MAATREGELEN: IsolatieMaatregel[] = [
     noot: "Bedragen gelden voor een schuin dak dat je laat uitvoeren.",
   },
   {
-    id: "gevel",
+    id: "spouw",
     naam: "Spouwmuurisolatie",
     kort: "De spouw tussen binnen- en buitenmuur volspuiten, meestal in één dag klaar.",
     merkbaar: "Muren voelen minder koud aan en het tochtgevoel langs de gevel verdwijnt.",
@@ -83,6 +94,21 @@ export const ISOLATIE_MAATREGELEN: IsolatieMaatregel[] = [
       vrijstaand: { m3: 600, euro: 800, kosten: 2700 },
     },
     noot: "Alleen mogelijk als je woning een spouw heeft en die nog leeg is. Dat controleren we vooraf.",
+  },
+  {
+    id: "gevel",
+    naam: "Gevelisolatie",
+    kort: "Isolatie tegen de gevel, aan de buitenkant of met een voorzetwand binnen.",
+    merkbaar: "Hetzelfde effect als spouwisolatie, maar dan voor een woning die geen spouw heeft.",
+    uitgangspunt:
+      "Van een ongeïsoleerde gevel naar isolatie aan de buitenkant, over de hele gevel.",
+    perType: {
+      tussenwoning: { m3: 530, euro: 750, kosten: 23000 },
+      hoekwoning: { m3: 530, euro: 750, kosten: 23000 },
+      "twee-onder-een-kap": { m3: 530, euro: 750, kosten: 23000 },
+      vrijstaand: { m3: 530, euro: 750, kosten: 23000 },
+    },
+    noot: "Dit is de route als je woning geen spouw heeft of de spouw al gevuld is; daarom kun je hem niet samen met spouwmuurisolatie kiezen. Buitenom levert het meeste op maar is ingrijpend en duur; een voorzetwand aan de binnenkant is een stuk goedkoper, levert minder op en kost ruimte. Milieu Centraal rekent hier met een hoekwoning, daarom staat dit cijfer voor elk woningtype gelijk.",
   },
   {
     id: "vloer",

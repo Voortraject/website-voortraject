@@ -25,7 +25,10 @@ import { ISOLATIE_MAATREGELEN, euro } from "@/data/isolatie";
 const toon = () => render(<MemoryRouter><Isolatie /></MemoryRouter>);
 
 const dak = ISOLATIE_MAATREGELEN.find((m) => m.id === "dak")!;
+const spouw = ISOLATIE_MAATREGELEN.find((m) => m.id === "spouw")!;
 const gevel = ISOLATIE_MAATREGELEN.find((m) => m.id === "gevel")!;
+
+const knop = (naam: string) => screen.getByRole("button", { name: new RegExp(`^${naam}`) });
 
 describe("isolatiepagina: de configurator", () => {
   it("begint op nul, zonder gekozen maatregelen", () => {
@@ -38,18 +41,18 @@ describe("isolatiepagina: de configurator", () => {
     toon();
 
     // Standaard staat de hoekwoning aan.
-    fireEvent.click(screen.getByRole("button", { name: new RegExp(dak.naam) }));
+    fireEvent.click(knop(dak.naam));
     expect(screen.getByText(euro(dak.perType.hoekwoning.euro))).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: new RegExp(gevel.naam) }));
-    const samen = dak.perType.hoekwoning.euro + gevel.perType.hoekwoning.euro;
+    fireEvent.click(knop(spouw.naam));
+    const samen = dak.perType.hoekwoning.euro + spouw.perType.hoekwoning.euro;
     expect(screen.getByText(euro(samen))).toBeInTheDocument();
   });
 
   it("rekent opnieuw als je een ander woningtype kiest", () => {
     toon();
 
-    fireEvent.click(screen.getByRole("button", { name: new RegExp(dak.naam) }));
+    fireEvent.click(knop(dak.naam));
     fireEvent.click(screen.getByRole("button", { name: "Vrijstaand" }));
 
     expect(screen.getByText(euro(dak.perType.vrijstaand.euro))).toBeInTheDocument();
@@ -63,17 +66,43 @@ describe("isolatiepagina: de configurator", () => {
     const tekening = () => container.querySelector('svg[role="img"]')!;
     expect(tekening().getAttribute("aria-label")).toMatch(/zonder isolatie/);
 
-    fireEvent.click(screen.getByRole("button", { name: new RegExp(dak.naam) }));
+    fireEvent.click(knop(dak.naam));
     expect(tekening().getAttribute("aria-label")).toMatch(/met isolatie in: dak/);
   });
 
   it("toont per maatregel het uitgangspunt zodra je hem aanzet", () => {
     toon();
 
-    fireEvent.click(screen.getByRole("button", { name: new RegExp(gevel.naam) }));
+    fireEvent.click(knop(spouw.naam));
     // Zonder dit voorbehoud is de belofte niet waar: spouwisolatie kan alleen
     // als er een spouw is en die nog leeg is.
-    expect(screen.getByText(new RegExp(gevel.noot!.slice(0, 40)))).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(spouw.noot!.slice(0, 40)))).toBeInTheDocument();
+  });
+
+  it("laat spouw- en gevelisolatie elkaar uitsluiten", () => {
+    toon();
+
+    fireEvent.click(knop(spouw.naam));
+    expect(knop(spouw.naam)).toHaveAttribute("aria-pressed", "true");
+
+    // Je doet het één of het ander: een woning zonder spouw isoleer je aan de
+    // gevel. Allebei optellen zou een besparing beloven die je niet krijgt.
+    fireEvent.click(knop(gevel.naam));
+    expect(knop(gevel.naam)).toHaveAttribute("aria-pressed", "true");
+    expect(knop(spouw.naam)).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByText(euro(gevel.perType.hoekwoning.euro))).toBeInTheDocument();
+  });
+
+  it("telt bij 'alles aanzetten' niet allebei de gevelroutes mee", () => {
+    toon();
+    fireEvent.click(screen.getByRole("button", { name: /Alles aanzetten/ }));
+
+    const zonderGevel = ISOLATIE_MAATREGELEN.filter((m) => m.id !== "gevel").reduce(
+      (som, m) => som + m.perType.hoekwoning.euro,
+      0,
+    );
+    expect(screen.getByText(euro(zonderGevel))).toBeInTheDocument();
+    expect(knop(gevel.naam)).toHaveAttribute("aria-pressed", "false");
   });
 });
 
