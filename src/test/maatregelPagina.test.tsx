@@ -81,7 +81,7 @@ describe("maatregelpagina's tonen alle aangeleverde content", () => {
     expect(screen.getByText(/BRL 6000-21/)).toBeInTheDocument();
     expect(screen.getByText(/STEK Warmtepomp-module D/)).toBeInTheDocument();
     expect(
-      screen.getByText(/Wij koppelen je alleen aan uitvoerders die dit op orde hebben/),
+      screen.getByText(/uitvoerders die dit op orde hebben/),
     ).toBeInTheDocument();
   });
 

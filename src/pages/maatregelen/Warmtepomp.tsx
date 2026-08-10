@@ -28,16 +28,20 @@ import warmtepompImage from "@/assets/maatregel-warmtepomp.webp";
  * adres lopen, via de subsidiecheck.
  */
 
-/** De rekensom van Milieu Centraal, in woorden, uit de datamodule. */
+/**
+ * De rekensom van Milieu Centraal, in woorden, uit de datamodule. Bewust zonder
+ * de aanschafprijs: die staat groot in de vergelijking bovenaan de pagina en
+ * hoeft hier niet nog eens.
+ */
 const rekenvoorbeeld = (s: Systeem) => {
   const { voor, na } = s.referentie;
-  const verschil = voor.kosten - na.kosten;
-  const naVerbruik = na.gas > 0 ? `${getal(na.gas)} m³ gas en ${getal(na.stroom)} kWh stroom` : `${getal(na.stroom)} kWh stroom`;
+  const naVerbruik =
+    na.gas > 0 ? `${getal(na.gas)} m³ gas en ${getal(na.stroom)} kWh stroom` : `${getal(na.stroom)} kWh stroom`;
 
   return [
-    `Nu ${getal(voor.gas)} m³ gas en ${getal(voor.stroom)} kWh stroom, samen ${euro(voor.kosten)} per jaar.`,
-    `Daarna ${naVerbruik}, samen ${euro(na.kosten)}.`,
-    `Dat scheelt ongeveer ${euro(verschil)} per jaar, tegenover een aanschaf van ${euro(s.aanschaf)} vóór subsidie.`,
+    `Nu ${getal(voor.gas)} m³ gas en ${getal(voor.stroom)} kWh stroom: ${euro(voor.kosten)} per jaar.`,
+    `Daarna ${naVerbruik}: ${euro(na.kosten)}.`,
+    `Dat scheelt ongeveer ${euro(voor.kosten - na.kosten)} per jaar.`,
     s.referentie.noot,
   ]
     .filter(Boolean)
@@ -56,7 +60,7 @@ const Warmtepomp = () => (
       { na: "subsidies", bg: "warm", id: "geluid", inhoud: <GeluidPlaatsingVakmanschap /> },
     ]}
     heroTitle="Warmtepomp, [[comfort]] zonder gas"
-    heroSub="Verwarmen zonder gas, mits je woning er klaar voor is. In een goed geïsoleerde woning is een warmtepomp een efficiënte stap, en de keuze tussen hybride en volledig elektrisch hangt af van je woning en einddoel."
+    heroSub="Verwarmen zonder gas, mits je woning er klaar voor is. De keuze tussen hybride en volledig elektrisch hangt vooral af van je isolatie en je verwarming."
     heroIntro=""
     heroImageSrc={warmtepompImage}
     heroImageAlt="Adviseur van Voortraject bekijkt de installatie en instellingen binnenshuis"
@@ -79,7 +83,7 @@ const Warmtepomp = () => (
       title: `${s.naam} in een ${s.referentie.woning}`,
       body: rekenvoorbeeld(s),
     }))}
-    kostenFooter={`Deze twee sommen gaan over twee verschillende woningen: Milieu Centraal rekent de hybride door in een matig geïsoleerde hoekwoning en de volledig elektrische in een goed geïsoleerde. Dat is geen slordigheid maar precies waar de keuze aan hangt. Gerekend met ${PRIJSPEIL}, en vóór subsidie: wat jij krijgt hangt van je adres af.`}
+    kostenFooter={`Deze twee sommen gaan over twee verschillende woningen: Milieu Centraal rekent de hybride door in een matig geïsoleerde hoekwoning en de volledig elektrische in een goed geïsoleerde. Dat verschil is precies waar de keuze aan hangt. Gerekend met ${PRIJSPEIL}, vóór subsidie.`}
     faqs={[
       {
         q: "Is mijn woning geschikt voor een warmtepomp?",
@@ -87,11 +91,11 @@ const Warmtepomp = () => (
       },
       {
         q: "Wat is het verschil tussen een hybride en een volledig elektrische warmtepomp?",
-        a: "Een hybride werkt samen met je cv-ketel en vervangt 60 tot 70 procent van je gasverbruik voor verwarmen. Een volledig elektrische warmtepomp doet de verwarming en het warme water in zijn eentje, waardoor de gasaansluiting eruit kan. Die vraagt wel een redelijk tot goed geïsoleerde woning en een verwarming die uit de voeten kan met water van maximaal 45 tot 55 graden.",
+        a: "Een hybride werkt samen met je cv-ketel en vervangt 60 tot 70 procent van je gasverbruik voor verwarmen. Een volledig elektrische doet de verwarming en het warme water in zijn eentje, waardoor de gasaansluiting eruit kan. Die vraagt wel een redelijk tot goed geïsoleerde woning en water van maximaal 45 tot 55 graden.",
       },
       {
         q: "Maken warmtepompen veel geluid?",
-        a: "Er geldt een harde norm: op de perceelgrens mag een buitenunit in de avond en de nacht niet meer dan 40 dB laten horen, en onder voorwaarden overdag 45 dB. Dat staat in het Besluit bouwwerken leefomgeving. De afstand tot de grens is dus niet het criterium, wat telt is hoeveel geluid daar overblijft. Van de mensen met een warmtepomp heeft 72 procent er nooit last van; klachten komen vrijwel altijd door de plek waar de unit staat.",
+        a: "Er geldt een harde norm: op de perceelgrens mag een buitenunit in de avond en de nacht niet meer dan 40 dB laten horen, en overdag onder voorwaarden 45 dB. Dat staat in het Besluit bouwwerken leefomgeving. Van de mensen met een warmtepomp heeft 72 procent er nooit last van, en klachten komen vrijwel altijd door de plek waar de unit staat.",
       },
       {
         q: "Heb ik een vergunning nodig voor de buitenunit?",

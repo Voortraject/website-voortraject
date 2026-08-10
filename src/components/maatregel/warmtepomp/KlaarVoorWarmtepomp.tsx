@@ -32,11 +32,10 @@ export const KlaarVoorWarmtepomp = () => (
       </SectieKop>
       <p
         className="mt-4 mx-auto text-base leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 720 }}
+        style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 640 }}
       >
-        Een warmtepomp maakt water dat een stuk minder heet is dan wat je cv-ketel levert. De vraag
-        is dus of jouw woning warm blijft op lagere temperaturen. Dat hoef je niet te schatten: je
-        kunt het deze winter zelf uitproberen, zonder dat je iets hoeft te kopen.
+        Een warmtepomp maakt minder heet water dan je cv-ketel. Blijft jouw woning daarop warm? Dat
+        hoef je niet te schatten, je kunt het deze winter zelf uitproberen.
       </p>
     </div>
 
@@ -100,8 +99,8 @@ export const KlaarVoorWarmtepomp = () => (
           >
             {BRONNEN.verwarmingstest.naam}
           </a>
-          , gecontroleerd op {BRONNEN.verwarmingstest.gecontroleerd}. Je kunt je daar aanmelden en
-          krijgt dan een seintje zodra er een koude periode aankomt.
+          , gecontroleerd op {BRONNEN.verwarmingstest.gecontroleerd}. Daar kun je je aanmelden voor
+          een seintje zodra het koud wordt.
         </p>
       </div>
 
@@ -115,9 +114,9 @@ export const KlaarVoorWarmtepomp = () => (
           className="text-[15px] leading-relaxed"
           style={{ color: KLEUR.navy, opacity: 0.8, margin: "12px 0 0 0" }}
         >
-          Een cv-ketel staat meestal op {CV_KETEL_AANVOER} en heeft warmte in overvloed. Een
-          warmtepomp komt daar niet bij in de buurt, en dat is geen gebrek: juist door het water
-          minder heet te maken haalt hij zijn rendement. Vijftig graden ligt precies in dat gebied.
+          Een cv-ketel staat meestal op {CV_KETEL_AANVOER}. Een warmtepomp komt daar niet bij in de
+          buurt, en dat is geen gebrek: juist door het water minder heet te maken haalt hij zijn
+          rendement. Vijftig graden ligt precies in dat gebied.
         </p>
 
         <div className="mt-7 flex flex-col gap-4">
@@ -161,9 +160,8 @@ export const KlaarVoorWarmtepomp = () => (
           className="mt-5 text-[14.5px] leading-relaxed"
           style={{ color: KLEUR.navy, opacity: 0.8, margin: "20px 0 0 0" }}
         >
-          Blijft het comfortabel op {VERWARMINGSTEST.temperatuur} graden, dan zit je woning in het
-          bereik waarin een volledig elektrische warmtepomp uit de voeten kan. Lukt dat niet, dan
-          weet je meteen waar de winst zit: isoleren, of grotere radiatoren, of allebei.
+          Lukt het niet op {VERWARMINGSTEST.temperatuur} graden, dan weet je meteen waar de winst
+          zit: isoleren, of grotere radiatoren, of allebei.
         </p>
         <a
           href="/verduurzamen/isolatie"
@@ -190,11 +188,11 @@ export const KlaarVoorWarmtepomp = () => (
 
       <p
         className="text-[15px] leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.8, margin: "16px 0 0 0", maxWidth: 760 }}
+        style={{ color: KLEUR.navy, opacity: 0.8, margin: "14px 0 0 0", maxWidth: 760 }}
       >
-        Een warmtepomp maakt van één kilowattuur stroom meerdere kilowatturen warmte, {RENDEMENT.bereik}.
-        Hoeveel precies hangt af van hoe heet het water moet worden en hoe koud het buiten is.
-        Dezelfde warmtepomp presteert daardoor heel verschillend in twee huizen.
+        Eén kilowattuur stroom levert {RENDEMENT.bereik} kilowattuur warmte op. Hoeveel precies
+        hangt af van je afgiftesysteem en de buitentemperatuur, dus dezelfde warmtepomp presteert in
+        twee huizen heel verschillend.
       </p>
 
       <div className="mt-7 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -224,9 +222,9 @@ export const KlaarVoorWarmtepomp = () => (
         className="mt-7 text-[13px] leading-relaxed"
         style={{ color: KLEUR.navy, opacity: 0.55, margin: "28px 0 0 0" }}
       >
-        Over een heel jaar gemeten heet dit de SCOP. Met alleen radiatoren komt een
-        lucht-warmtepomp uit op ongeveer {getal(RENDEMENT.scopRadiatoren)}; haalt hij de warmte uit
-        de bodem, dan is {RENDEMENT.scopBodem} haalbaar. Cijfers van{" "}
+        Over een heel jaar gemeten heet dit de SCOP: met alleen radiatoren ongeveer{" "}
+        {getal(RENDEMENT.scopRadiatoren)}, met warmte uit de bodem {RENDEMENT.scopBodem}. Cijfers
+        van{" "}
         <a
           href={BRONNEN.rendement.url}
           target="_blank"

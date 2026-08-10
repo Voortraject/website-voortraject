@@ -2250,3 +2250,24 @@ basislijn van 17. Visueel gecontroleerd op 1440 px en 390 px, per sectie en over
 **Nog te doen, aparte PR**: isolatie staat op zeven inhoudelijke secties. Daar vervalt de
 subsidiesectie, die inhoud hoort in het gouden paneel van de configurator.
 
+### Tweede ronde: te uitgebreid, en de rij "Past als"
+
+Reactie van de opdrachtgever op de eerste versie: de pagina is te uitgebreid en visueel nog niet
+altijd overzichtelijk, en de kolom "Past als" kan weg omdat de sectie "Past dit bij jouw woning"
+dat al doet.
+
+- [x] **Rij "Past als" eruit.** Terecht: hetzelfde antwoord stond twee secties uit elkaar twee keer.
+- [x] **Elk vak in de vergelijking is nu kern plus toelichting** in plaats van een alinea. Je kunt
+      de tabel scannen op de vetgedrukte regel en alleen doorlezen waar je blijft hangen. Type
+      `Cel` in de datamodule.
+- [x] **Prijsvak onderaan de kolom** (`md:mt-auto`): de ene omschrijving loopt over twee regels en
+      de andere niet, waardoor de bedragen scheef stonden.
+- [x] **Sectie 6 van drie kaarten naar twee.** Plaatsing en vakmanschap staan weer naast elkaar,
+      maar nu passen ze, want beide lijsten zijn ingekort. De aanvullende keurmerken zijn één
+      zin geworden in plaats van een eigen kolom: het zijn geen eisen, dus ze hoeven geen kolom.
+- [x] **Alle intro's, teststappen, plaatsingstips en voetnoten korter.** De aanschafprijs is uit de
+      rekenvoorbeelden gehaald; die staat groot in sectie 1 en hoefde er niet nog eens bij.
+
+Resultaat op 1440 px: sectie 1 van 1457 naar 1142 px, sectie 4 van 1313 naar 1191, sectie 6 van
+1588 naar 1167. Samen ruim 850 px korter, en op mobiel gaat sectie 1 van 3103 naar 2454 px.
+

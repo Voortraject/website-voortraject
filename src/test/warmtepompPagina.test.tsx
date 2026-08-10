@@ -49,8 +49,18 @@ describe("warmtepomppagina: de keuze tussen hybride en volledig elektrisch", () 
     toon();
     // Dit is het verschil dat de keuze bepaalt: een hybride kan in een matig
     // geïsoleerd huis, volledig elektrisch niet.
-    expect(screen.getByText(/Werkt ook in een matig geïsoleerde woning/)).toBeInTheDocument();
-    expect(screen.getByText(/8 tot 12 cm dak- en vloerisolatie/)).toBeInTheDocument();
+    expect(screen.getByText(hybride.isolatie.kern)).toBeInTheDocument();
+    expect(screen.getByText(elektrisch.isolatie.kern)).toBeInTheDocument();
+    expect(screen.getByText(/Rc 2,5 of hoger/)).toBeInTheDocument();
+  });
+
+  it("herhaalt niet wat de sectie 'Past dit bij jouw woning' al zegt", () => {
+    const { container } = toon();
+    // De rij "Past als" stond in de vergelijking én als wel/niet-blok een
+    // sectie verderop. Twee keer hetzelfde antwoord maakt de tabel alleen
+    // langer, dus de rij is eruit.
+    expect(container.textContent).not.toMatch(/Past als/);
+    expect(screen.getByText(/Past dit bij/)).toBeInTheDocument();
   });
 });
 
@@ -61,7 +71,7 @@ describe("warmtepomppagina: de rekenvoorbeelden", () => {
     for (const s of SYSTEMEN) {
       const { voor, na } = s.referentie;
       expect(container.textContent).toContain(
-        `Nu ${getal(voor.gas)} m³ gas en ${getal(voor.stroom)} kWh stroom, samen ${euro(voor.kosten)} per jaar.`,
+        `Nu ${getal(voor.gas)} m³ gas en ${getal(voor.stroom)} kWh stroom: ${euro(voor.kosten)} per jaar.`,
       );
       expect(container.textContent).toContain(
         `Dat scheelt ongeveer ${euro(voor.kosten - na.kosten)} per jaar`,
@@ -72,7 +82,7 @@ describe("warmtepomppagina: de rekenvoorbeelden", () => {
   it("laat de gasaansluiting bij volledig elektrisch echt vervallen", () => {
     const { container } = toon();
     // Zou hier "0 m³ gas" staan, dan leest het als een restje gasverbruik.
-    expect(container.textContent).toContain(`Daarna ${getal(elektrisch.referentie.na.stroom)} kWh stroom`);
+    expect(container.textContent).toContain(`Daarna ${getal(elektrisch.referentie.na.stroom)} kWh stroom:`);
     expect(container.textContent).not.toContain("Daarna 0 m³ gas");
   });
 
@@ -121,7 +131,7 @@ describe("warmtepomppagina: geluid en vakmanschap", () => {
     expect(container.textContent).toContain(GELUID.artikel);
     // De afstand tot de grens is niet het criterium; dat misverstand is precies
     // waar het schema over gaat.
-    expect(screen.getByText(/Wat telt is hoeveel geluid er op de perceelgrens overblijft/)).toBeInTheDocument();
+    expect(screen.getByText(/het gaat om wat er op de grens overblijft/)).toBeInTheDocument();
   });
 
   it("heeft een schema met een tekstalternatief", () => {
@@ -137,9 +147,11 @@ describe("warmtepomppagina: geluid en vakmanschap", () => {
     // Allebei net niet: BRL 6000-21 gaat over bodemenergie en STEK is een
     // aanvullende erkenning.
     expect(screen.getByText("BRL 6000-21 met SIKB 11000")).toBeInTheDocument();
-    expect(screen.getByText(/Alleen van toepassing als de warmte uit de bodem komt/)).toBeInTheDocument();
-    expect(screen.getByText(/Wettelijk verplicht voor de monteur/)).toBeInTheDocument();
+    expect(screen.getByText(/Alleen als de warmte uit de bodem komt/)).toBeInTheDocument();
+    expect(screen.getByText(/Verplicht voor de monteur/)).toBeInTheDocument();
     expect(container.textContent).not.toMatch(/STEK, verplichte certificering/);
+    // STEK hoort bij het aanvullende rijtje, niet bij wat er moet zijn.
+    expect(screen.getByText(/Geen eis, wel een goed teken/)).toBeInTheDocument();
   });
 });
 

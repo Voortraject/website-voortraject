@@ -68,6 +68,16 @@ export const CV_KETEL_AANVOER = "60 tot 80 graden";
 
 export type SysteemId = "hybride" | "elektrisch";
 
+/**
+ * Eén vak in de vergelijking. De kern is wat je ziet als je de tabel scant, de
+ * toelichting is voor wie blijft hangen. Zonder die tweedeling werd elk vak een
+ * alinea en las de tabel als een lap tekst.
+ */
+export interface Cel {
+  kern: string;
+  toelichting?: string;
+}
+
 export interface Referentiewoning {
   /** Zo omschrijft de bron het huis waar de som over gaat. */
   woning: string;
@@ -84,14 +94,17 @@ export interface Systeem {
   /** Aanschaf inclusief btw en plaatsing, vóór subsidie. */
   aanschaf: number;
   aanschafNoot: string;
-  /** De rijen van de vergelijking, in deze volgorde. */
-  hoe: string;
-  gas: string;
-  isolatie: string;
-  aanvoer: string;
-  afgifte: string;
-  buitenunit: string;
-  pastAls: string;
+  /**
+   * De rijen van de vergelijking. "Past als" stond hier ook, maar dat is precies
+   * wat de sectie "Past dit bij jouw woning" al doet; twee keer hetzelfde
+   * antwoord maakt de tabel alleen langer.
+   */
+  hoe: Cel;
+  gas: Cel;
+  isolatie: Cel;
+  aanvoer: Cel;
+  afgifte: Cel;
+  buitenunit: Cel;
   referentie: Referentiewoning;
 }
 
@@ -99,48 +112,72 @@ export const SYSTEMEN: Systeem[] = [
   {
     id: "hybride",
     naam: "Hybride warmtepomp",
-    kort: "De warmtepomp doet het grootste deel van het jaar het werk, de cv-ketel springt bij als het koud wordt.",
+    kort: "Doet het grootste deel van het jaar het werk, de cv-ketel springt bij.",
     aanschaf: 6200,
-    aanschafNoot:
-      "Voor een warmtepomp van 4 kW naast een bestaande cv-ketel. Moet de ketel ook vervangen worden, dan rekent Milieu Centraal met € 8.300.",
-    hoe: "Werkt samen met je cv-ketel. De warmtepomp verwarmt zolang dat efficiënt kan, bij lage buitentemperaturen neemt de ketel het over.",
-    gas: "Je gasverbruik voor verwarmen daalt met 60 tot 70 procent. De gasaansluiting blijft.",
-    isolatie:
-      "Werkt ook in een matig geïsoleerde woning. Hoe beter geïsoleerd, hoe vaker de warmtepomp het alleen afkan.",
-    aanvoer: "Maakt water van 30 tot 55 graden; de ketel vult aan als er meer nodig is.",
-    afgifte: "Je bestaande radiatoren kunnen meestal blijven zitten.",
-    buitenunit: "Ja, met de geluidseisen die daarbij horen.",
-    pastAls:
-      "Je stap voor stap van het gas af wilt, je cv-ketel toe is aan vervanging, of je woning nog niet goed genoeg geïsoleerd is voor volledig elektrisch.",
+    aanschafNoot: "Warmtepomp van 4 kW naast een bestaande ketel. Met een nieuwe ketel erbij € 8.300.",
+    hoe: {
+      kern: "Samen met je cv-ketel",
+      toelichting: "Bij lage buitentemperaturen neemt de ketel het over.",
+    },
+    gas: {
+      kern: "60 tot 70 procent minder",
+      toelichting: "De gasaansluiting blijft.",
+    },
+    isolatie: {
+      kern: "Werkt ook matig geïsoleerd",
+      toelichting: "Hoe beter de schil, hoe vaker de warmtepomp het alleen afkan.",
+    },
+    aanvoer: {
+      kern: "30 tot 55 graden",
+      toelichting: "De ketel vult aan als er meer nodig is.",
+    },
+    afgifte: {
+      kern: "Radiatoren kunnen blijven",
+    },
+    buitenunit: {
+      kern: "Ja",
+      toelichting: "Met de geluidseisen die daarbij horen.",
+    },
     referentie: {
       woning: "matig geïsoleerde hoekwoning",
       voor: { gas: 1360, stroom: 310, kosten: 1950 },
       na: { gas: 680, stroom: 1925, kosten: 1350 },
-      noot: "Je CO2-uitstoot voor verwarmen en warm water daalt met ruim 30 procent.",
+      noot: "CO2-uitstoot voor verwarmen en warm water ruim 30 procent lager.",
     },
   },
   {
     id: "elektrisch",
     naam: "Volledig elektrische warmtepomp",
-    kort: "Verzorgt de verwarming en het warme water in zijn eentje. De gasaansluiting kan eruit.",
+    kort: "Verzorgt de verwarming en het warme water in zijn eentje.",
     aanschaf: 12000,
-    aanschafNoot:
-      "Voor een warmtepomp met een buitenunit. Haal je de warmte uit de bodem, dan rekent Milieu Centraal met € 30.000; dat levert wel het hoogste rendement.",
-    hoe: "Verwarmt de woning en het tapwater volledig elektrisch. Er is geen cv-ketel meer die bijspringt.",
-    gas: "Je gebruikt geen gas meer voor verwarmen. De gasaansluiting en het vastrecht daarvoor vervallen.",
-    isolatie:
-      "Vraagt minstens een redelijk tot goed geïsoleerde woning: 8 tot 12 cm dak- en vloerisolatie (Rc 2,5 of hoger), een geïsoleerde spouw en HR++ glas.",
-    aanvoer: "Werkt met maximaal 45 tot 55 graden. Daaronder blijven is precies waar het rendement vandaan komt.",
-    afgifte:
-      "Vloer- of wandverwarming, of radiatoren die bij lage temperatuur genoeg warmte afgeven. Vaak moeten er een paar groter.",
-    buitenunit: "Ja, tenzij je de warmte uit de bodem haalt.",
-    pastAls:
-      "Je woning al goed geïsoleerd is of dat wordt, en je in één keer van het gas af wilt.",
+    aanschafNoot: "Met buitenunit. Uit de bodem € 30.000, met het hoogste rendement.",
+    hoe: {
+      kern: "In zijn eentje",
+      toelichting: "Geen cv-ketel meer, ook niet voor het warme water.",
+    },
+    gas: {
+      kern: "Helemaal geen gas",
+      toelichting: "Aansluiting en vastrecht vervallen.",
+    },
+    isolatie: {
+      kern: "Redelijk tot goed geïsoleerd",
+      toelichting: "Rc 2,5 of hoger op dak en vloer, geïsoleerde spouw, HR++ glas.",
+    },
+    aanvoer: {
+      kern: "Maximaal 45 tot 55 graden",
+      toelichting: "Daaronder blijven levert het rendement op.",
+    },
+    afgifte: {
+      kern: "Vloerverwarming of grotere radiatoren",
+    },
+    buitenunit: {
+      kern: "Ja, tenzij uit de bodem",
+    },
     referentie: {
       woning: "goed geïsoleerde hoekwoning met twee bewoners",
       voor: { gas: 950, stroom: 250, kosten: 1720 },
       na: { gas: 0, stroom: 3400, kosten: 720 },
-      noot: "In die € 1.720 zit € 360 vastrecht voor de gasaansluiting. Dat deel verdwijnt zodra het gas eruit gaat. Je CO2-uitstoot voor verwarmen daalt met 60 tot 70 procent.",
+      noot: "In die € 1.720 zit € 360 vastrecht voor gas; dat vervalt. CO2-uitstoot voor verwarmen 60 tot 70 procent lager.",
     },
   },
 ];
@@ -155,23 +192,19 @@ export const VERWARMINGSTEST = {
   stappen: [
     {
       kop: "Zet je cv-ketel op 50 graden",
-      tekst:
-        "Alleen de temperatuur van het cv-water. Laat de instelling voor warm tapwater staan zoals hij staat, die heeft er niets mee te maken.",
+      tekst: "Alleen het cv-water. De stand voor warm tapwater laat je staan.",
     },
     {
       kop: "Zet de radiatoren helemaal open",
-      tekst:
-        "In alle kamers die je normaal verwarmt. Een radiator die op de helft staat, geeft bij 50 graden te weinig warmte af en dat vertekent de uitkomst.",
+      tekst: "In alle kamers die je normaal verwarmt, anders vertekent de uitkomst.",
     },
     {
       kop: "Wacht op een echt koude periode",
-      tekst:
-        "Milieu Centraal doet de test in de winter en kijkt naar nachten onder de min 5 graden. Op een zachte dag bewijst de test niets.",
+      tekst: "Op een zachte dag bewijst de test niets; het gaat om nachten onder de min 5 graden.",
     },
     {
       kop: "Kijk of het comfortabel blijft",
-      tekst:
-        "Blijft je woning warm, dan is hij klaar voor een volledig elektrische warmtepomp. Lukt dat niet, dan is er eerst isolatie nodig, of past een hybride beter.",
+      tekst: "Zo ja, dan kan je woning volledig elektrisch. Zo nee, dan eerst isoleren of een hybride.",
     },
   ],
 } as const;
@@ -204,10 +237,10 @@ export const GELUID = {
   artikel: "artikel 4.107 van het Besluit bouwwerken leefomgeving",
   tevreden: 72,
   tips: [
-    "Niet onder een slaapkamerraam, van jou of van de buren. Kijk waar de ramen en deuren bij de perceelgrens zitten.",
-    "Niet op een dak of constructie die trillingen doorgeeft aan de woning.",
-    "Een omkasting mag, maar houd ongeveer 20 cm vrij: de unit moet lucht kunnen aanzuigen.",
-    "De afstand tot de grens is niet het criterium. Wat telt is hoeveel geluid er op de perceelgrens overblijft.",
+    "Niet onder een slaapkamerraam, van jou of van de buren.",
+    "Niet op een dak of constructie die trillingen doorgeeft.",
+    "Een omkasting mag, maar houd 20 cm vrij voor de luchtaanvoer.",
+    "Afstand is niet het criterium; het gaat om wat er op de grens overblijft.",
   ],
 } as const;
 
@@ -221,46 +254,18 @@ export const GELUID = {
  * er wél moet zijn staat hieronder in de eerste groep.
  */
 export const CERTIFICERING = {
-  moet: {
-    kop: "Dit hoort er te zijn",
-    items: [
-      {
-        naam: "F-gassen",
-        tekst:
-          "Wettelijk verplicht voor de monteur die met koudemiddelen werkt. Zonder dat certificaat mag hij de warmtepomp niet aansluiten.",
-      },
-      {
-        naam: "BRL 100",
-        tekst: "De erkenning van het installatiebedrijf zelf.",
-      },
-      {
-        naam: "CO-vrij",
-        tekst:
-          "Nodig zodra er aan een cv-ketel gewerkt wordt, dus altijd bij een hybride warmtepomp en bij het vervangen van de ketel.",
-      },
-      {
-        naam: "BRL 6000-21 met SIKB 11000",
-        tekst: "Alleen van toepassing als de warmte uit de bodem komt.",
-      },
-    ],
-  },
-  extra: {
-    kop: "Dit zegt iets extra's",
-    items: [
-      {
-        naam: "STEK Warmtepomp-module D",
-        tekst: "Aanvullende erkenning voor bedrijven die met koudemiddelen werken.",
-      },
-      {
-        naam: "Vakmanschap Warmtepompen",
-        tekst: "Gericht op de kennis van de monteur, niet op het bedrijf.",
-      },
-      {
-        naam: "Erkenningsregeling InstallQ",
-        tekst: "Onafhankelijke toetsing van het installatiebedrijf.",
-      },
-    ],
-  },
+  moet: [
+    { naam: "F-gassen", tekst: "Verplicht voor de monteur, vanwege de koudemiddelen." },
+    { naam: "BRL 100", tekst: "De erkenning van het installatiebedrijf." },
+    { naam: "CO-vrij", tekst: "Zodra er aan een cv-ketel gewerkt wordt, dus bij elke hybride." },
+    { naam: "BRL 6000-21 met SIKB 11000", tekst: "Alleen als de warmte uit de bodem komt." },
+  ],
+  /**
+   * Aanvullende erkenningen. Bewust één regel en geen tweede kolom: het zijn
+   * keurmerken die iets extra's zeggen, geen eis, en als kolom trokken ze meer
+   * aandacht dan ze verdienen.
+   */
+  extra: "STEK Warmtepomp-module D, Vakmanschap Warmtepompen en de erkenningsregeling van InstallQ",
 } as const;
 
 export const euro = (bedrag: number) => `€ ${Math.round(bedrag).toLocaleString("nl-NL")}`;

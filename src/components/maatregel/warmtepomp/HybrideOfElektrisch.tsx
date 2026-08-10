@@ -14,17 +14,21 @@ import { KLEUR } from "@/components/maatregel/stijl";
  * hangt van het adres af, dus die vraag gaat naar de subsidiecheck.
  */
 
-/** Alleen de velden die als tekstregel in de vergelijking passen. */
-type TekstVeld = "hoe" | "gas" | "isolatie" | "aanvoer" | "afgifte" | "buitenunit" | "pastAls";
+/** Alleen de velden die als vak in de vergelijking staan. */
+type CelVeld = "hoe" | "gas" | "isolatie" | "aanvoer" | "afgifte" | "buitenunit";
 
-const RIJEN: { label: string; veld: TekstVeld }[] = [
+/**
+ * "Past als" stond hier ook, maar dat is precies waar de sectie "Past dit bij
+ * jouw woning" over gaat. Hetzelfde antwoord twee keer geven maakt de tabel
+ * alleen langer.
+ */
+const RIJEN: { label: string; veld: CelVeld }[] = [
   { label: "Hoe het werkt", veld: "hoe" },
   { label: "Je gasverbruik", veld: "gas" },
   { label: "Wat je woning nodig heeft", veld: "isolatie" },
   { label: "Watertemperatuur", veld: "aanvoer" },
   { label: "Afgifte in huis", veld: "afgifte" },
   { label: "Buitenunit", veld: "buitenunit" },
-  { label: "Past als", veld: "pastAls" },
 ];
 
 /** Eén raster voor kop en rijen, zodat de kolommen echt onder elkaar staan. */
@@ -38,11 +42,10 @@ export const HybrideOfElektrisch = () => (
       </SectieKop>
       <p
         className="mt-4 mx-auto text-base leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 720 }}
+        style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 640 }}
       >
-        Dit is de keuze waar het bij een warmtepomp om draait, en hij hangt minder aan je budget
-        dan aan je woning. Een hybride werkt vrijwel overal. Volledig elektrisch vraagt een
-        geïsoleerd huis en een verwarming die uit de voeten kan met lager water.
+        Deze keuze hangt minder aan je budget dan aan je woning. Een hybride werkt vrijwel overal,
+        volledig elektrisch vraagt een geïsoleerd huis.
       </p>
     </div>
 
@@ -58,7 +61,9 @@ export const HybrideOfElektrisch = () => (
             key={s.id}
             // Op mobiel staan de twee koppen onder elkaar op dezelfde
             // achtergrond; zonder streepje lopen ze in elkaar over.
-            className={`p-6 md:p-7 ${i > 0 ? "border-t md:border-t-0" : ""}`}
+            // Kolom met het prijsvak onderaan: de ene omschrijving loopt over
+            // twee regels en de andere niet, en dan staan de bedragen scheef.
+            className={`p-6 md:p-7 flex flex-col ${i > 0 ? "border-t md:border-t-0" : ""}`}
             style={{ backgroundColor: KLEUR.zand, borderTopColor: KLEUR.rand }}
           >
             <h3
@@ -74,7 +79,7 @@ export const HybrideOfElektrisch = () => (
               {s.kort}
             </p>
             <div
-              className="mt-5 rounded-xl px-4 py-3"
+              className="mt-5 md:mt-auto rounded-xl px-4 py-3"
               style={{
                 backgroundColor: "hsl(var(--accent) / 0.14)",
                 border: "1px solid hsl(var(--accent) / 0.4)",
@@ -110,7 +115,7 @@ export const HybrideOfElektrisch = () => (
           {SYSTEMEN.map((s) => (
             <div
               key={s.id}
-              className="px-6 pb-5 md:py-6 md:px-7 md:border-t"
+              className="px-6 pb-5 md:py-5 md:px-7 md:border-t"
               style={{ borderTopColor: KLEUR.rand }}
             >
               {/* Op mobiel staan de twee waarden onder elkaar, dus dan is een
@@ -123,11 +128,19 @@ export const HybrideOfElektrisch = () => (
                 {s.id === "hybride" ? "Hybride" : "Volledig elektrisch"}
               </span>
               <span
-                className="block text-[15px] leading-relaxed"
-                style={{ color: KLEUR.navy, opacity: 0.85 }}
+                className="block text-[16px] font-semibold"
+                style={{ color: KLEUR.navy, lineHeight: 1.4 }}
               >
-                {s[rij.veld]}
+                {s[rij.veld].kern}
               </span>
+              {s[rij.veld].toelichting && (
+                <span
+                  className="mt-1 block text-[14px] leading-relaxed"
+                  style={{ color: KLEUR.navy, opacity: 0.65 }}
+                >
+                  {s[rij.veld].toelichting}
+                </span>
+              )}
             </div>
           ))}
         </div>
@@ -135,8 +148,7 @@ export const HybrideOfElektrisch = () => (
     </div>
 
     <p className="mt-5 text-[13px] leading-relaxed" style={{ color: KLEUR.navy, opacity: 0.55 }}>
-      Ter vergelijking: een cv-ketel staat meestal op {CV_KETEL_AANVOER}. Bedragen en eisen komen
-      van{" "}
+      Een cv-ketel staat ter vergelijking meestal op {CV_KETEL_AANVOER}. Bedragen en eisen van{" "}
       <a
         href={BRONNEN.elektrisch.url}
         target="_blank"
@@ -145,8 +157,8 @@ export const HybrideOfElektrisch = () => (
       >
         {BRONNEN.elektrisch.naam}
       </a>
-      , gecontroleerd op {BRONNEN.elektrisch.gecontroleerd}, en gelden inclusief btw en plaatsing.
-      Subsidie zit er niet in verwerkt: wat jij krijgt hangt van je adres af.
+      , gecontroleerd op {BRONNEN.elektrisch.gecontroleerd}, inclusief btw en plaatsing en vóór
+      subsidie.
     </p>
   </>
 );
