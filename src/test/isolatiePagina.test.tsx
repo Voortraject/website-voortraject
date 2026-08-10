@@ -140,6 +140,27 @@ describe("isolatiepagina: de configurator", () => {
   });
 });
 
+describe("isolatiepagina: zes secties plus de FAQ", () => {
+  it("blijft op maximaal zes inhoudelijke secties", () => {
+    // Afspraak met de opdrachtgever: zes per pagina. De hero telt niet mee, de
+    // subsidiecheck-band ook niet (die heeft geen data-bg, want hij brengt zijn
+    // eigen kleur mee) en de FAQ staat er los naast.
+    const { container } = toon();
+    const metAchtergrond = Array.from(container.querySelectorAll("main > section")).filter((s) =>
+      s.hasAttribute("data-bg"),
+    );
+    // Eerste is de hero, laatste de FAQ.
+    expect(metAchtergrond.slice(1, -1)).toHaveLength(6);
+  });
+
+  it("heeft geen losse subsidiesectie meer naast het paneel in de configurator", () => {
+    toon();
+    // Twee keer hetzelfde verhaal, een paar schermen uit elkaar. Het paneel bij
+    // de bedragen wint, want dáár mist de subsidie.
+    expect(screen.queryByText(/Subsidies bij deze/)).not.toBeInTheDocument();
+  });
+});
+
 describe("isolatiepagina: eerlijk over subsidie", () => {
   it("presenteert de cijfers vóór subsidie en verwijst naar het adres", () => {
     toon();
@@ -147,6 +168,18 @@ describe("isolatiepagina: eerlijk over subsidie", () => {
     expect(
       screen.getByText(/in Groningen en Noord-Drenthe loopt dat anders dan in de rest van het land/),
     ).toBeInTheDocument();
+  });
+
+  it("noemt de drie routes bij de bedragen waar ze nog niet in zitten", () => {
+    const { container } = toon();
+    expect(screen.getByText(/Nij Begun, tot 100 procent vergoed/)).toBeInTheDocument();
+    expect(screen.getByText(/verdubbelt bij twee of meer maatregelen/)).toBeInTheDocument();
+    expect(screen.getByText(/Gemeentelijke regelingen, stapelbaar/)).toBeInTheDocument();
+
+    const link = Array.from(container.querySelectorAll<HTMLAnchorElement>("a")).find((a) =>
+      /subsidies stapelt/i.test(a.textContent ?? ""),
+    );
+    expect(link?.getAttribute("href")).toBe("/subsidies/stapelen");
   });
 
   it("neemt geen landelijk subsidiebedrag als uitgangspunt", () => {
