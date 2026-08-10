@@ -17,6 +17,11 @@ Scope: de 7 pagina's onder `/verduurzamen/*` plus een nieuwe hub-pagina `/verduu
 5. **Alleen publieke bronnen.** Geen eigen praktijkcijfers van Voortraject; alles komt uit
    RVO, Milieu Centraal, Rijksoverheid en vergelijkbare bronnen, met bron en controledatum.
 6. **CTA-opzet:** de subsidiecheck halverwege de pagina, het gratis gesprek als afsluiter.
+7. **Maximaal 6 secties plus de FAQ** per pagina (afgesproken 2026-08-10). De hero telt niet mee,
+   de subsidiecheck-band en de afsluitende CTA-band ook niet: dat is conversie, geen inhoud. Een
+   pagina wordt korter door props weg te laten, niet door het template te veranderen. Content die
+   als losse sectie sneuvelt gaat naar de sectie waar hij bruikbaar is, of vervalt omdat een
+   sterkere sectie hem al dekt.
 
 ---
 

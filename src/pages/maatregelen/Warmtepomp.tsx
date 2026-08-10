@@ -1,15 +1,66 @@
 import { Thermometer } from "lucide-react";
 import { MaatregelPagina } from "@/components/MaatregelPagina";
+import { HybrideOfElektrisch } from "@/components/maatregel/warmtepomp/HybrideOfElektrisch";
+import { KlaarVoorWarmtepomp } from "@/components/maatregel/warmtepomp/KlaarVoorWarmtepomp";
+import { GeluidPlaatsingVakmanschap } from "@/components/maatregel/warmtepomp/GeluidPlaatsingVakmanschap";
+import { euro, getal, PRIJSPEIL, SYSTEMEN, type Systeem } from "@/data/warmtepomp";
 import warmtepompImage from "@/assets/maatregel-warmtepomp.webp";
+
+/**
+ * Zes inhoudelijke secties plus de FAQ, zoals afgesproken voor alle pagina's
+ * onder /verduurzamen:
+ *
+ *   1 hybride of volledig elektrisch   (eigen)
+ *   2 past dit bij jouw woning         (template)
+ *   3 waar dit staat in de route       (template)
+ *   4 is jouw woning er klaar voor     (eigen)
+ *   5 wat het kost en oplevert         (template)
+ *     subsidiecheck
+ *   6 geluid, plaatsing en vakmanschap (eigen)
+ *
+ * De achtergronden lopen daarmee zand, wit, warm, navy, wit, zand, warm, zand.
+ * src/test/maatregelPagina.test.tsx bewaakt zowel het aantal secties als dat er
+ * nooit twee dezelfde achtergronden naast elkaar komen.
+ *
+ * Wat er bewust níét meer op staat: ISDE. Die regeling geldt niet in Groningen
+ * en Noord-Drenthe, dus een groot deel van de bezoekers heeft er niets aan. De
+ * pagina rekent daarom vóór subsidie en laat de vraag "wat krijg ik" naar het
+ * adres lopen, via de subsidiecheck.
+ */
+
+/**
+ * De rekensom van Milieu Centraal, in woorden, uit de datamodule. Bewust zonder
+ * de aanschafprijs: die staat groot in de vergelijking bovenaan de pagina en
+ * hoeft hier niet nog eens.
+ */
+const rekenvoorbeeld = (s: Systeem) => {
+  const { voor, na } = s.referentie;
+  const naVerbruik =
+    na.gas > 0 ? `${getal(na.gas)} m³ gas en ${getal(na.stroom)} kWh stroom` : `${getal(na.stroom)} kWh stroom`;
+
+  return [
+    `Nu ${getal(voor.gas)} m³ gas en ${getal(voor.stroom)} kWh stroom: ${euro(voor.kosten)} per jaar.`,
+    `Daarna ${naVerbruik}: ${euro(na.kosten)}.`,
+    `Dat scheelt ongeveer ${euro(voor.kosten - na.kosten)} per jaar.`,
+    s.referentie.noot,
+  ]
+    .filter(Boolean)
+    .join(" ");
+};
 
 const Warmtepomp = () => (
   <MaatregelPagina
     slug="warmtepomp"
     icon={Thermometer}
     seoTitle="Warmtepomp | Voortraject"
-    seoDescription="Gasloos en comfortabel verwarmen met een warmtepomp. Wanneer is je woning er klaar voor, wat kost het en welke certificeringen zijn belangrijk?"
+    seoDescription="Hybride of volledig elektrisch: wat past bij jouw woning? Met de eisen per systeem, de test waarmee je zelf checkt of je huis er klaar voor is, en de geluidsnorm voor de buitenunit."
+    eigenSecties={[
+      { na: "hero", bg: "wit", id: "keuze", inhoud: <HybrideOfElektrisch /> },
+      { na: "route", bg: "wit", id: "klaar-voor", inhoud: <KlaarVoorWarmtepomp /> },
+      { na: "subsidies", bg: "warm", id: "geluid", inhoud: <GeluidPlaatsingVakmanschap /> },
+    ]}
     heroTitle="Warmtepomp, [[comfort]] zonder gas"
-    heroSub="Verwarmen zonder gas, mits je woning er klaar voor is. In een goed geïsoleerde woning is een warmtepomp een efficiënte stap, en de keuze tussen hybride en volledig elektrisch hangt af van je woning en einddoel."
+    heroSub="Verwarmen zonder gas, mits je woning er klaar voor is. De keuze tussen hybride en volledig elektrisch hangt vooral af van je isolatie en je verwarming."
     heroIntro=""
     heroImageSrc={warmtepompImage}
     heroImageAlt="Adviseur van Voortraject bekijkt de installatie en instellingen binnenshuis"
@@ -26,79 +77,33 @@ const Warmtepomp = () => (
       "Je oude radiatoren met hoge aanvoertemperaturen niet wilt aanpassen; volledig elektrisch past dan niet, een hybride vaak wel",
       "Je op zeer korte termijn verhuist",
     ]}
-    watValtEronder={[
-      "Hybride warmtepomp, werkt samen met je bestaande cv-ketel",
-      "Volledig elektrische warmtepomp, verwarmt het hele huis zonder gas",
-      "Lagetemperatuurverwarming als einddoel, zoals vloerverwarming of grotere radiatoren",
-    ]}
     routeStep="slim"
     routeTekst="Een warmtepomp rendeert pas goed als de eerdere stappen zijn gezet. In een goed geïsoleerde woning werkt een warmtepomp efficiënt en betaalbaar. In een slecht geïsoleerde woning verbruikt hij veel en vallen de kosten tegen. Daarom is isolatie bijna altijd de eerste stap en komt slim verwarmen daarna. Een hybride warmtepomp kan een goede tussenstap zijn als volledig elektrisch nog niet haalbaar is."
-    kostenItems={[
-      {
-        title: "Hybride warmtepomp",
-        body: "Lagere investering en geschikt voor veel bestaande woningen. Werkt samen met je cv-ketel, waardoor je een deel van je gasverbruik vervangt door elektriciteit. Een goede tussenstap richting volledig gasloos.",
-        pills: [
-          { dim: "Investering", value: "Gemiddeld" },
-          { dim: "Terugverdientijd", value: "Gemiddeld" },
-          { dim: "Comfortwinst", value: "Hoog" },
-        ],
-      },
-      {
-        title: "Volledig elektrische warmtepomp",
-        body: "Hogere investering, maar de grootste besparing op de lange termijn en geen gas meer nodig. Vraagt om een goed geïsoleerde woning en bij voorkeur lagetemperatuurverwarming om efficiënt te draaien.",
-        pills: [
-          { dim: "Investering", value: "Hoog" },
-          { dim: "Terugverdientijd", value: "Lang" },
-          { dim: "Comfortwinst", value: "Hoog" },
-        ],
-      },
-    ]}
-    kostenFooter="Wat het beïnvloedt zijn de isolatiegraad, het type verwarming, de grootte van de woning en de energieprijzen."
-    zachteCtaTekst="Benieuwd of jouw woning klaar is voor een warmtepomp?"
-    aandachtspunten={[
-      "Een warmtepomp werkt alleen efficiënt in een voldoende geïsoleerde woning. Isoleer eerst.",
-      "Volledig elektrisch werkt het beste met lagetemperatuurverwarming.",
-      "De buitenunit produceert geluid. Er gelden geluidsnormen op de erfgrens.",
-      "Kies een gecertificeerde installateur. Dat bepaalt de kwaliteit en veiligheid van de installatie.",
-    ]}
-    keurmerken={{
-      kop: "Let op [[keurmerken]] en certificeringen",
-      intro:
-        "Een warmtepomp werkt met koudemiddelen en vraagt om vakkundige installatie. Werk alleen met installateurs die de juiste erkenningen hebben. Hier let je op:",
-      items: [
-        "BRL 6000-21, de erkenning voor het ontwerp en de installatie van warmtepompen",
-        "BRL 100 en BRL 200 gerelateerde erkenningen voor installatiewerk",
-        "STEK, verplichte certificering voor bedrijven die met koudemiddelen werken",
-        "F-gassen vakbekwaamheid, categorie F1 en F2, voor het veilig werken met fluorhoudende koudemiddelen",
-      ],
-      voetregel:
-        "Wij koppelen je alleen aan uitvoerders die deze certificeringen op orde hebben.",
-    }}
-    subsidiesIntro="Voor warmtepompen gelden aantrekkelijke regelingen, vaak combineerbaar:"
-    subsidiesItems={[
-      "ISDE (landelijk), een vast bedrag per type warmtepomp, verdubbelt bij twee of meer maatregelen",
-      "Nij Begun en gemeentelijke regelingen, afhankelijk van je adres",
-    ]}
+    kostenItems={SYSTEMEN.map((s) => ({
+      title: `${s.naam} in een ${s.referentie.woning}`,
+      body: rekenvoorbeeld(s),
+    }))}
+    kostenFooter={`Deze twee sommen gaan over twee verschillende woningen: Milieu Centraal rekent de hybride door in een matig geïsoleerde hoekwoning en de volledig elektrische in een goed geïsoleerde. Dat verschil is precies waar de keuze aan hangt. Gerekend met ${PRIJSPEIL}, vóór subsidie.`}
     faqs={[
       {
         q: "Is mijn woning geschikt voor een warmtepomp?",
-        a: "Dat hangt vooral af van je isolatie en je type verwarming. In een goed geïsoleerde woning met lagetemperatuurverwarming werkt een warmtepomp het best; is je woning daar nog niet klaar voor, dan kan een hybride een logische tussenstap zijn.",
+        a: "Dat hangt vooral af van je isolatie en je type verwarming. In een goed geïsoleerde woning met lagetemperatuurverwarming werkt een warmtepomp het best; is je woning daar nog niet klaar voor, dan kan een hybride een logische tussenstap zijn. Je kunt het zelf uitproberen door je cv-ketel een winter lang op 50 graden te zetten en te kijken of het comfortabel blijft.",
       },
       {
         q: "Wat is het verschil tussen een hybride en een volledig elektrische warmtepomp?",
-        a: "Een hybride werkt samen met je cv-ketel en vervangt een deel van je gasverbruik. Een volledig elektrische warmtepomp maakt je woning gasloos, vraagt een hogere investering, maar levert op lange termijn de grootste besparing.",
+        a: "Een hybride werkt samen met je cv-ketel en vervangt 60 tot 70 procent van je gasverbruik voor verwarmen. Een volledig elektrische doet de verwarming en het warme water in zijn eentje, waardoor de gasaansluiting eruit kan. Die vraagt wel een redelijk tot goed geïsoleerde woning en water van maximaal 45 tot 55 graden.",
       },
       {
         q: "Maken warmtepompen veel geluid?",
-        a: "Moderne warmtepompen zijn een stuk stiller en moeten voldoen aan wettelijke geluidsnormen op de perceelgrens. Met de juiste plaatsing van de buitenunit valt overlast voor jou en de buren in de praktijk mee.",
+        a: "Er geldt een harde norm: op de perceelgrens mag een buitenunit in de avond en de nacht niet meer dan 40 dB laten horen, en overdag onder voorwaarden 45 dB. Dat staat in het Besluit bouwwerken leefomgeving. Van de mensen met een warmtepomp heeft 72 procent er nooit last van, en klachten komen vrijwel altijd door de plek waar de unit staat.",
       },
       {
         q: "Heb ik een vergunning nodig voor de buitenunit?",
-        a: "Meestal niet, maar er gelden regels rond geluid en plaatsing die per gemeente verschillen. We zorgen dat de uitvoerder daar rekening mee houdt en checken het bij twijfel voor jouw situatie.",
+        a: "Meestal niet, maar de geluidseis op de perceelgrens geldt altijd en gemeenten kunnen aanvullende regels hebben over plaatsing en aanzicht. We zorgen dat de uitvoerder daar rekening mee houdt en checken het bij twijfel voor jouw situatie.",
       },
       {
         q: "Kom ik in aanmerking voor subsidie of Nij Begun?",
-        a: "Vaak wel. Voor een warmtepomp bestaat landelijke ISDE-subsidie, en in Groningen en Noord-Drenthe kan Nij Begun daar bovenop komen. Wat je precies krijgt hangt af van je woning en gebied; dat zoeken we voor je uit.",
+        a: "Vaak wel, maar welke regeling voor jou geldt hangt van je adres af. In Groningen en Noord-Drenthe loopt dat anders dan in de rest van het land, en gemeenten hebben er geregeld nog een eigen regeling naast. Alle bedragen op deze pagina staan daarom vóór subsidie. Doe de subsidiecheck met je postcode, dan zie je wat er voor jouw woning is.",
       },
       {
         q: "Zit ik vast aan een bepaald merk?",

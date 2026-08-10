@@ -2092,3 +2092,182 @@ tonen zou ruis zijn. Geen deploy van de edge function nodig (alleen commentaar d
 wordt client-side samengesteld.
 
 Review: 35 testbestanden / 201 tests groen, `tsc --noEmit` schoon, lint op de basislijn van 17.
+
+## Verduurzamen PR 2: warmtepomp (2026-08-10)
+
+Branch `feat/verduurzamen-warmtepomp`. Tweede pagina-PR na isolatie (#132). Zelfde aanpak:
+datamodule met bron en controledatum, pagina-eigen secties via `eigenSecties`, een test die
+bewaakt dat de cijfers echt renderen en dat er geen landelijk subsidiebedrag als drager op staat.
+
+### De vraag die de pagina moet beantwoorden
+
+Bezoekers komen binnen met "hybride of volledig elektrisch, en kan mijn huis het aan". Dat staat er
+nu nergens. Wat er wel staat zijn twee kaartjes met de pillen Laag/Gemiddeld/Hoog, geen enkel getal,
+en een geluidszin zonder norm.
+
+### Cijfers en bronnen (alles vóór subsidie)
+
+Milieu Centraal, hybride warmtepomp, referentie **matig geïsoleerde hoekwoning**:
+- nu 1.360 m³ gas + 310 kWh, energiekosten € 1.950
+- met hybride 680 m³ gas + 1.925 kWh, energiekosten € 1.350
+- aanschaf € 6.200 bij een bestaande cv-ketel, € 8.300 met een nieuwe ketel erbij (incl. btw en plaatsing)
+- 60 à 70 procent minder aardgas voor verwarming, CO2 ruim 30 procent lager
+- warmtepomp maakt water van 30 tot 55 graden, een cv-ketel staat meestal op 60 tot 80
+
+Milieu Centraal, volledig elektrische warmtepomp, referentie **goed geïsoleerde hoekwoning, 2 personen**:
+- nu 950 m³ gas + 250 kWh, energiekosten € 1.720 (incl. vastrecht gas)
+- met warmtepomp 3.400 kWh, energiekosten € 720, dus ongeveer € 1.000 per jaar lager
+- aanschaf € 12.000 met buitenunit, € 30.000 met bodemwarmte (incl. btw en plaatsing)
+- eis: minstens redelijk tot goed geïsoleerd (8 tot 12 cm dak- en vloerisolatie, Rc 2,5 of hoger,
+  geïsoleerde spouw, HR++), werkt met maximaal 45 tot 55 graden
+- 72 procent van de bezitters ervaart nooit geluidsoverlast
+
+Consumentenbond, rendement:
+- COP meestal tussen 3 en 5; SCOP is het jaarrendement
+- bij 7 graden buiten: vloerverwarming COP 5,9, radiatoren COP 4,2
+- bij min 2 graden buiten: vloerverwarming 3,5, radiatoren 2,8
+- alleen radiatoren komt uit op een SCOP van bijvoorbeeld 2,9; bodemwarmte 4,5 tot 5
+
+Bbl artikel 4.107 (via IPLO) en Milieu Centraal, geluid:
+- op de perceelgrens maximaal 40 dB in de avond- en nachtperiode, onder voorwaarden 45 dB overdag
+- de afstand tot de grens doet er niet toe, het gaat om wat er op de grens overblijft
+
+**Eerlijkheidspunt dat de pagina moet maken:** de twee rekenvoorbeelden gaan over twee verschillende
+woningen (matig versus goed geïsoleerd). € 600 naast € 1.000 zetten alsof het dezelfde woning is,
+klopt niet. Dat verschil ís het verhaal: welke van de twee bij je past, hangt aan je isolatie.
+
+### Maximaal 6 secties plus de FAQ (nieuwe regel, 2026-08-10)
+
+Afspraak van de opdrachtgever, geldt voor alle zeven pagina's. Wat wel en niet meetelt:
+de hero telt niet mee, de subsidiecheck-band en de afsluitende CTA-band tellen niet mee (dat is
+conversie, geen inhoud), de FAQ staat er los naast. Dus zes inhoudelijke secties tussen hero en FAQ.
+
+Gevolg voor het template: geen wijziging nodig. Bijna elke sectie hangt al aan een prop, dus een
+pagina wordt korter door props weg te laten, niet door code te slopen. De andere pagina's blijven
+werken tot ze aan de beurt zijn.
+
+### De zes secties van de warmtepomppagina
+
+1. **Hybride of volledig elektrisch** (eigen, `na: "hero"`, wit). De vergelijking over de assen die
+   er werkelijk toe doen: hoe het werkt, wat er met je gas gebeurt, benodigde isolatie,
+   aanvoertemperatuur, afgiftesysteem, buitenunit, aanschaf vóór subsidie, wanneer dit past.
+   Op desktop naast elkaar met gedeelde rijen, op mobiel twee kaarten onder elkaar.
+2. **Past dit bij jouw woning** (template, warm). Het wel/niet-blok, blijft zoals het is.
+3. **Waar dit staat in de route** (template, navy). Smalle band, doet de kruislinks naar isolatie
+   en de andere maatregelen.
+4. **Is jouw woning er klaar voor** (eigen, `na: "route"`, wit). De verwarmingstest van Milieu
+   Centraal als concrete stappen (cv op 50 graden, radiatoren open, tapwater ongemoeid, in een
+   koude periode kijken of het comfortabel blijft), de temperatuurschaal 60-80 tegen 30-55, en het
+   rendementsblok: dezelfde warmtepomp haalt bij 7 graden COP 4,2 op radiatoren en 5,9 op
+   vloerverwarming, bij min 2 graden 2,8 tegen 3,5.
+5. **Wat het kost en oplevert** (template kosten, zand). De twee rekenvoorbeelden met verbruik voor
+   en na, plus het gouden paneel "hier staat nog geen subsidie in" met de link naar
+   `/subsidies/stapelen`. Zelfde patroon als de configurator op isolatie.
+   → hierna de subsidiecheck-band, precies op het moment dat de bezoeker naar bedragen kijkt
+6. **Geluid, plaatsing en vakmanschap** (eigen, `na: "subsidies"`, warm). De norm van 40 dB op de
+   perceelgrens met een schema (woning, unit, grens, raam van de buren), de plaatsingsregels (niet
+   onder een slaapkamerraam, niet op een trillingsgevoelig dak, omkasting op 20 cm van de schutting
+   vanwege de luchtaanvoer), het cijfer van 72 procent als tegenwicht, en de keurmerken erin.
+
+Daarna de FAQ.
+
+### Wat er als losse sectie verdwijnt, en waar het landt
+
+- `watValtEronder` (hybride / volledig elektrisch / lagetemperatuurverwarming) → sectie 1, die doet
+  het beter. Zelfde keuze als op isolatie.
+- `subsidiesIntro` / `subsidiesItems` → het gouden paneel in sectie 5. Zonder ISDE bleef er toch
+  weinig meer over dan "hangt van je adres af", en dat hoort bij de bedragen te staan.
+- `aandachtspunten` → uit elkaar getrokken naar waar ze bruikbaar zijn: isoleer eerst (1 en 4),
+  lagetemperatuurverwarming (1 en 4), geluid en gecertificeerde installateur (6). Als losse lijst
+  herhaalden ze straks alleen wat er drie secties eerder al stond.
+- `keurmerken` → sectie 6. Certificering is onderdeel van "hoe zorg je dat het goed gebeurt",
+  niet een eigen hoofdstuk.
+
+### Overige wijzigingen in de props
+
+- `kostenItems` wordt de energierekening in plaats van een herhaling van de keuze: per referentie-
+  woning het verbruik voor en na en het verschil per jaar, met `kostenFooter` die zegt dat het twee
+  verschillende woningen zijn.
+- **ISDE eruit**, uit `subsidiesItems` en uit het FAQ-antwoord over subsidie.
+- Keurmerken kloppend maken: BRL 6000-21 hoort bij bodemwarmtepompen (staat er nu als "de erkenning
+  voor warmtepompen"), F-gassen is wettelijk verplicht voor de monteur, BRL 100 voor het bedrijf, en
+  bij een hybride komt daar het CO-vrij certificaat bij vanwege de cv-ketel.
+- Geluid-FAQ krijgt de norm erin in plaats van "valt in de praktijk mee".
+
+### Achtergrondritme
+
+zand (hero), wit, warm, navy, wit, zand, sand (subsidiecheck), warm, zand (FAQ). Geen twee gelijke
+naast elkaar; `maatregelPagina.test.tsx` bewaakt dat.
+
+### Bestanden
+
+- nieuw `src/data/warmtepomp.ts`
+- nieuw `src/components/maatregel/warmtepomp/{HybrideOfElektrisch,KlaarVoorWarmtepomp,GeluidPlaatsingVakmanschap}.tsx`
+- gewijzigd `src/pages/maatregelen/Warmtepomp.tsx`
+- nieuw `src/test/warmtepompPagina.test.tsx` (cijfers renderen, bron met controledatum, geen ISDE)
+- gewijzigd `src/test/maatregelPagina.test.tsx`: de keurmerk-assertie verhuist mee naar de eigen
+  sectie, en er komt een telling bij die bewaakt dat een herbouwde pagina op maximaal zes
+  inhoudelijke secties plus FAQ blijft. Die telling geldt per pagina zodra hij herbouwd is.
+
+### Beeld
+
+Geen nieuwe foto nodig: sectie 6 draait op een schema. Een eigen foto van een geplaatste buitenunit
+zou die sectie wel sterker maken; die staat niet in de repo.
+
+### Review
+
+Uitgevoerd zoals gepland. De pagina telt nu zes inhoudelijke secties plus de FAQ; de volgorde van
+achtergronden is zand, wit, warm, navy, wit, zand, sand (subsidiecheck), warm, zand.
+
+**Nieuw**
+- `src/data/warmtepomp.ts`: de twee systemen met hun referentiewoning, de verwarmingstest, de
+  rendementscijfers, de geluidsnorm en de certificeringen, elk met bron en controledatum.
+- `src/components/maatregel/warmtepomp/`: `HybrideOfElektrisch` (vergelijking op zeven assen),
+  `KlaarVoorWarmtepomp` (verwarmingstest, temperatuurschaal, rendementsbalken),
+  `GeluidPlaatsingVakmanschap` en `BuitenunitSchema` (de tekening).
+- `src/test/warmtepompPagina.test.tsx`: 11 tests over de cijfers, de norm, de bronnen en de
+  afwezigheid van ISDE.
+
+**Gecorrigeerd ten opzichte van de oude tekst**
+- BRL 6000-21 stond er als "de erkenning voor het ontwerp en de installatie van warmtepompen";
+  die gaat over bodemenergie. STEK stond er als "verplichte certificering"; dat is een aanvullende
+  erkenning. Wat er wél moet zijn (F-gassen, BRL 100, CO-vrij bij een cv-ketel) stond er niet.
+- Het FAQ-antwoord over geluid zei dat overlast "in de praktijk meevalt". Nu staat de norm er.
+
+**Tijdens het bouwen bijgesteld**
+- De temperatuurbalken toonden hun bereik twee keer, links én rechts, en daardoor stond de streep
+  bij 50 graden niet boven het aslabel. Rechterkolom weg, streep klopt nu.
+- Plaatsing en vakmanschap stonden naast elkaar; het linkerlijstje is veel korter, dus die kaart was
+  voor de helft leeg. Nu onder elkaar, elk over de volle breedte.
+- Op 390 px botsten de opschriften "buitenunit" en "perceelgrens" in de tekening. Het eerste
+  verdwijnt daar nu; de grens is het punt van het schema.
+- Kruislink naar de isolatiepagina toegevoegd op de plek waar de test faalt, want daar is isoleren
+  het antwoord.
+
+**Geverifieerd**: 245 tests groen (was 231), `tsc --noEmit` schoon, build slaagt, lint op de
+basislijn van 17. Visueel gecontroleerd op 1440 px en 390 px, per sectie en over de hele pagina.
+
+**Nog te doen, aparte PR**: isolatie staat op zeven inhoudelijke secties. Daar vervalt de
+subsidiesectie, die inhoud hoort in het gouden paneel van de configurator.
+
+### Tweede ronde: te uitgebreid, en de rij "Past als"
+
+Reactie van de opdrachtgever op de eerste versie: de pagina is te uitgebreid en visueel nog niet
+altijd overzichtelijk, en de kolom "Past als" kan weg omdat de sectie "Past dit bij jouw woning"
+dat al doet.
+
+- [x] **Rij "Past als" eruit.** Terecht: hetzelfde antwoord stond twee secties uit elkaar twee keer.
+- [x] **Elk vak in de vergelijking is nu kern plus toelichting** in plaats van een alinea. Je kunt
+      de tabel scannen op de vetgedrukte regel en alleen doorlezen waar je blijft hangen. Type
+      `Cel` in de datamodule.
+- [x] **Prijsvak onderaan de kolom** (`md:mt-auto`): de ene omschrijving loopt over twee regels en
+      de andere niet, waardoor de bedragen scheef stonden.
+- [x] **Sectie 6 van drie kaarten naar twee.** Plaatsing en vakmanschap staan weer naast elkaar,
+      maar nu passen ze, want beide lijsten zijn ingekort. De aanvullende keurmerken zijn één
+      zin geworden in plaats van een eigen kolom: het zijn geen eisen, dus ze hoeven geen kolom.
+- [x] **Alle intro's, teststappen, plaatsingstips en voetnoten korter.** De aanschafprijs is uit de
+      rekenvoorbeelden gehaald; die staat groot in sectie 1 en hoefde er niet nog eens bij.
+
+Resultaat op 1440 px: sectie 1 van 1457 naar 1142 px, sectie 4 van 1313 naar 1191, sectie 6 van
+1588 naar 1167. Samen ruim 850 px korter, en op mobiel gaat sectie 1 van 3103 naar 2454 px.
+
