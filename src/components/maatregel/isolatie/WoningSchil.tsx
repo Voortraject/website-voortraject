@@ -268,6 +268,20 @@ export const WoningSchil = () => {
                         5,8 voor enkel glas: hoe lager, hoe beter het isoleert. {soort.toelichting}
                       </p>
                     )}
+                    {soort?.zelfdeBesparing && (
+                      // Milieu Centraal komt voor triple op exact dezelfde
+                      // besparing uit als voor HR++. Dat lijkt op een fout in de
+                      // teller, dus zeggen we het er hardop bij.
+                      <p
+                        className="mt-2 text-[13px] leading-relaxed"
+                        style={{ color: KLEUR.navy, opacity: 0.7, margin: "8px 0 0 0" }}
+                      >
+                        <strong>Op de gasrekening scheelt het niets.</strong> Milieu Centraal komt
+                        voor triple op dezelfde besparing uit als voor HR++: het glas is bij allebei
+                        zoveel beter dan wat er zat, dat de rest verwaarloosbaar is. Het verschil zit
+                        in comfort bij het raam en in de prijs, niet in je rekening.
+                      </p>
+                    )}
                     <p
                       className="mt-2 text-[13px] leading-relaxed"
                       style={{ color: KLEUR.navy, opacity: 0.55, margin: "8px 0 0 0" }}

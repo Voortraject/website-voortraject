@@ -116,6 +116,10 @@ describe("isolatiepagina: de configurator", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Triple" }));
     expect(screen.getByText(/vaak zijn er nieuwe kozijnen nodig/i)).toBeInTheDocument();
+    // Milieu Centraal komt voor triple op dezelfde besparing uit als voor HR++.
+    // Als de teller dan niet verandert lijkt dat een fout, dus dat hoort er
+    // hardop bij te staan.
+    expect(screen.getByText(/Op de gasrekening scheelt het niets/)).toBeInTheDocument();
     // De investering in de teller geldt voor bestaande kozijnen; dat mag niet
     // stilzwijgend blijven.
     expect(

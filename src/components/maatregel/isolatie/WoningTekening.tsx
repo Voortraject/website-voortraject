@@ -5,14 +5,16 @@ import type { MaatregelId } from "@/data/isolatie";
 /**
  * De woning als opengewerkte isometrische tekening.
  *
- * De rechterkant is opengesneden. Daardoor kijk je in de opbouw van dak, gevel
- * en vloer, en dat is precies waar isolatie zit: tussen de lagen, van buiten
- * onzichtbaar. Zet je een maatregel aan, dan vult de isolatie de laag waar hij
- * hoort. Een gouden streep op de buitenkant zou nergens op slaan.
+ * De rechterkant is opengesneden, want isolatie zit tussen de lagen en is van
+ * buiten niet te zien. In de snede vult de isolatie de laag waar hij hoort.
+ * Daarnaast verandert de buitenkant waar dat in het echt ook gebeurt:
+ * gevelisolatie aan de buitenkant geeft de gevel een stuclaag, terwijl
+ * spouwisolatie onzichtbaar blijft en alleen als markering oplicht.
  *
  * Alle punten komen uit één functie `P(a, b, z)`: a loopt langs de voorgevel,
- * b de diepte in, z omhoog. Zo staan gevel, dak, snede en ramen op hetzelfde
- * assenstelsel en kan er niets scheef lopen.
+ * b de diepte in, z omhoog. De dakpannen worden als echt raster over het
+ * dakvlak gelegd (rijen plus pankolommen), niet als geskewd patroon: alleen zo
+ * lopen ze mee met het perspectief.
  */
 
 type Punt = [number, number];
@@ -24,18 +26,21 @@ const U: Punt = [190, 42];   // langs de voorgevel, naar rechtsonder
 const V: Punt = [96, -48];   // de diepte in, naar rechtsboven
 const H = 104;               // muurhoogte
 const NOK = 58;              // nok boven de muur
+const OVERSTEK = 0.08;       // hoever het dak voorbij de gevel steekt
 
 const P = (a: number, b: number, z: number): Punt => [
   O[0] + U[0] * a + V[0] * b,
   O[1] + U[1] * a + V[1] * b - z,
 ];
 
+/** Punt op het dakvlak: a langs de nok, t van dakvoet (0) naar nok (1). */
+const D = (a: number, t: number): Punt =>
+  P(a, -OVERSTEK + t * (0.5 + OVERSTEK), H - 5 + t * (NOK + 5));
+
 const pad = (...punten: Punt[]) =>
   punten.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
 
-/** Hellingshoek van een richting, voor patternTransform. */
 const hoek = ([dx, dy]: Punt) => (Math.atan2(dy, dx) * 180) / Math.PI;
-
 const HOEK_GEVEL = hoek(U);
 const HOEK_SNEDE = hoek(V);
 
@@ -44,9 +49,12 @@ const HOEK_SNEDE = hoek(V);
 const STEEN = "#BB8C69";
 const STEEN_DONKER = "#9D7051";
 const VOEG = "#DDCAB7";
-const PAN = "#454E5C";
-const PAN_LICHT = "#636D7D";
-const PAN_DONKER = "#2B323C";
+const STUC = "#E8E0D2";
+const STUC_DONKER = "#D3C8B4";
+const PAN = "#4A5361";
+const PAN_LICHT = "#6B7585";
+const PAN_DONKER = "#2A313B";
+const PAN_VOEG = "#232932";
 const KOZIJN = "#F6F3ED";
 const KOZIJN_SCHADUW = "#D4CEC2";
 const BINNEN = "#FBF8F2";
@@ -58,14 +66,18 @@ const LIJN = "hsl(var(--primary) / 0.5)";
 
 /** Diktes van de lagen in de snede. */
 const VLOER_DIK = 21;
-const MUUR_DIK = 0.13; // in delen van de diepte
+const MUUR_DIK = 0.13;
 const DAK_DIK = 22;
+
+/** Aantal pannenrijen en pankolommen op het dakvlak. */
+const RIJEN = 8;
+const KOLOMMEN = 22;
 
 export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
   const id = useId();
   const steen = `${id}-steen`;
   const steenSnede = `${id}-steen-snede`;
-  const pannen = `${id}-pannen`;
+  const stuc = `${id}-stuc`;
   const wol = `${id}-wol`;
   const glas = `${id}-glas`;
   const grond = `${id}-grond`;
@@ -83,10 +95,6 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
   const nokSnede = P(1, 0.5, H + NOK);
   const nokAchter = P(0, 0.5, H + NOK);
 
-  // Dakvlak met overstek: iets voorbij de gevel en iets lager dan de muur.
-  const dakVoorL = P(-0.02, -0.08, H - 5);
-  const dakVoorR = P(1, -0.08, H - 5);
-
   const beschrijving =
     gekozen.size === 0
       ? "Opengewerkte tekening van een woning zonder isolatie: dak, gevel en vloer zijn nog lege constructies en de warmte ontsnapt naar buiten"
@@ -95,7 +103,6 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
   return (
     <svg viewBox="14 74 372 296" className="w-full h-auto" role="img" aria-label={beschrijving}>
       <defs>
-        {/* Metselwerk op de voorgevel, meegekanteld met het vlak. */}
         <pattern
           id={steen}
           width="30"
@@ -111,7 +118,6 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
           <rect x="23.2" y="7.3" width="13.6" height="4.9" fill={STEEN_DONKER} />
         </pattern>
 
-        {/* Metselwerk in de snede, dat de andere kant op loopt. */}
         <pattern
           id={steenSnede}
           width="11"
@@ -124,21 +130,19 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
           <rect x="0.8" y="7.3" width="9.4" height="4.9" fill={STEEN_DONKER} />
         </pattern>
 
-        {/* Dakpannen: verticale welvingen met een schaduwlijn per rij. */}
+        {/* Stucwerk: zo ziet een gevel eruit die aan de buitenkant is geïsoleerd. */}
         <pattern
-          id={pannen}
-          width="15"
-          height="12"
+          id={stuc}
+          width="7"
+          height="7"
           patternUnits="userSpaceOnUse"
           patternTransform={`skewY(${HOEK_GEVEL})`}
         >
-          <rect width="15" height="12" fill={PAN} />
-          <rect x="1" y="0" width="5.4" height="12" fill={PAN_LICHT} />
-          <rect x="8.6" y="0" width="5.4" height="12" fill={PAN_LICHT} />
-          <rect x="0" y="0" width="15" height="2.4" fill={PAN_DONKER} />
+          <rect width="7" height="7" fill={STUC} />
+          <circle cx="1.6" cy="2.2" r="0.6" fill={STUC_DONKER} />
+          <circle cx="4.8" cy="5.1" r="0.6" fill={STUC_DONKER} />
         </pattern>
 
-        {/* Isolatiewol: golvende vezels, herkenbaar als isolatie. */}
         <pattern id={wol} width="12" height="10" patternUnits="userSpaceOnUse">
           <rect width="12" height="10" fill="hsl(var(--accent) / 0.9)" />
           <path d="M0 3 q3 -3.4 6 0 q3 3.4 6 0" fill="none" stroke="#A8791C" strokeWidth="1.4" />
@@ -160,11 +164,8 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
 
       <ellipse cx="205" cy="330" rx="165" ry="32" fill={`url(#${grond})`} />
 
-      {/* ============ DE SNEDE: hier zie je de opbouw ============ */}
-      <polygon
-        points={pad(voorOnderR, achterOnderR, achterTopR, nokSnede, voorTopR)}
-        fill={BINNEN}
-      />
+      {/* ============ SNEDE: hier zie je de opbouw ============ */}
+      <polygon points={pad(voorOnderR, achterOnderR, achterTopR, nokSnede, voorTopR)} fill={BINNEN} />
 
       {/* vloeropbouw */}
       <polygon
@@ -187,36 +188,32 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
       ].map(({ van, tot }) => {
         const spouwVan = van + (tot - van) * 0.34;
         const spouwTot = van + (tot - van) * 0.7;
-        const hoekpunten = (b1: number, b2: number) =>
+        const vlak = (b1: number, b2: number) =>
           pad(P(1, b1, VLOER_DIK), P(1, b2, VLOER_DIK), P(1, b2, H), P(1, b1, H));
         return (
           <g key={van}>
-            <polygon points={hoekpunten(van, tot)} fill={`url(#${steenSnede})`} />
-            {/* de spouw: leeg tot je hem isoleert */}
-            <polygon points={hoekpunten(spouwVan, spouwTot)} fill="#EFE9DF" />
+            <polygon points={vlak(van, tot)} fill={`url(#${steenSnede})`} />
+            <polygon points={vlak(spouwVan, spouwTot)} fill="#EFE9DF" />
             <polygon
               className="schil-overgang"
-              points={hoekpunten(spouwVan, spouwTot)}
+              points={vlak(spouwVan, spouwTot)}
               fill={`url(#${wol})`}
               style={{ opacity: gevelAan ? 1 : 0 }}
             />
-            <polygon points={hoekpunten(van, tot)} fill="none" stroke={LIJN} strokeWidth="1.2" />
+            <polygon points={vlak(van, tot)} fill="none" stroke={LIJN} strokeWidth="1.2" />
           </g>
         );
       })}
 
-      {/* dakopbouw: twee schuine lagen naar de nok */}
-      {[
-        { vanB: 0, vanZ: H },
-        { vanB: 1, vanZ: H },
-      ].map(({ vanB, vanZ }, i) => (
-        <g key={i}>
+      {/* dakopbouw naar de nok */}
+      {[0, 1].map((vanB) => (
+        <g key={vanB}>
           <polygon
             points={pad(
-              P(1, vanB, vanZ),
+              P(1, vanB, H),
               P(1, 0.5, H + NOK),
               P(1, 0.5, H + NOK - DAK_DIK),
-              P(1, vanB, vanZ - DAK_DIK),
+              P(1, vanB, H - DAK_DIK),
             )}
             fill={HOUT}
             stroke={HOUT_DONKER}
@@ -225,10 +222,10 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
           <polygon
             className="schil-overgang"
             points={pad(
-              P(1, vanB, vanZ - 4),
+              P(1, vanB, H - 4),
               P(1, 0.5, H + NOK - 4),
               P(1, 0.5, H + NOK - DAK_DIK + 4),
-              P(1, vanB, vanZ - DAK_DIK + 4),
+              P(1, vanB, H - DAK_DIK + 4),
             )}
             fill={`url(#${wol})`}
             style={{ opacity: aan("dak") ? 1 : 0 }}
@@ -236,7 +233,6 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
         </g>
       ))}
 
-      {/* omtrek van de snede */}
       <polygon
         points={pad(voorOnderR, achterOnderR, achterTopR, nokSnede, voorTopR)}
         fill="none"
@@ -247,11 +243,28 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
 
       {/* ============ VOORGEVEL ============ */}
       <polygon points={pad(voorOnderL, voorOnderR, voorTopR, voorTopL)} fill={`url(#${steen})`} />
+      {/* Gevelisolatie buitenom: de gevel krijgt een stuclaag. Dat is het enige
+          dat je van isolatie aan de buitenkant écht ziet. */}
+      <polygon
+        className="schil-overgang"
+        points={pad(voorOnderL, voorOnderR, voorTopR, voorTopL)}
+        fill={`url(#${stuc})`}
+        style={{ opacity: aan("gevel") ? 1 : 0 }}
+      />
+      {/* Spouwisolatie blijft onzichtbaar; een warme waas markeert dat de muren
+          nu wél geïsoleerd zijn. */}
+      <polygon
+        className="schil-overgang"
+        points={pad(voorOnderL, voorOnderR, voorTopR, voorTopL)}
+        fill="hsl(var(--accent) / 0.3)"
+        style={{ opacity: aan("spouw") ? 1 : 0 }}
+      />
       <polygon
         points={pad(voorOnderL, voorOnderR, voorTopR, voorTopL)}
         fill="hsl(var(--primary) / 0.09)"
       />
 
+      {/* Ramen */}
       {[
         { a1: 0.07, a2: 0.28 },
         { a1: 0.36, a2: 0.57 },
@@ -271,24 +284,14 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
           />
           <polygon
             className="schil-overgang"
-            points={pad(
-              P(a1 + 0.014, 0, 40),
-              P(a2 - 0.014, 0, 40),
-              P(a2 - 0.014, 0, 80),
-              P(a1 + 0.014, 0, 80),
-            )}
+            points={pad(P(a1 + 0.014, 0, 40), P(a2 - 0.014, 0, 40), P(a2 - 0.014, 0, 80), P(a1 + 0.014, 0, 80))}
             fill={aan("glas") ? `url(#${glas})` : "#C9CBC6"}
             stroke={aan("glas") ? "#6E9BB5" : "#A8ACA6"}
             strokeWidth="1.2"
           />
           <polygon
             className="schil-overgang"
-            points={pad(
-              P(a1 + 0.026, 0, 44),
-              P(a2 - 0.026, 0, 44),
-              P(a2 - 0.026, 0, 76),
-              P(a1 + 0.026, 0, 76),
-            )}
+            points={pad(P(a1 + 0.026, 0, 44), P(a2 - 0.026, 0, 44), P(a2 - 0.026, 0, 76), P(a1 + 0.026, 0, 76))}
             fill="none"
             stroke="#6E9BB5"
             strokeWidth="1"
@@ -307,29 +310,63 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
       />
       <circle {...(() => { const [cx, cy] = P(0.822, 0, 37); return { cx, cy, r: 2.3 }; })()} fill="#D9C48C" />
 
-      {/* Hoeklijnen, zodat het volume afleesbaar blijft */}
       <line x1={voorOnderR[0]} y1={voorOnderR[1]} x2={voorTopR[0]} y2={voorTopR[1]} stroke={LIJN} strokeWidth="2.2" />
       <line x1={voorOnderL[0]} y1={voorOnderL[1]} x2={voorOnderR[0]} y2={voorOnderR[1]} stroke={LIJN} strokeWidth="1.6" />
       <line x1={voorOnderL[0]} y1={voorOnderL[1]} x2={voorTopL[0]} y2={voorTopL[1]} stroke={LIJN} strokeWidth="1.4" />
 
       {/* ============ DAK ============ */}
-      {/* onderkant van het overstek: geeft het dak dikte */}
-      <polygon points={pad(dakVoorL, dakVoorR, voorTopR, voorTopL)} fill="#8B8375" />
-      <polygon points={pad(dakVoorL, dakVoorR, nokSnede, nokAchter)} fill={`url(#${pannen})`} />
+      {/* onderkant van het overstek */}
+      <polygon points={pad(D(0, 0), D(1, 0), voorTopR, voorTopL)} fill="#8B8375" />
+
+      {/* pannenrijen, van dakvoet naar nok */}
+      {Array.from({ length: RIJEN }, (_, i) => {
+        const t1 = i / RIJEN;
+        const t2 = (i + 1) / RIJEN;
+        return (
+          <polygon
+            key={`rij${i}`}
+            points={pad(D(0, t1), D(1, t1), D(1, t2), D(0, t2))}
+            fill={PAN}
+            stroke={PAN_VOEG}
+            strokeWidth="1.6"
+          />
+        );
+      })}
+      {/* de welving van elke pan: een lichte baan per kolom */}
+      {Array.from({ length: KOLOMMEN }, (_, k) => {
+        const a1 = k / KOLOMMEN;
+        const a2 = a1 + 0.6 / KOLOMMEN;
+        return (
+          <polygon
+            key={`pan${k}`}
+            points={pad(D(a1, 0), D(a2, 0), D(a2, 1), D(a1, 1))}
+            fill={PAN_LICHT}
+            opacity="0.55"
+          />
+        );
+      })}
+      {/* pannaden tussen de kolommen */}
+      {Array.from({ length: KOLOMMEN + 1 }, (_, k) => {
+        const a = k / KOLOMMEN;
+        const [x1, y1] = D(a, 0);
+        const [x2, y2] = D(a, 1);
+        return <line key={`naad${k}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke={PAN_DONKER} strokeWidth="0.9" />;
+      })}
       <polygon
-        points={pad(dakVoorL, dakVoorR, nokSnede, nokAchter)}
+        points={pad(D(0, 0), D(1, 0), D(1, 1), D(0, 1))}
         fill="hsl(var(--primary) / 0.05)"
       />
       <polygon
-        points={pad(dakVoorL, dakVoorR, nokSnede, nokAchter)}
+        points={pad(D(0, 0), D(1, 0), D(1, 1), D(0, 1))}
         fill="none"
         stroke={LIJN}
         strokeWidth="1.6"
         strokeLinejoin="round"
       />
+
       {/* boeiboord langs de dakvoet */}
       <polygon
-        points={pad(dakVoorL, dakVoorR, [dakVoorR[0], dakVoorR[1] + 7], [dakVoorL[0], dakVoorL[1] + 7])}
+        points={pad(D(0, 0), D(1, 0), [D(1, 0)[0], D(1, 0)[1] + 7], [D(0, 0)[0], D(0, 0)[1] + 7])}
         fill="#F2EEE5"
         stroke={LIJN}
         strokeWidth="1"
@@ -352,21 +389,34 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
       })()}
 
       {/* ============ WARMTE DIE ONTSNAPT ============ */}
-      {/* Boven het dakvlak, langs de schoorsteen heen. */}
-      <Pijl x={140} y={96} richting="op" zichtbaar={lek(!aan("dak"))} />
-      <Pijl x={240} y={118} richting="op" zichtbaar={lek(!aan("dak"))} />
-      <Pijl x={272} y={126} richting="op" zichtbaar={lek(!aan("dak"))} />
-      {/* Weerszijden van de woning. */}
-      <Pijl x={40} y={228} richting="links" zichtbaar={lek(!gevelAan)} />
-      <Pijl x={40} y={262} richting="links" zichtbaar={lek(!gevelAan)} />
-      <Pijl x={370} y={212} richting="rechts" zichtbaar={lek(!gevelAan)} />
-      <Pijl x={370} y={250} richting="rechts" zichtbaar={lek(!gevelAan)} />
-      {/* Net boven de kozijnen. */}
-      <Pijl x={97} y={210} richting="op" zichtbaar={lek(!aan("glas"))} kort />
-      <Pijl x={152} y={222} richting="op" zichtbaar={lek(!aan("glas"))} kort />
-      {/* Onder de vloer. */}
-      <Pijl x={150} y={340} richting="neer" zichtbaar={lek(!aan("vloer"))} />
-      <Pijl x={292} y={352} richting="neer" zichtbaar={lek(!aan("vloer"))} />
+      {/* Boven de nok, met een gat waar de schoorsteen staat. */}
+      {[0.12, 0.55, 0.85].map((a) => {
+        const [x, y] = P(a, 0.5, H + NOK);
+        return <Pijl key={`dak${a}`} x={x} y={y - 20} richting="op" zichtbaar={lek(!aan("dak"))} />;
+      })}
+      {/* Links en rechts van de woning, op muurhoogte. */}
+      {[40, 74].map((z) => {
+        const [, y] = P(0, 0, z);
+        return <Pijl key={`l${z}`} x={P(0, 0, z)[0] - 28} y={y} richting="links" zichtbaar={lek(!gevelAan)} />;
+      })}
+      {[40, 74].map((z) => {
+        const [x, y] = P(1, 1, z);
+        return <Pijl key={`r${z}`} x={x + 28} y={y} richting="rechts" zichtbaar={lek(!gevelAan)} />;
+      })}
+      {/* Uit de ramen omhoog. */}
+      {[0.175, 0.465].map((a) => {
+        const [x, y] = P(a, 0, 85);
+        return <Pijl key={`g${a}`} x={x} y={y - 14} richting="op" zichtbaar={lek(!aan("glas"))} kort />;
+      })}
+      {/* Onder de vloer door. */}
+      {[0.35, 0.78].map((a) => {
+        const [x, y] = P(a, 0, 0);
+        return <Pijl key={`v${a}`} x={x} y={y + 26} richting="neer" zichtbaar={lek(!aan("vloer"))} />;
+      })}
+      {(() => {
+        const [x, y] = P(1, 0.55, 0);
+        return <Pijl x={x} y={y + 26} richting="neer" zichtbaar={lek(!aan("vloer"))} />;
+      })()}
     </svg>
   );
 };

@@ -57,7 +57,14 @@ export interface GlasKeuzes {
   /** Wat er nu in zit; dit bepaalt de besparing. */
   startpunt: { id: string; label: string; m3: number; euro: number }[];
   /** Waar je heen gaat; dit bepaalt de U-waarde en de kozijnvraag. */
-  soort: { id: string; label: string; uWaarde: string; toelichting: string }[];
+  soort: {
+    id: string;
+    label: string;
+    uWaarde: string;
+    toelichting: string;
+    /** Levert dit type volgens de bron dezelfde gasbesparing op als HR++? */
+    zelfdeBesparing: boolean;
+  }[];
 }
 
 export interface IsolatieMaatregel {
@@ -157,6 +164,7 @@ export const ISOLATIE_MAATREGELEN: IsolatieMaatregel[] = [
           uWaarde: "ongeveer 1,1",
           toelichting:
             "Past meestal in je bestaande kozijnen en is voor de meeste woningen de verstandige keuze.",
+          zelfdeBesparing: false,
         },
         {
           id: "triple",
@@ -164,6 +172,7 @@ export const ISOLATIE_MAATREGELEN: IsolatieMaatregel[] = [
           uWaarde: "0,4 tot 0,9",
           toelichting:
             "Isoleert beter, maar is zwaarder en dikker. Vaak zijn er nieuwe kozijnen nodig, en dat bepaalt de prijs meer dan het glas zelf. Loont vooral als je naar een gasloze woning met lagetemperatuurverwarming toe werkt.",
+          zelfdeBesparing: true,
         },
       ],
     },
