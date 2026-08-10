@@ -187,7 +187,9 @@ export async function schrijfSubsidiecheckLead(args: {
     // code `voortraject`; vóór deze wijziging viel "Subsidiecheck" terug op
     // `website`. Welk formulier de lead opleverde staat in `formulier` hierboven.
     bron: "Voortraject",
-    status: "nieuw",
+    // `status`, `prioriteit` en `toegewezen_aan` sturen we bewust NIET mee: de
+    // kolom heeft DEFAULT 'nieuw', en het CRM zet die drie bij een anonieme
+    // insert toch terug (trigger `publieke_lead_velden_vastzetten`).
   } as never);
   if (!error) return;
 

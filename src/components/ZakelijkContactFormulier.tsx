@@ -185,7 +185,9 @@ export const ZakelijkContactFormulier = () => {
         // Eigen lead van onze eigen site: bron "Voortraject". Het CRM normaliseert
         // dat (trigger `normaliseer_lead_bron`) naar de code `voortraject`.
         bron: "Voortraject",
-        status: "nieuw",
+        // `status`, `prioriteit` en `toegewezen_aan` sturen we bewust NIET mee:
+        // DEFAULT 'nieuw' op de kolom, en het CRM zet ze bij een anonieme insert
+        // toch terug (trigger `publieke_lead_velden_vastzetten`).
         // De gegenereerde types voor leads_uitvoerders lopen achter op de live
         // CRM-tabel (zie de toelichting bovenaan dit bestand), vandaar de cast.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

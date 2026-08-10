@@ -798,7 +798,13 @@ Deno.serve(async (req: Request) => {
     subsidiecheck_type_bewoner: typeBewoner,
     formulier: "subsidietool",
     bron: "Voortraject",
-    status: "nieuw",
+    // `status`, `prioriteit` en `toegewezen_aan` sturen we bewust NIET mee. De
+    // kolom heeft DEFAULT 'nieuw', dus er verandert niets aan de uitkomst.
+    //
+    // Let op het verschil met de client: het CRM zet die drie velden terug via
+    // de trigger `publieke_lead_velden_vastzetten`, maar die grijpt alleen in
+    // bij `auth.role() = 'anon'`. Deze function schrijft met service_role en
+    // valt daar dus buiten — reden te meer om ze hier niet te sturen.
   };
 
   const volledigeNaam = [voornaam, tussenvoegsel, achternaam].filter(Boolean).join(" ") || legacyNaam;

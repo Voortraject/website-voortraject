@@ -269,7 +269,10 @@ const Contact = () => {
         // of de bevestigingsmail ("binnen 24 uur contact") uitgaat. Er staat een
         // CHECK op: alleen 'contactformulier', 'subsidietool' of NULL.
         formulier: "contactformulier",
-        status: "nieuw",
+        // `status`, `prioriteit` en `toegewezen_aan` sturen we bewust NIET mee.
+        // De kolom heeft DEFAULT 'nieuw', en het CRM zet die drie velden bij een
+        // anonieme insert sowieso terug (trigger `publieke_lead_velden_vastzetten`).
+        // Ze meesturen suggereert dat de website er iets over te zeggen heeft.
       } as any);
       if (error) throw error;
       // Tegenhanger van zakelijk_lead in ZakelijkContactFormulier. Geen
