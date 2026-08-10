@@ -9,6 +9,47 @@ the user corrects course or a non-obvious gotcha surfaces. Review at session sta
 **Lesson:** the rule to follow next time
 -->
 
+## 2026-08-10 — Een rem in het geheugen van een edge-isolate is geen rem
+**Context:** Bij de securityronde vanuit het CRM bleek de subsidiecheck, de belangrijkste
+leadroute, buiten de volumerem te vallen. Twee oorzaken die elkaar versterkten: de
+database-trigger `rem_publieke_lead_inserts` slaat `service_role` over (zodat n8n niet in zijn
+eigen rem loopt) en `subsidiecheck-mail` schrijft nou juist met `service_role`. De function had
+zelf wel een rem, maar die stond in een `Map` in het geheugen van de edge-isolate.
+**Lesson:**
+- **Tel volumegrenzen in de database, niet in het geheugen van een function.** Een isolate
+  herstart, schaalt uit en houdt geen state vast: zo'n teller is een decoratie. Roep een
+  databasefunctie aan die telt, dan geldt dezelfde rem voor alle instances.
+- **Tel in dezelfde tabel als de bestaande remmen.** Anders krijgt één bezoeker twee losse
+  emmers in plaats van één, en is de som van de grenzen niet meer wat je hebt afgesproken.
+- **Kijk bij elke rem of authenticatie expliciet welke rol een pad gebruikt.** Een vrijstelling
+  die voor n8n bedoeld is, geldt net zo goed voor élke andere service_role-aanroeper. Zo'n
+  bijwerking is vanaf de kant die de vrijstelling schrijft niet te zien.
+- **Fail open als de rem zelf niet bereikbaar is**, maar log het. Een lead verliezen omdat de
+  teller stuk is, is erger dan één aanvraag te veel doorlaten. Daardoor kan de aanroepende code
+  ook vóór de migratie live, wat losse repo's onafhankelijk laat uitrollen.
+- **Neem het láátste element van `x-forwarded-for`, niet het eerste.** Het eerste kan de client
+  zelf meesturen; dan kiest de aanvaller zijn eigen emmer en is de rem gratis te omzeilen.
+
+## 2026-08-10 — Zoek bij onbegrensde groei naar de sléútel, niet naar het aantal records
+**Context:** De publieke `woninginfo`-function schrijft met service_role in `pand_3d_cache`.
+Ingeschat als "ongelimiteerde rijgroei, hooguit zoveel rijen als er panden zijn". Bij het
+bouwen bleek de cachesleutel `${pandid}@${Math.round(x)},${Math.round(y)}` te zijn, met x en y
+rechtstreeks uit de queryparameters: één geldige pand-id plus een coördinaat die per verzoek
+één meter opschuift levert onbeperkt véle rijen op voor hetzelfde gebouw, elk met een volledig
+3D-model erin.
+**Lesson:**
+- **De grens op een cache is de vorm van de sleutel, niet het aantal echte dingen.** Zit er
+  ook maar één vrij te kiezen getal uit de request in, dan is de tabel onbegrensd. Rond af op
+  een rooster of laat het veld weg.
+- **Rond één keer af en gebruik die waarde overal.** Alleen de sleutel afronden en de rauwe
+  waarde doorgeven aan de berekening maakt de inhoud afhankelijk van welk verzoek toevallig
+  het eerste was.
+- **Zet zulke logica in een puur bestand naast de function** (zoals `cachesleutel.ts` naast
+  `model3d.ts`): vitest importeert die rechtstreeks, dus de securitylogica krijgt een test in
+  plaats van alleen een comment.
+- **Best-effort caches mogen fail-closed op hun eigen budget.** Niet kunnen schrijven kost
+  alleen snelheid, en een rem die uitvalt zodra de database hapert is geen rem.
+
 ## 2026-08-10 — De pagina die het gedeelde component niet gebruikt, mist ook de stille reparaties
 **Context:** De opdrachtgever wees op twee witte hoekjes op `/verduurzamen/onderhoud`, op de
 overgang van de donkere slotsectie naar de footer. Oorzaak: `Footer` rendert zijn donkere paneel

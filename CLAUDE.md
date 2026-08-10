@@ -153,8 +153,17 @@
    `src/integrations/supabase/types.ts`. After any schema change, **always regenerate the
    Supabase types** so code and database stay in sync.
 
-3. **Database changes** (RLS policies, functions, grants) go through **SQL migrations**, not
-   the frontend branch, and only after **explicit confirmation**.
+3. **Schema changes do NOT happen in this repo.** The database is shared with the CRM app,
+   and two repos migrating the same database is asking for trouble. Agreed with the CRM team
+   on 2026-08-10: **all** schema changes (tables, columns, RLS policies, functions, triggers,
+   grants) are authored and applied from the **CRM repo**. This repo only *reads* the schema
+   and *calls* what is there.
+   - Need a schema change? Write down what you need and why, and ask the CRM side to deliver
+     it. Document the expected signature next to the code that calls it, as
+     `supabase/functions/subsidiecheck-mail/index.ts` does for `rem_publieke_route`.
+   - Code that depends on something new must degrade safely while it does not exist yet
+     (fail open, log, fall back), so the two repos can deploy independently.
+   - `supabase/migrations/` is history only; see the README there.
 
 4. **Use the existing design tokens** (Tailwind config + CSS variables). Never hardcode colors.
 

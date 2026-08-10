@@ -1,6 +1,11 @@
 # CRM-project (Voortraject CRM). De backend van de website leeft hier, niet meer
 # in het verlaten Lovable-project. Deploy dus tegen dit project-ref
 # (supabase functions deploy … --project-ref lfelnfukbrxznkevnevr).
+#
+# LET OP: dit is dezelfde database als die van de CRM-app. Alleen edge functions
+# worden vanuit deze repo uitgerold. SCHEMAWIJZIGINGEN GAAN ALLEEN VANUIT HET CRM
+# (afspraak 2026-08-10) — draai hiervandaan dus geen `supabase db push`. Zie
+# supabase/migrations/README.md.
 project_id = "lfelnfukbrxznkevnevr"
 
 # Google-reviews sync. Geen JWT nodig: de functie draait via cron en gebruikt
