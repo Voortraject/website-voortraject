@@ -53,6 +53,13 @@ interface PerType {
   kosten: number;
 }
 
+export interface GlasKeuzes {
+  /** Wat er nu in zit; dit bepaalt de besparing. */
+  startpunt: { id: string; label: string; m3: number; euro: number }[];
+  /** Waar je heen gaat; dit bepaalt de U-waarde en de kozijnvraag. */
+  soort: { id: string; label: string; uWaarde: string; toelichting: string }[];
+}
+
 export interface IsolatieMaatregel {
   id: MaatregelId;
   naam: string;
@@ -64,6 +71,8 @@ export interface IsolatieMaatregel {
   uitgangspunt: string;
   perType: Record<Woningtype, PerType>;
   noot?: string;
+  /** Alleen voor glas: de keuzes die de bezoeker binnen de maatregel heeft. */
+  keuzes?: GlasKeuzes;
 }
 
 export const ISOLATIE_MAATREGELEN: IsolatieMaatregel[] = [
@@ -125,22 +134,41 @@ export const ISOLATIE_MAATREGELEN: IsolatieMaatregel[] = [
   },
   {
     id: "glas",
-    naam: "HR++ glas",
-    kort: "Isolerend glas in je bestaande kozijnen.",
+    naam: "Isolerend glas",
+    kort: "HR++ of triple in je kozijnen, in plaats van enkel of gewoon dubbel glas.",
     merkbaar: "Geen koudeval meer bij het raam, minder condens en merkbaar minder geluid van buiten.",
-    uitgangspunt: "Van gewoon dubbel glas naar HR++. Vervang je enkel glas, dan is de besparing een stuk groter.",
+    uitgangspunt: "Kies hieronder wat er nu in zit; dat bepaalt vooral wat het oplevert.",
     perType: {
       tussenwoning: { m3: 70, euro: 90, kosten: 4700 },
       hoekwoning: { m3: 70, euro: 90, kosten: 4700 },
       "twee-onder-een-kap": { m3: 70, euro: 90, kosten: 4700 },
       vrijstaand: { m3: 70, euro: 90, kosten: 4700 },
     },
-    noot: "Milieu Centraal rekent hier met een hoekwoning met 22 m² glas; daarom staat dit cijfer voor elk woningtype gelijk. Vanaf enkel glas is het ongeveer 260 m³ gas, zo'n € 350 per jaar.",
+    noot: "Milieu Centraal rekent met een hoekwoning met 22 m² glas; daarom staat dit cijfer voor elk woningtype gelijk.",
+    keuzes: {
+      startpunt: [
+        { id: "dubbel", label: "Gewoon dubbel glas", m3: 70, euro: 90 },
+        { id: "enkel", label: "Enkel glas", m3: 260, euro: 350 },
+      ],
+      soort: [
+        {
+          id: "hrplus",
+          label: "HR++",
+          uWaarde: "ongeveer 1,1",
+          toelichting:
+            "Past meestal in je bestaande kozijnen en is voor de meeste woningen de verstandige keuze.",
+        },
+        {
+          id: "triple",
+          label: "Triple",
+          uWaarde: "0,4 tot 0,9",
+          toelichting:
+            "Isoleert beter, maar is zwaarder en dikker. Vaak zijn er nieuwe kozijnen nodig, en dat bepaalt de prijs meer dan het glas zelf. Loont vooral als je naar een gasloze woning met lagetemperatuurverwarming toe werkt.",
+        },
+      ],
+    },
   },
 ];
-
-/** Vanaf enkel glas, hoekwoning met 22 m² glas. */
-export const GLAS_VANAF_ENKEL = { m3: 260, euro: 350 };
 
 export const euro = (bedrag: number) =>
   `€ ${Math.round(bedrag).toLocaleString("nl-NL")}`;

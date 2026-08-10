@@ -93,6 +93,36 @@ describe("isolatiepagina: de configurator", () => {
     expect(screen.getByText(euro(gevel.perType.hoekwoning.euro))).toBeInTheDocument();
   });
 
+  it("laat de glasbesparing afhangen van wat er nu in zit", () => {
+    toon();
+    const glas = ISOLATIE_MAATREGELEN.find((m) => m.id === "glas")!;
+    const vanafDubbel = glas.keuzes!.startpunt.find((s) => s.id === "dubbel")!;
+    const vanafEnkel = glas.keuzes!.startpunt.find((s) => s.id === "enkel")!;
+
+    fireEvent.click(knop(glas.naam));
+    expect(screen.getByText(euro(vanafDubbel.euro))).toBeInTheDocument();
+
+    // Van enkel glas naar isolerend glas levert een veelvoud op van de stap
+    // vanaf gewoon dubbel glas. Eén cijfer voor "glas" zou dus misleiden.
+    fireEvent.click(screen.getByRole("button", { name: "Enkel glas" }));
+    expect(screen.getByText(euro(vanafEnkel.euro))).toBeInTheDocument();
+    expect(vanafEnkel.euro).toBeGreaterThan(vanafDubbel.euro * 2);
+  });
+
+  it("biedt triple als keuze en is eerlijk over de kozijnen", () => {
+    toon();
+    const glas = ISOLATIE_MAATREGELEN.find((m) => m.id === "glas")!;
+    fireEvent.click(knop(glas.naam));
+
+    fireEvent.click(screen.getByRole("button", { name: "Triple" }));
+    expect(screen.getByText(/vaak zijn er nieuwe kozijnen nodig/i)).toBeInTheDocument();
+    // De investering in de teller geldt voor bestaande kozijnen; dat mag niet
+    // stilzwijgend blijven.
+    expect(
+      screen.getByText(/geldt voor isolerend glas in je bestaande kozijnen/),
+    ).toBeInTheDocument();
+  });
+
   it("telt bij 'alles aanzetten' niet allebei de gevelroutes mee", () => {
     toon();
     fireEvent.click(screen.getByRole("button", { name: /Alles aanzetten/ }));

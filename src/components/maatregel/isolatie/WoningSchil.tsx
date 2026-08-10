@@ -26,9 +26,28 @@ import { WoningTekening } from "./WoningTekening";
  * gemeentelijk). Alles is vóór subsidie gerekend en de vraag "wat krijg ik"
  * gaat naar de subsidiecheck.
  */
+/**
+ * De besparing van een maatregel. Alleen bij glas hangt die niet aan het
+ * woningtype maar aan wat er nu in zit: van enkel glas naar isolerend glas
+ * levert vier keer zoveel op als van gewoon dubbel glas.
+ */
+const besparingVan = (
+  m: (typeof ISOLATIE_MAATREGELEN)[number],
+  woningtype: Woningtype,
+  glasStart: string,
+) => {
+  const basis = m.perType[woningtype];
+  const start = m.keuzes?.startpunt.find((s) => s.id === glasStart);
+  return start ? { ...basis, m3: start.m3, euro: start.euro } : basis;
+};
+
 export const WoningSchil = () => {
   const [woningtype, setWoningtype] = useState<Woningtype>("hoekwoning");
   const [gekozen, setGekozen] = useState<Set<MaatregelId>>(new Set());
+  // Glas heeft twee keuzes binnen de maatregel: wat er nu in zit (bepaalt de
+  // besparing) en waar je heen gaat (bepaalt de U-waarde en de kozijnvraag).
+  const [glasStart, setGlasStart] = useState("dubbel");
+  const [glasSoort, setGlasSoort] = useState("hrplus");
 
   const wissel = (id: MaatregelId) =>
     setGekozen((vorige) => {
@@ -50,13 +69,13 @@ export const WoningSchil = () => {
     let kosten = 0;
     for (const m of ISOLATIE_MAATREGELEN) {
       if (!gekozen.has(m.id)) continue;
-      const t = m.perType[woningtype];
+      const t = besparingVan(m, woningtype, glasStart);
       euroPerJaar += t.euro;
       m3PerJaar += t.m3;
       kosten += t.kosten;
     }
     return { euroPerJaar, m3PerJaar, kosten };
-  }, [gekozen, woningtype]);
+  }, [gekozen, woningtype, glasStart]);
 
   // Alles aanzetten slaat de tweede helft van een uitsluitend paar over, anders
   // zou de teller een besparing optellen die je in werkelijkheid niet krijgt.
@@ -153,73 +172,113 @@ export const WoningSchil = () => {
         <div className="flex flex-col gap-3">
           {ISOLATIE_MAATREGELEN.map((m) => {
             const aan = gekozen.has(m.id);
-            const t = m.perType[woningtype];
+            const t = besparingVan(m, woningtype, glasStart);
+            const soort = m.keuzes?.soort.find((k) => k.id === glasSoort);
             return (
-              <button
+              // Geen <button> om de hele kaart: de glaskaart heeft eigen knoppen
+              // en een knop in een knop is ongeldige HTML.
+              <div
                 key={m.id}
-                type="button"
-                onClick={() => wissel(m.id)}
-                aria-pressed={aan}
-                className="w-full rounded-2xl p-5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="rounded-2xl transition-colors"
                 style={{
                   backgroundColor: aan ? "hsl(var(--accent) / 0.12)" : KLEUR.wit,
                   border: `1px solid ${aan ? "hsl(var(--accent) / 0.5)" : KLEUR.rand}`,
                 }}
               >
-                <span className="flex items-start gap-4">
-                  <span
-                    className="mt-0.5 flex items-center justify-center rounded-full shrink-0 transition-colors"
-                    style={{
-                      width: 26,
-                      height: 26,
-                      backgroundColor: aan ? KLEUR.goud : "transparent",
-                      border: `2px solid ${aan ? KLEUR.goud : "hsl(var(--primary) / 0.25)"}`,
-                    }}
-                  >
-                    {aan && <Check size={15} color={KLEUR.navy} strokeWidth={3} aria-hidden="true" />}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                      <span
-                        className="text-[17px] font-semibold"
-                        style={{ color: KLEUR.navy }}
-                      >
-                        {m.naam}
-                      </span>
-                      <span
-                        className="text-[15px] font-bold tabular-nums whitespace-nowrap"
-                        style={{ color: aan ? KLEUR.navy : "hsl(var(--primary) / 0.6)" }}
-                      >
-                        {euro(t.euro)} per jaar
-                      </span>
-                    </span>
+                <button
+                  type="button"
+                  onClick={() => wissel(m.id)}
+                  aria-pressed={aan}
+                  className="w-full rounded-2xl p-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <span className="flex items-start gap-4">
                     <span
-                      className="mt-1.5 block text-[14px] leading-relaxed"
-                      style={{ color: KLEUR.navy, opacity: 0.75 }}
+                      className="mt-0.5 flex items-center justify-center rounded-full shrink-0 transition-colors"
+                      style={{
+                        width: 26,
+                        height: 26,
+                        backgroundColor: aan ? KLEUR.goud : "transparent",
+                        border: `2px solid ${aan ? KLEUR.goud : "hsl(var(--primary) / 0.25)"}`,
+                      }}
                     >
-                      {m.kort}
+                      {aan && <Check size={15} color={KLEUR.navy} strokeWidth={3} aria-hidden="true" />}
                     </span>
-                    {aan && (
-                      <span className="mt-3 block">
-                        <span
-                          className="block text-[14px] leading-relaxed"
-                          style={{ color: KLEUR.navy, opacity: 0.85 }}
-                        >
-                          <strong>Wat je merkt:</strong> {m.merkbaar}
+                    <span className="min-w-0 flex-1">
+                      <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                        <span className="text-[17px] font-semibold" style={{ color: KLEUR.navy }}>
+                          {m.naam}
                         </span>
                         <span
-                          className="mt-2 block text-[13px] leading-relaxed"
-                          style={{ color: KLEUR.navy, opacity: 0.6 }}
+                          className="text-[15px] font-bold tabular-nums whitespace-nowrap"
+                          style={{ color: aan ? KLEUR.navy : "hsl(var(--primary) / 0.6)" }}
                         >
-                          {t.m3} m³ gas per jaar. Investering {euro(t.kosten)} vóór subsidie.{" "}
-                          {m.uitgangspunt}
-                          {m.noot ? ` ${m.noot}` : ""}
+                          {euro(t.euro)} per jaar
                         </span>
                       </span>
-                    )}
+                      <span
+                        className="mt-1.5 block text-[14px] leading-relaxed"
+                        style={{ color: KLEUR.navy, opacity: 0.75 }}
+                      >
+                        {m.kort}
+                      </span>
+                      {aan && (
+                        <span className="mt-3 block">
+                          <span
+                            className="block text-[14px] leading-relaxed"
+                            style={{ color: KLEUR.navy, opacity: 0.85 }}
+                          >
+                            <strong>Wat je merkt:</strong> {m.merkbaar}
+                          </span>
+                          <span
+                            className="mt-2 block text-[13px] leading-relaxed"
+                            style={{ color: KLEUR.navy, opacity: 0.6 }}
+                          >
+                            {t.m3} m³ gas per jaar. Investering {euro(t.kosten)} vóór subsidie.{" "}
+                            {m.uitgangspunt}
+                            {m.noot ? ` ${m.noot}` : ""}
+                          </span>
+                        </span>
+                      )}
+                    </span>
                   </span>
-                </span>
-              </button>
+                </button>
+
+                {aan && m.keuzes && (
+                  <div className="px-5 pb-5 pl-[60px]">
+                    <Keuzerij
+                      label="Wat zit er nu in?"
+                      opties={m.keuzes.startpunt}
+                      actief={glasStart}
+                      kies={setGlasStart}
+                    />
+                    <div className="mt-3">
+                      <Keuzerij
+                        label="Waar ga je heen?"
+                        opties={m.keuzes.soort}
+                        actief={glasSoort}
+                        kies={setGlasSoort}
+                      />
+                    </div>
+                    {soort && (
+                      <p
+                        className="mt-3 text-[13px] leading-relaxed"
+                        style={{ color: KLEUR.navy, opacity: 0.7, margin: "12px 0 0 0" }}
+                      >
+                        <strong>{soort.label}</strong> heeft een U-waarde van {soort.uWaarde}, tegen
+                        5,8 voor enkel glas: hoe lager, hoe beter het isoleert. {soort.toelichting}
+                      </p>
+                    )}
+                    <p
+                      className="mt-2 text-[13px] leading-relaxed"
+                      style={{ color: KLEUR.navy, opacity: 0.55, margin: "8px 0 0 0" }}
+                    >
+                      De investering hierboven geldt voor isolerend glas in je bestaande kozijnen.
+                      Moeten de kozijnen mee, dan valt hij hoger uit; dat hangt zo sterk af van je
+                      woning dat we het per situatie doorrekenen.
+                    </p>
+                  </div>
+                )}
+              </div>
             );
           })}
 
@@ -266,3 +325,44 @@ export const WoningSchil = () => {
     </>
   );
 };
+
+/** Rij met keuzeknoppen binnen een maatregel. */
+const Keuzerij = ({
+  label,
+  opties,
+  actief,
+  kies,
+}: {
+  label: string;
+  opties: { id: string; label: string }[];
+  actief: string;
+  kies: (id: string) => void;
+}) => (
+  <div className="flex flex-wrap items-center gap-2">
+    <span
+      className="mr-1 text-[13px] font-semibold"
+      style={{ color: KLEUR.navy, opacity: 0.65 }}
+    >
+      {label}
+    </span>
+    {opties.map((o) => {
+      const aan = o.id === actief;
+      return (
+        <button
+          key={o.id}
+          type="button"
+          onClick={() => kies(o.id)}
+          aria-pressed={aan}
+          className="rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          style={{
+            backgroundColor: aan ? KLEUR.navy : KLEUR.wit,
+            color: aan ? KLEUR.wit : KLEUR.navy,
+            border: `1px solid ${aan ? KLEUR.navy : KLEUR.rand}`,
+          }}
+        >
+          {o.label}
+        </button>
+      );
+    })}
+  </div>
+);
