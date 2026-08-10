@@ -28,6 +28,14 @@ vi.mock("@/lib/subsidies", async (importOriginal) => ({
   subsidieProvider: { naam: "test", check: vi.fn() },
 }));
 
+// Vitest laadt `.env`, dus zonder deze mock gaat het energielabel hier echt over
+// de lijn. Deze test gaat over het noodpad bij een bronfout; de verrijking zelf
+// staat in src/test/verrijking.test.tsx.
+vi.mock("@/lib/woninginfo", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/woninginfo")>()),
+  haalWoningInfo: vi.fn().mockResolvedValue({ energielabel: null, gebouw: null }),
+}));
+
 import { StapGegevens } from "@/components/subsidiecheck/StapGegevens";
 import { TOESTEMMING_TEKST } from "@/components/subsidiecheck/toestemming";
 import { subsidieProvider } from "@/lib/subsidies";

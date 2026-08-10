@@ -36,6 +36,15 @@ vi.mock("@/lib/subsidies", async (importOriginal) => ({
   subsidieProvider: { check: vi.fn().mockResolvedValue([]) },
 }));
 
+// Idem voor het energielabel. Vitest laadt `.env`, dus zónder deze mock doet de
+// poort hier een echte call naar de woninginfo-function, en daar wacht het
+// verzenden sinds de verrijkingsfix ook op. Deze test gaat over de honeypot,
+// niet over het netwerk. Zie src/test/verrijking.test.tsx voor de verrijking zelf.
+vi.mock("@/lib/woninginfo", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/woninginfo")>()),
+  haalWoningInfo: vi.fn().mockResolvedValue({ energielabel: null, gebouw: null }),
+}));
+
 import { ZakelijkContactFormulier } from "@/components/ZakelijkContactFormulier";
 import { StapGegevens } from "@/components/subsidiecheck/StapGegevens";
 import { subsidieProvider } from "@/lib/subsidies";
