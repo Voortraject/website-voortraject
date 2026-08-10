@@ -764,9 +764,11 @@ Deno.serve(async (req: Request) => {
   if (bouwjaar) verrijking.bouwjaar = bouwjaar;
 
   // Toestemming voor opvolging. Rijdt mee op `verrijking` en dus op dezelfde
-  // terugval: draait de migratie nog niet op het CRM, dan weigert Postgres de
-  // onbekende kolom, valt de insert terug op de basisvelden, en gaat de lead
-  // gewoon door. Het leesbare bewijs staat sowieso in `notities`.
+  // terugval: weigert het CRM deze kolommen, dan valt de insert terug op de
+  // basisvelden en gaat de lead gewoon door. Dat was ooit onschadelijk omdat het
+  // bewijs ook als regel in `notities` stond; die dubbeling is er sinds
+  // 2026-08-10 uit (de kolommen bestaan en vullen aantoonbaar). Gaat dit pad nu
+  // aan, dan is het bewijs weg — zie de console.error in insertLead.
   //
   // Alleen een echte ISO-datum wordt overgenomen: een onzinwaarde in een
   // timestamptz-kolom laat de hele insert falen, en dan kost een detail een lead.

@@ -2069,3 +2069,26 @@ geen spoor, en de terugval-insert maakt het onzichtbaar.
 37 testbestanden / 224 tests groen, `tsc --noEmit` schoon, lint op de basislijn van 17.
 Niet aangeraakt (bekend, apart te wegen): de vraagroute (`verstuurSubsidiecheckBericht`) stuurt geen
 verrijking mee, en beide inserts vallen bij een fout stil terug op de basisvelden.
+
+## Toestemmingsbewijs uit `notities` (2026-08-10)
+
+De toestemming stond dubbel: in de kolommen `toestemming_op` / `toestemming_tekst` én als leesbare
+regel in `notities`. Die regel was de terugval uit de periode waarin de kolommen nog niet bestonden.
+
+Op een echte lead geverifieerd dat de kolommen zich vullen (10 aug, `toestemming_op`
+`2026-08-10 10:03:07.102+00` met de letterlijke tekst). Leads van 8 aug zijn leeg, want het ging pas
+op 9 aug live: precies zoals verwacht.
+
+- [x] `toestemmingBewijs()` weg; `notities` bevat nog alleen "Wil hulp met: …".
+- [x] Commentaar bijgewerkt op de plekken die leunden op de dubbeling (`toestemming.ts`,
+      `leadFormulier.ts`, de edge function). De terugval waarbij de insert het zonder de extra
+      kolommen opnieuw probeert is voor toestemming geen vangnet meer maar verlies; die fout wordt
+      daarom expliciet gelogd.
+- [x] `bronfout.test.tsx` bewaakt nu dat `notities` alléén de hulpvraag bevat en dat het bewijs
+      langs het noodpad in de kolommen staat.
+
+De opdrachtgever hoeft de kolommen niet in het CRM-scherm te zien: opslaan in de back-end volstaat,
+tonen zou ruis zijn. Geen deploy van de edge function nodig (alleen commentaar daar); de notitie
+wordt client-side samengesteld.
+
+Review: 35 testbestanden / 201 tests groen, `tsc --noEmit` schoon, lint op de basislijn van 17.

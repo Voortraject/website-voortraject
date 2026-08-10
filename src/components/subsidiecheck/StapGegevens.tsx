@@ -21,7 +21,7 @@ import {
   verstuurSubsidiecheckLead,
   type LeadVerrijking,
 } from "./leadFormulier";
-import { TOESTEMMING_TEKST, toestemmingBewijs, toestemmingVelden } from "./toestemming";
+import { TOESTEMMING_TEKST, toestemmingVelden } from "./toestemming";
 import { ZoekKaart } from "./Zoeksequentie";
 
 const inputClass =
@@ -207,15 +207,15 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
     // van de tegels, niet van het aanklikken, zodat het CRM leest zoals de
     // bezoeker het zag.
     const gekozenLabels = HULPVRAGEN.filter((h) => hulpvragen.includes(h.id)).map((h) => h.label);
-    // De toestemmingsregel komt eronder, niet erboven: het team leest eerst waar
-    // het gesprek over gaat. Dit is het bewijs dat de ACM per persoon verlangt
-    // (zie toestemming.ts) en het reist mee langs beide schrijfpaden, de edge
+    // `notities` bevat alleen de hulpvraag: dat is het veld waar het team zelf in
+    // werkt. Het toestemmingsbewijs dat de ACM per persoon verlangt stond hier
+    // ook als leesbare regel onder, als terugval voor de tijd dat de kolommen nog
+    // niet bestonden. Die kolommen zijn er nu en vullen aantoonbaar, dus het
+    // bewijs staat nog op één plek: `toestemming_op` en `toestemming_tekst`.
+    // Zie toestemming.ts. Het reist mee langs beide schrijfpaden, de edge
     // function én de directe insert bij een bronfout.
-    // Eén moment voor beide vastleggingen, zodat de kolom en de regel in
-    // `notities` niet een seconde uit elkaar kunnen lopen.
-    const toestemmingOp = new Date();
-    const notitie = `Wil hulp met: ${gekozenLabels.join(", ")}\n${toestemmingBewijs(toestemmingOp)}`;
-    const toestemming = toestemmingVelden(toestemmingOp);
+    const notitie = `Wil hulp met: ${gekozenLabels.join(", ")}`;
+    const toestemming = toestemmingVelden();
 
     setBezig(true);
     const verzondenOp = Date.now();
