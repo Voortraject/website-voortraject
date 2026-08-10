@@ -23,8 +23,8 @@ export const Team = () => (
           </h2>
           <p className="mt-5 text-[18px] md:text-[20px] leading-[1.65] text-muted-foreground">
             Voortraject is een nuchter adviesteam uit Noord-Nederland. Je spreekt bij ons geen
-            callcenter maar gewoon Michael, Wouter, Tim of Christian, en diegene blijft jouw
-            aanspreekpunt van het eerste gesprek tot de oplevering. We werken in Groningen,
+            callcenter maar gewoon Michael, Wouter, Tim of Christian, vaste gezichten die jouw
+            situatie kennen van het eerste gesprek tot de oplevering. We werken in Groningen,
             Drenthe en Friesland.
           </p>
           <a
