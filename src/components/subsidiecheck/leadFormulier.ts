@@ -131,9 +131,11 @@ function verrijkingsVelden(verrijking?: LeadVerrijking): Record<string, string |
 
 // De toestemmingskolommen liften mee op dezelfde "extra"-bak als de verrijking,
 // en dat is bewust: die bak heeft al een terugval waarbij de insert het zonder
-// die velden opnieuw probeert. Draait de migratie nog niet op het CRM, dan
-// weigert Postgres de onbekende kolom, valt de insert terug, en gaat de lead
-// gewoon door. Het bewijs staat dan nog steeds in `notities`.
+// die velden opnieuw probeert, zodat een geweigerde kolom nooit een lead kost.
+//
+// Let op: sinds het toestemmingsbewijs niet meer óók in `notities` staat, is die
+// terugval voor deze twee kolommen geen vangnet meer maar verlies. Hij hoort dus
+// niet stil te gebeuren; de fout eronder wordt gelogd.
 function toestemmingsVelden(toestemming?: ToestemmingVelden): Record<string, string> {
   return toestemming ? { ...toestemming } : {};
 }
@@ -191,9 +193,11 @@ export async function schrijfSubsidiecheckLead(args: {
 
   // De verrijkingskolommen zijn een extraatje: als het CRM er een weigert (bijv.
   // een CHECK op `energielabel` die "A+++" niet kent), mag dat nooit de lead
-  // kosten. Eén keer opnieuw, zonder die velden.
+  // kosten. Eén keer opnieuw, zonder die velden. De toestemmingskolommen zitten
+  // in dezelfde bak, en die zijn géén extraatje: gaat dit pad aan, dan staat de
+  // lead er wel maar het toestemmingsbewijs niet. Vandaar de fout hieronder.
   if (Object.keys(extra).length > 0) {
-    console.error("Lead-insert faalde met verrijking, opnieuw zonder", error);
+    console.error("Lead-insert faalde met verrijking, opnieuw zonder (toestemmingsbewijs gaat verloren)", error);
     return schrijfSubsidiecheckLead({ waarden, input, adres, notitie });
   }
   throw error;
@@ -262,8 +266,10 @@ export async function verstuurSubsidiecheckLead(args: {
       energielabel: verrijking?.energielabel,
       bouwjaar: verrijking?.bouwjaar,
       // Toestemming voor opvolging. De function schrijft dit naar de eigen
-      // kolommen; de leesbare regel staat sowieso al in `notitie`, dus ook een
-      // oudere, nog niet opnieuw uitgerolde function verliest het bewijs niet.
+      // kolommen. Dat is sinds 2026-08-10 de enige vastlegging: de leesbare regel
+      // in `notitie` is eruit, omdat op een echte lead is geverifieerd dat de
+      // kolommen zich vullen. De function die dat kan, staat sinds 2026-08-09
+      // uitgerold; een oudere versie zou deze twee velden negeren.
       toestemmingOp: toestemming?.toestemming_op,
       toestemmingTekst: toestemming?.toestemming_tekst,
       input: {

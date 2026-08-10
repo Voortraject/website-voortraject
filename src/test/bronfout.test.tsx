@@ -118,22 +118,20 @@ describe("gegevens-poort bij een bronfout", () => {
     expect(tabel).toBe("leads_bewoners");
     expect(rij).toMatchObject({ email: "jan@example.nl", bron: "Voortraject" });
     expect(rij.subsidiecheck_interesses).toBe("Isolatie & glas");
-    // De gekozen hulpvraag gaat als kopregel mee naar het CRM.
-    const regels = (rij.notities as string).split("\n");
-    expect(regels[0]).toBe("Wil hulp met: De aanvraag regelen");
-    // En daaronder het toestemmingsbewijs. Dit is de reden dat het bestaat: ook
-    // als de bron faalt en de lead langs het noodpad wordt weggeschreven, moet
-    // aantoonbaar zijn waar deze persoon ja tegen zei (art. 11.7 lid 2 Tw).
-    expect(regels[1]).toContain("Toestemming mailen/bellen: gegeven bij verzenden op");
+    // `notities` bevat alléén de hulpvraag: dat veld is voor het team zelf. Het
+    // toestemmingsbewijs stond hier ook als tweede regel, als terugval voor de
+    // tijd dat de kolommen nog niet bestonden. Die dubbeling is eruit.
+    expect(rij.notities).toBe("Wil hulp met: De aanvraag regelen");
+
+    // Het bewijs dat de ACM per persoon verlangt (art. 11.7 lid 2 Tw) staat nu
+    // uitsluitend in de eigen kolommen, en moet er ook langs dit noodpad in
+    // staan: juist als de bron faalt en de lead er buitenom in gaat.
     // De bewaarde tekst is letterlijk de tekst die op het scherm stond; zou dat
     // uiteenlopen, dan bewijst het bewaarde iets anders dan wat er gevraagd is.
-    expect(regels[1]).toContain(`Getoonde tekst: "${TOESTEMMING_TEKST}"`);
-    expect(screen.getByText(new RegExp(TOESTEMMING_TEKST.slice(0, 40)))).toBeTruthy();
-    // Dezelfde toestemming gaat óók naar de eigen kolommen. Beide vastleggingen
-    // moeten van hetzelfde moment zijn; liepen ze uiteen, dan zou het bewijs
-    // twee verschillende tijdstippen noemen.
     expect(rij.toestemming_tekst).toBe(TOESTEMMING_TEKST);
-    expect(regels[1]).toContain(rij.toestemming_op as string);
+    expect(screen.getByText(new RegExp(TOESTEMMING_TEKST.slice(0, 40)))).toBeTruthy();
+    // Een echt moment, vastgelegd rond het verzenden.
+    expect(Number.isFinite(Date.parse(rij.toestemming_op as string))).toBe(true);
   });
 
   it("verstuurt niets zolang de hulpvraag niet gekozen is", async () => {

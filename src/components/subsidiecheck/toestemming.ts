@@ -18,6 +18,12 @@
 // hij wordt getoond én hij gaat letterlijk mee de lead in. Daardoor kan er nooit
 // licht zitten tussen wat de bezoeker las en wat wij bewaren, ook niet als de
 // copy later verandert; oude leads dragen hun eigen tekst.
+//
+// Waar het bewijs landt: uitsluitend in de kolommen `toestemming_op` en
+// `toestemming_tekst`. Er stond hier ook een leesbare regel in `notities`, als
+// terugval voor de periode waarin die kolommen nog niet bestonden. Ze bestaan
+// sinds 2026-08-09 en op 2026-08-10 is op een echte lead geverifieerd dat ze zich
+// vullen, dus die dubbeling is eruit: `notities` is voor het team zelf.
 
 /**
  * De zin onder de verzendknop van de gegevens-poort. Wijzig je deze, dan
@@ -33,20 +39,15 @@ export const TOESTEMMING_TEKST =
   "Door te versturen mogen wij je mailen of bellen over jouw verduurzaming.";
 
 /**
- * De regel die bij de lead wordt bewaard als bewijs. Bevat het moment en de
- * letterlijke tekst die op dat moment op het scherm stond.
+ * De kolomwaarden voor `leads_bewoners` (zie de migratie van 2026-08-10): het
+ * moment én de letterlijke tekst die de bezoeker toen op het scherm zag.
  *
- * Blijft bestaan naast de kolommen hieronder: dit is de terugval. Weigert het
- * CRM de kolommen (bijvoorbeeld omdat de migratie nog niet gedraaid is), dan
- * valt de insert terug op de basisvelden, en dan is deze regel het enige bewijs
- * dat er nog staat. Twee keer hetzelfde vastleggen is hier geen verspilling maar
- * het verschil tussen wel en geen bewijs.
+ * Dit is sinds het verdwijnen van de notitieregel de énige vastlegging. Weigert
+ * het CRM deze kolommen, dan valt de insert terug op de basisvelden en gaat de
+ * lead wél door maar het bewijs niet mee. Dat is een bewuste afweging (een lead
+ * verliezen is erger), maar het is dan ook een echte fout: beide schrijfpaden
+ * loggen die terugval, zie leadFormulier.ts en de edge function.
  */
-export function toestemmingBewijs(op: Date = new Date()): string {
-  return `Toestemming mailen/bellen: gegeven bij verzenden op ${op.toISOString()}. Getoonde tekst: "${TOESTEMMING_TEKST}"`;
-}
-
-/** De kolomwaarden voor `leads_bewoners` (zie de migratie van 2026-08-10). */
 export type ToestemmingVelden = { toestemming_op: string; toestemming_tekst: string };
 
 export function toestemmingVelden(op: Date = new Date()): ToestemmingVelden {
