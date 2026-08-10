@@ -81,10 +81,11 @@ describe("maatregelpagina's tonen alle aangeleverde content", () => {
     ).toBeInTheDocument();
   });
 
-  it("toont de losse blokken: context, onderhoud en combineren", () => {
-    toon(<Thuisbatterij />);
-    expect(screen.getByText(/De salderingsregeling wordt stapsgewijs afgebouwd/)).toBeInTheDocument();
-
+  it("toont de losse blokken: onderhoud en combineren", () => {
+    // Thuisbatterij had hier een contextblok met "de salderingsregeling wordt
+    // stapsgewijs afgebouwd". Die claim klopte niet meer (saldering stopt in
+    // één keer op 1 januari 2027) en het blok is opgegaan in de eigen sectie
+    // van die pagina. Zie thuisbatterijPagina.test.tsx.
     const airco = toon(<Airco />);
     expect(
       airco.getByText(/Filters schoonmaken of vervangen kun je vaak zelf/),
