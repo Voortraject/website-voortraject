@@ -2271,3 +2271,86 @@ dat al doet.
 Resultaat op 1440 px: sectie 1 van 1457 naar 1142 px, sectie 4 van 1313 naar 1191, sectie 6 van
 1588 naar 1167. Samen ruim 850 px korter, en op mobiel gaat sectie 1 van 3103 naar 2454 px.
 
+
+---
+
+# Verduurzamen PR 6: laadpaal (#139, gemerged 2026-08-10)
+
+De pagina noemde geen enkel getal: één blok tekst met de pillen Laag, Gemiddeld en Hoog. De
+vraag waarmee bezoekers binnenkomen, hoe snel kan ik thuis laden en wat kost dat, werd nergens
+beantwoord.
+
+Zes inhoudelijke secties plus de FAQ:
+
+1. 1-fase of 3-fase, met vermogen, laadtijd, meterkast en wanneer welke logisch is (eigen)
+2. Past dit bij jouw woning (template)
+3. Waar dit staat in de route, op "gebruik het slim" (template)
+4. Veilig laden en load balancing, met een schema van je aansluiting (eigen)
+5. Wat het kost, thuis tegenover openbaar (template)
+6. Laden op je eigen zon, met de kruislinks naar zonnepanelen en thuisbatterij (eigen)
+
+- [x] `src/data/laadpaal.ts` met bron en controledatum per groep: Milieu Centraal
+      (laadvermogens, laadtijden, tarieven, jaarkosten, zelfverbruik), Nederland Elektrisch
+      (70 procent 1-fase, eisen aan het laadpunt), Enexis (aansluitwaarden, wachttijd bij
+      verzwaren), Rijksoverheid (einde saldering).
+- [x] Bedragen per 100 km worden in de datamodule berekend uit de jaarbedragen, zodat er
+      nergens een los overgetypt getal rondzwerft. Geen bron geeft een terugverdientijd voor
+      een laadpaal, dus die staat er niet; wel het verschil van € 750 per jaar naast de
+      aanschafprijs van € 1.300 tot € 2.200.
+- [x] STEK van de pagina af. Die stond er als eis voor een laadpaal, terwijl STEK over
+      koudemiddelen gaat en die er niet in zitten. Vervangen door wat er wel moet kloppen:
+      eigen groep, eigen zekering, aparte aardlekschakelaar, NEN 1010.
+- [x] `watValtEronder`, `aandachtspunten`, `combineren` en `keurmerken` vervallen; die inhoud
+      staat nu in de drie eigen secties.
+- [x] Laadpaal was de laatste pagina met `watValtEronder`. De gedeelde test controleert die
+      prop nu op een kale sjabloonpagina in plaats van op een echte.
+
+Review: 246 tests groen op de branch, `tsc --noEmit` schoon, lint op de basislijn van 17.
+Samen met #134 tot en met #138 getest in een aparte worktree: schone merge in elke volgorde,
+296 tests groen. Visueel gecontroleerd op 1440 en 390 px.
+
+Nog open: `maatregel-laadpaal.jpg` in de hero oogt als stock, net als bij thuisbatterij.
+
+---
+
+# Verduurzamen PR 7: onderhoud op het gedeelde fundament
+
+De laatste van de zeven met eigen opmaak: een eigen `Section`, andere paddings en andere
+hero-typografie. Daardoor oogde de pagina als een andere website, én zat er een zichtbare fout
+in (zie hieronder).
+
+Zes inhoudelijke secties plus de FAQ:
+
+1. De onderhoudskalender (eigen)
+2. Waar onderhoud echt uitmaakt (template)
+3. Waar dit hoort in de route (template)
+4. Verplicht, of alleen voor je garantie (eigen)
+5. Wat onderhoud oplevert (template, met omgezette kop)
+6. Waar je het aan merkt (eigen)
+
+- [x] **Witte hoekjes bij de footer opgelost.** De pagina had een eigen donkere slotsectie
+      direct boven `<Footer />`. De footer rendert zijn donkere paneel met afgeronde
+      bovenhoeken in een `bg-white`-wikkel, dus precies in die twee hoeken piepte het wit
+      door tegen het navy erboven. De slot-CTA loopt nu via de `cta`-prop van `Footer`,
+      waarmee CTA en footer weer in één donker vlak zitten. Een test bewaakt het.
+- [x] **De service-belofte is eraf.** "Wij houden overzicht op het onderhoud van je
+      installaties" stond er terwijl Voortraject niets met onderhoud doet. Wat er nu staat is
+      dat wij het níét doen, met een doorverwijzing naar het gesprek over de
+      verduurzamingsstappen zelf. Twee tests bewaken dat de belofte niet terugkomt.
+- [x] `src/data/onderhoud.ts` met alleen termijnen die een bron ook echt noemt: Milieu Centraal
+      voor ventilatie (filters 2x per jaar, unit elke 2 jaar, inregelen elke 4 jaar, kanalen
+      elke 8 jaar) en zonnepanelen (opbrengstverlies boven 10 procent, panelen bij een bijna
+      plat dak 1x per jaar, centrale omvormer na ~12 jaar), Liander voor de aardlekschakelaar
+      (elk half jaar de testknop).
+- [x] Waar een bron géén termijn geeft staat dat er zo bij: voor warmtepomp en airco noemt
+      Milieu Centraal alleen "regelmatig", en voor een thuisbatterij publiceert niemand een
+      onderhoudsschema. Een test bewaakt dat er geen termijn verzonnen wordt.
+- [x] "Zelf doen of uitbesteden" is geen eigen sectie meer maar een merkteken per beurt in de
+      kalender. Het is een eigenschap van een beurt, geen apart onderwerp.
+- [x] Twee optionele template-props erbij, allebei met de oude waarde als default zodat geen
+      enkele bestaande pagina verandert: `kostenKop` (onderhoud kent geen investering) en
+      `voorWieIntro` (de vraag is hier niet of het bij je woning past).
+- [x] Onderhoud staat nu ook in de achtergrondritme-test van `maatregelPagina.test.tsx`.
+
+Review: 311 tests groen, `tsc --noEmit` schoon, lint op de basislijn van 17. Visueel
+gecontroleerd op 1440 en 390 px, inclusief de naad tussen FAQ en footer.

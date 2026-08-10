@@ -9,6 +9,45 @@ the user corrects course or a non-obvious gotcha surfaces. Review at session sta
 **Lesson:** the rule to follow next time
 -->
 
+## 2026-08-10 — De pagina die het gedeelde component niet gebruikt, mist ook de stille reparaties
+**Context:** De opdrachtgever wees op twee witte hoekjes op `/verduurzamen/onderhoud`, op de
+overgang van de donkere slotsectie naar de footer. Oorzaak: `Footer` rendert zijn donkere paneel
+met `rounded-t-[2rem]` binnen een `bg-white`-wikkel. Dat klopt zolang de sectie erbóven wit of
+bijna wit is, en precies daarvoor bestaat de `cta`-prop: geef je de slot-CTA daaraan mee, dan zit
+hij ín hetzelfde donkere vlak en is er geen naad. Onderhoud was de enige pagina die dat niet deed;
+hij had nog zijn eigen donkere `<section>` boven een kale `<Footer />`. De les van 2026-06-24 ging
+hier al over, en de reparatie was destijds overal uitgerold behalve op deze ene pagina, omdat die
+als enige niet op het gedeelde template zat.
+**Lesson:**
+- **Een pagina die het gedeelde component ontwijkt, loopt niet één keer achter maar structureel.**
+  Elke latere fix aan het template gaat aan hem voorbij, en dat merk je pas als iemand een
+  screenshot stuurt. Zet zo'n pagina om zodra je hem toch aanraakt, ook als de opdracht "alleen de
+  inhoud" was.
+- **Zoek bij zo'n melding meteen alle plekken met hetzelfde patroon**, hier met
+  `grep -n "Footer />" -B 12 src/pages/*.tsx` op een donkere sectie vlak ervoor. Van de zes
+  pagina's met een kale `<Footer />` eindigden er vijf licht; alleen onderhoud botste. Dat maakt
+  het verschil tussen "één fout gerepareerd" en "weten dat het de enige was".
+- **Test de naad, niet het uiterlijk.** `expect(within(footer).getByText(...))` bewijst dat de CTA
+  via de prop binnenkomt en niet als losse sectie. Dat is met een screenshot niet vol te houden en
+  met deze regel wel.
+
+## 2026-08-10 — Verzin geen termijn als de bron er geen geeft, en zeg dat er dan bij
+**Context:** Voor de onderhoudspagina gaf Milieu Centraal keurige intervallen voor ventilatie
+(filters 2x per jaar, unit elke 2 jaar, kanalen elke 8 jaar) en zonnepanelen (omvormer na ~12
+jaar), maar voor een warmtepomp en een airco staat er alleen "regelmatig", en voor een
+thuisbatterij publiceert niemand een onderhoudsschema. De verleiding is dan om "jaarlijks" op te
+schrijven, want dat is wat iedereen zegt en het staat netjes in een tabel.
+**Lesson:**
+- **Een gat in de bron is inhoud, geen probleem.** "Milieu Centraal noemt hier geen vaste termijn,
+  wij verzinnen er geen" is voor deze opdrachtgever sterker dan een getal, want het is precies de
+  onafhankelijkheid die ze verkopen. Zet het als voetregel onder die ene rij, niet als disclaimer
+  onder de hele tabel.
+- **Laat de datamodule het gat expliciet dragen** (hier een `voorbehoud`-veld per installatie),
+  anders verdwijnt de nuance bij de eerste de beste redactieronde en staat er een maand later
+  alsnog "jaarlijks".
+- Zelfde lijn als bij de thuisbatterij (geen terugverdientijd) en de laadpaal (idem). Het is
+  inmiddels het patroon van deze reeks en geen uitzondering meer.
+
 ## 2026-08-10 — Een tabelvak is geen alinea, en een rij die een andere sectie al beantwoordt hoort weg
 **Context:** De eerste versie van de warmtepomppagina kreeg als reactie: "wat te uitgebreid en
 visueel nog niet altijd overzichtelijk", plus "kolom Past als kan weg want die wordt al benoemd in

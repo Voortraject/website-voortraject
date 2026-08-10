@@ -34,6 +34,7 @@ import Warmtepomp from "@/pages/maatregelen/Warmtepomp";
 import Laadpaal from "@/pages/maatregelen/Laadpaal";
 import Thuisbatterij from "@/pages/maatregelen/Thuisbatterij";
 import Airco from "@/pages/maatregelen/Airco";
+import Onderhoud from "@/pages/maatregelen/Onderhoud";
 
 const toon = (pagina: ReactElement) => render(<MemoryRouter>{pagina}</MemoryRouter>);
 
@@ -173,6 +174,7 @@ describe("het achtergrondritme klopt bij elke combinatie van secties", () => {
     ["thuisbatterij", <Thuisbatterij key="t" />],
     ["airco", <Airco key="a" />],
     ["laadpaal", <Laadpaal key="l" />],
+    ["onderhoud", <Onderhoud key="o" />],
   ];
 
   it("houdt een herbouwde pagina op maximaal zes secties plus de FAQ", () => {
