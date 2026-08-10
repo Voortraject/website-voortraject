@@ -12,9 +12,8 @@ export interface FaqItem {
  * vraag-en-antwoord. Met FAQPage kan Google ze uitklapbaar in de
  * zoekresultaten tonen.
  *
- * Het kruimelpad bevat bewust nog geen /verduurzamen-niveau: die URL redirect
- * op dit moment naar de homepage. Zodra de hub-pagina bestaat hoort dat niveau
- * hier tussen te staan (en wordt het ook in Kruimelpad.tsx een link).
+ * Het kruimelpad bevat sinds de hub-pagina ook het /verduurzamen-niveau, zodat
+ * de structured data gelijkloopt met wat de bezoeker in Kruimelpad.tsx ziet.
  */
 export const maatregelJsonLd = ({
   slug,
@@ -32,7 +31,8 @@ export const maatregelJsonLd = ({
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-      { "@type": "ListItem", position: 2, name: label, item: url },
+      { "@type": "ListItem", position: 2, name: "Verduurzamen", item: `${SITE_URL}/verduurzamen` },
+      { "@type": "ListItem", position: 3, name: label, item: url },
     ],
   };
 

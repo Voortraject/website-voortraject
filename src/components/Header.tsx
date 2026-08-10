@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown, Search } from "lucide-react";
+import { Menu, X, ChevronDown, LayoutGrid, Search } from "lucide-react";
 import logoVoortrajectBlauw from "@/assets/logo-voortraject-blauw.png";
 
 const pillShadow = {
@@ -15,9 +15,12 @@ const glassPill = "bg-white/70 backdrop-blur-xl";
 // need a higher white opacity to read as the *same* frosted surface as the pills.
 const glassPanel = "bg-white/95 backdrop-blur-xl";
 
-type DropdownItem = { href: string; label: string; tool?: boolean };
+type DropdownItem = { href: string; label: string; tool?: boolean; overzicht?: boolean };
 
 const verduurzamenItems: DropdownItem[] = [
+  // De hub bovenaan, zelfde plek als de subsidiecheck in de andere dropdown:
+  // wie nog niet weet welke maatregel hij zoekt, hoort daar te beginnen.
+  { href: "/verduurzamen", label: "Overzicht en route", overzicht: true },
   { href: "/verduurzamen/isolatie", label: "Isolatie & ventilatie" },
   { href: "/verduurzamen/warmtepomp", label: "Warmtepomp" },
   { href: "/verduurzamen/airco", label: "Airco" },
@@ -38,7 +41,11 @@ const subsidiesItems: DropdownItem[] = [
 ];
 
 const links: { href: string; label: string; dropdown?: typeof subsidiesItems }[] = [
-  { href: "/verduurzamen/isolatie", label: "Verduurzamen", dropdown: verduurzamenItems },
+  // De href van een item mét dropdown wordt niet als link gerenderd (dat is een
+  // <button>), maar bepaalt wel wanneer het item actief oplicht. Met
+  // /verduurzamen/isolatie lichtte "Verduurzamen" alleen op de isolatiepagina
+  // op en niet op de andere zes.
+  { href: "/verduurzamen", label: "Verduurzamen", dropdown: verduurzamenItems },
   { href: "/subsidies", label: "Subsidies", dropdown: subsidiesItems },
   { href: "/over-ons", label: "Over ons" },
   { href: "/zakelijk", label: "Zakelijk" },
@@ -108,18 +115,24 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
                 {openSection === l.href && (
                   <div className="pb-4 pl-2 flex flex-col gap-2">
                     {l.dropdown.map((s) =>
-                      s.tool ? (
+                      s.tool || s.overzicht ? (
                         <a
                           key={s.href}
                           href={s.href}
                           onClick={sluitNaKlik}
                           className="inline-flex items-center gap-2 py-2 text-lg font-semibold text-white hover:text-accent"
                         >
-                          <Search size={17} strokeWidth={2} aria-hidden="true" />
+                          {s.tool ? (
+                            <Search size={17} strokeWidth={2} aria-hidden="true" />
+                          ) : (
+                            <LayoutGrid size={17} strokeWidth={2} aria-hidden="true" />
+                          )}
                           {s.label}
-                          <span className="rounded-full bg-accent/30 px-2 py-0.5 text-[11px] font-semibold text-white">
-                            Tool
-                          </span>
+                          {s.tool && (
+                            <span className="rounded-full bg-accent/30 px-2 py-0.5 text-[11px] font-semibold text-white">
+                              Tool
+                            </span>
+                          )}
                         </a>
                       ) : (
                         <a
@@ -250,17 +263,23 @@ export const Header = ({ compact = false }: HeaderProps) => {
                   <div className="absolute left-1/2 -translate-x-1/2 top-full pt-3 hidden group-hover:block">
                     <div className={`${glassPanel} rounded-lg overflow-hidden py-2 min-w-[220px]`} style={pillShadow}>
                       {l.dropdown.map((s) =>
-                        s.tool ? (
+                        s.tool || s.overzicht ? (
                           <div key={s.href}>
                             <a
                               href={s.href}
                               className="flex items-center gap-2.5 px-4 py-2.5 text-[14px] font-semibold text-primary hover:bg-secondary transition-colors"
                             >
-                              <Search size={15} strokeWidth={2} className="text-primary" aria-hidden="true" />
+                              {s.tool ? (
+                                <Search size={15} strokeWidth={2} className="text-primary" aria-hidden="true" />
+                              ) : (
+                                <LayoutGrid size={15} strokeWidth={2} className="text-primary" aria-hidden="true" />
+                              )}
                               {s.label}
-                              <span className="ml-auto rounded-full bg-accent/25 px-2 py-0.5 text-[11px] font-semibold text-primary">
-                                Tool
-                              </span>
+                              {s.tool && (
+                                <span className="ml-auto rounded-full bg-accent/25 px-2 py-0.5 text-[11px] font-semibold text-primary">
+                                  Tool
+                                </span>
+                              )}
                             </a>
                             <div className="mx-4 my-1.5 h-px bg-border" aria-hidden="true" />
                           </div>

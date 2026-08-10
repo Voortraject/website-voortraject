@@ -30,6 +30,7 @@ const entries: SitemapEntry[] = [
   ...(SUBSIDIECHECK_LIVE ? [{ path: "/subsidiecheck", lastmod: "2026-08-07" } as SitemapEntry] : []),
   { path: "/zakelijk", lastmod: "2026-08-07" },
 
+  { path: "/verduurzamen", lastmod: "2026-08-10" },
   { path: "/verduurzamen/isolatie", lastmod: "2026-07-03" },
   { path: "/verduurzamen/zonnepanelen", lastmod: "2026-07-02" },
   { path: "/verduurzamen/warmtepomp", lastmod: "2026-07-02" },
