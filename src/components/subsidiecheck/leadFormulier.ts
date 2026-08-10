@@ -1,4 +1,5 @@
 import { SUPABASE_EXTERNAL_ANON_KEY, supabaseExternal } from "@/integrations/supabase/external-client";
+import { MailFunctieFout } from "@/lib/formulierFout";
 import { normalizePostcode, type PdokAdres } from "@/lib/pdok";
 import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
 import {
@@ -294,7 +295,11 @@ export async function verstuurSubsidiecheckLead(args: {
       })),
     }),
   });
-  if (!res.ok) throw new Error(`subsidiecheck-mail gaf status ${res.status}`);
+  // Bewust géén terugval op de directe insert bij een fout: die insert is de
+  // route die de volumerem in het CRM juist moet tegenhouden, dus terugvallen bij
+  // een 429 zou de rem om zeep helpen. De fout draagt de status mee zodat het
+  // formulier "te druk" van "storing" kan onderscheiden.
+  if (!res.ok) throw new MailFunctieFout(res.status);
 
   // Het id is meegenomen sinds de function het teruggeeft; oudere versies (of een
   // gefaalde parse) leveren gewoon niets op en dan valt een later bericht terug
@@ -372,5 +377,5 @@ export async function verstuurSubsidiecheckBericht(args: {
       overzichtUrl,
     }),
   });
-  if (!res.ok) throw new Error(`subsidiecheck-mail (bericht) gaf status ${res.status}`);
+  if (!res.ok) throw new MailFunctieFout(res.status, "subsidiecheck-mail (bericht)");
 }

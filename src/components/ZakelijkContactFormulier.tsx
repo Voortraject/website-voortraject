@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, FormEvent, ChangeEvent } from "react";
 import { Loader2 } from "lucide-react";
 import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
 import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
+import { formulierFoutMelding } from "@/lib/formulierFout";
 import { pushGtmEvent } from "@/lib/gtm";
 
 // Zakelijk contactformulier, hoort bij /zakelijk. Dit is sinds de bewoner-only
@@ -199,8 +200,12 @@ export const ZakelijkContactFormulier = () => {
       setSubmitted(true);
     } catch (err) {
       console.error("Zakelijke lead submit failed", err);
+      // Zie Contact.tsx: de volumerem van het CRM krijgt een eigen melding.
       setErrorMsg(
-        "Er ging iets mis bij het versturen. Probeer het later nog eens of mail ons direct op info@voortraject.nl.",
+        formulierFoutMelding(
+          err,
+          "Er ging iets mis bij het versturen. Probeer het later nog eens of mail ons direct op info@voortraject.nl.",
+        ),
       );
     } finally {
       setSubmitting(false);
