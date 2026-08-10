@@ -23,21 +23,76 @@ export interface MaatregelInfo {
   /** Korte naam, zoals in de navigatie en het kruimelpad. */
   label: string;
   href: string;
+  /**
+   * De vraag waarmee bezoekers op deze pagina binnenkomen, en die de pagina
+   * ook echt beantwoordt. Staat op de hub onder elke kaart: een kernvraag zegt
+   * meer over de inhoud dan een samenvatting die toch niemand leest.
+   */
+  kernvraag: string;
+  /** Waar de maatregel in de route valt. Onderhoud staat er bewust buiten. */
+  stap?: RouteStap;
 }
 
 export const MAATREGELEN: Record<MaatregelSlug, MaatregelInfo> = {
-  isolatie: { slug: "isolatie", label: "Isolatie & ventilatie", href: "/verduurzamen/isolatie" },
-  warmtepomp: { slug: "warmtepomp", label: "Warmtepomp", href: "/verduurzamen/warmtepomp" },
-  airco: { slug: "airco", label: "Airco", href: "/verduurzamen/airco" },
+  isolatie: {
+    slug: "isolatie",
+    label: "Isolatie & ventilatie",
+    href: "/verduurzamen/isolatie",
+    kernvraag: "Waar lekt de warmte weg, en wat levert dichten op?",
+    stap: "beperk",
+  },
+  warmtepomp: {
+    slug: "warmtepomp",
+    label: "Warmtepomp",
+    href: "/verduurzamen/warmtepomp",
+    kernvraag: "Hybride of volledig elektrisch, en is mijn woning er klaar voor?",
+    stap: "slim",
+  },
+  airco: {
+    slug: "airco",
+    label: "Airco",
+    href: "/verduurzamen/airco",
+    kernvraag: "Wat kost koelen echt, en waar begint een warmtepomp?",
+    stap: "slim",
+  },
   thuisbatterij: {
     slug: "thuisbatterij",
     label: "Thuisbatterij & opslag",
     href: "/verduurzamen/thuisbatterij",
+    kernvraag: "Loont opslag bij mij, of nog niet?",
+    stap: "slim",
   },
-  zonnepanelen: { slug: "zonnepanelen", label: "Zonnepanelen", href: "/verduurzamen/zonnepanelen" },
-  laadpaal: { slug: "laadpaal", label: "Laadpaal", href: "/verduurzamen/laadpaal" },
-  onderhoud: { slug: "onderhoud", label: "Onderhoud", href: "/verduurzamen/onderhoud" },
+  zonnepanelen: {
+    slug: "zonnepanelen",
+    label: "Zonnepanelen",
+    href: "/verduurzamen/zonnepanelen",
+    kernvraag: "Wat blijft er over als salderen stopt?",
+    stap: "opwekken",
+  },
+  laadpaal: {
+    slug: "laadpaal",
+    label: "Laadpaal",
+    href: "/verduurzamen/laadpaal",
+    kernvraag: "Hoe snel kan ik thuis laden, en wat scheelt dat?",
+    stap: "slim",
+  },
+  onderhoud: {
+    slug: "onderhoud",
+    label: "Onderhoud",
+    href: "/verduurzamen/onderhoud",
+    kernvraag: "Wat moet er wanneer gebeuren, en wie doet het?",
+  },
 };
+
+/** De zes maatregelen in de volgorde van de route; onderhoud staat apart. */
+export const MAATREGEL_VOLGORDE: MaatregelSlug[] = [
+  "isolatie",
+  "zonnepanelen",
+  "warmtepomp",
+  "thuisbatterij",
+  "laadpaal",
+  "airco",
+];
 
 /**
  * De verduurzamingsroute: eerst beperken wat je verbruikt, dan opwekken, dan

@@ -17,6 +17,7 @@ import Thuisbatterij from "./pages/maatregelen/Thuisbatterij.tsx";
 import Zonnepanelen from "./pages/maatregelen/Zonnepanelen.tsx";
 import Laadpaal from "./pages/maatregelen/Laadpaal.tsx";
 import Onderhoud from "./pages/maatregelen/Onderhoud.tsx";
+import Verduurzamen from "./pages/Verduurzamen.tsx";
 import OverOns from "./pages/OverOns.tsx";
 import Contact from "./pages/Contact.tsx";
 import Subsidiecheck from "./pages/Subsidiecheck.tsx";
@@ -51,7 +52,9 @@ const App = () => (
             <Route path="/partners" element={<Navigate to="/zakelijk" replace />} />
             <Route path="/uitvoerders" element={<Navigate to="/zakelijk" replace />} />
             <Route path="/bewoners" element={<Navigate to="/" replace />} />
-            <Route path="/verduurzamen" element={<Navigate to="/" replace />} />
+            {/* Was een redirect naar de homepage; sinds er een hub-pagina is,
+                is dit het startpunt van de sectie. */}
+            <Route path="/verduurzamen" element={<Verduurzamen />} />
             <Route path="/verduurzamen/isolatie" element={<Isolatie />} />
             <Route path="/verduurzamen/warmtepomp" element={<Warmtepomp />} />
             <Route path="/verduurzamen/airco" element={<Airco />} />
