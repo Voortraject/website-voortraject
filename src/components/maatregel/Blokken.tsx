@@ -1,4 +1,4 @@
-import { ArrowRight, Check, ShieldCheck, TrendingUp, Wrench } from "lucide-react";
+import { ArrowRight, Check, ShieldCheck, Wrench } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { Accent, IconCirkel, Kaart, KaartTekst, KaartTitel, SectieIntro, SectieKop } from "./primitieven";
@@ -10,11 +10,15 @@ import { KLEUR } from "./stijl";
 
 /**
  * De onderdelen die onder een maatregel vallen. Stond al op elke pagina in
- * `watValtEronder`, maar werd niet gerenderd. Als genummerde tegels in plaats
- * van een opsomming, zodat het scanbaar is.
+ * `watValtEronder`, maar werd niet gerenderd.
+ *
+ * Bewust géén sectiekop: dit is de afbakening van de maatregel, geen
+ * hoofdstuk. Een volle kop kostte een derde van de breedte aan witruimte voor
+ * drie woorden. Nu één strip over de volle breedte met een klein bovenschrift,
+ * zodat de inhoud de ruimte krijgt in plaats van de titel.
  */
 export const WatValtEronder = ({
-  kop = "Wat valt hier[[onder]]?",
+  kop = "Wat valt hieronder",
   intro,
   items,
 }: {
@@ -22,37 +26,37 @@ export const WatValtEronder = ({
   intro?: string;
   items: string[];
 }) => (
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-start">
-    <div>
-      <SectieKop><Accent tekst={kop} /></SectieKop>
-      {intro && <SectieIntro>{intro}</SectieIntro>}
+  <div
+    className="rounded-2xl p-6 md:p-8"
+    style={{ backgroundColor: KLEUR.zand, border: `1px solid ${KLEUR.rand}` }}
+  >
+    <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+      <span className="label-eyebrow">{kop.replace(/\[\[|\]\]/g, "")}</span>
+      {intro && (
+        <span className="text-[14px]" style={{ color: KLEUR.navy, opacity: 0.6 }}>
+          {intro}
+        </span>
+      )}
     </div>
-    {/* Bewust compact: dit is de afbakening van de maatregel, niet de
-        hoofdinhoud. De uitwerking per optie staat verderop bij de kosten. */}
-    <div
-      className="md:col-span-2 rounded-2xl p-6 md:p-7"
-      style={{ backgroundColor: KLEUR.zand, border: `1px solid ${KLEUR.rand}` }}
+    <ul
+      className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-3.5"
+      style={{ listStyle: "none", padding: 0, margin: "20px 0 0 0" }}
     >
-      <ul
-        className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3.5"
-        style={{ listStyle: "none", padding: 0, margin: 0 }}
-      >
-        {items.map((item) => (
-          <li key={item} className="flex items-start gap-3">
-            <Check
-              size={17}
-              className="mt-[3px] shrink-0"
-              style={{ color: KLEUR.goud }}
-              strokeWidth={2.5}
-              aria-hidden="true"
-            />
-            <span style={{ fontSize: 15.5, lineHeight: 1.55, color: KLEUR.navy, opacity: 0.85 }}>
-              {item}
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
+      {items.map((item) => (
+        <li key={item} className="flex items-start gap-3">
+          <Check
+            size={17}
+            className="mt-[3px] shrink-0"
+            style={{ color: KLEUR.goud }}
+            strokeWidth={2.5}
+            aria-hidden="true"
+          />
+          <span style={{ fontSize: 15.5, lineHeight: 1.55, color: KLEUR.navy, opacity: 0.85 }}>
+            {item}
+          </span>
+        </li>
+      ))}
+    </ul>
   </div>
 );
 
@@ -73,29 +77,50 @@ export const Aandachtspunten = ({
   items: string[];
 }) => (
   <>
-    <SectieKop><Accent tekst={kop} /></SectieKop>
-    <ul
-      className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5"
-      style={{ listStyle: "none", padding: 0, margin: "32px 0 0 0" }}
+    <div className="text-center">
+      <SectieKop center><Accent tekst={kop} /></SectieKop>
+    </div>
+    {/* Eén paneel met genummerde regels in plaats van losse kaarten in een
+        raster. Een raster laat bij drie of vijf punten een gat vallen en de
+        korte teksten zwemmen dan in te brede kaarten. Als doorlopende lijst
+        oogt het compleet bij elk aantal en leest het als advies. */}
+    <ol
+      className="mt-10 mx-auto max-w-[880px] rounded-2xl overflow-hidden"
+      style={{
+        backgroundColor: KLEUR.wit,
+        border: `1px solid ${KLEUR.rand}`,
+        listStyle: "none",
+        padding: 0,
+        margin: "40px auto 0 auto",
+      }}
     >
-      {items.map((item) => (
+      {items.map((item, i) => (
         <li
           key={item}
-          className="flex items-start gap-3.5 rounded-2xl p-5"
-          style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
+          className="flex items-baseline gap-5 px-6 py-5 md:px-8"
+          style={{
+            borderTop: i === 0 ? "none" : `1px solid ${KLEUR.rand}`,
+          }}
         >
           <span
-            className="mt-[1px] flex items-center justify-center rounded-full shrink-0"
-            style={{ width: 26, height: 26, backgroundColor: "hsl(var(--accent) / 0.2)" }}
+            className="font-display shrink-0 tabular-nums"
+            style={{
+              color: KLEUR.goud,
+              fontWeight: 700,
+              fontSize: 26,
+              lineHeight: 1,
+              width: 30,
+            }}
+            aria-hidden="true"
           >
-            <TrendingUp size={14} color={KLEUR.navy} strokeWidth={2.5} aria-hidden="true" />
+            {String(i + 1).padStart(2, "0")}
           </span>
-          <span style={{ fontSize: 15.5, lineHeight: 1.6, color: KLEUR.navy, opacity: 0.85 }}>
+          <span style={{ fontSize: 16, lineHeight: 1.6, color: KLEUR.navy, opacity: 0.85 }}>
             {item}
           </span>
         </li>
       ))}
-    </ul>
+    </ol>
   </>
 );
 
@@ -126,7 +151,7 @@ export const Keurmerken = ({ data }: { data: KeurmerkenData }) => (
         <div
           key={item}
           className="rounded-2xl p-5 flex items-start gap-4"
-          style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
+          style={{ backgroundColor: KLEUR.zand, border: `1px solid ${KLEUR.rand}` }}
         >
           <span
             className="flex items-center justify-center rounded-full shrink-0"

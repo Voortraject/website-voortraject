@@ -37,6 +37,9 @@ export const Sectie = ({
   <section
     id={id}
     aria-labelledby={labelledBy}
+    // Maakt het achtergrondritme controleerbaar in een test: jsdom parst
+    // `hsl(var(--token))` niet, dus de gerenderde stijl is daar leeg.
+    data-bg={bg}
     className="w-full py-12 md:py-[72px]"
     style={{ backgroundColor: SECTIE_BG[bg] }}
   >

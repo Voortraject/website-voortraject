@@ -120,4 +120,41 @@ describe("maatregelpagina's tonen alle aangeleverde content", () => {
       screen.getByRole("button", { name: /Bekijk mijn subsidies/ }),
     ).toBeInTheDocument();
   });
+
+  it("toont de processectie niet meer", () => {
+    toon(<Isolatie />);
+    // Stond op alle zes de pagina's identiek (de DEFAULT_PROCES) en voegde niets
+    // toe aan de maatregel zelf.
+    expect(screen.queryByText(/Zo pakken wij het voor je/)).not.toBeInTheDocument();
+    expect(screen.queryByText("Intakegesprek")).not.toBeInTheDocument();
+  });
+});
+
+describe("het achtergrondritme klopt bij elke combinatie van secties", () => {
+  // Bijna elke sectie is optioneel, dus de volgorde van achtergronden moet zo
+  // gekozen zijn dat er nooit twee dezelfde naast elkaar vallen. Dat is met het
+  // blote oog niet te controleren: je ziet het alleen op de ene pagina die net
+  // die combinatie heeft.
+  const paginas: [string, ReactElement][] = [
+    ["isolatie", <Isolatie key="i" />],
+    ["warmtepomp", <Warmtepomp key="w" />],
+    ["thuisbatterij", <Thuisbatterij key="t" />],
+    ["airco", <Airco key="a" />],
+    ["laadpaal", <Laadpaal key="l" />],
+  ];
+
+  it.each(paginas)("%s heeft geen twee gelijke achtergronden op rij", (naam, pagina) => {
+    const { container } = toon(pagina);
+    // Secties zonder data-bg (de subsidiecheck-CTA brengt zijn eigen zandkleur
+    // mee) krijgen een unieke waarde, zodat ze de vergelijking niet vervuilen.
+    const bgs = Array.from(container.querySelectorAll("main > section")).map(
+      (s, i) => s.getAttribute("data-bg") ?? `vast-${i}`,
+    );
+
+    expect(bgs.length).toBeGreaterThan(5);
+    const botsingen = bgs
+      .map((bg, i) => (i > 0 && bg === bgs[i - 1] ? `${bgs[i - 1]} → ${bg} (sectie ${i})` : null))
+      .filter(Boolean);
+    expect(botsingen, `${naam} heeft aangrenzende secties met dezelfde achtergrond`).toEqual([]);
+  });
 });

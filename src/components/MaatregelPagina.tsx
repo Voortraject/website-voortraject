@@ -1,5 +1,4 @@
-import { ArrowRight, ChevronDown, Check, Info, Wrench, X } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ArrowRight, ChevronDown, Check, Wrench, X } from "lucide-react";
 import { BorderRotate } from "@/components/ui/animated-gradient-border";
 import type { LucideIcon } from "lucide-react";
 import { Header } from "@/components/Header";
@@ -104,11 +103,6 @@ export interface MaatregelPaginaProps {
   // Waar wij op letten
   aandachtspunten?: string[];
 
-  // Zo pakken wij het op
-  procesKop?: string;
-  procesStappen?: ProcesStap[];
-  certificeringen?: string[];
-
   // Keurmerken en subsidies
   keurmerken?: KeurmerkenBlock;
   subsidiesIntro?: string;
@@ -135,11 +129,16 @@ export interface MaatregelPaginaProps {
     links: { label: string; href: string }[];
   };
 
-  // Behouden voor compatibiliteit, niet meer apart gerenderd
+  // Behouden voor compatibiliteit, niet meer apart gerenderd.
+  // De processectie ("Zo pakken wij het voor je op") is er bewust uit: die stond
+  // op alle zes de pagina's identiek en voegde niets toe aan de maatregel zelf.
   subsidiesPosition?: "side" | "below";
   zachteCtaTekst?: string;
   zachteCtaLabel?: string;
   zachteCtaHref?: string;
+  procesKop?: string;
+  procesStappen?: ProcesStap[];
+  certificeringen?: string[];
 
   // FAQ
   faqs: MaatregelFaq[];
@@ -150,21 +149,6 @@ export interface MaatregelPaginaProps {
   finalCtaLabel?: string;
   finalCtaHref?: string;
 }
-
-const DEFAULT_PROCES: ProcesStap[] = [
-  {
-    title: "Intakegesprek",
-    body: "We luisteren naar je situatie, je woning en wat je wilt bereiken.",
-  },
-  {
-    title: "Onafhankelijk advies",
-    body: "Een eerlijke afweging, zonder verkoopbelang of voorkeursleverancier.",
-  },
-  {
-    title: "Koppeling met uitvoerder",
-    body: "Wij brengen je in contact met een gecertificeerde, betrouwbare partij.",
-  },
-];
 
 const STANDAARD_KOSTEN_VOETNOOT =
   "Deze inschatting klopt in veel gevallen, maar verschilt per woning. Bouwjaar, woningtype, huidige isolatie en de combinatie van maatregelen die je kiest, bepalen wat het bij jou oplevert.";
@@ -198,8 +182,6 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
     kostenSinglePills,
     prijsPeil = "juni 2026",
     aandachtspunten,
-    procesKop = "Zo pakken wij het voor je [[op]]",
-    procesStappen = DEFAULT_PROCES,
     keurmerken,
     subsidiesIntro,
     subsidiesItems,
@@ -228,7 +210,11 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
       <Header />
       <main className="flex-1">
         {/* 1 — HERO */}
-        <section className="w-full py-12 md:py-[72px]" style={{ backgroundColor: KLEUR.zand }}>
+        <section
+          data-bg="zand"
+          className="w-full py-12 md:py-[72px]"
+          style={{ backgroundColor: KLEUR.zand }}
+        >
           <div className="mx-auto max-w-[1180px] px-6">
             <Kruimelpad label={label} />
             <div className="flex flex-col md:flex-row md:items-center gap-10 md:gap-12">
@@ -289,6 +275,11 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
             </div>
           </div>
         </section>
+
+        {/* De achtergronden wisselen bewust per sectie. Omdat bijna elke sectie
+            optioneel is, is de reeks zo gekozen dat er in élke combinatie van
+            aanwezige blokken nooit twee dezelfde achtergronden naast elkaar
+            komen. src/test/maatregelPagina.test.tsx bewaakt dat. */}
 
         {/* 2 — WAT VALT HIERONDER */}
         {watValtEronder && watValtEronder.length > 0 && (
@@ -476,91 +467,20 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
 
         {/* 10 — KEURMERKEN EN CERTIFICERINGEN */}
         {keurmerken && (
-          <Sectie bg="zand">
+          <Sectie bg="wit">
             <Keurmerken data={keurmerken} />
           </Sectie>
         )}
 
-        {/* 11 — ZO PAKKEN WIJ HET VOOR JE OP */}
-        <Sectie bg="wit">
-          <SectieKop center><Accent tekst={procesKop} /></SectieKop>
-
-          <TooltipProvider delayDuration={150}>
-            <ol
-              className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16 relative"
-              style={{ listStyle: "none", padding: 0, margin: 0, marginTop: 64 }}
-            >
-              {procesStappen.map((stap, i) => {
-                const isKoppeling = /koppeling/i.test(stap.title);
-                return (
-                  <li key={stap.title} className="relative">
-                    <Kaart bg={KLEUR.zand}>
-                      <div className="flex items-center gap-3">
-                        <span
-                          className="flex items-center justify-center rounded-full font-semibold shrink-0"
-                          style={{
-                            width: 36,
-                            height: 36,
-                            backgroundColor: KLEUR.navy,
-                            color: KLEUR.wit,
-                            fontSize: 15,
-                          }}
-                        >
-                          {i + 1}
-                        </span>
-                        <h3
-                          className="text-lg font-medium flex items-center gap-2"
-                          style={{ color: KLEUR.navy, margin: 0 }}
-                        >
-                          {stap.title}
-                          {isKoppeling && (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <button
-                                  type="button"
-                                  aria-label="Bekijk certificeringen"
-                                  className="inline-flex items-center justify-center rounded-full"
-                                  style={{ color: KLEUR.goud }}
-                                >
-                                  <Info size={16} aria-hidden="true" />
-                                </button>
-                              </TooltipTrigger>
-                              <TooltipContent side="top" className="max-w-[280px]">
-                                <p className="text-xs leading-relaxed">
-                                  Wij werken alleen met erkende, gecertificeerde vakbedrijven. Hun keurmerken en erkenningen staan voor kwaliteit, vakmanschap en veiligheid, zodat jouw project in vertrouwde handen is.
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          )}
-                        </h3>
-                      </div>
-                      <KaartTekst>{stap.body}</KaartTekst>
-                    </Kaart>
-                    {i < procesStappen.length - 1 && (
-                      <div
-                        aria-hidden="true"
-                        className="hidden md:flex absolute top-1/2 -translate-y-1/2 items-center justify-center"
-                        style={{ right: -56, width: 48, height: 48 }}
-                      >
-                        <ArrowRight size={36} color={KLEUR.goud} strokeWidth={2.5} />
-                      </div>
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
-          </TooltipProvider>
-        </Sectie>
-
-        {/* 12 — COMBINEERT GOED MET */}
+        {/* 11 — COMBINEERT GOED MET */}
         {combineren && (
-          <Sectie bg="zand">
+          <Sectie bg="warm">
             <LinkKaart kop={combineren.kop} tekst={combineren.tekst} links={combineren.links} />
           </Sectie>
         )}
 
-        {/* 13 — VEELGESTELDE VRAGEN */}
-        <Sectie bg="warm">
+        {/* 12 — VEELGESTELDE VRAGEN */}
+        <Sectie bg="zand">
           <SectieKop center><Accent tekst="Veelgestelde [[vragen]]" /></SectieKop>
           <div
             className="mt-10 max-w-[820px] mx-auto rounded-2xl overflow-hidden"
