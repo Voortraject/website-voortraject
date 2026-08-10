@@ -1,14 +1,27 @@
 import { Home } from "lucide-react";
 import { MaatregelPagina } from "@/components/MaatregelPagina";
+import { WoningSchil } from "@/components/maatregel/isolatie/WoningSchil";
+import { Ventilatie } from "@/components/maatregel/isolatie/Ventilatie";
 import isolatieImage from "@/assets/helpen-isolatie.webp";
 
+/**
+ * De achtergronden van de eigen secties zijn zo gekozen dat het ritme van de
+ * pagina blijft kloppen. De volgorde wordt:
+ * zand, wit, warm, navy, zand, warm, zand(CTA), wit, warm, zand.
+ * src/test/maatregelPagina.test.tsx bewaakt dat er nooit twee dezelfde
+ * achtergronden naast elkaar komen.
+ */
 const Isolatie = () => (
   <MaatregelPagina
     slug="isolatie"
     icon={Home}
     badge="Vaak eerste stap"
     seoTitle="Isolatie & ventilatie | Voortraject"
-    seoDescription="Isolatie en ventilatie vormen de basis van elke verduurzaming. Wat valt eronder, wanneer is het slim en welke subsidies passen erbij."
+    seoDescription="Zie per bouwdeel wat isoleren je woning oplevert, met besparing per jaar voor jouw woningtype. Plus waarom goed isoleren om goed ventileren vraagt."
+    eigenSecties={[
+      { na: "hero", bg: "wit", id: "schil", inhoud: <WoningSchil /> },
+      { na: "kosten", bg: "warm", id: "ventilatie", inhoud: <Ventilatie /> },
+    ]}
     heroTitle="Isolatie & ventilatie, de [[basis]]"
     heroSub="Minder warmteverlies, meer comfort en lagere energiekosten, vrijwel altijd de slimste eerste stap. Het is de basis waarop een warmtepomp of zonnepanelen pas echt renderen, en goed isoleren vraagt om goed ventileren."
     heroIntro=""
@@ -25,13 +38,6 @@ const Isolatie = () => (
       "Je woning al goed is geïsoleerd, met bijvoorbeeld HR++ of triple glas en een geïsoleerde gevel, vloer en dak",
       "Je op zeer korte termijn verhuist",
       "Je een monument hebt; dan gelden strikte regels en kijken we eerst naar wat mag",
-    ]}
-    watValtEronder={[
-      "Dakisolatie, vaak de kortste terugverdientijd",
-      "Vloer- of bodemisolatie",
-      "Spouwmuurisolatie, relatief goedkoop en snel terugverdiend",
-      "HR++ of triple glas met goede kozijnen",
-      "Ventilatie: natuurlijk, mechanisch, of balansventilatie met warmteterugwinning (WTW)",
     ]}
     routeStep="beperk"
     routeTekst="Isolatie is bijna altijd de eerste stap. Het verlaagt je energieverbruik direct en maakt elke volgende maatregel effectiever. Een warmtepomp in een slecht geïsoleerde woning werkt inefficiënt en duur. Zonnepanelen leveren minder op als je verbruik onnodig hoog blijft. Daarom eerst beperken wat je verbruikt, dan pas opwekken en slim gebruiken. Ventilatie hoort direct bij of vlak na het isoleren, want een luchtdichte woning heeft gezonde luchtverversing nodig."
@@ -89,10 +95,10 @@ const Isolatie = () => (
       "Begin bij de maatregel met de kortste terugverdientijd, vaak dak of spouw, niet bij de duurste.",
       "De kwaliteit van uitvoering bepaalt het resultaat. Een goed product, slecht aangebracht, levert weinig op.",
     ]}
-    subsidiesIntro="Isolatie is een van de best gesubsidieerde maatregelen en vaak combineerbaar:"
+    subsidiesIntro="Isolatie is een van de best gesubsidieerde maatregelen. Welke regeling voor jou geldt hangt af van je adres, en vaak zijn ze te combineren:"
     subsidiesItems={[
-      "ISDE (landelijk), verdubbelt bij twee of meer maatregelen",
       "Nij Begun, tot 100 procent vergoed voor eigenaar-bewoners in Groningen en Noord-Drenthe",
+      "De landelijke isolatiesubsidie, die verdubbelt bij twee of meer maatregelen",
       "Gemeentelijke regelingen, stapelbaar bovenop bovenstaande",
     ]}
     faqs={[
