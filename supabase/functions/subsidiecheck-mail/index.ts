@@ -297,6 +297,27 @@ function normalizePostcode(raw: string): string {
   return raw.replace(/\s+/g, "").toUpperCase();
 }
 
+// Kopje boven een vraag die de bezoeker zelf heeft getypt, met datum en tijd.
+//
+// Op verzoek van de CRM-kant (10-08-2026). `notities` is een gedeeld veld: het
+// team schrijft er zelf in en de subsidietool schrijft er onderaan bij. Zonder
+// kopje staat de tekst van een bezoeker kaal onder die van een collega en is in
+// het CRM niet meer te zien wie wat heeft geschreven. Leesbaarheid, geen
+// veiligheid.
+//
+// Tijd in Europe/Amsterdam, want dit leest een mens in Groningen, niet UTC.
+function vraagKopje(op: Date): string {
+  const wanneer = op.toLocaleString("nl-NL", {
+    timeZone: "Europe/Amsterdam",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  return `Vraag van de bezoeker via de subsidietool (${wanneer}):`;
+}
+
 /** Terugvalrem in het geheugen van deze isolate. Alleen als de database het niet doet. */
 function throttled(ip: string): boolean {
   const nu = Date.now();
@@ -953,6 +974,12 @@ Deno.serve(async (req: Request) => {
     const leadId = typeof payload.leadId === "string" && UUID_RE.test(payload.leadId) ? payload.leadId : null;
     let nieuweLead = true;
 
+    // De vraag zoals hij in `notities` terechtkomt: kopje met datum, dan de tekst
+    // van de bezoeker ongewijzigd. Eén keer opgebouwd, want beide routes
+    // hieronder (aanvullen bij een bestaande lead, of een nieuwe lead maken)
+    // moeten er identiek uitzien in het CRM.
+    const vraagBlok = `${vraagKopje(new Date())}\n${bericht}`;
+
     try {
       if (leadId) {
         // Bijwerken mag alleen als id én e-mailadres bij elkaar horen. Een uuid
@@ -979,7 +1006,7 @@ Deno.serve(async (req: Request) => {
           //     andermans tekst af te kappen. De vraag gaat sowieso voluit naar het
           //     team per mail, dus er raakt niets zoek.
           const bestaandeNotitie = (bestaand.notities ?? "").trim();
-          const nieuweNotitie = bestaandeNotitie ? `${bestaandeNotitie}\n\n${bericht}` : bericht;
+          const nieuweNotitie = bestaandeNotitie ? `${bestaandeNotitie}\n\n${vraagBlok}` : vraagBlok;
 
           if (!nieuweNotitie.trim()) {
             console.error("Notitie-update overgeslagen: resultaat zou leeg zijn");
@@ -1001,8 +1028,10 @@ Deno.serve(async (req: Request) => {
 
       if (nieuweLead) {
         // Geen bestaande lead: alles wat we van deze bezoeker weten in één keer,
-        // met de termijn (indien meegestuurd) boven de vraag.
-        const notities = [notitie, bericht].filter(Boolean).join("\n");
+        // met de hulpvraag uit de poort (indien meegestuurd) boven de vraag. Ook
+        // hier het kopje boven de vraag, zodat een lead er in het CRM hetzelfde
+        // uitziet of hij nu via deze route of via de update hierboven is ontstaan.
+        const notities = [notitie, vraagBlok].filter(Boolean).join("\n\n");
         const { error } = await insertLead(supabase, { ...leadVelden, notities }, verrijking);
         if (error) throw error;
       }
