@@ -95,6 +95,8 @@ export interface MaatregelPaginaProps {
 
   // Is dit iets voor jou
   voorWieKop?: string;
+  /** Regel onder de kop. Overschrijf hem als "past bij jouw woning" niet de vraag is. */
+  voorWieIntro?: string;
   pastBij: string[];
   minderUrgent: string[];
 
@@ -108,6 +110,8 @@ export interface MaatregelPaginaProps {
   routeTekst?: string;
 
   // Kosten en opbrengst (waarde-kaartjes)
+  /** Kop boven de waardekaarten. Onderhoud kent geen investering, dus die pagina zet hem om. */
+  kostenKop?: string;
   kostenItems: CollapsibleItem[];
   kostenFooter?: string;
   /** "opties" = grid van kaarten; "single" = één blok over volle breedte. */
@@ -189,6 +193,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
     heroImageAlt,
     heroImagePosition = "center",
     voorWieKop = "Past dit bij [[jouw]] woning?",
+    voorWieIntro = "We zijn er eerlijk over wanneer dit wel en niet bij jouw woning past.",
     pastBij,
     minderUrgent,
     watValtEronderKop,
@@ -196,6 +201,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
     wanneerKop,
     routeStep,
     routeTekst,
+    kostenKop = "Wat je investering [[oplevert]]",
     kostenItems,
     kostenFooter,
     kostenMode = "opties",
@@ -328,7 +334,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
               className="mt-3 text-base leading-relaxed mx-auto"
               style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 560 }}
             >
-              We zijn er eerlijk over wanneer dit wel en niet bij jouw woning past.
+              {voorWieIntro}
             </p>
           </div>
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
@@ -423,7 +429,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
 
         {/* 6 — WAT HET KOST EN OPLEVERT */}
         <Sectie bg="zand">
-          <SectieKop center><Accent tekst="Wat je investering [[oplevert]]" /></SectieKop>
+          <SectieKop center><Accent tekst={kostenKop} /></SectieKop>
 
           {kostenMode === "single" ? (
             <div className="mt-10">

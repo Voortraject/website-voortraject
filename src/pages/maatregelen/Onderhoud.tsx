@@ -1,364 +1,106 @@
-import { Check } from "lucide-react";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { Seo } from "@/components/Seo";
-import { CtaButton } from "@/components/CtaButton";
-import { OfBelOnsCta } from "@/components/OfBelOnsCta";
+import { Wrench } from "lucide-react";
+import { MaatregelPagina } from "@/components/MaatregelPagina";
+import { Onderhoudskalender } from "@/components/maatregel/onderhoud/Onderhoudskalender";
+import { VerplichtOfGarantie } from "@/components/maatregel/onderhoud/VerplichtOfGarantie";
+import { Storingssignalen } from "@/components/maatregel/onderhoud/Storingssignalen";
+import { OPBRENGST } from "@/data/onderhoud";
 import onderhoudImage from "@/assets/maatregel-onderhoud.webp";
 
-const NAVY = "#152C4E";
-const INK = "#111111";
-const SAND = "#FBFAF7";
-const WARM = "#F6EFE2";
-const GOLD = "#E8B547";
-const SOFT = "#F0E4D0";
-const BORDER = "#E5E2DB";
-const MUTED = "#6B6B6B";
-const TEXT = "#2B2B2B";
-
-const renderAccented = (text: string) => {
-  const parts = text.split(/(\[\[[^\]]+\]\])/g);
-  return parts.map((part, i) => {
-    const m = part.match(/^\[\[([^\]]+)\]\]$/);
-    if (m) {
-      return (
-        <span key={i} style={{ color: GOLD }}>
-          {m[1]}
-        </span>
-      );
-    }
-    return <span key={i}>{part}</span>;
-  });
-};
-
-const Section = ({ bg, children }: { bg: string; children: React.ReactNode }) => (
-  <section className="py-[72px] md:py-[120px]" style={{ backgroundColor: bg }}>
-    <div className="container-content">{children}</div>
-  </section>
-);
-
-const SectionHeader = ({ title, sub, center = false }: { title: string; sub?: string; center?: boolean }) => (
-  <div className={center ? "max-w-3xl mx-auto text-center" : "max-w-3xl"}>
-    <h2
-      className="font-display"
-      style={{
-        fontSize: "clamp(28px, 3.4vw, 40px)",
-        fontWeight: 700,
-        color: NAVY,
-        letterSpacing: "-0.02em",
-        lineHeight: 1.15,
-        margin: 0,
-      }}
-    >
-      {renderAccented(title)}
-    </h2>
-    {sub && (
-      <p
-        style={{
-          fontSize: 16,
-          color: MUTED,
-          lineHeight: 1.7,
-          marginTop: 14,
-          marginBottom: 0,
-        }}
-      >
-        {sub}
-      </p>
-    )}
-  </div>
-);
-
-const Card = ({ children }: { children: React.ReactNode }) => (
-  <div
-    style={{
-      backgroundColor: "#FFFFFF",
-      border: `1px solid ${BORDER}`,
-      borderRadius: 16,
-      padding: "24px 24px",
-    }}
-  >
-    {children}
-  </div>
-);
+/**
+ * De zevende pagina, en de laatste die nog eigen opmaak had: een eigen
+ * `Section`, andere paddings en een andere hero-typografie. Daardoor oogde hij
+ * als een andere website, en zat er bovendien een zichtbare fout in: de eigen
+ * donkere slotsectie stond direct boven de footer, die zijn eigen donkere
+ * paneel met afgeronde bovenhoeken in een witte wikkel rendert. Precies in die
+ * hoeken piepte het wit door. Door de slot-CTA via het template door te geven
+ * (de `cta`-prop van `Footer`) zitten CTA en footer weer in één donker vlak.
+ *
+ * Zes inhoudelijke secties plus de FAQ:
+ *
+ *   1 de onderhoudskalender          (eigen)
+ *   2 waar onderhoud echt uitmaakt   (template)
+ *   3 waar dit staat in de route     (template)
+ *   4 verplicht of alleen garantie   (eigen)
+ *   5 wat onderhoud oplevert         (template)
+ *     subsidiecheck
+ *   6 waar je het aan merkt          (eigen)
+ *
+ * Inhoudelijk is dit een informatiepagina en verder niets. De belofte "wij
+ * houden overzicht op het onderhoud van je installaties en koppelen je aan
+ * vakkundige uitvoerders" is eraf: Voortraject doet niets met onderhoud. Wat
+ * blijft is kennis, en een doorverwijzing naar het gesprek over de
+ * verduurzamingsstappen zelf.
+ *
+ * "Zelf doen of uitbesteden" heeft geen eigen sectie meer. Dat is een
+ * eigenschap van elke beurt en staat nu als merkteken in de kalender, waar je
+ * het nodig hebt.
+ */
 
 const Onderhoud = () => (
-  <div className="min-h-screen bg-background flex flex-col">
-    <Seo
-      title="Onderhoud | Voortraject"
-      description="Goed onderhoud houdt je verduurzamingsinstallaties efficient, veilig en duurzaam. Wat kun je zelf doen en wat laat je over aan een specialist?"
-      path="/verduurzamen/onderhoud"
-    />
-    <Header />
-    <main className="flex-1">
-      {/* SECTIE 1 — HERO */}
-      <section
-        className="pb-[64px] md:pb-[112px]"
-        style={{ backgroundColor: SAND, paddingTop: "clamp(40px, 6vw, 80px)" }}
-        aria-labelledby="o-title"
-      >
-        <div className="container-content">
-          <div className="flex flex-col md:flex-row md:items-center gap-10 md:gap-12">
-            <div className="md:flex-1 min-w-0">
-              <h1
-                id="o-title"
-                className="font-display"
-                style={{
-                  fontWeight: 700,
-                  fontSize: "clamp(36px, 5vw, 56px)",
-                  color: INK,
-                  letterSpacing: "-0.02em",
-                  lineHeight: 1.05,
-                }}
-              >
-                {renderAccented("Onderhoud, zodat alles blijft [[presteren]]")}
-              </h1>
-              <p className="mt-5 text-base md:text-lg leading-relaxed" style={{ color: INK, opacity: 0.85, maxWidth: 560 }}>
-                Verduurzamen stopt niet na de installatie. Een warmtepomp, airco of thuisbatterij blijft het beste werken met regelmatig onderhoud: efficiënter, langere levensduur en minder onverwachte storingen.
-              </p>
-              <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
-                <CtaButton href="/contact" variant="primary">
-                  Plan een gratis gesprek
-                </CtaButton>
-
-              </div>
-            </div>
-
-            <div
-              className="md:flex-1 self-center w-full max-w-[460px] overflow-hidden"
-              style={{
-                borderRadius: 20,
-                border: `1px solid ${BORDER}`,
-                aspectRatio: "4 / 3",
-                backgroundColor: "#EFEAE0",
-              }}
-            >
-              <img
-                src={onderhoudImage}
-                alt="Adviseur van Voortraject controleert de leidingen en ventilatie binnenshuis"
-                width={1024}
-                height={768}
-                className="w-full h-full object-cover"
-                style={{ objectPosition: "center 35%" }}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTIE 2 — Waarom onderhoud belangrijk is */}
-      <Section bg="#FFFFFF">
-        <SectionHeader
-          title="Waarom onderhoud [[belangrijk]] is"
-          sub="Regelmatig onderhoud levert meer op dan je denkt. Dit zijn de belangrijkste voordelen."
-          center
-        />
-        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-          {[
-            {
-              title: "Lagere energiekosten",
-              body: "Een goed onderhouden systeem werkt efficienter en verbruikt minder energie.",
-            },
-            {
-              title: "Langere levensduur",
-              body: "Je installaties gaan langer mee als ze regelmatig worden gecontroleerd en schoongehouden.",
-            },
-            {
-              title: "Minder storingen",
-              body: "Problemen worden op tijd opgemerkt, voordat ze tot een dure reparatie leiden.",
-            },
-            {
-              title: "Behoud van garantie en veiligheid",
-              body: "Voorgeschreven onderhoud blijft op orde, wat belangrijk is voor garantie en verzekering.",
-            },
-          ].map((card) => (
-            <Card key={card.title}>
-              <h3
-                style={{
-                  fontSize: 17,
-                  fontWeight: 600,
-                  color: NAVY,
-                  lineHeight: 1.35,
-                  margin: 0,
-                }}
-              >
-                {card.title}
-              </h3>
-              <p style={{ fontSize: 15, color: MUTED, lineHeight: 1.7, marginTop: 10, marginBottom: 0 }}>
-                {card.body}
-              </p>
-            </Card>
-          ))}
-        </div>
-      </Section>
-
-      {/* SECTIE 3 — Onderhoud per installatie */}
-      <Section bg={WARM}>
-        <SectionHeader title="Onderhoud per [[installatie]]" />
-        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
-          {[
-            {
-              title: "Warmtepomp",
-              body: "Periodieke controle van het systeem en het koudemiddel houdt de warmtepomp efficient. Dit hoort door een gecertificeerde monteur te gebeuren.",
-            },
-            {
-              title: "Airco",
-              body: "Filters schoonmaken of vervangen kun je vaak zelf. Periodieke controle van het systeem en het koudemiddel doe je het beste door een specialist.",
-            },
-            {
-              title: "Zonnepanelen",
-              body: "Panelen zijn grotendeels onderhoudsarm. Een periodieke controle van de opbrengst en de omvormer zorgt dat je problemen op tijd merkt.",
-            },
-            {
-              title: "Thuisbatterij",
-              body: "Een thuisbatterij is onderhoudsarm en wordt continu gemonitord. Software-updates en periodieke controles houden hem veilig en op prestatie.",
-            },
-          ].map((item) => (
-            <Card key={item.title}>
-              <h3
-                style={{
-                  fontSize: 17,
-                  fontWeight: 600,
-                  color: NAVY,
-                  lineHeight: 1.35,
-                  margin: 0,
-                }}
-              >
-                {item.title}
-              </h3>
-              <p style={{ fontSize: 15, color: MUTED, lineHeight: 1.7, marginTop: 10, marginBottom: 0 }}>
-                {item.body}
-              </p>
-            </Card>
-          ))}
-        </div>
-      </Section>
-
-      {/* SECTIE 4 — Zelf doen vs uitbesteden */}
-      <Section bg="#FFFFFF">
-        <SectionHeader title="Wat je zelf kunt doen en wat je beter [[uitbesteedt]]" />
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-          <div
-            style={{
-              backgroundColor: SAND,
-              border: `1px solid ${BORDER}`,
-              borderRadius: 18,
-              padding: "28px 28px",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: 13,
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.1em",
-                color: NAVY,
-                marginBottom: 18,
-                marginTop: 0,
-              }}
-            >
-              Zelf doen
-            </h3>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0 }} className="flex flex-col gap-3">
-              {[
-                "Filters van een airco schoonmaken of vervangen",
-                "Binnenunits stofvrij houden",
-                "De opbrengst van je zonnepanelen in de gaten houden",
-              ].map((item) => (
-                <li
-                  key={item}
-                  className="flex items-start gap-3"
-                  style={{ fontSize: 16, color: TEXT, lineHeight: 1.6 }}
-                >
-                  <span
-                    className="mt-[2px] shrink-0 rounded-full flex items-center justify-center"
-                    style={{ width: 22, height: 22, backgroundColor: SOFT }}
-                  >
-                    <Check size={13} color={NAVY} strokeWidth={3} />
-                  </span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div
-            style={{
-              backgroundColor: "#FFFFFF",
-              border: `1px solid ${BORDER}`,
-              borderRadius: 18,
-              padding: "28px 28px",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: 13,
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.1em",
-                color: MUTED,
-                marginBottom: 18,
-                marginTop: 0,
-              }}
-            >
-              Beter uitbesteden
-            </h3>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0 }} className="flex flex-col gap-3">
-              {[
-                "Alles met koudemiddelen, dit vraagt certificering",
-                "Elektrische aansluitingen en de meterkast",
-                "Periodieke veiligheids- en prestatiecontroles",
-              ].map((item) => (
-                <li
-                  key={item}
-                  className="flex items-start gap-3"
-                  style={{ fontSize: 16, color: MUTED, lineHeight: 1.6 }}
-                >
-                  <span
-                    className="mt-[2px] shrink-0 rounded-full flex items-center justify-center"
-                    style={{ width: 22, height: 22, backgroundColor: "#EFEAE0" }}
-                  >
-                    <Check size={13} color={MUTED} strokeWidth={3} />
-                  </span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </Section>
-
-      {/* SECTIE 5 — Hoe wij helpen + CTA */}
-      <section className="py-[72px] md:py-[112px]" style={{ backgroundColor: NAVY }}>
-        <div className="container-content">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2
-              className="font-display"
-              style={{
-                fontSize: "clamp(28px, 3.6vw, 42px)",
-                fontWeight: 700,
-                color: "#FFFFFF",
-                letterSpacing: "-0.02em",
-                lineHeight: 1.15,
-              }}
-            >
-              {renderAccented("Hoe wij [[helpen]]")}
-            </h2>
-            <p
-              className="mt-5"
-              style={{ fontSize: 17, color: "#FFFFFF", opacity: 0.85, lineHeight: 1.7 }}
-            >
-              Wij houden overzicht op het onderhoud van je installaties en koppelen je aan vakkundige, gecertificeerde uitvoerders. Zo hoef je zelf niet bij te houden wanneer wat aan de beurt is, en blijft je woning zuinig en veilig. Wij verkopen geen onderhoudscontracten, ons advies is onafhankelijk.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
-              <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
-              <OfBelOnsCta color="#FFFFFF" align="center" />
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-    <Footer />
-  </div>
+  <MaatregelPagina
+    slug="onderhoud"
+    icon={Wrench}
+    seoTitle="Onderhoud | Voortraject"
+    seoDescription="Wat moet er wanneer gebeuren aan je ventilatie, zonnepanelen, warmtepomp en meterkast? Een onderhoudskalender met termijnen uit publieke bronnen, en het verschil tussen een wettelijke eis en je garantie."
+    eigenSecties={[
+      { na: "hero", bg: "wit", id: "kalender", inhoud: <Onderhoudskalender /> },
+      { na: "route", bg: "wit", id: "verplicht", inhoud: <VerplichtOfGarantie /> },
+      { na: "subsidies", bg: "warm", id: "signalen", inhoud: <Storingssignalen /> },
+    ]}
+    heroTitle="Onderhoud, zodat alles blijft [[presteren]]"
+    heroSub="Verduurzamen stopt niet bij de oplevering. Ventilatie, zonnepanelen en alles met koudemiddel vragen periodiek aandacht, en een deel daarvan kun je prima zelf."
+    heroIntro="Hieronder staat per installatie wat er wanneer moet gebeuren, met de termijnen die publieke bronnen ook echt noemen."
+    heroImageSrc={onderhoudImage}
+    heroImageAlt="Adviseur van Voortraject controleert de leidingen en ventilatie binnenshuis"
+    heroImagePosition="center 35%"
+    voorWieKop="Waar onderhoud echt [[uitmaakt]]"
+    voorWieIntro="Niet elke installatie vraagt evenveel. We zijn er eerlijk over waar je aandacht loont en waar er weinig te doen valt."
+    pastBij={[
+      "Je hebt balansventilatie of mechanische afvoer: filters en kanalen vragen het meest van alle installaties",
+      "Je hebt een warmtepomp of airco: alles met koudemiddel hoort bij een gecertificeerde monteur",
+      "Je zonnepanelen liggen (bijna) plat, want dan spoelt de regen ze niet schoon",
+      "Je centrale omvormer loopt tegen de twaalf jaar",
+    ]}
+    minderUrgent={[
+      "Je zonnepanelen liggen steiler dan 20 graden: de regen doet het schoonmaakwerk",
+      "Je hebt een thuisbatterij, want daar publiceert geen enkele bron een onderhoudsschema voor",
+      "Je laadpaal doet het gewoon; verder dan de testknop van je aardlekschakelaar gaat het niet",
+      "Je installatie is net opgeleverd en de eerste termijn is nog niet in zicht",
+    ]}
+    wanneerKop="Waar dit hoort in de route"
+    routeTekst="Onderhoud is geen stap in de route maar de voorwaarde eronder. Een woning die je isoleert, van zonnepanelen voorziet en slim laat verwarmen, levert alleen jaren achtereen op wat je ervan verwacht als de installaties blijven doen waarvoor ze zijn neergezet. Vervuilde ventilatiefilters kosten je stroom terwijl je minder frisse lucht krijgt, en een omvormer die stilletjes achteruitgaat merk je pas op de jaarafrekening. Onderhoud is dus geen extra stap; het is het beschermen van de stappen die je al hebt gezet."
+    kostenKop="Wat onderhoud [[oplevert]]"
+    kostenItems={OPBRENGST.map((punt) => ({ title: punt.kop, body: punt.tekst }))}
+    kostenFooter="Wij doen zelf geen onderhoud en verkopen geen onderhoudscontracten. Deze pagina staat er om je te laten zien wat er speelt, zodat je bij je eigen installateur de goede vragen stelt."
+    faqs={[
+      {
+        q: "Hoe vaak moet mijn warmtepomp of airco onderhouden worden?",
+        a: "Daar is geen algemeen antwoord op. Milieu Centraal zegt \"regelmatig\" en noemt bewust geen termijn, omdat het per toestel en per koudemiddel verschilt. Wat er wel staat: laat de binnen- en buitenunit schoonmaken en laat controleren of er koudemiddel lekt. De termijn die voor jouw toestel telt, staat in je eigen garantievoorwaarden.",
+      },
+      {
+        q: "Is onderhoud wettelijk verplicht?",
+        a: "Voor een woning schrijft de wet geen onderhoudstermijn voor. Wat de wet wel regelt is wie het werk mag doen: aan het koudemiddel van een warmtepomp of airco mag alleen iemand met een F-gassendiploma werken, en het installatiebedrijf heeft een BRL 100-certificaat nodig. Wordt er ook aan een cv-ketel gewerkt, dan komt CO-vrij erbij, en bij bodemwarmte BRL 6000-21 met SIKB 11000.",
+      },
+      {
+        q: "Wat kan ik zelf doen en wat laat ik over aan een specialist?",
+        a: "Zelf kun je de ventilatiefilters schoonmaken en vervangen, de roosters en ventielen schoonhouden, de omvormer stofvrij houden, de opbrengst van je zonnepanelen volgen en elk half jaar de testknop van je aardlekschakelaar indrukken. Naar een specialist gaat alles met koudemiddel, de ventilatiemotor en de kanalen, het inregelen van het ventilatiesysteem en het vervangen van de omvormer.",
+      },
+      {
+        q: "Hoe vaak moet ik mijn ventilatiefilters vervangen?",
+        a: "Bij balansventilatie met warmteterugwinning twee keer per jaar, en tussendoor minstens één keer schoonmaken met de stofzuiger. Vervuilde filters geven weerstand, waardoor de motor harder werkt en meer stroom verbruikt, en er kunnen schimmels en bacteriën worden meegeblazen. Heb je mechanische afvoer, maak dan minstens één keer per jaar de roosters en ventielen goed schoon.",
+      },
+      {
+        q: "Moet ik mijn zonnepanelen schoonmaken?",
+        a: "Meestal niet. Liggen ze onder een hoek van meer dan 20 graden, dan spoelt de regen ze vanzelf schoon. Bij een dak dat bijna plat ligt is het aan te raden ze minstens één keer per jaar schoon te maken. Belangrijker is dat je de opbrengst volgt: zakt die met meer dan 10 procent, laat panelen en omvormer dan nakijken.",
+      },
+      {
+        q: "Regelt Voortraject het onderhoud voor mij?",
+        a: "Nee. Wij begeleiden je door het verduurzamingstraject en houden ons niet bezig met onderhoud daarna. Deze pagina is er om je op weg te helpen. Zit je nog aan het begin en wil je weten welke stappen voor jouw woning logisch zijn, dan denken we in een gratis gesprek graag mee.",
+      },
+    ]}
+    finalCtaKop="Nog aan het begin van je [[traject]]?"
+    finalCtaTekst="Wij doen geen onderhoud, maar wel alles daarvoor: welke maatregelen bij jouw woning passen, in welke volgorde, en welke regelingen er voor jouw adres zijn. In een gratis gesprek zetten we dat op een rij."
+  />
 );
 
 export default Onderhoud;
