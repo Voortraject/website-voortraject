@@ -119,6 +119,54 @@ describe("isolatiepagina: de configurator", () => {
     expect(tekening().getAttribute("aria-label")).toMatch(/met isolatie in: dak/);
   });
 
+  it("laat de warmtestromen stoppen zodra je dat bouwdeel isoleert", () => {
+    const { container } = toon();
+    const stroomt = (bron: string) => {
+      const stromen = Array.from(
+        container.querySelectorAll<SVGElement>(`[data-stroom="${bron}"]`),
+      );
+      expect(stromen.length, `geen warmtestromen voor ${bron}`).toBeGreaterThan(0);
+      return stromen.every((s) => s.style.opacity !== "0");
+    };
+
+    expect(stroomt("dak")).toBe(true);
+    fireEvent.click(knop(dak.naam));
+    expect(stroomt("dak")).toBe(false);
+    // De rest van de schil lekt nog wel; alleen het dak is dicht.
+    expect(stroomt("vloer")).toBe(true);
+
+    // De gevel is dicht via spouw óf gevel: allebei stoppen dezelfde stroom.
+    expect(stroomt("gevel")).toBe(true);
+    fireEvent.click(knop(spouw.naam));
+    expect(stroomt("gevel")).toBe(false);
+  });
+
+  it("houdt de warmtestromen binnen het kader van de tekening", () => {
+    // De stromen zijn langer dan de pijlen die er stonden, dus ze liepen aan
+    // drie kanten het kader uit. Dit is geen som die je met de hand blijft
+    // narekenen als er een stroom bij komt.
+    const { container } = toon();
+    const svg = container.querySelector('svg[role="img"]')!;
+    const [vx, vy, vBreed, vHoog] = svg.getAttribute("viewBox")!.split(" ").map(Number);
+
+    const stromen = Array.from(container.querySelectorAll("[data-stroom]"));
+    expect(stromen.length).toBeGreaterThan(0);
+
+    for (const stroom of stromen) {
+      const getallen = (stroom.getAttribute("d") ?? "").match(/-?\d+(?:\.\d+)?/g)!.map(Number);
+      for (let i = 0; i < getallen.length; i += 2) {
+        const [x, y] = [getallen[i], getallen[i + 1]];
+        // Een bezier blijft binnen de omhullende van zijn punten, dus passen
+        // alle punten, dan past de kromme.
+        const waar = `${stroom.getAttribute("data-stroom")} op ${x},${y}`;
+        expect(x, `${waar} steekt links uit`).toBeGreaterThanOrEqual(vx);
+        expect(x, `${waar} steekt rechts uit`).toBeLessThanOrEqual(vx + vBreed);
+        expect(y, `${waar} steekt boven uit`).toBeGreaterThanOrEqual(vy);
+        expect(y, `${waar} steekt onder uit`).toBeLessThanOrEqual(vy + vHoog);
+      }
+    }
+  });
+
   it("kleurt het hele dakvlak bij dakisolatie, niet alleen de snede", () => {
     // Zat de isolatie alleen in de opengewerkte snede, dan leek er bij het dak
     // niets te gebeuren. Het dakvlak hoort mee te kleuren, net als de gevel.

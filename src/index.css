@@ -25,22 +25,24 @@
   .schil-overgang { transition: none; }
 }
 
-/* De warmte die ontsnapt drijft zachtjes naar buiten, zodat een ongeïsoleerd
-   huis leeft en het stilvallen bij isoleren ook echt opvalt. Alleen transform,
-   want de zichtbaarheid loopt via een inline opacity die een animatie zou
-   overrulen. */
-@keyframes warmte-op     { 0%, 100% { transform: translateY(3px);  } 50% { transform: translateY(-3px); } }
-@keyframes warmte-neer   { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(3px);  } }
-@keyframes warmte-links  { 0%, 100% { transform: translateX(3px);  } 50% { transform: translateX(-3px); } }
-@keyframes warmte-rechts { 0%, 100% { transform: translateX(-3px); } 50% { transform: translateX(3px);  } }
+/* De warmte die ontsnapt stroomt naar buiten: streepjes schuiven langs het pad
+   weg van de woning, zodat het leest als warmte die wegloopt en niet als een
+   pijl die wiebelt. De verschuiving is precies twee streeppatronen (2 × 22),
+   anders springt de lus. Alleen stroke-dashoffset, want de zichtbaarheid loopt
+   via een inline opacity die een animatie zou overrulen.
 
-.warmte-op     { animation: warmte-op 3.2s ease-in-out infinite; }
-.warmte-neer   { animation: warmte-neer 3.2s ease-in-out infinite; }
-.warmte-links  { animation: warmte-links 3.2s ease-in-out infinite; }
-.warmte-rechts { animation: warmte-rechts 3.2s ease-in-out infinite; }
-
+   Zonder beweging blijft de stroom staan als een doorlopende sliert; dat leest
+   nog steeds als ontsnappende warmte. */
+@keyframes warmtestroom {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -44; }
+}
+.warmtestroom {
+  stroke-dasharray: 10 12;
+  animation: warmtestroom 2.6s linear infinite;
+}
 @media (prefers-reduced-motion: reduce) {
-  .warmte-op, .warmte-neer, .warmte-links, .warmte-rechts { animation: none; }
+  .warmtestroom { animation: none; stroke-dasharray: none; }
 }
 
 /* De maatregelkaarten komen bij hover iets omhoog. Als CSS-regel en niet als
