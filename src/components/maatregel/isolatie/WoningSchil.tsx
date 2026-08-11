@@ -4,8 +4,12 @@ import { ArrowRight, Check } from "lucide-react";
 import {
   BOUWDEEL,
   BRON,
+  bouwdeelVan,
   euro,
   ISOLATIE_MAATREGELEN,
+  jaren,
+  SCHIL_DELEN,
+  terugverdientijd,
   WONINGTYPES,
   type MaatregelId,
   type Woningtype,
@@ -95,6 +99,38 @@ export const WoningSchil = () => {
   // tweede aanzet. Dat ziet eruit als een fout, dus leggen we het uit.
   const gevelDubbel = gekozen.has("spouw") && gekozen.has("gevel");
 
+  /**
+   * De schil in vier delen, elk zo breed als zijn aandeel in wat er voor deze
+   * woning te besparen valt. De balk laat daarmee twee dingen tegelijk zien:
+   * hoever je bent, en waar de warmte eigenlijk weggaat. Bij de gevel telt de
+   * hoogste van spouw en gevel, want dat is wat het bouwdeel maximaal opbrengt.
+   */
+  const schil = useMemo(() => {
+    const delen = SCHIL_DELEN.map((deel) => {
+      const maatregelen = ISOLATIE_MAATREGELEN.filter((m) => bouwdeelVan(m.id) === deel.id);
+      const euroMax = Math.max(
+        ...maatregelen.map((m) => besparingVan(m, woningtype, glasStart).euro),
+      );
+      return { ...deel, euroMax, dicht: maatregelen.some((m) => gekozen.has(m.id)) };
+    });
+    const haalbaar = delen.reduce((som, d) => som + d.euroMax, 0);
+    const dicht = delen.reduce((som, d) => som + (d.dicht ? d.euroMax : 0), 0);
+    return { delen, haalbaar, aandeelDicht: dicht / haalbaar };
+  }, [gekozen, woningtype, glasStart]);
+
+  /**
+   * De maatregel die zichzelf het snelst terugverdient. De pagina zegt verderop
+   * "begin bij de maatregel met de kortste terugverdientijd", dus dan hoort de
+   * tool die ook aan te wijzen in plaats van het aan de bezoeker te laten.
+   */
+  const snelste = useMemo(() => {
+    const opTijd = ISOLATIE_MAATREGELEN.map((m) => {
+      const t = besparingVan(m, woningtype, glasStart);
+      return { id: m.id, tijd: terugverdientijd(t.kosten, t.euro) };
+    }).sort((a, b) => a.tijd - b.tijd);
+    return opTijd[0].id;
+  }, [woningtype, glasStart]);
+
   // Alles aanzetten kiest één route per bouwdeel: voor verreweg de meeste
   // woningen is dat de spouw, en de bron rekent zijn voorbeeldwoning ook zo door.
   const alleMogelijk = ISOLATIE_MAATREGELEN.reduce<MaatregelId[]>((lijst, m) => {
@@ -153,13 +189,21 @@ export const WoningSchil = () => {
       <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
         {/* Tekening plus teller */}
         <div
-          className="rounded-2xl p-5 md:p-6 lg:sticky lg:top-24"
+          className="rounded-2xl p-5 md:p-6 lg:sticky lg:top-20"
           style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
         >
-          <WoningTekening gekozen={gekozen} />
+          {/* De tekening krijgt een maximum: met de voortgangsbalk en de drie
+              cijfers erbij werd het kaartje anders hoger dan het scherm, en dan
+              schuift juist de teller onder de vouw terwijl je de lijst langs
+              scrollt. */}
+          <div className="mx-auto" style={{ maxWidth: 420 }}>
+            <WoningTekening gekozen={gekozen} />
+          </div>
+
+          <SchilBalk delen={schil.delen} haalbaar={schil.haalbaar} aandeel={schil.aandeelDicht} />
 
           <div
-            className="mt-5 rounded-xl p-5 text-center"
+            className="mt-4 rounded-xl px-5 pt-5 pb-4 text-center"
             style={{
               backgroundColor: gekozen.size > 0 ? "hsl(var(--accent) / 0.14)" : KLEUR.zand,
               border: `1px solid ${gekozen.size > 0 ? "hsl(var(--accent) / 0.45)" : KLEUR.rand}`,
@@ -174,15 +218,36 @@ export const WoningSchil = () => {
             </span>
             <div
               className="font-display mt-1 tabular-nums"
-              style={{ color: KLEUR.navy, fontWeight: 700, fontSize: 40, lineHeight: 1.1 }}
+              style={{ color: KLEUR.navy, fontWeight: 700, fontSize: 44, lineHeight: 1.05 }}
             >
               {euro(totaal.euroPerJaar)}
             </div>
-            <p className="mt-1 text-[14px]" style={{ color: KLEUR.navy, opacity: 0.7 }}>
-              {gekozen.size === 0
-                ? "Zet hiernaast een maatregel aan"
-                : `${totaal.m3PerJaar.toLocaleString("nl-NL")} m³ gas minder, investering ${euro(totaal.kosten)} vóór subsidie`}
-            </p>
+
+            {gekozen.size === 0 ? (
+              <p className="mt-1 text-[14px]" style={{ color: KLEUR.navy, opacity: 0.7 }}>
+                Zet hiernaast een maatregel aan
+              </p>
+            ) : (
+              <>
+                <div
+                  className="mt-4 grid grid-cols-3 gap-2 pt-4"
+                  style={{ borderTop: "1px solid hsl(var(--primary) / 0.12)" }}
+                >
+                  <Cijfer
+                    waarde={`${totaal.m3PerJaar.toLocaleString("nl-NL")} m³`}
+                    label="gas minder"
+                  />
+                  <Cijfer waarde={euro(totaal.kosten)} label="investering" />
+                  <Cijfer
+                    waarde={jaren(terugverdientijd(totaal.kosten, totaal.euroPerJaar))}
+                    label="terugverdiend"
+                  />
+                </div>
+                <p className="mt-3 text-[12px]" style={{ color: KLEUR.navy, opacity: 0.6 }}>
+                  Investering en terugverdientijd zijn vóór subsidie.
+                </p>
+              </>
+            )}
           </div>
 
           {gevelDubbel && (
@@ -211,7 +276,7 @@ export const WoningSchil = () => {
               // en een knop in een knop is ongeldige HTML.
               <div
                 key={m.id}
-                className="rounded-2xl transition-colors"
+                className="maatregel-kaart rounded-2xl"
                 style={{
                   backgroundColor: aan ? "hsl(var(--accent) / 0.12)" : KLEUR.wit,
                   border: `1px solid ${aan ? "hsl(var(--accent) / 0.5)" : KLEUR.rand}`,
@@ -237,8 +302,21 @@ export const WoningSchil = () => {
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                        <span className="text-[17px] font-semibold" style={{ color: KLEUR.navy }}>
-                          {m.naam}
+                        <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                          <span className="text-[17px] font-semibold" style={{ color: KLEUR.navy }}>
+                            {m.naam}
+                          </span>
+                          {m.id === snelste && (
+                            <span
+                              className="rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide whitespace-nowrap"
+                              style={{
+                                backgroundColor: "hsl(var(--accent) / 0.3)",
+                                color: KLEUR.navy,
+                              }}
+                            >
+                              Snelst terugverdiend
+                            </span>
+                          )}
                         </span>
                         <span
                           className="text-[15px] font-bold tabular-nums whitespace-nowrap"
@@ -261,11 +339,25 @@ export const WoningSchil = () => {
                           >
                             <strong>Wat je merkt:</strong> {m.merkbaar}
                           </span>
+                          {/* De drie cijfers stonden als doorlopende zin in de
+                              grijze regel eronder. Als strook zijn ze te
+                              vergelijken tussen maatregelen zonder te lezen. */}
+                          <span
+                            className="mt-3 grid grid-cols-3 gap-2 rounded-lg px-3 py-2.5"
+                            style={{ backgroundColor: "hsl(var(--primary) / 0.05)" }}
+                          >
+                            <Cijfer waarde={`${t.m3} m³`} label="gas per jaar" klein />
+                            <Cijfer waarde={euro(t.kosten)} label="investering" klein />
+                            <Cijfer
+                              waarde={jaren(terugverdientijd(t.kosten, t.euro))}
+                              label="terugverdiend"
+                              klein
+                            />
+                          </span>
                           <span
                             className="mt-2 block text-[13px] leading-relaxed"
                             style={{ color: KLEUR.navy, opacity: 0.6 }}
                           >
-                            {t.m3} m³ gas per jaar. Investering {euro(t.kosten)} vóór subsidie.{" "}
                             {m.uitgangspunt}
                             {m.noot ? ` ${m.noot}` : ""}
                           </span>
@@ -371,6 +463,111 @@ export const WoningSchil = () => {
     </>
   );
 };
+
+/** Eén getal met zijn label eronder: in de teller en op de maatregelkaarten. */
+const Cijfer = ({
+  waarde,
+  label,
+  klein = false,
+}: {
+  waarde: string;
+  label: string;
+  klein?: boolean;
+}) => (
+  <span className="block text-center">
+    <span
+      className="block font-semibold tabular-nums leading-tight"
+      style={{ color: KLEUR.navy, fontSize: klein ? 14 : 16 }}
+    >
+      {waarde}
+    </span>
+    <span
+      className="mt-0.5 block leading-tight"
+      style={{ color: KLEUR.navy, opacity: 0.6, fontSize: klein ? 11 : 12 }}
+    >
+      {label}
+    </span>
+  </span>
+);
+
+/**
+ * De schil als één balk van vier delen. Elk deel is zo breed als zijn aandeel
+ * in wat er voor deze woning te besparen valt, dus de balk laat twee dingen
+ * tegelijk zien: hoever je bent, en waar de warmte eigenlijk weggaat.
+ *
+ * De balk zelf is aria-hidden; de stand staat als percentage en als lijst met
+ * bouwdelen in gewone tekst eronder, en dat leest een schermlezer beter voor
+ * dan een rij vlakken.
+ */
+const SchilBalk = ({
+  delen,
+  haalbaar,
+  aandeel,
+}: {
+  delen: { id: string; label: string; euroMax: number; dicht: boolean }[];
+  haalbaar: number;
+  aandeel: number;
+}) => (
+  <div className="mt-5">
+    <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+      <span
+        className="text-[12px] font-bold uppercase tracking-wider"
+        style={{ color: KLEUR.navy, opacity: 0.6 }}
+      >
+        Schil dicht
+      </span>
+      <span className="text-[13px] font-bold tabular-nums" style={{ color: KLEUR.navy }}>
+        {Math.round(aandeel * 100)}% van {euro(haalbaar)} per jaar
+      </span>
+    </div>
+
+    <div className="mt-2 flex gap-1" aria-hidden="true">
+      {delen.map((deel) => (
+        <div
+          key={deel.id}
+          className="h-2.5 rounded-full transition-colors duration-300"
+          style={{
+            flex: `${deel.euroMax} 1 0%`,
+            backgroundColor: deel.dicht ? KLEUR.goud : "hsl(var(--primary) / 0.1)",
+          }}
+        />
+      ))}
+    </div>
+
+    <ul
+      className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1"
+      style={{ listStyle: "none", padding: 0, margin: "10px 0 0 0" }}
+    >
+      {delen.map((deel) => (
+        <li key={deel.id} className="flex items-center gap-1.5">
+          <span
+            className="rounded-full transition-colors duration-300"
+            style={{
+              width: 8,
+              height: 8,
+              backgroundColor: deel.dicht ? KLEUR.goud : "hsl(var(--primary) / 0.18)",
+            }}
+            aria-hidden="true"
+          />
+          <span
+            className="text-[13px]"
+            style={{ color: KLEUR.navy, opacity: deel.dicht ? 0.85 : 0.5 }}
+          >
+            {deel.label}
+            <span className="sr-only">{deel.dicht ? " geïsoleerd" : " nog niet geïsoleerd"}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+
+    {/* De bedragen per bouwdeel staan bewust niet in de legenda: die staan al in
+        de teller en op de kaarten, en drie keer hetzelfde getal is ruis. Deze
+        regel maakt in plaats daarvan de breedtes leesbaar. */}
+    <p className="mt-2 text-[12px]" style={{ color: KLEUR.navy, opacity: 0.55 }}>
+      Elk deel is zo breed als zijn aandeel in wat je kunt besparen.
+    </p>
+  </div>
+);
 
 /** Rij met keuzeknoppen binnen een maatregel. */
 const Keuzerij = ({

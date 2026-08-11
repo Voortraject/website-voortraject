@@ -27,6 +27,7 @@ const toon = () => render(<MemoryRouter><Isolatie /></MemoryRouter>);
 const dak = ISOLATIE_MAATREGELEN.find((m) => m.id === "dak")!;
 const spouw = ISOLATIE_MAATREGELEN.find((m) => m.id === "spouw")!;
 const gevel = ISOLATIE_MAATREGELEN.find((m) => m.id === "gevel")!;
+const vloer = ISOLATIE_MAATREGELEN.find((m) => m.id === "vloer")!;
 
 const knop = (naam: string) => screen.getByRole("button", { name: new RegExp(`^${naam}`) });
 
@@ -58,6 +59,54 @@ describe("isolatiepagina: de configurator", () => {
     expect(screen.getByText(euro(dak.perType.vrijstaand.euro))).toBeInTheDocument();
     // Het cijfer van de hoekwoning hoort dan weg te zijn als totaal.
     expect(dak.perType.vrijstaand.euro).not.toBe(dak.perType.hoekwoning.euro);
+  });
+
+  it("toont de terugverdientijd op de kaart en op het totaal", () => {
+    toon();
+
+    // Dak los: 6.500 / 480 is bijna 14 jaar.
+    fireEvent.click(knop(dak.naam));
+    const dakTijd = Math.round(
+      dak.perType.hoekwoning.kosten / dak.perType.hoekwoning.euro,
+    );
+    expect(screen.getAllByText(`${dakTijd} jaar`).length).toBeGreaterThan(0);
+
+    // Met vloer erbij loopt het totaal apart van de losse kaarten.
+    fireEvent.click(knop(vloer.naam));
+    const samenTijd = Math.round(
+      (dak.perType.hoekwoning.kosten + vloer.perType.hoekwoning.kosten) /
+        (dak.perType.hoekwoning.euro + vloer.perType.hoekwoning.euro),
+    );
+    expect(screen.getByText(`${samenTijd} jaar`)).toBeInTheDocument();
+
+    // Zonder dit voorbehoud is het getal niet waar voor het werkgebied: met
+    // Nij Begun wordt tot 100 procent vergoed.
+    expect(
+      screen.getByText(/Investering en terugverdientijd zijn vóór subsidie/),
+    ).toBeInTheDocument();
+  });
+
+  it("wijst de maatregel aan die zichzelf het snelst terugverdient", () => {
+    toon();
+    // De pagina zegt verderop "begin bij de maatregel met de kortste
+    // terugverdientijd", dus dan hoort de tool die ook aan te wijzen.
+    expect(screen.getAllByText("Snelst terugverdiend")).toHaveLength(1);
+    expect(knop(spouw.naam).textContent).toMatch(/Snelst terugverdiend/);
+  });
+
+  it("laat in de voortgangsbalk zien hoever de schil dicht is", () => {
+    toon();
+    // Hoekwoning: dak 480, gevel 750, vloer 180, glas 90 is samen € 1.500.
+    expect(screen.getByText(/^0% van/)).toBeInTheDocument();
+
+    fireEvent.click(knop(dak.naam));
+    const haalbaar =
+      dak.perType.hoekwoning.euro +
+      gevel.perType.hoekwoning.euro +
+      vloer.perType.hoekwoning.euro +
+      90;
+    const deel = Math.round((dak.perType.hoekwoning.euro / haalbaar) * 100);
+    expect(screen.getByText(`${deel}% van ${euro(haalbaar)} per jaar`)).toBeInTheDocument();
   });
 
   it("laat de tekening meebewegen met wat er aan staat", () => {
@@ -117,13 +166,7 @@ describe("isolatiepagina: de configurator", () => {
 
     // De investering telt wél op, want je betaalt allebei de ingrepen.
     const kosten = spouw.perType.hoekwoning.kosten + gevel.perType.hoekwoning.kosten;
-    expect(
-      screen.getByText((_, el) =>
-        Boolean(
-          el?.tagName === "P" && el.textContent?.includes(`investering ${euro(kosten)}`),
-        ),
-      ),
-    ).toBeInTheDocument();
+    expect(screen.getByText(euro(kosten))).toBeInTheDocument();
   });
 
   it("legt uit waarom de teller blijft staan bij spouw plus gevel", () => {

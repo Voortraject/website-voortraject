@@ -49,6 +49,21 @@ export const BOUWDEEL: Partial<Record<MaatregelId, string>> = {
   gevel: "gevel",
 };
 
+/** Het bouwdeel waar een maatregel over gaat; de meeste staan alleen. */
+export const bouwdeelVan = (id: MaatregelId) => BOUWDEEL[id] ?? id;
+
+/**
+ * De vier delen waar de schil uit bestaat, in de volgorde waarin ze in de
+ * voortgangsbalk staan. Dat is dezelfde volgorde als de maatregelen hieronder,
+ * zodat de balk en de lijst elkaar niet tegenspreken.
+ */
+export const SCHIL_DELEN: { id: string; label: string }[] = [
+  { id: "dak", label: "Dak" },
+  { id: "gevel", label: "Gevel" },
+  { id: "vloer", label: "Vloer" },
+  { id: "glas", label: "Glas" },
+];
+
 interface PerType {
   /** Besparing in kubieke meter gas per jaar. */
   m3: number;
@@ -171,3 +186,14 @@ export const ISOLATIE_MAATREGELEN: IsolatieMaatregel[] = [
 
 export const euro = (bedrag: number) =>
   `€ ${Math.round(bedrag).toLocaleString("nl-NL")}`;
+
+/**
+ * Hoeveel jaar de investering erover doet om zichzelf terug te verdienen, vóór
+ * subsidie. Bewust zonder rente of prijsstijging: dat suggereert een precisie
+ * die deze gemiddelden niet hebben. Voor een deel van het werkgebied vergoedt
+ * Nij Begun tot 100 procent, en dan valt dit getal compleet anders uit.
+ */
+export const terugverdientijd = (kosten: number, euroPerJaar: number) =>
+  Math.round(kosten / euroPerJaar);
+
+export const jaren = (aantal: number) => `${aantal} jaar`;

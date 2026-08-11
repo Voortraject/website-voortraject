@@ -401,32 +401,86 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
 
       {/* ============ WARMTE DIE ONTSNAPT ============ */}
       {/* Boven de nok, met een gat waar de schoorsteen staat. */}
-      {[0.12, 0.55, 0.85].map((a) => {
+      {[0.12, 0.55, 0.85].map((a, i) => {
         const [x, y] = P(a, 0.5, H + NOK);
-        return <Pijl key={`dak${a}`} x={x} y={y - 20} richting="op" zichtbaar={lek(!aan("dak"))} />;
+        return (
+          <Pijl
+            key={`dak${a}`}
+            x={x}
+            y={y - 20}
+            richting="op"
+            zichtbaar={lek(!aan("dak"))}
+            vertraging={i * 0.5}
+          />
+        );
       })}
       {/* Links en rechts van de woning, op muurhoogte. */}
-      {[40, 74].map((z) => {
+      {[40, 74].map((z, i) => {
         const [, y] = P(0, 0, z);
-        return <Pijl key={`l${z}`} x={P(0, 0, z)[0] - 28} y={y} richting="links" zichtbaar={lek(!gevelAan)} />;
+        return (
+          <Pijl
+            key={`l${z}`}
+            x={P(0, 0, z)[0] - 28}
+            y={y}
+            richting="links"
+            zichtbaar={lek(!gevelAan)}
+            vertraging={i * 0.6 + 0.2}
+          />
+        );
       })}
-      {[40, 74].map((z) => {
+      {[40, 74].map((z, i) => {
         const [x, y] = P(1, 1, z);
-        return <Pijl key={`r${z}`} x={x + 28} y={y} richting="rechts" zichtbaar={lek(!gevelAan)} />;
+        return (
+          <Pijl
+            key={`r${z}`}
+            x={x + 28}
+            y={y}
+            richting="rechts"
+            zichtbaar={lek(!gevelAan)}
+            vertraging={i * 0.6 + 0.9}
+          />
+        );
       })}
       {/* Uit de ramen omhoog. */}
-      {[0.175, 0.465].map((a) => {
+      {[0.175, 0.465].map((a, i) => {
         const [x, y] = P(a, 0, 85);
-        return <Pijl key={`g${a}`} x={x} y={y - 14} richting="op" zichtbaar={lek(!aan("glas"))} kort />;
+        return (
+          <Pijl
+            key={`g${a}`}
+            x={x}
+            y={y - 14}
+            richting="op"
+            zichtbaar={lek(!aan("glas"))}
+            kort
+            vertraging={i * 0.7 + 0.35}
+          />
+        );
       })}
       {/* Onder de vloer door. */}
-      {[0.35, 0.78].map((a) => {
+      {[0.35, 0.78].map((a, i) => {
         const [x, y] = P(a, 0, 0);
-        return <Pijl key={`v${a}`} x={x} y={y + 26} richting="neer" zichtbaar={lek(!aan("vloer"))} />;
+        return (
+          <Pijl
+            key={`v${a}`}
+            x={x}
+            y={y + 26}
+            richting="neer"
+            zichtbaar={lek(!aan("vloer"))}
+            vertraging={i * 0.55 + 0.15}
+          />
+        );
       })}
       {(() => {
         const [x, y] = P(1, 0.55, 0);
-        return <Pijl x={x} y={y + 26} richting="neer" zichtbaar={lek(!aan("vloer"))} />;
+        return (
+          <Pijl
+            x={x}
+            y={y + 26}
+            richting="neer"
+            zichtbaar={lek(!aan("vloer"))}
+            vertraging={1.25}
+          />
+        );
       })()}
     </svg>
   );
@@ -438,12 +492,15 @@ const Pijl = ({
   richting,
   zichtbaar,
   kort = false,
+  vertraging = 0,
 }: {
   x: number;
   y: number;
   richting: "op" | "neer" | "links" | "rechts";
   zichtbaar: number;
   kort?: boolean;
+  /** Seconden voorsprong, zodat de pijlen niet in de pas lopen. */
+  vertraging?: number;
 }) => {
   const l = kort ? 13 : 22;
   const d: Record<typeof richting, string> = {
@@ -454,14 +511,19 @@ const Pijl = ({
   };
   return (
     <path
-      className="schil-overgang"
+      className={`schil-overgang warmte-${richting}`}
       d={d[richting]}
       stroke={WARM}
       strokeWidth="2.6"
       strokeLinecap="round"
       strokeLinejoin="round"
       fill="none"
-      style={{ opacity: zichtbaar }}
+      style={{
+        opacity: zichtbaar,
+        animationDelay: `${vertraging}s`,
+        // Een pijl die niet te zien is hoeft ook niet te bewegen.
+        animationPlayState: zichtbaar ? "running" : "paused",
+      }}
       aria-hidden="true"
     />
   );

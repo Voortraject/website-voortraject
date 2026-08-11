@@ -25,6 +25,39 @@
   .schil-overgang { transition: none; }
 }
 
+/* De warmte die ontsnapt drijft zachtjes naar buiten, zodat een ongeïsoleerd
+   huis leeft en het stilvallen bij isoleren ook echt opvalt. Alleen transform,
+   want de zichtbaarheid loopt via een inline opacity die een animatie zou
+   overrulen. */
+@keyframes warmte-op     { 0%, 100% { transform: translateY(3px);  } 50% { transform: translateY(-3px); } }
+@keyframes warmte-neer   { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(3px);  } }
+@keyframes warmte-links  { 0%, 100% { transform: translateX(3px);  } 50% { transform: translateX(-3px); } }
+@keyframes warmte-rechts { 0%, 100% { transform: translateX(-3px); } 50% { transform: translateX(3px);  } }
+
+.warmte-op     { animation: warmte-op 3.2s ease-in-out infinite; }
+.warmte-neer   { animation: warmte-neer 3.2s ease-in-out infinite; }
+.warmte-links  { animation: warmte-links 3.2s ease-in-out infinite; }
+.warmte-rechts { animation: warmte-rechts 3.2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .warmte-op, .warmte-neer, .warmte-links, .warmte-rechts { animation: none; }
+}
+
+/* De maatregelkaarten komen bij hover iets omhoog. Als CSS-regel en niet als
+   inline stijl, want rand en achtergrond staan al inline en zouden een
+   hover-variant overrulen. */
+.maatregel-kaart {
+  transition: box-shadow 200ms ease, transform 200ms ease, background-color 200ms ease,
+    border-color 200ms ease;
+}
+.maatregel-kaart:hover {
+  box-shadow: 0 6px 20px hsl(var(--primary) / 0.09);
+  transform: translateY(-1px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .maatregel-kaart:hover { transform: none; }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
