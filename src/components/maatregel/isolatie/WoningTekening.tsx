@@ -435,17 +435,6 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
         </g>
       ))}
 
-      {/* Plafond: zonder deze lijn is de snede één leeg vlak en lijkt de zolder
-          bij de woonkamer te horen. */}
-      <line
-        x1={voorTopR[0]}
-        y1={voorTopR[1]}
-        x2={achterTopR[0]}
-        y2={achterTopR[1]}
-        stroke={LIJN}
-        strokeWidth="1.1"
-        opacity="0.55"
-      />
       <polygon
         points={pad(voorOnderR, achterOnderR, achterTopR, nokSnede, voorTopR)}
         fill="none"
@@ -502,22 +491,6 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
                 <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={VOEG} strokeWidth="0.45" />
               );
             })}
-          </g>
-        );
-      })}
-
-      {/* Muurankers: de smeedijzeren kruisjes waarmee de balklaag aan de gevel
-          hangt. Klein detail, maar het is wat een bakstenen gevel van vóór de
-          jaren zeventig herkenbaar maakt. */}
-      {[0.32, 0.625].map((a) => {
-        // Op de penanten tussen de openingen, en laag genoeg om onder de goot
-        // uit te komen.
-        const [x, y] = P(a, 0, 62);
-        return (
-          <g key={`anker${a}`} stroke={IJZER} strokeWidth="1.3" strokeLinecap="round" opacity="0.7">
-            <line x1={x} y1={y - 5} x2={x} y2={y + 5} />
-            <line x1={x - 2.4} y1={y - 5.4} x2={x + 2.4} y2={y - 4.6} />
-            <line x1={x - 2.4} y1={y + 4.6} x2={x + 2.4} y2={y + 5.4} />
           </g>
         );
       })}
@@ -865,87 +838,115 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
         );
       })()}
 
-      {/* Nokvorsten: losse vorsten met een naad ertussen, niet één balk. */}
+      {/* Nokvorst: één doorlopende kap met naden erin. Als losse vorsten met
+          ruimte ertussen stak er een rij tanden boven het dak uit. */}
       {(() => {
-        const stuks = 12;
-        return Array.from({ length: stuks }, (_, i) => {
-          const van = i / stuks + 0.006;
-          const tot = (i + 1) / stuks - 0.006;
-          const punt = (a: number, dy: number): Punt => {
-            const [x, y] = P(a, 0.5, H + NOK);
-            return [x, y + dy];
-          };
-          return (
-            <polygon
-              key={`vorst${i}`}
-              points={pad(punt(van, 0), punt(tot, 0), punt(tot, -7), punt(van, -7))}
-              fill={panDonker}
-              stroke={panVoeg}
-              strokeWidth="0.6"
-            />
-          );
-        });
-      })()}
-
-      {/* Slagschaduw van de schoorsteen op de pannen. Eén vlak dat niets
-          voorstelt maar alles doet: zonder schaduw plakt de schoorsteen op het
-          dak in plaats van erop te staan. */}
-      {(() => {
-        const [x, y] = P(0.32, 0.5, H + NOK - 4);
-        const S = (b: number, h: number): Punt => [x + 21 * b, y + 5 * b - h];
-        const weg = (punt: Punt): Punt => [punt[0] + 23, punt[1] + 5];
+        const HOOG = 5.5;
+        const punt = (a: number, dy: number): Punt => {
+          const [x, y] = P(a, 0.5, H + NOK);
+          return [x, y + dy];
+        };
         return (
-          <polygon
-            points={pad(S(0.12, -3), S(1.14, -3), weg(S(1.14, -3)), weg(S(0.12, -3)))}
-            fill="#000000"
-            opacity="0.13"
-          />
+          <g>
+            <polygon
+              points={pad(punt(0, 0), punt(1, 0), punt(1, -HOOG), punt(0, -HOOG))}
+              fill={panDonker}
+            />
+            <polygon
+              points={pad(punt(0, -HOOG), punt(1, -HOOG), punt(1, -HOOG + 1.4), punt(0, -HOOG + 1.4))}
+              fill="#FFFFFF"
+              opacity="0.12"
+            />
+            {Array.from({ length: 11 }, (_, i) => {
+              const a = (i + 1) / 12;
+              const [x1, y1] = punt(a, 0);
+              const [x2, y2] = punt(a, -HOOG);
+              return (
+                <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={panVoeg} strokeWidth="0.8" />
+              );
+            })}
+          </g>
         );
       })()}
 
-      {/* Schoorsteen: metselwerk met een loodslabbe waar hij door het dakvlak
-          steekt, en een afdekplaat met een rookkanaal erin. Zonder die slabbe
-          lekt een schoorsteen in het echt, en zonder afdekplaat regent hij vol. */}
+      {/* Schoorsteen.
+          Hij stond eerder met een eigen hulpfunctie op het beeld getekend in
+          plaats van in het assenstelsel van de woning. Daardoor klopte de
+          zijkant niet: de afdekplaat stak als een vin opzij. Nu is het een doos
+          in a, b en z, net als de rest, met de drie vlakken die je vanaf dit
+          standpunt ziet. */}
       {(() => {
-        const [x, y] = P(0.32, 0.5, H + NOK - 4);
-        /** Punt op de schoorsteen: b langs de breedte, h omhoog. */
-        const S = (b: number, h: number): Punt => [x + 21 * b, y + 5 * b - h];
+        const [a1, a2] = [0.27, 0.395];
+        const [b1, b2] = [0.42, 0.58];
+        const voet = H + NOK - 12;
+        const top = H + NOK + 26;
+
+        /** De drie zichtbare vlakken van een doos tussen twee hoogtes. */
+        const doos = (
+          va: number,
+          ta: number,
+          vb: number,
+          tb: number,
+          onder: number,
+          boven: number,
+        ) => ({
+          voor: pad(P(va, vb, onder), P(ta, vb, onder), P(ta, vb, boven), P(va, vb, boven)),
+          zij: pad(P(ta, vb, onder), P(ta, tb, onder), P(ta, tb, boven), P(ta, vb, boven)),
+          deksel: pad(P(va, vb, boven), P(ta, vb, boven), P(ta, tb, boven), P(va, tb, boven)),
+        });
+
+        const schacht = doos(a1, a2, b1, b2, voet, top);
+        const slab = doos(a1 - 0.014, a2 + 0.014, b1 - 0.022, b2 + 0.022, voet + 2, voet + 9);
+        const plaat = doos(a1 - 0.014, a2 + 0.014, b1 - 0.022, b2 + 0.022, top, top + 4);
+
         return (
           <g>
-            {/* Loodslabbe: de kraag waarmee het dak op de schoorsteen aansluit. */}
+            {/* Slagschaduw op de pannen: zonder schaduw plakt de schoorsteen op
+                het dak in plaats van erop te staan. */}
             <polygon
-              points={pad(S(-0.14, -4), S(1.14, -4), S(1.14, 7), S(-0.14, 7))}
-              fill={LOOD}
-              stroke="#7E858B"
-              strokeWidth="0.7"
+              points={pad(
+                P(a1, b1, voet + 6),
+                P(a2, b1, voet + 6),
+                P(a2 + 0.11, b1 - 0.16, voet + 6),
+                P(a1 + 0.11, b1 - 0.16, voet + 6),
+              )}
+              fill="#000000"
+              opacity="0.13"
             />
-            {/* De schacht, met een voegenpatroon in de breedte. */}
-            <polygon points={pad(S(0, 0), S(1, 0), S(1, 32), S(0, 37))} fill={STEEN_DONKER} />
-            {[9, 18, 27].map((h) => (
+
+            {/* Loodslabbe: de kraag waarmee het dak op de schoorsteen aansluit. */}
+            <polygon points={slab.voor} fill={LOOD} />
+            <polygon points={slab.zij} fill="#878E93" />
+            <polygon points={slab.deksel} fill="#B2B8BC" />
+
+            {/* De schacht, met voegen die met het perspectief meelopen. */}
+            <polygon points={schacht.voor} fill={STEEN_DONKER} />
+            <polygon points={schacht.zij} fill="#8A6145" />
+            {[10, 20, 30].map((h) => (
               <line
                 key={h}
-                x1={S(0, h + 5)[0]}
-                y1={S(0, h + 5)[1]}
-                x2={S(1, h)[0]}
-                y2={S(1, h)[1]}
+                x1={P(a1, b1, voet + h)[0]}
+                y1={P(a1, b1, voet + h)[1]}
+                x2={P(a2, b1, voet + h)[0]}
+                y2={P(a2, b1, voet + h)[1]}
                 stroke={VOEG}
                 strokeWidth="0.7"
-                opacity="0.5"
+                opacity="0.45"
               />
             ))}
-            {/* Afdekplaat, iets breder dan de schacht. */}
+
+            {/* Afdekplaat, iets over de schacht heen, met het rookkanaal erin. */}
+            <polygon points={plaat.voor} fill="#6F5340" />
+            <polygon points={plaat.zij} fill="#5B4334" />
+            <polygon points={plaat.deksel} fill="#8A6749" />
             <polygon
-              points={pad(S(-0.07, 34), S(1.07, 29), S(1.07, 33), S(-0.07, 38))}
-              fill="#6F5340"
-            />
-            <polygon
-              points={pad(S(-0.07, 38), S(1.07, 33), S(1.35, 38), S(0.21, 43))}
-              fill="#8A6749"
-            />
-            {/* Het rookkanaal: donker gat in de plaat. */}
-            <polygon
-              points={pad(S(0.3, 38.6), S(0.72, 36.7), S(0.83, 38.6), S(0.41, 40.5))}
-              fill="#3A2C22"
+              points={pad(
+                P(a1 + 0.028, b1 + 0.05, top + 4),
+                P(a2 - 0.028, b1 + 0.05, top + 4),
+                P(a2 - 0.028, b2 - 0.05, top + 4),
+                P(a1 + 0.028, b2 - 0.05, top + 4),
+              )}
+              fill="#332720"
             />
           </g>
         );
