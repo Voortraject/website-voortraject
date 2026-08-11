@@ -35,10 +35,10 @@
    nog steeds als ontsnappende warmte. */
 @keyframes warmtestroom {
   from { stroke-dashoffset: 0; }
-  to   { stroke-dashoffset: -44; }
+  to   { stroke-dashoffset: -60; }
 }
 .warmtestroom {
-  stroke-dasharray: 10 12;
+  stroke-dasharray: 20 10;
   animation: warmtestroom 2.6s linear infinite;
 }
 @media (prefers-reduced-motion: reduce) {
