@@ -79,18 +79,51 @@ describe("isolatiepagina: de configurator", () => {
     expect(screen.getByText(new RegExp(spouw.noot!.slice(0, 40)))).toBeInTheDocument();
   });
 
-  it("laat spouw- en gevelisolatie elkaar uitsluiten", () => {
+  it("laat spouw- en gevelisolatie samen aanzetten", () => {
+    toon();
+
+    // Milieu Centraal zegt het met zoveel woorden: buitengevelisolatie kun je
+    // combineren met spouwmuurisolatie, alleen wordt de buitenlaag dan dunner.
+    // De configurator mag de een dus niet stilzwijgend uitzetten.
+    fireEvent.click(knop(spouw.naam));
+    fireEvent.click(knop(gevel.naam));
+
+    expect(knop(spouw.naam)).toHaveAttribute("aria-pressed", "true");
+    expect(knop(gevel.naam)).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("telt de gevel één keer als spouw en gevel allebei aan staan", () => {
     toon();
 
     fireEvent.click(knop(spouw.naam));
-    expect(knop(spouw.naam)).toHaveAttribute("aria-pressed", "true");
-
-    // Je doet het één of het ander: een woning zonder spouw isoleer je aan de
-    // gevel. Allebei optellen zou een besparing beloven die je niet krijgt.
     fireEvent.click(knop(gevel.naam));
-    expect(knop(gevel.naam)).toHaveAttribute("aria-pressed", "true");
-    expect(knop(spouw.naam)).toHaveAttribute("aria-pressed", "false");
+
+    // Allebei kom je op dezelfde geïsoleerde gevel uit, dus de besparing
+    // verdubbelt niet: het hoogste van de twee telt.
+    const samen = spouw.perType.hoekwoning.euro + gevel.perType.hoekwoning.euro;
     expect(screen.getByText(euro(gevel.perType.hoekwoning.euro))).toBeInTheDocument();
+    expect(screen.queryByText(euro(samen))).not.toBeInTheDocument();
+
+    // De investering telt wél op, want je betaalt allebei de ingrepen.
+    const kosten = spouw.perType.hoekwoning.kosten + gevel.perType.hoekwoning.kosten;
+    expect(
+      screen.getByText((_, el) =>
+        Boolean(
+          el?.tagName === "P" && el.textContent?.includes(`investering ${euro(kosten)}`),
+        ),
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("legt uit waarom de teller blijft staan bij spouw plus gevel", () => {
+    toon();
+
+    fireEvent.click(knop(gevel.naam));
+    expect(screen.queryByText(/De gevel telt één keer mee/)).not.toBeInTheDocument();
+
+    // Zonder deze uitleg lijkt een teller die niet meebeweegt een fout.
+    fireEvent.click(knop(spouw.naam));
+    expect(screen.getByText(/De gevel telt één keer mee/)).toBeInTheDocument();
   });
 
   it("laat de glasbesparing afhangen van wat er nu in zit", () => {
@@ -195,7 +228,7 @@ describe("isolatiepagina: eerlijk over subsidie", () => {
       a.href.includes("milieucentraal.nl"),
     );
     expect(bron).toBeDefined();
-    expect(screen.getByText(/gecontroleerd op 10 augustus 2026/)).toBeInTheDocument();
+    expect(screen.getByText(/gecontroleerd op 11 augustus 2026/)).toBeInTheDocument();
     expect(screen.getByText(/gasprijs van € 1,37 per m³/)).toBeInTheDocument();
   });
 });
@@ -223,6 +256,20 @@ describe("isolatiegegevens", () => {
         expect(waarden.m3, `${m.naam} / ${type}: gasbesparing ontbreekt`).toBeGreaterThan(0);
         expect(waarden.kosten, `${m.naam} / ${type}: kosten ontbreken`).toBeGreaterThan(0);
       }
+    }
+  });
+
+  it("laat gevelisolatie nooit onder spouwmuurisolatie zakken", () => {
+    // De gevel aan de buitenkant isoleren brengt je op een hogere isolatiewaarde
+    // dan het vullen van de spouw, bij elk woningtype. Stond het gevelcijfer
+    // vlak op het hoekwoning-bedrag van de bron, dan kwam een vrijstaande woning
+    // op minder uit dan met spouwisolatie. Dat kan niet.
+    for (const type of Object.keys(spouw.perType) as (keyof typeof spouw.perType)[]) {
+      expect(
+        gevel.perType[type].m3,
+        `${type}: gevelisolatie bespaart minder dan spouwmuurisolatie`,
+      ).toBeGreaterThanOrEqual(spouw.perType[type].m3);
+      expect(gevel.perType[type].euro).toBeGreaterThanOrEqual(spouw.perType[type].euro);
     }
   });
 

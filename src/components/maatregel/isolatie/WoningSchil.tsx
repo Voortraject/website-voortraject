@@ -2,10 +2,10 @@ import { useMemo, useState } from "react";
 import { ArrowRight, Check } from "lucide-react";
 
 import {
+  BOUWDEEL,
   BRON,
   euro,
   ISOLATIE_MAATREGELEN,
-  SLUIT_UIT,
   WONINGTYPES,
   type MaatregelId,
   type Woningtype,
@@ -62,36 +62,44 @@ export const WoningSchil = () => {
   const wissel = (id: MaatregelId) =>
     setGekozen((vorige) => {
       const volgende = new Set(vorige);
-      if (volgende.has(id)) {
-        volgende.delete(id);
-      } else {
-        volgende.add(id);
-        // Spouw en gevel sluiten elkaar uit: je doet het één of het ander.
-        const botst = SLUIT_UIT[id];
-        if (botst) volgende.delete(botst);
-      }
+      if (volgende.has(id)) volgende.delete(id);
+      else volgende.add(id);
       return volgende;
     });
 
   const totaal = useMemo(() => {
-    let euroPerJaar = 0;
-    let m3PerJaar = 0;
+    // Maatregelen op hetzelfde bouwdeel tellen niet op. Spouw en gevel gaan
+    // over dezelfde muur: doe je ze allebei, dan is de eindsituatie dezelfde
+    // geïsoleerde gevel, dus de grootste van de twee telt en de andere
+    // verdwijnt daarin. Kosten tellen wél gewoon op, want je betaalt beide.
+    const perBouwdeel = new Map<string, { m3: number; euro: number }>();
     let kosten = 0;
     for (const m of ISOLATIE_MAATREGELEN) {
       if (!gekozen.has(m.id)) continue;
       const t = besparingVan(m, woningtype, glasStart);
-      euroPerJaar += t.euro;
-      m3PerJaar += t.m3;
       kosten += t.kosten;
+      const deel = BOUWDEEL[m.id] ?? m.id;
+      const staand = perBouwdeel.get(deel);
+      if (!staand || t.m3 > staand.m3) perBouwdeel.set(deel, { m3: t.m3, euro: t.euro });
+    }
+    let euroPerJaar = 0;
+    let m3PerJaar = 0;
+    for (const deel of perBouwdeel.values()) {
+      euroPerJaar += deel.euro;
+      m3PerJaar += deel.m3;
     }
     return { euroPerJaar, m3PerJaar, kosten };
   }, [gekozen, woningtype, glasStart]);
 
-  // Alles aanzetten slaat de tweede helft van een uitsluitend paar over, anders
-  // zou de teller een besparing optellen die je in werkelijkheid niet krijgt.
+  // Staan spouw en gevel allebei aan, dan blijft de teller staan als je de
+  // tweede aanzet. Dat ziet eruit als een fout, dus leggen we het uit.
+  const gevelDubbel = gekozen.has("spouw") && gekozen.has("gevel");
+
+  // Alles aanzetten kiest één route per bouwdeel: voor verreweg de meeste
+  // woningen is dat de spouw, en de bron rekent zijn voorbeeldwoning ook zo door.
   const alleMogelijk = ISOLATIE_MAATREGELEN.reduce<MaatregelId[]>((lijst, m) => {
-    const botst = SLUIT_UIT[m.id];
-    if (botst && lijst.includes(botst)) return lijst;
+    const deel = BOUWDEEL[m.id];
+    if (deel && lijst.some((id) => BOUWDEEL[id] === deel)) return lijst;
     return [...lijst, m.id];
   }, []);
   const allesAan = alleMogelijk.every((id) => gekozen.has(id));
@@ -176,6 +184,21 @@ export const WoningSchil = () => {
                 : `${totaal.m3PerJaar.toLocaleString("nl-NL")} m³ gas minder, investering ${euro(totaal.kosten)} vóór subsidie`}
             </p>
           </div>
+
+          {gevelDubbel && (
+            <p
+              className="mt-3 text-[13px] leading-relaxed"
+              style={{ color: KLEUR.navy, opacity: 0.7 }}
+            >
+              <strong>De gevel telt één keer mee.</strong> Spouwmuurisolatie en
+              gevelisolatie gaan over dezelfde muur. Je kunt ze prima combineren, maar je
+              komt dan op dezelfde geïsoleerde gevel uit, dus de besparing verdubbelt niet:
+              de teller rekent met het hoogste van de twee. Wat de spouw vullen wél doet, is
+              de laag aan de buitenkant dunner maken, 12 in plaats van 17 centimeter. De
+              investering hierboven is de som van beide en valt in de praktijk daardoor
+              lager uit.
+            </p>
+          )}
         </div>
 
         {/* Maatregelen */}

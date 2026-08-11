@@ -6,9 +6,9 @@
  * de landelijke en gemeentelijke regelingen. Alles hieronder is dus vóór
  * subsidie gerekend; wat je adres oplevert, komt uit de subsidiecheck.
  *
- * Bron: Milieu Centraal, pagina's over dak-, spouwmuur-, vloerisolatie en glas.
+ * Bron: Milieu Centraal, pagina's over dak-, spouwmuur-, vloerisolatie, gevel en glas.
  * https://www.milieucentraal.nl/energie-besparen/isoleren-en-besparen/
- * Gecontroleerd op 10 augustus 2026.
+ * Gecontroleerd op 11 augustus 2026.
  *
  * De bedragen gaan uit van een gasprijs van € 1,37 per m³, de gemiddelde
  * gasprijs die Milieu Centraal voor 2026 tot 2040 aanhoudt.
@@ -17,7 +17,7 @@
 export const BRON = {
   naam: "Milieu Centraal",
   url: "https://www.milieucentraal.nl/energie-besparen/isoleren-en-besparen/",
-  gecontroleerd: "10 augustus 2026",
+  gecontroleerd: "11 augustus 2026",
 } as const;
 
 export const GASPRIJS = 1.37;
@@ -34,14 +34,19 @@ export const WONINGTYPES: { id: Woningtype; label: string; kort: string }[] = [
 export type MaatregelId = "dak" | "spouw" | "gevel" | "vloer" | "glas";
 
 /**
- * Maatregelen die elkaar uitsluiten. Spouwmuurisolatie kan alleen als er een
- * spouw is en die nog leeg is; is dat niet zo, dan isoleer je de gevel aan de
- * binnen- of buitenkant. Allebei tegelijk kiezen zou een besparing optellen die
- * je in werkelijkheid niet twee keer krijgt.
+ * Maatregelen die hetzelfde bouwdeel isoleren.
+ *
+ * Spouwmuurisolatie en gevelisolatie gaan allebei over dezelfde muur, en ze
+ * sluiten elkaar niet uit: volgens Milieu Centraal kun je buitengevelisolatie
+ * combineren met spouwmuurisolatie, alleen wordt de laag aan de buitenkant dan
+ * dunner (12 cm in plaats van 17). Je komt met die combinatie dus op dezelfde
+ * geïsoleerde gevel uit als met gevelisolatie alleen, en daarmee op dezelfde
+ * besparing. Optellen zou een bedrag beloven dat je niet twee keer krijgt;
+ * daarom telt per bouwdeel de grootste besparing, niet de som.
  */
-export const SLUIT_UIT: Partial<Record<MaatregelId, MaatregelId>> = {
+export const BOUWDEEL: Partial<Record<MaatregelId, string>> = {
   spouw: "gevel",
-  gevel: "spouw",
+  gevel: "gevel",
 };
 
 interface PerType {
@@ -118,13 +123,18 @@ export const ISOLATIE_MAATREGELEN: IsolatieMaatregel[] = [
     merkbaar: "Hetzelfde effect als spouwisolatie, maar dan voor een woning die geen spouw heeft.",
     uitgangspunt:
       "Van een ongeïsoleerde gevel naar isolatie aan de buitenkant, over de hele gevel.",
+    // Milieu Centraal rekent gevelisolatie alleen door voor een hoekwoning.
+    // De andere woningtypen schalen mee met de verhouding uit de
+    // spouwmuurcijfers, die de bron wél per type geeft en die over dezelfde
+    // geveloppervlakte gaan: tussenwoning 180/400 = 0,45 en vrijstaand
+    // 600/400 = 1,5 ten opzichte van de hoekwoning.
     perType: {
-      tussenwoning: { m3: 530, euro: 750, kosten: 23000 },
+      tussenwoning: { m3: 240, euro: 330, kosten: 10400 },
       hoekwoning: { m3: 530, euro: 750, kosten: 23000 },
       "twee-onder-een-kap": { m3: 530, euro: 750, kosten: 23000 },
-      vrijstaand: { m3: 530, euro: 750, kosten: 23000 },
+      vrijstaand: { m3: 800, euro: 1100, kosten: 34500 },
     },
-    noot: "Dit is de route als je woning geen spouw heeft of de spouw al gevuld is; daarom kun je hem niet samen met spouwmuurisolatie kiezen. Buitenom levert het meeste op maar is ingrijpend en duur; een voorzetwand aan de binnenkant is een stuk goedkoper, levert minder op en kost ruimte. Milieu Centraal rekent hier met een hoekwoning, daarom staat dit cijfer voor elk woningtype gelijk.",
+    noot: "Dit is de route als je woning geen spouw heeft of de spouw al gevuld is. Heb je wel een lege spouw, dan kun je allebei doen: de spouw vullen scheelt dan dikte aan de buitenkant, maar je komt op dezelfde geïsoleerde gevel uit en dus niet op een dubbele besparing. Buitenom levert het meeste op maar is ingrijpend en duur; een voorzetwand aan de binnenkant is een stuk goedkoper, levert minder op en kost ruimte. Milieu Centraal rekent deze maatregel alleen voor een hoekwoning door; voor de andere woningtypen hebben wij het cijfer meegeschaald met de verhouding uit de spouwmuurcijfers.",
   },
   {
     id: "vloer",
