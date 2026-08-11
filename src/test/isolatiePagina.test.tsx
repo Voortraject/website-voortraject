@@ -70,6 +70,17 @@ describe("isolatiepagina: de configurator", () => {
     expect(tekening().getAttribute("aria-label")).toMatch(/met isolatie in: dak/);
   });
 
+  it("kleurt het hele dakvlak bij dakisolatie, niet alleen de snede", () => {
+    // Zat de isolatie alleen in de opengewerkte snede, dan leek er bij het dak
+    // niets te gebeuren. Het dakvlak hoort mee te kleuren, net als de gevel.
+    const { container } = toon();
+    const dakvlak = () => container.querySelector<SVGElement>('[data-laag="dak"]')!;
+
+    expect(dakvlak().style.opacity).toBe("0");
+    fireEvent.click(knop(dak.naam));
+    expect(dakvlak().style.opacity).toBe("1");
+  });
+
   it("toont per maatregel het uitgangspunt zodra je hem aanzet", () => {
     toon();
 
@@ -142,22 +153,29 @@ describe("isolatiepagina: de configurator", () => {
     expect(vanafEnkel.euro).toBeGreaterThan(vanafDubbel.euro * 2);
   });
 
-  it("biedt triple als keuze en is eerlijk over de kozijnen", () => {
+  it("houdt het glasblok bij de ene keuze die de teller beweegt", () => {
     toon();
     const glas = ISOLATIE_MAATREGELEN.find((m) => m.id === "glas")!;
     fireEvent.click(knop(glas.naam));
 
-    fireEvent.click(screen.getByRole("button", { name: "Triple" }));
-    expect(screen.getByText(/vaak zijn er nieuwe kozijnen nodig/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Enkel glas" })).toBeInTheDocument();
     // Milieu Centraal komt voor triple op dezelfde besparing uit als voor HR++.
-    // Als de teller dan niet verandert lijkt dat een fout, dus dat hoort er
-    // hardop bij te staan.
-    expect(screen.getByText(/Op de gasrekening scheelt het niets/)).toBeInTheDocument();
-    // De investering in de teller geldt voor bestaande kozijnen; dat mag niet
-    // stilzwijgend blijven.
-    expect(
-      screen.getByText(/geldt voor isolerend glas in je bestaande kozijnen/),
-    ).toBeInTheDocument();
+    // Als knop in de configurator bewoog die keuze de teller dus niet, en vroeg
+    // hij vooral om alinea's uitleg waarom er niets gebeurt.
+    expect(screen.queryByRole("button", { name: "Triple" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "HR++" })).not.toBeInTheDocument();
+
+    // De investering geldt voor bestaande kozijnen; dat mag niet stilzwijgend blijven.
+    expect(screen.getByText(/geldt voor isolerend glas in je bestaande kozijnen/)).toBeInTheDocument();
+  });
+
+  it("verplaatst het verhaal over triple naar de FAQ, waar het niet verloren gaat", () => {
+    const { container } = toon();
+    const tekst = container.textContent ?? "";
+    // Wat uit de configurator verdween, hoort ergens anders op de pagina te staan.
+    expect(tekst).toMatch(/U-waarde van ongeveer 1,1 en triple glas 0,4 tot 0,9/);
+    expect(tekst).toMatch(/Op je gasrekening scheelt dat verschil weinig/);
+    expect(tekst).toMatch(/vraagt vaak nieuwe kozijnen/);
   });
 
   it("telt bij 'alles aanzetten' niet allebei de gevelroutes mee", () => {

@@ -352,6 +352,17 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
         const [x2, y2] = D(a, 1);
         return <line key={`naad${k}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke={PAN_DONKER} strokeWidth="0.9" />;
       })}
+      {/* Dakisolatie zit tussen de spanten en is van buiten net zo onzichtbaar
+          als spouwisolatie. Toch hoort het hele dakvlak mee te kleuren en niet
+          alleen de snede, anders lijkt er niets te gebeuren: dezelfde warme
+          waas dus als bij de spouw. */}
+      <polygon
+        className="schil-overgang"
+        data-laag="dak"
+        points={pad(D(0, 0), D(1, 0), D(1, 1), D(0, 1))}
+        fill="hsl(var(--accent) / 0.34)"
+        style={{ opacity: aan("dak") ? 1 : 0 }}
+      />
       <polygon
         points={pad(D(0, 0), D(1, 0), D(1, 1), D(0, 1))}
         fill="hsl(var(--primary) / 0.05)"

@@ -54,10 +54,10 @@ const besparingVan = (
 export const WoningSchil = () => {
   const [woningtype, setWoningtype] = useState<Woningtype>("hoekwoning");
   const [gekozen, setGekozen] = useState<Set<MaatregelId>>(new Set());
-  // Glas heeft twee keuzes binnen de maatregel: wat er nu in zit (bepaalt de
-  // besparing) en waar je heen gaat (bepaalt de U-waarde en de kozijnvraag).
+  // De enige keuze binnen een maatregel: wat er nu in de kozijnen zit. Dat
+  // bepaalt de besparing, en van enkel glas af levert een veelvoud op van de
+  // stap vanaf gewoon dubbel glas.
   const [glasStart, setGlasStart] = useState("dubbel");
-  const [glasSoort, setGlasSoort] = useState("hrplus");
 
   const wissel = (id: MaatregelId) =>
     setGekozen((vorige) => {
@@ -206,7 +206,6 @@ export const WoningSchil = () => {
           {ISOLATIE_MAATREGELEN.map((m) => {
             const aan = gekozen.has(m.id);
             const t = besparingVan(m, woningtype, glasStart);
-            const soort = m.keuzes?.soort.find((k) => k.id === glasSoort);
             return (
               // Geen <button> om de hele kaart: de glaskaart heeft eigen knoppen
               // en een knop in een knop is ongeldige HTML.
@@ -277,6 +276,10 @@ export const WoningSchil = () => {
                 </button>
 
                 {aan && m.keuzes && (
+                  // Alleen de keuze die de teller beweegt. De vraag hr++ of
+                  // triple staat in de FAQ verderop: Milieu Centraal komt voor
+                  // allebei op dezelfde besparing uit, dus als knop hier vroeg
+                  // hij vooral om uitleg waarom er niets gebeurt.
                   <div className="px-5 pb-5 pl-[60px]">
                     <Keuzerij
                       label="Wat zit er nu in?"
@@ -284,45 +287,6 @@ export const WoningSchil = () => {
                       actief={glasStart}
                       kies={setGlasStart}
                     />
-                    <div className="mt-3">
-                      <Keuzerij
-                        label="Waar ga je heen?"
-                        opties={m.keuzes.soort}
-                        actief={glasSoort}
-                        kies={setGlasSoort}
-                      />
-                    </div>
-                    {soort && (
-                      <p
-                        className="mt-3 text-[13px] leading-relaxed"
-                        style={{ color: KLEUR.navy, opacity: 0.7, margin: "12px 0 0 0" }}
-                      >
-                        <strong>{soort.label}</strong> heeft een U-waarde van {soort.uWaarde}, tegen
-                        5,8 voor enkel glas: hoe lager, hoe beter het isoleert. {soort.toelichting}
-                      </p>
-                    )}
-                    {soort?.zelfdeBesparing && (
-                      // Milieu Centraal komt voor triple op exact dezelfde
-                      // besparing uit als voor HR++. Dat lijkt op een fout in de
-                      // teller, dus zeggen we het er hardop bij.
-                      <p
-                        className="mt-2 text-[13px] leading-relaxed"
-                        style={{ color: KLEUR.navy, opacity: 0.7, margin: "8px 0 0 0" }}
-                      >
-                        <strong>Op de gasrekening scheelt het niets.</strong> Milieu Centraal komt
-                        voor triple op dezelfde besparing uit als voor HR++: het glas is bij allebei
-                        zoveel beter dan wat er zat, dat de rest verwaarloosbaar is. Het verschil zit
-                        in comfort bij het raam en in de prijs, niet in je rekening.
-                      </p>
-                    )}
-                    <p
-                      className="mt-2 text-[13px] leading-relaxed"
-                      style={{ color: KLEUR.navy, opacity: 0.55, margin: "8px 0 0 0" }}
-                    >
-                      De investering hierboven geldt voor isolerend glas in je bestaande kozijnen.
-                      Moeten de kozijnen mee, dan valt hij hoger uit; dat hangt zo sterk af van je
-                      woning dat we het per situatie doorrekenen.
-                    </p>
                   </div>
                 )}
               </div>
