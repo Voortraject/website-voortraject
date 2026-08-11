@@ -56,7 +56,9 @@ const besparingVan = (
 };
 
 export const WoningSchil = () => {
-  const [woningtype, setWoningtype] = useState<Woningtype>("hoekwoning");
+  // De tussenwoning staat voor: dat is het meest voorkomende woningtype in
+  // Nederland, dus het beste vertrekpunt voor wie nog niets heeft gekozen.
+  const [woningtype, setWoningtype] = useState<Woningtype>("tussenwoning");
   const [gekozen, setGekozen] = useState<Set<MaatregelId>>(new Set());
   // De enige keuze binnen een maatregel: wat er nu in de kozijnen zit. Dat
   // bepaalt de besparing, en van enkel glas af levert een veelvoud op van de
@@ -131,15 +133,12 @@ export const WoningSchil = () => {
     return opTijd[0].id;
   }, [woningtype, glasStart]);
 
-  // Alles aanzetten kiest één route per bouwdeel: voor verreweg de meeste
-  // woningen is dat de spouw, en de bron rekent zijn voorbeeldwoning ook zo door.
-  const alleMogelijk = ISOLATIE_MAATREGELEN.reduce<MaatregelId[]>((lijst, m) => {
-    const deel = BOUWDEEL[m.id];
-    if (deel && lijst.some((id) => BOUWDEEL[id] === deel)) return lijst;
-    return [...lijst, m.id];
-  }, []);
-  const allesAan = alleMogelijk.every((id) => gekozen.has(id));
-  const alles = () => setGekozen(allesAan ? new Set() : new Set(alleMogelijk));
+  // Alles aanzetten zet ook echt alles aan, gevelisolatie incluis. Eerder sloeg
+  // hij de tweede gevelroute over om dubbeltellen te voorkomen, maar dat doet de
+  // teller nu zelf: een vinkje dat niet aangaat leest als een kapotte knop.
+  const alleMaatregelen = ISOLATIE_MAATREGELEN.map((m) => m.id);
+  const allesAan = alleMaatregelen.every((id) => gekozen.has(id));
+  const alles = () => setGekozen(allesAan ? new Set() : new Set(alleMaatregelen));
 
   return (
     <>

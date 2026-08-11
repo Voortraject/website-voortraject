@@ -33,6 +33,9 @@ const P = (a: number, b: number, z: number): Punt => [
   O[1] + U[1] * a + V[1] * b - z,
 ];
 
+/** Hoogte van het dakvlak op diepte b. Hiermee kun je iets óp het dak zetten. */
+const dakZ = (b: number) => H - 5 + ((b + OVERSTEK) / (0.5 + OVERSTEK)) * (NOK + 5);
+
 /** Punt op het dakvlak: a langs de nok, t van dakvoet (0) naar nok (1). */
 const D = (a: number, t: number): Punt =>
   P(a, -OVERSTEK + t * (0.5 + OVERSTEK), H - 5 + t * (NOK + 5));
@@ -47,14 +50,29 @@ const HOEK_SNEDE = hoek(V);
 /* ---------- kleuren ---------- */
 
 const STEEN = "#BB8C69";
+const STEEN_LICHT = "#C99B78";
 const STEEN_DONKER = "#9D7051";
 const VOEG = "#DDCAB7";
-const STUC = "#E8E0D2";
-const STUC_DONKER = "#D3C8B4";
+const STUC = "#EDE8DD";
+const STUC_DONKER = "#D9D2C3";
 const PAN = "#4A5361";
 const PAN_LICHT = "#6B7585";
 const PAN_DONKER = "#2A313B";
 const PAN_VOEG = "#232932";
+/**
+ * Dezelfde pannen, maar warm.
+ *
+ * Een okerwaas over blauwgrijze pannen levert olijfgroen op, en dat leest als
+ * een dak met mos in plaats van een dak dat de warmte binnenhoudt. Vandaar geen
+ * waas maar een tweede set kleuren: even donker, alleen warm in plaats van
+ * koel. Het dak blijft een dak en wordt toch zichtbaar anders.
+ */
+const PANNEN_WARM = {
+  pan: "#7A6A55",
+  licht: "#9C8A6F",
+  donker: "#55483A",
+  voeg: "#3D3428",
+};
 const KOZIJN = "#F6F3ED";
 const KOZIJN_SCHADUW = "#D4CEC2";
 const BINNEN = "#FBF8F2";
@@ -168,8 +186,18 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
   const glas = `${id}-glas`;
   const grond = `${id}-grond`;
   const warmte = `${id}-warmte`;
+  const licht = `${id}-licht`;
+  const dakLicht = `${id}-dak-licht`;
+  const overstek = `${id}-overstek`;
+  const contact = `${id}-contact`;
+  const dakGloed = `${id}-dak-gloed`;
 
   const aan = (m: MaatregelId) => gekozen.has(m);
+  const dakAan = gekozen.has("dak");
+  const pan = dakAan ? PANNEN_WARM.pan : PAN;
+  const panLicht = dakAan ? PANNEN_WARM.licht : PAN_LICHT;
+  const panDonker = dakAan ? PANNEN_WARM.donker : PAN_DONKER;
+  const panVoeg = dakAan ? PANNEN_WARM.voeg : PAN_VOEG;
   const gevelAan = aan("spouw") || aan("gevel");
   const lek = (open: boolean) => (open ? 0.85 : 0);
 
@@ -202,11 +230,18 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
           patternTransform={`skewY(${HOEK_GEVEL})`}
         >
           <rect width="30" height="13" fill={VOEG} />
+          {/* Drie tinten door elkaar: met twee leest een muur als een raster,
+              met drie als metselwerk. Elke steen krijgt bovendien een lichte
+              bovenrand, wat de schaduw in de lintvoeg suggereert. */}
           <rect x="0.7" y="0.8" width="13.6" height="4.9" fill={STEEN} />
           <rect x="15.7" y="0.8" width="13.6" height="4.9" fill={STEEN_DONKER} />
-          <rect x="-6.8" y="7.3" width="13.6" height="4.9" fill={STEEN_DONKER} />
+          <rect x="-6.8" y="7.3" width="13.6" height="4.9" fill={STEEN_LICHT} />
           <rect x="8.2" y="7.3" width="13.6" height="4.9" fill={STEEN} />
           <rect x="23.2" y="7.3" width="13.6" height="4.9" fill={STEEN_DONKER} />
+          <rect x="0.7" y="0.8" width="13.6" height="1" fill="#FFFFFF" opacity="0.18" />
+          <rect x="15.7" y="0.8" width="13.6" height="1" fill="#FFFFFF" opacity="0.14" />
+          <rect x="8.2" y="7.3" width="13.6" height="1" fill="#FFFFFF" opacity="0.18" />
+          <rect x="23.2" y="7.3" width="13.6" height="1" fill="#FFFFFF" opacity="0.14" />
         </pattern>
 
         <pattern
@@ -230,14 +265,16 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
           patternTransform={`skewY(${HOEK_GEVEL})`}
         >
           <rect width="7" height="7" fill={STUC} />
-          <circle cx="1.6" cy="2.2" r="0.6" fill={STUC_DONKER} />
-          <circle cx="4.8" cy="5.1" r="0.6" fill={STUC_DONKER} />
+          <circle cx="1.6" cy="2.2" r="0.45" fill={STUC_DONKER} />
+          <circle cx="4.8" cy="5.1" r="0.45" fill={STUC_DONKER} />
         </pattern>
 
-        <pattern id={wol} width="12" height="10" patternUnits="userSpaceOnUse">
-          <rect width="12" height="10" fill="hsl(var(--accent) / 0.9)" />
-          <path d="M0 3 q3 -3.4 6 0 q3 3.4 6 0" fill="none" stroke="#A8791C" strokeWidth="1.4" />
-          <path d="M0 8 q3 -3.4 6 0 q3 3.4 6 0" fill="none" stroke="#A8791C" strokeWidth="1.4" />
+        {/* Steenwol. Zachter dan volle oker met dikke golven: dat las als een
+            waarschuwingskleur en overstemde alles zodra er iets aanstond. */}
+        <pattern id={wol} width="10" height="8" patternUnits="userSpaceOnUse">
+          <rect width="10" height="8" fill="#E8CF9A" />
+          <path d="M0 2.4 q2.5 -2.5 5 0 q2.5 2.5 5 0" fill="none" stroke="#C3A059" strokeWidth="0.85" />
+          <path d="M0 6.4 q2.5 -2.5 5 0 q2.5 2.5 5 0" fill="none" stroke="#C3A059" strokeWidth="0.85" />
         </pattern>
 
         <linearGradient id={glas} x1="0" y1="0" x2="0.7" y2="1">
@@ -249,6 +286,36 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
 
         <radialGradient id={grond}>
           <stop offset="0%" stopColor="hsl(var(--primary) / 0.2)" />
+          <stop offset="100%" stopColor="hsl(var(--primary) / 0)" />
+        </radialGradient>
+
+        {/* Licht valt van linksboven. Dat maakt drie dingen nodig die een
+            vlakke tekening niet heeft: een gevel die naar beneden wegloopt, een
+            dakvlak dat naar de nok toe oplicht, en schaduw waar iets over iets
+            anders heen steekt. */}
+        <linearGradient id={licht} x1="0" y1="0" x2="0.35" y2="1">
+          <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.16" />
+          <stop offset="55%" stopColor="#FFFFFF" stopOpacity="0" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0.14" />
+        </linearGradient>
+        <linearGradient id={dakLicht} x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0%" stopColor="#000000" stopOpacity="0.16" />
+          <stop offset="45%" stopColor="#FFFFFF" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.16" />
+        </linearGradient>
+        {/* Slagschaduw van het overstek op de gevel: hard bovenaan, weg na een
+            paar steenlagen. */}
+        <linearGradient id={overstek} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#000000" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+        </linearGradient>
+        {/* Warmte die onder de pannen blijft hangen, sterkst bij de nok. */}
+        <linearGradient id={dakGloed} x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stopColor="hsl(var(--accent) / 0)" />
+          <stop offset="100%" stopColor="hsl(var(--accent) / 0.3)" />
+        </linearGradient>
+        <radialGradient id={contact}>
+          <stop offset="0%" stopColor="hsl(var(--primary) / 0.42)" />
           <stop offset="100%" stopColor="hsl(var(--primary) / 0)" />
         </radialGradient>
 
@@ -266,9 +333,16 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
       </defs>
 
       <ellipse cx="205" cy="330" rx="165" ry="32" fill={`url(#${grond})`} />
+      {/* Contactschaduw: een tweede, veel strakkere schaduw pal onder de gevel.
+          Zonder die harde aanzet lijkt de woning te zweven. */}
+      <ellipse cx="196" cy="311" rx="118" ry="15" fill={`url(#${contact})`} />
 
       {/* ============ SNEDE: hier zie je de opbouw ============ */}
       <polygon points={pad(voorOnderR, achterOnderR, achterTopR, nokSnede, voorTopR)} fill={BINNEN} />
+      <polygon
+        points={pad(voorOnderR, achterOnderR, achterTopR, nokSnede, voorTopR)}
+        fill={`url(#${licht})`}
+      />
 
       {/* Vloeropbouw: bodem, kruipruimte, en de vloer daar overheen. De
           isolatie hangt onder de vloer, tussen de funderingsmuren door, want
@@ -364,17 +438,6 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
         </g>
       ))}
 
-      {/* Plafond: zonder deze lijn is de snede één leeg vlak en lijkt de zolder
-          bij de woonkamer te horen. */}
-      <line
-        x1={voorTopR[0]}
-        y1={voorTopR[1]}
-        x2={achterTopR[0]}
-        y2={achterTopR[1]}
-        stroke={LIJN}
-        strokeWidth="1.1"
-        opacity="0.55"
-      />
       <polygon
         points={pad(voorOnderR, achterOnderR, achterTopR, nokSnede, voorTopR)}
         fill="none"
@@ -435,22 +498,6 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
         );
       })}
 
-      {/* Muurankers: de smeedijzeren kruisjes waarmee de balklaag aan de gevel
-          hangt. Klein detail, maar het is wat een bakstenen gevel van vóór de
-          jaren zeventig herkenbaar maakt. */}
-      {[0.32, 0.625].map((a) => {
-        // Op de penanten tussen de openingen, en laag genoeg om onder de goot
-        // uit te komen.
-        const [x, y] = P(a, 0, 62);
-        return (
-          <g key={`anker${a}`} stroke={IJZER} strokeWidth="1.3" strokeLinecap="round" opacity="0.7">
-            <line x1={x} y1={y - 5} x2={x} y2={y + 5} />
-            <line x1={x - 2.4} y1={y - 5.4} x2={x + 2.4} y2={y - 4.6} />
-            <line x1={x - 2.4} y1={y + 4.6} x2={x + 2.4} y2={y + 5.4} />
-          </g>
-        );
-      })}
-
       {/* Gevelisolatie buitenom: de gevel krijgt een stuclaag. Dat is het enige
           dat je van isolatie aan de buitenkant écht ziet, en het dekt de plint,
           de rollagen en de ankers af. */}
@@ -461,16 +508,22 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
         style={{ opacity: aan("gevel") ? 1 : 0 }}
       />
       {/* Spouwisolatie blijft onzichtbaar; een warme waas markeert dat de muren
-          nu wél geïsoleerd zijn. */}
+          nu wél geïsoleerd zijn. Zit er stucwerk overheen, dan vervalt de waas:
+          door een geïsoleerde buitengevel kijk je de spouw niet in, en de waas
+          maakte het verse pleisterwerk zandgeel. */}
       <polygon
         className="schil-overgang"
         points={pad(voorOnderL, voorOnderR, voorTopR, voorTopL)}
         fill="hsl(var(--accent) / 0.3)"
-        style={{ opacity: aan("spouw") ? 1 : 0 }}
+        style={{ opacity: aan("spouw") && !aan("gevel") ? 1 : 0 }}
       />
+      <polygon points={pad(voorOnderL, voorOnderR, voorTopR, voorTopL)} fill="hsl(var(--primary) / 0.06)" />
+      {/* Het licht over de gevel: op naar de dakrand, weg naar de plint. */}
+      <polygon points={pad(voorOnderL, voorOnderR, voorTopR, voorTopL)} fill={`url(#${licht})`} />
+      {/* En de slagschaduw die het overstek erop werpt. */}
       <polygon
-        points={pad(voorOnderL, voorOnderR, voorTopR, voorTopL)}
-        fill="hsl(var(--primary) / 0.09)"
+        points={pad(P(0, 0, H - 26), P(1, 0, H - 26), P(1, 0, H), P(0, 0, H))}
+        fill={`url(#${overstek})`}
       />
 
       {/* Ramen */}
@@ -510,6 +563,13 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
               fill={KOZIJN}
               stroke={KOZIJN_SCHADUW}
               strokeWidth="1"
+            />
+            {/* De negge: het kozijn ligt terug in de opening, dus vangt de
+                bovendorpel schaduw. Zonder dit plakt het raam op de gevel. */}
+            <polygon
+              points={pad(P(a1, 0, LATEI - 3), P(a2, 0, LATEI - 3), P(a2, 0, LATEI), P(a1, 0, LATEI))}
+              fill="#000000"
+              opacity="0.16"
             />
             <polygon
               className="schil-overgang"
@@ -666,58 +726,58 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
       {/* onderkant van het overstek */}
       <polygon points={pad(D(0, 0), D(1, 0), voorTopR, voorTopL)} fill="#8B8375" />
 
-      {/* pannenrijen, van dakvoet naar nok */}
-      {Array.from({ length: RIJEN }, (_, i) => {
-        const t1 = i / RIJEN;
-        const t2 = (i + 1) / RIJEN;
+      {/* De pannen.
+          Eerder liep de welving als één baan van dakvoet tot nok, en dat leest
+          als geribbeld plaatmateriaal. Een pannendak bestaat uit losse pannen
+          die rij voor rij over elkaar vallen, dus elke pan krijgt zijn eigen
+          welving én de rij erboven werpt een schaduw op de rij eronder. */}
+      {Array.from({ length: RIJEN }, (_, r) => {
+        const t1 = r / RIJEN;
+        const t2 = (r + 1) / RIJEN;
+        const stap = 1 / KOLOMMEN;
         return (
-          <polygon
-            key={`rij${i}`}
-            points={pad(D(0, t1), D(1, t1), D(1, t2), D(0, t2))}
-            fill={PAN}
-            stroke={PAN_VOEG}
-            strokeWidth="1.6"
-          />
+          <g key={`rij${r}`}>
+            <polygon points={pad(D(0, t1), D(1, t1), D(1, t2), D(0, t2))} fill={pan} />
+            {Array.from({ length: KOLOMMEN }, (_, k) => (
+              <polygon
+                key={k}
+                points={pad(
+                  D(k * stap + stap * 0.08, t1),
+                  D(k * stap + stap * 0.62, t1),
+                  D(k * stap + stap * 0.62, t2),
+                  D(k * stap + stap * 0.08, t2),
+                )}
+                fill={panLicht}
+                opacity="0.42"
+              />
+            ))}
+            {/* De onderrand van de pan erboven, die op deze rij valt. */}
+            <polygon
+              points={pad(D(0, t2 - 0.055), D(1, t2 - 0.055), D(1, t2), D(0, t2))}
+              fill={panVoeg}
+              opacity="0.42"
+            />
+          </g>
         );
       })}
-      {/* de welving van elke pan: een lichte baan per kolom */}
-      {Array.from({ length: KOLOMMEN }, (_, k) => {
-        const a1 = k / KOLOMMEN;
-        const a2 = a1 + 0.6 / KOLOMMEN;
-        return (
-          <polygon
-            key={`pan${k}`}
-            points={pad(D(a1, 0), D(a2, 0), D(a2, 1), D(a1, 1))}
-            fill={PAN_LICHT}
-            opacity="0.55"
-          />
-        );
-      })}
-      {/* pannaden tussen de kolommen */}
+      {/* naden tussen de pankolommen */}
       {Array.from({ length: KOLOMMEN + 1 }, (_, k) => {
         const a = k / KOLOMMEN;
         const [x1, y1] = D(a, 0);
         const [x2, y2] = D(a, 1);
-        return <line key={`naad${k}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke={PAN_DONKER} strokeWidth="0.9" />;
+        return <line key={`naad${k}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke={panDonker} strokeWidth="0.8" opacity="0.8" />;
       })}
-      {/* Dakisolatie zit tussen de spanten en is van buiten net zo onzichtbaar
-          als spouwisolatie. Toch hoort het hele dakvlak mee te kleuren en niet
-          alleen de snede, anders lijkt er niets te gebeuren.
-
-          Twee lagen en niet één: alleen oker over donkerblauwe pannen levert
-          olijfgroen op, en dat leest als een vies dak in plaats van een warm
-          dak. Eerst oplichten, dan pas de warmte erover. */}
-      <g className="schil-overgang" data-laag="dak" style={{ opacity: aan("dak") ? 1 : 0 }}>
-        <polygon points={pad(D(0, 0), D(1, 0), D(1, 1), D(0, 1))} fill="#FFFFFF" opacity="0.42" />
-        <polygon
-          points={pad(D(0, 0), D(1, 0), D(1, 1), D(0, 1))}
-          fill="hsl(var(--accent) / 0.28)"
-        />
-      </g>
       <polygon
         points={pad(D(0, 0), D(1, 0), D(1, 1), D(0, 1))}
         fill="hsl(var(--primary) / 0.05)"
       />
+      <polygon points={pad(D(0, 0), D(1, 0), D(1, 1), D(0, 1))} fill={`url(#${dakLicht})`} />
+      {/* Warmte die onder de pannen blijft hangen, sterkst bij de nok. Het
+          zichtbare verschil zit vooral in het warme pannenpalet; deze gloed
+          maakt het af zonder de pannen te vertroebelen. */}
+      <g className="schil-overgang" data-laag="dak" style={{ opacity: dakAan ? 1 : 0 }}>
+        <polygon points={pad(D(0, 0.55), D(1, 0.55), D(1, 1), D(0, 1))} fill={`url(#${dakGloed})`} />
+      </g>
       <polygon
         points={pad(D(0, 0), D(1, 0), D(1, 1), D(0, 1))}
         fill="none"
@@ -784,71 +844,142 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
         );
       })()}
 
-      {/* Nokvorsten: losse vorsten met een naad ertussen, niet één balk. */}
+      {/* Nokvorst: één doorlopende kap met naden erin. Als losse vorsten met
+          ruimte ertussen stak er een rij tanden boven het dak uit. */}
       {(() => {
-        const stuks = 12;
-        return Array.from({ length: stuks }, (_, i) => {
-          const van = i / stuks + 0.006;
-          const tot = (i + 1) / stuks - 0.006;
-          const punt = (a: number, dy: number): Punt => {
-            const [x, y] = P(a, 0.5, H + NOK);
-            return [x, y + dy];
-          };
-          return (
-            <polygon
-              key={`vorst${i}`}
-              points={pad(punt(van, 0), punt(tot, 0), punt(tot, -7), punt(van, -7))}
-              fill={PAN_DONKER}
-              stroke={PAN_VOEG}
-              strokeWidth="0.6"
-            />
-          );
-        });
-      })()}
-
-      {/* Schoorsteen: metselwerk met een loodslabbe waar hij door het dakvlak
-          steekt, en een afdekplaat met een rookkanaal erin. Zonder die slabbe
-          lekt een schoorsteen in het echt, en zonder afdekplaat regent hij vol. */}
-      {(() => {
-        const [x, y] = P(0.32, 0.5, H + NOK - 4);
-        /** Punt op de schoorsteen: b langs de breedte, h omhoog. */
-        const S = (b: number, h: number): Punt => [x + 21 * b, y + 5 * b - h];
+        const HOOG = 5.5;
+        const punt = (a: number, dy: number): Punt => {
+          const [x, y] = P(a, 0.5, H + NOK);
+          return [x, y + dy];
+        };
         return (
           <g>
-            {/* Loodslabbe: de kraag waarmee het dak op de schoorsteen aansluit. */}
             <polygon
-              points={pad(S(-0.14, -4), S(1.14, -4), S(1.14, 7), S(-0.14, 7))}
-              fill={LOOD}
-              stroke="#7E858B"
-              strokeWidth="0.7"
+              points={pad(punt(0, 0), punt(1, 0), punt(1, -HOOG), punt(0, -HOOG))}
+              fill={panDonker}
             />
-            {/* De schacht, met een voegenpatroon in de breedte. */}
-            <polygon points={pad(S(0, 0), S(1, 0), S(1, 32), S(0, 37))} fill={STEEN_DONKER} />
-            {[9, 18, 27].map((h) => (
+            <polygon
+              points={pad(punt(0, -HOOG), punt(1, -HOOG), punt(1, -HOOG + 1.4), punt(0, -HOOG + 1.4))}
+              fill="#FFFFFF"
+              opacity="0.12"
+            />
+            {Array.from({ length: 11 }, (_, i) => {
+              const a = (i + 1) / 12;
+              const [x1, y1] = punt(a, 0);
+              const [x2, y2] = punt(a, -HOOG);
+              return (
+                <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={panVoeg} strokeWidth="0.8" />
+              );
+            })}
+          </g>
+        );
+      })()}
+
+      {/* Schoorsteen.
+          Hij plakte op het dak omdat zijn onderkant recht was terwijl het dak
+          schuin loopt: de doos raakte het dakvlak maar sneed er niet doorheen.
+          Nu volgt de onderrand de helling, staat hij op één schuine kant, en
+          ligt de loodslabbe als een schort ín het dakvlak in plaats van ertegen
+          aan. Daarmee komt hij door het dak in plaats van erop. */}
+      {(() => {
+        const [a1, a2] = [0.3, 0.42];
+        const [b1, b2] = [0.3, 0.44];
+        const top = H + NOK + 28;
+        /** Rand van de slabbe: iets ruimer dan de schacht, plat op de pannen. */
+        const schort = (ea: number, eb: number) =>
+          pad(
+            P(a1 - ea, b1 - eb, dakZ(b1 - eb)),
+            P(a2 + ea, b1 - eb, dakZ(b1 - eb)),
+            P(a2 + ea, b2 + eb, dakZ(b2 + eb)),
+            P(a1 - ea, b2 + eb, dakZ(b2 + eb)),
+          );
+
+        return (
+          <g>
+            {/* Slagschaduw: het voetvlak, opgeschoven met het licht mee. */}
+            <polygon
+              points={pad(
+                P(a1 + 0.02, b1 - 0.03, dakZ(b1 - 0.03)),
+                P(a2 + 0.11, b1 - 0.03, dakZ(b1 - 0.03)),
+                P(a2 + 0.11, b2 + 0.03, dakZ(b2 + 0.03)),
+                P(a1 + 0.02, b2 + 0.03, dakZ(b2 + 0.03)),
+              )}
+              fill="#000000"
+              opacity="0.14"
+            />
+
+            {/* Loodslabbe, plat in het dakvlak. */}
+            <polygon points={schort(0.022, 0.03)} fill={LOOD} />
+            <polygon points={schort(0.008, 0.012)} fill="#8A9196" />
+
+            {/* De schacht: onderrand langs de helling, bovenrand waterpas. */}
+            <polygon
+              points={pad(
+                P(a1, b1, dakZ(b1)),
+                P(a2, b1, dakZ(b1)),
+                P(a2, b1, top),
+                P(a1, b1, top),
+              )}
+              fill={STEEN_DONKER}
+            />
+            <polygon
+              points={pad(
+                P(a2, b1, dakZ(b1)),
+                P(a2, b2, dakZ(b2)),
+                P(a2, b2, top),
+                P(a2, b1, top),
+              )}
+              fill="#8A6145"
+            />
+            {[12, 24, 36].map((h) => (
               <line
                 key={h}
-                x1={S(0, h + 5)[0]}
-                y1={S(0, h + 5)[1]}
-                x2={S(1, h)[0]}
-                y2={S(1, h)[1]}
+                x1={P(a1, b1, dakZ(b1) + h)[0]}
+                y1={P(a1, b1, dakZ(b1) + h)[1]}
+                x2={P(a2, b1, dakZ(b1) + h)[0]}
+                y2={P(a2, b1, dakZ(b1) + h)[1]}
                 stroke={VOEG}
                 strokeWidth="0.7"
-                opacity="0.5"
+                opacity="0.4"
               />
             ))}
-            {/* Afdekplaat, iets breder dan de schacht. */}
+
+            {/* Afdekplaat met het rookkanaal erin. */}
             <polygon
-              points={pad(S(-0.07, 34), S(1.07, 29), S(1.07, 33), S(-0.07, 38))}
+              points={pad(
+                P(a1 - 0.014, b1 - 0.02, top),
+                P(a2 + 0.014, b1 - 0.02, top),
+                P(a2 + 0.014, b1 - 0.02, top + 4),
+                P(a1 - 0.014, b1 - 0.02, top + 4),
+              )}
               fill="#6F5340"
             />
             <polygon
-              points={pad(S(-0.07, 38), S(1.07, 33), S(1.35, 38), S(0.21, 43))}
+              points={pad(
+                P(a2 + 0.014, b1 - 0.02, top),
+                P(a2 + 0.014, b2 + 0.02, top),
+                P(a2 + 0.014, b2 + 0.02, top + 4),
+                P(a2 + 0.014, b1 - 0.02, top + 4),
+              )}
+              fill="#5B4334"
+            />
+            <polygon
+              points={pad(
+                P(a1 - 0.014, b1 - 0.02, top + 4),
+                P(a2 + 0.014, b1 - 0.02, top + 4),
+                P(a2 + 0.014, b2 + 0.02, top + 4),
+                P(a1 - 0.014, b2 + 0.02, top + 4),
+              )}
               fill="#8A6749"
             />
-            {/* Het rookkanaal: donker gat in de plaat. */}
             <polygon
-              points={pad(S(0.3, 38.6), S(0.72, 36.7), S(0.83, 38.6), S(0.41, 40.5))}
-              fill="#3A2C22"
+              points={pad(
+                P(a1 + 0.028, b1 + 0.04, top + 4),
+                P(a2 - 0.028, b1 + 0.04, top + 4),
+                P(a2 - 0.028, b2 - 0.04, top + 4),
+                P(a1 + 0.028, b2 - 0.04, top + 4),
+              )}
+              fill="#332720"
             />
           </g>
         );

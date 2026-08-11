@@ -41,12 +41,12 @@ describe("isolatiepagina: de configurator", () => {
   it("telt de besparing op als je maatregelen aanzet", () => {
     toon();
 
-    // Standaard staat de hoekwoning aan.
+    // Standaard staat de tussenwoning aan: het meest voorkomende woningtype.
     fireEvent.click(knop(dak.naam));
-    expect(screen.getByText(euro(dak.perType.hoekwoning.euro))).toBeInTheDocument();
+    expect(screen.getByText(euro(dak.perType.tussenwoning.euro))).toBeInTheDocument();
 
     fireEvent.click(knop(spouw.naam));
-    const samen = dak.perType.hoekwoning.euro + spouw.perType.hoekwoning.euro;
+    const samen = dak.perType.tussenwoning.euro + spouw.perType.tussenwoning.euro;
     expect(screen.getByText(euro(samen))).toBeInTheDocument();
   });
 
@@ -57,25 +57,25 @@ describe("isolatiepagina: de configurator", () => {
     fireEvent.click(screen.getByRole("button", { name: "Vrijstaand" }));
 
     expect(screen.getByText(euro(dak.perType.vrijstaand.euro))).toBeInTheDocument();
-    // Het cijfer van de hoekwoning hoort dan weg te zijn als totaal.
-    expect(dak.perType.vrijstaand.euro).not.toBe(dak.perType.hoekwoning.euro);
+    // Het cijfer van de tussenwoning hoort dan weg te zijn als totaal.
+    expect(dak.perType.vrijstaand.euro).not.toBe(dak.perType.tussenwoning.euro);
   });
 
   it("toont de terugverdientijd op de kaart en op het totaal", () => {
     toon();
 
-    // Dak los: 6.500 / 480 is bijna 14 jaar.
+    // Dak los: 6.000 / 460 is ruim 13 jaar.
     fireEvent.click(knop(dak.naam));
     const dakTijd = Math.round(
-      dak.perType.hoekwoning.kosten / dak.perType.hoekwoning.euro,
+      dak.perType.tussenwoning.kosten / dak.perType.tussenwoning.euro,
     );
     expect(screen.getAllByText(`${dakTijd} jaar`).length).toBeGreaterThan(0);
 
     // Met vloer erbij loopt het totaal apart van de losse kaarten.
     fireEvent.click(knop(vloer.naam));
     const samenTijd = Math.round(
-      (dak.perType.hoekwoning.kosten + vloer.perType.hoekwoning.kosten) /
-        (dak.perType.hoekwoning.euro + vloer.perType.hoekwoning.euro),
+      (dak.perType.tussenwoning.kosten + vloer.perType.tussenwoning.kosten) /
+        (dak.perType.tussenwoning.euro + vloer.perType.tussenwoning.euro),
     );
     expect(screen.getByText(`${samenTijd} jaar`)).toBeInTheDocument();
 
@@ -96,16 +96,16 @@ describe("isolatiepagina: de configurator", () => {
 
   it("laat in de voortgangsbalk zien hoever de schil dicht is", () => {
     toon();
-    // Hoekwoning: dak 480, gevel 750, vloer 180, glas 90 is samen € 1.500.
+    // Tussenwoning: dak 460, gevel 330, vloer 110, glas 90 is samen € 990.
     expect(screen.getByText(/^0% van/)).toBeInTheDocument();
 
     fireEvent.click(knop(dak.naam));
     const haalbaar =
-      dak.perType.hoekwoning.euro +
-      gevel.perType.hoekwoning.euro +
-      vloer.perType.hoekwoning.euro +
+      dak.perType.tussenwoning.euro +
+      gevel.perType.tussenwoning.euro +
+      vloer.perType.tussenwoning.euro +
       90;
-    const deel = Math.round((dak.perType.hoekwoning.euro / haalbaar) * 100);
+    const deel = Math.round((dak.perType.tussenwoning.euro / haalbaar) * 100);
     expect(screen.getByText(`${deel}% van ${euro(haalbaar)} per jaar`)).toBeInTheDocument();
   });
 
@@ -208,12 +208,12 @@ describe("isolatiepagina: de configurator", () => {
 
     // Allebei kom je op dezelfde geïsoleerde gevel uit, dus de besparing
     // verdubbelt niet: het hoogste van de twee telt.
-    const samen = spouw.perType.hoekwoning.euro + gevel.perType.hoekwoning.euro;
-    expect(screen.getByText(euro(gevel.perType.hoekwoning.euro))).toBeInTheDocument();
+    const samen = spouw.perType.tussenwoning.euro + gevel.perType.tussenwoning.euro;
+    expect(screen.getByText(euro(gevel.perType.tussenwoning.euro))).toBeInTheDocument();
     expect(screen.queryByText(euro(samen))).not.toBeInTheDocument();
 
     // De investering telt wél op, want je betaalt allebei de ingrepen.
-    const kosten = spouw.perType.hoekwoning.kosten + gevel.perType.hoekwoning.kosten;
+    const kosten = spouw.perType.tussenwoning.kosten + gevel.perType.tussenwoning.kosten;
     expect(screen.getByText(euro(kosten))).toBeInTheDocument();
   });
 
@@ -269,16 +269,22 @@ describe("isolatiepagina: de configurator", () => {
     expect(tekst).toMatch(/vraagt vaak nieuwe kozijnen/);
   });
 
-  it("telt bij 'alles aanzetten' niet allebei de gevelroutes mee", () => {
+  it("zet bij 'alles aanzetten' ook echt alles aan, gevelisolatie incluis", () => {
     toon();
     fireEvent.click(screen.getByRole("button", { name: /Alles aanzetten/ }));
 
-    const zonderGevel = ISOLATIE_MAATREGELEN.filter((m) => m.id !== "gevel").reduce(
-      (som, m) => som + m.perType.hoekwoning.euro,
+    // Een vinkje dat niet aangaat leest als een kapotte knop. Dubbeltellen
+    // wordt voorkomen door de teller zelf, niet door een maatregel over te slaan.
+    for (const m of ISOLATIE_MAATREGELEN) {
+      expect(knop(m.naam), `${m.naam} bleef uit`).toHaveAttribute("aria-pressed", "true");
+    }
+
+    // De gevel telt daarbij één keer: de hoogste van spouw en gevel.
+    const totaal = ISOLATIE_MAATREGELEN.filter((m) => m.id !== "spouw").reduce(
+      (som, m) => som + m.perType.tussenwoning.euro,
       0,
     );
-    expect(screen.getByText(euro(zonderGevel))).toBeInTheDocument();
-    expect(knop(gevel.naam)).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByText(euro(totaal))).toBeInTheDocument();
   });
 });
 
