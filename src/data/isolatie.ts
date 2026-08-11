@@ -6,9 +6,9 @@
  * de landelijke en gemeentelijke regelingen. Alles hieronder is dus vóór
  * subsidie gerekend; wat je adres oplevert, komt uit de subsidiecheck.
  *
- * Bron: Milieu Centraal, pagina's over dak-, spouwmuur-, vloerisolatie en glas.
+ * Bron: Milieu Centraal, pagina's over dak-, spouwmuur-, vloerisolatie, gevel en glas.
  * https://www.milieucentraal.nl/energie-besparen/isoleren-en-besparen/
- * Gecontroleerd op 10 augustus 2026.
+ * Gecontroleerd op 11 augustus 2026.
  *
  * De bedragen gaan uit van een gasprijs van € 1,37 per m³, de gemiddelde
  * gasprijs die Milieu Centraal voor 2026 tot 2040 aanhoudt.
@@ -17,7 +17,7 @@
 export const BRON = {
   naam: "Milieu Centraal",
   url: "https://www.milieucentraal.nl/energie-besparen/isoleren-en-besparen/",
-  gecontroleerd: "10 augustus 2026",
+  gecontroleerd: "11 augustus 2026",
 } as const;
 
 export const GASPRIJS = 1.37;
@@ -34,15 +34,35 @@ export const WONINGTYPES: { id: Woningtype; label: string; kort: string }[] = [
 export type MaatregelId = "dak" | "spouw" | "gevel" | "vloer" | "glas";
 
 /**
- * Maatregelen die elkaar uitsluiten. Spouwmuurisolatie kan alleen als er een
- * spouw is en die nog leeg is; is dat niet zo, dan isoleer je de gevel aan de
- * binnen- of buitenkant. Allebei tegelijk kiezen zou een besparing optellen die
- * je in werkelijkheid niet twee keer krijgt.
+ * Maatregelen die hetzelfde bouwdeel isoleren.
+ *
+ * Spouwmuurisolatie en gevelisolatie gaan allebei over dezelfde muur, en ze
+ * sluiten elkaar niet uit: volgens Milieu Centraal kun je buitengevelisolatie
+ * combineren met spouwmuurisolatie, alleen wordt de laag aan de buitenkant dan
+ * dunner (12 cm in plaats van 17). Je komt met die combinatie dus op dezelfde
+ * geïsoleerde gevel uit als met gevelisolatie alleen, en daarmee op dezelfde
+ * besparing. Optellen zou een bedrag beloven dat je niet twee keer krijgt;
+ * daarom telt per bouwdeel de grootste besparing, niet de som.
  */
-export const SLUIT_UIT: Partial<Record<MaatregelId, MaatregelId>> = {
+export const BOUWDEEL: Partial<Record<MaatregelId, string>> = {
   spouw: "gevel",
-  gevel: "spouw",
+  gevel: "gevel",
 };
+
+/** Het bouwdeel waar een maatregel over gaat; de meeste staan alleen. */
+export const bouwdeelVan = (id: MaatregelId) => BOUWDEEL[id] ?? id;
+
+/**
+ * De vier delen waar de schil uit bestaat, in de volgorde waarin ze in de
+ * voortgangsbalk staan. Dat is dezelfde volgorde als de maatregelen hieronder,
+ * zodat de balk en de lijst elkaar niet tegenspreken.
+ */
+export const SCHIL_DELEN: { id: string; label: string }[] = [
+  { id: "dak", label: "Dak" },
+  { id: "gevel", label: "Gevel" },
+  { id: "vloer", label: "Vloer" },
+  { id: "glas", label: "Glas" },
+];
 
 interface PerType {
   /** Besparing in kubieke meter gas per jaar. */
@@ -53,18 +73,16 @@ interface PerType {
   kosten: number;
 }
 
+/**
+ * Bij glas hangt de besparing niet aan het woningtype maar aan wat er nu in
+ * zit. De keuze tussen hr++ en triple staat er bewust níét bij: Milieu Centraal
+ * komt voor allebei op dezelfde besparing uit, dus die knop zou de teller niet
+ * bewegen en vroeg om drie alinea's uitleg waarom niet. Dat verhaal staat in de
+ * FAQ op dezelfde pagina, waar mensen het ook zoeken.
+ */
 export interface GlasKeuzes {
   /** Wat er nu in zit; dit bepaalt de besparing. */
   startpunt: { id: string; label: string; m3: number; euro: number }[];
-  /** Waar je heen gaat; dit bepaalt de U-waarde en de kozijnvraag. */
-  soort: {
-    id: string;
-    label: string;
-    uWaarde: string;
-    toelichting: string;
-    /** Levert dit type volgens de bron dezelfde gasbesparing op als HR++? */
-    zelfdeBesparing: boolean;
-  }[];
 }
 
 export interface IsolatieMaatregel {
@@ -118,13 +136,18 @@ export const ISOLATIE_MAATREGELEN: IsolatieMaatregel[] = [
     merkbaar: "Hetzelfde effect als spouwisolatie, maar dan voor een woning die geen spouw heeft.",
     uitgangspunt:
       "Van een ongeïsoleerde gevel naar isolatie aan de buitenkant, over de hele gevel.",
+    // Milieu Centraal rekent gevelisolatie alleen door voor een hoekwoning.
+    // De andere woningtypen schalen mee met de verhouding uit de
+    // spouwmuurcijfers, die de bron wél per type geeft en die over dezelfde
+    // geveloppervlakte gaan: tussenwoning 180/400 = 0,45 en vrijstaand
+    // 600/400 = 1,5 ten opzichte van de hoekwoning.
     perType: {
-      tussenwoning: { m3: 530, euro: 750, kosten: 23000 },
+      tussenwoning: { m3: 240, euro: 330, kosten: 10400 },
       hoekwoning: { m3: 530, euro: 750, kosten: 23000 },
       "twee-onder-een-kap": { m3: 530, euro: 750, kosten: 23000 },
-      vrijstaand: { m3: 530, euro: 750, kosten: 23000 },
+      vrijstaand: { m3: 800, euro: 1100, kosten: 34500 },
     },
-    noot: "Dit is de route als je woning geen spouw heeft of de spouw al gevuld is; daarom kun je hem niet samen met spouwmuurisolatie kiezen. Buitenom levert het meeste op maar is ingrijpend en duur; een voorzetwand aan de binnenkant is een stuk goedkoper, levert minder op en kost ruimte. Milieu Centraal rekent hier met een hoekwoning, daarom staat dit cijfer voor elk woningtype gelijk.",
+    noot: "Dit is de route als je woning geen spouw heeft of de spouw al gevuld is. Heb je wel een lege spouw, dan kun je allebei doen: de spouw vullen scheelt dan dikte aan de buitenkant, maar je komt op dezelfde geïsoleerde gevel uit en dus niet op een dubbele besparing. Buitenom levert het meeste op maar is ingrijpend en duur; een voorzetwand aan de binnenkant is een stuk goedkoper, levert minder op en kost ruimte. Milieu Centraal rekent deze maatregel alleen voor een hoekwoning door; voor de andere woningtypen hebben wij het cijfer meegeschaald met de verhouding uit de spouwmuurcijfers.",
   },
   {
     id: "vloer",
@@ -144,36 +167,18 @@ export const ISOLATIE_MAATREGELEN: IsolatieMaatregel[] = [
     naam: "Isolerend glas",
     kort: "HR++ of triple in je kozijnen, in plaats van enkel of gewoon dubbel glas.",
     merkbaar: "Geen koudeval meer bij het raam, minder condens en merkbaar minder geluid van buiten.",
-    uitgangspunt: "Kies hieronder wat er nu in zit; dat bepaalt vooral wat het oplevert.",
+    uitgangspunt: "Kies hieronder wat er nu in zit; dat bepaalt wat het oplevert.",
     perType: {
       tussenwoning: { m3: 70, euro: 90, kosten: 4700 },
       hoekwoning: { m3: 70, euro: 90, kosten: 4700 },
       "twee-onder-een-kap": { m3: 70, euro: 90, kosten: 4700 },
       vrijstaand: { m3: 70, euro: 90, kosten: 4700 },
     },
-    noot: "Milieu Centraal rekent met een hoekwoning met 22 m² glas; daarom staat dit cijfer voor elk woningtype gelijk.",
+    noot: "De investering geldt voor isolerend glas in je bestaande kozijnen; moeten de kozijnen mee, dan valt hij hoger uit. Milieu Centraal rekent met een hoekwoning met 22 m² glas; daarom staat dit cijfer voor elk woningtype gelijk.",
     keuzes: {
       startpunt: [
         { id: "dubbel", label: "Gewoon dubbel glas", m3: 70, euro: 90 },
         { id: "enkel", label: "Enkel glas", m3: 260, euro: 350 },
-      ],
-      soort: [
-        {
-          id: "hrplus",
-          label: "HR++",
-          uWaarde: "ongeveer 1,1",
-          toelichting:
-            "Past meestal in je bestaande kozijnen en is voor de meeste woningen de verstandige keuze.",
-          zelfdeBesparing: false,
-        },
-        {
-          id: "triple",
-          label: "Triple",
-          uWaarde: "0,4 tot 0,9",
-          toelichting:
-            "Isoleert beter, maar is zwaarder en dikker. Vaak zijn er nieuwe kozijnen nodig, en dat bepaalt de prijs meer dan het glas zelf. Loont vooral als je naar een gasloze woning met lagetemperatuurverwarming toe werkt.",
-          zelfdeBesparing: true,
-        },
       ],
     },
   },
@@ -181,3 +186,14 @@ export const ISOLATIE_MAATREGELEN: IsolatieMaatregel[] = [
 
 export const euro = (bedrag: number) =>
   `€ ${Math.round(bedrag).toLocaleString("nl-NL")}`;
+
+/**
+ * Hoeveel jaar de investering erover doet om zichzelf terug te verdienen, vóór
+ * subsidie. Bewust zonder rente of prijsstijging: dat suggereert een precisie
+ * die deze gemiddelden niet hebben. Voor een deel van het werkgebied vergoedt
+ * Nij Begun tot 100 procent, en dan valt dit getal compleet anders uit.
+ */
+export const terugverdientijd = (kosten: number, euroPerJaar: number) =>
+  Math.round(kosten / euroPerJaar);
+
+export const jaren = (aantal: number) => `${aantal} jaar`;

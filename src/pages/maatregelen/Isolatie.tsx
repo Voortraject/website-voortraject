@@ -120,7 +120,7 @@ const Isolatie = () => (
       },
       {
         q: "Wat is het verschil tussen HR++ en triple glas, en is triple de meerprijs waard?",
-        a: "HR++ glas isoleert goed en is geschikt voor de meeste woningen. Triple glas isoleert nog beter, maar is duurder en vraagt vaak zwaardere kozijnen. Triple loont vooral als je naar een volledig gasloze woning met lage temperatuurverwarming toewerkt. In andere gevallen is HR++ meestal de slimmere keuze.",
+        a: "HR++ glas heeft een U-waarde van ongeveer 1,1 en triple glas 0,4 tot 0,9, tegen 5,8 voor enkel glas: hoe lager, hoe beter het isoleert. Op je gasrekening scheelt dat verschil weinig. Milieu Centraal komt voor triple op dezelfde besparing uit als voor HR++, want allebei zijn ze zoveel beter dan wat er zat dat de rest verwaarloosbaar is. Het verschil zit in comfort bij het raam en in de prijs: triple is zwaarder en dikker en vraagt vaak nieuwe kozijnen, en dat bepaalt de prijs meer dan het glas zelf. Triple loont vooral als je naar een volledig gasloze woning met lagetemperatuurverwarming toewerkt. In andere gevallen is HR++ meestal de slimmere keuze.",
       },
       {
         q: "Kan ik isoleren als ik later van het gas af wil?",

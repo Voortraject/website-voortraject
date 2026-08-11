@@ -27,6 +27,7 @@ const toon = () => render(<MemoryRouter><Isolatie /></MemoryRouter>);
 const dak = ISOLATIE_MAATREGELEN.find((m) => m.id === "dak")!;
 const spouw = ISOLATIE_MAATREGELEN.find((m) => m.id === "spouw")!;
 const gevel = ISOLATIE_MAATREGELEN.find((m) => m.id === "gevel")!;
+const vloer = ISOLATIE_MAATREGELEN.find((m) => m.id === "vloer")!;
 
 const knop = (naam: string) => screen.getByRole("button", { name: new RegExp(`^${naam}`) });
 
@@ -60,6 +61,54 @@ describe("isolatiepagina: de configurator", () => {
     expect(dak.perType.vrijstaand.euro).not.toBe(dak.perType.hoekwoning.euro);
   });
 
+  it("toont de terugverdientijd op de kaart en op het totaal", () => {
+    toon();
+
+    // Dak los: 6.500 / 480 is bijna 14 jaar.
+    fireEvent.click(knop(dak.naam));
+    const dakTijd = Math.round(
+      dak.perType.hoekwoning.kosten / dak.perType.hoekwoning.euro,
+    );
+    expect(screen.getAllByText(`${dakTijd} jaar`).length).toBeGreaterThan(0);
+
+    // Met vloer erbij loopt het totaal apart van de losse kaarten.
+    fireEvent.click(knop(vloer.naam));
+    const samenTijd = Math.round(
+      (dak.perType.hoekwoning.kosten + vloer.perType.hoekwoning.kosten) /
+        (dak.perType.hoekwoning.euro + vloer.perType.hoekwoning.euro),
+    );
+    expect(screen.getByText(`${samenTijd} jaar`)).toBeInTheDocument();
+
+    // Zonder dit voorbehoud is het getal niet waar voor het werkgebied: met
+    // Nij Begun wordt tot 100 procent vergoed.
+    expect(
+      screen.getByText(/Investering en terugverdientijd zijn vóór subsidie/),
+    ).toBeInTheDocument();
+  });
+
+  it("wijst de maatregel aan die zichzelf het snelst terugverdient", () => {
+    toon();
+    // De pagina zegt verderop "begin bij de maatregel met de kortste
+    // terugverdientijd", dus dan hoort de tool die ook aan te wijzen.
+    expect(screen.getAllByText("Snelst terugverdiend")).toHaveLength(1);
+    expect(knop(spouw.naam).textContent).toMatch(/Snelst terugverdiend/);
+  });
+
+  it("laat in de voortgangsbalk zien hoever de schil dicht is", () => {
+    toon();
+    // Hoekwoning: dak 480, gevel 750, vloer 180, glas 90 is samen € 1.500.
+    expect(screen.getByText(/^0% van/)).toBeInTheDocument();
+
+    fireEvent.click(knop(dak.naam));
+    const haalbaar =
+      dak.perType.hoekwoning.euro +
+      gevel.perType.hoekwoning.euro +
+      vloer.perType.hoekwoning.euro +
+      90;
+    const deel = Math.round((dak.perType.hoekwoning.euro / haalbaar) * 100);
+    expect(screen.getByText(`${deel}% van ${euro(haalbaar)} per jaar`)).toBeInTheDocument();
+  });
+
   it("laat de tekening meebewegen met wat er aan staat", () => {
     const { container } = toon();
 
@@ -68,6 +117,65 @@ describe("isolatiepagina: de configurator", () => {
 
     fireEvent.click(knop(dak.naam));
     expect(tekening().getAttribute("aria-label")).toMatch(/met isolatie in: dak/);
+  });
+
+  it("laat de warmtestromen stoppen zodra je dat bouwdeel isoleert", () => {
+    const { container } = toon();
+    const stroomt = (bron: string) => {
+      const stromen = Array.from(
+        container.querySelectorAll<SVGElement>(`[data-stroom="${bron}"]`),
+      );
+      expect(stromen.length, `geen warmtestromen voor ${bron}`).toBeGreaterThan(0);
+      return stromen.every((s) => s.style.opacity !== "0");
+    };
+
+    expect(stroomt("dak")).toBe(true);
+    fireEvent.click(knop(dak.naam));
+    expect(stroomt("dak")).toBe(false);
+    // De rest van de schil lekt nog wel; alleen het dak is dicht.
+    expect(stroomt("vloer")).toBe(true);
+
+    // De gevel is dicht via spouw óf gevel: allebei stoppen dezelfde stroom.
+    expect(stroomt("gevel")).toBe(true);
+    fireEvent.click(knop(spouw.naam));
+    expect(stroomt("gevel")).toBe(false);
+  });
+
+  it("houdt de warmtestromen binnen het kader van de tekening", () => {
+    // De stromen zijn langer dan de pijlen die er stonden, dus ze liepen aan
+    // drie kanten het kader uit. Dit is geen som die je met de hand blijft
+    // narekenen als er een stroom bij komt.
+    const { container } = toon();
+    const svg = container.querySelector('svg[role="img"]')!;
+    const [vx, vy, vBreed, vHoog] = svg.getAttribute("viewBox")!.split(" ").map(Number);
+
+    const stromen = Array.from(container.querySelectorAll("[data-stroom]"));
+    expect(stromen.length).toBeGreaterThan(0);
+
+    for (const stroom of stromen) {
+      const getallen = (stroom.getAttribute("d") ?? "").match(/-?\d+(?:\.\d+)?/g)!.map(Number);
+      for (let i = 0; i < getallen.length; i += 2) {
+        const [x, y] = [getallen[i], getallen[i + 1]];
+        // Een bezier blijft binnen de omhullende van zijn punten, dus passen
+        // alle punten, dan past de kromme.
+        const waar = `${stroom.getAttribute("data-stroom")} op ${x},${y}`;
+        expect(x, `${waar} steekt links uit`).toBeGreaterThanOrEqual(vx);
+        expect(x, `${waar} steekt rechts uit`).toBeLessThanOrEqual(vx + vBreed);
+        expect(y, `${waar} steekt boven uit`).toBeGreaterThanOrEqual(vy);
+        expect(y, `${waar} steekt onder uit`).toBeLessThanOrEqual(vy + vHoog);
+      }
+    }
+  });
+
+  it("kleurt het hele dakvlak bij dakisolatie, niet alleen de snede", () => {
+    // Zat de isolatie alleen in de opengewerkte snede, dan leek er bij het dak
+    // niets te gebeuren. Het dakvlak hoort mee te kleuren, net als de gevel.
+    const { container } = toon();
+    const dakvlak = () => container.querySelector<SVGElement>('[data-laag="dak"]')!;
+
+    expect(dakvlak().style.opacity).toBe("0");
+    fireEvent.click(knop(dak.naam));
+    expect(dakvlak().style.opacity).toBe("1");
   });
 
   it("toont per maatregel het uitgangspunt zodra je hem aanzet", () => {
@@ -79,18 +187,45 @@ describe("isolatiepagina: de configurator", () => {
     expect(screen.getByText(new RegExp(spouw.noot!.slice(0, 40)))).toBeInTheDocument();
   });
 
-  it("laat spouw- en gevelisolatie elkaar uitsluiten", () => {
+  it("laat spouw- en gevelisolatie samen aanzetten", () => {
+    toon();
+
+    // Milieu Centraal zegt het met zoveel woorden: buitengevelisolatie kun je
+    // combineren met spouwmuurisolatie, alleen wordt de buitenlaag dan dunner.
+    // De configurator mag de een dus niet stilzwijgend uitzetten.
+    fireEvent.click(knop(spouw.naam));
+    fireEvent.click(knop(gevel.naam));
+
+    expect(knop(spouw.naam)).toHaveAttribute("aria-pressed", "true");
+    expect(knop(gevel.naam)).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("telt de gevel één keer als spouw en gevel allebei aan staan", () => {
     toon();
 
     fireEvent.click(knop(spouw.naam));
-    expect(knop(spouw.naam)).toHaveAttribute("aria-pressed", "true");
-
-    // Je doet het één of het ander: een woning zonder spouw isoleer je aan de
-    // gevel. Allebei optellen zou een besparing beloven die je niet krijgt.
     fireEvent.click(knop(gevel.naam));
-    expect(knop(gevel.naam)).toHaveAttribute("aria-pressed", "true");
-    expect(knop(spouw.naam)).toHaveAttribute("aria-pressed", "false");
+
+    // Allebei kom je op dezelfde geïsoleerde gevel uit, dus de besparing
+    // verdubbelt niet: het hoogste van de twee telt.
+    const samen = spouw.perType.hoekwoning.euro + gevel.perType.hoekwoning.euro;
     expect(screen.getByText(euro(gevel.perType.hoekwoning.euro))).toBeInTheDocument();
+    expect(screen.queryByText(euro(samen))).not.toBeInTheDocument();
+
+    // De investering telt wél op, want je betaalt allebei de ingrepen.
+    const kosten = spouw.perType.hoekwoning.kosten + gevel.perType.hoekwoning.kosten;
+    expect(screen.getByText(euro(kosten))).toBeInTheDocument();
+  });
+
+  it("legt uit waarom de teller blijft staan bij spouw plus gevel", () => {
+    toon();
+
+    fireEvent.click(knop(gevel.naam));
+    expect(screen.queryByText(/De gevel telt één keer mee/)).not.toBeInTheDocument();
+
+    // Zonder deze uitleg lijkt een teller die niet meebeweegt een fout.
+    fireEvent.click(knop(spouw.naam));
+    expect(screen.getByText(/De gevel telt één keer mee/)).toBeInTheDocument();
   });
 
   it("laat de glasbesparing afhangen van wat er nu in zit", () => {
@@ -109,22 +244,29 @@ describe("isolatiepagina: de configurator", () => {
     expect(vanafEnkel.euro).toBeGreaterThan(vanafDubbel.euro * 2);
   });
 
-  it("biedt triple als keuze en is eerlijk over de kozijnen", () => {
+  it("houdt het glasblok bij de ene keuze die de teller beweegt", () => {
     toon();
     const glas = ISOLATIE_MAATREGELEN.find((m) => m.id === "glas")!;
     fireEvent.click(knop(glas.naam));
 
-    fireEvent.click(screen.getByRole("button", { name: "Triple" }));
-    expect(screen.getByText(/vaak zijn er nieuwe kozijnen nodig/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Enkel glas" })).toBeInTheDocument();
     // Milieu Centraal komt voor triple op dezelfde besparing uit als voor HR++.
-    // Als de teller dan niet verandert lijkt dat een fout, dus dat hoort er
-    // hardop bij te staan.
-    expect(screen.getByText(/Op de gasrekening scheelt het niets/)).toBeInTheDocument();
-    // De investering in de teller geldt voor bestaande kozijnen; dat mag niet
-    // stilzwijgend blijven.
-    expect(
-      screen.getByText(/geldt voor isolerend glas in je bestaande kozijnen/),
-    ).toBeInTheDocument();
+    // Als knop in de configurator bewoog die keuze de teller dus niet, en vroeg
+    // hij vooral om alinea's uitleg waarom er niets gebeurt.
+    expect(screen.queryByRole("button", { name: "Triple" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "HR++" })).not.toBeInTheDocument();
+
+    // De investering geldt voor bestaande kozijnen; dat mag niet stilzwijgend blijven.
+    expect(screen.getByText(/geldt voor isolerend glas in je bestaande kozijnen/)).toBeInTheDocument();
+  });
+
+  it("verplaatst het verhaal over triple naar de FAQ, waar het niet verloren gaat", () => {
+    const { container } = toon();
+    const tekst = container.textContent ?? "";
+    // Wat uit de configurator verdween, hoort ergens anders op de pagina te staan.
+    expect(tekst).toMatch(/U-waarde van ongeveer 1,1 en triple glas 0,4 tot 0,9/);
+    expect(tekst).toMatch(/Op je gasrekening scheelt dat verschil weinig/);
+    expect(tekst).toMatch(/vraagt vaak nieuwe kozijnen/);
   });
 
   it("telt bij 'alles aanzetten' niet allebei de gevelroutes mee", () => {
@@ -195,7 +337,7 @@ describe("isolatiepagina: eerlijk over subsidie", () => {
       a.href.includes("milieucentraal.nl"),
     );
     expect(bron).toBeDefined();
-    expect(screen.getByText(/gecontroleerd op 10 augustus 2026/)).toBeInTheDocument();
+    expect(screen.getByText(/gecontroleerd op 11 augustus 2026/)).toBeInTheDocument();
     expect(screen.getByText(/gasprijs van € 1,37 per m³/)).toBeInTheDocument();
   });
 });
@@ -223,6 +365,20 @@ describe("isolatiegegevens", () => {
         expect(waarden.m3, `${m.naam} / ${type}: gasbesparing ontbreekt`).toBeGreaterThan(0);
         expect(waarden.kosten, `${m.naam} / ${type}: kosten ontbreken`).toBeGreaterThan(0);
       }
+    }
+  });
+
+  it("laat gevelisolatie nooit onder spouwmuurisolatie zakken", () => {
+    // De gevel aan de buitenkant isoleren brengt je op een hogere isolatiewaarde
+    // dan het vullen van de spouw, bij elk woningtype. Stond het gevelcijfer
+    // vlak op het hoekwoning-bedrag van de bron, dan kwam een vrijstaande woning
+    // op minder uit dan met spouwisolatie. Dat kan niet.
+    for (const type of Object.keys(spouw.perType) as (keyof typeof spouw.perType)[]) {
+      expect(
+        gevel.perType[type].m3,
+        `${type}: gevelisolatie bespaart minder dan spouwmuurisolatie`,
+      ).toBeGreaterThanOrEqual(spouw.perType[type].m3);
+      expect(gevel.perType[type].euro).toBeGreaterThanOrEqual(spouw.perType[type].euro);
     }
   });
 

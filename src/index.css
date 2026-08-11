@@ -25,6 +25,41 @@
   .schil-overgang { transition: none; }
 }
 
+/* De warmte die ontsnapt stroomt naar buiten: streepjes schuiven langs het pad
+   weg van de woning, zodat het leest als warmte die wegloopt en niet als een
+   pijl die wiebelt. De verschuiving is precies twee streeppatronen (2 × 22),
+   anders springt de lus. Alleen stroke-dashoffset, want de zichtbaarheid loopt
+   via een inline opacity die een animatie zou overrulen.
+
+   Zonder beweging blijft de stroom staan als een doorlopende sliert; dat leest
+   nog steeds als ontsnappende warmte. */
+@keyframes warmtestroom {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -44; }
+}
+.warmtestroom {
+  stroke-dasharray: 10 12;
+  animation: warmtestroom 2.6s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .warmtestroom { animation: none; stroke-dasharray: none; }
+}
+
+/* De maatregelkaarten komen bij hover iets omhoog. Als CSS-regel en niet als
+   inline stijl, want rand en achtergrond staan al inline en zouden een
+   hover-variant overrulen. */
+.maatregel-kaart {
+  transition: box-shadow 200ms ease, transform 200ms ease, background-color 200ms ease,
+    border-color 200ms ease;
+}
+.maatregel-kaart:hover {
+  box-shadow: 0 6px 20px hsl(var(--primary) / 0.09);
+  transform: translateY(-1px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .maatregel-kaart:hover { transform: none; }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

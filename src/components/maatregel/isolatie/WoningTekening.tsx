@@ -62,6 +62,8 @@ const HOUT = "#C4A075";
 const HOUT_DONKER = "#A8834F";
 const BETON = "#BDB6A9";
 const WARM = "#C0392B";
+/** Waar de stroom de woning verlaat is hij het heetst, en dus lichter. */
+const WARM_HEET = "#E2673A";
 const LIJN = "hsl(var(--primary) / 0.5)";
 
 /** Diktes van de lagen in de snede. */
@@ -73,6 +75,45 @@ const DAK_DIK = 22;
 const RIJEN = 8;
 const KOLOMMEN = 22;
 
+/* ---------- warmte die ontsnapt ---------- */
+
+type Richting = "op" | "neer" | "links" | "rechts";
+
+const RICHTINGEN: Record<Richting, Punt> = {
+  op: [0, -1],
+  neer: [0, 1],
+  links: [-1, 0],
+  rechts: [1, 0],
+};
+
+/** Waar het verloop langs loopt: heet aan de woning, opgelost aan het eind. */
+const VERLOOP_AS: Record<Richting, { x1: number; y1: number; x2: number; y2: number }> = {
+  op: { x1: 0, y1: 1, x2: 0, y2: 0 },
+  neer: { x1: 0, y1: 0, x2: 0, y2: 1 },
+  links: { x1: 1, y1: 0, x2: 0, y2: 0 },
+  rechts: { x1: 0, y1: 0, x2: 1, y2: 0 },
+};
+
+/**
+ * Een golvende warmtestroom vanaf (x, y) naar buiten.
+ *
+ * Twee bochten om de as heen, zodat hij leest als opstijgende warmte en niet
+ * als een streep. De stroom loopt van de woning af; dat is ook de richting
+ * waarin het verloop vervaagt en waarin de streepjes bewegen.
+ */
+const stroompad = (x: number, y: number, richting: Richting, lengte: number, golf: number) => {
+  const [dx, dy] = RICHTINGEN[richting];
+  const [px, py] = [-dy, dx];
+  const punt = (t: number, zij: number): Punt => [
+    x + dx * lengte * t + px * golf * zij,
+    y + dy * lengte * t + py * golf * zij,
+  ];
+  const [c1x, c1y] = punt(0.36, 1);
+  const [c2x, c2y] = punt(0.68, -1);
+  const [ex, ey] = punt(1, 0);
+  return `M${x.toFixed(1)} ${y.toFixed(1)} C${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
+};
+
 export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
   const id = useId();
   const steen = `${id}-steen`;
@@ -81,6 +122,7 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
   const wol = `${id}-wol`;
   const glas = `${id}-glas`;
   const grond = `${id}-grond`;
+  const warmte = `${id}-warmte`;
 
   const aan = (m: MaatregelId) => gekozen.has(m);
   const gevelAan = aan("spouw") || aan("gevel");
@@ -101,7 +143,11 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
       : `Opengewerkte tekening van een woning met isolatie in: ${[...gekozen].join(", ")}`;
 
   return (
-    <svg viewBox="14 74 372 296" className="w-full h-auto" role="img" aria-label={beschrijving}>
+    // Het kader loopt boven en rechts ruimer door dan de woning nodig heeft:
+    // de warmtestromen zijn langer dan de pijlen die er stonden en werden
+    // anders afgesneden. De verhouding blijft vrijwel gelijk (386/306 tegen
+    // 372/296), dus de woning staat er even groot in, alleen beter gecentreerd.
+    <svg viewBox="14 64 386 306" className="w-full h-auto" role="img" aria-label={beschrijving}>
       <defs>
         <pattern
           id={steen}
@@ -160,6 +206,18 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
           <stop offset="0%" stopColor="hsl(var(--primary) / 0.2)" />
           <stop offset="100%" stopColor="hsl(var(--primary) / 0)" />
         </radialGradient>
+
+        {/* Eén verloop per richting: de stroom is heet waar hij de woning
+            verlaat en lost aan het eind op in het niets. Het verloop ligt op de
+            omhullende van het pad, dus elke stroom vervaagt over zijn eigen
+            lengte. */}
+        {(Object.keys(VERLOOP_AS) as Richting[]).map((richting) => (
+          <linearGradient key={richting} id={`${warmte}-${richting}`} {...VERLOOP_AS[richting]}>
+            <stop offset="0%" stopColor={WARM_HEET} stopOpacity="0.95" />
+            <stop offset="45%" stopColor={WARM} stopOpacity="0.6" />
+            <stop offset="100%" stopColor={WARM} stopOpacity="0" />
+          </linearGradient>
+        ))}
       </defs>
 
       <ellipse cx="205" cy="330" rx="165" ry="32" fill={`url(#${grond})`} />
@@ -352,6 +410,17 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
         const [x2, y2] = D(a, 1);
         return <line key={`naad${k}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke={PAN_DONKER} strokeWidth="0.9" />;
       })}
+      {/* Dakisolatie zit tussen de spanten en is van buiten net zo onzichtbaar
+          als spouwisolatie. Toch hoort het hele dakvlak mee te kleuren en niet
+          alleen de snede, anders lijkt er niets te gebeuren: dezelfde warme
+          waas dus als bij de spouw. */}
+      <polygon
+        className="schil-overgang"
+        data-laag="dak"
+        points={pad(D(0, 0), D(1, 0), D(1, 1), D(0, 1))}
+        fill="hsl(var(--accent) / 0.34)"
+        style={{ opacity: aan("dak") ? 1 : 0 }}
+      />
       <polygon
         points={pad(D(0, 0), D(1, 0), D(1, 1), D(0, 1))}
         fill="hsl(var(--primary) / 0.05)"
@@ -389,69 +458,182 @@ export const WoningTekening = ({ gekozen }: { gekozen: Set<MaatregelId> }) => {
       })()}
 
       {/* ============ WARMTE DIE ONTSNAPT ============ */}
-      {/* Boven de nok, met een gat waar de schoorsteen staat. */}
-      {[0.12, 0.55, 0.85].map((a) => {
+      {/* Boven de nok, langs de schoorsteen heen. */}
+      {[
+        { a: 0.1, lengte: 38, golf: 6 },
+        { a: 0.52, lengte: 46, golf: 7 },
+        { a: 0.68, lengte: 32, golf: 5 },
+        { a: 0.86, lengte: 42, golf: 6 },
+      ].map(({ a, lengte, golf }, i) => {
         const [x, y] = P(a, 0.5, H + NOK);
-        return <Pijl key={`dak${a}`} x={x} y={y - 20} richting="op" zichtbaar={lek(!aan("dak"))} />;
+        return (
+          <Stroom
+            key={`dak${a}`}
+            bron="dak"
+            verloop={warmte}
+            x={x}
+            y={y - 8}
+            richting="op"
+            lengte={lengte}
+            golf={golf}
+            zichtbaar={lek(!aan("dak"))}
+            vertraging={i * 0.55}
+          />
+        );
       })}
       {/* Links en rechts van de woning, op muurhoogte. */}
-      {[40, 74].map((z) => {
-        const [, y] = P(0, 0, z);
-        return <Pijl key={`l${z}`} x={P(0, 0, z)[0] - 28} y={y} richting="links" zichtbaar={lek(!gevelAan)} />;
+      {[
+        { z: 34, lengte: 40 },
+        { z: 62, lengte: 32 },
+        { z: 86, lengte: 40 },
+      ].map(({ z, lengte }, i) => {
+        const [x, y] = P(0, 0, z);
+        return (
+          <Stroom
+            key={`l${z}`}
+            bron="gevel"
+            verloop={warmte}
+            x={x - 5}
+            y={y}
+            richting="links"
+            lengte={lengte}
+            golf={5}
+            zichtbaar={lek(!gevelAan)}
+            vertraging={i * 0.6 + 0.2}
+          />
+        );
       })}
-      {[40, 74].map((z) => {
+      {[
+        { z: 34, lengte: 34 },
+        { z: 62, lengte: 40 },
+        { z: 86, lengte: 36 },
+      ].map(({ z, lengte }, i) => {
         const [x, y] = P(1, 1, z);
-        return <Pijl key={`r${z}`} x={x + 28} y={y} richting="rechts" zichtbaar={lek(!gevelAan)} />;
+        return (
+          <Stroom
+            key={`r${z}`}
+            bron="gevel"
+            verloop={warmte}
+            x={x + 5}
+            y={y}
+            richting="rechts"
+            lengte={lengte}
+            golf={5}
+            zichtbaar={lek(!gevelAan)}
+            vertraging={i * 0.6 + 1}
+          />
+        );
       })}
-      {/* Uit de ramen omhoog. */}
-      {[0.175, 0.465].map((a) => {
+      {/* Uit de ramen omhoog: korter en dunner, want er lekt minder. */}
+      {[0.175, 0.465].map((a, i) => {
         const [x, y] = P(a, 0, 85);
-        return <Pijl key={`g${a}`} x={x} y={y - 14} richting="op" zichtbaar={lek(!aan("glas"))} kort />;
+        return (
+          <Stroom
+            key={`g${a}`}
+            bron="glas"
+            verloop={warmte}
+            x={x}
+            y={y - 6}
+            richting="op"
+            lengte={24}
+            golf={4}
+            breedte={1.9}
+            zichtbaar={lek(!aan("glas"))}
+            vertraging={i * 0.7 + 0.35}
+          />
+        );
       })}
       {/* Onder de vloer door. */}
-      {[0.35, 0.78].map((a) => {
+      {[
+        { a: 0.3, lengte: 30 },
+        { a: 0.62, lengte: 24 },
+        { a: 0.9, lengte: 22 },
+      ].map(({ a, lengte }, i) => {
         const [x, y] = P(a, 0, 0);
-        return <Pijl key={`v${a}`} x={x} y={y + 26} richting="neer" zichtbaar={lek(!aan("vloer"))} />;
+        return (
+          <Stroom
+            key={`v${a}`}
+            bron="vloer"
+            verloop={warmte}
+            x={x}
+            y={y + 8}
+            richting="neer"
+            lengte={lengte}
+            golf={4}
+            zichtbaar={lek(!aan("vloer"))}
+            vertraging={i * 0.55 + 0.15}
+          />
+        );
       })}
       {(() => {
         const [x, y] = P(1, 0.55, 0);
-        return <Pijl x={x} y={y + 26} richting="neer" zichtbaar={lek(!aan("vloer"))} />;
+        return (
+          <Stroom
+            bron="vloer"
+            verloop={warmte}
+            x={x}
+            y={y + 8}
+            richting="neer"
+            lengte={26}
+            golf={4}
+            zichtbaar={lek(!aan("vloer"))}
+            vertraging={1.3}
+          />
+        );
       })()}
     </svg>
   );
 };
 
-const Pijl = ({
+/**
+ * Eén stroom warmte die de woning verlaat.
+ *
+ * De beweging komt van streepjes die langs het pad naar buiten schuiven
+ * (stroke-dashoffset), niet van het pad zelf: zo lijkt het of er warmte
+ * doorheen loopt in plaats van dat er een pijl heen en weer wiebelt. Elke
+ * stroom heeft zijn eigen lengte, golf en vertraging, want gelijke stromen op
+ * een rij zien er meteen uit als een patroon en niet als warmte.
+ */
+const Stroom = ({
+  bron,
+  verloop,
   x,
   y,
   richting,
+  lengte,
+  golf,
   zichtbaar,
-  kort = false,
+  breedte = 2.6,
+  vertraging = 0,
 }: {
+  /** Het bouwdeel waar deze stroom bij hoort; alleen om op te kunnen testen. */
+  bron: string;
+  /** Basis-id van de verlopen in defs. */
+  verloop: string;
   x: number;
   y: number;
-  richting: "op" | "neer" | "links" | "rechts";
+  richting: Richting;
+  lengte: number;
+  golf: number;
   zichtbaar: number;
-  kort?: boolean;
-}) => {
-  const l = kort ? 13 : 22;
-  const d: Record<typeof richting, string> = {
-    op: `M${x} ${y + l} L${x} ${y} M${x - 5} ${y + 6} L${x} ${y} L${x + 5} ${y + 6}`,
-    neer: `M${x} ${y - l} L${x} ${y} M${x - 5} ${y - 6} L${x} ${y} L${x + 5} ${y - 6}`,
-    links: `M${x + l} ${y} L${x} ${y} M${x + 6} ${y - 5} L${x} ${y} L${x + 6} ${y + 5}`,
-    rechts: `M${x - l} ${y} L${x} ${y} M${x - 6} ${y - 5} L${x} ${y} L${x - 6} ${y + 5}`,
-  };
-  return (
-    <path
-      className="schil-overgang"
-      d={d[richting]}
-      stroke={WARM}
-      strokeWidth="2.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      fill="none"
-      style={{ opacity: zichtbaar }}
-      aria-hidden="true"
-    />
-  );
-};
+  breedte?: number;
+  /** Seconden voorsprong, zodat de stromen niet in de pas lopen. */
+  vertraging?: number;
+}) => (
+  <path
+    className="schil-overgang warmtestroom"
+    data-stroom={bron}
+    d={stroompad(x, y, richting, lengte, golf)}
+    stroke={`url(#${verloop}-${richting})`}
+    strokeWidth={breedte}
+    strokeLinecap="round"
+    fill="none"
+    style={{
+      opacity: zichtbaar,
+      animationDelay: `${vertraging}s`,
+      // Een stroom die niet te zien is hoeft ook niet te stromen.
+      animationPlayState: zichtbaar ? "running" : "paused",
+    }}
+    aria-hidden="true"
+  />
+);
