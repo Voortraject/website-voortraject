@@ -1,9 +1,10 @@
 import { FormEvent, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, ChevronDown } from "lucide-react";
 
 import { SUBSIDIECHECK_BELOFTES } from "@/config/beloftes";
 import { normalizePostcode, POSTCODE_RE } from "@/lib/pdok";
+import { BEWONERTYPE_MEERVOUD } from "@/lib/subsidies";
 
 // Typt mee met de gebruiker: hoofdletters, alleen geldige tekens.
 const formatPostcode = (v: string) => v.toUpperCase().replace(/[^0-9A-Z ]/g, "").slice(0, 7);
@@ -33,10 +34,44 @@ export const SubsidiecheckCta = () => {
       return;
     }
     const tv = toevoeging.trim();
+    // `type` erbij betekent: stap 1 is hiermee klaar, de bezoeker komt direct op
+    // "Je gegevens" uit. Wie hier zijn adres invult heeft de vraag van stap 1 al
+    // beantwoord; die daar tóch nog een keer neerzetten kost een klik zonder dat
+    // er iets te kiezen valt. De standaardsituatie (woningeigenaar) en alle
+    // maatregelen zijn precies wat stap 1 zou hebben ingevuld: die stap staat
+    // standaard op woningeigenaar en zonder m-parameter zoeken we op alles.
+    //
+    // Afwijken kan verderop gewoon: stap 1 blijft aanklikbaar in de
+    // voortgangsbalk, en op het resultaat staat "situatie aanpassen".
     navigate(
       `/subsidiecheck?pc=${encodeURIComponent(normalizePostcode(pc))}&hn=${encodeURIComponent(hn)}` +
-        (tv ? `&tv=${encodeURIComponent(tv)}` : ""),
+        (tv ? `&tv=${encodeURIComponent(tv)}` : "") +
+        "&type=woningeigenaar",
     );
+  };
+
+  // "Aanpassen": naar stap 1 met de keuzes al uitgeklapt. Op de homepage zelf
+  // uitklappen kan niet zonder de pill uit elkaar te trekken, en het hoort ook
+  // niet hier thuis: de keuzes staan al op stap 1, inclusief de uitleg eromheen.
+  //
+  // `sit=1` is dezelfde route als "situatie aanpassen" op het resultaat en zet
+  // op stap 1 zowel "Ik ben…" als "Waar ben je in geïnteresseerd?" open. Bewust
+  // géén `type`: die parameter rondt stap 1 juist af, en hier wil de bezoeker er
+  // nu net wél zijn.
+  //
+  // Wat er al getypt staat gaat mee, ook een half adres: dan staan de velden op
+  // stap 1 voorgevuld in plaats van leeg. Geen validatie dus, want dit is geen
+  // verzendknop; wie hier klikt is nog aan het kiezen.
+  const naarKeuzes = () => {
+    const params = new URLSearchParams();
+    const pc = postcode.trim();
+    const hn = huisnummer.trim();
+    const tv = toevoeging.trim();
+    if (pc) params.set("pc", POSTCODE_RE.test(pc) ? normalizePostcode(pc) : pc);
+    if (hn) params.set("hn", hn);
+    if (tv) params.set("tv", tv);
+    params.set("sit", "1");
+    navigate(`/subsidiecheck?${params.toString()}`);
   };
 
   return (
@@ -122,6 +157,29 @@ export const SubsidiecheckCta = () => {
                 {fout}
               </p>
             )}
+
+            {/* Dezelfde zin als op stap 1, en om dezelfde reden: de check zoekt
+                hier op een standaard (woningeigenaar, alle maatregelen) en dat
+                hoort de bezoeker te weten vóórdat hij zijn overzicht krijgt, niet
+                pas als het er staat. Nu de knop rechtstreeks naar de gegevensstap
+                gaat is dit de enige plek waar dat nog voorbijkomt.
+                Tekst en toon bewust letterlijk gelijk aan StapAdres.
+
+                foreground/80 in plaats van muted-foreground: dit blok staat op de
+                zandkleurige sectie, en daar haalt muted (#6B6B6B op #F0E4D0) net
+                geen 4.5:1. Op stap 1, met de off-white achtergrond, doet dezelfde
+                token dat wel. */}
+            <p className="mt-4 text-[13px] leading-relaxed text-foreground/80 sm:text-[13.5px]">
+              We zoeken voor {BEWONERTYPE_MEERVOUD.woningeigenaar} op alle maatregelen.{" "}
+              <button
+                type="button"
+                onClick={naarKeuzes}
+                className="inline-flex items-center gap-1 rounded-sm font-medium text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                Aanpassen
+                <ChevronDown size={13} aria-hidden="true" />
+              </button>
+            </p>
           </form>
 
           {/* Drie beloftes met vinkjes — zelfde patroon als de hero. De teksten

@@ -148,6 +148,17 @@ describe("de keuzeregel boven de knop", () => {
     expect(screen.getByText("Waar ben je in geïnteresseerd?")).toBeInTheDocument();
   });
 
+  it("staat meteen open voor wie hier expliciet naartoe kwam", () => {
+    // Via "situatie aanpassen" op het resultaat of "Aanpassen" op de homepage
+    // (sit=1). Dan is de uitklap precies waarvoor de bezoeker kwam; die dicht
+    // laten zou de klik zinloos maken.
+    stapAdres({ situatieOpen: true });
+
+    expect(screen.getByText("Ik ben…")).toBeInTheDocument();
+    expect(screen.getByText("Waar ben je in geïnteresseerd?")).toBeInTheDocument();
+    expect(screen.queryByText(/We zoeken voor/i)).toBeNull();
+  });
+
   it("toont de zin niet als de bezoeker al van de standaard afwijkt", () => {
     // Wie als huurder binnenkomt heeft wél iets te kiezen; dan hoort het blok
     // meteen open te staan in plaats van samengevat te zijn.
