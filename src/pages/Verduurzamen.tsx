@@ -12,7 +12,11 @@ import { MAATREGEL_VOLGORDE, MAATREGELEN, ROUTE, type MaatregelSlug } from "@/da
 import { SITE_URL } from "@/lib/site";
 
 import heroImage from "@/assets/helpen-subsidies.webp";
-import isolatieImage from "@/assets/maatregel-isolatie.webp";
+// De spouwmuurfoto: dezelfde die op de isolatiepagina zelf de hero is. De kaart
+// toonde eerder de kruipruimte-foto (maatregel-isolatie.webp); die vertelde
+// vooral "iemand kruipt onder de vloer", terwijl dit beeld laat zien wat we
+// doen: eerst kijken wat er in de muur zit.
+import isolatieImage from "@/assets/helpen-isolatie.webp";
 import zonnepanelenImage from "@/assets/maatregel-zonnepanelen.webp";
 import warmtepompImage from "@/assets/maatregel-warmtepomp.webp";
 import thuisbatterijImage from "@/assets/maatregel-thuisbatterij.jpg";
@@ -44,7 +48,7 @@ const BEELD: Record<MaatregelSlug, string> = {
 };
 
 const ALT: Record<MaatregelSlug, string> = {
-  isolatie: "Uitvoerder brengt isolatie aan in een woning",
+  isolatie: "Adviseur van Voortraject bekijkt met een inspectiecamera wat er in de spouwmuur zit",
   zonnepanelen: "Zonnepanelen op het dak van een woning",
   warmtepomp: "Adviseur bekijkt de instellingen van een warmtepomp",
   thuisbatterij: "Thuisbatterij aan een muur in een bijkeuken",
