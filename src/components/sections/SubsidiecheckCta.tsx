@@ -33,9 +33,19 @@ export const SubsidiecheckCta = () => {
       return;
     }
     const tv = toevoeging.trim();
+    // `type` erbij betekent: stap 1 is hiermee klaar, de bezoeker komt direct op
+    // "Je gegevens" uit. Wie hier zijn adres invult heeft de vraag van stap 1 al
+    // beantwoord; die daar tóch nog een keer neerzetten kost een klik zonder dat
+    // er iets te kiezen valt. De standaardsituatie (woningeigenaar) en alle
+    // maatregelen zijn precies wat stap 1 zou hebben ingevuld: die stap staat
+    // standaard op woningeigenaar en zonder m-parameter zoeken we op alles.
+    //
+    // Afwijken kan verderop gewoon: stap 1 blijft aanklikbaar in de
+    // voortgangsbalk, en op het resultaat staat "situatie aanpassen".
     navigate(
       `/subsidiecheck?pc=${encodeURIComponent(normalizePostcode(pc))}&hn=${encodeURIComponent(hn)}` +
-        (tv ? `&tv=${encodeURIComponent(tv)}` : ""),
+        (tv ? `&tv=${encodeURIComponent(tv)}` : "") +
+        "&type=woningeigenaar",
     );
   };
 
