@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ArrowRight, ChevronDown, Check, Wrench, X } from "lucide-react";
+import { ArrowRight, ChevronDown, Check, Clock, Wrench } from "lucide-react";
 import { BorderRotate } from "@/components/ui/animated-gradient-border";
 import type { LucideIcon } from "lucide-react";
 import { Header } from "@/components/Header";
@@ -374,22 +374,22 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
 
             {/* NIET (rechts) */}
             <div
-              className="rounded-2xl p-6 shadow-sm border border-red-100 h-full"
-              style={{ backgroundColor: "#FEF7F7" }}
+              className="rounded-2xl p-6 shadow-sm h-full"
+              style={{ backgroundColor: KLEUR.warm, border: `1px solid ${KLEUR.rand}` }}
             >
               <div
                 className="mb-6 text-sm font-bold uppercase tracking-wider"
-                style={{ color: "#C0392B" }}
+                style={{ color: KLEUR.navy, opacity: 0.7 }}
               >
-                Niet
+                Nu even niet
               </div>
               <ul className="flex flex-col gap-4">
                 {minderUrgent.map((t, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <X
+                    <Clock
                       size={18}
                       className="mt-1 shrink-0"
-                      style={{ color: "#C0392B" }}
+                      style={{ color: KLEUR.navy, opacity: 0.5 }}
                       aria-hidden="true"
                     />
                     <span style={{ fontSize: 16, lineHeight: 1.5, color: "hsl(var(--foreground))", fontWeight: 400 }}>
@@ -584,29 +584,31 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
 
 /* ---------- helpers ---------- */
 
-/** Bepaalt de toon (gunstigheid) van een pill op basis van dimensie + waarde. */
-const pillTone = (dim: string, value: string): "good" | "neutral" | "bad" => {
+/**
+ * Bepaalt de toon (gunstigheid) van een pill op basis van dimensie + waarde.
+ *
+ * Een hogere investering of een langere terugverdientijd is geen fout, maar een
+ * eigenschap die van de woning afhangt. Ze krijgen daarom nooit de rode toon:
+ * een rood stempel bij "Investering: Hoog" leest als een afrader, terwijl
+ * dezelfde maatregel bij een andere woning juist de verstandigste stap is.
+ * src/test/maatregelPagina.test.tsx bewaakt dat.
+ */
+const pillTone = (dim: string, value: string): PillTone => {
   const v = value.toLowerCase();
-  if (dim === "Investering") {
-    if (v === "laag") return "good";
-    if (v === "midden" || v === "middel" || v === "gemiddeld") return "neutral";
-    return "bad";
-  }
-  if (dim === "Terugverdientijd") {
-    if (v === "kort") return "good";
-    if (v === "middel" || v === "midden" || v === "gemiddeld") return "neutral";
-    return "bad";
+  if (dim === "Investering" || dim === "Terugverdientijd") {
+    if (v === "laag" || v === "kort") return "good";
+    return "neutral";
   }
   // Comfortwinst / Besparing / Onafhankelijkheid / Gebruiksgemak
   if (v.startsWith("hoog")) return "good";
-  if (v === "gemiddeld" || v === "middel" || v === "midden") return "neutral";
-  return "bad";
+  return "neutral";
 };
 
-const PILL_TONES: Record<"good" | "neutral" | "bad", { bg: string; fg: string; border: string }> = {
+type PillTone = "good" | "neutral";
+
+const PILL_TONES: Record<PillTone, { bg: string; fg: string; border: string }> = {
   good:    { bg: "#ECFDF5", fg: "#15803D", border: "#A7F3D0" },
   neutral: { bg: "#FEF6E0", fg: "#92701A", border: "#F0D78A" },
-  bad:     { bg: "#FEF2F2", fg: "#B91C1C", border: "#FECACA" },
 };
 
 const Pill = ({ pill }: { pill: KostenPill }) => {

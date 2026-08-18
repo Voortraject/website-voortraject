@@ -7,8 +7,8 @@ import thuisbatterijImage from "@/assets/maatregel-thuisbatterij.jpg";
 
 /**
  * Vijf inhoudelijke secties plus de FAQ. Korter dan de andere pagina's, en dat
- * is hier terecht: als het antwoord "voor de meeste mensen nog niet" is, hoort
- * daar geen uitgebreide verkoopfolder omheen.
+ * is hier terecht: een batterij loont nu bij een deel van de huishoudens, en
+ * daar hoort een helder antwoord bij, geen uitgebreide verkoopfolder.
  *
  *   1 loont een thuisbatterij bij jou   (eigen)
  *   2 past dit bij jouw woning          (template)
@@ -27,13 +27,13 @@ const Thuisbatterij = () => (
     icon={Battery}
     badge="Meestal latere stap"
     seoTitle="Thuisbatterij & opslag | Voortraject"
-    seoDescription="Loont een thuisbatterij? Voor de meeste huishoudens nog niet, en we leggen eerlijk uit waarom. Plus wanneer de rekensom wél anders ligt en waar je dan op let."
+    seoDescription="Loont een thuisbatterij? Bij noodstroom, een dynamisch contract of een vol net kan dat nu al. We rekenen eerlijk voor wanneer, en waar je dan op let."
     eigenSecties={[
       { na: "hero", bg: "wit", id: "loont-het", inhoud: <LoontHetBijJou /> },
       { na: "subsidies", bg: "warm", id: "waar-op-letten", inhoud: <AlsJeErTochEenNeemt /> },
     ]}
     heroTitle="Thuisbatterij, je stroom [[slim]] opslaan"
-    heroSub="Opslaan wat je overdag opwekt en het 's avonds gebruiken klinkt logisch, zeker nu salderen stopt. Of het bij jou uit kan is een andere vraag, en daar zijn we eerlijk over."
+    heroSub="Opslaan wat je overdag opwekt en het 's avonds gebruiken wordt aantrekkelijker nu salderen stopt. Bij welke huishoudens dat nu al uit kan, rekenen we eerlijk voor."
     heroIntro=""
     heroImageSrc={thuisbatterijImage}
     heroImageAlt="Thuisbatterij aan een muur in een bijkeuken"
@@ -45,12 +45,12 @@ const Thuisbatterij = () => (
     ]}
     minderUrgent={[
       "Je nog geen zonnepanelen hebt; zonder eigen opwek valt er weinig op te slaan",
-      "Je vooral op de terugverdientijd let; die is op dit moment lang en onzeker",
+      "Je vooral op de terugverdientijd let; die hangt sterk af van je contract en verbruik, en die rekenen we liever eerst met je door",
       "Je je verbruik nog naar de zonuren kunt verschuiven, want dat kost niets",
       "Je woning nog niet goed geïsoleerd is; daar zit je geld beter",
     ]}
     routeStep="slim"
-    routeTekst="Een thuisbatterij is de laatste stap, niet de eerste. Hij doet pas iets als je al zonnepanelen hebt en je verbruik niet verder kunt verschuiven naar de uren dat de zon schijnt. Beperk dus eerst je verbruik, wek daarna zelf op, en kijk pas daarna naar opslag. Wie die volgorde omdraait, betaalt het meeste voor het minste resultaat."
+    routeTekst="Een thuisbatterij is de laatste stap, niet de eerste. Hij doet pas iets als je al zonnepanelen hebt en je verbruik niet verder kunt verschuiven naar de uren dat de zon schijnt. Beperk dus eerst je verbruik, wek daarna zelf op, en kijk pas daarna naar opslag. In die volgorde haalt een batterij er ook echt uit wat erin zit."
     kostenItems={CAPACITEITEN.map((maat) => ({
       title: `${maat.label}: ${maat.kwh}`,
       body: maat.waarvoor,
@@ -59,7 +59,7 @@ const Thuisbatterij = () => (
     faqs={[
       {
         q: "Verdien ik een thuisbatterij terug?",
-        a: "Waarschijnlijk niet met wat hij je op je stroomrekening bespaart. Dat is de conclusie van Milieu Centraal en wij nemen die over: een batterij is op dit moment zo duur dat de besparing er niet tegenop weegt. Er zijn wel andere redenen om er een te nemen, zoals noodstroom of handelen met een dynamisch contract, maar dat is een andere afweging dan terugverdienen.",
+        a: "Met wat hij je op je stroomrekening bespaart waarschijnlijk niet, en dat is de conclusie van Milieu Centraal die wij overnemen. Er zijn wel goede redenen om er nu al een te nemen: noodstroom, handelen met een dynamisch contract, of een plek waar je nauwelijks kunt terugleveren. Dan koop je hem voor wat hij doet, niet om hem terug te verdienen.",
       },
       {
         q: "Verandert dat als salderen stopt?",
@@ -71,7 +71,7 @@ const Thuisbatterij = () => (
       },
       {
         q: "Werkt een thuisbatterij ook bij stroomuitval?",
-        a: "Niet automatisch. Daar is een aparte voorziening voor nodig en lang niet elk systeem heeft die. Wil je noodstroom, zeg dat dan vooraf, want achteraf inbouwen is duur.",
+        a: "Niet automatisch. Daar is een aparte voorziening voor nodig en lang niet elk systeem heeft die. Wil je noodstroom, zeg dat dan vooraf, want achteraf inbouwen kost een stuk meer werk.",
       },
       {
         q: "Zijn losse batterijen die je in het stopcontact prikt veilig?",
@@ -79,11 +79,11 @@ const Thuisbatterij = () => (
       },
       {
         q: "Hoe zit het met de milieu-impact?",
-        a: "Het maken van een batterij kost veel energie en kritieke grondstoffen. Bij een keuze die je maakt om te verduurzamen hoort dat in de weging mee, zeker als de financiële winst beperkt is.",
+        a: "Het maken van een batterij kost veel energie en kritieke grondstoffen. Bij een keuze die je maakt om te verduurzamen hoort dat in de weging mee, naast wat de batterij je oplevert.",
       },
     ]}
     finalCtaKop="Benieuwd of het bij jou anders [[uitpakt]]?"
-    finalCtaTekst="In een gratis gesprek rekenen we het door met jouw verbruik, je panelen en je contract. Blijkt een batterij niet te lonen, dan zeggen we dat gewoon en kijken we wat wél helpt. Wij verkopen geen batterijen."
+    finalCtaTekst="In een gratis gesprek rekenen we het door met jouw verbruik, je panelen en je contract, zodat je weet of een batterij bij jou nu al uit kan. Zo niet, dan zeggen we dat gewoon en kijken we wat wél helpt. Wij verkopen geen batterijen."
   />
 );
 

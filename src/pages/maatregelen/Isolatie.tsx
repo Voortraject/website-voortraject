@@ -54,7 +54,7 @@ const Isolatie = () => (
       "Je een monument hebt; dan gelden strikte regels en kijken we eerst naar wat mag",
     ]}
     routeStep="beperk"
-    routeTekst="Isolatie is bijna altijd de eerste stap. Het verlaagt je energieverbruik direct en maakt elke volgende maatregel effectiever. Een warmtepomp in een slecht geïsoleerde woning werkt inefficiënt en duur. Zonnepanelen leveren minder op als je verbruik onnodig hoog blijft. Daarom eerst beperken wat je verbruikt, dan pas opwekken en slim gebruiken. Ventilatie hoort direct bij of vlak na het isoleren, want een luchtdichte woning heeft gezonde luchtverversing nodig."
+    routeTekst="Isolatie is bijna altijd de eerste stap. Het verlaagt je energieverbruik direct en maakt elke volgende maatregel effectiever. Een warmtepomp haalt zijn rendement pas in een goed geïsoleerde woning. Zonnepanelen leveren minder op als je verbruik onnodig hoog blijft. Daarom eerst beperken wat je verbruikt, dan pas opwekken en slim gebruiken. Ventilatie hoort direct bij of vlak na het isoleren, want een luchtdichte woning heeft gezonde luchtverversing nodig."
     kostenItems={[
       {
         title: "Spouwmuurisolatie",
@@ -67,7 +67,7 @@ const Isolatie = () => (
       },
       {
         title: "Dakisolatie",
-        body: "Hogere investering, maar een grote besparing op je stookkosten. Doordat warmte vooral via het dak verdwijnt, is de terugverdientijd toch kort.",
+        body: "Een grotere stap die zich snel terugbetaalt. Warmte verdwijnt vooral via het dak, dus de besparing op je stookkosten is groot en de terugverdientijd kort.",
         pills: [
           { dim: "Investering", value: "Gemiddeld" },
           { dim: "Terugverdientijd", value: "Kort" },
@@ -85,7 +85,7 @@ const Isolatie = () => (
       },
       {
         title: "HR++ of triple glas",
-        body: "Hogere investering en langere terugverdientijd. De grootste winst zit hier in comfort en geluidsdemping, en in de stap richting een warmtepomp.",
+        body: "Betaalt zich vooral uit in comfort en geluidsdemping, en in de stap richting een warmtepomp. Wat het bij jou kost hangt sterk af van je kozijnen: soms kan het glas eruit en blijft de rest staan.",
         pills: [
           { dim: "Investering", value: "Hoog" },
           { dim: "Terugverdientijd", value: "Lang" },
@@ -94,7 +94,7 @@ const Isolatie = () => (
       },
       {
         title: "Ventilatie met warmteterugwinning (WTW)",
-        body: "De meest energiezuinige vorm van ventileren, maar ook de duurste optie. Past goed bij een luchtdichte, goed geïsoleerde woning.",
+        body: "De meest complete vorm van ventileren: hij vraagt de grootste investering en geeft daarvoor de meeste warmte terug. Past bij een luchtdichte, goed geïsoleerde woning of een ingrijpende verbouwing.",
         pills: [
           { dim: "Investering", value: "Hoog" },
           { dim: "Terugverdientijd", value: "Lang" },
@@ -102,11 +102,11 @@ const Isolatie = () => (
         ],
       },
     ]}
-    kostenFooter="Wat het beïnvloedt zijn bouwjaar, huidige isolatiewaarden, woningtype en de combinatie die je kiest."
+    kostenFooter="Wat het beïnvloedt zijn bouwjaar, huidige isolatiewaarden, woningtype en de combinatie die je kiest. Twee woningen in dezelfde straat komen daardoor op heel verschillende bedragen uit."
     zachteCtaTekst="Benieuwd wat voor jouw woning de meeste winst oplevert?"
     aandachtspunten={[
       "Goed isoleren zonder goed ventileren geeft vocht en schimmel. Behandel ze altijd samen.",
-      "Begin bij de maatregel met de kortste terugverdientijd, vaak dak of spouw, niet bij de duurste.",
+      "Begin bij de maatregel met de kortste terugverdientijd, vaak dak of spouw. Wat die oplevert, maakt de volgende stap makkelijker.",
       "De kwaliteit van uitvoering bepaalt het resultaat. Een goed product, slecht aangebracht, levert weinig op.",
     ]}
     faqs={[

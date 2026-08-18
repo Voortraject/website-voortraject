@@ -37,10 +37,15 @@ export const BRONNEN = {
   },
 } as const satisfies Record<string, Bron>;
 
-/** Het oordeel van de bron, zo dicht mogelijk bij hoe zij het opschrijft. */
+/**
+ * Het antwoord op "loont het?": eerst waarvoor een batterij nu al zinvol is, dan
+ * wat de bron over terugverdienen zegt. De kern blijft het oordeel van Milieu
+ * Centraal, alleen niet meer als afrader geformuleerd: dezelfde batterij is bij
+ * netcongestie of noodstroom juist wel een verstandige keuze.
+ */
 export const OORDEEL = {
-  kop: "Voor de meeste huishoudens: nog niet",
-  kern: "Een thuisbatterij is op dit moment zo duur dat je hem hoogstwaarschijnlijk niet terugverdient met wat hij je op je stroomrekening bespaart.",
+  kop: "Nu al zinvol bij noodstroom, een dynamisch contract of een vol net",
+  kern: "Puur op je stroomrekening verdien je een thuisbatterij op dit moment hoogstwaarschijnlijk niet terug, dus wie er nu een neemt doet dat om wat hij verder oplevert.",
   bron: "Milieu Centraal",
 } as const;
 
@@ -121,7 +126,7 @@ export const LETTEN = [
   {
     kop: "Vraag naar de back-upfunctie",
     tekst:
-      "Werken bij stroomuitval is geen standaardeigenschap. Wil je dat, zeg het dan vooraf, want achteraf inbouwen is duur.",
+      "Werken bij stroomuitval is geen standaardeigenschap. Wil je dat, zeg het dan vooraf, want achteraf inbouwen kost een stuk meer werk.",
   },
   {
     kop: "Laat het aansluiten door een vakman",

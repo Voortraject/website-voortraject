@@ -63,7 +63,7 @@ export const KOELSYSTEMEN: Koelsysteem[] = [
     kwh: 110,
     euro: 23,
     co2: 28,
-    toelichting: "De slang door het raam laat warme lucht terug naar binnen. Duur in gebruik.",
+    toelichting: "De slang door het raam laat warme lucht terug naar binnen, dus hij vraagt meer stroom dan een vaste split.",
   },
   {
     naam: "Multi split",

@@ -59,7 +59,7 @@ export const MAATREGELEN: Record<MaatregelSlug, MaatregelInfo> = {
     slug: "thuisbatterij",
     label: "Thuisbatterij & opslag",
     href: "/verduurzamen/thuisbatterij",
-    kernvraag: "Loont opslag bij mij, of nog niet?",
+    kernvraag: "Wanneer loont opslag bij mij?",
     stap: "slim",
   },
   zonnepanelen: {
