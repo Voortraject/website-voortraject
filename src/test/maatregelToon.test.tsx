@@ -21,6 +21,12 @@ import { describe, expect, it, vi } from "vitest";
  *   1 de woordenlijst hieronder komt niet meer voor in de opgebouwde pagina;
  *   2 het sjabloon kleurt een hoge investering of een lange terugverdientijd
  *     niet rood, en de kolom "nu even niet" is geen rode afkeuringskaart meer.
+ *
+ * Wat bewust rood blijft: de echte waarschuwingen. Isoleren zonder ventileren
+ * geeft vocht en schimmel, een laadpaal die je aansluiting overvraagt gooit je
+ * hoofdzekering eruit, en een batterij in het stopcontact kan de bedrading laten
+ * oververhitten. Daar hóórt een alarmkleur bij. Deze test kijkt daarom naar het
+ * sjabloon en naar de woorden, niet naar elk rood vlak op de pagina.
  */
 
 vi.mock("@/components/Header", () => ({ Header: () => null }));
@@ -67,6 +73,23 @@ describe("toon op de maatregelpagina's", () => {
 
     for (const [patroon, wat] of AFRADERS) {
       expect(tekst, `deze pagina zegt "${wat}"`).not.toMatch(patroon);
+    }
+  });
+});
+
+/** Pillen die een eigenschap van de woning als minpunt op de maatregel plakken. */
+const MINPUNT_PILLEN: [RegExp, string][] = [
+  [/Investering\s*Hoog/i, "Investering: Hoog"],
+  [/Terugverdientijd\s*Lang/i, "Terugverdientijd: Lang"],
+];
+
+describe("de pillen benoemen wat een maatregel oplevert", () => {
+  it.each(PAGINAS)("%s draagt geen minpunt-pil", (_naam, pagina) => {
+    const { container } = render(<MemoryRouter>{pagina}</MemoryRouter>);
+    const tekst = container.textContent ?? "";
+
+    for (const [patroon, wat] of MINPUNT_PILLEN) {
+      expect(tekst, `deze pagina toont de pil "${wat}"`).not.toMatch(patroon);
     }
   });
 });

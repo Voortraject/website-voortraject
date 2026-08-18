@@ -1,4 +1,4 @@
-import { ArrowRight, Check, X } from "lucide-react";
+import { ArrowRight, Check, Minus } from "lucide-react";
 
 import { VERWARMEN } from "@/data/airco";
 import { Accent, SectieKop } from "@/components/maatregel/primitieven";
@@ -58,18 +58,21 @@ export const VerwarmenMetAirco = () => (
 
       <div
         className="rounded-2xl p-6 md:p-7"
-        style={{ backgroundColor: "#FEF7F7", border: "1px solid #F5D9D9" }}
+        style={{ backgroundColor: KLEUR.warm, border: `1px solid ${KLEUR.rand}` }}
       >
-        <span className="text-sm font-bold uppercase tracking-wider" style={{ color: "#C0392B" }}>
-          Daar niet
+        <span
+          className="text-sm font-bold uppercase tracking-wider"
+          style={{ color: KLEUR.navy, opacity: 0.7 }}
+        >
+          Daar hoort een warmtepomp
         </span>
         <ul className="mt-5 flex flex-col gap-4" style={{ listStyle: "none", padding: 0, margin: "20px 0 0 0" }}>
           {VERWARMEN.pastNiet.map((punt) => (
             <li key={punt} className="flex items-start gap-3">
-              <X
+              <Minus
                 size={18}
                 className="mt-1 shrink-0"
-                style={{ color: "#C0392B" }}
+                style={{ color: KLEUR.navy, opacity: 0.5 }}
                 aria-hidden="true"
               />
               <span style={{ fontSize: 15.5, lineHeight: 1.55, color: KLEUR.navy, opacity: 0.85 }}>
