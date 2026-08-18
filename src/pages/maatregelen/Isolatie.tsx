@@ -80,25 +80,24 @@ const Isolatie = () => (
         pills: [
           { dim: "Investering", value: "Laag" },
           { dim: "Terugverdientijd", value: "Gemiddeld" },
-          { dim: "Comfortwinst", value: "Gemiddeld" },
+          { dim: "Comfortwinst", value: "Hoog" },
         ],
       },
       {
         title: "HR++ of triple glas",
         body: "Betaalt zich vooral uit in comfort en geluidsdemping, en in de stap richting een warmtepomp. Wat het bij jou kost hangt sterk af van je kozijnen: soms kan het glas eruit en blijft de rest staan.",
         pills: [
-          { dim: "Investering", value: "Hoog" },
-          { dim: "Terugverdientijd", value: "Lang" },
           { dim: "Comfortwinst", value: "Hoog" },
+          { dim: "Geluidsdemping", value: "Hoog" },
         ],
       },
       {
         title: "Ventilatie met warmteterugwinning (WTW)",
         body: "De meest complete vorm van ventileren: hij vraagt de grootste investering en geeft daarvoor de meeste warmte terug. Past bij een luchtdichte, goed geïsoleerde woning of een ingrijpende verbouwing.",
         pills: [
-          { dim: "Investering", value: "Hoog" },
-          { dim: "Terugverdientijd", value: "Lang" },
           { dim: "Comfortwinst", value: "Hoog" },
+          { dim: "Luchtkwaliteit", value: "Hoog" },
+          { dim: "Warmteterugwinning", value: "Hoog" },
         ],
       },
     ]}

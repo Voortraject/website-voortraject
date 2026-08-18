@@ -77,3 +77,26 @@ Wat bewust is blijven staan: de veiligheidswaarschuwingen (stekkerbatterij, lade
 stopcontact), de milieu-afweging bij de batterij, "Micro-omvormers zijn duurder" (een
 vergelijking tussen twee varianten, geen oordeel over de maatregel) en alle "nu even
 niet"-situaties zelf.
+
+## Vervolg (2026-08-18, na de eerste merge)
+
+De pillen zelf waren nog niet klaar. "Investering: Hoog" en "Terugverdientijd: Lang" stonden er
+nog steeds, alleen niet meer in het rood, en dat blijft een minpunt op een kaart die hoort te
+vertellen wat een maatregel oplevert. Op verzoek van de opdrachtgever:
+
+- HR++ of triple glas: pillen zijn nu "Comfortwinst: Hoog" en "Geluidsdemping: Hoog".
+- Ventilatie met WTW: "Comfortwinst: Hoog", "Luchtkwaliteit: Hoog", "Warmteterugwinning: Hoog".
+- Vloerisolatie: comfortwinst van "Gemiddeld" naar "Hoog", want koude voeten en tochtgevoel
+  verdwijnen juist daar het duidelijkst. De tekst van de kaart zei dat al.
+- `KostenDimension` heeft er drie dimensies bij (geluidsdemping, luchtkwaliteit,
+  warmteterugwinning) met een toelichting waarom investering en terugverdientijd alleen als
+  pluspunt op een kaart horen.
+
+Wat een maatregel duurder maakt staat nog steeds in de tekst van de kaart, met de nuance erbij
+(bij glas bijvoorbeeld dat de kozijnen de prijs bepalen). `maatregelToon.test.tsx` heeft er zeven
+tests bij die de twee minpunt-pillen op alle zeven pagina's tegenhouden. Bewezen dat die test
+bijt: de pilteksten staan in exact die vorm in de gerenderde DOM.
+
+Nog een open puntje: spouwmuurisolatie staat op "Comfortwinst: Gemiddeld". Dat is geen minpunt,
+maar als koude buitenmuren voor jullie net zo zwaar wegen als een koude vloer, kan die ook naar
+"Hoog".

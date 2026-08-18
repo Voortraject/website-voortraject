@@ -71,6 +71,23 @@ describe("toon op de maatregelpagina's", () => {
   });
 });
 
+/** Pillen die een eigenschap van de woning als minpunt op de maatregel plakken. */
+const MINPUNT_PILLEN: [RegExp, string][] = [
+  [/Investering\s*Hoog/i, "Investering: Hoog"],
+  [/Terugverdientijd\s*Lang/i, "Terugverdientijd: Lang"],
+];
+
+describe("de pillen benoemen wat een maatregel oplevert", () => {
+  it.each(PAGINAS)("%s draagt geen minpunt-pil", (_naam, pagina) => {
+    const { container } = render(<MemoryRouter>{pagina}</MemoryRouter>);
+    const tekst = container.textContent ?? "";
+
+    for (const [patroon, wat] of MINPUNT_PILLEN) {
+      expect(tekst, `deze pagina toont de pil "${wat}"`).not.toMatch(patroon);
+    }
+  });
+});
+
 /** Het kale sjabloon, om losse onderdelen zonder paginatekst te bekijken. */
 const Sjabloon = () => (
   <MaatregelPagina

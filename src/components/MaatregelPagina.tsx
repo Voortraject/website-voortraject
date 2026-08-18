@@ -26,11 +26,22 @@ import { KLEUR, type SectieBg } from "@/components/maatregel/stijl";
 
 export type RouteStep = RouteStap;
 
+/**
+ * De pillen benoemen wat een maatregel oplevert. Investering en
+ * terugverdientijd horen daar alleen bij als ze gunstig zijn ("Laag", "Kort");
+ * "Hoog" of "Lang" hangt aan de woning en niet aan de maatregel, en als stempel
+ * op een kaart leest het als een afrader. Wat een maatregel duurder maakt,
+ * staat in de tekst van de kaart, waar de nuance bij past.
+ * src/test/maatregelToon.test.tsx bewaakt dat.
+ */
 export type KostenDimension =
   | "Investering"
   | "Terugverdientijd"
   | "Comfortwinst"
   | "Besparing"
+  | "Geluidsdemping"
+  | "Luchtkwaliteit"
+  | "Warmteterugwinning"
   | "Onafhankelijkheid"
   | "Gebruiksgemak";
 
