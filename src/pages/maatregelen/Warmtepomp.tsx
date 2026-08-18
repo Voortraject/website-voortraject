@@ -78,7 +78,7 @@ const Warmtepomp = () => (
       "Je op zeer korte termijn verhuist",
     ]}
     routeStep="slim"
-    routeTekst="Een warmtepomp rendeert pas goed als de eerdere stappen zijn gezet. In een goed geïsoleerde woning werkt een warmtepomp efficiënt en betaalbaar. In een slecht geïsoleerde woning verbruikt hij veel en vallen de kosten tegen. Daarom is isolatie bijna altijd de eerste stap en komt slim verwarmen daarna. Een hybride warmtepomp kan een goede tussenstap zijn als volledig elektrisch nog niet haalbaar is."
+    routeTekst="Een warmtepomp rendeert pas goed als de eerdere stappen zijn gezet. In een goed geïsoleerde woning werkt hij efficiënt en betaalbaar, en elke isolatiestap die je vooraf zet, zie je terug in zijn verbruik. Daarom is isolatie bijna altijd de eerste stap en komt slim verwarmen daarna. Een hybride warmtepomp kan een goede tussenstap zijn als volledig elektrisch nog niet haalbaar is."
     kostenItems={SYSTEMEN.map((s) => ({
       title: `${s.naam} in een ${s.referentie.woning}`,
       body: rekenvoorbeeld(s),

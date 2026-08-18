@@ -49,10 +49,10 @@ const Airco = () => (
       "Je je hele woning gasloos wilt verwarmen; kijk dan eerst naar een warmtepomp",
       "Je geen plek hebt voor een buitenunit binnen de geluidsnorm op de perceelgrens",
       "Je met zonwering, isolatie en een ventilator uitkomt op de paar warme dagen die je hebt",
-      "Je een mobiele airco overweegt als permanente oplossing; dat is de duurste manier om te koelen",
+      "Je een mobiele airco overweegt als permanente oplossing; voor de lange termijn koelt een vaste split zuiniger",
     ]}
     wanneerKop="Wanneer is dit relevant?"
-    routeTekst="Een airco hoort bij de laatste stap: slim gebruiken. Hoe beter je woning geïsoleerd is en hoe meer warmte je buiten houdt met zonwering, hoe minder hij hoeft te draaien. Wek je bovendien zelf stroom op, dan koelt hij precies op de uren dat de zon schijnt en je panelen het meeste leveren. In die volgorde is een airco een prima aanvulling; als eerste stap is hij een dure pleister."
+    routeTekst="Een airco hoort bij de laatste stap: slim gebruiken. Hoe beter je woning geïsoleerd is en hoe meer warmte je buiten houdt met zonwering, hoe minder hij hoeft te draaien. Wek je bovendien zelf stroom op, dan koelt hij precies op de uren dat de zon schijnt en je panelen het meeste leveren. In die volgorde is een airco een prima aanvulling. Zet je hem als eerste stap neer, dan laat je liggen wat zonwering en isolatie al voor je doen."
     kostenItems={KOELSYSTEMEN.filter((s) => s.naam !== "Ventilator").map((systeem) => ({
       title: systeem.naam,
       body: `${systeem.toelichting} Over ${REKENBASIS.uren} uur gebruik: ${getal(systeem.kwh)} kWh, ongeveer ${euro(systeem.euro)} en ${getal(systeem.co2)} kg CO2.`,
@@ -65,7 +65,7 @@ const Airco = () => (
       },
       {
         q: "Is een mobiele airco geen goedkoper alternatief?",
-        a: "In aanschaf wel, in gebruik niet. De slang door het raam laat warme lucht terug naar binnen, waardoor het apparaat harder moet werken dan een vaste split. Als tijdelijke oplossing prima, als vaste oplossing de duurste keuze.",
+        a: "In aanschaf wel, in gebruik niet. De slang door het raam laat warme lucht terug naar binnen, waardoor het apparaat harder moet werken dan een vaste split. Voor een enkele hittegolf of een tijdelijke situatie is dat prima; ga je hem elk jaar gebruiken, dan is een vaste split zuiniger.",
       },
       {
         q: "Kan een airco ook verwarmen, of alleen koelen?",

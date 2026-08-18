@@ -147,7 +147,7 @@ export const ISOLATIE_MAATREGELEN: IsolatieMaatregel[] = [
       "twee-onder-een-kap": { m3: 530, euro: 750, kosten: 23000 },
       vrijstaand: { m3: 800, euro: 1100, kosten: 34500 },
     },
-    noot: "Dit is de route als je woning geen spouw heeft of de spouw al gevuld is. Heb je wel een lege spouw, dan kun je allebei doen: de spouw vullen scheelt dan dikte aan de buitenkant, maar je komt op dezelfde geïsoleerde gevel uit en dus niet op een dubbele besparing. Buitenom levert het meeste op maar is ingrijpend en duur; een voorzetwand aan de binnenkant is een stuk goedkoper, levert minder op en kost ruimte. Milieu Centraal rekent deze maatregel alleen voor een hoekwoning door; voor de andere woningtypen hebben wij het cijfer meegeschaald met de verhouding uit de spouwmuurcijfers.",
+    noot: "Dit is de route als je woning geen spouw heeft of de spouw al gevuld is. Heb je wel een lege spouw, dan kun je allebei doen: de spouw vullen scheelt dan dikte aan de buitenkant, maar je komt op dezelfde geïsoleerde gevel uit en dus niet op een dubbele besparing. Buitenom levert het meeste op en is meteen de meest ingrijpende route; een voorzetwand aan de binnenkant vraagt een kleinere investering, levert minder op en kost ruimte. Milieu Centraal rekent deze maatregel alleen voor een hoekwoning door; voor de andere woningtypen hebben wij het cijfer meegeschaald met de verhouding uit de spouwmuurcijfers.",
   },
   {
     id: "vloer",

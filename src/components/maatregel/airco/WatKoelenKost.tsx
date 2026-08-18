@@ -112,8 +112,8 @@ export const WatKoelenKost = () => (
       }}
     >
       <p className="text-[15.5px] leading-relaxed" style={{ color: KLEUR.navy, margin: 0 }}>
-        <strong>{VERHOUDING}</strong> Dat maakt hem niet verboden, wel de duurste manier om het
-        koeler te krijgen. Voordat je iets koopt, is dit rijtje bijna altijd effectiever:
+        <strong>{VERHOUDING}</strong> Hij mag er zeker staan, alleen levert dit rijtje meestal
+        meer koelte op voordat je iets koopt:
       </p>
       <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4">
         {EERST_DIT.map((punt) => (

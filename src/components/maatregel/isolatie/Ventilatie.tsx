@@ -31,7 +31,7 @@ const SOORTEN = [
     naam: "Balansventilatie met WTW",
     hoe: "Aan- en afvoer zijn in balans, en een warmtewisselaar haalt de warmte uit de afgevoerde lucht.",
     past: "Goed geïsoleerde, luchtdichte woningen en ingrijpende verbouwingen.",
-    let: "De duurste optie en hij vraagt kanalen door de woning. Levert de meeste warmte terug.",
+    let: "Vraagt de grootste investering en kanalen door de woning. Levert daarvoor de meeste warmte terug.",
   },
 ];
 

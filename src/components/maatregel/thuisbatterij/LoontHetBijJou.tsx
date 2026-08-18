@@ -5,16 +5,18 @@ import { Accent, SectieKop } from "@/components/maatregel/primitieven";
 import { KLEUR } from "@/components/maatregel/stijl";
 
 /**
- * Het antwoord vooraan, ook al is het "nog niet".
+ * Het antwoord vooraan, en dat antwoord begint bij waarvoor een batterij nu al
+ * wél zinvol is.
  *
- * Milieu Centraal is hier ongewoon stellig: een thuisbatterij helpt op dit
- * moment niet als je geld wilt besparen of het klimaat wilt helpen. Dat kun je
- * op een pagina over thuisbatterijen wegstoppen onder een kop over hoe
- * interessant opslag is, of je kunt het bovenaan zetten. Het tweede is waarom
- * bezoekers hier komen: wij verkopen geen batterijen.
+ * Milieu Centraal is stellig over terugverdienen: met wat een batterij op je
+ * stroomrekening bespaart, kom je er op dit moment niet uit. Dat blijft hier
+ * staan, met bron, want wij verkopen geen batterijen. Alleen is dat een
+ * antwoord op één vraag, niet op de vraag of een batterij bij jou past: bij
+ * netcongestie, noodstroom of een dynamisch contract ligt de afweging anders.
+ * Daarom staat die kant vooraan en het terugverdienen erachter.
  *
- * Daarna pas de nuance: waarom je er tóch over hoort, wanneer de rekensom
- * anders ligt, en wat op dit moment wél meer oplevert.
+ * Daarna de nuance: waarom je er overal over hoort, wanneer het nu al loont, en
+ * wat op dit moment meer oplevert.
  */
 
 export const LoontHetBijJou = () => (
@@ -25,7 +27,7 @@ export const LoontHetBijJou = () => (
       </SectieKop>
     </div>
 
-    {/* Het oordeel, groot en zonder omweg */}
+    {/* Het antwoord, groot en zonder omweg */}
     <div
       className="mt-8 mx-auto rounded-2xl p-6 md:p-8 text-center"
       style={{
@@ -51,8 +53,9 @@ export const LoontHetBijJou = () => (
         className="mx-auto text-[16px] leading-relaxed"
         style={{ color: KLEUR.navy, opacity: 0.85, margin: "14px auto 0 auto", maxWidth: 620 }}
       >
-        {OORDEEL.kern} Dat is niet onze mening maar de conclusie van {OORDEEL.bron}, en wij zeggen
-        het er liever bij dan dat je er achteraf achter komt.
+        {OORDEEL.kern} Dat je hem op je stroomrekening niet terugverdient is niet onze mening
+        maar de conclusie van {OORDEEL.bron}, en wij zeggen het er liever bij dan dat je er
+        achteraf achter komt. Hieronder staat wanneer de rekensom bij jou anders uitpakt.
       </p>
     </div>
 
@@ -67,8 +70,8 @@ export const LoontHetBijJou = () => (
           className="text-[14px] leading-relaxed"
           style={{ color: KLEUR.navy, opacity: 0.65, maxWidth: 560 }}
         >
-          Er verandert echt iets aan hoe stroom wordt afgerekend. Alleen: dat maakt opslaan
-          aantrekkelijker, nog niet automatisch rendabel.
+          Er verandert echt iets aan hoe stroom wordt afgerekend. Dat maakt opslaan elk jaar
+          aantrekkelijker; of het bij jou uit kan hangt af van je verbruik en je contract.
         </span>
       </div>
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4">
@@ -92,12 +95,12 @@ export const LoontHetBijJou = () => (
     </div>
 
     <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Wanneer het anders ligt */}
+      {/* Wanneer het nu al loont */}
       <div
         className="rounded-2xl p-6 md:p-7"
         style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
       >
-        <span className="label-eyebrow">Wanneer de rekensom anders ligt</span>
+        <span className="label-eyebrow">Wanneer het nu al loont</span>
         <div className="mt-5 flex flex-col gap-4">
           {UITZONDERINGEN.map((geval) => (
             <div key={geval.kop}>
