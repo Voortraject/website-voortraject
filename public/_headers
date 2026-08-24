@@ -3,3 +3,9 @@
   X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Afbeeldingen in transactionele mail. Mailclients halen deze bij elke keer openen
+# opnieuw op; zonder expliciete regel serveert Pages max-age=14400, must-revalidate.
+# Wijzigt het logo, geef het dan een NIEUWE bestandsnaam in plaats van dit te verlagen.
+/mail/*
+  Cache-Control: public, max-age=2592000
