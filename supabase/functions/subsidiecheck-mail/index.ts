@@ -138,13 +138,14 @@ const NIVEAU_LABELS: Record<Niveau, string> = {
   overig: "Leningen en overig",
 };
 
-// Wit-transparant logo (voor de navy header). Publieke Supabase-storage-URL.
-// LET OP: bestandsnamen in de bucket `logos` zijn hoofdlettergevoelig en staan
-// hier hardcoded. Hernoem of verwijder je iets in de bucket, pas dan ook deze
-// regel aan EN de ~28 <img>-tags in de n8n-mailworkflows van het CRM. Precies
-// dat ging mis: het oude bestand verdween en deze mail hield een 400 over.
-const LOGO_URL =
-  "https://lfelnfukbrxznkevnevr.supabase.co/storage/v1/object/public/logos/Voortraject/voortraject-logo-wit--lageKB.png";
+// Wit-transparant logo (voor de navy header). Staat sinds 24-08-2026 in
+// `public/mail/`, net als de iconen hieronder, en niet meer in de Supabase-bucket
+// `logos`. Die bucket-URL kwam binnen met Cache-Control: no-cache, dus Gmail's
+// afbeeldingsproxy moest bij elke keer openen opnieuw de supabase.co-gateway
+// raken, en een hernoeming in de bucket brak direct live mail. Dat is twee keer
+// gebeurd. Wijzig je het logo, geef het dan een NIEUWE bestandsnaam en pas ook
+// de <img>-tags in de n8n-mailworkflows van het CRM aan.
+const LOGO_URL = "https://voortraject.nl/mail/voortraject-logo-wit.png";
 
 // Iconen in de knoppen en bij de Google-score. Deze staan wél op de website
 // (`public/mail/`, meegebouwd door Cloudflare Pages) en niet in de storage-bucket
