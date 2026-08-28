@@ -45,13 +45,16 @@
 export const GEMIDDELD_AANTAL_REGELINGEN = 9;
 
 /**
- * Het feitje zoals de bezoeker het op stap 1 leest, gesplitst zodat het getal
- * vet kan staan zonder dat de zin op twee plekken leeft.
+ * Het feitje zoals de bezoeker het op stap 1 leest.
  *
  * "Gemiddeld" is hier een gemeten gemiddelde over adressen, geen schatting, en
  * geldt voor woningeigenaren: dat is de groep waarop gemeten is en de standaard
  * op stap 1. Voor huurders, VvE's en verhuurders tonen we de regel daarom niet.
+ *
+ * De zin sluit bewust aan op de subregel erboven ("… dan zoeken we alle
+ * regelingen"): "er" zijn die regelingen. Zo staat het woord niet twee regels
+ * onder elkaar en leest het als één alinea in plaats van twee losse mededelingen.
+ * Verhuist deze zin ooit naar een plek zónder die subregel, schrijf het
+ * onderwerp dan weer voluit.
  */
-export const GEMIDDELDE_REGELINGEN_KOP = `Gemiddeld ${GEMIDDELD_AANTAL_REGELINGEN} regelingen`;
-export const GEMIDDELDE_REGELINGEN_STAART = "per adres";
-export const GEMIDDELDE_REGELINGEN_ZIN = `${GEMIDDELDE_REGELINGEN_KOP} ${GEMIDDELDE_REGELINGEN_STAART}`;
+export const GEMIDDELDE_REGELINGEN_ZIN = `Gemiddeld vinden we er ${GEMIDDELD_AANTAL_REGELINGEN} per adres.`;

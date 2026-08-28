@@ -1,9 +1,9 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, ChevronDown, Lightbulb, Loader2, MapPin } from "lucide-react";
+import { Check, ChevronDown, Loader2, MapPin } from "lucide-react";
 
 import { SUBSIDIECHECK_BELOFTES } from "@/config/beloftes";
-import { GEMIDDELDE_REGELINGEN_KOP, GEMIDDELDE_REGELINGEN_STAART } from "@/config/cijfers";
+import { GEMIDDELDE_REGELINGEN_ZIN } from "@/config/cijfers";
 import { usePdokAdres } from "@/hooks/usePdokAdres";
 import { pushGtmEvent } from "@/lib/gtm";
 import { displayPostcode, normalizePostcode, POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib/pdok";
@@ -246,25 +246,45 @@ export const StapAdres = ({
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      {/* Eén hard cijfer vóór de eerste inspanning, als feitje in beeld gebracht
-          en niet als zoveelste grijze regel. Zonder anker weet de bezoeker niet
-          of dit overzicht tweehonderd euro of achtduizend waard is, en dan is
-          drie velden invullen al te duur.
+      {/* De subregel onder de kop. Hij staat hier en niet in Subsidiecheck.tsx
+          omdat de tweede zin het gemeten gemiddelde noemt, en dat cijfer geldt
+          alleen voor woningeigenaren; alleen dit formulier weet welke situatie
+          er op dit moment gekozen is.
+
+          Waarom dat cijfer er hoort: het is het enige antwoord op "wat levert
+          drie velden invullen mij op". Zonder anker weet de bezoeker niet of dit
+          overzicht tweehonderd euro of achtduizend waard is, en dan is zelfs een
+          kort formulier te duur.
+
+          Vorm: gewoon de tweede zin van dezelfde alinea. Dit stond eerst als
+          losse pill met een okeren lampje tussen de subregel en de velden, en
+          dat was precies het probleem: een gevuld vlak met ronde hoeken leest
+          als een knop, dus het oog ging erheen terwijl er niets te doen viel. Het
+          was bovendien het derde gecentreerde blok boven de velden, met de
+          bewijsrij ónder de knop erbij ingeklemd. Als tweede zin zegt het
+          hetzelfde en trekt het de aandacht niet weg van het enige dat hier moet
+          gebeuren: het adres invullen. Zelfde afweging als bij de ingeklapte
+          situatieregel verderop en bij EersteStap op het resultaat.
 
           Het getal is gemeten en niet geschat (zie src/config/cijfers.ts en
           scripts/meet-subsidieaantal.mjs), naar beneden afgerond, en het is het
           landelijke gemiddelde: bewust zonder regio, zodat iemand uit Friesland
-          of Overijssel zich niet buitengesloten voelt.
-
-          Alleen voor woningeigenaren: dat is de groep waarop gemeten is én de
-          standaard hier. Een huurder krijgt een andere lijst, en dan zou dit
-          cijfer een belofte zijn die we niet hebben nagemeten. */}
-      {!bevestigdAdres && bewonertype === "woningeigenaar" && (
-        <p className="mx-auto mb-6 flex w-fit items-center gap-2 rounded-full bg-secondary px-4 py-1.5 text-[13px] text-foreground sm:text-[13.5px]">
-          <Lightbulb size={15} strokeWidth={2} className="shrink-0 text-accent" aria-hidden="true" />
-          <span>
-            <span className="font-semibold">{GEMIDDELDE_REGELINGEN_KOP}</span> {GEMIDDELDE_REGELINGEN_STAART}
-          </span>
+          of Overijssel zich niet buitengesloten voelt. Voor huurders, VvE's en
+          verhuurders tonen we alleen de eerste zin: die groepen krijgen een
+          andere lijst, en dan zou het cijfer een niet-nagemeten belofte zijn. */}
+      {!bevestigdAdres && (
+        // De negatieve bovenmarge heft de mt-6 van de formulierwrapper op, zodat
+        // deze regel net zo dicht onder de kop hangt als een gewone subregel.
+        //
+        // De hele zin past op een breed scherm op één regel (599px bij 15px,
+        // binnen de 640px die de kolom breed is). Past hij niet, dan houdt de
+        // nowrap-span de tweede zin bij elkaar: hij breekt dan netjes op de punt
+        // en nooit middenin, ook niet op een telefoon.
+        <p className="mx-auto -mt-4 mb-6 text-center text-[14px] leading-relaxed text-muted-foreground sm:text-[15px]">
+          Vul je adres in, dan zoeken we alle regelingen.{" "}
+          {bewonertype === "woningeigenaar" && (
+            <span className="whitespace-nowrap">{GEMIDDELDE_REGELINGEN_ZIN}</span>
+          )}
         </p>
       )}
 
