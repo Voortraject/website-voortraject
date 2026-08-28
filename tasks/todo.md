@@ -312,3 +312,118 @@ echte instantie: "RVO", "Gemeente Groningen", "SNN", "Nationaal Warmtefonds", "B
 - [ ] Secret zetten: `bunx supabase secrets set ESW_API_KEY=… --project-ref lfelnfukbrxznkevnevr`
 - [ ] Productieverificatie: 9742HJ over vier bewonertypes, `via: "api"` in het antwoord
 - [ ] Headless visuele check en één echte overzichtsmail
+
+---
+
+# Vervolg: verrijking met wat de API al meestuurt (2026-08-28)
+
+Branch `feat/subsidiecheck-api-verrijking`, bovenop de API-overstap. Zes punten, allemaal
+afgestemd met de opdrachtgever.
+
+## 1. De "Let op" van de bron op de kaart en in de mail
+
+De API heeft een extra alinea (`AdditionalIntro`) die bij dertig van de tweeënveertig
+noordelijke regelingen gevuld is. Bijna altijd is dat gewone uitleg, maar **één op de dertig**
+begint met "Let op", en dat is precies de belangrijkste: bij ISDE staat er dat je in Groningen
+en Noord-Drenthe beter de Isolatieaanpak kunt nemen en de ISDE dan niet hoeft aan te vragen.
+Op een Groninger resultatenpagina stonden die twee tot nu toe zonder één woord uitleg naast
+elkaar.
+
+Daarom tonen we alleen de "Let op"-variant, en niet de andere negenentwintig: zeldzaam betekent
+dat hij opvalt, en gewone uitleg zou de kaarten volschrijven. Zandkleurig vlak uit de huisstijl,
+geen rood: het is een aanwijzing, geen fout. Staat ook in de overzichtsmail.
+
+## 2. Einddatum, generiek uit `DateEnd`
+
+Geen losse notitie per regeling, zoals afgesproken. `DateEnd` staat op elke regeling, maar de
+bron zet 2050 neer als iets voorlopig doorloopt: vijfentwintig van de tweeënveertig staan zo.
+We tonen de datum alleen als hij **binnen drie maanden** valt. Dat zijn er nu twee: Subsidie
+Waardevermeerdering (1 september) en Subsidie lokale aanpak isolatie Emmen (1 november).
+
+"Aanvragen kan tot 1 september 2026", met een okerkleurig kalendericoon. Verlopen regelingen
+haalt Milieu Centraal zelf weg, dus daar hoeven we niets voor te bouwen.
+
+## 3. Het verzonnen ISDE-percentage eruit
+
+`CURATED_BEDRAG` is weg. Dat was onze eigen schatting "tot ± 30% van de kosten", zonder bron en
+zonder dat hij meeliep met wijzigingen. De API zegt zelf waarom er geen bedrag staat, dus:
+
+- Het bedrag-slot toont "verschilt per maatregel" wanneer de bróntekst dat zegt (regex op "hangt
+  af van", "verschilt per", "afhankelijk van … maatregel"). Raakt in Noord-Nederland precies
+  twee regelingen: ISDE en de Amsterdamse gebouwensubsidie.
+- De uitklap krijgt een regel "Bedrag" met de zin van de bron zelf. Dat helpt ook de dertien
+  regelingen die helemaal geen getal hebben; die zeiden voorheen nergens iets over het bedrag.
+- Zegt de bron niets bruikbaars, dan blijft het slot leeg. Liever niets dan iets verzinnen.
+
+## 4. Negen maatregelen, met de namen van Milieu Centraal
+
+Asbest verwijderen (1613) is de negende. Niet omdat Voortraject asbest saneert, maar omdat een
+asbestdak eraf en isolatie erop in Groningen en Drenthe hetzelfde traject is. Levert in
+Noord-Nederland twee regelingen op die we misliepen: de Maatwerklening en de Lening verwijderen
+asbestdaken Drenthe.
+
+Gasaansluiting verwijderen is bewust **niet** toegevoegd: gemeten levert die nul extra
+regelingen op in Noord-Nederland, dus hij zou de chiplijst alleen langer maken.
+
+De labels zijn nu die van Milieu Centraal zelf: "Isolatie en glas" (was "Isolatie & glas") en
+"Koken op elektriciteit" (was "Elektrisch koken"). Dezelfde woorden aan beide kanten van de
+koppeling, en de tag-labels uit de bron kunnen daardoor rechtstreeks op de kaart.
+
+**Let op voor het CRM-team:** deze labels gaan als platte tekst naar
+`leads_bewoners.subsidiecheck_interesses`. Nieuwe rijen krijgen dus de nieuwe schrijfwijze en er
+kan "Asbest verwijderen" in staan. Oude rijen blijven zoals ze zijn. Geen kapotte insert (vrije
+tekst), maar n8n zet dit veld wel in de communicatiekaart. De edge function `subsidiecheck-mail`
+heeft een eigen kopie van de labellijst en moet dus mee gedeployed.
+
+## 5. De maatregelregel terug, maar alleen als beperking
+
+Op de dichte kaart, niet in de uitklap: als iemand een warmtepomp zoekt en er staat een
+isolatiesubsidie tussen, moet dat zichtbaar zijn zonder te klikken.
+
+Alleen wanneer een regeling hooguit twee maatregelen dekt. Gemeten: vijftien van de
+vijfendertig noordelijke regelingen, bijna allemaal "Alleen voor isolatie en glas".
+
+Geteld op de **volledige** taglijst van de bron, niet op onze negen. De Isolatieaanpak dekt vier
+maatregelen waarvan wij er twee aanbieden; "Alleen voor isolatie en glas, ventilatie" zou dan
+onwaar zijn, want de regeling dekt ook energieadvies en procesondersteuning. Die krijgt dus geen
+regel. Liever geen regel dan een onware.
+
+## 6. Bewaking van de filterlijst
+
+De API Guide zegt expliciet dat filters kunnen wijzigen en niet hardcoded moeten worden. Onze
+negen id's staan wél vast, dus we bewaken ze.
+
+- `src/lib/subsidies/esw-filters.snapshot.json` — de momentopname in de repo, zodat zwart op wit
+  staat waar we van uitgingen. Alleen maatregelen, bewonertypes en soorten; de 342 gemeenten
+  laten we weg, die wijzigen bij elke herindeling en zeggen niets over onze koppeling.
+- `scripts/controleer-esw-filters.mjs` — haalt de lijst op en vergelijkt. Drie uitkomsten:
+  niets veranderd (exit 0, geen ruis), lijst gewijzigd (exit 1 plus bijgewerkte momentopname),
+  een van **onze** id's verdwenen (exit 2, want dan vindt de tool stilletjes niets meer).
+- `.github/workflows/esw-filters.yml` — maandagochtend. Bij een wijziging opent de workflow een
+  pull request met de nieuwe momentopname, zodat het als leesbare diff langskomt en mergen je
+  bevestiging is. Bij een verdwenen id faalt de run in plaats daarvan.
+
+Twee keuzes daarin die afwijken van het eerste voorstel:
+
+- De lijst wordt opgehaald via **onze eigen edge function** (`?meta=filters`, nieuw), niet
+  rechtstreeks bij Milieu Centraal. Zo blijft de API-key op één plek staan in plaats van ook nog
+  als GitHub-secret te bestaan, en controleert dezelfde run meteen of onze function het nog doet.
+- De workflow heeft **geen enkel secret** nodig. De anon-key is publiek en staat al in de repo,
+  dus het script leest hem daar uit.
+
+Alle drie de paden zijn end-to-end getest tegen een lokale nepbron: ongewijzigd, hernoemd label
+plus nieuwe maatregel, en een verdwenen eigen id.
+
+## Verificatie
+
+412 tests groen (37 nieuw). `bun run build` slaagt. `tsc` en `eslint` geven exact dezelfde
+meldingen als `main`. `deno check` op `subsidiecheck` is schoon; `subsidiecheck-mail` heeft
+dezelfde vier supabase-js-typefouten als op `main`. Headless gecontroleerd op 1440px en 390px:
+de "Let op" leest goed, de einddatum valt op, "Alleen voor isolatie en glas" staat er alleen
+waar het klopt, en geen enkele aanbiedersnaam wordt nog afgekapt.
+
+## Nog niet gedaan
+
+- De indeling zelf (koppen in bewonerstaal, "Leningen en overig" hernoemen, één zin die uitlegt
+  waarom er groepen zijn). Wacht op akkoord.
+- De andere negenentwintig `AdditionalIntro`-teksten in de uitklap. Buiten scope gehouden.

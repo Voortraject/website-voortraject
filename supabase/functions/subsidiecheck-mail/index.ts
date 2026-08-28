@@ -60,6 +60,10 @@ const KLEUR = {
   kaart: "#FFFFFF",
   border: "#E5E7EB",
   muted: "#6B7280",
+  // Het zandvlak uit de huisstijl (--secondary). Voor de enkele "Let op" die de
+  // bron meestuurt: opvallend genoeg om te lezen, niet rood, want het is een
+  // aanwijzing en geen fout. Mail kan geen transparantie, dus de volle tint.
+  zacht: "#F0E4D0",
 };
 
 const TELEFOON = "050 211 26 89";
@@ -179,6 +183,7 @@ const ALLE_MAATREGELEN = [
   "warmtenet",
   "elektrisch-koken",
   "thuisbatterij",
+  "asbest",
 ] as const;
 // Bewonertype uit stap 1 van de check. Exact de codes van `Bewonertype` in
 // src/lib/subsidies/types.ts (ook de waarden achter `?type=` in de deel-link) en
@@ -187,15 +192,21 @@ const ALLE_MAATREGELEN = [
 // anders dan deze vier laat de insert falen, dus onbekende invoer → NULL.
 const BEWONERTYPES = ["woningeigenaar", "huurder", "vve", "verhuurder"] as const;
 
+// De schrijfwijze van Milieu Centraal zelf, gelijk aan MAATREGEL_LABELS in
+// src/lib/subsidies/types.ts. Deno kan src/ niet importeren, dus dit is een
+// kopie: pas ze samen aan en deploy deze function mee. Kent deze kopie een
+// maatregel nog niet, dan valt hij weg uit de interesses in plaats van als
+// "undefined" in het CRM te belanden.
 const MAATREGEL_LABELS: Record<string, string> = {
-  isolatie: "Isolatie & glas",
+  isolatie: "Isolatie en glas",
   warmtepomp: "Warmtepomp",
   zonnepanelen: "Zonnepanelen",
   zonneboiler: "Zonneboiler",
   ventilatie: "Ventilatie",
   warmtenet: "Warmtenet-aansluiting",
-  "elektrisch-koken": "Elektrisch koken",
+  "elektrisch-koken": "Koken op elektriciteit",
   thuisbatterij: "Thuisbatterij",
+  asbest: "Asbest verwijderen",
 };
 
 // ---- Volumerem ----
@@ -227,6 +238,8 @@ type Regeling = {
   aanbieder?: string;
   omschrijving?: string;
   bedragIndicatie?: string;
+  /** Uitzondering die de bron zelf als "Let op" markeert. Zeldzaam, dus zwaar. */
+  letOp?: string;
   bronUrl?: string;
 };
 
@@ -392,6 +405,14 @@ function regelingRij(r: Regeling): string {
   const omschrijving = r.omschrijving
     ? `<div style="margin-top:4px;font-size:14px;line-height:1.5;color:${KLEUR.muted};">${escapeHtml(r.omschrijving)}</div>`
     : "";
+  // "Let op" komt letterlijk van de bron en staat op ongeveer één op de dertig
+  // regelingen. Bij ISDE zegt hij dat je in Groningen en Noord-Drenthe beter de
+  // Isolatieaanpak kunt nemen: precies ons werkgebied, dus die hoort net zo goed
+  // in de mail als op de site. Zandkleurig vlak, geen rood: het is een
+  // aanwijzing, geen fout.
+  const letOp = r.letOp
+    ? `<div style="margin-top:10px;padding:10px 12px;background:${KLEUR.zacht};border-radius:6px;font-size:13px;line-height:1.5;color:${KLEUR.muted};"><strong style="color:${KLEUR.primary};">Let op:</strong> ${escapeHtml(r.letOp)}</div>`
+    : "";
   const bron =
     r.bronUrl && /^https?:\/\//i.test(r.bronUrl)
       ? `<div style="margin-top:8px;font-size:13px;"><a href="${escapeHtml(r.bronUrl)}" style="color:${KLEUR.primary};font-weight:600;">Meer info &rarr;</a></div>`
@@ -411,6 +432,7 @@ function regelingRij(r: Regeling): string {
         </tr></table>
         <div style="margin-top:6px;font-size:16px;font-weight:700;line-height:1.35;color:${KLEUR.primary};">${titel}</div>
         ${omschrijving}
+        ${letOp}
         ${bron}
       </td>
     </tr>
@@ -863,7 +885,7 @@ Deno.serve(async (req: Request) => {
 
   // `gewenste_maatregelen` raken we niet aan; de aangevinkte onderwerpen gaan
   // als platte tekst naar `subsidiecheck_interesses`, in de volgorde van de
-  // chips op de site — bijv. "Isolatie & glas, Warmtepomp, Thuisbatterij".
+  // chips op de site — bijv. "Isolatie en glas, Warmtepomp, Thuisbatterij".
   const interesses = ALLE_MAATREGELEN.filter((m) => maatregelen.includes(m))
     .map((m) => MAATREGEL_LABELS[m])
     .join(", ");

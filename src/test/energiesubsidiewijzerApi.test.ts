@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   aanbiederVan,
+  beperktTotVan,
   filterOpMaatregelen,
   idVan,
   maatregelenVan,
@@ -13,7 +14,7 @@ import {
   typeVan,
   type EswApiRegeling,
 } from "@/lib/subsidies/energiesubsidiewijzerApi";
-import { ALLE_MAATREGELEN } from "@/lib/subsidies/types";
+import { ALLE_MAATREGELEN, formateerDatum, looptBinnenkortAf } from "@/lib/subsidies/types";
 
 // Echt antwoord van de officiële API (search, 9742HJ, Woningeigenaar), alleen
 // ontdaan van `Details` en `Share` — die zijn obsolete respectievelijk ongebruikt
@@ -22,16 +23,17 @@ const fixture = JSON.parse(
   readFileSync(resolve(__dirname, "fixtures/esw-api-9742hj-woningeigenaar.json"), "utf8"),
 ) as EswApiRegeling[];
 
-// De acht maatregelen die onze tool aanbiedt (de "Alles"-keuze).
-const ONZE_ACHT = filterOpMaatregelen(fixture, [...ALLE_MAATREGELEN]);
+// De maatregelen die onze tool aanbiedt (de "Alles"-keuze).
+const ONZE_KEUZE = filterOpMaatregelen(fixture, [...ALLE_MAATREGELEN]);
 
 describe("Energiesubsidiewijzer-API: filteren op maatregelen", () => {
   it("houdt precies de regelingen over die de live tool nu toont", () => {
-    // De bron geeft er twaalf voor deze postcode; twee gaan alleen over
-    // asbest (1613) en natuurinclusief bouwen (1614), maatregelen die wij niet
-    // aanbieden. Dit is exact de tien die er op dit moment live staan.
-    expect(ONZE_ACHT).toHaveLength(10);
-    expect(ONZE_ACHT.map(idVan)).toEqual([
+    // De bron geeft er twaalf voor deze postcode. Er valt er één af: de
+    // Stimuleringsregeling natuurinclusief (ver)bouwen, die alleen 1614 heeft
+    // en dat bieden wij niet aan. De Maatwerklening (alleen asbest, 1613) komt
+    // er sinds de negende maatregel wél bij; die misten we eerder.
+    expect(ONZE_KEUZE).toHaveLength(11);
+    expect(ONZE_KEUZE.map(idVan)).toEqual([
       "isolatieaanpak-groningen-en-noord-drenthe",
       "isde-subsidie-rijksoverheid",
       "subsidie-verduurzaming-en-verbetering-groningen-10-000",
@@ -40,13 +42,14 @@ describe("Energiesubsidiewijzer-API: filteren op maatregelen", () => {
       "subsidie-energiemaatregelen-groningen",
       "verzilverlening",
       "subsidie-waardevermeerdering-drenthe-en-groningen",
+      "maatwerklening",
       "extra-geld-voor-energiebesparing-in-hypotheek-met-nhg",
       "laag-btw-tarief-voor-isolatiewerkzaamheden",
     ]);
   });
 
-  it("een lege keuze betekent alle acht, niet 'niets'", () => {
-    expect(filterOpMaatregelen(fixture, []).map(idVan)).toEqual(ONZE_ACHT.map(idVan));
+  it("een lege keuze betekent allemaal, niet 'niets'", () => {
+    expect(filterOpMaatregelen(fixture, []).map(idVan)).toEqual(ONZE_KEUZE.map(idVan));
   });
 
   it("filtert op één maatregel", () => {
@@ -81,10 +84,40 @@ describe("Energiesubsidiewijzer-API: velden vertalen", () => {
     expect(isolatieaanpak.bedragIndicatie).toBe("50–100% van de kosten");
   });
 
-  it("laat het bedrag leeg als de bron geen getal noemt", () => {
-    // ISDE verschilt per maatregel; de provider zet er een curated indicatie bij.
+  it("zegt dat het bedrag per maatregel verschilt als de bron dat zelf zegt", () => {
+    // ISDE noemt geen bedrag omdat het per maatregel verschilt. Hier stond
+    // eerder onze eigen schatting "tot ± 30% van de kosten"; die is weg.
     const isde = naarRegeling(fixture.find((r) => r.Id === "1629")!);
-    expect(isde.bedragIndicatie).toBeUndefined();
+    expect(isde.bedragIndicatie).toBe("verschilt per maatregel");
+    expect(isde.bedragToelichting).toContain("hangt af van welke maatregel");
+  });
+
+  it("laat het bedrag leeg als de bron geen getal noemt en ook niet zegt waarom", () => {
+    // Het lage btw-tarief noemt "9 procent", geen bedrag en geen uitleg dat het
+    // per maatregel verschilt. Dan liever niets dan iets verzinnen.
+    const btw = naarRegeling(fixture.find((r) => r.Id === "1647")!);
+    expect(btw.bedragIndicatie).toBeUndefined();
+    expect(btw.bedragToelichting).toContain("9 procent");
+  });
+
+  it("licht een 'Let op' van de bron eruit en haalt de aanhef weg", () => {
+    // Bij ISDE staat dat je in Groningen en Noord-Drenthe de Isolatieaanpak
+    // kunt nemen en de ISDE dan niet hoeft aan te vragen. Die tekst is het hele
+    // punt van dit veld; de aanhef "Let op:" zetten we zelf al op de kaart.
+    const isde = naarRegeling(fixture.find((r) => r.Id === "1629")!);
+    expect(isde.letOp).toMatch(/^Woon je in Groningen of Noord-Drenthe\?/);
+    expect(isde.letOp).toContain("géén ISDE-subsidie aan te vragen");
+  });
+
+  it("laat een gewone extra alinea staan waar hij staat", () => {
+    // De Isolatieaanpak heeft ook een AdditionalIntro, maar zonder "Let op".
+    // Dat is uitleg, geen uitzondering, en hoort niet als waarschuwing op de kaart.
+    expect(naarRegeling(fixture.find((r) => r.Id === "3143")!).letOp).toBeUndefined();
+  });
+
+  it("neemt de einddatum over zoals de bron hem geeft", () => {
+    const waardevermeerdering = naarRegeling(fixture.find((r) => r.Id === "2559")!);
+    expect(waardevermeerdering.looptAfOp).toBe("2026-09-01T00:00:00Z");
   });
 
   it("gebruikt ProviderUrl als officiële bron", () => {
@@ -105,8 +138,8 @@ describe("Energiesubsidiewijzer-API: velden vertalen", () => {
   });
 
   it("laat maatregelen die wij niet aanbieden buiten beschouwing", () => {
-    // 1613 is asbest verwijderen; dat staat niet in onze acht.
-    expect(maatregelenVan({ Tags: [{ Value: "1613" }, { Value: "1503" }] })).toEqual(["isolatie"]);
+    // 1609 is "Tuin vergroenen"; dat bieden wij niet aan, 1503 wel.
+    expect(maatregelenVan({ Tags: [{ Value: "1609" }, { Value: "1503" }] })).toEqual(["isolatie"]);
   });
 
   it("toont de echte aanbieder, niet het generieke laaglabel", () => {
@@ -202,10 +235,70 @@ describe("Energiesubsidiewijzer-API: overheidslaag afleiden", () => {
   });
 
   it("deelt 9742HJ in zoals afgesproken", () => {
-    const perNiveau = ONZE_ACHT.map(naarRegeling).reduce<Record<string, number>>((acc, r) => {
+    const perNiveau = ONZE_KEUZE.map(naarRegeling).reduce<Record<string, number>>((acc, r) => {
       acc[r.niveau] = (acc[r.niveau] ?? 0) + 1;
       return acc;
     }, {});
-    expect(perNiveau).toEqual({ rijk: 6, provincie: 2, gemeente: 2 });
+    expect(perNiveau).toEqual({ rijk: 6, provincie: 2, gemeente: 3 });
+  });
+});
+
+describe("Einddatum: alleen tonen als hij in zicht is", () => {
+  const nu = new Date("2026-08-28T12:00:00Z");
+
+  it("toont een datum binnen drie maanden", () => {
+    expect(looptBinnenkortAf("2026-09-01T00:00:00Z", nu)).toBe(true);
+    expect(looptBinnenkortAf("2026-11-01T00:00:00Z", nu)).toBe(true);
+  });
+
+  it("negeert de 2050-plaatshouder waarmee de bron 'loopt door' bedoelt", () => {
+    // Vijfentwintig van de tweeënveertig regelingen in Noord-Nederland staan zo.
+    expect(looptBinnenkortAf("2050-01-01T00:00:00Z", nu)).toBe(false);
+  });
+
+  it("negeert een datum verderop en een datum die al voorbij is", () => {
+    expect(looptBinnenkortAf("2027-12-31T00:00:00Z", nu)).toBe(false);
+    expect(looptBinnenkortAf("2026-08-01T00:00:00Z", nu)).toBe(false);
+  });
+
+  it("kan overweg met niets en met onzin", () => {
+    expect(looptBinnenkortAf(undefined, nu)).toBe(false);
+    expect(looptBinnenkortAf("geen datum", nu)).toBe(false);
+  });
+
+  it("schrijft de datum voluit in het Nederlands", () => {
+    expect(formateerDatum("2026-09-01T00:00:00Z")).toBe("1 september 2026");
+  });
+});
+
+describe("De regel 'alleen voor …' op de kaart", () => {
+  it("staat er alleen als de regeling écht smal is", () => {
+    // Het lage btw-tarief heeft één tag: isolatie en glas.
+    expect(naarRegeling(fixture.find((r) => r.Id === "1647")!).beperktTot).toBe("isolatie en glas");
+  });
+
+  it("blijft leeg bij een brede regeling", () => {
+    // ISDE dekt er zes; die opsommen voegt niets toe aan de omschrijving.
+    expect(naarRegeling(fixture.find((r) => r.Id === "1629")!).beperktTot).toBeUndefined();
+  });
+
+  it("kijkt naar álle maatregelen van de bron, niet alleen naar de onze", () => {
+    // De Isolatieaanpak heeft vier tags, waarvan wij er twee aanbieden
+    // (isolatie en ventilatie). "Alleen voor isolatie en ventilatie" zou dan
+    // onwaar zijn: de regeling dekt ook energieadvies en procesondersteuning.
+    const isolatieaanpak = fixture.find((r) => r.Id === "3143")!;
+    expect(maatregelenVan(isolatieaanpak)).toHaveLength(2);
+    expect(beperktTotVan(isolatieaanpak)).toBeUndefined();
+  });
+
+  it("schrijft de labels met een kleine letter, want ze staan midden in een zin", () => {
+    expect(beperktTotVan({ Tags: [{ Label: "Isolatie en glas" }, { Label: "Ventilatie" }] })).toBe(
+      "isolatie en glas, ventilatie",
+    );
+  });
+
+  it("blijft leeg als de bron geen maatregelen meegeeft", () => {
+    expect(beperktTotVan({})).toBeUndefined();
+    expect(beperktTotVan({ Tags: [] })).toBeUndefined();
   });
 });

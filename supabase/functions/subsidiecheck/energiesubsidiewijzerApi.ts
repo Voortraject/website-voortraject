@@ -33,8 +33,12 @@ export type EswApiRegeling = {
   Id?: string;
   Title?: string;
   Intro?: string;
+  /** Extra alinea vóór de rest; soms een uitzondering die met "Let op" begint. */
+  AdditionalIntro?: string;
   AmountsText?: string;
   Conditions?: string;
+  /** Einddatum. De bron zet 2050 neer als een regeling voorlopig doorloopt. */
+  DateEnd?: string;
   /** "subsidy" | "loan" | "other" */
   Type?: string;
   TargetGroup?: string;
@@ -152,6 +156,30 @@ export function maatregelenVan(regeling: EswApiRegeling): Maatregel[] {
   return uit;
 }
 
+// Hoeveel maatregelen een regeling nog "smal" maakt. Gemeten over Noord-
+// Nederland: bij hooguit twee krijgen vijftien van de vijfendertig regelingen
+// een regel, en dat is bijna altijd "alleen voor isolatie en glas". Vanaf drie
+// wordt het een opsomming die niets toevoegt aan de omschrijving erboven.
+const MAX_MAATREGELEN_VOOR_BEPERKING = 2;
+
+/**
+ * "isolatie en glas" of "isolatie en glas, ventilatie": waar de regeling écht
+ * alleen voor geldt, of undefined als hij breder is.
+ *
+ * Bewust op de vólledige tag-lijst van de bron en niet op onze eigen negen: als
+ * een regeling ook energieadvies dekt en wij dat niet aanbieden, is "alleen
+ * voor isolatie" een claim die niet klopt. Liever geen regel dan een onware.
+ * De labels komen ook uit de bron, en die schrijfwijze hebben we overgenomen in
+ * MAATREGEL_LABELS, dus beide kanten zeggen hetzelfde.
+ */
+export function beperktTotVan(regeling: EswApiRegeling): string | undefined {
+  const labels = (regeling.Tags ?? []).map((t) => schoon(t.Label ?? "")).filter(Boolean);
+  if (labels.length === 0 || labels.length > MAX_MAATREGELEN_VOOR_BEPERKING) return undefined;
+  // Midden in een zin, dus met een kleine letter. Alleen de eerste letter, niet
+  // het hele label: een toekomstige naam kan een eigennaam bevatten.
+  return labels.map((l) => l.charAt(0).toLowerCase() + l.slice(1)).join(", ");
+}
+
 function doelgroepenVan(regeling: EswApiRegeling): Bewonertype[] {
   const bewonertype = RESIDENT_NAAR_BEWONERTYPE.get((regeling.TargetGroup ?? "").trim().toLowerCase());
   // De bron filtert al op bewonertype; kent hij de waarde niet, dan houden we
@@ -159,8 +187,34 @@ function doelgroepenVan(regeling: EswApiRegeling): Bewonertype[] {
   return bewonertype ? [bewonertype] : [...ALLE_BEWONERTYPES];
 }
 
+// De bron markeert een uitzondering door de extra alinea met "Let op" te
+// beginnen. Zeldzaam: één op de dertig regelingen in Noord-Nederland. Daarom is
+// dit een bruikbaar signaal en geen ruis, en daarom laten we de andere
+// negenentwintig extra alinea's staan waar ze staan.
+const LET_OP_RE = /^let\s*op\b[:,]?\s*/i;
+
+// De bedragtekst noemt soms geen bedrag maar zegt waaróm dat niet kan. Dan is
+// "verschilt per maatregel" in het bedrag-slot eerlijker dan een leeg vakje, en
+// een stuk eerlijker dan het percentage dat wij er eerder zelf bij verzonnen.
+// Raakt in Noord-Nederland twee regelingen: ISDE en de Amsterdamse
+// gebouwensubsidie.
+const HANGT_AF_VAN_MAATREGEL_RE = /hangt af van|verschilt per|afhankelijk van .{0,40}maatregel/i;
+
+function bedragVan(regeling: EswApiRegeling): { indicatie?: string; toelichting?: string } {
+  const toelichting = eersteRegel(regeling.AmountsText);
+  const indicatie = beknoptBedrag(toelichting);
+  if (indicatie) return { indicatie, toelichting };
+  const volledig = schoon(regeling.AmountsText ?? "");
+  return {
+    indicatie: HANGT_AF_VAN_MAATREGEL_RE.test(volledig) ? "verschilt per maatregel" : undefined,
+    toelichting,
+  };
+}
+
 export function naarRegeling(regeling: EswApiRegeling): SubsidieRegeling {
   const niveau = niveauVan(regeling);
+  const extra = schoon(regeling.AdditionalIntro ?? "");
+  const bedrag = bedragVan(regeling);
   return {
     id: idVan(regeling),
     titel: schoon(regeling.Title ?? ""),
@@ -171,8 +225,13 @@ export function naarRegeling(regeling: EswApiRegeling): SubsidieRegeling {
     // Alleen de eerste alinea van de bedragtekst, net als de scrape deed: daarna
     // volgt vaak een opsomming met uitzonderingsbedragen, en het hoogste getal
     // daaruit zou een verkeerd beeld geven (Isolatieaanpak is "50–100% van de
-    // kosten", niet "tot € 40.000").
-    bedragIndicatie: beknoptBedrag(eersteRegel(regeling.AmountsText)),
+    // kosten", niet "tot € 40.000"; bij Westerkwartier staat er een
+    // inkomensgrens die anders als subsidiebedrag zou worden gelezen).
+    bedragIndicatie: bedrag.indicatie,
+    bedragToelichting: bedrag.toelichting,
+    letOp: LET_OP_RE.test(extra) ? extra.replace(LET_OP_RE, "") : undefined,
+    looptAfOp: regeling.DateEnd,
+    beperktTot: beperktTotVan(regeling),
     belangrijksteVoorwaarde: eersteRegel(regeling.Conditions),
     bronUrl: regeling.ProviderUrl || regeling.Url || "",
     maatregelen: maatregelenVan(regeling),

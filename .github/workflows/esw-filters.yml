@@ -1,0 +1,68 @@
+# Wekelijkse controle op de filterlijst van Milieu Centraal.
+#
+# De API Guide zegt expliciet dat filters kunnen wijzigen en niet hardcoded
+# moeten worden. Onze negen maatregel-id's staan wél vast (ze bepalen de chips en
+# de opgeslagen interesses), dus we bewaken ze in plaats van erop te hopen. Een
+# gewijzigd id zou de subsidiecheck stilletjes minder regelingen laten vinden,
+# zonder foutmelding.
+#
+# De lijst wordt opgehaald via onze eigen edge function (`?meta=filters`), zodat
+# de API-key alleen in de Supabase-secrets staat en niet ook nog hier.
+#
+# Uitkomsten:
+#   exit 0  niets veranderd, geen ruis
+#   exit 1  lijst gewijzigd → deze workflow opent een PR met de nieuwe
+#           momentopname, zodat de wijziging als leesbare diff langskomt
+#   exit 2  een van ONZE id's is verdwenen → de run faalt, want dan is de tool stuk
+
+name: Filterlijst Energiesubsidiewijzer
+
+on:
+  schedule:
+    # Maandagochtend 06:00 UTC.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  controleer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Filterlijst vergelijken
+        id: controle
+        run: |
+          set +e
+          node scripts/controleer-esw-filters.mjs
+          code=$?
+          set -e
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          # 2 = een van onze id's bestaat niet meer. Dat is kapot, dus de run faalt.
+          if [ "$code" -eq 2 ]; then exit 1; fi
+
+      - name: Pull request openen bij een wijziging
+        if: steps.controle.outputs.code == '1'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tak="chore/esw-filters-$(date +%Y-%m-%d)"
+          # Bestaat de tak al van een eerdere run, dan is er al een open PR.
+          if git ls-remote --exit-code --heads origin "$tak" >/dev/null 2>&1; then
+            echo "Tak $tak bestaat al; er staat al een pull request open."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$tak"
+          git add src/lib/subsidies/esw-filters.snapshot.json
+          git commit -m "chore(subsidiecheck): filterlijst van Milieu Centraal is gewijzigd"
+          git push origin "$tak"
+          gh pr create --base main --head "$tak" --title "Filterlijst Energiesubsidiewijzer is gewijzigd" --body-file .github/esw-filters-pr.md

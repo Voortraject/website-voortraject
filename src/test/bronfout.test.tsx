@@ -117,7 +117,7 @@ describe("gegevens-poort bij een bronfout", () => {
     const [tabel, rij] = insertMock.mock.calls[0];
     expect(tabel).toBe("leads_bewoners");
     expect(rij).toMatchObject({ email: "jan@example.nl", bron: "Voortraject" });
-    expect(rij.subsidiecheck_interesses).toBe("Isolatie & glas");
+    expect(rij.subsidiecheck_interesses).toBe("Isolatie en glas");
     // `notities` bevat alléén de hulpvraag: dat veld is voor het team zelf. Het
     // toestemmingsbewijs stond hier ook als tweede regel, als terugval voor de
     // tijd dat de kolommen nog niet bestonden. Die dubbeling is eruit.

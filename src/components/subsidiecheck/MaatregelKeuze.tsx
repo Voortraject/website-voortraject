@@ -1,5 +1,6 @@
 import {
   BatteryCharging,
+  Construction,
   CookingPot,
   Droplets,
   Fan,
@@ -21,6 +22,9 @@ const MAATREGEL_ICONS: Record<Maatregel, LucideIcon> = {
   warmtenet: Share2,
   "elektrisch-koken": CookingPot,
   thuisbatterij: BatteryCharging,
+  // Bewust geen waarschuwingsdriehoek: die leest tussen de andere chips als
+  // "hier is iets mis" in plaats van als een klus waar geld voor is.
+  asbest: Construction,
 };
 
 interface MaatregelKeuzeProps {

@@ -291,6 +291,10 @@ export async function verstuurSubsidiecheckLead(args: {
         type: r.type,
         bedragIndicatie: r.bedragIndicatie,
         omschrijving: r.omschrijving,
+        // De "Let op" van de bron hoort in de mail net zo goed als op de site:
+        // bij ISDE staat daar dat je in ons werkgebied de Isolatieaanpak kunt
+        // nemen. Een oudere function negeert dit veld gewoon.
+        letOp: r.letOp,
         bronUrl: r.bronUrl,
       })),
     }),

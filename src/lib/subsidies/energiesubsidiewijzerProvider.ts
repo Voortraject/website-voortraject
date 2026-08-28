@@ -28,22 +28,12 @@ import {
 const FUNCTIE_URL = import.meta.env.VITE_SUBSIDIECHECK_URL as string | undefined;
 const DEV_API_PROXY = "/mc-api/regulation/search";
 
-// Curated indicaties voor bekende regelingen waarvoor de bron geen schoon bedrag
-// teruggeeft. ISDE noemt geen los percentage omdat het bedrag per maatregel
-// verschilt (isolatie per m², warmtepomp een vast bedrag); wij tonen een eigen
-// indicatie i.p.v. een leeg veld. Alléén als terugval: een echt bedrag uit de
-// bron wint altijd. Sleutel = de stabiele regeling-id (laatste padsegment).
-const CURATED_BEDRAG: Record<string, string> = {
-  "isde-subsidie-rijksoverheid": "tot ± 30% van de kosten",
-};
-
-// Vult de curated indicatie in waar de bron er geen gaf. Raakt de weergave én de
-// mail (die dezelfde client-lijst meestuurt), zonder de edge function te wijzigen.
-function metCuratedBedrag(regelingen: SubsidieRegeling[]): SubsidieRegeling[] {
-  return regelingen.map((r) =>
-    r.bedragIndicatie || !CURATED_BEDRAG[r.id] ? r : { ...r, bedragIndicatie: CURATED_BEDRAG[r.id] },
-  );
-}
+// Hier stond een curated bedrag voor ISDE ("tot ± 30% van de kosten"), omdat de
+// scrape er geen bedrag bij gaf. Dat was onze eigen schatting: niet onderbouwd,
+// en hij liep niet mee als het percentage wijzigde. De officiële API vertelt
+// zelf waaróm er geen bedrag staat ("hangt af van welke maatregel én hoeveel
+// maatregelen je uitvoert"), dus die zin tonen we nu, met een link naar de
+// rekentool van RVO. Geen verzonnen cijfer meer.
 
 // --- Productie: JSON via de edge function (al verrijkt) ---
 // De filters (bewonertype + maatregelen) gaan mee; de function forwardt ze naar
@@ -89,9 +79,8 @@ export const energiesubsidiewijzerProvider: SubsidieProvider = {
     // een fout resultaat bleef zo 5 minuten in de query-cache hangen.
     // Een lege-maar-geldige lijst (0 regelingen voor deze situatie) komt gewoon
     // door en toont de nette "geen regelingen"-staat.
-    const regelingen = FUNCTIE_URL
+    return FUNCTIE_URL
       ? await haalViaFunctie(input.postcode, bouwEswFilterQuery(input.bewonertype, input.maatregelen))
       : await haalViaDevProxy(input);
-    return metCuratedBedrag(regelingen);
   },
 };
