@@ -574,10 +574,28 @@ De subsidiecheck draait op productie op de officiële API van Milieu Centraal.
 **Terugrollen** blijft één handeling: `bunx supabase secrets unset ESW_API_KEY --project-ref
 lfelnfukbrxznkevnevr`. De functie valt dan meteen terug op de oude route, zonder deploy.
 
+**Afgerond met het CRM-team, dezelfde dag:**
+
+- [x] Gemeld dat `leads_bewoners.subsidiecheck_interesses` vanaf nu "Isolatie en glas" en "Koken
+      op elektriciteit" schrijft, en dat er "Asbest verwijderen" in kan staan. Oude rijen blijven
+      zoals ze zijn; geen enkele rapportage groepeert op die strings.
+- [x] Zij hebben live nagekeken dat er geen CHECK, FK of trigger op die kolom staat. Het is vrije
+      tekst, dus een onbekende waarde kan geen insert laten falen. Er stond geen lead op het spel.
+- [x] n8n, node "Match bepalen": die had onze oude acht labels hardgecodeerd om te bepalen of
+      iemand álles aanvinkte. Door het hernoemen werkte die samenvatting niet meer en schreef n8n
+      negen labels uit waar "Alle maatregelen" hoorde te staan. Stil, geen foutmelding. Bijgewerkt
+      naar de negen nieuwe labels.
+- [x] Hun eigen subsidiecheck-pagina (CRM-PR #477) heeft asbest erbij gekregen, waardoor ook daar
+      de Maatwerklening terug is: 10 → 11 regelingen.
+- [x] De `letOp`-uitzondering staat nu ook op de kaart in het CRM (CRM-PR #478), letterlijk zoals
+      de bron hem geeft. Zo ziet een adviseur aan de telefoon dat ISDE in Groningen en
+      Noord-Drenthe beter de Isolatieaanpak kan zijn.
+
 **Nog te doen:**
 
-- [ ] Het CRM-team melden dat `leads_bewoners.subsidiecheck_interesses` vanaf nu "Isolatie en
-      glas" en "Koken op elektriciteit" schrijft (was "Isolatie & glas" en "Elektrisch koken"),
-      en dat er "Asbest verwijderen" in kan staan. Oude rijen blijven zoals ze zijn.
-- [ ] Over ongeveer een week: opruim-PR die de scrape-route, de HTML-parser, de fixtures en de
-      bronlink-heuristiek weghaalt. Pas doen als het vangnet niet meer nodig blijkt.
+- [ ] **Rond 4 september:** opruim-PR die de scrape-route, de HTML-parser, de zeven fixtures en de
+      bronlink-heuristiek weghaalt. Zo'n vijftienhonderd regels die alleen nog als vangnet
+      bestaan. Pas doen als de API een week stabiel is gebleken, en pas na akkoord: daarna ziet
+      een bezoeker een storing bij Milieu Centraal als eerlijke foutmelding in plaats van dat de
+      oude route het stil opvangt. Dat is bewust zo ontworpen, maar het is een keuze om te maken.
+      Het CRM weet ervan; voor hen verandert er niets, alleen zegt `via` daarna altijd `"api"`.
