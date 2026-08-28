@@ -104,14 +104,6 @@ export const NIVEAU_LABELS: Record<SubsidieNiveau, string> = {
   overig: "Leningen en overig",
 };
 
-// Korte varianten voor de legenda in de samenvatting (waar ruimte krap is).
-export const NIVEAU_KORT: Record<SubsidieNiveau, string> = {
-  rijk: "Landelijk",
-  provincie: "Provinciaal",
-  gemeente: "Gemeentelijk",
-  overig: "Leningen/overig",
-};
-
 export const TYPE_LABELS: Record<SubsidieType, string> = {
   subsidie: "Subsidie",
   lening: "Lening",
@@ -176,23 +168,19 @@ export type Samenvatting = {
   totaal: number;
   subsidies: number;
   leningen: number;
-  /** Aantal per niveau, in vaste volgorde, lege niveaus weggelaten. */
-  perNiveau: { niveau: SubsidieNiveau; aantal: number }[];
 };
 
 // Kern voor het samenvattingsblok bovenaan het resultaat (inverted pyramid):
-// het aantal, de subsidie/lening-verdeling en de spreiding over de niveaus.
-// Bewust géén opgeteld totaalbedrag: regelingen zijn niet zomaar stapelbaar en
-// een verzonnen maximumbedrag ondermijnt het vertrouwen.
+// het aantal en de subsidie/lening-verdeling. Bewust géén opgeteld
+// totaalbedrag: regelingen zijn niet zomaar stapelbaar en een verzonnen
+// maximumbedrag ondermijnt het vertrouwen. De spreiding over de niveaus zat
+// hier ook in, maar die kwam dubbel terug als groepskoppen op het resultaat en
+// is daar in PR #47 uit de samenvatting gehaald.
 export function maakSamenvatting(regelingen: SubsidieRegeling[]): Samenvatting {
   return {
     totaal: regelingen.length,
     subsidies: regelingen.filter((r) => r.type === "subsidie").length,
     leningen: regelingen.filter((r) => r.type === "lening").length,
-    perNiveau: NIVEAU_VOLGORDE.map((niveau) => ({
-      niveau,
-      aantal: regelingen.filter((r) => r.niveau === niveau).length,
-    })).filter((g) => g.aantal > 0),
   };
 }
 

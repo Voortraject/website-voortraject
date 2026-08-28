@@ -1,0 +1,754 @@
+[
+ {
+  "Id": "3143",
+  "Title": "Isolatieaanpak Groningen en Noord-Drenthe",
+  "Intro": "De Rijksoverheid geeft subsidie voor isolatie- en ventilatiemaatregelen voor inwoners van Groningen en Noord-Drenthe (gemeenten Aa en Hunze, Noordenveld en Tynaarlo). ",
+  "AdditionalIntro": "<p>Deze subsidie is onderdeel van de isolatieaanpak van Nij Begun, ook wel Maatregel 29 genoemd. Hiermee krijg je 100% of 50% van de kosten voor het isoleren en ventileren van je woning. Deze regeling is speciaal voor inwoners die wonen in het aardbevingsbied.<br>Zodra de subsidie voor de isolatieaanpak beschikbaar is, hoef je geen ISDE-subsidie apart aan te vragen.</p>",
+  "AmountsText": "<p>Van 50% tot 100% van de kosten, afhankelijk van waar je woont en hoe hoog je inkomen is.<br><!--[endif]--></p>\n<ul>\n<li class=\"MsoNormal\">Huiseigenaren binnen het versterkingsgebied <a></a>krijgen 100% vergoeding, tot € 40.000</li>\n<li class=\"MsoNormal\">Huiseigenaren buiten het versterkingsgebied krijgen 50% vergoeding, tot € 20.000</li>\n<li class=\"MsoNormal\"><a></a>Mensen met een laag inkomen (tot 140% van het sociaal minimum) krijgen 100% vergoeding, tot € 40.000</li>\n<li class=\"MsoNormal\">Verhuurders krijgen ook subsidie, maar de regels zijn anders. <a></a><a></a>Vraag voordat je deze subsidie aanvraagt, altijd eerst de SVOH aan</li>\n<li class=\"MsoNormal\">Mensen met een huis dat zwaar versterkt moet worden, kunnen ook 100% krijgen</li>\n<li class=\"MsoNormal\">VvE's komen ook in aanmerking voor subsidie&nbsp;</li>\n<li class=\"MsoNormal\">Huiseigenaren die hun huis al hebben geïsoleerd na 25 april 2023 en daar geen subsidie voor kregen, mogen deze alsnog aanvragen</li>\n</ul>",
+  "Conditions": "<ul>\n<li>Je woont in de provincie Groningen of Noord-Drenthe (gemeenten Aa en Hunze, Noordenveld en Tynaarlo)&nbsp;</li>\n<li>Je woning voldoet nog niet aan de standaard voor woningisolatie.&nbsp;<span>Huizen die na 2012 zijn gebouwd voldoen per definitie aan de standaard voor woningisolatie en komen daarom niet in aanmerking voor de subsidie</span></li>\n</ul>",
+  "Type": "subsidy",
+  "TargetGroup": "Woningeigenaar, Vereniging van Eigenaren, Particuliere woningverhuurder",
+  "Amount": "variabel",
+  "Locations": [
+   "Aa en Hunze",
+   "Eemsdelta",
+   "Het Hogeland",
+   "Oldambt",
+   "Pekela",
+   "Stadskanaal",
+   "Veendam",
+   "Westerkwartier",
+   "Westerwolde",
+   "Hoogeveen",
+   "Midden-Groningen",
+   "Groningen",
+   "Groningen",
+   "Noordenveld",
+   "Tynaarlo"
+  ],
+  "LocationIDs": [],
+  "DateCreation": "10 March 2025",
+  "DateEnd": "2050-01-01T00:00:00Z",
+  "Stackable": "Nee",
+  "ProviderName": "Rijksdienst voor Ondernemend Nederland (RVO)",
+  "ProviderUrl": "https://isolatie.nijbegun.nl/",
+  "Url": "https://www.verbeterjehuis.nl/energiesubsidiewijzer/subsidies/isolatieaanpak-groningen-en-noord-drenthe",
+  "Tags": [
+   {
+    "Label": "Energie advies",
+    "Value": "1605"
+   },
+   {
+    "Label": "Proces ondersteuning",
+    "Value": "1606"
+   },
+   {
+    "Label": "Ventilatie",
+    "Value": "1581"
+   },
+   {
+    "Label": "Isolatie en glas",
+    "Value": "1503"
+   }
+  ],
+  "LandingPageId": "1487"
+ },
+ {
+  "Id": "1629",
+  "Title": "ISDE-subsidie Rijksoverheid",
+  "Intro": "Je kunt subsidie krijgen op isolatie & glas, ventilatie, warmtepompen, warmtenetaansluiting, koken op elektriciteit en zonneboilers.",
+  "AdditionalIntro": "<p>Let op: Woon je in Groningen of Noord-Drenthe? Dan kun je meedoen aan de Isolatieaanpak Nij Begun (maatregel 29). Deze overheidsregeling biedt subsidie en extra ondersteuning voor het isoleren en ventileren van je woning. De aanpak geldt voor woningeigenaren in de provincie Groningen en in de gemeenten Aa en Hunze, Noordenveld en Tynaarlo.&nbsp;<br>Je hoeft dan géén ISDE-subsidie aan te vragen voor isolatie- en ventilatiemaatregelen.&nbsp;<br><br><br></p>",
+  "AmountsText": "<p>Het subsidiebedrag hangt af van welke maatregel én hoeveel maatregelen je uitvoert.&nbsp;<br>Wil je uitrekenen hoeveel subsidie je kunt krijgen? Vul dan de <a rel=\"noopener\" href=\"https://www.rvo.nl/onderwerpen/isde/woningeigenaren/rekentool\" target=\"_blank\">ISDE-rekentool</a> van RVO in.&nbsp;</p>",
+  "Conditions": "<ul>\n<li>Je bent eigenaar van de woning en je woont er zelf (je hebt de woning dus niet verhuurd)</li>\n<li>De isolatiemaatregelen voldoen aan de vereiste isolatiewaarden en aan het vereiste minimum aantal vierkante meters</li>\n<li>Je vraagt de subsidie aan <strong>nadat </strong>de maatregelen zijn uitgevoerd</li>\n<li>Je doet de aanvraag binnen 2 jaar (24 maanden) na het uitvoeren van de eerste maatregel</li>\n<li>Je mag 1x een aanvraag doen voor een type isolatiemaatregel (1x spouw, 1x vloer etc), met uitzondering van glasisolatie waarvoor je 2x binnen 24 maanden een aanvraag mag doen (hieronder vallen ook kozijnpanelen en isolerende deuren)</li>\n<li>Je krijgt alleen subsidie voor het nemen van energiebesparende maatregelen in een bestaande woning. Je krijgt geen subsidie voor een nieuwe aanbouw of nieuwbouwwoning</li>\n<li>Je krijgt alleen subsidie voor maatregelen die je laat uitvoeren door een deskundig bedrijf en niet voor maatregelen die je zelf uitvoert. Het bedrijf moet als bouwbedrijf/installateur zijn ingeschreven bij de kamer van koophandel</li>\n<li><strong>Er zijn ook gemeentes en provincies die subsidie geven voor isolatiemaatregelen. Je mag voor dezelfde maatregelen de ISDE-subsidie aanvragen én een lokale subsidie (van een gemeente, provincie of waterschap)</strong></li>\n</ul>",
+  "Type": "subsidy",
+  "TargetGroup": "Woningeigenaar",
+  "Amount": "variabel",
+  "Locations": [
+   "0000-9999"
+  ],
+  "LocationIDs": [],
+  "DateCreation": "11 November 2019",
+  "DateEnd": "2050-01-01T00:00:00Z",
+  "Stackable": "Nee",
+  "ProviderName": "Rijksdienst voor Ondernemend Nederland (RVO)",
+  "ProviderUrl": "https://www.rvo.nl/subsidie-en-financieringswijzer/isde/woningeigenaren",
+  "Url": "https://www.verbeterjehuis.nl/energiesubsidiewijzer/subsidies/isde-subsidie-rijksoverheid",
+  "Tags": [
+   {
+    "Label": "Warmtepomp",
+    "Value": "1564"
+   },
+   {
+    "Label": "Zonneboiler",
+    "Value": "1584"
+   },
+   {
+    "Label": "Isolatie en glas",
+    "Value": "1503"
+   },
+   {
+    "Label": "Warmtenet-aansluiting",
+    "Value": "1594"
+   },
+   {
+    "Label": "Koken op elektriciteit",
+    "Value": "1601"
+   },
+   {
+    "Label": "Ventilatie",
+    "Value": "1581"
+   }
+  ],
+  "LandingPageId": "1487"
+ },
+ {
+  "Id": "3104d4bf-3c7c-4923-b885-8c61b31084d9",
+  "Title": "Subsidie Verduurzaming en Verbetering Groningen – € 10.000",
+  "Intro": "Het Samenwerkingsverband Noord-Nederland (SNN) geeft subsidie voor het verbeteren en verduurzamen van je woning.",
+  "AdditionalIntro": "<p>Ben jij woningeigenaar in het aangewezen postcodegebied? En val je niet onder het versterkingsprogramma van Nationaal Coördinator Groningen (NCG)? Vraag deze subsidie van maximaal € 10.000 aan voor verduurzaming en verbetering van jouw woning en/of bijgebouw.</p>\n<p>Jouw woning staat in het aangewezen <a rel=\"noopener\" href=\"https://www.snn.nl/sites/default/files/documents/Postcodelijst%20Verbetering%20en%20Verduurzaming%20Groningen%2010.000%20%28VVG%203%20-%2026-02%29.pdf\" target=\"_blank\">postcodegebied</a>. En is geen onderdeel van het versterkingsprogramma van Nationaal Coördinator Groningen (NCG). Je kunt de subsidie gebruiken voor het verduurzamen of verbeteren van je woning. Denk hierbij bijvoorbeeld aan het laten plaatsen van zonnepanelen, HR++-glas of een warmtepomp. Ook behoort een schilderbeurt of een nieuwe badkamer tot de mogelijkheden.</p>",
+  "AmountsText": "<p>Tot € 10.000.</p>",
+  "Conditions": "<ul class=\"m-usp\">\n<li class=\"m-usp__item\">\n<div class=\"m-usp__content\">\n<p>Je bent eigenaar van een gebouw dat (mede)bestemd is voor bewoning. Huiseigenaren met een bedrijf aan huis kunnen ook aanspraak maken op de subsidie. Denk hierbij aan een boerderij of een kapper aan huis. Let op: De subsidie kan dan alleen aangevraagd worden voor het woongedeelte van je pand. Let op: Recreatiewoningen worden niet aangemerkt als gebouwen (mede)bestemd voor bewoning</p>\n</div>\n</li>\n<li class=\"m-usp__item\">\n<div class=\"m-usp__content\">\n<p>De woning is niet opgenomen in het versterkingsprogramma van NCG</p>\n</div>\n</li>\n<li class=\"m-usp__item\">\n<div class=\"m-usp__content\">\n<p>De woning staat in het&nbsp;aangewezen&nbsp;<a rel=\"noopener\" href=\"https://www.snn.nl/sites/default/files/documents/Postcodelijst%20Verbetering%20en%20Verduurzaming%20Groningen%2010.000%20%28VVG%203%20-%2026-02%29.pdf\" target=\"_blank\">postcodegebied</a>. Een postcodegebied komt in aanmerking voor de subsidie indien er sprake is van een minimaal schadepercentage van 40%. Naast de postcodegebieden met een schadepercentage van 40% of hoger, zĳn ook postcodegebieden met een lager schadepercentage toegevoegd aan de woningverbeteringssubsidie, wanneer die ingesloten zĳn door postcodegebieden met een schadepercentage van 40% of hoger. (hiervoor wordt het Atlas Research rapport uit 2022 als ijkpunt hebben genomen voor de 40% schade, welke als peildatum 01-01-2021 heeft)</p>\n</div>\n</li>\n<li class=\"m-usp__item\">\n<div class=\"m-usp__content\">\n<p>De woning is gebouwd en opgeleverd vóór 1 januari 2016</p>\n</div>\n</li>\n<li class=\"m-usp__item\">\n<div class=\"m-usp__content\">\n<p>Je kunt meerdere keren subsidie aanvragen binnen deze subsidieregeling. Dit geldt per adres en dit mag tot het maximum van € 10.000</p>\n</div>\n</li>\n<li class=\"m-usp__item\">\n<div class=\"m-usp__content\">\n<p>Nadat je de aanvraag voor deze subsidie is goedgekeurd, heb je vier jaar de tijd om de werkzaamheden uit te (laten) voeren</p>\n</div>\n</li>\n</ul>",
+  "Type": "subsidy",
+  "TargetGroup": "Woningeigenaar",
+  "Amount": "variabel",
+  "Locations": [
+   "Midden-Groningen",
+   "Aa en Hunze",
+   "Tynaarlo",
+   "Eemsdelta",
+   "Veendam",
+   "Westerkwartier",
+   "Het Hogeland",
+   "Groningen",
+   "Oldambt"
+  ],
+  "LocationIDs": [],
+  "DateCreation": "30 June 2025",
+  "DateEnd": "2031-05-31T00:00:00Z",
+  "Stackable": "Nee",
+  "ProviderName": "SNN",
+  "ProviderUrl": "https://www.snn.nl/subsidies-voor-particulieren/subsidie-verduurzaming-en-verbetering-groningen-eu-10000",
+  "Url": "https://www.verbeterjehuis.nl/energiesubsidiewijzer/subsidies/subsidie-verduurzaming-en-verbetering-groningen-10-000",
+  "Tags": [
+   {
+    "Label": "Isolatie en glas",
+    "Value": "1503"
+   },
+   {
+    "Label": "Kleine energiebesparende maatregelen",
+    "Value": "1603"
+   },
+   {
+    "Label": "Ventilatie",
+    "Value": "1581"
+   },
+   {
+    "Label": "Koken op elektriciteit",
+    "Value": "1601"
+   },
+   {
+    "Label": "Zonnepanelen",
+    "Value": "1571"
+   },
+   {
+    "Label": "Warmtepomp",
+    "Value": "1564"
+   },
+   {
+    "Label": "Zonneboiler",
+    "Value": "1584"
+   },
+   {
+    "Label": "Energie advies",
+    "Value": "1605"
+   },
+   {
+    "Label": "Thuisbatterij",
+    "Value": "1602"
+   },
+   {
+    "Label": "Natuurinclusief (ver)bouwen",
+    "Value": "1614"
+   },
+   {
+    "Label": "Daken en gevels vergroenen",
+    "Value": "1608"
+   },
+   {
+    "Label": "Asbest verwijderen",
+    "Value": "1613"
+   }
+  ],
+  "LandingPageId": "1487"
+ },
+ {
+  "Id": "1624",
+  "Title": "Energiebespaarlening (Warmtefonds)",
+  "Intro": "De Energiebespaarlening is een regeling, waarbij huiseigenaren tegen een gunstige rente een lening kunnen afsluiten voor energiebesparende maatregelen zoals dak-, vloer- en gevelisolatie, isolatieglas en zonnepanelen.",
+  "AdditionalIntro": "",
+  "AmountsText": "<ul>\n<li>Vanaf € 1.000 tot maximaal € 28.000 lenen.</li>\n</ul>",
+  "Conditions": "<ul>\n<li>Ook leenmogelijkheden voor eigenaar-bewoners met beperkte leenruimte</li>\n<li>Rente van 0% voor eigenaar-bewoners met verzamelinkomen minder dan € 60.000</li>\n<li>Het rentetarief van de lening staat vast tijdens de looptijd van de lening. Je kiezen voor een looptijd van 7, 10 of 15 jaar en voor leenbedragen vanaf € 15.000 ook voor 20 jaar</li>\n<li>De rente van de lening is voor de meeste woningeigenaren fiscaal aftrekbaar</li>\n<li>De lening is annuïtair. Dat betekent dat je aan het einde van de looptijd de volledige lening hebt terugbetaald. Je betaalt over de hele looptijd een vast bedrag per maand</li>\n<li>Vervroegd aflossen mogelijk zonder extra kosten</li>\n</ul>",
+  "Type": "loan",
+  "TargetGroup": "Woningeigenaar",
+  "Amount": "variabel",
+  "Locations": [
+   "0000 - 9999"
+  ],
+  "LocationIDs": [],
+  "DateCreation": "11 November 2019",
+  "DateEnd": "2050-12-01T00:00:00Z",
+  "Stackable": "Nee",
+  "ProviderName": "Nationaal Warmtefonds",
+  "ProviderUrl": "https://www.warmtefonds.nl/particulieren",
+  "Url": "https://www.verbeterjehuis.nl/energiesubsidiewijzer/leningen/energiebespaarlening-warmtefonds",
+  "Tags": [
+   {
+    "Label": "Isolatie en glas",
+    "Value": "1503"
+   },
+   {
+    "Label": "Warmtepomp",
+    "Value": "1564"
+   },
+   {
+    "Label": "Zonnepanelen",
+    "Value": "1571"
+   },
+   {
+    "Label": "Zonneboiler",
+    "Value": "1584"
+   },
+   {
+    "Label": "Gasaansluiting verwijderen",
+    "Value": "1591"
+   },
+   {
+    "Label": "Energie advies",
+    "Value": "1605"
+   },
+   {
+    "Label": "Ventilatie",
+    "Value": "1581"
+   },
+   {
+    "Label": "Asbest verwijderen",
+    "Value": "1613"
+   }
+  ],
+  "LandingPageId": "1487"
+ },
+ {
+  "Id": "1635",
+  "Title": "Energiebespaarlening voor mensen met onvoldoende leencapaciteit (Warmtefonds)",
+  "Intro": "Heb je onvoldoende leencapaciteit om een normale Energiebespaarlening of hypotheek af te sluiten? Wellicht is het dan mogelijk om de Energiebespaarlening met combinatielening af te sluiten. Deze lening is speciaal voor mensen die geen andere lening kunnen krijgen.",
+  "AdditionalIntro": "<p>Je kunt de lening gebruiken voor energiebesparende maatregelen, zoals zoals dak-, vloer- en gevelisolatie, isolatieglas, warmtepomp en zonnepanelen.</p>",
+  "AmountsText": "<p>Je kunt tussen de € 1.000 en € 10.000 lenen.</p>",
+  "Conditions": "<ul>\n<li>Voor de Energiebespaarlening met een combinatielening betaal je geen rente.</li>\n<li>De looptijd van de lening is standaard 20 jaar. Dit kan dus anders zijn dan je bij het aanvragen van de Energiebespaarlening in gedachten had. Besteed je meer dan 1/3 van de lening aan een warmtepomp? Dan is de looptijd 15 jaar.</li>\n<li>De eerste 5 jaar betaal je zelf geen maandelijkse rente en aflossing. Na 5 jaar bekijkt het Warmtefonds of je wel zelf de maandlasten kunt betalen. Dit noemen ze een ‘hertoets’. Je moet dan gegevens over je inkomen en lasten opnieuw aanleveren.&nbsp;</li>\n<li>Bij de verkoop van je woning moet je de Energiebespaarlening (en combinatielening) aflossen. Heb je verkoopverlies? Meestal schelden ze dan je schuld kwijt.&nbsp;</li>\n</ul>",
+  "Type": "loan",
+  "TargetGroup": "Woningeigenaar",
+  "Amount": "variabel",
+  "Locations": [
+   "0000 - 9999"
+  ],
+  "LocationIDs": [],
+  "DateCreation": "03 April 2023",
+  "DateEnd": "2050-12-31T00:00:00Z",
+  "Stackable": "Nee",
+  "ProviderName": "Nationaal Warmtefonds",
+  "ProviderUrl": "https://www.warmtefonds.nl/particulieren/energiebespaarlening-met-een-combinatielening",
+  "Url": "https://www.verbeterjehuis.nl/energiesubsidiewijzer/leningen/energiebespaarlening-voor-mensen-met-onvoldoende-leencapaciteit-warmtefonds",
+  "Tags": [
+   {
+    "Label": "Isolatie en glas",
+    "Value": "1503"
+   },
+   {
+    "Label": "Warmtepomp",
+    "Value": "1564"
+   },
+   {
+    "Label": "Zonnepanelen",
+    "Value": "1571"
+   },
+   {
+    "Label": "Ventilatie",
+    "Value": "1581"
+   },
+   {
+    "Label": "Zonneboiler",
+    "Value": "1584"
+   },
+   {
+    "Label": "Gasaansluiting verwijderen",
+    "Value": "1591"
+   },
+   {
+    "Label": "Warmtenet-aansluiting",
+    "Value": "1594"
+   },
+   {
+    "Label": "Koken op elektriciteit",
+    "Value": "1601"
+   },
+   {
+    "Label": "Asbest verwijderen",
+    "Value": "1613"
+   }
+  ],
+  "LandingPageId": "1487"
+ },
+ {
+  "Id": "3018",
+  "Title": "Subsidie energiemaatregelen Groningen",
+  "Intro": "De gemeente Groningen geeft subsidie voor het verduurzamen van woningen in Ten Post, Kröddeburen of Wittewierum (postcodegebied 9792).",
+  "AdditionalIntro": "",
+  "AmountsText": "<p>Maximaal € 28.000, afhankelijk van de maatregelen die je uitvoert.</p>",
+  "Conditions": "<ul>\n<li>De woning staat in Ten Post, Kröddeburen of Wittewierum en ligt in het postcodegebied 9792</li>\n<li>De woning valt niet onder de sloop-/nieuwbouwregeling van NCG in het kader van de versterkingsopgave van NCG.</li>\n<li>De subsidie geldt alleen voor bestaande bouw</li>\n<li>De aanvrager heeft een Energieadvies-rapport van EnergiePloeg</li>\n<li>De aanvrager heeft de subsidie € 7.000 verduurzaming van SNN al aangevraagd en gebruikt</li>\n</ul>",
+  "Type": "subsidy",
+  "TargetGroup": "Woningeigenaar",
+  "Amount": "variabel",
+  "Locations": [
+   "Groningen",
+   "9792",
+   "Ten Post"
+  ],
+  "LocationIDs": [],
+  "DateCreation": "19 December 2024",
+  "DateEnd": "2027-12-31T00:00:00Z",
+  "Stackable": "Nee",
+  "ProviderName": "Gemeente Groningen",
+  "ProviderUrl": "https://gemeente.groningen.nl/subsidie-energieneutraal-ten-post",
+  "Url": "https://www.verbeterjehuis.nl/energiesubsidiewijzer/subsidies/subsidie-energiemaatregelen-groningen",
+  "Tags": [
+   {
+    "Label": "Isolatie en glas",
+    "Value": "1503"
+   },
+   {
+    "Label": "Warmtepomp",
+    "Value": "1564"
+   },
+   {
+    "Label": "Zonnepanelen",
+    "Value": "1571"
+   },
+   {
+    "Label": "Zonneboiler",
+    "Value": "1584"
+   }
+  ],
+  "LandingPageId": "1487"
+ },
+ {
+  "Id": "2074",
+  "Title": "Verzilverlening",
+  "Intro": "Is je woning meer waard dan de hoogte van je hypotheek? Met die overwaarde kun je een Verzilverlening krijgen, waarmee je je woning kunt aanpassen en verbouwen. Je kunt de lening bijvoorbeeld gebruiken voor energiebesparende maatregelen of asbestverwijdering. ",
+  "AdditionalIntro": "<p>Wil je die overwaarde graag gebruiken voor een aanpassing aan je woning, bijvoorbeeld voor isolatie? Dan biedt jouw gemeente de Verzilverlening aan. Je kunt de aanpassingen aan je woning dan financieren uit de overwaarde van je huis, zonder dat je maandlasten stijgen.</p>",
+  "AmountsText": "<p>Voor de Verzilverlening betaal je maandelijks geen rente en aflossing. De rente wordt jaarlijks bij de schuldrest opgeteld. Aan het einde van de looptijd, of bij verkoop van uw woning of bij overlijden van de langstlevende schuldenaar moet de lening afgelost worden.&nbsp;</p>",
+  "Conditions": "<p>De mogelijkheden en voorwaarden van de Verzilverlening verschillen per gemeente of provincie. Bij de meeste gemeenten kun je er energiebesparende maatregelen of asbestverwijdering mee financieren</p>\n<p>Klik op de knop ‘aanbieder’ om te zien wat de mogelijkheden en voorwaarden in jouw gemeente zijn.</p>",
+  "Type": "loan",
+  "TargetGroup": "Woningeigenaar",
+  "Amount": "variabel",
+  "Locations": [
+   "Lelystad",
+   "Leeuwarden",
+   "Noardeast-Fryslân",
+   "Ooststellingwerf",
+   "Opsterland",
+   "Aalten",
+   "Apeldoorn",
+   "Arnhem",
+   "Barneveld",
+   "Berg en Dal",
+   "Berkelland",
+   "Beuningen",
+   "Bronckhorst",
+   "Brummen",
+   "Doesburg",
+   "Doetinchem",
+   "Druten",
+   "Ede",
+   "Elburg",
+   "Epe",
+   "Ermelo",
+   "Harderwijk",
+   "Heerde",
+   "Lingewaard",
+   "Lochem",
+   "Maasdriel",
+   "Neder-Betuwe",
+   "Nunspeet",
+   "Oldebroek",
+   "Oost Gelre",
+   "Oude IJsselstreek",
+   "Overbetuwe",
+   "Putten",
+   "Renkum",
+   "Rheden",
+   "Rozendaal",
+   "Scherpenzeel",
+   "Tiel",
+   "Voorst",
+   "Wageningen",
+   "West Betuwe",
+   "West Maas en Waal",
+   "Wijchen",
+   "Zaltbommel",
+   "Zevenaar",
+   "Zutphen",
+   "Eemsdelta",
+   "Midden-Groningen",
+   "Westerkwartier",
+   "Westerwolde",
+   "Beek",
+   "Beekdaelen",
+   "Beesel",
+   "Bergen (L)",
+   "Brunssum",
+   "Echt-Susteren",
+   "Eijsden-Margraten",
+   "Gennep",
+   "Gulpen-Wittem",
+   "Heerlen",
+   "Horst aan de Maas",
+   "Kerkrade",
+   "Landgraaf",
+   "Leudal",
+   "Maasgouw",
+   "Meerssen",
+   "Mook en Middelaar",
+   "Nederweert",
+   "Peel en Maas",
+   "Roerdalen",
+   "Simpelveld",
+   "Sittard-Geleen",
+   "Stein",
+   "Vaals",
+   "Valkenburg aan de Geul",
+   "Venlo",
+   "Venray",
+   "Voerendaal",
+   "Weert",
+   "Etten-Leur",
+   "Hilvarenbeek",
+   "Land van Cuijk",
+   "Nuenen, Gerwen en Nederwetten",
+   "Roosendaal",
+   "Tilburg",
+   "Woensdrecht",
+   "Waalwijk",
+   "Den Helder",
+   "Enkhuizen",
+   "Hilversum",
+   "Huizen",
+   "Koggenland",
+   "Medemblik",
+   "Wijdemeren",
+   "Borne",
+   "Dalfsen",
+   "Hardenberg",
+   "Olst-Wijhe",
+   "Rijssen-Holten",
+   "Lopik",
+   "Nieuwegein",
+   "Rhenen",
+   "Goes",
+   "Tholen",
+   "Veere",
+   "Ridderkerk",
+   "Rotterdam",
+   "Schiedam",
+   "Schouwen-Duiveland",
+   "Almelo",
+   "Sint-Michielsgestel",
+   "Loon op Zand",
+   "Boxtel",
+   "Nijmegen",
+   "Oldambt",
+   "Groningen",
+   "Het Hogeland",
+   "Assen",
+   "Borger-Odoorn",
+   "Coevorden",
+   "De Wolden",
+   "Emmen",
+   "Hoogeveen",
+   "Meppel"
+  ],
+  "LocationIDs": [],
+  "DateCreation": "07 November 2019",
+  "DateEnd": "2050-12-01T00:00:00Z",
+  "Stackable": "Nee",
+  "ProviderName": "Stimuleringsfonds Volkshuisvesting",
+  "ProviderUrl": "https://www.svn.nl/verzilverlening/",
+  "Url": "https://www.verbeterjehuis.nl/energiesubsidiewijzer/leningen/verzilverlening",
+  "Tags": [
+   {
+    "Label": "Gasaansluiting verwijderen",
+    "Value": "1591"
+   },
+   {
+    "Label": "Zonnepanelen",
+    "Value": "1571"
+   },
+   {
+    "Label": "Warmtepomp",
+    "Value": "1564"
+   },
+   {
+    "Label": "Isolatie en glas",
+    "Value": "1503"
+   },
+   {
+    "Label": "Zonneboiler",
+    "Value": "1584"
+   },
+   {
+    "Label": "Asbest verwijderen",
+    "Value": "1613"
+   },
+   {
+    "Label": "Ventilatie",
+    "Value": "1581"
+   }
+  ],
+  "LandingPageId": "1487"
+ },
+ {
+  "Id": "2559",
+  "Title": "Subsidie Waardevermeerdering Drenthe en Groningen",
+  "Intro": "Woningeigenaren en huurders in het aardbevingsgebied met erkende aardbevingsschade, die een schaderapport of schadevergoeding van € 1.000 of hoger hebben ontvangen, kunnen gebruik maken van de subsidie Waardevermeerdering om hun huis duurzamer te maken.",
+  "AdditionalIntro": "",
+  "AmountsText": "<p>Maximaal € 4.000.</p>",
+  "Conditions": "<ul>\n<li>Je hebt op je huidige adres nog niet eerder gebruik gemaakt van de vorige tijdelijke regeling Waardevermeerdering, die loop tot 2017</li>\n<li>Je hebt aardbevingsschade van minimaal € 1.000 en bent in het bezit van één van de bewijsstukken die op de website van de aanbieder staan</li>\n<li>Je bent eigenaar van een gebouw dat (mede)bestemd is voor bewoning. De subsidie kan alleen worden aangevraagd voor het woongedeelte van je pand</li>\n<li><span>Als huurder mag je de subsidie aanvragen als de eigenaar of verhuurder toestemming heeft gegeven. Dit bewijs je met een ingevuld toestemmingsformulier. De eigenaar of verhuurder mag de WVM nog niet eerder voor hetzelfde adres hebben aangevraagd</span></li>\n</ul>",
+  "Type": "subsidy",
+  "TargetGroup": "Woningeigenaar, Huurder",
+  "Amount": "variabel",
+  "Locations": [
+   "Groningen",
+   "Drenthe",
+   "Noordenveld"
+  ],
+  "LocationIDs": [],
+  "DateCreation": "26 April 2024",
+  "DateEnd": "2026-09-01T00:00:00Z",
+  "Stackable": "Nee",
+  "ProviderName": "Samenwerkingsverband Noord-Nederland",
+  "ProviderUrl": "https://www.snn.nl/subsidies-voor-particulieren/subsidie-waardevermeerdering",
+  "Url": "https://www.verbeterjehuis.nl/energiesubsidiewijzer/subsidies/subsidie-waardevermeerdering-drenthe-en-groningen",
+  "Tags": [
+   {
+    "Label": "Isolatie en glas",
+    "Value": "1503"
+   },
+   {
+    "Label": "Warmtepomp",
+    "Value": "1564"
+   },
+   {
+    "Label": "Zonnepanelen",
+    "Value": "1571"
+   },
+   {
+    "Label": "Zonneboiler",
+    "Value": "1584"
+   },
+   {
+    "Label": "Gasaansluiting verwijderen",
+    "Value": "1591"
+   }
+  ],
+  "LandingPageId": "1487"
+ },
+ {
+  "Id": "2089",
+  "Title": "Maatwerklening",
+  "Intro": "De Maatwerklening is een lening waarmee je een bouwkundig noodzakelijke woningverbetering kunt financieren. Je kunt deze lening alleen krijgen als je inkomen niet genoeg is om een normale hypotheek te betalen.",
+  "AdditionalIntro": "<p>Als de situatie in je woning onveilig wordt, bijvoorbeeld door asbest in uw woning, een asbestdak of als de fundering moet worden hersteld, dan is een renovatie zeer noodzakelijk. Heb je onvoldoende financiële draagkracht om een hypotheek voor deze renovatie af te sluiten? Dan kun je met de Maatwerklening een gevaarlijke of onhoudbare situatie oplossen én in je woning blijven wonen. In sommige gemeenten kun je met deze lening ook duurzame maatregelen (bijvoorbeeld isolatie) in de woning financieren.</p>",
+  "AmountsText": "<p>De lening is minimaal € 2.500. Het maximumleenbedrag verschilt per gemeente of provincie.</p>",
+  "Conditions": "<ul>\n<li>De Maatwerklening wordt alleen verstrekt als er onvoldoende inkomen is voor een <br>normale lening. Naast het inkomen kijkt SVn naar de waarde van de woning</li>\n<li>Na beoordeling van de financiële en persoonlijke situatie worden op basis van de <br>leennormen en ons kredietbeleid bepaald of er een lening verstrekt kan worden</li>\n<li>De eerste 3 jaar wordt er geen rente en geen aflossing voor de Maatwerklening in rekening gebracht. De rente wordt door de gemeente of provincie betaald</li>\n<li>Als je daarna de maandlasten niet (volledig) kan betalen, kun je een financiële toets aanvragen. Er zijn mogelijkheden om een periode geen maandlast of lagere maandlasten te betalen.</li>\n</ul>",
+  "Type": "loan",
+  "TargetGroup": "Woningeigenaar",
+  "Amount": "variabel",
+  "Locations": [
+   "Aa en Hunze",
+   "Assen",
+   "Borger-Odoorn",
+   "Coevorden",
+   "De Wolden",
+   "Emmen",
+   "Hoogeveen",
+   "Meppel",
+   "Midden-Drenthe",
+   "Noordenveld",
+   "Tynaarlo",
+   "Westerveld",
+   "Lelystad",
+   "Opsterland",
+   "Aalten",
+   "Arnhem",
+   "Apeldoorn",
+   "Barneveld",
+   "Berg en Dal",
+   "Berkelland",
+   "Beuningen",
+   "Bronckhorst",
+   "Brummen",
+   "Doesburg",
+   "Doetinchem",
+   "Druten",
+   "Ede",
+   "Elburg",
+   "Epe",
+   "Ermelo",
+   "Harderwijk",
+   "Heerde",
+   "Lingewaard",
+   "Lochem",
+   "Maasdriel",
+   "Neder-Betuwe",
+   "Nijmegen",
+   "Oldebroek",
+   "Oost Gelre",
+   "Oude IJsselstreek",
+   "Overbetuwe",
+   "Putten",
+   "Renkum",
+   "Rheden",
+   "Rozendaal",
+   "Scherpenzeel",
+   "Tiel",
+   "Voorst",
+   "Wageningen",
+   "West Betuwe",
+   "Wijchen",
+   "Zaltbommel",
+   "Zevenaar",
+   "Zutphen",
+   "Woensdrecht",
+   "Zaanstad",
+   "Hardinxveld-Giessendam",
+   "Rotterdam",
+   "Schiedam",
+   "Groningen"
+  ],
+  "LocationIDs": [],
+  "DateCreation": "21 March 2023",
+  "DateEnd": "2050-12-31T00:00:00Z",
+  "Stackable": "Nee",
+  "ProviderName": "Stimuleringsfonds Volkshuisvesting (SVn)",
+  "ProviderUrl": "https://www.svn.nl/maatwerklening/",
+  "Url": "https://www.verbeterjehuis.nl/energiesubsidiewijzer/leningen/maatwerklening",
+  "Tags": [
+   {
+    "Label": "Asbest verwijderen",
+    "Value": "1613"
+   }
+  ],
+  "LandingPageId": "1487"
+ },
+ {
+  "Id": "2395",
+  "Title": "Stimuleringsregeling natuurinclusief (ver)bouwen Groningen",
+  "Intro": "De gemeente Groningen heeft een stimuleringsregeling voor natuurinclusief (ver)bouwen. Je kunt als eigenaar van een bestaande woning of een bedrijfspand met een korting voorzieningen kopen die de biodiversiteit versterken in je directie woon- of werkomgeving",
+  "AdditionalIntro": "",
+  "AmountsText": "<p>Je kunt als eigenaar van een bestaande woning of een bedrijfspand in de gemeente Groningen met een korting voorzieningen kopen die de biodiversiteit versterken in je directie woon- of werkomgeving:</p>\n<ul>\n<li>Bij besteding onder de € 200 ontvang je 25% korting met de volgende kortingscode: Groningen25</li>\n<li>Bij besteding boven de € 200 ontvang je € 50 korting met de volgende kortingscode: Groningen50</li>\n</ul>",
+  "Conditions": "<ul>\n<li>De korting geldt alleen op de geselecteerde producten op <a rel=\"noopener\" href=\"https://www.vivara.nl/vivara-pro/gemeente-groningen\" target=\"_blank\" title=\"Vivara\">deze pagina</a></li>\n<li>De korting kan oplopen tot maximaal € 50 per adres. Elk adres kan maximaal eenmaal gebruik maken van de korting</li>\n<li>De stimuleringsactie geldt alleen voor de geselecteerde postcodegebieden</li>\n<li>De gemeente Groningen stelt jaarlijks een bedrag beschikbaar voor deze stimuleringsregeling. De regeling stopt wanneer het budget is verbruikt</li>\n</ul>",
+  "Type": "subsidy",
+  "TargetGroup": "Woningeigenaar",
+  "Amount": "variabel",
+  "Locations": [
+   "Groningen"
+  ],
+  "LocationIDs": [],
+  "DateCreation": "02 January 2023",
+  "DateEnd": "2050-01-01T00:00:00Z",
+  "Stackable": "Nee",
+  "ProviderName": "Gemeente Groningen",
+  "ProviderUrl": "https://natuurinclusiefgroningen.nl/",
+  "Url": "https://www.verbeterjehuis.nl/energiesubsidiewijzer/subsidies/stimuleringsregeling-natuurinclusief-ver-bouwen-groningen",
+  "Tags": [
+   {
+    "Label": "Natuurinclusief (ver)bouwen",
+    "Value": "1614"
+   }
+  ],
+  "LandingPageId": "1487"
+ },
+ {
+  "Id": "1731",
+  "Title": "Extra geld voor energiebesparing in hypotheek met NHG",
+  "Intro": "Bij het afsluiten of het verhogen van een hypotheek met Nationale Hypotheek Garantie (NHG) kun je direct energiebesparende maatregelen meefinancieren. Je kunt extra geld lenen voor energiebesparende maatregelen. ",
+  "AdditionalIntro": "<p>Als je jouw keuze hebt gemaakt en de energiebesparende maatregelen hebt laten uitvoeren, dan stuur je de factuur naar de hypotheekverstrekker. Die controleert of de maatregel binnen je energiebespaarbudget past. En daarna wordt de factuur betaald. Handig, snel en duurzaam, dat is het energiebespaarbudget!</p>",
+  "AmountsText": "<p>Het Energiebespaarbudget kan in elke hypotheek met Nationale Hypotheek Garantie opgenomen worden tot 106% van de marktwaarde van de woning.</p>",
+  "Conditions": "<ul>\n<li>Je hoeft bij het afsluiten van de hypotheek nog niet te beslissen welke maatregelen je wil nemen. Er is namelijk geen (kosten)specificatie vooraf nodig</li>\n<li>De energiebesparende maatregelen hoeven niet in een taxatierapport opgenomen te worden. De hypotheek is maximaal 106% van de woningwaarde vóór uitvoering van de energiebesparende maatregelen</li>\n<li>Je mag alle erkende energiebesparende maatregelen uit het Energiebespaarbudget financieren</li>\n<li>Je moet aantonen dat je de aanvullende lening besteedt aan energiebesparende maatregelen. Daarom wordt het geld niet direct uitgekeerd, maar op een bouwdepot gestort</li>\n<li>Als er na afloop van de termijn nog geld aanwezig is in het bouwdepot, zal de geldverstrekker het bouwdepot opheffen en het restant in mindering brengen op je hypotheek</li>\n</ul>\n<p><strong>LET OP</strong>: Nog niet alle hypotheekverstrekkers bieden het Energiebespaarbudget aan!</p>",
+  "Type": "loan",
+  "TargetGroup": "Woningeigenaar",
+  "Amount": "variabel",
+  "Locations": [
+   "0000 - 9999"
+  ],
+  "LocationIDs": [],
+  "DateCreation": "09 March 2020",
+  "DateEnd": "2050-12-01T00:00:00Z",
+  "Stackable": "Nee",
+  "ProviderName": "Nationale Hypotheek Garantie (verkrijgbaar via hypotheekverstrekkers)",
+  "ProviderUrl": "https://www.nhg.nl/Professional/Verduurzamen/energiebespaarbudget",
+  "Url": "https://www.verbeterjehuis.nl/energiesubsidiewijzer/leningen/extra-geld-voor-energiebesparing-in-hypotheek-met-nhg",
+  "Tags": [
+   {
+    "Label": "Isolatie en glas",
+    "Value": "1503"
+   },
+   {
+    "Label": "Warmtepomp",
+    "Value": "1564"
+   },
+   {
+    "Label": "Zonnepanelen",
+    "Value": "1571"
+   },
+   {
+    "Label": "Zonneboiler",
+    "Value": "1584"
+   },
+   {
+    "Label": "Gasaansluiting verwijderen",
+    "Value": "1591"
+   },
+   {
+    "Label": "Ventilatie",
+    "Value": "1581"
+   }
+  ],
+  "LandingPageId": "1487"
+ },
+ {
+  "Id": "1647",
+  "Title": "Laag BTW tarief voor isolatiewerkzaamheden",
+  "Intro": "Voor vloer-, bodem-, dak- en gevelisolatie en het aanbrengen van isolatieglas geldt het lage btw-tarief op arbeidsloon.",
+  "AdditionalIntro": "",
+  "AmountsText": "<p>Het lage btw-tarief is 9 procent in plaats van de normale 21 procent.</p>",
+  "Conditions": "<p>Het lage btw-tarief geldt alleen voor de arbeidskosten en niet voor de (isolatie)materialen. Die laatste vallen onder het normale btw-tarief.</p>",
+  "Type": "other",
+  "TargetGroup": "Woningeigenaar, Vereniging van Eigenaren",
+  "Amount": "variabel",
+  "Locations": [
+   "0000 - 9999"
+  ],
+  "LocationIDs": [],
+  "DateCreation": "11 November 2019",
+  "DateEnd": "2050-12-01T00:00:00Z",
+  "Stackable": "Nee",
+  "ProviderName": "Belastingdienst ",
+  "ProviderUrl": "https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/zakelijk/btw/tarieven_en_vrijstellingen/diensten_9_btw/werkzaamheden_aan_woningen/isoleren_van_woningen",
+  "Url": "https://www.verbeterjehuis.nl/energiesubsidiewijzer/overig/laag-btw-tarief-voor-isolatiewerkzaamheden",
+  "Tags": [
+   {
+    "Label": "Isolatie en glas",
+    "Value": "1503"
+   }
+  ],
+  "LandingPageId": "1487"
+ }
+]
