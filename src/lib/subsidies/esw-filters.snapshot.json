@@ -1,0 +1,114 @@
+{
+  "_uitleg": "Momentopname van de filterlijst van Milieu Centraal (regulation/getfilters). Wordt wekelijks gecontroleerd door scripts/controleer-esw-filters.mjs. Wijzigt de bron iets, dan opent de GitHub Action een PR die dit bestand bijwerkt.",
+  "_opgehaald": "2026-08-28",
+  "Measures": [
+    {
+      "Label": "Isolatie en glas",
+      "Value": "1503"
+    },
+    {
+      "Label": "Warmtepomp",
+      "Value": "1564"
+    },
+    {
+      "Label": "Zonnepanelen",
+      "Value": "1571"
+    },
+    {
+      "Label": "Ventilatie",
+      "Value": "1581"
+    },
+    {
+      "Label": "Zonneboiler",
+      "Value": "1584"
+    },
+    {
+      "Label": "Gasaansluiting verwijderen",
+      "Value": "1591"
+    },
+    {
+      "Label": "Warmtenet-aansluiting",
+      "Value": "1594"
+    },
+    {
+      "Label": "Koken op elektriciteit",
+      "Value": "1601"
+    },
+    {
+      "Label": "Thuisbatterij",
+      "Value": "1602"
+    },
+    {
+      "Label": "Kleine energiebesparende maatregelen",
+      "Value": "1603"
+    },
+    {
+      "Label": "Energie advies",
+      "Value": "1605"
+    },
+    {
+      "Label": "Proces ondersteuning",
+      "Value": "1606"
+    },
+    {
+      "Label": "Daken en gevels vergroenen",
+      "Value": "1608"
+    },
+    {
+      "Label": "Tuin vergroenen",
+      "Value": "1609"
+    },
+    {
+      "Label": "Regenwater opvangen",
+      "Value": "1610"
+    },
+    {
+      "Label": "Asbest verwijderen",
+      "Value": "1613"
+    },
+    {
+      "Label": "Natuurinclusief (ver)bouwen",
+      "Value": "1614"
+    },
+    {
+      "Label": "Overige groene maatregelen",
+      "Value": "1616"
+    },
+    {
+      "Label": "Zonwering",
+      "Value": "c9d0869c-dedf-47ec-b45c-cb3d13d1b714"
+    }
+  ],
+  "TypeOfResident": [
+    {
+      "Label": "Huurder",
+      "Value": "Huurder"
+    },
+    {
+      "Label": "Particuliere woningverhuurder",
+      "Value": "Particuliere woningverhuurder"
+    },
+    {
+      "Label": "Vereniging van Eigenaren",
+      "Value": "Vereniging van Eigenaren"
+    },
+    {
+      "Label": "Woningeigenaar",
+      "Value": "Woningeigenaar"
+    }
+  ],
+  "Types": [
+    {
+      "Label": "Lening",
+      "Value": "loan"
+    },
+    {
+      "Label": "Overige",
+      "Value": "other"
+    },
+    {
+      "Label": "Subsidie",
+      "Value": "subsidy"
+    }
+  ]
+}

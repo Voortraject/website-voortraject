@@ -16,6 +16,7 @@ import {
   subsidieProvider,
   type SubsidieCheckInput,
   topBedragen,
+  WAAROM_GROEPEN,
 } from "@/lib/subsidies";
 
 import { Bewijsregel } from "./Bewijsregel";
@@ -305,6 +306,14 @@ export const StapResultaat = ({ input, adres, netBinnen = false }: StapResultaat
         className={`mt-8 flex flex-col gap-8 ${beweeg ? "animate-onthul" : ""}`}
         style={beweeg ? { animationDelay: "260ms" } : undefined}
       >
+        {/* Waarom de lijst in groepen staat. Zonder deze zin leest de indeling
+            als ambtenarij; mét deze zin is het het argument dat ertoe doet.
+            Alleen bij twee of meer groepen: bij één groep valt er niets te
+            combineren en zou de zin een loze belofte zijn. */}
+        {groepen.length > 1 && (
+          <p className="-mt-2 text-[14px] leading-relaxed text-muted-foreground">{WAAROM_GROEPEN}</p>
+        )}
+
         {groepen.map(({ niveau, regelingen: groep }) => (
           <section key={niveau} aria-label={NIVEAU_LABELS[niveau]}>
             <h2 className="mb-3 flex items-center gap-2 text-[14px] font-semibold uppercase tracking-[0.08em] text-primary">

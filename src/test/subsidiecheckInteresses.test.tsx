@@ -82,12 +82,12 @@ const contact = () => {
 describe("bouwSubsidiecheckInteresses", () => {
   it("gebruikt de site-volgorde, niet de klikvolgorde", () => {
     expect(bouwSubsidiecheckInteresses(["thuisbatterij", "isolatie", "warmtepomp"])).toBe(
-      "Isolatie & glas, Warmtepomp, Thuisbatterij",
+      "Isolatie en glas, Warmtepomp, Thuisbatterij",
     );
   });
 
   it("houdt de ampersand rauw (escapen hoort bij het renderen)", () => {
-    expect(bouwSubsidiecheckInteresses(["isolatie"])).toBe("Isolatie & glas");
+    expect(bouwSubsidiecheckInteresses(["isolatie"])).toBe("Isolatie en glas");
     expect(bouwSubsidiecheckInteresses(["isolatie"])).not.toContain("&amp;");
   });
 
@@ -102,7 +102,7 @@ describe("subsidiecheck-lead", () => {
 
     const [tabel, rij] = insertMock.mock.calls[0];
     expect(tabel).toBe("leads_bewoners");
-    expect(rij.subsidiecheck_interesses).toBe("Isolatie & glas, Warmtepomp, Thuisbatterij");
+    expect(rij.subsidiecheck_interesses).toBe("Isolatie en glas, Warmtepomp, Thuisbatterij");
     expect(rij.notities).toBeNull();
     expect(rij.gewenste_maatregelen).toBeUndefined();
   });

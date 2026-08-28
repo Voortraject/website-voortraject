@@ -33,6 +33,7 @@ import type { SubsidieRegeling } from "./types.ts";
 
 const BRON = "https://www.verbeterjehuis.nl";
 const API_ZOEKEN = `${BRON}/api/v1/regulation/search`;
+const API_FILTERS = `${BRON}/api/v1/regulation/getfilters`;
 // Ontbreekt de key, dan draait de function gewoon op de oude route. Zo kunnen we
 // deployen vóór de secret bestaat, en met het weghalen van de secret terugrollen
 // zonder release.
@@ -191,6 +192,23 @@ Deno.serve(async (req: Request) => {
   if (req.method !== "GET") return json({ error: "Alleen GET" }, 405);
 
   const url = new URL(req.url);
+
+  // `?meta=filters` geeft de filterlijst van de bron door. Publieke informatie
+  // (ze staat op hun eigen site), en het bespaart een tweede kopie van de
+  // API-key: de wekelijkse controle in GitHub Actions vraagt het hier op in
+  // plaats van rechtstreeks aan Milieu Centraal. Zie
+  // scripts/controleer-esw-filters.mjs.
+  if (url.searchParams.get("meta") === "filters") {
+    if (!API_KEY) return json({ error: "Geen ESW_API_KEY ingesteld" }, 503);
+    try {
+      const res = await fetch(API_FILTERS, { headers: { apiKey: API_KEY, Accept: "application/json" } });
+      if (!res.ok) return json({ error: `Energiesubsidiewijzer-API gaf status ${res.status}` }, 502);
+      return json(await res.json());
+    } catch (err) {
+      return json({ error: err instanceof Error ? err.message : String(err) }, 502);
+    }
+  }
+
   const raw = url.searchParams.get("postalcode") ?? url.searchParams.get("postcode") ?? "";
   const postcode = normalizePostcode(raw);
   if (!POSTCODE_RE.test(postcode)) {

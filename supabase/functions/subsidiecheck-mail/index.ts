@@ -60,6 +60,10 @@ const KLEUR = {
   kaart: "#FFFFFF",
   border: "#E5E7EB",
   muted: "#6B7280",
+  // Het zandvlak uit de huisstijl (--secondary). Voor de enkele "Let op" die de
+  // bron meestuurt: opvallend genoeg om te lezen, niet rood, want het is een
+  // aanwijzing en geen fout. Mail kan geen transparantie, dus de volle tint.
+  zacht: "#F0E4D0",
 };
 
 const TELEFOON = "050 211 26 89";
@@ -129,13 +133,20 @@ function validatePhoneNL(raw: string): boolean {
   return /^\+[1-9][0-9]{7,14}$/.test(n); // overig buitenlands nummer
 }
 
+// Gelijk aan WAAROM_GROEPEN in src/lib/subsidies/types.ts: pas ze samen aan.
+// Zegt waaróm de lijst in groepen staat, want dat is de enige boodschap die die
+// koppen moeten overbrengen: verschillende potten, dus vaak te combineren.
+const WAAROM_GROEPEN =
+  "Deze regelingen komen van verschillende overheden. Daarom kun je ze vaak naast elkaar aanvragen.";
+
 const NIVEAU_VOLGORDE = ["rijk", "provincie", "gemeente", "overig"] as const;
 type Niveau = (typeof NIVEAU_VOLGORDE)[number];
+// Gelijk aan NIVEAU_LABELS in src/lib/subsidies/types.ts: pas ze samen aan.
 const NIVEAU_LABELS: Record<Niveau, string> = {
-  rijk: "Rijksoverheid",
-  provincie: "Provincie",
-  gemeente: "Gemeente",
-  overig: "Leningen en overig",
+  rijk: "Van de Rijksoverheid",
+  provincie: "Van de provincie",
+  gemeente: "Van jouw gemeente",
+  overig: "Van andere organisaties",
 };
 
 // Wit-transparant logo (voor de navy header). Staat sinds 24-08-2026 in
@@ -179,6 +190,7 @@ const ALLE_MAATREGELEN = [
   "warmtenet",
   "elektrisch-koken",
   "thuisbatterij",
+  "asbest",
 ] as const;
 // Bewonertype uit stap 1 van de check. Exact de codes van `Bewonertype` in
 // src/lib/subsidies/types.ts (ook de waarden achter `?type=` in de deel-link) en
@@ -187,15 +199,21 @@ const ALLE_MAATREGELEN = [
 // anders dan deze vier laat de insert falen, dus onbekende invoer → NULL.
 const BEWONERTYPES = ["woningeigenaar", "huurder", "vve", "verhuurder"] as const;
 
+// De schrijfwijze van Milieu Centraal zelf, gelijk aan MAATREGEL_LABELS in
+// src/lib/subsidies/types.ts. Deno kan src/ niet importeren, dus dit is een
+// kopie: pas ze samen aan en deploy deze function mee. Kent deze kopie een
+// maatregel nog niet, dan valt hij weg uit de interesses in plaats van als
+// "undefined" in het CRM te belanden.
 const MAATREGEL_LABELS: Record<string, string> = {
-  isolatie: "Isolatie & glas",
+  isolatie: "Isolatie en glas",
   warmtepomp: "Warmtepomp",
   zonnepanelen: "Zonnepanelen",
   zonneboiler: "Zonneboiler",
   ventilatie: "Ventilatie",
   warmtenet: "Warmtenet-aansluiting",
-  "elektrisch-koken": "Elektrisch koken",
+  "elektrisch-koken": "Koken op elektriciteit",
   thuisbatterij: "Thuisbatterij",
+  asbest: "Asbest verwijderen",
 };
 
 // ---- Volumerem ----
@@ -227,6 +245,10 @@ type Regeling = {
   aanbieder?: string;
   omschrijving?: string;
   bedragIndicatie?: string;
+  /** Uitzondering die de bron zelf als "Let op" markeert. Zeldzaam, dus zwaar. */
+  letOp?: string;
+  /** Einddatum (ISO). De client stuurt hem alleen mee als hij binnen drie maanden valt. */
+  looptAfOp?: string;
   bronUrl?: string;
 };
 
@@ -376,6 +398,26 @@ async function remControle(supabase: RemClient, ip: string): Promise<"ok" | "te-
 
 // ---- E-mail opbouwen ----
 
+// "1 september 2026". Geeft niets terug bij onzin, bij een datum die al voorbij
+// is of bij een datum meer dan een jaar weg: de client filtert al op "binnen
+// drie maanden", en dit is het vangnet voor een oudere of andere aanroeper.
+function einddatumTekst(iso: string | undefined): string {
+  if (!iso) return "";
+  const eind = new Date(iso);
+  if (Number.isNaN(eind.getTime())) return "";
+  const nu = Date.now();
+  if (eind.getTime() <= nu || eind.getTime() > nu + 366 * 24 * 60 * 60 * 1000) return "";
+  return new Intl.DateTimeFormat("nl-NL", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(
+    eind,
+  );
+}
+
+// Elke melding in de mail heeft dezelfde vorm als op de site: vetgedrukt
+// "Let op:" en dan de mededeling. Zie het Melding-component in SubsidieCard.tsx.
+function meldingRegel(tekst: string): string {
+  return `<div style="margin-top:8px;font-size:13px;line-height:1.5;color:${KLEUR.primary};"><strong>Let op:</strong> ${tekst}</div>`;
+}
+
 function regelingRij(r: Regeling): string {
   const typeKleur = r.type === "lening" ? LENING_KLEUR : SUBSIDIE_KLEUR;
   const typeVlak = r.type === "lening" ? LENING_VLAK : SUBSIDIE_VLAK;
@@ -392,6 +434,19 @@ function regelingRij(r: Regeling): string {
   const omschrijving = r.omschrijving
     ? `<div style="margin-top:4px;font-size:14px;line-height:1.5;color:${KLEUR.muted};">${escapeHtml(r.omschrijving)}</div>`
     : "";
+  // "Let op" komt letterlijk van de bron en staat op ongeveer één op de dertig
+  // regelingen. Bij ISDE zegt hij dat je in Groningen en Noord-Drenthe beter de
+  // Isolatieaanpak kunt nemen: precies ons werkgebied, dus die hoort net zo goed
+  // in de mail als op de site. Zandkleurig vlak, geen rood: het is een
+  // aanwijzing, geen fout.
+  const letOp = r.letOp
+    ? `<div style="margin-top:10px;padding:10px 12px;background:${KLEUR.zacht};border-radius:6px;font-size:13px;line-height:1.5;color:${KLEUR.muted};"><strong style="color:${KLEUR.primary};">Let op:</strong> ${escapeHtml(r.letOp)}</div>`
+    : "";
+  // De mail bewaart de bewoner, dus een deadline hoort er juist in. Hier wél de
+  // datum voluit en niet, zoals op de kaart, een verwijzing naar de uitklap: een
+  // mail heeft geen uitklap.
+  const einddatum = einddatumTekst(r.looptAfOp);
+  const deadline = einddatum ? meldingRegel(`aanvragen kan tot ${escapeHtml(einddatum)}.`) : "";
   const bron =
     r.bronUrl && /^https?:\/\//i.test(r.bronUrl)
       ? `<div style="margin-top:8px;font-size:13px;"><a href="${escapeHtml(r.bronUrl)}" style="color:${KLEUR.primary};font-weight:600;">Meer info &rarr;</a></div>`
@@ -411,6 +466,8 @@ function regelingRij(r: Regeling): string {
         </tr></table>
         <div style="margin-top:6px;font-size:16px;font-weight:700;line-height:1.35;color:${KLEUR.primary};">${titel}</div>
         ${omschrijving}
+        ${deadline}
+        ${letOp}
         ${bron}
       </td>
     </tr>
@@ -531,6 +588,15 @@ function bouwEmailHtml(opts: {
         .sort((a, b) => typeRang(a.type) - typeRang(b.type)),
     ),
   ).join("");
+  // Alleen bij twee of meer groepen: bij één groep valt er niets te combineren
+  // en zou de zin een loze belofte zijn.
+  const aantalGroepen = NIVEAU_VOLGORDE.filter((niveau) =>
+    regelingen.some((r) => (r.niveau ?? "overig") === niveau),
+  ).length;
+  const waaromGroepen =
+    aantalGroepen > 1
+      ? `<p style="margin:0 0 4px;font-size:14px;line-height:1.5;color:${KLEUR.muted};">${WAAROM_GROEPEN}</p>`
+      : "";
 
   return `<!doctype html>
 <html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="color-scheme" content="light"><meta name="supported-color-schemes" content="light"><title>Voortraject - Jouw subsidieoverzicht</title></head>
@@ -570,7 +636,8 @@ function bouwEmailHtml(opts: {
           }
 
           <!-- De belofte: het volledige overzicht in de mail — alle subsidies en
-               leningen per niveau onder elkaar. -->
+               leningen per niveau onder elkaar, met erboven waarom er groepen zijn. -->
+          ${waaromGroepen}
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 8px;">${groepen}</table>
 
           <!-- Scheidslijn: markeert het einde van de regelingenlijst en de
@@ -863,7 +930,7 @@ Deno.serve(async (req: Request) => {
 
   // `gewenste_maatregelen` raken we niet aan; de aangevinkte onderwerpen gaan
   // als platte tekst naar `subsidiecheck_interesses`, in de volgorde van de
-  // chips op de site — bijv. "Isolatie & glas, Warmtepomp, Thuisbatterij".
+  // chips op de site — bijv. "Isolatie en glas, Warmtepomp, Thuisbatterij".
   const interesses = ALLE_MAATREGELEN.filter((m) => maatregelen.includes(m))
     .map((m) => MAATREGEL_LABELS[m])
     .join(", ");

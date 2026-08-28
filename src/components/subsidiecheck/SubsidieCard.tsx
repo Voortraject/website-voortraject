@@ -1,18 +1,43 @@
-import { useId, useState } from "react";
-import { ChevronDown, ExternalLink } from "lucide-react";
+import { useId, useState, type ReactNode } from "react";
+import { CalendarClock, ChevronDown, ExternalLink, Info, type LucideIcon } from "lucide-react";
 
-import { TYPE_LABELS, type SubsidieRegeling } from "@/lib/subsidies";
+import { formateerDatum, looptBinnenkortAf, TYPE_LABELS, type SubsidieRegeling } from "@/lib/subsidies";
 
 import { TYPE_KAART, TYPE_PILL } from "./niveauKleuren";
 
-// Hier stond een maatregelregel ("Voor isolatie & glas, ventilatie …"). Die is
-// weg omdat hij niet waar te maken is: de Energiesubsidiewijzer levert per
-// regeling geen maatregelenlijst, dus de parser vult `regeling.maatregelen`
-// met álle acht (zie energiesubsidiewijzer.ts). Elke kaart toonde daardoor
-// dezelfde zin "Voor vrijwel alle maatregelen", ook een regeling die alleen
-// over isolatie gaat. Twaalf identieke, onjuiste regels op de pagina waar we
-// geloofwaardigheid moeten verdienen. Liever niets dan iets wat niet klopt.
-// Terug te zetten zodra de bron per regeling wél maatregelen levert.
+// De maatregelregel is terug, maar alleen waar hij iets zegt.
+//
+// Hij stond hier eerder en is weggehaald omdat de scrape per regeling geen
+// maatregelen leverde: `regeling.maatregelen` bevatte dan altijd alle acht en
+// elke kaart kreeg dezelfde onjuiste zin. De officiële API levert ze wél. Maar
+// alles opsommen is nog steeds verkeerd: gemeten over Noord-Nederland dekt de
+// helft van de regelingen er drie tot zeven, en dan wordt het een waslijst die
+// niets toevoegt aan de omschrijving erboven.
+//
+// Daarom tonen we hem alleen als hij een béperking is (zie beperktTotVan in
+// energiesubsidiewijzerApi.ts): dat is precies wat iemand moet weten die met een
+// warmtepomp in zijn hoofd naar een isolatiesubsidie kijkt. Vijftien van de
+// vijfendertig regelingen in het noorden vallen daaronder, bijna allemaal
+// "alleen voor isolatie en glas".
+
+// Elke melding op de kaart heeft dezelfde vorm: een icoon, vetgedrukt "Let op:"
+// en dan de mededeling. Zo ziet een bezoeker meteen dat er iets is dat hij moet
+// weten, of het nu om een deadline of om een uitzondering gaat, en hoeft hij
+// niet per regel opnieuw uit te vinden wat voor soort regel dit is. Het icoon
+// verschilt wél, want dát vertelt wat vóór melding het is.
+//
+// Bewust geen pill: een gevuld vlak met ronde hoeken leest als een knop en hier
+// valt niets te klikken. Zelfde afweging als bij het feitje op stap 1, zie de
+// toelichting in StapAdres.tsx.
+const Melding = ({ icoon: Icoon, children }: { icoon: LucideIcon; children: ReactNode }) => (
+  <p className="mt-2 flex items-start gap-1.5 text-[13px] leading-snug text-primary">
+    <Icoon size={14} strokeWidth={2} aria-hidden="true" className="mt-[3px] shrink-0 text-accent" />
+    <span>
+      <span className="font-semibold">Let op: </span>
+      {children}
+    </span>
+  </p>
+);
 
 // Eén regeling in het resultaat. Gesloten toont de kaart alles om te beslissen
 // (type, titel, bedrag rechtsboven, één regel uitleg, maatregelen). De uitklap
@@ -23,6 +48,8 @@ import { TYPE_KAART, TYPE_PILL } from "./niveauKleuren";
 export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
   const [open, setOpen] = useState(false);
   const regionId = useId();
+
+  const eindigtBinnenkort = looptBinnenkortAf(regeling.looptAfOp);
 
   return (
     // Mobiel iets krapper: met elf kaarten onder elkaar telt elke geschrapte
@@ -46,9 +73,43 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
       <h3 className="mt-2 font-display text-[17px] font-semibold leading-snug text-primary md:text-[18px]">
         {regeling.titel}
       </h3>
+      {/* Alleen als de regeling maar één of twee maatregelen dekt: dan is het
+          een beperking en hoort hij vóór de klik te staan, niet in de uitklap.
+
+          Bewust "Alleen X" en niet "Alleen voor X". De labels komen van Milieu
+          Centraal en zijn niet allemaal zelfstandige naamwoorden: naast
+          "zonnepanelen" en "isolatie en glas" bestaan er ook werkwoordsvormen
+          als "asbest verwijderen" en "tuin vergroenen". Na "voor" leest zo'n
+          label krom, en dat is geen randgeval: "Alleen voor asbest verwijderen"
+          stond in negentien procent van de noordelijke overzichten. Zonder dat
+          voorzetsel klopt élke schrijfwijze die de bron kan bedenken, dus dit
+          blijft ook goed als we ooit een maatregel toevoegen. */}
+      {regeling.beperktTot && (
+        <p className="mt-1.5 text-[13px] font-medium text-muted-foreground">Alleen {regeling.beperktTot}</p>
+      )}
+
       {/* Op mobiel blijft de gesloten kaart compact (badge, titel, bedrag,
           maatregelregel); de omschrijving verhuist daar naar de uitklap. */}
       <p className="mt-1.5 hidden text-[15px] leading-relaxed text-foreground/80 md:block">{regeling.omschrijving}</p>
+
+      {/* Einddatum, alleen als hij binnen drie maanden valt. De bron zet op de
+          meeste regelingen 2050 neer, dus een datum die hier verschijnt is een
+          echte deadline. */}
+      {eindigtBinnenkort && regeling.looptAfOp && (
+        <Melding icoon={CalendarClock}>aanvragen kan tot {formateerDatum(regeling.looptAfOp)}.</Melding>
+      )}
+
+      {/* "Let op" komt letterlijk van de bron en is zeldzaam (één op de dertig).
+          Bij ISDE staat hier dat je in Groningen en Noord-Drenthe beter de
+          Isolatieaanpak kunt nemen: precies ons werkgebied, en precies het soort
+          dubbeling waar een bewoner zelf niet uitkomt.
+
+          Die tekst is wel lang (bij ISDE 428 tekens). In een gevuld vlak op de
+          dichte kaart werd dat een blok van zes regels dat de hele lijst uit
+          balans trok. Hier staat daarom alleen de melding zelf, als één rustige
+          regel zoals de einddatum erboven; de tekst van de bron staat bovenaan
+          de uitklap, achter dezelfde knop waar ook de voorwaarden zitten. */}
+      {regeling.letOp && <Melding icoon={Info}>er geldt een uitzondering, zie de voorwaarden.</Melding>}
 
       {/* Aanbieder en uitklapknop op één regel, ook op mobiel: onder elkaar kostte
           dat per kaart een extra regel, en met elf kaarten is dat een half scherm
@@ -82,6 +143,26 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
       {open && (
         <div id={regionId} className="mt-3 flex flex-col gap-3 border-t border-border/60 pt-3 text-[14px] leading-relaxed">
           <p className="text-foreground/80 md:hidden">{regeling.omschrijving}</p>
+          {/* De uitzondering staat bovenaan: wie hier klikt na de melding op de
+              dichte kaart, wil eerst wéten wat die uitzondering is. */}
+          {regeling.letOp && (
+            <div className="flex gap-2 rounded-md bg-secondary/60 p-3">
+              <Info size={15} strokeWidth={2} aria-hidden="true" className="mt-0.5 shrink-0 text-primary" />
+              <p className="text-[13.5px] leading-relaxed text-foreground/80">
+                <span className="font-semibold text-primary">Let op: </span>
+                {regeling.letOp}
+              </p>
+            </div>
+          )}
+          {/* De bedragzin van de bron zelf. Het slot rechtsboven heeft maar
+              ruimte voor één cijfer; hier staat waar dat cijfer op slaat, en bij
+              een regeling zónder cijfer staat hier waaróm er geen bedrag is. */}
+          {regeling.bedragToelichting && (
+            <p>
+              <span className="font-semibold text-primary">Bedrag: </span>
+              <span className="text-foreground/80">{regeling.bedragToelichting}</span>
+            </p>
+          )}
           {regeling.voorWie && (
             <p>
               <span className="font-semibold text-primary">Voor wie: </span>

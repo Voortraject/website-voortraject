@@ -18,7 +18,8 @@ export type Maatregel =
   | "ventilatie"
   | "warmtenet"
   | "elektrisch-koken"
-  | "thuisbatterij";
+  | "thuisbatterij"
+  | "asbest";
 
 export const ALLE_MAATREGELEN: Maatregel[] = [
   "isolatie",
@@ -29,6 +30,7 @@ export const ALLE_MAATREGELEN: Maatregel[] = [
   "warmtenet",
   "elektrisch-koken",
   "thuisbatterij",
+  "asbest",
 ];
 
 export type SubsidieRegeling = {
@@ -39,6 +41,10 @@ export type SubsidieRegeling = {
   aanbieder: string;
   omschrijving: string;
   bedragIndicatie?: string;
+  bedragToelichting?: string;
+  letOp?: string;
+  looptAfOp?: string;
+  beperktTot?: string;
   voorWie?: string;
   belangrijksteVoorwaarde?: string;
   bronUrl: string;
@@ -63,4 +69,5 @@ export const MAATREGEL_FILTER_ID: Record<Maatregel, string> = {
   warmtenet: "1594",
   "elektrisch-koken": "1601",
   thuisbatterij: "1602",
+  asbest: "1613",
 };

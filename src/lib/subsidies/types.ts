@@ -19,7 +19,8 @@ export type Maatregel =
   | "ventilatie"
   | "warmtenet"
   | "elektrisch-koken"
-  | "thuisbatterij";
+  | "thuisbatterij"
+  | "asbest";
 
 export const ALLE_MAATREGELEN: Maatregel[] = [
   "isolatie",
@@ -30,17 +31,24 @@ export const ALLE_MAATREGELEN: Maatregel[] = [
   "warmtenet",
   "elektrisch-koken",
   "thuisbatterij",
+  "asbest",
 ];
 
+// Bewust de schrijfwijze van Milieu Centraal zelf, niet onze eigen variant.
+// Deze labels staan naast hun filters in de bron én gaan als platte tekst naar
+// `leads_bewoners.subsidiecheck_interesses` in het CRM; dezelfde woorden aan
+// beide kanten scheelt vertaalwerk en verwarring. Wijzigt de bron een naam, dan
+// meldt de filtercontrole dat (zie scripts/controleer-esw-filters.mjs).
 export const MAATREGEL_LABELS: Record<Maatregel, string> = {
-  isolatie: "Isolatie & glas",
+  isolatie: "Isolatie en glas",
   warmtepomp: "Warmtepomp",
   zonnepanelen: "Zonnepanelen",
   zonneboiler: "Zonneboiler",
   ventilatie: "Ventilatie",
   warmtenet: "Warmtenet-aansluiting",
-  "elektrisch-koken": "Elektrisch koken",
+  "elektrisch-koken": "Koken op elektriciteit",
   thuisbatterij: "Thuisbatterij",
+  asbest: "Asbest verwijderen",
 };
 
 export const BEWONERTYPE_LABELS: Record<Bewonertype, string> = {
@@ -63,7 +71,7 @@ export const BEWONERTYPE_MEERVOUD: Record<Bewonertype, string> = {
 // Verbeterjehuis filtert server-side op bewonertype (`type-of-resident`) én
 // maatregel (`filter=<id>`). We mappen onze types 1-op-1 op hun waarden, zodat
 // de bron exact dezelfde lijst teruggeeft als hun eigen tool (geverifieerd
-// 2026-07-13: 9742HJ + woningeigenaar + onze 8 maatregelen = 10 regelingen).
+// 2026-07-13: 9742HJ + woningeigenaar + onze maatregelen = 10 regelingen).
 export const BEWONERTYPE_RESIDENT: Record<Bewonertype, string> = {
   woningeigenaar: "Woningeigenaar",
   vve: "Vereniging van Eigenaren",
@@ -80,10 +88,15 @@ export const MAATREGEL_FILTER_ID: Record<Maatregel, string> = {
   warmtenet: "1594",
   "elektrisch-koken": "1601",
   thuisbatterij: "1602",
+  // Asbest staat er niet omdat wij asbest saneren, maar omdat een asbestdak
+  // eraf en isolatie erop in Groningen en Drenthe hetzelfde traject is. Levert
+  // in Noord-Nederland twee regelingen op die we anders misliepen: de
+  // Maatwerklening en de Lening verwijderen asbestdaken Drenthe.
+  asbest: "1613",
 };
 
 // Bouwt de filter-parameters voor de Energiesubsidiewijzer: bewonertype + de
-// gekozen maatregelen (lege lijst = alle 8, want dat is onze "Alles"-optie).
+// gekozen maatregelen (lege lijst = allemaal, want dat is onze "Alles"-optie).
 // Retourneert alleen de query zónder postcode, zodat de dev-proxy én de edge
 // function dezelfde logica delen.
 export function bouwEswFilterQuery(bewonertype: Bewonertype, maatregelen: Maatregel[]): string {
@@ -97,12 +110,36 @@ export function bouwEswFilterQuery(bewonertype: Bewonertype, maatregelen: Maatre
   return params.toString();
 }
 
+// Koppen boven de groepen op het resultaat. In bewonerstaal ("van jouw
+// gemeente"), want dat is de groep waar de verrassing zit: dat je eigen gemeente
+// iets heeft, weten de meeste mensen niet.
+//
+// "Leningen en overig" is hier weg. Die kop beloofde leningen terwijl leningen
+// juist over álle groepen verspreid staan en al aan hun blauwe kleur te
+// herkennen zijn. In alle tien de noordelijke postcodes die we gemeten hebben,
+// is deze groep bovendien leeg.
+//
+// En bewust "organisaties" en niet "aanbieders". Milieu Centraal gebruikt zelf
+// wel "aanbieder" (hun veld heet ProviderName en hun voorwaardentekst verwijst
+// naar "de website van de aanbieder"), maar op een pagina die over energie gaat
+// leest "aanbieder" als energieaanbieder. Dat is precies de verwarring die je
+// hier niet wilt.
 export const NIVEAU_LABELS: Record<SubsidieNiveau, string> = {
-  rijk: "Rijksoverheid",
-  provincie: "Provincie",
-  gemeente: "Gemeente",
-  overig: "Leningen en overig",
+  rijk: "Van de Rijksoverheid",
+  provincie: "Van de provincie",
+  gemeente: "Van jouw gemeente",
+  overig: "Van andere organisaties",
 };
+
+// Waarom er groepen staan, in één zin. Zonder deze zin is de indeling een
+// ambtelijke ordening; mét deze zin is het het argument dat ertoe doet, want
+// verschillende potten betekent dat je ze vaak naast elkaar kunt aanvragen.
+// Deze zin stond ooit op élke kaart en is toen weggehaald omdat hij twaalf keer
+// herhaald werd; hij hoorde daarna één keer op het resultaat te komen, maar dat
+// is er nooit van gekomen. "Vaak" en niet "altijd": stapelen mag lang niet
+// overal, en dat uitzoeken is precies waar wij voor zijn.
+export const WAAROM_GROEPEN =
+  "Deze regelingen komen van verschillende overheden. Daarom kun je ze vaak naast elkaar aanvragen.";
 
 export const TYPE_LABELS: Record<SubsidieType, string> = {
   subsidie: "Subsidie",
@@ -121,6 +158,24 @@ export type SubsidieRegeling = {
   omschrijving: string;
   /** Indicatie zoals "tot € 10.000" of "0%-lening". Weglaten als onbekend. */
   bedragIndicatie?: string;
+  /** De bedragzin van de bron zelf, voor de uitklap. Vult het korte slot aan. */
+  bedragToelichting?: string;
+  /**
+   * Uitzondering die de bron zelf als "Let op" markeert. Zeldzaam (één op de
+   * dertig), dus het valt op als het er staat, en dat hoort ook: bij ISDE staat
+   * hier dat je in Groningen en Noord-Drenthe beter de Isolatieaanpak kunt
+   * nemen en de ISDE dan niet hoeft aan te vragen.
+   */
+  letOp?: string;
+  /** Einddatum van de regeling (ISO). De bron gebruikt 2050 voor "onbepaald". */
+  looptAfOp?: string;
+  /**
+   * Alleen gevuld als de regeling écht smal is: "isolatie en glas". Dat is voor
+   * de bezoeker een beperking en hoort dus vóór de uitklap te staan. Is een
+   * regeling breder, dan blijft dit leeg: een opsomming van zeven maatregelen
+   * voegt niets toe aan de omschrijving.
+   */
+  beperktTot?: string;
   /** Uitklap-verdieping (drielagenmodel): voor wie de regeling bedoeld is. */
   voorWie?: string;
   /** Uitklap-verdieping: de belangrijkste voorwaarde in één zin. */
@@ -231,4 +286,33 @@ export function topBedragen(regelingen: SubsidieRegeling[]): { subsidie?: TopBed
 /** Euro met NL-duizendtallen, bijv. 28000 → "28.000". */
 export function formatEuro(n: number): string {
   return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+// --- Einddatum ---
+// De bron zet `DateEnd` op elke regeling, maar gebruikt 2050 als "loopt
+// voorlopig door" (25 van de 42 regelingen in Noord-Nederland staan zo).
+// Alleen een datum die écht in zicht is zegt iets tegen de bezoeker; de rest is
+// ruis. Drie maanden is de grens: kort genoeg om te haasten, lang genoeg om nog
+// een aanvraag rond te krijgen.
+const BINNENKORT_MAANDEN = 3;
+
+export function looptBinnenkortAf(iso: string | undefined, nu = new Date()): boolean {
+  if (!iso) return false;
+  const eind = new Date(iso);
+  if (Number.isNaN(eind.getTime()) || eind <= nu) return false;
+  const grens = new Date(nu);
+  grens.setMonth(grens.getMonth() + BINNENKORT_MAANDEN);
+  return eind <= grens;
+}
+
+/** "2026-09-01T00:00:00Z" → "1 september 2026". */
+export function formateerDatum(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return new Intl.DateTimeFormat("nl-NL", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(d);
 }

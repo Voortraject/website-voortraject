@@ -63,7 +63,7 @@ export function eersteStapTekst(bouwjaar: number | undefined, bewonertype: Bewon
   const opening = `Jouw huis is uit ${bouwjaar}.`;
   // Huurders kunnen zelf weinig aan de schil doen, maar Voortraject kan altijd
   // meekijken wat er in hun situatie mogelijk is. De uitspraak over de voorraad
-  // blijft dus staan; alleen de vraag verschuift van "waar staat je huis" naar
+  // blijft dus staan; alleen de vraag verschuift van "wat is er al gedaan" naar
   // "wat kan er in jouw situatie".
   const isHuurder = bewonertype === "huurder";
 
@@ -90,9 +90,14 @@ export function eersteStapTekst(bouwjaar: number | undefined, bewonertype: Bewon
 
   return {
     zinnen: [opening, kern, "Wat er daarna is gedaan verschilt per woning."],
+    // Hier stond "Zullen we uitzoeken waar jouw huis nu staat?". Dat is een
+    // uitdrukking, en op een pagina die net een adres heeft opgevraagd las hij
+    // letterlijk: waar in het land staat je huis. De vraag zegt nu hetzelfde als
+    // het voorstel dat hij invult, en sluit aan op de zin ervoor ("wat er daarna
+    // is gedaan verschilt per woning").
     vraag: isHuurder
       ? "Zullen we uitzoeken wat er in jouw situatie mogelijk is?"
-      : "Zullen we uitzoeken waar jouw huis nu staat?",
+      : "Zullen we uitzoeken wat er al gedaan is en wat er nog kan?",
     voorstel: isHuurder
       ? `Ik huur een woning uit ${bouwjaar}. Kunnen jullie uitzoeken wat er in mijn situatie mogelijk is?`
       : `Mijn woning is uit ${bouwjaar}. Kunnen jullie uitzoeken wat er al aan isolatie is gedaan en wat er nog kan?`,
