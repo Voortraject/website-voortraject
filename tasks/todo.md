@@ -533,3 +533,51 @@ Frequentie van alle vier de regels, over diezelfde 75 combinaties:
 | Alleen zonnepanelen | 20 | 1 |
 | Alleen asbest verwijderen | 14 | 2 |
 | Alleen isolatie en glas, ventilatie | 6 | 4 |
+
+---
+
+# LIVE (2026-08-28)
+
+De subsidiecheck draait op productie op de officiële API van Milieu Centraal.
+
+**Volgorde die is aangehouden**, elke stap geverifieerd voordat de volgende begon:
+
+1. **#161 gemerged** (merge-commit `4d15f3b`). Bevat de bronwissel en de echte aanbieder op de
+   kaart; het `CURATED_BEDRAG` voor ISDE zit er nog in, dus er ontstond geen gat waarin ISDE
+   zonder bedrag zou staan.
+2. **`subsidiecheck` uitgerold zonder de secret.** Productie gecontroleerd: `via: "scrape"`,
+   10 regelingen voor 9742HJ, aanbieder "Rijksoverheid". Exact zoals daarvoor.
+3. **`ESW_API_KEY` als Supabase-secret gezet** op het CRM-project. Productie schakelde om:
+   `via: "api"`, en 10 / 6 / 1 / 3 over de vier bewonertypes, precies de aantallen van de oude
+   route.
+4. **#164 gemerged** (merge-commit `ebe2c1d`). Dit was #163; die werd door GitHub automatisch
+   gesloten toen bij het mergen van #161 de basistak werd opgeruimd. Zelfde commits, opnieuw
+   ingediend tegen `main`. **Les voor de volgende keer: bij gestapelde PR's eerst de basis van
+   de bovenste omzetten naar `main`, dán pas de onderste mergen.**
+5. **`subsidiecheck-mail` en `subsidiecheck` opnieuw uitgerold** (nieuwe labels, asbest,
+   "Let op", einddatum, aliassen en `?meta=filters`).
+
+**Productieverificatie na afloop:**
+
+- Vier bewonertypes op 9742HJ: 11 / 6 / 1 / 3, allemaal `via: "api"`. Elf in plaats van tien
+  omdat asbest de negende maatregel is en de Maatwerklening er nu bij komt.
+- Eén `letOp` (ISDE), elf einddatums, twee `beperktTot`.
+- Aanbieders consistent: twee keer SNN, twee keer SVn, en RVO in plaats van de volledige naam.
+- `?meta=filters` geeft 19 maatregelen en 4 bewonertypes.
+- Live bundle op voortraject.nl gecontroleerd: nieuwe koppen, combineer-zin, asbest,
+  MC-schrijfwijze, herschreven bouwjaarvraag, geen "Leningen en overig", en **de API-key komt er
+  niet in voor**. Het verzonnen ISDE-percentage is weg.
+- Headless gecontroleerd op voortraject.nl, desktop en mobiel.
+- De GitHub Action één keer met de hand gestart (run 33171620266): geslaagd, en de PR-stap werd
+  correct overgeslagen omdat de filterlijst ongewijzigd is.
+
+**Terugrollen** blijft één handeling: `bunx supabase secrets unset ESW_API_KEY --project-ref
+lfelnfukbrxznkevnevr`. De functie valt dan meteen terug op de oude route, zonder deploy.
+
+**Nog te doen:**
+
+- [ ] Het CRM-team melden dat `leads_bewoners.subsidiecheck_interesses` vanaf nu "Isolatie en
+      glas" en "Koken op elektriciteit" schrijft (was "Isolatie & glas" en "Elektrisch koken"),
+      en dat er "Asbest verwijderen" in kan staan. Oude rijen blijven zoals ze zijn.
+- [ ] Over ongeveer een week: opruim-PR die de scrape-route, de HTML-parser, de fixtures en de
+      bronlink-heuristiek weghaalt. Pas doen als het vangnet niet meer nodig blijkt.
