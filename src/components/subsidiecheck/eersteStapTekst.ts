@@ -1,5 +1,5 @@
 // De persoonlijke eerste stap op het resultaat: één uitspraak over de
-// woningvoorraad, gevolgd door een vraag.
+// woningvoorraad, gevolgd door de vraag die de bezoeker kan stellen.
 //
 // De regel die alles stuurt: NOOIT een uitspraak over dít huis. We weten het
 // bouwjaar (BAG), maar niet wat er sindsdien is gedaan. "Jouw muren zijn niet
@@ -37,7 +37,12 @@ import type { Bewonertype } from "@/lib/subsidies";
 export type EersteStapTekst = {
   /** De uitspraak over de woningvoorraad. Eén of twee zinnen. */
   zinnen: string[];
-  /** De slotvraag; die brengt de bezoeker naar het vraagblok. */
+  /**
+   * Het klikbare label eronder, in de ik-vorm. Het is niet onze vraag aan de
+   * bezoeker maar zíjn vraag aan ons: na de klik staat precies dat in het
+   * vraagveld (zie `voorstel`). Dezelfde stem als "Ik wil gratis advies", de
+   * knop die er op het resultaat naast staat.
+   */
   vraag: string;
   /** Wat er alvast in het vraagveld komt te staan als hij erop klikt. */
   voorstel: string;
@@ -67,6 +72,14 @@ export function eersteStapTekst(bouwjaar: number | undefined, bewonertype: Bewon
   // "wat kan er in jouw situatie".
   const isHuurder = bewonertype === "huurder";
 
+  // Voor een huurder verandert het bouwjaar niets aan wat híj kan doen: dat
+  // hangt aan de verhuurder, niet aan de schil. Eén regel dus voor beide
+  // perioden, in plaats van twee die uit elkaar kunnen lopen.
+  const huurder = {
+    vraag: "Ik wil weten wat er in mijn situatie mogelijk is",
+    voorstel: `Ik huur een woning uit ${bouwjaar}. Kunnen jullie uitzoeken wat er in mijn situatie mogelijk is?`,
+  };
+
   if (bouwjaar >= 1992) {
     return {
       zinnen: [
@@ -74,12 +87,13 @@ export function eersteStapTekst(bouwjaar: number | undefined, bewonertype: Bewon
         "Woningen uit die tijd kregen bij de bouw al redelijke isolatie mee.",
         "De winst zit dan meestal niet in de schil maar in verwarming en opwek.",
       ],
-      vraag: isHuurder
-        ? "Zullen we uitzoeken wat er in jouw situatie mogelijk is?"
-        : "Zullen we uitzoeken wat voor jouw huis interessant is?",
+      // "Interessant" zei niet waarover het ging. Dit pakt de zin ervoor op:
+      // daar staat waar de winst bij deze bouwperiode zit, hier vraagt hij waar
+      // die bij hem zit.
+      vraag: isHuurder ? huurder.vraag : "Ik wil weten waar bij mijn huis de winst zit",
       voorstel: isHuurder
-        ? `Ik huur een woning uit ${bouwjaar}. Kunnen jullie uitzoeken wat er in mijn situatie mogelijk is?`
-        : `Mijn woning is uit ${bouwjaar}. Kunnen jullie meedenken over wat voor mijn huis interessant is?`,
+        ? huurder.voorstel
+        : `Mijn woning is uit ${bouwjaar}. Kunnen jullie meedenken over waar bij mijn huis de winst zit?`,
     };
   }
 
@@ -90,16 +104,13 @@ export function eersteStapTekst(bouwjaar: number | undefined, bewonertype: Bewon
 
   return {
     zinnen: [opening, kern, "Wat er daarna is gedaan verschilt per woning."],
-    // Hier stond "Zullen we uitzoeken waar jouw huis nu staat?". Dat is een
-    // uitdrukking, en op een pagina die net een adres heeft opgevraagd las hij
-    // letterlijk: waar in het land staat je huis. De vraag zegt nu hetzelfde als
-    // het voorstel dat hij invult, en sluit aan op de zin ervoor ("wat er daarna
-    // is gedaan verschilt per woning").
-    vraag: isHuurder
-      ? "Zullen we uitzoeken wat er in jouw situatie mogelijk is?"
-      : "Zullen we uitzoeken wat er al gedaan is en wat er nog kan?",
+    // Hier stond eerst "Zullen we uitzoeken waar jouw huis nu staat?". Dat is
+    // een uitdrukking, en op een pagina die net een adres heeft opgevraagd las
+    // hij letterlijk: waar in het land staat je huis. Wat er nu staat pakt de
+    // zin ervoor op ("wat er daarna is gedaan verschilt per woning").
+    vraag: isHuurder ? huurder.vraag : "Ik wil weten wat er al gedaan is en wat er nog kan",
     voorstel: isHuurder
-      ? `Ik huur een woning uit ${bouwjaar}. Kunnen jullie uitzoeken wat er in mijn situatie mogelijk is?`
+      ? huurder.voorstel
       : `Mijn woning is uit ${bouwjaar}. Kunnen jullie uitzoeken wat er al aan isolatie is gedaan en wat er nog kan?`,
   };
 }
