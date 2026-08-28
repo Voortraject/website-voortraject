@@ -48,7 +48,7 @@ describe("eersteStapTekst", () => {
 
   it("vraagt huurders wat er in hun situatie mogelijk is", () => {
     const huurder = eersteStapTekst(1962, "huurder");
-    expect(huurder?.vraag).toBe("Zullen we uitzoeken wat er in jouw situatie mogelijk is?");
+    expect(huurder?.vraag).toBe("Ik wil weten wat er in mijn situatie mogelijk is");
     expect(huurder?.voorstel).toMatch(/^Ik huur een woning uit 1962\./);
     // De uitspraak over de voorraad blijft wél gewoon staan.
     expect(huurder?.zinnen[1]).toMatch(/geen isolatie mee/);
@@ -57,7 +57,7 @@ describe("eersteStapTekst", () => {
   it("stuurt bij nieuwere woningen naar verwarming en opwek in plaats van de schil", () => {
     const nieuw = eersteStapTekst(2007, "woningeigenaar");
     expect(nieuw?.zinnen[2]).toMatch(/verwarming en opwek/);
-    expect(nieuw?.vraag).toBe("Zullen we uitzoeken wat voor jouw huis interessant is?");
+    expect(nieuw?.vraag).toBe("Ik wil weten waar bij mijn huis de winst zit");
   });
 
   it("geeft een voorstel dat het bouwjaar meeneemt, zodat het team context heeft", () => {
