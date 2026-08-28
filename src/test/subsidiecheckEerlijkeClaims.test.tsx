@@ -116,6 +116,16 @@ describe("de uitzondering die de bron meldt", () => {
     expect(screen.getByText(/géén ISDE-subsidie aan te vragen/)).toBeInTheDocument();
   });
 
+  it("begint elke melding met een vetgedrukt \"Let op\"", () => {
+    // Deadline en uitzondering krijgen dezelfde vorm, zodat een bezoeker niet
+    // per regel hoeft uit te vinden wat voor soort mededeling dit is.
+    const overDrieWeken = new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString();
+    render(<SubsidieCard regeling={{ ...isolatieRegeling, looptAfOp: overDrieWeken }} />);
+
+    expect(screen.getByText(/aanvragen kan tot/i)).toBeInTheDocument();
+    expect(screen.getByText("Let op:")).toBeInTheDocument();
+  });
+
   it("meldt niets als de bron geen uitzondering geeft", () => {
     render(<SubsidieCard regeling={isolatieRegeling} />);
 

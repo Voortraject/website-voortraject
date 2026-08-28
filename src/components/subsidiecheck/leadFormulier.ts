@@ -4,6 +4,7 @@ import { normalizePostcode, type PdokAdres } from "@/lib/pdok";
 import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
 import {
   ALLE_MAATREGELEN,
+  looptBinnenkortAf,
   MAATREGEL_LABELS,
   type Maatregel,
   type SubsidieCheckInput,
@@ -295,6 +296,10 @@ export async function verstuurSubsidiecheckLead(args: {
         // bij ISDE staat daar dat je in ons werkgebied de Isolatieaanpak kunt
         // nemen. Een oudere function negeert dit veld gewoon.
         letOp: r.letOp,
+        // Alleen een deadline die er echt is. De bron zet op de meeste
+        // regelingen 2050 neer; die filtering doen we hier, zodat de mail maar
+        // op één plek hoeft te weten wat "binnenkort" betekent.
+        looptAfOp: looptBinnenkortAf(r.looptAfOp) ? r.looptAfOp : undefined,
         bronUrl: r.bronUrl,
       })),
     }),

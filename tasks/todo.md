@@ -483,3 +483,31 @@ varianten waren al concreet.
 energieaanbieder. Het woord blijft wél staan onderaan de kaart, waar de échte naam staat.
 
 420 tests groen (3 nieuw op de compacte melding).
+
+## Consistentie-ronde (2026-08-28)
+
+**Eén organisatie, één naam.** De bron schrijft dezelfde instantie niet overal hetzelfde. Over
+72 combinaties gemeten kwam SNN voorbij als "SNN" (10x), als "Samenwerkingsverband
+Noord-Nederland" (14x) én als "Samenwerkingsverband Noord-Nederland (SNN)" (2x). Op de
+resultatenpagina stond daardoor op de ene kaart "SNN" en op de kaart ernaast de volledige naam,
+voor precies dezelfde organisatie. Idem voor RVO en SVn (die laatste in vier schrijfwijzen).
+
+`AANBIEDER_ALIAS` in `energiesubsidiewijzerApi.ts` normaliseert naar de afkorting die de bron
+zelf ook gebruikt: SNN, RVO, SVn. Verzint niets, en past op een telefoon. Daarnaast wordt de
+eerste letter rechtgetrokken, want de bron schrijft soms "gemeente Nijmegen".
+
+**Alle meldingen in dezelfde vorm.** Een `Melding`-component: icoon, vetgedrukt "Let op:", dan
+de mededeling. Zowel de deadline ("Let op: aanvragen kan tot 1 september 2026.") als de
+uitzondering ("Let op: er geldt een uitzondering, zie de voorwaarden."). Het icoon verschilt
+nog wél (kalender tegenover info), want dát vertelt om wat voor melding het gaat.
+
+Geen pill, bewust. Een gevuld vlak met ronde hoeken leest als een knop en hier valt niets te
+klikken; dezelfde afweging als bij het feitje op stap 1 (zie `StapAdres.tsx`). Bovendien staat
+er al één pill op de kaart, en die is dragend: subsidie tegenover lening.
+
+**De deadline staat nu ook in de mail**, in dezelfde vorm. Die mail bewaart de bewoner, dus daar
+hoort een einddatum juist in. De client stuurt `looptAfOp` alleen mee als hij binnen drie
+maanden valt, zodat de regel op één plek staat; de mail heeft een eigen vangnet dat een datum
+verder dan een jaar weg negeert.
+
+423 tests groen (7 nieuw).

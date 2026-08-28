@@ -1,5 +1,5 @@
-import { useId, useState } from "react";
-import { CalendarClock, ChevronDown, ExternalLink, Info } from "lucide-react";
+import { useId, useState, type ReactNode } from "react";
+import { CalendarClock, ChevronDown, ExternalLink, Info, type LucideIcon } from "lucide-react";
 
 import { formateerDatum, looptBinnenkortAf, TYPE_LABELS, type SubsidieRegeling } from "@/lib/subsidies";
 
@@ -19,6 +19,25 @@ import { TYPE_KAART, TYPE_PILL } from "./niveauKleuren";
 // warmtepomp in zijn hoofd naar een isolatiesubsidie kijkt. Vijftien van de
 // vijfendertig regelingen in het noorden vallen daaronder, bijna allemaal
 // "alleen voor isolatie en glas".
+
+// Elke melding op de kaart heeft dezelfde vorm: een icoon, vetgedrukt "Let op:"
+// en dan de mededeling. Zo ziet een bezoeker meteen dat er iets is dat hij moet
+// weten, of het nu om een deadline of om een uitzondering gaat, en hoeft hij
+// niet per regel opnieuw uit te vinden wat voor soort regel dit is. Het icoon
+// verschilt wél, want dát vertelt wat vóór melding het is.
+//
+// Bewust geen pill: een gevuld vlak met ronde hoeken leest als een knop en hier
+// valt niets te klikken. Zelfde afweging als bij het feitje op stap 1, zie de
+// toelichting in StapAdres.tsx.
+const Melding = ({ icoon: Icoon, children }: { icoon: LucideIcon; children: ReactNode }) => (
+  <p className="mt-2 flex items-start gap-1.5 text-[13px] leading-snug text-primary">
+    <Icoon size={14} strokeWidth={2} aria-hidden="true" className="mt-[3px] shrink-0 text-accent" />
+    <span>
+      <span className="font-semibold">Let op: </span>
+      {children}
+    </span>
+  </p>
+);
 
 // Eén regeling in het resultaat. Gesloten toont de kaart alles om te beslissen
 // (type, titel, bedrag rechtsboven, één regel uitleg, maatregelen). De uitklap
@@ -66,12 +85,9 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
 
       {/* Einddatum, alleen als hij binnen drie maanden valt. De bron zet op de
           meeste regelingen 2050 neer, dus een datum die hier verschijnt is een
-          echte deadline en verdient de okerkleur. */}
+          echte deadline. */}
       {eindigtBinnenkort && regeling.looptAfOp && (
-        <p className="mt-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary">
-          <CalendarClock size={14} strokeWidth={2} aria-hidden="true" className="shrink-0 text-accent" />
-          Aanvragen kan tot {formateerDatum(regeling.looptAfOp)}
-        </p>
+        <Melding icoon={CalendarClock}>aanvragen kan tot {formateerDatum(regeling.looptAfOp)}.</Melding>
       )}
 
       {/* "Let op" komt letterlijk van de bron en is zeldzaam (één op de dertig).
@@ -84,15 +100,7 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
           balans trok. Hier staat daarom alleen de melding zelf, als één rustige
           regel zoals de einddatum erboven; de tekst van de bron staat bovenaan
           de uitklap, achter dezelfde knop waar ook de voorwaarden zitten. */}
-      {regeling.letOp && (
-        <p className="mt-2 inline-flex items-start gap-1.5 text-[13px] leading-snug text-primary">
-          <Info size={14} strokeWidth={2} aria-hidden="true" className="mt-[3px] shrink-0 text-accent" />
-          <span>
-            <span className="font-semibold">Let op: </span>
-            er geldt een uitzondering, zie de voorwaarden.
-          </span>
-        </p>
-      )}
+      {regeling.letOp && <Melding icoon={Info}>er geldt een uitzondering, zie de voorwaarden.</Melding>}
 
       {/* Aanbieder en uitklapknop op één regel, ook op mobiel: onder elkaar kostte
           dat per kaart een extra regel, en met elf kaarten is dat een half scherm

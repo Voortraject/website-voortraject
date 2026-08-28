@@ -247,6 +247,8 @@ type Regeling = {
   bedragIndicatie?: string;
   /** Uitzondering die de bron zelf als "Let op" markeert. Zeldzaam, dus zwaar. */
   letOp?: string;
+  /** Einddatum (ISO). De client stuurt hem alleen mee als hij binnen drie maanden valt. */
+  looptAfOp?: string;
   bronUrl?: string;
 };
 
@@ -396,6 +398,26 @@ async function remControle(supabase: RemClient, ip: string): Promise<"ok" | "te-
 
 // ---- E-mail opbouwen ----
 
+// "1 september 2026". Geeft niets terug bij onzin, bij een datum die al voorbij
+// is of bij een datum meer dan een jaar weg: de client filtert al op "binnen
+// drie maanden", en dit is het vangnet voor een oudere of andere aanroeper.
+function einddatumTekst(iso: string | undefined): string {
+  if (!iso) return "";
+  const eind = new Date(iso);
+  if (Number.isNaN(eind.getTime())) return "";
+  const nu = Date.now();
+  if (eind.getTime() <= nu || eind.getTime() > nu + 366 * 24 * 60 * 60 * 1000) return "";
+  return new Intl.DateTimeFormat("nl-NL", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(
+    eind,
+  );
+}
+
+// Elke melding in de mail heeft dezelfde vorm als op de site: vetgedrukt
+// "Let op:" en dan de mededeling. Zie het Melding-component in SubsidieCard.tsx.
+function meldingRegel(tekst: string): string {
+  return `<div style="margin-top:8px;font-size:13px;line-height:1.5;color:${KLEUR.primary};"><strong>Let op:</strong> ${tekst}</div>`;
+}
+
 function regelingRij(r: Regeling): string {
   const typeKleur = r.type === "lening" ? LENING_KLEUR : SUBSIDIE_KLEUR;
   const typeVlak = r.type === "lening" ? LENING_VLAK : SUBSIDIE_VLAK;
@@ -420,6 +442,11 @@ function regelingRij(r: Regeling): string {
   const letOp = r.letOp
     ? `<div style="margin-top:10px;padding:10px 12px;background:${KLEUR.zacht};border-radius:6px;font-size:13px;line-height:1.5;color:${KLEUR.muted};"><strong style="color:${KLEUR.primary};">Let op:</strong> ${escapeHtml(r.letOp)}</div>`
     : "";
+  // De mail bewaart de bewoner, dus een deadline hoort er juist in. Hier wél de
+  // datum voluit en niet, zoals op de kaart, een verwijzing naar de uitklap: een
+  // mail heeft geen uitklap.
+  const einddatum = einddatumTekst(r.looptAfOp);
+  const deadline = einddatum ? meldingRegel(`aanvragen kan tot ${escapeHtml(einddatum)}.`) : "";
   const bron =
     r.bronUrl && /^https?:\/\//i.test(r.bronUrl)
       ? `<div style="margin-top:8px;font-size:13px;"><a href="${escapeHtml(r.bronUrl)}" style="color:${KLEUR.primary};font-weight:600;">Meer info &rarr;</a></div>`
@@ -439,6 +466,7 @@ function regelingRij(r: Regeling): string {
         </tr></table>
         <div style="margin-top:6px;font-size:16px;font-weight:700;line-height:1.35;color:${KLEUR.primary};">${titel}</div>
         ${omschrijving}
+        ${deadline}
         ${letOp}
         ${bron}
       </td>

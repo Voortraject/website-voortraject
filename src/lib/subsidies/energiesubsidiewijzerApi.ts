@@ -71,6 +71,23 @@ const NIVEAU_AANBIEDER: Record<SubsidieNiveau, string> = {
 const AFKORTING_ACHTERAAN_RE = /^(.+?)\s*\(([A-Za-z]{2,5})\)$/;
 const TOELICHTING_ACHTERAAN_RE = /^(.+?)\s*\([^)]{6,}\)$/;
 
+// Dezelfde instantie heet bij de bron niet overal hetzelfde. Over 72
+// postcode/bewonertype-combinaties gemeten kwam SNN voorbij als "SNN" (10x),
+// als "Samenwerkingsverband Noord-Nederland" (14x) én als "Samenwerkingsverband
+// Noord-Nederland (SNN)" (2x). Zonder deze tabel staat op de ene kaart "SNN" en
+// op de kaart ernaast de volledige naam, voor precies dezelfde organisatie.
+//
+// We kiezen de afkorting, want die gebruikt de bron zelf ook en hij past op een
+// telefoon. Dit verzint niets: elke regel hier zet een naam om naar de eigen
+// officiële afkorting van diezelfde organisatie. Komt er een instantie bij die
+// de bron óók door elkaar schrijft, dan hoort hij hier.
+const AANBIEDER_ALIAS: Record<string, string> = {
+  "samenwerkingsverband noord-nederland": "SNN",
+  "rijksdienst voor ondernemend nederland": "RVO",
+  "stimuleringsfonds volkshuisvesting": "SVn",
+  "svn stimuleringsfonds volkshuisvesting nederlandse gemeenten": "SVn",
+};
+
 /** De naam van de aanbieder zoals hij op de kaart komt te staan. */
 export function aanbiederVan(regeling: EswApiRegeling, niveau: SubsidieNiveau): string {
   const naam = schoon(regeling.ProviderName ?? "");
@@ -82,7 +99,12 @@ export function aanbiederVan(regeling: EswApiRegeling, niveau: SubsidieNiveau): 
   // juist die wil een bewoner uit zijn eigen plaats herkennen.
   if (afkorting && /[A-Z]/.test(afkorting[2]) && !/\ben\b/i.test(afkorting[1])) return afkorting[2];
 
-  return naam.match(TOELICHTING_ACHTERAAN_RE)?.[1] ?? naam;
+  const zonderToelichting = naam.match(TOELICHTING_ACHTERAAN_RE)?.[1] ?? naam;
+  const alias = AANBIEDER_ALIAS[zonderToelichting.toLowerCase()];
+  if (alias) return alias;
+
+  // De bron schrijft soms "gemeente Nijmegen" en soms "Gemeente Nijmegen".
+  return zonderToelichting.charAt(0).toUpperCase() + zonderToelichting.slice(1);
 }
 
 const ALLE_BEWONERTYPES: Bewonertype[] = ["woningeigenaar", "huurder", "vve", "verhuurder"];

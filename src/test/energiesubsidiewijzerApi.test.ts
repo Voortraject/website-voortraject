@@ -148,9 +148,27 @@ describe("Energiesubsidiewijzer-API: velden vertalen", () => {
     // indeling "Rijksoverheid" hebben gezegd. NHG is geen rijksoverheid.
     expect(nhg.aanbieder).toBe("Nationale Hypotheek Garantie");
     expect(naarRegeling(fixture.find((r) => r.Id === "3018")!).aanbieder).toBe("Gemeente Groningen");
-    expect(naarRegeling(fixture.find((r) => r.Id === "2559")!).aanbieder).toBe(
-      "Samenwerkingsverband Noord-Nederland",
-    );
+    // Genormaliseerd naar de afkorting, zodat deze kaart hetzelfde zegt als de
+    // kaart ernaast waar de bron gewoon "SNN" schrijft.
+    expect(naarRegeling(fixture.find((r) => r.Id === "2559")!).aanbieder).toBe("SNN");
+  });
+
+  it("noemt dezelfde organisatie overal hetzelfde", () => {
+    // De bron schrijft SNN op drie manieren, en zonder normalisatie stond op de
+    // ene kaart "SNN" en op de kaart ernaast de volledige naam.
+    expect(aanbiederVan({ ProviderName: "SNN" }, "provincie")).toBe("SNN");
+    expect(aanbiederVan({ ProviderName: "Samenwerkingsverband Noord-Nederland" }, "provincie")).toBe("SNN");
+    expect(aanbiederVan({ ProviderName: "Samenwerkingsverband Noord-Nederland (SNN)" }, "provincie")).toBe("SNN");
+    // Idem voor RVO en SVn.
+    expect(aanbiederVan({ ProviderName: "Rijksdienst voor Ondernemend Nederland" }, "rijk")).toBe("RVO");
+    expect(aanbiederVan({ ProviderName: "Stimuleringsfonds Volkshuisvesting" }, "gemeente")).toBe("SVn");
+    expect(
+      aanbiederVan({ ProviderName: "SVn Stimuleringsfonds Volkshuisvesting Nederlandse gemeenten" }, "gemeente"),
+    ).toBe("SVn");
+  });
+
+  it("trekt de hoofdletter recht die de bron soms vergeet", () => {
+    expect(aanbiederVan({ ProviderName: "gemeente Nijmegen" }, "gemeente")).toBe("Gemeente Nijmegen");
   });
 
   it("gebruikt de afkorting die de bron zelf achter de naam zet", () => {
