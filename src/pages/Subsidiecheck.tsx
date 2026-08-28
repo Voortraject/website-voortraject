@@ -257,15 +257,14 @@ const SubsidiecheckLive = () => {
             // verduurzaming": dat veronderstelt dat de bewoner nog moet
             // beginnen, terwijl een deel al van alles heeft gedaan.
             titel: "Welke subsidies zijn er voor jouw huis?",
-            // Moet op een telefoon op één regel passen. De kop loopt daar al
-            // over twee regels; een subregel die dat ook doet maakt er een blok
-            // van vier regels tekst van, en dan valt geen van beide meer op.
-            //
-            // Wat "past" betekent, in cijfers: op een scherm van 360px blijft er
-            // na de paginamarges (px-6) 312px over, en Manrope op 14px doet zo'n
-            // 6,3px per teken. Dat is grofweg 49 tekens. Deze zin heeft er 47;
-            // met "bij elkaar" erachter waren het er 58 en brak hij dus.
-            sub: "Vul je adres in, dan zoeken we alle regelingen.",
+            // Géén subregel hier: die staat op deze ene plek in StapAdres zelf
+            // (zoek op "Vul je adres in"). Reden: hij eindigt met het gemeten
+            // gemiddelde, en dat cijfer tonen we alleen aan woningeigenaren.
+            // Alleen StapAdres weet welke situatie er op dit moment gekozen is
+            // (de bezoeker kan dat binnen het formulier omzetten naar huurder
+            // zonder dat de URL meebeweegt), dus daar hoort de zin thuis. Zo
+            // staan beide zinnen bovendien in één alinea in plaats van als twee
+            // losse regels onder elkaar.
           };
     }
     if (stap === 2) {

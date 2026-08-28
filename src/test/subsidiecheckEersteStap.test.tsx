@@ -13,12 +13,7 @@ vi.mock("@/lib/gtm", () => ({ pushGtmEvent: vi.fn() }));
 import { Header } from "@/components/Header";
 import { StapAdres } from "@/components/subsidiecheck/StapAdres";
 import { Voortgang } from "@/components/subsidiecheck/Voortgang";
-import {
-  GEMIDDELD_AANTAL_REGELINGEN,
-  GEMIDDELDE_REGELINGEN_KOP,
-  GEMIDDELDE_REGELINGEN_STAART,
-  GEMIDDELDE_REGELINGEN_ZIN,
-} from "@/config/cijfers";
+import { GEMIDDELD_AANTAL_REGELINGEN, GEMIDDELDE_REGELINGEN_ZIN } from "@/config/cijfers";
 import { SUBSIDIECHECK_BELOFTES } from "@/config/beloftes";
 import type { Bewonertype } from "@/lib/subsidies";
 
@@ -67,8 +62,9 @@ describe("de compacte header van de check", () => {
 
 describe("het feitje op stap 1", () => {
   it("houdt getal en zin bij elkaar", () => {
-    expect(GEMIDDELDE_REGELINGEN_KOP).toBe(`Gemiddeld ${GEMIDDELD_AANTAL_REGELINGEN} regelingen`);
-    expect(GEMIDDELDE_REGELINGEN_ZIN).toBe(`${GEMIDDELDE_REGELINGEN_KOP} ${GEMIDDELDE_REGELINGEN_STAART}`);
+    expect(GEMIDDELDE_REGELINGEN_ZIN).toContain(String(GEMIDDELD_AANTAL_REGELINGEN));
+    // Geen tweede getal in de zin: dan zou onduidelijk zijn welke het gemiddelde is.
+    expect(GEMIDDELDE_REGELINGEN_ZIN.match(/\d+/g)).toEqual([String(GEMIDDELD_AANTAL_REGELINGEN)]);
   });
 
   it("blijft een heel getal: we tonen het gemeten gemiddelde naar beneden afgerond", () => {
@@ -85,7 +81,7 @@ describe("het feitje op stap 1", () => {
   it("staat boven de velden, dus vóór de eerste inspanning", () => {
     const { container } = stapAdres();
 
-    const zin = screen.getByText(GEMIDDELDE_REGELINGEN_KOP);
+    const zin = screen.getByText(GEMIDDELDE_REGELINGEN_ZIN);
     const postcode = container.querySelector("#sc-postcode");
     expect(postcode).not.toBeNull();
     // DOCUMENT_POSITION_FOLLOWING = het postcodeveld komt ná het feitje.
@@ -97,14 +93,14 @@ describe("het feitje op stap 1", () => {
     // voor de andere groepen zou dit een niet-nagemeten belofte zijn.
     for (const type of ["huurder", "vve", "verhuurder"] as Bewonertype[]) {
       const { unmount } = stapAdres({ initBewonertype: type });
-      expect(screen.queryByText(GEMIDDELDE_REGELINGEN_KOP)).toBeNull();
+      expect(screen.queryByText(GEMIDDELDE_REGELINGEN_ZIN)).toBeNull();
       unmount();
     }
   });
 
   it("noemt het cijfer wél bij de standaardsituatie (woningeigenaar)", () => {
     stapAdres({ initBewonertype: "woningeigenaar" });
-    expect(screen.getByText(GEMIDDELDE_REGELINGEN_KOP)).toBeInTheDocument();
+    expect(screen.getByText(GEMIDDELDE_REGELINGEN_ZIN)).toBeInTheDocument();
   });
 });
 
