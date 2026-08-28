@@ -39,6 +39,18 @@ export const ALLE_MAATREGELEN: Maatregel[] = [
 // `leads_bewoners.subsidiecheck_interesses` in het CRM; dezelfde woorden aan
 // beide kanten scheelt vertaalwerk en verwarring. Wijzigt de bron een naam, dan
 // meldt de filtercontrole dat (zie scripts/controleer-esw-filters.mjs).
+//
+// WIJZIG JE DEZE LIJST, DAN MOET ER BUITEN DEZE REPO IETS MEE.
+// 1. De kopie in `supabase/functions/subsidiecheck-mail/index.ts`, en die
+//    function opnieuw deployen. Anders valt een nieuwe maatregel stil weg uit de
+//    interesses van een lead.
+// 2. De n8n-workflow "Website formulier (bewoners)", node "Match bepalen". Die
+//    heeft deze lijst hardgecodeerd om te bepalen of iemand álles aanvinkte; komt
+//    hij niet overeen, dan schrijft n8n negen labels uit waar "Alle maatregelen"
+//    hoorde te staan. Stil, geen foutmelding.
+// 3. De CRM-app heeft een eigen kopie in `src/lib/subsidiecheck.ts` voor haar
+//    eigen subsidiecheck-pagina. Ontbreekt een maatregel daar, dan vraagt het CRM
+//    hem nooit op en mist het regelingen.
 export const MAATREGEL_LABELS: Record<Maatregel, string> = {
   isolatie: "Isolatie en glas",
   warmtepomp: "Warmtepomp",
