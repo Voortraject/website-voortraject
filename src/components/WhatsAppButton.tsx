@@ -13,7 +13,13 @@
  * Verbergt zichzelf zolang er een pagina-eigen actiebalk onderin staat (de
  * mobiele balk op het subsidiecheck-resultaat, die WhatsApp zelf al aanbiedt).
  * Zie `.heeft-actiebalk` in src/index.css.
+ *
+ * Staat helemaal niet op de subsidiecheck: die tool is een gerichte flow, en
+ * een zwevende knop die eruit wegleidt kost daar alleen maar afrondingen. De
+ * contactmogelijkheden binnen de tool zelf blijven wel staan.
  */
+import { useLocation } from "react-router-dom";
+
 import { WhatsAppLogo } from "@/components/WhatsAppLogo";
 import { pushGtmEvent } from "@/lib/gtm";
 import { whatsappUrl } from "@/lib/whatsapp";
@@ -27,9 +33,13 @@ const pillShadow = {
 };
 
 export const WhatsAppButton = () => {
+  const { pathname } = useLocation();
+
   // plek onderscheidt deze sitebrede knop van de WhatsApp-knoppen ín de
   // subsidiecheck, die hun eigen subsidiecheck_whatsapp pushen.
   const meldKlik = () => pushGtmEvent("whatsapp_klik", { plek: "zwevend" });
+
+  if (pathname.startsWith("/subsidiecheck")) return null;
 
   return (
     <a
