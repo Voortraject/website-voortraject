@@ -76,16 +76,22 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
 
       {/* "Let op" komt letterlijk van de bron en is zeldzaam (één op de dertig).
           Bij ISDE staat hier dat je in Groningen en Noord-Drenthe beter de
-          Isolatieaanpak kunt nemen — precies ons werkgebied, en precies het
-          soort dubbeling waar een bewoner zelf niet uitkomt. */}
+          Isolatieaanpak kunt nemen: precies ons werkgebied, en precies het soort
+          dubbeling waar een bewoner zelf niet uitkomt.
+
+          Die tekst is wel lang (bij ISDE 428 tekens). In een gevuld vlak op de
+          dichte kaart werd dat een blok van zes regels dat de hele lijst uit
+          balans trok. Hier staat daarom alleen de melding zelf, als één rustige
+          regel zoals de einddatum erboven; de tekst van de bron staat bovenaan
+          de uitklap, achter dezelfde knop waar ook de voorwaarden zitten. */}
       {regeling.letOp && (
-        <div className="mt-3 flex gap-2 rounded-md bg-secondary/60 p-2.5">
-          <Info size={15} strokeWidth={2} aria-hidden="true" className="mt-0.5 shrink-0 text-primary" />
-          <p className="text-[13px] leading-relaxed text-foreground/80">
-            <span className="font-semibold text-primary">Let op: </span>
-            {regeling.letOp}
-          </p>
-        </div>
+        <p className="mt-2 inline-flex items-start gap-1.5 text-[13px] leading-snug text-primary">
+          <Info size={14} strokeWidth={2} aria-hidden="true" className="mt-[3px] shrink-0 text-accent" />
+          <span>
+            <span className="font-semibold">Let op: </span>
+            er geldt een uitzondering, zie de voorwaarden.
+          </span>
+        </p>
       )}
 
       {/* Aanbieder en uitklapknop op één regel, ook op mobiel: onder elkaar kostte
@@ -120,6 +126,17 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
       {open && (
         <div id={regionId} className="mt-3 flex flex-col gap-3 border-t border-border/60 pt-3 text-[14px] leading-relaxed">
           <p className="text-foreground/80 md:hidden">{regeling.omschrijving}</p>
+          {/* De uitzondering staat bovenaan: wie hier klikt na de melding op de
+              dichte kaart, wil eerst wéten wat die uitzondering is. */}
+          {regeling.letOp && (
+            <div className="flex gap-2 rounded-md bg-secondary/60 p-3">
+              <Info size={15} strokeWidth={2} aria-hidden="true" className="mt-0.5 shrink-0 text-primary" />
+              <p className="text-[13.5px] leading-relaxed text-foreground/80">
+                <span className="font-semibold text-primary">Let op: </span>
+                {regeling.letOp}
+              </p>
+            </div>
+          )}
           {/* De bedragzin van de bron zelf. Het slot rechtsboven heeft maar
               ruimte voor één cijfer; hier staat waar dat cijfer op slaat, en bij
               een regeling zónder cijfer staat hier waaróm er geen bedrag is. */}

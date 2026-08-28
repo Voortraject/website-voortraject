@@ -92,3 +92,33 @@ describe("beloftes bij de subsidiecheck", () => {
     }
   });
 });
+
+describe("de uitzondering die de bron meldt", () => {
+  const metLetOp = {
+    ...isolatieRegeling,
+    letOp:
+      "Woon je in Groningen of Noord-Drenthe? Dan kun je meedoen aan de Isolatieaanpak Nij Begun. Je hoeft dan géén ISDE-subsidie aan te vragen voor isolatie- en ventilatiemaatregelen.",
+  };
+
+  it("zet op de dichte kaart alleen de melding, niet de hele tekst", () => {
+    render(<SubsidieCard regeling={metLetOp} />);
+
+    expect(screen.getByText(/er geldt een uitzondering/i)).toBeInTheDocument();
+    // De tekst van de bron is te lang voor de dichte kaart: 428 tekens bij ISDE
+    // maakten er een blok van zes regels van dat de hele lijst uit balans trok.
+    expect(screen.queryByText(/Isolatieaanpak Nij Begun/)).toBeNull();
+  });
+
+  it("toont de volledige uitzondering wel in de uitklap", () => {
+    render(<SubsidieCard regeling={metLetOp} />);
+    fireEvent.click(screen.getByRole("button", { name: /bekijk voorwaarden/i }));
+
+    expect(screen.getByText(/géén ISDE-subsidie aan te vragen/)).toBeInTheDocument();
+  });
+
+  it("meldt niets als de bron geen uitzondering geeft", () => {
+    render(<SubsidieCard regeling={isolatieRegeling} />);
+
+    expect(screen.queryByText(/let op/i)).toBeNull();
+  });
+});

@@ -456,3 +456,30 @@ uitzondering, met € 53.515 bij de gemeente.
 
 Verificatie na deze ronde: 417 tests groen (5 nieuw), build slaagt, tsc en eslint gelijk aan
 `main`, `deno check` op `subsidiecheck` schoon.
+
+## Twee correcties na meekijken (2026-08-28)
+
+**De "Let op" was te zwaar op de kaart.** De tekst van de bron is bij ISDE 428 tekens, en in een
+gevuld vlak op de dichte kaart werd dat een blok van zes regels dat de hele lijst uit balans
+trok. Nu staat er op de dichte kaart alleen de melding zelf, als één rustige regel in dezelfde
+vorm als de einddatum erboven: een okerkleurig info-icoon plus "Let op: er geldt een
+uitzondering, zie de voorwaarden." De tekst van de bron staat bovenaan de uitklap, achter
+dezelfde knop waar ook het bedrag en de voorwaarde zitten. Eén vaste regel, geen variabele
+lengte op de kaart, en de volgorde in de uitklap is nu uitzondering → bedrag → voorwaarde.
+
+In de mail blijft de volledige tekst wél in het gevulde vlak staan: daar is geen uitklap, dus
+daar is dit de enige plek waar hij kan.
+
+**"Zullen we uitzoeken waar jouw huis nu staat?"** is een uitdrukking, en direct onder een
+pagina die net om een adres heeft gevraagd las hij letterlijk: waar in het land staat je huis.
+Dat is nu "Zullen we uitzoeken wat er al gedaan is en wat er nog kan?" Die zin zegt hetzelfde
+als het voorstel dat de link invult ("Kunnen jullie uitzoeken wat er al aan isolatie is gedaan
+en wat er nog kan?") en sluit aan op de zin ervoor ("Wat er daarna is gedaan verschilt per
+woning"). Alleen de variant voor woningeigenaren met een woning van vóór 1992; de andere drie
+varianten waren al concreet.
+
+**"Van andere aanbieders" is "Van andere organisaties".** Milieu Centraal gebruikt zelf wel
+"aanbieder" (hun veld heet `ProviderName`), maar op een pagina over energie leest dat als
+energieaanbieder. Het woord blijft wél staan onderaan de kaart, waar de échte naam staat.
+
+420 tests groen (3 nieuw op de compacte melding).
