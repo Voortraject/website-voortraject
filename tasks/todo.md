@@ -280,12 +280,34 @@ werkmap buiten `.env`. De naam `ESW_API_KEY` staat ook niet in de bundle. De dev
 end-to-end getest: `http://localhost:8080/mc-api/regulation/search?cityId=9742HJ&targetGroup=Woningeigenaar`
 geeft 12 regelingen, met de key alleen aan de Node-kant.
 
-## Nog te doen
+## Echte aanbiedersnaam op de kaart (punt 5b, naar voren gehaald)
 
-- [ ] Losse vraag aan de opdrachtgever: NHG en SVn komen door de nieuwe indeling onder de kop
-      "Rijksoverheid", en de kaart toont het aanbiederlabel dat uit de groep volgt. Er zou dan
-      "Rijksoverheid" onder een NHG-regeling staan, en dat klopt niet. Punt 5b (de echte
-      aanbiedersnaam op de kaart) lost het op. Naar voren halen of een andere indeling?
+Door de nieuwe indeling kwamen NHG en SVn onder de kop "Rijksoverheid", en de kaart toonde het
+aanbiederlabel dat uit de groep volgde. Er zou dus "Rijksoverheid" onder een NHG-regeling zijn
+komen te staan, en NHG is een private stichting. Op verzoek van de opdrachtgever is 5b daarom
+alsnog in deze PR meegenomen, alleen voor het aanbiederlabel.
+
+`aanbieder` komt nu uit `ProviderName`. De groepskop blijft de overheidslaag, de kaart noemt de
+echte instantie: "RVO", "Gemeente Groningen", "SNN", "Nationaal Warmtefonds", "Belastingdienst",
+"Nationale Hypotheek Garantie".
+
+**Twee dingen moesten daarvoor wijken.** Gemeten over 72 postcode/bewonertype-combinaties komen er
+43 unieke aanbiedersnamen voorbij, waarvan zes langer dan 40 tekens.
+
+1. De bron zet achter een naam soms een afkorting ("Rijksdienst voor Ondernemend Nederland
+   (RVO)") en soms een toelichting ("Nationale Hypotheek Garantie (verkrijgbaar via
+   hypotheekverstrekkers)", 69 tekens). Bij een afkorting nemen we die afkorting: de bron gebruikt
+   voor dezelfde instantie afwisselend "RVO" en de volledige naam, dus zo heet hij op elke kaart
+   hetzelfde. Een toelichting gaat er gewoon af. Staan er twee organisaties voor de haakjes
+   ("Gemeente Den Haag en Stimuleringsfonds Volkshuisvesting (SVn)"), dan korten we niet in: dan
+   zou de gemeente verdwijnen en juist die herkent een bewoner.
+2. `SubsidieCard` kapte de aanbieder af met `truncate`. Dat werkte prima toen er "Rijksoverheid"
+   stond, maar leverde op mobiel "Rijksdienst voor Onder…" op: middenin een woord afgebroken.
+   Headless geverifieerd op 390px. De naam breekt nu af op een spatie en mag een tweede regel
+   gebruiken; op 1440px past alles op één regel, op 390px gebruiken drie van de tien kaarten er
+   twee.
+
+## Nog te doen
 - [ ] Deploy stap 1 (function zonder secret) — moet de opdrachtgever goedkeuren, het is productie.
 - [ ] Secret zetten: `bunx supabase secrets set ESW_API_KEY=… --project-ref lfelnfukbrxznkevnevr`
 - [ ] Productieverificatie: 9742HJ over vier bewonertypes, `via: "api"` in het antwoord

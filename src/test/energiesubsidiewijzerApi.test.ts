@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import {
+  aanbiederVan,
   filterOpMaatregelen,
   idVan,
   maatregelenVan,
@@ -106,6 +107,48 @@ describe("Energiesubsidiewijzer-API: velden vertalen", () => {
   it("laat maatregelen die wij niet aanbieden buiten beschouwing", () => {
     // 1613 is asbest verwijderen; dat staat niet in onze acht.
     expect(maatregelenVan({ Tags: [{ Value: "1613" }, { Value: "1503" }] })).toEqual(["isolatie"]);
+  });
+
+  it("toont de echte aanbieder, niet het generieke laaglabel", () => {
+    const nhg = naarRegeling(fixture.find((r) => r.Id === "1731")!);
+    // Stond eerst als "Overige aanbieders" op de kaart, en zou met de nieuwe
+    // indeling "Rijksoverheid" hebben gezegd. NHG is geen rijksoverheid.
+    expect(nhg.aanbieder).toBe("Nationale Hypotheek Garantie");
+    expect(naarRegeling(fixture.find((r) => r.Id === "3018")!).aanbieder).toBe("Gemeente Groningen");
+    expect(naarRegeling(fixture.find((r) => r.Id === "2559")!).aanbieder).toBe(
+      "Samenwerkingsverband Noord-Nederland",
+    );
+  });
+
+  it("gebruikt de afkorting die de bron zelf achter de naam zet", () => {
+    // De bron noemt dezelfde instantie afwisselend "RVO" en voluit; zo heet hij
+    // op elke kaart hetzelfde, en past hij ook op een telefoon.
+    expect(aanbiederVan({ ProviderName: "Rijksdienst voor Ondernemend Nederland (RVO)" }, "rijk")).toBe("RVO");
+    expect(aanbiederVan({ ProviderName: "Stimuleringsfonds Volkshuisvesting (SVn)" }, "gemeente")).toBe("SVn");
+  });
+
+  it("haalt een toelichting tussen haakjes weg in plaats van hem als afkorting te lezen", () => {
+    expect(
+      aanbiederVan({ ProviderName: "Nationale Hypotheek Garantie (verkrijgbaar via hypotheekverstrekkers)" }, "rijk"),
+    ).toBe("Nationale Hypotheek Garantie");
+  });
+
+  it("kort niet in tot de afkorting als er twee organisaties voor de haakjes staan", () => {
+    // "SVn" zou hier de gemeente wegpoetsen, en juist die herkent een bewoner.
+    // De naam blijft dus voluit staan; de kaart laat hem over twee regels lopen.
+    expect(
+      aanbiederVan({ ProviderName: "Gemeente Den Haag en Stimuleringsfonds Volkshuisvesting (SVn)" }, "gemeente"),
+    ).toBe("Gemeente Den Haag en Stimuleringsfonds Volkshuisvesting (SVn)");
+  });
+
+  it("valt terug op het laaglabel als de bron geen aanbieder noemt", () => {
+    expect(aanbiederVan({}, "gemeente")).toBe("Gemeente");
+    expect(aanbiederVan({ ProviderName: "   " }, "overig")).toBe("Overige aanbieders");
+  });
+
+  it("haalt de spatie weg die de bron soms achter een naam laat staan", () => {
+    // De Belastingdienst komt binnen als "Belastingdienst " (met spatie).
+    expect(naarRegeling(fixture.find((r) => r.Id === "1647")!).aanbieder).toBe("Belastingdienst");
   });
 
   it("houdt entities en tags uit de zichtbare tekst", () => {

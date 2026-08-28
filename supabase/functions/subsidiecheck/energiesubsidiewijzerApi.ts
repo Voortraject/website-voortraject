@@ -46,15 +46,43 @@ export type EswApiRegeling = {
   Tags?: { Label?: string; Value?: string }[];
 };
 
-// Het generieke aanbiederlabel dat de kaart nu toont. De API kent de échte naam
-// ("Gemeente Groningen", "SNN"); die tonen is een aparte, zichtbare wijziging
-// en gaat in een volgende PR (zie tasks/todo.md 5b).
+// Terugval voor het aanbiederlabel: alleen als de bron geen naam meegeeft. De
+// scrape kón niet anders dan dit generieke label tonen, want de naam stond
+// nergens op de pagina; de API geeft hem wél, en dan is "Rijksoverheid" onder
+// een NHG-regeling gewoon onwaar.
 const NIVEAU_AANBIEDER: Record<SubsidieNiveau, string> = {
   rijk: "Rijksoverheid",
   provincie: "Provincie",
   gemeente: "Gemeente",
   overig: "Overige aanbieders",
 };
+
+// De bron zet achter een naam soms een afkorting ("Rijksdienst voor Ondernemend
+// Nederland (RVO)") en soms een toelichting ("Nationale Hypotheek Garantie
+// (verkrijgbaar via hypotheekverstrekkers)", 69 tekens). Allebei te lang voor de
+// kaartvoet, maar ze vragen om iets anders: de afkorting ís de korte naam, de
+// toelichting kan gewoon weg.
+//
+// Gemeten over 72 postcode/bewonertype-combinaties: 43 unieke aanbiedersnamen,
+// waarvan zes langer dan 40 tekens. De bron gebruikt voor dezelfde instantie
+// afwisselend "RVO" en "Rijksdienst voor Ondernemend Nederland (RVO)"; door de
+// afkorting te kiezen heet hij op elke kaart hetzelfde.
+const AFKORTING_ACHTERAAN_RE = /^(.+?)\s*\(([A-Za-z]{2,5})\)$/;
+const TOELICHTING_ACHTERAAN_RE = /^(.+?)\s*\([^)]{6,}\)$/;
+
+/** De naam van de aanbieder zoals hij op de kaart komt te staan. */
+export function aanbiederVan(regeling: EswApiRegeling, niveau: SubsidieNiveau): string {
+  const naam = schoon(regeling.ProviderName ?? "");
+  if (!naam) return NIVEAU_AANBIEDER[niveau];
+
+  const afkorting = naam.match(AFKORTING_ACHTERAAN_RE);
+  // Alleen bij één organisatie. "Gemeente Den Haag en Stimuleringsfonds
+  // Volkshuisvesting (SVn)" inkorten tot "SVn" laat de gemeente verdwijnen, en
+  // juist die wil een bewoner uit zijn eigen plaats herkennen.
+  if (afkorting && /[A-Z]/.test(afkorting[2]) && !/\ben\b/i.test(afkorting[1])) return afkorting[2];
+
+  return naam.match(TOELICHTING_ACHTERAAN_RE)?.[1] ?? naam;
+}
 
 const ALLE_BEWONERTYPES: Bewonertype[] = ["woningeigenaar", "huurder", "vve", "verhuurder"];
 
@@ -138,7 +166,7 @@ export function naarRegeling(regeling: EswApiRegeling): SubsidieRegeling {
     titel: schoon(regeling.Title ?? ""),
     niveau,
     type: typeVan(regeling),
-    aanbieder: NIVEAU_AANBIEDER[niveau],
+    aanbieder: aanbiederVan(regeling, niveau),
     omschrijving: schoon(regeling.Intro ?? ""),
     // Alleen de eerste alinea van de bedragtekst, net als de scrape deed: daarna
     // volgt vaak een opsomming met uitzonderingsbedragen, en het hoogste getal

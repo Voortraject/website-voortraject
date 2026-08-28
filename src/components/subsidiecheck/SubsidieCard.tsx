@@ -52,9 +52,16 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
 
       {/* Aanbieder en uitklapknop op één regel, ook op mobiel: onder elkaar kostte
           dat per kaart een extra regel, en met elf kaarten is dat een half scherm
-          scrollen. De aanbieder mag inkorten, de knop nooit. */}
+          scrollen. De knop wijkt nooit.
+
+          De aanbieder stond hier afgekapt (`truncate`), wat prima werkte zolang
+          er "Rijksoverheid" of "Gemeente" stond. Sinds de officiële API de échte
+          naam levert, leverde dat op mobiel "Rijksdienst voor Onder…" op: midden
+          in een woord afgebroken en daarmee onleesbaar. Nu breekt de naam af op
+          een spatie en mag hij een tweede regel gebruiken. Dat kost alleen ruimte
+          bij de paar lange namen, en die informatie is het waard. */}
       <div className="mt-3 flex items-center justify-between gap-3 border-t border-border/60 pt-2.5 md:mt-4 md:pt-3">
-        <span className="min-w-0 truncate text-[13px] text-muted-foreground">{regeling.aanbieder}</span>
+        <span className="min-w-0 text-[13px] leading-snug text-muted-foreground">{regeling.aanbieder}</span>
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
