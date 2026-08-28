@@ -97,7 +97,7 @@ describe("groepen op het resultaat", () => {
 
     await screen.findByText("Van de Rijksoverheid");
     expect(screen.queryByText(/leningen en overig/i)).toBeNull();
-    expect(screen.getByText("Van andere aanbieders")).toBeInTheDocument();
+    expect(screen.getByText("Van andere organisaties")).toBeInTheDocument();
   });
 
   it("legt één keer uit waarom er groepen zijn", async () => {

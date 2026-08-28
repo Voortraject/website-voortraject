@@ -435,9 +435,11 @@ Drie dingen, alle drie zowel op de site als in de overzichtsmail.
 1. **Koppen in bewonerstaal.** "Rijksoverheid / Provincie / Gemeente" is geworden "Van de
    Rijksoverheid / Van de provincie / Van jouw gemeente". Dat laatste is de groep waar de
    verrassing zit: dat hun eigen gemeente iets heeft, weten de meeste mensen niet.
-2. **"Leningen en overig" is "Van andere aanbieders".** Die kop beloofde leningen terwijl
+2. **"Leningen en overig" is "Van andere organisaties".** Die kop beloofde leningen terwijl
    leningen juist over álle groepen verspreid staan en al aan hun blauwe kleur te herkennen
-   zijn. En hij is in alle tien de gemeten noordelijke postcodes leeg.
+   zijn. En hij is in alle tien de gemeten noordelijke postcodes leeg. Bewust "organisaties" en
+   niet "aanbieders": Milieu Centraal gebruikt dat woord zelf wel, maar op een pagina over
+   energie leest "aanbieder" als energieaanbieder.
 3. **Eén zin boven de groepen**: "Deze regelingen komen van verschillende overheden. Daarom kun
    je ze vaak naast elkaar aanvragen." Zonder die zin is de indeling een ambtelijke ordening;
    mét die zin is het het argument dat ertoe doet. Alleen bij twee of meer groepen, want bij één

@@ -118,11 +118,17 @@ export function bouwEswFilterQuery(bewonertype: Bewonertype, maatregelen: Maatre
 // juist over álle groepen verspreid staan en al aan hun blauwe kleur te
 // herkennen zijn. In alle tien de noordelijke postcodes die we gemeten hebben,
 // is deze groep bovendien leeg.
+//
+// En bewust "organisaties" en niet "aanbieders". Milieu Centraal gebruikt zelf
+// wel "aanbieder" (hun veld heet ProviderName en hun voorwaardentekst verwijst
+// naar "de website van de aanbieder"), maar op een pagina die over energie gaat
+// leest "aanbieder" als energieaanbieder. Dat is precies de verwarring die je
+// hier niet wilt.
 export const NIVEAU_LABELS: Record<SubsidieNiveau, string> = {
   rijk: "Van de Rijksoverheid",
   provincie: "Van de provincie",
   gemeente: "Van jouw gemeente",
-  overig: "Van andere aanbieders",
+  overig: "Van andere organisaties",
 };
 
 // Waarom er groepen staan, in één zin. Zonder deze zin is de indeling een

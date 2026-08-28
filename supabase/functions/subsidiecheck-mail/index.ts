@@ -146,7 +146,7 @@ const NIVEAU_LABELS: Record<Niveau, string> = {
   rijk: "Van de Rijksoverheid",
   provincie: "Van de provincie",
   gemeente: "Van jouw gemeente",
-  overig: "Van andere aanbieders",
+  overig: "Van andere organisaties",
 };
 
 // Wit-transparant logo (voor de navy header). Staat sinds 24-08-2026 in
