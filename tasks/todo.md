@@ -511,3 +511,25 @@ maanden valt, zodat de regel op één plek staat; de mail heeft een eigen vangne
 verder dan een jaar weg negeert.
 
 423 tests groen (7 nieuw).
+
+## "Alleen voor asbest verwijderen" (2026-08-28)
+
+Gemeten over twintig postcodes in Groningen, Drenthe en Friesland maal vier bewonertypes: 75
+combinaties met resultaat. De regel "Alleen voor asbest verwijderen" stond in **14 daarvan, 19
+procent**. Dat is geen randgeval, dus aangepast.
+
+Niet door het label van Milieu Centraal te wijzigen (dat blijft "Asbest verwijderen", conform de
+afspraak), maar door het voorzetsel uit de zin te halen: **"Alleen asbest verwijderen"**. De
+labels van de bron zijn niet allemaal zelfstandige naamwoorden; naast "zonnepanelen" en
+"isolatie en glas" bestaan er ook werkwoordsvormen als "asbest verwijderen", "tuin vergroenen"
+en "gasaansluiting verwijderen". Na "voor" leest zo'n label krom, zónder voorzetsel klopt élke
+schrijfwijze. Dat is dus juist toekomstbestendiger dan een uitzondering per label.
+
+Frequentie van alle vier de regels, over diezelfde 75 combinaties:
+
+| regel | in hoeveel overzichten | uit hoeveel regelingen |
+|---|---|---|
+| Alleen isolatie en glas | 40 | 15 |
+| Alleen zonnepanelen | 20 | 1 |
+| Alleen asbest verwijderen | 14 | 2 |
+| Alleen isolatie en glas, ventilatie | 6 | 4 |

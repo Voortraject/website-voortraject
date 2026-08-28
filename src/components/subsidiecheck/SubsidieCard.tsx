@@ -74,9 +74,18 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
         {regeling.titel}
       </h3>
       {/* Alleen als de regeling maar één of twee maatregelen dekt: dan is het
-          een beperking en hoort hij vóór de klik te staan, niet in de uitklap. */}
+          een beperking en hoort hij vóór de klik te staan, niet in de uitklap.
+
+          Bewust "Alleen X" en niet "Alleen voor X". De labels komen van Milieu
+          Centraal en zijn niet allemaal zelfstandige naamwoorden: naast
+          "zonnepanelen" en "isolatie en glas" bestaan er ook werkwoordsvormen
+          als "asbest verwijderen" en "tuin vergroenen". Na "voor" leest zo'n
+          label krom, en dat is geen randgeval: "Alleen voor asbest verwijderen"
+          stond in negentien procent van de noordelijke overzichten. Zonder dat
+          voorzetsel klopt élke schrijfwijze die de bron kan bedenken, dus dit
+          blijft ook goed als we ooit een maatregel toevoegen. */}
       {regeling.beperktTot && (
-        <p className="mt-1.5 text-[13px] font-medium text-muted-foreground">Alleen voor {regeling.beperktTot}</p>
+        <p className="mt-1.5 text-[13px] font-medium text-muted-foreground">Alleen {regeling.beperktTot}</p>
       )}
 
       {/* Op mobiel blijft de gesloten kaart compact (badge, titel, bedrag,

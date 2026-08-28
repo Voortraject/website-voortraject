@@ -47,7 +47,7 @@ describe("claims op de regelingkaart", () => {
 
     expect(screen.queryByText(/vrijwel alle maatregelen/i)).toBeNull();
     // Ook geen opsomming: de bron weet het simpelweg niet per regeling.
-    expect(screen.queryByText(/^Voor .*Isolatie en glas/i)).toBeNull();
+    expect(screen.queryByText(/^Alleen /i)).toBeNull();
   });
 
   it("zegt het wél als de bron meldt dat een regeling smal is", () => {
@@ -56,7 +56,7 @@ describe("claims op de regelingkaart", () => {
     // zien dat dit een isolatiesubsidie is.
     render(<SubsidieCard regeling={{ ...isolatieRegeling, beperktTot: "isolatie en glas" }} />);
 
-    expect(screen.getByText(/Alleen voor isolatie en glas/i)).toBeInTheDocument();
+    expect(screen.getByText(/^Alleen isolatie en glas$/i)).toBeInTheDocument();
   });
 
   it("herhaalt de combineer-belofte niet op elke kaart", () => {
