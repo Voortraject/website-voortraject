@@ -539,3 +539,21 @@ draaien nadat de achtergrondtaak was gestopt (vite overleeft het stoppen van de 
 - Bij een melding "de poort laat me door": kijk eerst welke *bron* de gebruiker zag
   (localhost of productie) en welke waarde die bron op dat moment serveerde
   (`curl localhost:8080/src/config/features.ts`), vóór je in de logica gaat zoeken.
+
+## 2026-08-28 — `git stash` gebruikt om iets te controleren, terwijl er iemand anders in dezelfde werkmap schreef
+**Context:** Om te bewijzen dat drie `tsc`-fouten al op `main` stonden en niet uit mijn wijziging
+kwamen, is `git stash -u` gebruikt, daarna `tsc`, daarna `git stash pop`. Die pop faalde: in de
+seconden ertussen had een ander proces (een parallelle sessie of Lovable) `StapAdres.tsx` en
+`cijfers.ts` beschreven. Gevolg: mijn tracked wijzigingen zaten vast in de stash, de untracked
+bestanden waren wél teruggezet, en in de stash zat bovendien een half afgemaakte versie van
+andermans bestand. Alles was te redden (`git checkout stash@{0} -- <alleen mijn bestanden>`),
+maar het had net zo goed andermans werk kunnen kosten.
+**Lesson:**
+- Gebruik `git stash` niet als meetinstrument. Wil je weten of een fout al bestond, vergelijk dan
+  zónder de werkmap aan te raken: `git worktree add <tmp> HEAD` in een aparte map, of draai de
+  check tegen `git show HEAD:<pad>`. Een worktree raakt de bestanden van een ander niet.
+- Ga er niet van uit dat de werkmap alleen van jou is. Het `gitStatus`-blok bovenaan de sessie is
+  een momentopname; deze repo wordt ook vanuit Lovable en vanuit andere sessies beschreven.
+- Zie je onverwachte wijzigingen: eerst `git diff > back-up.patch` in de scratchpad, dan pas
+  herstellen. En stage bij het committen expliciet je eigen bestanden (`git add <pad> …`), nooit
+  `git add -A`, anders neem je andermans halve werk mee je PR in.
