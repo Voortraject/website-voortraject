@@ -14,9 +14,12 @@ project_id = "lfelnfukbrxznkevnevr"
 [functions.sync-google-reviews]
 verify_jwt = false
 
-# Subsidiecheck-databrug: haalt serverside de Energiesubsidiewijzer op, parset +
-# verrijkt + cachet, en levert JSON met open CORS. Geen JWT: publiek/anoniem te
-# gebruiken. Geen secrets nodig (raakt de database niet).
+# Subsidiecheck-databrug: haalt serverside de Energiesubsidiewijzer van Milieu
+# Centraal op, vertaalt naar onze types + cachet, en levert JSON met open CORS.
+# Geen JWT: publiek/anoniem te gebruiken. Raakt de database niet.
+# Secret: ESW_API_KEY (de API-key van Milieu Centraal). Is die niet gezet, dan
+# valt de function terug op de oude route (scrape van hun publieke site), zodat
+# de secret weghalen een directe rollback is zonder deploy.
 [functions.subsidiecheck]
 verify_jwt = false
 

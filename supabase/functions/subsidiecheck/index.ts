@@ -1,26 +1,42 @@
 // Supabase Edge Function: subsidiecheck
 //
-// De productie-databrug naar de Energiesubsidiewijzer van Verbeterjehuis
-// (RVO/Milieu Centraal, CC-0). In DEV praat de frontend rechtstreeks met de
-// Vite-proxy `/esw`; in PRODUCTIE praat 'ie met déze function, die:
-//   1. de resultatenlijst per postcode serverside ophaalt + parset,
-//   2. elke regeling verrijkt met bedrag/voorwaarde/officiële bron
-//      (detailpagina's — N+1, met een beleefde concurrency-limiet),
-//   3. het resultaat per postcode cachet (in-memory, TTL) tegen latency en
-//      onnodige load op de bron,
-//   4. het al verrijkt als JSON teruggeeft, met open CORS (data is publiek).
+// De productie-databrug naar de Energiesubsidiewijzer van Milieu Centraal. In
+// DEV praat de frontend via een Vite-proxy rechtstreeks met de bron; in
+// PRODUCTIE praat 'ie met déze function, die de regelingen per postcode ophaalt,
+// naar onze types vertaalt, cachet en als JSON teruggeeft met open CORS.
 //
-// Zo blijft het scrapen serverside (geen CORS in de browser, één plek om de
-// User-Agent en caching te beheren). De parser is een kopie van
-// src/lib/subsidies/energiesubsidiewijzer.ts (zie de header daar).
+// Twee routes naar dezelfde uitkomst:
+//   1. OFFICIËLE API (`ESW_API_KEY` gezet). Eén request per postcode en
+//      bewonertype; het antwoord bevat al bedrag, voorwaarden, officiële bron en
+//      de maatregelen per regeling. Filteren op maatregelen doen we hier, op de
+//      `Tags` uit dat antwoord.
+//   2. OUDE ROUTE (geen key, of de API valt uit). De scrape van hun publieke
+//      site: lijstpagina parsen en per regeling een detailpagina ophalen. Blijft
+//      staan als vangnet tijdens de overstap en gaat daarna weg (tasks/todo.md).
 //
-// Geen secrets nodig; deze function raakt de database niet. verify_jwt = false
-// (zie config.toml) omdat de checker publiek en anoniem te gebruiken is.
+// Het contract naar de frontend is in beide gevallen identiek — zelfde
+// queryparameters, zelfde JSON — zodat ook een oude, nog gecachete browserbundle
+// blijft werken en de overstap onzichtbaar is. Het veld `via` in het antwoord
+// zegt welke route het is geworden; dat is puur voor onze eigen verificatie.
+//
+// Secret: ESW_API_KEY (Milieu Centraal). Deze function raakt de database niet.
+// verify_jwt = false (zie config.toml) omdat de checker publiek en anoniem te
+// gebruiken is.
 
 import { parseDetail, parseResultaten, verrijk, type RegelingDetail } from "./energiesubsidiewijzer.ts";
+import {
+  filterOpFilterIds,
+  naarRegeling,
+  type EswApiRegeling,
+} from "./energiesubsidiewijzerApi.ts";
 import type { SubsidieRegeling } from "./types.ts";
 
 const BRON = "https://www.verbeterjehuis.nl";
+const API_ZOEKEN = `${BRON}/api/v1/regulation/search`;
+// Ontbreekt de key, dan draait de function gewoon op de oude route. Zo kunnen we
+// deployen vóór de secret bestaat, en met het weghalen van de secret terugrollen
+// zonder release.
+const API_KEY = Deno.env.get("ESW_API_KEY") ?? "";
 // Een echte browser-UA: de bron levert server-rendered HTML en kan kale
 // bots weren. Zelfde UA als de Vite-dev-proxy (vite.config.ts).
 const USER_AGENT =
@@ -51,6 +67,13 @@ const lijstCache = new Map<string, LijstCacheItem>();
 
 type DetailCacheItem = { detail: RegelingDetail; at: number };
 const detailCache = new Map<string, DetailCacheItem>();
+
+// De API-cache bewaart het rúwe antwoord per postcode en bewonertype. Het
+// filteren op maatregelen gebeurt daarna, dus één opgehaald antwoord bedient
+// alle 255 maatregelcombinaties in plaats van één. Dat scheelt fors in
+// cache-missers ten opzichte van de oude route.
+type ApiCacheItem = { regelingen: EswApiRegeling[]; at: number };
+const apiCache = new Map<string, ApiCacheItem>();
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -131,6 +154,38 @@ async function haalRegelingen(cacheKey: string, bronQuery: string): Promise<Subs
   return verrijkt;
 }
 
+// --- Route 1: de officiële API ---
+// `cityId` accepteert volgens de API Guide een gemeente-id, een plaatsnaam óf
+// een postcode; wij sturen de PC6 die de bezoeker invulde.
+async function haalViaApi(postcode: string, resident: string): Promise<EswApiRegeling[]> {
+  const cacheKey = `${postcode}|${resident}`;
+  const cached = apiCache.get(cacheKey);
+  if (cached && Date.now() - cached.at < LIJST_TTL_MS) return cached.regelingen;
+
+  const zoek = new URL(API_ZOEKEN);
+  zoek.searchParams.set("cityId", postcode);
+  if (resident) zoek.searchParams.set("targetGroup", resident);
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  try {
+    const res = await fetch(zoek, {
+      headers: { apiKey: API_KEY, Accept: "application/json" },
+      signal: controller.signal,
+    });
+    if (!res.ok) throw new Error(`Energiesubsidiewijzer-API gaf status ${res.status}`);
+    const data = await res.json();
+    // Een lege lijst is een geldig antwoord ("geen regelingen voor deze
+    // situatie"); iets anders dan een lijst is dat niet.
+    if (!Array.isArray(data)) throw new Error("Energiesubsidiewijzer-API gaf geen lijst terug");
+    const regelingen = data as EswApiRegeling[];
+    apiCache.set(cacheKey, { regelingen, at: Date.now() });
+    return regelingen;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: CORS });
   if (req.method !== "GET") return json({ error: "Alleen GET" }, 405);
@@ -142,8 +197,8 @@ Deno.serve(async (req: Request) => {
     return json({ error: "Ongeldige postcode. Verwacht een PC6, bijv. 9742HJ." }, 400);
   }
 
-  // Forward het bewonertype (type-of-resident) en de maatregel-filters naar de
-  // bron, zodat Verbeterjehuis server-side filtert (exact als hun eigen tool).
+  // Het bewonertype (`type-of-resident`) en de maatregel-filters komen binnen in
+  // de waarden van de bron zelf, dus we geven ze onvertaald door.
   const bron = new URLSearchParams();
   bron.set("postalcode", postcode);
   const resident = url.searchParams.get("type-of-resident");
@@ -152,12 +207,26 @@ Deno.serve(async (req: Request) => {
   for (const f of filters) bron.append("filter", f);
   const cacheKey = `${postcode}|${resident ?? ""}|${filters.join(",")}`;
 
+  // Route 1. Faalt de API, dan gaan we door naar de oude route in plaats van de
+  // bezoeker een foutmelding te geven: een storing bij hen mag ons niet stilzetten.
+  if (API_KEY) {
+    try {
+      const ruw = await haalViaApi(postcode, resident ?? "");
+      const regelingen = filterOpFilterIds(ruw, filters).map(naarRegeling);
+      return json({ postcode, regelingen, bron: "Energiesubsidiewijzer", via: "api" });
+    } catch (err) {
+      console.error("Energiesubsidiewijzer-API mislukt, terug naar de oude route:", err);
+    }
+  }
+
+  // Route 2 (vangnet).
   try {
     const regelingen = await haalRegelingen(cacheKey, bron.toString());
-    return json({ postcode, regelingen, bron: "Energiesubsidiewijzer" });
+    return json({ postcode, regelingen, bron: "Energiesubsidiewijzer", via: "scrape" });
   } catch (err) {
-    // De frontend valt bij een fout stil terug op de mock (zie de provider),
-    // dus een 502 hier is prima en informatief in de logs.
+    // Beide routes plat. De frontend toont dan de eerlijke foutstaat met
+    // "Opnieuw proberen" (geen voorbeelddata, zie de provider), dus een 502 is
+    // hier het juiste antwoord en informatief in de logs.
     return json({ error: err instanceof Error ? err.message : String(err) }, 502);
   }
 });

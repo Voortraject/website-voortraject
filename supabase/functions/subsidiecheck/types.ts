@@ -45,3 +45,22 @@ export type SubsidieRegeling = {
   maatregelen: Maatregel[];
   doelgroepen: Bewonertype[];
 };
+
+// --- Bron-koppeling: Energiesubsidiewijzer (verbatim uit src/lib/subsidies/types.ts) ---
+export const BEWONERTYPE_RESIDENT: Record<Bewonertype, string> = {
+  woningeigenaar: "Woningeigenaar",
+  vve: "Vereniging van Eigenaren",
+  huurder: "Huurder",
+  verhuurder: "Particuliere woningverhuurder",
+};
+
+export const MAATREGEL_FILTER_ID: Record<Maatregel, string> = {
+  isolatie: "1503",
+  warmtepomp: "1564",
+  zonnepanelen: "1571",
+  zonneboiler: "1584",
+  ventilatie: "1581",
+  warmtenet: "1594",
+  "elektrisch-koken": "1601",
+  thuisbatterij: "1602",
+};

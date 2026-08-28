@@ -15,8 +15,13 @@
 //  - type komt uit het URL-pad: /leningen/ = lening, anders subsidie
 //    (/overig/, zoals een btw-verlaging, rekenen we tot "geen lening" = subsidie).
 
+import { beknoptBedrag, decodeEntities, schoon } from "./tekst";
 import type { Bewonertype, Maatregel, SubsidieNiveau, SubsidieRegeling, SubsidieType } from "./types";
 import { ALLE_MAATREGELEN } from "./types";
+
+// De tekst-helpers wonen in tekst.ts, omdat de officiële API ze net zo hard
+// nodig heeft. Hier her-geëxporteerd zodat bestaande imports blijven werken.
+export { beknoptBedrag, decodeEntities };
 
 const LABEL_NAAR_NIVEAU: Record<string, SubsidieNiveau> = {
   "national-government": "rijk",
@@ -35,29 +40,6 @@ const NIVEAU_AANBIEDER: Record<SubsidieNiveau, string> = {
 // Alle bewonertypes: de lijst is al op postcode gefilterd door de bron; wij
 // filteren client-side niet verder weg tenzij we detail-doelgroepen hebben.
 const ALLE_BEWONERTYPES: Bewonertype[] = ["woningeigenaar", "huurder", "vve", "verhuurder"];
-
-// Losse named entities die in de teksten voorkomen; numeriek (&#x..; / &#..;)
-// wordt generiek afgehandeld.
-const NAMED: Record<string, string> = {
-  amp: "&",
-  lt: "<",
-  gt: ">",
-  quot: '"',
-  apos: "'",
-  nbsp: " ",
-};
-
-export function decodeEntities(input: string): string {
-  return input
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCodePoint(parseInt(h, 16)))
-    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(parseInt(d, 10)))
-    .replace(/&([a-zA-Z]+);/g, (m, name) => NAMED[name] ?? m);
-}
-
-// Verwijdert HTML-tags, decodeert entities en normaliseert witruimte.
-function schoon(fragment: string): string {
-  return decodeEntities(fragment.replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
-}
 
 function eersteMatch(bron: string, re: RegExp): string | undefined {
   const m = bron.match(re);
@@ -178,26 +160,6 @@ function officieleBron(html: string): string | undefined {
     if (!beste || rang < beste.rang) beste = { url, rang };
   }
   return beste?.url;
-}
-
-// De "Bedrag"-sectie is een hele alinea; voor het compacte bedrag-slot destilleren
-// we een korte indicatie: het hoogste euro-bedrag ("tot € 10.000") of anders een
-// percentage ("50–100% van de kosten"). Geen getal → geen indicatie (eerlijk;
-// bijv. ISDE hangt af van de maatregel).
-export function beknoptBedrag(tekst?: string): string | undefined {
-  if (!tekst) return undefined;
-  const euros = [...tekst.matchAll(/€\s?([\d.]+)/g)]
-    .map((m) => parseInt(m[1].replace(/\./g, ""), 10))
-    .filter((n) => Number.isFinite(n) && n > 0);
-  if (euros.length) {
-    const max = Math.max(...euros);
-    return `tot € ${max.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
-  }
-  const reeks = tekst.match(/(\d{1,3})\s*%\s*(?:tot|-|–|en)\s*(\d{1,3})\s*%/i);
-  if (reeks) return `${reeks[1]}–${reeks[2]}% van de kosten`;
-  const enkel = tekst.match(/\b(?:tot|maximaal)?\s*(\d{1,3})\s*%/i);
-  if (enkel) return `tot ${enkel[1]}% van de kosten`;
-  return undefined;
 }
 
 /** Verrijkt een regeling met bedrag, belangrijkste voorwaarde en officiële bron. */
