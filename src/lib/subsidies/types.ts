@@ -110,12 +110,30 @@ export function bouwEswFilterQuery(bewonertype: Bewonertype, maatregelen: Maatre
   return params.toString();
 }
 
+// Koppen boven de groepen op het resultaat. In bewonerstaal ("van jouw
+// gemeente"), want dat is de groep waar de verrassing zit: dat je eigen gemeente
+// iets heeft, weten de meeste mensen niet.
+//
+// "Leningen en overig" is hier weg. Die kop beloofde leningen terwijl leningen
+// juist over álle groepen verspreid staan en al aan hun blauwe kleur te
+// herkennen zijn. In alle tien de noordelijke postcodes die we gemeten hebben,
+// is deze groep bovendien leeg.
 export const NIVEAU_LABELS: Record<SubsidieNiveau, string> = {
-  rijk: "Rijksoverheid",
-  provincie: "Provincie",
-  gemeente: "Gemeente",
-  overig: "Leningen en overig",
+  rijk: "Van de Rijksoverheid",
+  provincie: "Van de provincie",
+  gemeente: "Van jouw gemeente",
+  overig: "Van andere aanbieders",
 };
+
+// Waarom er groepen staan, in één zin. Zonder deze zin is de indeling een
+// ambtelijke ordening; mét deze zin is het het argument dat ertoe doet, want
+// verschillende potten betekent dat je ze vaak naast elkaar kunt aanvragen.
+// Deze zin stond ooit op élke kaart en is toen weggehaald omdat hij twaalf keer
+// herhaald werd; hij hoorde daarna één keer op het resultaat te komen, maar dat
+// is er nooit van gekomen. "Vaak" en niet "altijd": stapelen mag lang niet
+// overal, en dat uitzoeken is precies waar wij voor zijn.
+export const WAAROM_GROEPEN =
+  "Deze regelingen komen van verschillende overheden. Daarom kun je ze vaak naast elkaar aanvragen.";
 
 export const TYPE_LABELS: Record<SubsidieType, string> = {
   subsidie: "Subsidie",

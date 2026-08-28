@@ -7,10 +7,13 @@ import { describe, expect, it } from "vitest";
 // juist geloofwaardigheid is wat deze tool moet opleveren.
 //
 // Twee dingen liepen mis en mogen niet terugkomen:
-//  1. Elke regelingkaart toonde "Voor vrijwel alle maatregelen". Dat komt niet
-//     uit de bron: de Energiesubsidiewijzer levert per regeling géén
-//     maatregelenlijst, dus de parser vult `maatregelen` met alle acht. Een
-//     isolatiesubsidie kreeg zo dezelfde regel als een brede regeling.
+//  1. Elke regelingkaart toonde "Voor vrijwel alle maatregelen". De scrape gaf
+//     per regeling géén maatregelenlijst, dus `maatregelen` werd met alle acht
+//     gevuld en een isolatiesubsidie kreeg dezelfde regel als een brede
+//     regeling. De officiële API levert ze wél, dus de kaart mag er nu iets over
+//     zeggen — maar alleen wanneer de bron zegt dat de regeling écht smal is
+//     (`beperktTot`), en nooit op grond van een lijst die wij zelf hebben
+//     volgezet.
 //  2. De beloftes bij de check zeiden "Geen account nodig", terwijl de stap
 //     erna om naam, e-mail en telefoon vraagt.
 
@@ -19,9 +22,10 @@ import { SubsidieCard } from "@/components/subsidiecheck/SubsidieCard";
 import { SUBSIDIECHECK_BELOFTES } from "@/config/beloftes";
 import { ALLE_MAATREGELEN, type SubsidieRegeling } from "@/lib/subsidies";
 
-// Precies zoals de live edge function een regeling teruggeeft: alle acht
-// maatregelen en alle vier de doelgroepen, ook bij een regeling die feitelijk
-// alleen over isolatie gaat. Geverifieerd tegen de bron voor postcode 7811AB.
+// Zoals de oude scrape een regeling teruggaf: alle maatregelen en alle vier de
+// doelgroepen, ook bij een regeling die feitelijk alleen over isolatie gaat.
+// `beperktTot` is leeg, want de scrape wist het niet. Geverifieerd tegen de bron
+// voor postcode 7811AB.
 const isolatieRegeling: SubsidieRegeling = {
   id: "subsidie-lokale-aanpak-isolatie-emmen",
   titel: "Subsidie lokale aanpak isolatie Emmen",
@@ -46,6 +50,15 @@ describe("claims op de regelingkaart", () => {
     expect(screen.queryByText(/^Voor .*Isolatie en glas/i)).toBeNull();
   });
 
+  it("zegt het wél als de bron meldt dat een regeling smal is", () => {
+    // Nu de officiële API de maatregelen per regeling levert, mag de beperking
+    // op de dichte kaart staan: wie een warmtepomp zoekt moet zonder klikken
+    // zien dat dit een isolatiesubsidie is.
+    render(<SubsidieCard regeling={{ ...isolatieRegeling, beperktTot: "isolatie en glas" }} />);
+
+    expect(screen.getByText(/Alleen voor isolatie en glas/i)).toBeInTheDocument();
+  });
+
   it("herhaalt de combineer-belofte niet op elke kaart", () => {
     render(<SubsidieCard regeling={isolatieRegeling} />);
     fireEvent.click(screen.getByRole("button", { name: /bekijk voorwaarden/i }));
@@ -53,7 +66,7 @@ describe("claims op de regelingkaart", () => {
     // De uitklap toont wél de echte voorwaarde uit de bron.
     expect(screen.getByText(/Je bent eigenaar én bewoner/i)).toBeInTheDocument();
     // Maar niet de generieke zin die op alle twaalf kaarten stond; die staat nu
-    // één keer op het resultaat zelf.
+    // één keer op het resultaat zelf (zie subsidiecheckGroepen.test.tsx).
     expect(screen.queryByText(/vaak te combineren/i)).toBeNull();
   });
 });

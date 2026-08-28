@@ -427,3 +427,30 @@ waar het klopt, en geen enkele aanbiedersnaam wordt nog afgekapt.
 - De indeling zelf (koppen in bewonerstaal, "Leningen en overig" hernoemen, één zin die uitlegt
   waarom er groepen zijn). Wacht op akkoord.
 - De andere negenentwintig `AdditionalIntro`-teksten in de uitklap. Buiten scope gehouden.
+
+## De indeling zelf (alsnog uitgevoerd, na akkoord)
+
+Drie dingen, alle drie zowel op de site als in de overzichtsmail.
+
+1. **Koppen in bewonerstaal.** "Rijksoverheid / Provincie / Gemeente" is geworden "Van de
+   Rijksoverheid / Van de provincie / Van jouw gemeente". Dat laatste is de groep waar de
+   verrassing zit: dat hun eigen gemeente iets heeft, weten de meeste mensen niet.
+2. **"Leningen en overig" is "Van andere aanbieders".** Die kop beloofde leningen terwijl
+   leningen juist over álle groepen verspreid staan en al aan hun blauwe kleur te herkennen
+   zijn. En hij is in alle tien de gemeten noordelijke postcodes leeg.
+3. **Eén zin boven de groepen**: "Deze regelingen komen van verschillende overheden. Daarom kun
+   je ze vaak naast elkaar aanvragen." Zonder die zin is de indeling een ambtelijke ordening;
+   mét die zin is het het argument dat ertoe doet. Alleen bij twee of meer groepen, want bij één
+   groep valt er niets naast elkaar te leggen.
+
+Die zin bestond ooit, op élke kaart. Hij is toen weggehaald omdat hij twaalf keer herhaald werd,
+met in `SubsidieCard` de notitie dat hij "nu één keer op het resultaat" zou staan. Dat is er
+nooit van gekomen; hij stond alleen nog als voorbeeldtekst in het vragenveld. Nu staat hij er
+echt, en `src/test/subsidiecheckGroepen.test.tsx` (4 tests) houdt hem op zijn plek.
+
+De volgorde landelijk → lokaal blijft. Op negen van de tien gemeten postcodes zit het hoogste
+bedrag bij het Rijk (de € 28.000 van het Warmtefonds), dus het sterkste staat vooraan. Leek is de
+uitzondering, met € 53.515 bij de gemeente.
+
+Verificatie na deze ronde: 417 tests groen (5 nieuw), build slaagt, tsc en eslint gelijk aan
+`main`, `deno check` op `subsidiecheck` schoon.

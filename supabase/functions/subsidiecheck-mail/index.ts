@@ -133,13 +133,20 @@ function validatePhoneNL(raw: string): boolean {
   return /^\+[1-9][0-9]{7,14}$/.test(n); // overig buitenlands nummer
 }
 
+// Gelijk aan WAAROM_GROEPEN in src/lib/subsidies/types.ts: pas ze samen aan.
+// Zegt waaróm de lijst in groepen staat, want dat is de enige boodschap die die
+// koppen moeten overbrengen: verschillende potten, dus vaak te combineren.
+const WAAROM_GROEPEN =
+  "Deze regelingen komen van verschillende overheden. Daarom kun je ze vaak naast elkaar aanvragen.";
+
 const NIVEAU_VOLGORDE = ["rijk", "provincie", "gemeente", "overig"] as const;
 type Niveau = (typeof NIVEAU_VOLGORDE)[number];
+// Gelijk aan NIVEAU_LABELS in src/lib/subsidies/types.ts: pas ze samen aan.
 const NIVEAU_LABELS: Record<Niveau, string> = {
-  rijk: "Rijksoverheid",
-  provincie: "Provincie",
-  gemeente: "Gemeente",
-  overig: "Leningen en overig",
+  rijk: "Van de Rijksoverheid",
+  provincie: "Van de provincie",
+  gemeente: "Van jouw gemeente",
+  overig: "Van andere aanbieders",
 };
 
 // Wit-transparant logo (voor de navy header). Staat sinds 24-08-2026 in
@@ -553,6 +560,15 @@ function bouwEmailHtml(opts: {
         .sort((a, b) => typeRang(a.type) - typeRang(b.type)),
     ),
   ).join("");
+  // Alleen bij twee of meer groepen: bij één groep valt er niets te combineren
+  // en zou de zin een loze belofte zijn.
+  const aantalGroepen = NIVEAU_VOLGORDE.filter((niveau) =>
+    regelingen.some((r) => (r.niveau ?? "overig") === niveau),
+  ).length;
+  const waaromGroepen =
+    aantalGroepen > 1
+      ? `<p style="margin:0 0 4px;font-size:14px;line-height:1.5;color:${KLEUR.muted};">${WAAROM_GROEPEN}</p>`
+      : "";
 
   return `<!doctype html>
 <html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="color-scheme" content="light"><meta name="supported-color-schemes" content="light"><title>Voortraject - Jouw subsidieoverzicht</title></head>
@@ -592,7 +608,8 @@ function bouwEmailHtml(opts: {
           }
 
           <!-- De belofte: het volledige overzicht in de mail — alle subsidies en
-               leningen per niveau onder elkaar. -->
+               leningen per niveau onder elkaar, met erboven waarom er groepen zijn. -->
+          ${waaromGroepen}
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 8px;">${groepen}</table>
 
           <!-- Scheidslijn: markeert het einde van de regelingenlijst en de
