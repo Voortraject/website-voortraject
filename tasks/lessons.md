@@ -557,3 +557,24 @@ maar het had net zo goed andermans werk kunnen kosten.
 - Zie je onverwachte wijzigingen: eerst `git diff > back-up.patch` in de scratchpad, dan pas
   herstellen. En stage bij het committen expliciet je eigen bestanden (`git add <pad> …`), nooit
   `git add -A`, anders neem je andermans halve werk mee je PR in.
+
+## 2026-08-28 — een gedeelde edge function veranderd zonder te weten dat het CRM hem ook aanroept
+**Context:** Bij de overstap naar de officiële Milieu Centraal-API is het antwoord van de edge
+function `subsidiecheck` op drie punten van betekenis veranderd: `niveau` kreeg andere waarden,
+`aanbieder` werd de echte instantienaam in plaats van een generiek label, en `maatregelen` bevat
+nu de échte maatregelen per regeling in plaats van standaard alle acht. Uit het onderzoek van het
+CRM-team bleek dat die function een **tweede afnemer** heeft: de CRM-app roept hem aan voor haar
+eigen subsidiecheck-pagina, met een eigen kopie van de maatregel-id's. Er ging niets stuk, maar
+dat was geluk: hun kaart klapte de maatregelen samen op `maatregelen.length >= 8`, en dat werkte
+alleen omdat de scrape er altijd acht teruggaf. Tegelijk bleek een n8n-node dezelfde lijst
+hardgecodeerd te hebben, waardoor de samenvatting "Alle maatregelen" stil stuk ging.
+**Lesson:**
+- CLAUDE.md waarschuwt dat het databaseschema gedeeld is met het CRM. **Dat geldt net zo goed
+  voor de edge functions in `supabase/`.** Het antwoord van zo'n function is een contract met een
+  repo die je hier niet ziet. Velden bijzetten is veilig; de betekenis van een bestaand veld
+  wijzigen niet.
+- Vraag vóór zo'n wijziging bij het CRM na wie de function aanroept, in plaats van na afloop te
+  constateren dat het goed afliep.
+- Labels die naar een gedeelde kolom gaan (`subsidiecheck_interesses`) leven óók in n8n en in de
+  CRM-frontend. Hernoemen breekt daar niets hard, maar degradeert stil. Noteer dat bij de
+  constante zelf, niet alleen in een PR-tekst: zie het blok boven `MAATREGEL_LABELS`.

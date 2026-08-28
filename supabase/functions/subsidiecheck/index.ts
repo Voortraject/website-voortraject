@@ -19,6 +19,19 @@
 // blijft werken en de overstap onzichtbaar is. Het veld `via` in het antwoord
 // zegt welke route het is geworden; dat is puur voor onze eigen verificatie.
 //
+// LET OP: DEZE FUNCTION HEEFT TWEE AFNEMERS.
+// Naast deze site roept ook de CRM-app hem aan, voor haar eigen
+// subsidiecheck-pagina (`src/lib/subsidiecheck.ts` in de CRM-repo, met een eigen
+// kopie van de maatregel-id's). Het antwoord is dus een gedeeld contract, net als
+// het databaseschema: velden bijzetten mag, maar de betekenis van een bestaand
+// veld veranderen raakt een repo die je hier niet ziet.
+//
+// Bij de overstap naar de officiële API is dat gebeurd zonder dat we het wisten:
+// `niveau` kreeg andere waarden, `aanbieder` werd de echte naam in plaats van een
+// generiek label, en `maatregelen` bevat nu de échte maatregelen per regeling in
+// plaats van standaard alle acht. Er is niets stukgegaan, maar dat was geluk. Bij
+// een volgende wijziging: eerst even bij het CRM navragen.
+//
 // Secret: ESW_API_KEY (Milieu Centraal). Deze function raakt de database niet.
 // verify_jwt = false (zie config.toml) omdat de checker publiek en anoniem te
 // gebruiken is.
