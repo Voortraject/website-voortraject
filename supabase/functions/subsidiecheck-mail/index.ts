@@ -594,7 +594,7 @@ function bouwEmailHtml(opts: {
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 8px;background:${KLEUR.achtergrond};border-left:4px solid ${KLEUR.accent};border-radius:4px;">
             <tr><td style="padding:20px 24px;">
               <p style="font-size:15px;font-weight:700;color:${KLEUR.primary};margin:0 0 6px;">Gratis advies over jouw overzicht</p>
-              <p style="font-size:14px;color:${KLEUR.muted};margin:0 0 16px;line-height:1.6;"><strong style="color:${KLEUR.primary};font-weight:600;">Antwoord op deze mail</strong> met je vraag, of stuur een WhatsApp-bericht. Een van onze adviseurs kijkt dan naar jouw adres. Gratis en vrijblijvend, reactie binnen 24 uur.</p>
+              <p style="font-size:14px;color:${KLEUR.muted};margin:0 0 16px;line-height:1.6;"><strong style="color:${KLEUR.primary};font-weight:600;">Antwoord op deze mail</strong> met je vraag, of stuur een WhatsApp-bericht. Een van onze adviseurs kijkt dan naar jouw adres. Gratis en vrijblijvend, reactie binnen 1 werkdag.</p>
               <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
                 <td style="padding-right:10px;">
                   <a href="${escapeHtml(waLink)}" style="display:inline-block;background:${KLEUR.accent};color:${KLEUR.primary};font-size:14px;font-weight:700;text-decoration:none;padding:11px 16px;border-radius:8px;white-space:nowrap;"><img src="${ICOON.whatsapp}" alt="" width="16" height="16" style="width:16px;height:16px;vertical-align:-3px;border:0;"> &nbsp;WhatsApp</a>

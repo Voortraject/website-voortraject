@@ -44,7 +44,7 @@ export const ClosingCta = () => (
 
       {/* Risico-verlagende microtekst */}
       <p className="mt-6 text-[13px] text-white/60">
-        Vrijblijvend · Binnen 24 uur reactie · Je hoeft niets voor te bereiden
+        Vrijblijvend · Binnen 1 werkdag reactie · Je hoeft niets voor te bereiden
       </p>
 
       {/* Kleine verwijzing naar de zakelijke pagina */}

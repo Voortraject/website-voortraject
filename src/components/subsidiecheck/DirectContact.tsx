@@ -171,7 +171,7 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
                 eigen regel voegt JSX er een spatie voor in, en dan lees je
                 "…@voorbeeld.nl . Je hoeft niets voor te bereiden." */}
             <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-foreground/80">
-              We reageren binnen 24 uur
+              We reageren binnen 1 werkdag
               {antwoordAdres ? (
                 <>
                   {" "}
@@ -322,9 +322,9 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
           {whatsappKnop}
         </div>
 
-        {/* Hier stond "We antwoorden binnen 24 uur op <e-mailadres>." Twee
+        {/* Hier stond "We antwoorden binnen 1 werkdag op <e-mailadres>." Twee
             redenen om die weg te halen. De belofte komt na het verzenden
-            sowieso ("Je vraag is bij ons binnen · We reageren binnen 24 uur op
+            sowieso ("Je vraag is bij ons binnen · We reageren binnen 1 werkdag op
             …"), dus vooraf is het een herhaling. En het terugkaatsen van het
             e-mailadres van de bezoeker, vlak onder de knop, leest als een
             bevestiging van iets wat nog niet gebeurd is. */}

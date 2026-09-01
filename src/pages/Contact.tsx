@@ -40,7 +40,7 @@ const optionalSm = (
 );
 
 const expectations = [
-  "We nemen binnen 24 uur contact op",
+  "We nemen binnen 1 werkdag contact op",
   "We kijken samen wat er voor jouw woning logisch is",
   "Je hoeft niets voor te bereiden",
 ];
@@ -291,7 +291,7 @@ const Contact = () => {
         // werd code `website`, en die bron is in het CRM niet meer in gebruik.
         bron: "Voortraject",
         // Welk formulier de lead opleverde. n8n bepaalt hiermee de taaktitel én
-        // of de bevestigingsmail ("binnen 24 uur contact") uitgaat. Er staat een
+        // of de bevestigingsmail ("binnen 1 werkdag contact") uitgaat. Er staat een
         // CHECK op: alleen 'contactformulier', 'subsidietool' of NULL.
         formulier: "contactformulier",
         // `status`, `prioriteit` en `toegewezen_aan` sturen we bewust NIET mee.
@@ -365,7 +365,7 @@ const Contact = () => {
     <div className="min-h-screen bg-background">
       <Seo
         title="Contact | Voortraject"
-        description="Plan een vrijblijvende kennismaking met Voortraject. We reageren binnen 24 uur en helpen je verder met je verduurzamingsvraag."
+        description="Plan een vrijblijvende kennismaking met Voortraject. We reageren binnen 1 werkdag en helpen je verder met je verduurzamingsvraag."
         path="/contact"
       />
       <Header />
@@ -418,7 +418,7 @@ const Contact = () => {
                     Bedankt!
                   </h3>
                   <p className="font-sans" style={{ fontSize: 15, color: "#166534", lineHeight: 1.6 }}>
-                    We hebben je bericht ontvangen en nemen binnen 24 uur contact met je op.
+                    We hebben je bericht ontvangen en nemen binnen 1 werkdag contact met je op.
                   </p>
                 </div>
               ) : (
