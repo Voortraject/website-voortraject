@@ -362,7 +362,7 @@ export const StapResultaat = ({ input, adres, netBinnen = false }: StapResultaat
           die drie naast elkaar blijven staan. */}
       <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
         <ul className="flex flex-nowrap items-center gap-x-2 whitespace-nowrap text-[12px] text-muted-foreground sm:gap-x-4 sm:text-[13px]">
-          {["Vrijblijvend", "Reactie binnen 24 uur", "Lokaal adviesteam"].map((belofte, i) => (
+          {["Vrijblijvend", "Reactie binnen 1 werkdag", "Lokaal adviesteam"].map((belofte, i) => (
             <li key={belofte} className="inline-flex items-center gap-1.5">
               {i > 0 && (
                 <span aria-hidden="true" className="text-border sm:hidden">

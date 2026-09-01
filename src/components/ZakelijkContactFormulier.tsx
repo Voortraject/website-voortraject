@@ -239,7 +239,7 @@ export const ZakelijkContactFormulier = () => {
       >
         <h3 className="font-display text-[22px] font-semibold text-[#15803d] mb-3">Bedankt!</h3>
         <p className="font-sans text-[15px] leading-relaxed text-[#166534]">
-          We hebben je bericht ontvangen en nemen binnen 24 uur contact met je op.
+          We hebben je bericht ontvangen en nemen binnen 1 werkdag contact met je op.
         </p>
       </div>
     );
@@ -450,7 +450,7 @@ export const ZakelijkContactFormulier = () => {
         </button>
 
         <p className="font-sans mt-4 text-[13px] leading-relaxed text-muted-foreground">
-          We nemen binnen 24 uur contact op. Je gegevens gebruiken we alleen om je vraag te
+          We nemen binnen 1 werkdag contact op. Je gegevens gebruiken we alleen om je vraag te
           beantwoorden, zie onze <a href="/privacy" className="underline underline-offset-2 hover:text-foreground">privacyverklaring</a>.
         </p>
       </form>
