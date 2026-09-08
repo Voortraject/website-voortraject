@@ -20,7 +20,7 @@ const STATS_LIVE = { reviews: null, stats: { rating: 4.9, user_rating_count: 26 
 describe("cijferband", () => {
   it("maakt de getallen op zoals ze in de config staan", () => {
     expect(CIJFER_ISOLATIE.waarde).toBe(10000);
-    expect(CIJFER_VERDUURZAMING.waarde).toBe(800000);
+    expect(CIJFER_VERDUURZAMING.waarde).toBe(1000000);
   });
 
   it("toont de drie getallen uit de config, met de live Google-beoordeling", () => {
@@ -32,7 +32,7 @@ describe("cijferband", () => {
     expect(tekst).toContain(CIJFER_ISOLATIE.eenheid);
     expect(tekst).toContain(CIJFER_ISOLATIE.onderschrift);
     expect(tekst).toContain(CIJFER_VERDUURZAMING.voorvoegsel);
-    expect(tekst).toContain(`800.000${CIJFER_VERDUURZAMING.achtervoegsel}`);
+    expect(tekst).toContain(`1.000.000${CIJFER_VERDUURZAMING.achtervoegsel}`);
     expect(tekst).toContain(CIJFER_VERDUURZAMING.onderschrift);
     expect(tekst).toContain("4,9");
     expect(tekst).toContain(CIJFER_GOOGLE.onderschrift);
