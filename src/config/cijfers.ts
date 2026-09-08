@@ -96,19 +96,19 @@ export const CIJFER_ISOLATIE = {
 /**
  * Doorgerekende maatregelen: € 822.306 incl. btw, waarvan € 422.315 al
  * ondertekend. Geverifieerd 2026-09-08. Elke offerteregel hierin is
- * subsidiabel onder Nij Begun, maar dat staat bewust niet in het
- * onderschrift: subsidiabel is niet hetzelfde als uitgekeerd, en dat
- * verschil is op een publieke site niet uit te leggen in vier woorden.
+ * subsidiabel onder Nij Begun; dat is wat "betaald met subsidie" in het
+ * onderschrift dekt.
  *
  * Let op bij een update: dit is het doorgerekende bedrag, niet het
  * ondertekende en niet het uitgekeerde. Vervang het alleen door een
- * bedrag dat op dezelfde manier is gemeten.
+ * bedrag dat op dezelfde manier is gemeten, anders staat er iets anders
+ * dan het onderschrift belooft.
  */
 export const CIJFER_VERDUURZAMING = {
   voorvoegsel: "€",
   waarde: 800000,
   achtervoegsel: "+",
-  onderschrift: "aan verduurzaming voor bewoners",
+  onderschrift: "euro aan verduurzaming, betaald met subsidie",
 } as const;
 
 /**

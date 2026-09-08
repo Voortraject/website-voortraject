@@ -20,13 +20,24 @@ import { useGoogleReviews } from "@/hooks/useGoogleReviews";
 
 const TELDUUR_MS = 1600;
 
-/** Zit het element in beeld geweest? Blijft daarna true: één keer tellen. */
+// Ruim een derde van de band moet zichtbaar zijn voordat het tellen begint:
+// dan telt hij pas als de bezoeker er echt naar kijkt, niet al bij de eerste
+// pixel onderin het scherm.
+const ZICHTBAAR_VANAF = 0.35;
+
+/**
+ * Staat het element in beeld? Gaat weer uit zodra de band het scherm
+ * helemaal verlaten heeft, zodat hij bij een volgende passage opnieuw
+ * optelt. Het uitzetten gebeurt expres pas bij helemaal weg en niet al
+ * onder de drempel: anders knippert het getal als je een klein stukje
+ * heen en weer scrolt.
+ */
 const useInBeeld = (ref: RefObject<Element>) => {
   const [inBeeld, setInBeeld] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || inBeeld) return;
+    if (!el) return;
 
     // Geen IntersectionObserver (oude browser, testomgeving): dan meteen
     // tonen. Een cijfer dat op 0 blijft staan is erger dan geen animatie.
@@ -37,19 +48,15 @@ const useInBeeld = (ref: RefObject<Element>) => {
 
     const io = new IntersectionObserver(
       (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setInBeeld(true);
-          io.disconnect();
-        }
+        const laatste = entries[entries.length - 1];
+        if (laatste.intersectionRatio >= ZICHTBAAR_VANAF) setInBeeld(true);
+        else if (!laatste.isIntersecting) setInBeeld(false);
       },
-      // Ruim een derde van de band moet zichtbaar zijn: dan begint het
-      // tellen pas als de bezoeker er echt naar kijkt, niet al bij de
-      // eerste pixel onderin het scherm.
-      { threshold: 0.35 },
+      { threshold: [0, ZICHTBAAR_VANAF] },
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [ref, inBeeld]);
+  }, [ref]);
 
   return inBeeld;
 };
@@ -75,7 +82,12 @@ const useTelOp = (doel: number, start: boolean) => {
       setHuidig(doel);
       return;
     }
-    if (!start) return;
+    // Uit beeld: terug naar nul, zodat de volgende passage weer een echte
+    // telling is en niet een getal dat er al staat.
+    if (!start) {
+      setHuidig(0);
+      return;
+    }
 
     // Vanaf de waarde die er nú staat, niet vanaf nul. Dat is bijna altijd
     // 0, maar de Google-beoordeling verandert nog als de live query
