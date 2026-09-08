@@ -2,6 +2,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
 import { CtaButton } from "@/components/CtaButton";
+import { Cijfers } from "@/components/sections/Cijfers";
 import michael from "@/assets/team-michael.png";
 import tim from "@/assets/team-tim.png";
 import wouter from "@/assets/team-wouter.png";
@@ -186,8 +187,8 @@ const OverOns = () => {
           </div>
         </section>
 
-
-
+        {/* Cijferband: laatste bewijs voordat de bezoeker naar de CTA gaat. */}
+        <Cijfers />
       </main>
       <Footer
         cta={

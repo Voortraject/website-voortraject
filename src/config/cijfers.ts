@@ -58,3 +58,59 @@ export const GEMIDDELD_AANTAL_REGELINGEN = 9;
  * onderwerp dan weer voluit.
  */
 export const GEMIDDELDE_REGELINGEN_ZIN = `Gemiddeld vinden we er ${GEMIDDELD_AANTAL_REGELINGEN} per adres.`;
+
+/* ------------------------------------------------------------------ *
+ * "Voortraject in cijfers": de drie getallen in de cijferband
+ * (src/components/sections/Cijfers.tsx, staat op de homepage en op
+ * /over-ons).
+ *
+ * Alle drie geverifieerd op 2026-09-08 in de CRM-database. Deze getallen
+ * groeien; bij een update pas je hier de waarde én de datum in het
+ * commentaar aan, en verder niets. De onderschriften staan er expres bij,
+ * zodat getal en tekst nooit uit elkaar kunnen lopen.
+ * ------------------------------------------------------------------ */
+
+/**
+ * Vierkante meters isolatie in de offerteregels: 9.958 m² (dak 2.596,
+ * gevel 3.698, vloer/zolder 2.499, glas 1.042). Geverifieerd 2026-09-08.
+ * Naar beneden gepresenteerd als "10.000+" zodra het er echt boven zit;
+ * op dit moment is het de eerstvolgende ronde grens en dekt de "+" de
+ * groei sinds de meting. Zakt het cijfer ooit, rond dan naar beneden af.
+ */
+export const CIJFER_ISOLATIE = {
+  getal: "10.000",
+  achtervoegsel: "+",
+  onderschrift: "m² isolatie geregeld voor woningen in Groningen en Drenthe",
+} as const;
+
+/**
+ * Doorgerekende maatregelen: € 822.306 incl. btw, waarvan € 422.315 al
+ * ondertekend. Geverifieerd 2026-09-08. Elke offerteregel hierin is
+ * subsidiabel onder Nij Begun.
+ *
+ * Let op bij een update: dit is het doorgerekende bedrag, niet het
+ * ondertekende en niet het uitgekeerde. Vervang het alleen door een
+ * bedrag dat op dezelfde manier is gemeten, anders klopt het onderschrift
+ * niet meer.
+ */
+export const CIJFER_VERDUURZAMING = {
+  getal: "800.000",
+  achtervoegsel: "+",
+  onderschrift: "euro aan verduurzaming voor bewoners, volledig uit de Nij Begun-subsidie",
+} as const;
+
+/**
+ * Gemiddelde Google-beoordeling. Dit cijfer komt live uit
+ * `google_place_stats` in het CRM-project (dagelijkse sync, zie
+ * useGoogleReviews); de waarde hieronder is alleen de terugval als die
+ * query niet lukt. Stond op 4,9 bij 26 beoordelingen op 2026-09-08.
+ *
+ * Het aantal beoordelingen tonen we hier bewust NIET: 26 maakt een 4,9
+ * zwakker in plaats van sterker. Boven de 50 willen we het er juist wél
+ * bij; dan is dit onderschrift het enige dat hoeft te veranderen, naar
+ * bijvoorbeeld "gemiddelde beoordeling over 50+ beoordelingen op Google".
+ */
+export const CIJFER_GOOGLE = {
+  terugval: 4.9,
+  onderschrift: "gemiddelde beoordeling op Google",
+} as const;
