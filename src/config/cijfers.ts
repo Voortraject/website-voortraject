@@ -65,38 +65,50 @@ export const GEMIDDELDE_REGELINGEN_ZIN = `Gemiddeld vinden we er ${GEMIDDELD_AAN
  * /over-ons).
  *
  * Alle drie geverifieerd op 2026-09-08 in de CRM-database. Deze getallen
- * groeien; bij een update pas je hier de waarde én de datum in het
- * commentaar aan, en verder niets. De onderschriften staan er expres bij,
- * zodat getal en tekst nooit uit elkaar kunnen lopen.
+ * groeien; bij een update pas je hier de waarde en de datum in het
+ * commentaar aan, en verder niets. De eenheid en het onderschrift staan
+ * er expres bij, zodat getal en tekst nooit uit elkaar kunnen lopen.
+ *
+ * De waarden zijn getallen en geen tekst, omdat de band ernaartoe telt
+ * zodra hij in beeld komt. De opmaak (duizendtallen, decimalen) gebeurt
+ * in het component, in nl-NL.
  * ------------------------------------------------------------------ */
 
 /**
  * Vierkante meters isolatie in de offerteregels: 9.958 m² (dak 2.596,
  * gevel 3.698, vloer/zolder 2.499, glas 1.042). Geverifieerd 2026-09-08.
- * Naar beneden gepresenteerd als "10.000+" zodra het er echt boven zit;
- * op dit moment is het de eerstvolgende ronde grens en dekt de "+" de
- * groei sinds de meting. Zakt het cijfer ooit, rond dan naar beneden af.
+ * Getoond als "10.000+": de eerstvolgende ronde grens, waarbij de "+" de
+ * groei sinds de meting dekt. Zakt het cijfer ooit, rond dan naar beneden
+ * af.
+ *
+ * Het onderschrift zegt Noord-Nederland en niet Groningen en Drenthe.
+ * Gemeten is er in Groningen en Drenthe, en dat ligt allebei in
+ * Noord-Nederland, dus de claim blijft waar; de bredere formulering sluit
+ * bezoekers uit Friesland niet uit.
  */
 export const CIJFER_ISOLATIE = {
-  getal: "10.000",
+  waarde: 10000,
   achtervoegsel: "+",
-  onderschrift: "m² isolatie geregeld voor woningen in Groningen en Drenthe",
+  eenheid: "m²",
+  onderschrift: "isolatie geregeld voor woningen in Noord-Nederland",
 } as const;
 
 /**
  * Doorgerekende maatregelen: € 822.306 incl. btw, waarvan € 422.315 al
  * ondertekend. Geverifieerd 2026-09-08. Elke offerteregel hierin is
- * subsidiabel onder Nij Begun.
+ * subsidiabel onder Nij Begun, maar dat staat bewust niet in het
+ * onderschrift: subsidiabel is niet hetzelfde als uitgekeerd, en dat
+ * verschil is op een publieke site niet uit te leggen in vier woorden.
  *
  * Let op bij een update: dit is het doorgerekende bedrag, niet het
  * ondertekende en niet het uitgekeerde. Vervang het alleen door een
- * bedrag dat op dezelfde manier is gemeten, anders klopt het onderschrift
- * niet meer.
+ * bedrag dat op dezelfde manier is gemeten.
  */
 export const CIJFER_VERDUURZAMING = {
-  getal: "800.000",
+  voorvoegsel: "€",
+  waarde: 800000,
   achtervoegsel: "+",
-  onderschrift: "euro aan verduurzaming voor bewoners, volledig uit de Nij Begun-subsidie",
+  onderschrift: "aan verduurzaming voor bewoners",
 } as const;
 
 /**

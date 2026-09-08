@@ -36,14 +36,26 @@ const PlusTeken = () => (
 export const Subsidies = () => (
   <section className="section-pad-home" style={{ backgroundColor: "#FFFFFF" }} aria-labelledby="subsidies-title">
     <div className="container-home">
-      <div className="max-w-3xl">
-        <h2 id="subsidies-title" className="h2-section">
-          Wist je dat je subsidies kunt <span className="text-accent">stapelen</span>?
-        </h2>
-        <p className="mt-4 text-[18px] md:text-[20px] leading-[1.6] text-muted-foreground">
-          Landelijk, provinciaal en gemeentelijk: er zijn meer regelingen dan de meeste mensen
-          weten, en vaak zijn ze te combineren.
-        </p>
+      {/* De knop staat naast de kop en niet onder de kaarten: daar kostte hij
+          een hele regel witruimte voor één link. Op desktop lijnt hij uit met
+          de onderkant van de intro, op mobiel valt hij eronder. */}
+      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-10">
+        <div className="max-w-3xl">
+          <h2 id="subsidies-title" className="h2-section">
+            Wist je dat je subsidies kunt <span className="text-accent">stapelen</span>?
+          </h2>
+          <p className="mt-4 text-[18px] md:text-[20px] leading-[1.6] text-muted-foreground">
+            Landelijk, provinciaal en gemeentelijk: er zijn meer regelingen dan de meeste mensen
+            weten, en vaak zijn ze te combineren.
+          </p>
+        </div>
+        <a
+          href="/subsidies/stapelen"
+          className="shrink-0 self-start md:self-auto inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-semibold border border-primary text-primary transition-colors duration-150 hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        >
+          Meer over subsidies stapelen
+          <ArrowRight size={16} aria-hidden="true" />
+        </a>
       </div>
 
       {/* De stapel: drie niveaus met plustekens ertussen */}
@@ -77,16 +89,6 @@ export const Subsidies = () => (
             {i < niveaus.length - 1 && <PlusTeken />}
           </Fragment>
         ))}
-      </div>
-
-      <div className="mt-12">
-        <a
-          href="/subsidies/stapelen"
-          className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-semibold border border-primary text-primary transition-colors duration-150 hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-        >
-          Meer over subsidies stapelen
-          <ArrowRight size={16} aria-hidden="true" />
-        </a>
       </div>
     </div>
   </section>

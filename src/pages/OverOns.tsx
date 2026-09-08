@@ -129,6 +129,10 @@ const OverOns = () => {
           </div>
         </section>
 
+        {/* Cijferband: het harde bewijs onder het verhaal, vlak voordat we
+            vertellen hoe we werken. */}
+        <Cijfers />
+
         {/* Hoe wij werken */}
         <section className="py-12 md:py-[72px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
@@ -187,8 +191,6 @@ const OverOns = () => {
           </div>
         </section>
 
-        {/* Cijferband: laatste bewijs voordat de bezoeker naar de CTA gaat. */}
-        <Cijfers />
       </main>
       <Footer
         cta={
