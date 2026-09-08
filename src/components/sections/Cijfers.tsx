@@ -146,10 +146,11 @@ const Cijfer = ({
 
   return (
     <div className="text-center">
-      <p
-        className="font-display font-bold text-primary leading-none tracking-[-0.03em]"
-        style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)" }}
-      >
+      {/* "€ 1.000.000+" is de langste regel: ruim zes tekenbreedtes. Op mobiel
+          staat elk cijfer op een eigen regel en mag het groot zijn; vanaf sm
+          delen ze de breedte met z'n drieën, dus schaalt de maat daar mee met
+          de kolom. Anders loopt het bedrag op een tablet uit zijn vak. */}
+      <p className="font-display font-bold text-primary leading-none tracking-[-0.03em] text-[2.5rem] sm:text-[clamp(1.6rem,4vw,3.25rem)]">
         <span className="sr-only">{volledig}</span>
         <span aria-hidden="true">
           {voorvoegsel && <span className="mr-1.5">{voorvoegsel}</span>}
