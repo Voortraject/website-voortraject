@@ -2,6 +2,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
 import { CtaButton } from "@/components/CtaButton";
+import { Cijfers } from "@/components/sections/Cijfers";
 import michael from "@/assets/team-michael.png";
 import tim from "@/assets/team-tim.png";
 import wouter from "@/assets/team-wouter.png";
@@ -128,6 +129,10 @@ const OverOns = () => {
           </div>
         </section>
 
+        {/* Cijferband: het harde bewijs onder het verhaal, vlak voordat we
+            vertellen hoe we werken. */}
+        <Cijfers />
+
         {/* Hoe wij werken */}
         <section className="py-12 md:py-[72px]" style={{ backgroundColor: "#F5F2EC" }}>
           <div className="container-content">
@@ -185,8 +190,6 @@ const OverOns = () => {
             </div>
           </div>
         </section>
-
-
 
       </main>
       <Footer

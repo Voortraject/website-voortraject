@@ -58,3 +58,71 @@ export const GEMIDDELD_AANTAL_REGELINGEN = 9;
  * onderwerp dan weer voluit.
  */
 export const GEMIDDELDE_REGELINGEN_ZIN = `Gemiddeld vinden we er ${GEMIDDELD_AANTAL_REGELINGEN} per adres.`;
+
+/* ------------------------------------------------------------------ *
+ * "Voortraject in cijfers": de drie getallen in de cijferband
+ * (src/components/sections/Cijfers.tsx, staat op de homepage en op
+ * /over-ons).
+ *
+ * Alle drie geverifieerd op 2026-09-08 in de CRM-database. Deze getallen
+ * groeien; bij een update pas je hier de waarde en de datum in het
+ * commentaar aan, en verder niets. De eenheid en het onderschrift staan
+ * er expres bij, zodat getal en tekst nooit uit elkaar kunnen lopen.
+ *
+ * De waarden zijn getallen en geen tekst, omdat de band ernaartoe telt
+ * zodra hij in beeld komt. De opmaak (duizendtallen, decimalen) gebeurt
+ * in het component, in nl-NL.
+ * ------------------------------------------------------------------ */
+
+/**
+ * Vierkante meters isolatie in de offerteregels: 9.958 m² (dak 2.596,
+ * gevel 3.698, vloer/zolder 2.499, glas 1.042). Geverifieerd 2026-09-08.
+ * Getoond als "10.000+": de eerstvolgende ronde grens, waarbij de "+" de
+ * groei sinds de meting dekt. Zakt het cijfer ooit, rond dan naar beneden
+ * af.
+ *
+ * Het onderschrift zegt Noord-Nederland en niet Groningen en Drenthe.
+ * Gemeten is er in Groningen en Drenthe, en dat ligt allebei in
+ * Noord-Nederland, dus de claim blijft waar; de bredere formulering sluit
+ * bezoekers uit Friesland niet uit.
+ */
+export const CIJFER_ISOLATIE = {
+  waarde: 10000,
+  achtervoegsel: "+",
+  eenheid: "m²",
+  onderschrift: "isolatie geregeld voor woningen in Noord-Nederland",
+} as const;
+
+/**
+ * Doorgerekende maatregelen: € 822.306 incl. btw, waarvan € 422.315 al
+ * ondertekend. Geverifieerd 2026-09-08. Elke offerteregel hierin is
+ * subsidiabel onder Nij Begun; dat is wat "betaald met subsidie" in het
+ * onderschrift dekt.
+ *
+ * Let op bij een update: dit is het doorgerekende bedrag, niet het
+ * ondertekende en niet het uitgekeerde. Vervang het alleen door een
+ * bedrag dat op dezelfde manier is gemeten, anders staat er iets anders
+ * dan het onderschrift belooft.
+ */
+export const CIJFER_VERDUURZAMING = {
+  voorvoegsel: "€",
+  waarde: 800000,
+  achtervoegsel: "+",
+  onderschrift: "euro aan verduurzaming, betaald met subsidie",
+} as const;
+
+/**
+ * Gemiddelde Google-beoordeling. Dit cijfer komt live uit
+ * `google_place_stats` in het CRM-project (dagelijkse sync, zie
+ * useGoogleReviews); de waarde hieronder is alleen de terugval als die
+ * query niet lukt. Stond op 4,9 bij 26 beoordelingen op 2026-09-08.
+ *
+ * Het aantal beoordelingen tonen we hier bewust NIET: 26 maakt een 4,9
+ * zwakker in plaats van sterker. Boven de 50 willen we het er juist wél
+ * bij; dan is dit onderschrift het enige dat hoeft te veranderen, naar
+ * bijvoorbeeld "gemiddelde beoordeling over 50+ beoordelingen op Google".
+ */
+export const CIJFER_GOOGLE = {
+  terugval: 4.9,
+  onderschrift: "gemiddelde beoordeling op Google",
+} as const;

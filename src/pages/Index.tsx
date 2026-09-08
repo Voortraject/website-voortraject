@@ -7,6 +7,7 @@ import { SubsidiecheckCta } from "@/components/sections/SubsidiecheckCta";
 import { Herkenning } from "@/components/sections/Herkenning";
 import { WaarWeBijHelpen } from "@/components/sections/WaarWeBijHelpen";
 import { WaaromKiezen } from "@/components/sections/WaaromKiezen";
+import { Cijfers } from "@/components/sections/Cijfers";
 import { Reviews } from "@/components/sections/Reviews";
 import { Subsidies } from "@/components/sections/Subsidies";
 import { Team } from "@/components/sections/Team";
@@ -30,6 +31,7 @@ const Index = () => {
         <WaarWeBijHelpen />
         <Subsidies />
         <WaaromKiezen />
+        <Cijfers />
         <Reviews />
         <Team />
         <Faq />
