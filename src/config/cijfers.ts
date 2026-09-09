@@ -118,12 +118,15 @@ export const CIJFER_ISOLATIE = {
  * ondergrens van wat hier verdedigbaar is.
  *
  * Bewust géén subsidie in dit bedrag: dit is de lagere energierekening, niet
- * wat een regeling bijdraagt. En bewust geen "+": een gemiddelde met een
- * plusteken erachter is geen gemiddelde meer.
+ * wat een regeling bijdraagt. En bewust geen "+" zoals bij de m² hierboven:
+ * een gemiddelde met een plusteken erachter is geen gemiddelde meer. Het
+ * achtervoegsel is hier ",-", dat het bedrag afmaakt zonder er een ondergrens
+ * van te maken; het component zet het in oker, net als de "+".
  */
 export const CIJFER_BESPARING = {
   voorvoegsel: "€",
   waarde: 500,
+  achtervoegsel: ",-",
   onderschrift: "gemiddeld per jaar lagere energierekening per woning",
 } as const;
 
