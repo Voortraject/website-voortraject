@@ -94,25 +94,37 @@ export const CIJFER_ISOLATIE = {
 } as const;
 
 /**
- * Doorgerekende maatregelen: € 822.306 incl. btw in het CRM (waarvan
- * € 422.315 ondertekend), geverifieerd 2026-09-08, plus circa € 200.000
- * aan werk dat buiten die telling om loopt. Samen ruim een miljoen, en
- * daarom staat hier 1.000.000+. Die tweede post is interne informatie:
- * niet op de site benoemen.
+ * Wat de isolatie die wij regelen een woning per jaar aan gas scheelt,
+ * gemiddeld en vóór subsidie.
  *
- * Elke offerteregel is subsidiabel onder Nij Begun; dat is wat "betaald
- * met subsidie" in het onderschrift dekt.
+ * Dit cijfer is afgeleid en niet geteld, anders dan de m² hierboven. De
+ * afleiding, zodat iedereen hem kan narekenen:
  *
- * Let op bij een update: dit is het doorgerekende bedrag, niet het
- * ondertekende en niet het uitgekeerde. Vervang het alleen door een
- * bedrag dat op dezelfde manier is opgeteld, anders staat er iets anders
- * dan het onderschrift belooft.
+ *  - De 9.958 m² hierboven, verdeeld over dak (26%), gevel (37%),
+ *    vloer en zolder (25%) en glas (10%).
+ *  - De besparing per maatregel uit src/data/isolatie.ts, de cijfers van
+ *    Milieu Centraal, bij hun gasprijs van € 1,37 per m³ voor 2026 tot 2040.
+ *    Gemiddeld over de vier woningtypen: dak € 550, spouw € 548,
+ *    gevel € 733, vloer € 215, glas € 90 vanaf dubbel en € 350 vanaf enkel.
+ *  - Gewogen met die verdeling levert één maatregel gemiddeld € 455 per jaar
+ *    op. Een adres waar meer dan één maatregel is gedaan ligt hoger: bij
+ *    gemiddeld 1,3 maatregelen per woning kom je op ongeveer € 590.
+ *
+ * € 500 ligt tussen die twee in. Wat nog ontbreekt om het hard te maken, is
+ * het aantal unieke adressen achter die 9.958 m²: pas dan weet je hoeveel
+ * maatregelen er gemiddeld per woning zijn gedaan. Zolang dat er niet is,
+ * is dit een berekening met een aanname erin, en dat hoort hier te staan.
+ * Blijkt straks dat een gemiddeld adres maar één maatregel afneemt, dan
+ * moet dit getal naar € 450.
+ *
+ * Bewust géén subsidie in dit bedrag: dit is de lagere energierekening, niet
+ * wat een regeling bijdraagt. En bewust geen "+": een gemiddelde met een
+ * plusteken erachter is geen gemiddelde meer.
  */
-export const CIJFER_VERDUURZAMING = {
+export const CIJFER_BESPARING = {
   voorvoegsel: "€",
-  waarde: 1000000,
-  achtervoegsel: "+",
-  onderschrift: "euro aan verduurzaming, betaald met subsidie",
+  waarde: 500,
+  onderschrift: "gemiddeld per jaar lagere energierekening per woning",
 } as const;
 
 /**
