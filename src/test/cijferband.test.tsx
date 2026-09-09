@@ -32,7 +32,7 @@ describe("cijferband", () => {
     expect(tekst).toContain(CIJFER_ISOLATIE.eenheid);
     expect(tekst).toContain(CIJFER_ISOLATIE.onderschrift);
     expect(tekst).toContain(CIJFER_BESPARING.voorvoegsel);
-    expect(tekst).toContain("500");
+    expect(tekst).toContain(`500${CIJFER_BESPARING.achtervoegsel}`);
     expect(tekst).toContain(CIJFER_BESPARING.onderschrift);
     expect(tekst).toContain("4,9");
     expect(tekst).toContain(CIJFER_GOOGLE.onderschrift);
