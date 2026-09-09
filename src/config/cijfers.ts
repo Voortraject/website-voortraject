@@ -110,12 +110,12 @@ export const CIJFER_ISOLATIE = {
  *    op. Een adres waar meer dan één maatregel is gedaan ligt hoger: bij
  *    gemiddeld 1,3 maatregelen per woning kom je op ongeveer € 590.
  *
- * € 500 ligt tussen die twee in. Wat nog ontbreekt om het hard te maken, is
- * het aantal unieke adressen achter die 9.958 m²: pas dan weet je hoeveel
- * maatregelen er gemiddeld per woning zijn gedaan. Zolang dat er niet is,
- * is dit een berekening met een aanname erin, en dat hoort hier te staan.
- * Blijkt straks dat een gemiddeld adres maar één maatregel afneemt, dan
- * moet dit getal naar € 450.
+ * € 500 ligt tussen die twee in, en is op 2026-09-09 door Voortraject zelf
+ * bevestigd als het bedrag dat bij de praktijk hoort: een gemiddeld adres
+ * neemt meer dan één maatregel af. De som hierboven is dus de controle op
+ * dat getal, niet de enige onderbouwing. Wie het ooit herziet: € 455 is wat
+ * de som geeft bij precies één maatregel per woning, en daarmee de
+ * ondergrens van wat hier verdedigbaar is.
  *
  * Bewust géén subsidie in dit bedrag: dit is de lagere energierekening, niet
  * wat een regeling bijdraagt. En bewust geen "+": een gemiddelde met een
