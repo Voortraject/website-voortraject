@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { Star } from "lucide-react";
 
-import { CIJFER_GOOGLE, CIJFER_ISOLATIE, CIJFER_VERDUURZAMING } from "@/config/cijfers";
+import { CIJFER_BESPARING, CIJFER_GOOGLE, CIJFER_ISOLATIE } from "@/config/cijfers";
 import { useGoogleReviews } from "@/hooks/useGoogleReviews";
 
 /**
@@ -146,7 +146,7 @@ const Cijfer = ({
 
   return (
     <div className="text-center">
-      {/* "€ 1.000.000+" is de langste regel: ruim zes tekenbreedtes. Op mobiel
+      {/* "10.000+ m²" is de langste regel: ruim zes tekenbreedtes. Op mobiel
           staat elk cijfer op een eigen regel en mag het groot zijn; vanaf sm
           delen ze de breedte met z'n drieën, dus schaalt de maat daar mee met
           de kolom. Anders loopt het bedrag op een tablet uit zijn vak. */}
@@ -199,7 +199,7 @@ export const Cijfers = () => {
             halve telefoonbreedte. Vanaf sm staan ze alle drie naast elkaar. */}
         <div className="grid grid-cols-1 gap-y-9 sm:grid-cols-3 sm:gap-x-8 md:gap-x-10">
           <Cijfer {...CIJFER_ISOLATIE} telt={telt} />
-          <Cijfer {...CIJFER_VERDUURZAMING} telt={telt} />
+          <Cijfer {...CIJFER_BESPARING} telt={telt} />
           <Cijfer
             waarde={rating}
             decimalen={1}
