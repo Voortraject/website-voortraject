@@ -578,3 +578,14 @@ hardgecodeerd te hebben, waardoor de samenvatting "Alle maatregelen" stil stuk g
 - Labels die naar een gedeelde kolom gaan (`subsidiecheck_interesses`) leven óók in n8n en in de
   CRM-frontend. Hernoemen breekt daar niets hard, maar degradeert stil. Noteer dat bij de
   constante zelf, niet alleen in een PR-tekst: zie het blok boven `MAATREGEL_LABELS`.
+
+## 2026-09-14 — nieuwe teamfoto's afgekeurd omdat ze afweken van de foto's op de site
+**Context:** Bij het vernieuwen van de teamfoto's met ChatGPT heb ik de uitkomsten vergeleken met
+de huidige bestanden in `src/assets/team-*.png` en Christian (ander kapsel, andere kleding) en
+Michael (andere kleding) afgekeurd als "niet meer dezelfde persoon". Die nieuwe foto's lieten juist
+zien hoe het team er nú uitziet; de foto's op de site waren verouderd.
+**Lesson:**
+- De site is geen bron van waarheid voor hoe iemand eruitziet. Vraag eerst of een afwijking van
+  het huidige beeld bewust is, in plaats van het meteen als fout te benoemen.
+- Wel altijd blijven letten op echte AI-fouten (vervormde handen, kleding van de ene persoon op de
+  andere), maar formuleer dat als vraag, niet als oordeel.
