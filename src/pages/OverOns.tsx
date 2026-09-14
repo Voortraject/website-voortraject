@@ -3,10 +3,10 @@ import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
 import { CtaButton } from "@/components/CtaButton";
 import { Cijfers } from "@/components/sections/Cijfers";
-import michael from "@/assets/team-michael.png";
-import tim from "@/assets/team-tim.png";
-import wouter from "@/assets/team-wouter.png";
-import christian from "@/assets/team-christian.png";
+import michael from "@/assets/team-michael.webp";
+import tim from "@/assets/team-tim.webp";
+import wouter from "@/assets/team-wouter.webp";
+import christian from "@/assets/team-christian.webp";
 import { UserCheck, ShieldCheck, Zap, FolderCheck } from "lucide-react";
 
 const team = [
@@ -98,7 +98,7 @@ const OverOns = () => {
               {team.map((p) => (
                 <article
                   key={p.name}
-                  className="bg-white rounded-2xl overflow-hidden transition-all duration-200 ease-out hover:-translate-y-1 flex flex-col"
+                  className="bg-white rounded-2xl overflow-hidden transition-all duration-200 ease-out hover:-translate-y-1 flex flex-col w-full max-w-[400px] mx-auto sm:max-w-none"
                   style={{
                     border: "1px solid #E5E2DB",
                     boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
@@ -106,7 +106,7 @@ const OverOns = () => {
                   onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 12px 36px rgba(21,44,78,0.14)")}
                   onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 4px 24px rgba(21,44,78,0.06)")}
                 >
-                  <div className="w-full overflow-hidden h-[280px] md:h-[320px]" style={{ backgroundColor: "#FAFAFA" }}>
+                  <div className="w-full overflow-hidden aspect-[4/5]" style={{ backgroundColor: "#FAFAFA" }}>
                     <img
                       src={p.img}
                       alt={p.name}
