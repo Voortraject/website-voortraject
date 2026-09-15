@@ -68,6 +68,7 @@ export const WaarWeBijHelpen = () => (
           <TegelFoto
             src={fotoIsolatie}
             alt="Adviseur van Voortraject meet de gevel op voor isolatie"
+            objectPosition="center 15%"
           />
           <h3 className="mt-4 font-display font-semibold text-primary text-[20px] md:text-[22px] leading-[1.25]">
             Advies over isolatie
