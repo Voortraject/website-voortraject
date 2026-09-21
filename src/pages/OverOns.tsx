@@ -3,34 +3,8 @@ import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
 import { CtaButton } from "@/components/CtaButton";
 import { Cijfers } from "@/components/sections/Cijfers";
-import michael from "@/assets/team-michael.webp";
-import tim from "@/assets/team-tim.webp";
-import wouter from "@/assets/team-wouter.webp";
-import christian from "@/assets/team-christian.webp";
-import { UserCheck, ShieldCheck, Zap, FolderCheck } from "lucide-react";
-
-const team = [
-  {
-    name: "Michael",
-    specialty: "Verduurzamingsspecialist",
-    img: michael,
-  },
-  {
-    name: "Tim",
-    specialty: "Bewonersadviseur",
-    img: tim,
-  },
-  {
-    name: "Wouter",
-    specialty: "Bewonersadviseur",
-    img: wouter,
-  },
-  {
-    name: "Christian",
-    specialty: "Subsidiespecialist",
-    img: christian,
-  },
-];
+import { UserCheck, ShieldCheck, Zap, FolderCheck, Mail } from "lucide-react";
+import { TEAM, teamJsonLd } from "@/config/team";
 
 const accent = { color: "hsl(var(--accent))" };
 
@@ -67,6 +41,7 @@ const OverOns = () => {
         title="Over ons | Voortraject"
         description="Maak kennis met het team van Voortraject. Een klein, vast team dat het hele verduurzamingstraject voor uitvoerders en bewoners overziet."
         path="/over-ons"
+        jsonLd={teamJsonLd}
       />
       <Header />
       <main className="flex-1">
@@ -95,7 +70,7 @@ const OverOns = () => {
         <section className="py-12 md:py-16 bg-white">
           <div className="container-content">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-              {team.map((p) => (
+              {TEAM.map((p) => (
                 <article
                   key={p.name}
                   className="bg-white rounded-2xl overflow-hidden transition-all duration-200 ease-out hover:-translate-y-1 flex flex-col w-full max-w-[400px] mx-auto sm:max-w-none"
@@ -115,13 +90,29 @@ const OverOns = () => {
                       style={{ objectPosition: "top center" }}
                     />
                   </div>
-                  <div className="p-6 flex-1 flex flex-col">
-                    <h3 className="font-display font-bold text-primary text-[20px] tracking-[-0.01em] leading-tight">
-                      {p.name}
-                    </h3>
-                    <p className="text-muted-foreground text-[14px] leading-tight" style={{ marginTop: 4 }}>
-                      {p.specialty}
-                    </p>
+                  <div className="p-6 flex-1 flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h3 className="font-display font-bold text-primary text-[20px] tracking-[-0.01em] leading-tight">
+                        {p.name}
+                      </h3>
+                      <p className="text-muted-foreground text-[14px] leading-tight" style={{ marginTop: 4 }}>
+                        {p.specialty}
+                      </p>
+                    </div>
+                    {/* Direct mailen naar de persoon zelf: wie al weet wie hij
+                        nodig heeft, hoeft niet langs het contactformulier. Het
+                        adres staat alleen in de link, niet als tekst op de
+                        kaart. De knop is 36px en wordt met -6px omhoog gezet,
+                        zodat zijn midden op de regel van de naam uitkomt. */}
+                    <a
+                      href={`mailto:${p.email}`}
+                      title={`Mail ${p.name}: ${p.email}`}
+                      aria-label={`Mail ${p.name} op ${p.email}`}
+                      className="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-full border border-border text-muted-foreground hover:text-accent hover:border-accent focus-visible:text-accent focus-visible:border-accent transition-colors duration-150"
+                      style={{ marginTop: -6 }}
+                    >
+                      <Mail className="w-[18px] h-[18px]" aria-hidden="true" />
+                    </a>
                   </div>
                 </article>
               ))}
