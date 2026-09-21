@@ -13,6 +13,7 @@ vi.mock("@/components/sections/Cijfers", () => ({ Cijfers: () => null }));
 vi.mock("@/components/CtaButton", () => ({ CtaButton: () => null }));
 
 import OverOns from "@/pages/OverOns";
+import { teamJsonLd } from "@/config/team";
 
 const TEAM = [
   ["Michael", "michael@voortraject.nl"],
@@ -28,7 +29,10 @@ describe("teamkaarten op /over-ons", () => {
     for (const [naam, adres] of TEAM) {
       const link = screen.getByRole("link", { name: new RegExp(`Mail ${naam}`) });
       expect(link, naam).toHaveAttribute("href", `mailto:${adres}`);
-      expect(link).toHaveTextContent(adres);
+      // Het adres staat alleen in de link, niet als tekst op de kaart. De
+      // tooltip is dan de enige plek waar een ziende bezoeker het adres ziet
+      // voordat hij klikt.
+      expect(link, naam).toHaveAttribute("title", `Mail ${naam}: ${adres}`);
     }
   });
 
@@ -39,5 +43,21 @@ describe("teamkaarten op /over-ons", () => {
     );
 
     expect(adressen.sort()).toEqual(TEAM.map(([, adres]) => adres).sort());
+  });
+  it("zet het team als Person-schema op de pagina", () => {
+    const personen = teamJsonLd.employee;
+
+    expect(teamJsonLd["@type"]).toBe("Organization");
+    expect(personen).toHaveLength(TEAM.length);
+
+    for (const [i, [naam, adres]] of TEAM.entries()) {
+      // Volgorde volgt het team-array, zodat schema en kaarten niet uiteen lopen.
+      expect(personen[i]["@type"], naam).toBe("Person");
+      expect(personen[i].name).toBe(naam);
+      expect(personen[i].email).toBe(adres);
+      expect(personen[i].jobTitle, naam).toBeTruthy();
+      expect(personen[i].image, naam).toContain("https://voortraject.nl/");
+      expect(personen[i].worksFor["@id"]).toBe(teamJsonLd["@id"]);
+    }
   });
 });
