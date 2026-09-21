@@ -7,27 +7,31 @@ import michael from "@/assets/team-michael.webp";
 import tim from "@/assets/team-tim.webp";
 import wouter from "@/assets/team-wouter.webp";
 import christian from "@/assets/team-christian.webp";
-import { UserCheck, ShieldCheck, Zap, FolderCheck } from "lucide-react";
+import { UserCheck, ShieldCheck, Zap, FolderCheck, Mail } from "lucide-react";
 
 const team = [
   {
     name: "Michael",
     specialty: "Verduurzamingsspecialist",
+    email: "michael@voortraject.nl",
     img: michael,
   },
   {
     name: "Tim",
     specialty: "Bewonersadviseur",
+    email: "tim@voortraject.nl",
     img: tim,
   },
   {
     name: "Wouter",
     specialty: "Bewonersadviseur",
+    email: "wouter@voortraject.nl",
     img: wouter,
   },
   {
     name: "Christian",
     specialty: "Subsidiespecialist",
+    email: "christian@voortraject.nl",
     img: christian,
   },
 ];
@@ -122,6 +126,17 @@ const OverOns = () => {
                     <p className="text-muted-foreground text-[14px] leading-tight" style={{ marginTop: 4 }}>
                       {p.specialty}
                     </p>
+                    {/* Direct mailen naar de persoon zelf: wie al weet wie hij
+                        nodig heeft, hoeft niet langs het contactformulier. */}
+                    <a
+                      href={`mailto:${p.email}`}
+                      aria-label={`Mail ${p.name} op ${p.email}`}
+                      className="inline-flex self-start items-center gap-2 text-[13px] text-muted-foreground hover:text-accent focus-visible:text-accent transition-colors duration-150 break-all"
+                      style={{ marginTop: 12 }}
+                    >
+                      <Mail className="w-4 h-4 shrink-0" aria-hidden="true" />
+                      <span>{p.email}</span>
+                    </a>
                   </div>
                 </article>
               ))}
