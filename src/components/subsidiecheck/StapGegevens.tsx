@@ -309,6 +309,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         gemeente={input.gemeente}
         provincie={input.provincie}
         fase={fase}
+        klaar={!zoekBezig}
       />
     );
   }
