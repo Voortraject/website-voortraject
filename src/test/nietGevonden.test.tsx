@@ -34,10 +34,10 @@ describe("404-pagina", () => {
     expect(seo.dataset.path).toBe("/bestaat-niet");
   });
 
-  it("heeft één Nederlandse h1", () => {
+  it("heeft één h1 in gewone taal", () => {
     toon();
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
-    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("Deze pagina is weggewaaid");
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("Deze pagina bestaat niet");
   });
 
   it("wijst door naar de subsidiecheck, verduurzamen, contact en home", () => {

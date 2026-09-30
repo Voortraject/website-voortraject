@@ -36,7 +36,7 @@ const NotFound = () => {
           (een "soft 404"). */}
       <Seo
         title="Pagina niet gevonden | Voortraject"
-        description="Deze pagina bestaat niet (meer). Ga verder naar de subsidiecheck, verduurzamen of neem contact met ons op."
+        description="Deze pagina bestaat niet. Ga verder naar de subsidiecheck, verduurzamen of neem contact met ons op."
         path={pathname}
         noindex
       />
@@ -44,20 +44,26 @@ const NotFound = () => {
       <main className="flex-1">
         <section className="section-pad">
           <div className="container-content mx-auto max-w-3xl text-center">
-            {/* Het blaadje is van het logo gewaaid en landt boven op de 404,
-                zoals het in het logo boven de j staat. */}
-            <div className="relative mx-auto w-fit" aria-hidden="true">
-              <span className="block font-['Inter_Tight',_'Inter',_sans-serif] text-[112px] font-bold leading-none tracking-[-0.04em] text-primary md:text-[168px]">
-                404
-              </span>
-              <Blaadje className="absolute -right-5 -top-9 h-14 w-14 animate-wegwaaien motion-reduce:animate-none motion-reduce:rotate-[14deg] md:-right-8 md:-top-14 md:h-20 md:w-20" />
-            </div>
+            {/* In het logo is het blaadje geen losse versiering maar deel van een
+                letter (de punt op de j). Hier neemt het dezelfde rol: het staat op
+                de plek van de 0. De maten zijn in em, zodat het blad meeschaalt met
+                het cijfer: 0,84em hoog is de kapitaalhoogte van Inter Tight, de
+                negatieve marges halen de lege ruimte naast en onder het blad in de
+                viewBox weg, zodat het takje op de basislijn staat. */}
+            <p
+              className="font-['Inter_Tight',_'Inter',_sans-serif] text-[120px] font-bold leading-none tracking-[-0.04em] text-primary md:text-[176px]"
+              aria-hidden="true"
+            >
+              4
+              <Blaadje className="mb-[-0.055em] ml-[-0.06em] mr-[-0.13em] inline-block h-[0.84em] w-[0.84em] animate-dwarrelen align-baseline motion-reduce:animate-none" />
+              4
+            </p>
 
-            <p className="label-eyebrow mt-8">Pagina niet gevonden</p>
-            <h1 className="h2-section mt-3">Deze pagina is weggewaaid</h1>
+            <p className="label-eyebrow mt-8">Foutmelding 404</p>
+            <h1 className="h2-section mt-3">Deze pagina bestaat niet</h1>
             <p className="body-lg mx-auto mt-4 max-w-xl text-muted-foreground">
-              Ons blaadje is even van het logo gewaaid, en de pagina die je zocht is meegewaaid. Misschien is het
-              adres veranderd of zit er een tikfout in. Wij weten de weg gelukkig nog wel.
+              De link die je hebt gevolgd werkt niet meer, of er zit een typfout in het adres. Dat kan gebeuren als
+              een pagina is verhuisd. Kies hieronder waar je naartoe wilt, dan helpen we je verder.
             </p>
 
             <ul className="mt-10 grid gap-3 text-left sm:grid-cols-3">
