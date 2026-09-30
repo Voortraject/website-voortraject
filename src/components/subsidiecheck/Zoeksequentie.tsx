@@ -47,7 +47,7 @@ export const ZoekKaart = ({ adresRegel, gemeente, provincie, fase, klaar }: Zoek
         aria-valuemax={100}
         aria-valuenow={procent}
       >
-        <Blaadje vulling={vulling} className="h-[72px] w-[72px] md:h-[84px] md:w-[84px]" />
+        <Blaadje vulling={vulling} className="h-[96px] w-[96px] md:h-[112px] md:w-[112px]" />
         <span className="mt-2 text-[13px] font-semibold tabular-nums text-muted-foreground" aria-hidden="true">
           {procent}%
         </span>
