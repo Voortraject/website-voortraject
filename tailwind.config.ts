@@ -78,6 +78,14 @@ export default {
           "0%": { opacity: "0", transform: "translateY(12px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        // Het blaadje op de 404 staat op de plek van de 0. Het dwarrelt rustig
+        // van boven naar zijn plek en eindigt recht, zodat het als cijfer leest.
+        "dwarrelen": {
+          "0%": { opacity: "0", transform: "translate(-40px, -90px) rotate(-28deg)" },
+          "35%": { opacity: "1", transform: "translate(22px, -48px) rotate(16deg)" },
+          "70%": { transform: "translate(-8px, -12px) rotate(-7deg)" },
+          "100%": { opacity: "1", transform: "translate(0, 0) rotate(0deg)" },
+        },
         // Ingetogener dan fade-up: minder afstand, korter. Voor de aankomst op
         // het resultaat, waar meerdere blokken kort na elkaar verschijnen. Met
         // 12px over 0,6s per blok schuift het hele scherm als één plaat.
@@ -102,6 +110,7 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-up": "fade-up 0.6s ease-out both",
+        "dwarrelen": "dwarrelen 2s cubic-bezier(0.33, 0, 0.2, 1) 0.15s both",
         "onthul": "onthul 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both",
         "tech-pulse": "tech-pulse 4s ease-in-out infinite",
         "blink": "blink 1s steps(2, start) infinite",
