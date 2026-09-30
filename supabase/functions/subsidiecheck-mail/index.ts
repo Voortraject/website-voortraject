@@ -158,6 +158,12 @@ const NIVEAU_LABELS: Record<Niveau, string> = {
 // de <img>-tags in de n8n-mailworkflows van het CRM aan.
 const LOGO_URL = "https://voortraject.nl/mail/voortraject-logo-wit.png";
 
+// De algemene mailhandtekening van Voortraject, onder de groet in plaats van de regel
+// "Team Voortraject". KOPIE van handtekeningAlgemeenHtml() in src/lib/mailHandtekening.ts van
+// de CRM-repo; daar staat hij ook in elke n8n-mail. Verandert hij daar, dan hier mee.
+// Inline stijlen en vaste kleuren: mailclients strippen een <style>-blok en kennen geen tokens.
+const HANDTEKENING_ALGEMEEN_HTML = "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;color:#152C4E;\"><tr><td width=\"170\" align=\"center\" style=\"width:170px;vertical-align:middle;padding:0 22px 0 0;\"><a href=\"https://voortraject.nl\" style=\"display:block;text-decoration:none;\"><img src=\"https://voortraject.nl/mail/voortraject-logo-blauw.png\" width=\"170\" height=\"45\" alt=\"Voortraject\" style=\"display:block;width:170px;height:45px;border:0;margin:0 auto;\"></a></td><td style=\"vertical-align:middle;padding:4px 0 4px 22px;border-left:2px solid #E8B547;\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;\"><tr><td colspan=\"2\" style=\"font-size:17px;line-height:22px;font-weight:bold;color:#152C4E;padding:0;\">Team Voortraject</td></tr><tr><td colspan=\"2\" style=\"font-size:13px;line-height:18px;color:#5C6B80;padding:0 0 12px 0;\">Gratis advies over verduurzamen en subsidies</td></tr><tr><td width=\"62\" style=\"width:62px;font-size:12px;line-height:20px;color:#8A94A3;padding:0;\">Telefoon</td><td style=\"font-size:13px;line-height:20px;padding:0;\"><a href=\"tel:+31502112689\" style=\"color:#152C4E;text-decoration:none;\">050 211 26 89</a></td></tr><tr><td width=\"62\" style=\"width:62px;font-size:12px;line-height:20px;color:#8A94A3;padding:0;\">E-mail</td><td style=\"font-size:13px;line-height:20px;padding:0;\"><a href=\"mailto:info@voortraject.nl\" style=\"color:#152C4E;text-decoration:none;\">info@voortraject.nl</a></td></tr><tr><td width=\"62\" style=\"width:62px;font-size:12px;line-height:20px;color:#8A94A3;padding:0;\">Website</td><td style=\"font-size:13px;line-height:20px;padding:0;\"><a href=\"https://voortraject.nl\" style=\"color:#152C4E;text-decoration:none;\">voortraject.nl</a></td></tr></table></td></tr></table>";
+
 // Iconen in de knoppen en bij de Google-score. Deze staan wél op de website
 // (`public/mail/`, meegebouwd door Cloudflare Pages) en niet in de storage-bucket
 // hierboven: dan horen ze bij de code die ze gebruikt en gaan ze mee met dezelfde
@@ -691,7 +697,7 @@ function bouwEmailHtml(opts: {
           <p style="font-size:14px;color:${KLEUR.muted};margin:20px 0 0;line-height:1.6;">Ken je iemand die dit ook moet doen? Huizen uit dezelfde tijd komen vaak voor dezelfde regelingen in aanmerking. Stuur ze <a href="${DEEL_URL}" style="color:${KLEUR.primary};font-weight:600;">de check voor hun eigen adres</a>.</p>
 
           <p style="font-size:16px;margin:24px 0 4px;">Met vriendelijke groet,</p>
-          <p style="font-size:16px;margin:0;font-weight:600;">Team Voortraject</p>
+          <div style="line-height:24px">&nbsp;</div>${HANDTEKENING_ALGEMEEN_HTML}
         </td></tr>
 
         <!-- Footer -->
