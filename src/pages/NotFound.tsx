@@ -46,16 +46,18 @@ const NotFound = () => {
           <div className="container-content mx-auto max-w-3xl text-center">
             {/* In het logo is het blaadje geen losse versiering maar deel van een
                 letter (de punt op de j). Hier neemt het dezelfde rol: het staat op
-                de plek van de 0. De maten zijn in em, zodat het blad meeschaalt met
-                het cijfer: 0,84em hoog is de kapitaalhoogte van Inter Tight, de
-                negatieve marges halen de lege ruimte naast en onder het blad in de
-                viewBox weg, zodat het takje op de basislijn staat. */}
+                de plek van de 0, en daarom net als in het logo zonder takje. De
+                maten zijn in em, zodat het blad meeschaalt met het cijfer: 0,79em
+                hoog is de kapitaalhoogte van Inter Tight, de marges zetten het blad
+                optisch midden tussen de vieren en op de basislijn. */}
             <p
               className="font-['Inter_Tight',_'Inter',_sans-serif] text-[120px] font-bold leading-none tracking-[-0.04em] text-primary md:text-[176px]"
               aria-hidden="true"
             >
               4
-              <Blaadje className="mb-[-0.055em] ml-[-0.06em] mr-[-0.13em] inline-block h-[0.84em] w-[0.84em] animate-dwarrelen align-baseline motion-reduce:animate-none" />
+              <Blaadje
+                takje={false}
+                className="mb-[-0.03em] ml-[0.06em] mr-[-0.03em] inline-block h-[0.79em] w-[0.79em] animate-dwarrelen align-baseline motion-reduce:animate-none" />
               4
             </p>
 
