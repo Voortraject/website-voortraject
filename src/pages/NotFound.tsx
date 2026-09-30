@@ -47,8 +47,8 @@ const NotFound = () => {
             {/* In het logo is het blaadje geen losse versiering maar deel van een
                 letter (de punt op de j). Hier neemt het dezelfde rol: het staat op
                 de plek van de 0, en daarom net als in het logo zonder takje. De
-                maten zijn in em, zodat het blad meeschaalt met het cijfer: 0,79em
-                hoog is de kapitaalhoogte van Inter Tight, de marges zetten het blad
+                maten zijn in em, zodat het blad meeschaalt met het cijfer: 0,7em
+                hoog, iets onder de kapitaalhoogte van Inter Tight; de marges zetten het blad
                 optisch midden tussen de vieren en op de basislijn. */}
             <p
               className="font-['Inter_Tight',_'Inter',_sans-serif] text-[120px] font-bold leading-none tracking-[-0.04em] text-primary md:text-[176px]"
@@ -57,7 +57,7 @@ const NotFound = () => {
               4
               <Blaadje
                 takje={false}
-                className="mb-[-0.03em] ml-[0.06em] mr-[-0.03em] inline-block h-[0.79em] w-[0.79em] animate-dwarrelen align-baseline motion-reduce:animate-none" />
+                className="mb-[-0.027em] ml-[0.11em] mr-[0.07em] inline-block h-[0.7em] w-[0.7em] animate-dwarrelen align-baseline motion-reduce:animate-none" />
               4
             </p>
 
