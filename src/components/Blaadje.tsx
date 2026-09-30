@@ -1,19 +1,19 @@
 import { useId } from "react";
 
-// Het blad uit het logo, nagetekend als pad (viewBox 0 0 100 100), zodat we het
-// los kunnen gebruiken: vullen, inkleuren, laten bewegen. Eén doorlopende
-// omtrek; de nerf is de spleet die onderaan tussen het smalle linkerdeel en het
-// hoofdblad opengaat, net als in het logo.
+// Het blad uit het logo, met het takje uit onze losse favicon, nagetekend als
+// pad (viewBox 0 0 100 100) zodat we het los kunnen gebruiken: vullen,
+// inkleuren, laten bewegen. Eén doorlopende omtrek: het takje loopt door in de
+// nerf, de spleet tussen het smalle linkerdeel en het hoofdblad.
 export const BLAD_PAD =
-  "M 12 93 C 0 71 4 37 30 20 C 50 7 72 4 90 5 C 96 5 97 9 96.5 15 C 92 53 66 90 22 96 C 26 70 45 45 71 29 C 44 42 22 62 12 93 Z";
+  "M 22 93.5 C 22.6 82.5 25.8 74.5 29.2 68 C 23.8 54.5 24.5 35.5 38.5 22.5 C 50 11.5 63.5 6.5 77.5 6 C 78.5 23.5 75 43.5 65 58.5 C 57 68.5 45 73 33.3 72 C 40 54.5 49 40.5 59 28.5 C 45 41.5 33 58.5 30.2 70 C 27.8 78.5 26.7 86.5 26.7 93.5 Z";
 
-// De bovenste en onderste y van het blad. De vulling loopt tussen deze twee,
-// anders zit het eerste en laatste stuk van de voortgang in lege ruimte.
-const BOVEN = 4;
-const ONDER = 96;
+// De bovenste en onderste y van blad plus takje. De vulling loopt tussen deze
+// twee: eerst stijgt hij door het takje, dan vult het blad zich.
+const BOVEN = 6;
+const ONDER = 93.5;
 
 interface BlaadjeProps {
-  /** Hoe vol het blad is, 0…1. Standaard vol: dan is het gewoon het logoblad. */
+  /** Hoe vol het blad is, 0…1. Standaard vol: dan is het gewoon het blad uit de favicon. */
   vulling?: number;
   className?: string;
 }
@@ -21,7 +21,7 @@ interface BlaadjeProps {
 /**
  * Het blaadje als voortgang: leeg is het zand, het vult zich van onder met
  * inktblauw, met een okerlijn op het vulniveau. Vol is het precies het blad uit
- * het logo. Puur decoratief (aria-hidden); de aanroeper zorgt voor de tekst of
+ * de favicon. Puur decoratief (aria-hidden); de aanroeper zorgt voor de tekst of
  * de progressbar-semantiek.
  */
 export const Blaadje = ({ vulling = 1, className }: BlaadjeProps) => {

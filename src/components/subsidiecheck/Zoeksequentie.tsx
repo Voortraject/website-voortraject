@@ -38,7 +38,7 @@ export const ZoekKaart = ({ adresRegel, gemeente, provincie, fase, klaar }: Zoek
       <p className="text-[13.5px] text-muted-foreground">We zoeken de regelingen voor {adresRegel}</p>
 
       {/* Het blaadje uit het logo vult zich met de echte voortgang. Vol is het
-          precies het logoblad, en dat is ook het moment dat de regelingen er zijn. */}
+          precies het blad uit de favicon, en dat is ook het moment dat de regelingen er zijn. */}
       <div
         className="mx-auto mt-7 flex flex-col items-center"
         role="progressbar"
