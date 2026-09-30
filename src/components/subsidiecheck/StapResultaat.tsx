@@ -182,7 +182,13 @@ export const StapResultaat = ({ input, adres, netBinnen = false }: StapResultaat
 
   if (laden) {
     return (
-      <ZoekKaart adresRegel={adresRegel} gemeente={input.gemeente} provincie={input.provincie} fase={fase} />
+      <ZoekKaart
+        adresRegel={adresRegel}
+        gemeente={input.gemeente}
+        provincie={input.provincie}
+        fase={fase}
+        klaar={!isPending}
+      />
     );
   }
 

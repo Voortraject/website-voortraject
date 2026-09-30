@@ -1,4 +1,5 @@
-import { Loader2 } from "lucide-react";
+import { Blaadje } from "@/components/Blaadje";
+import { doelVulling, useVloeiend } from "@/hooks/useLaadsequentie";
 
 // Presentatie van de zoekstap. De timing zit in useLaadsequentie
 // (src/hooks/useLaadsequentie.ts); dit bestand exporteert alleen een component,
@@ -11,17 +12,22 @@ interface ZoekKaartProps {
   provincie?: string;
   /** Huidige fase uit useLaadsequentie. */
   fase: number;
+  /** De bron heeft geantwoord; pas dan vult het blaadje tot 100%. */
+  klaar: boolean;
 }
 
 // Eén zoekstap tegelijk, prominent in beeld; de stappen wisselen elkaar rustig
 // kruisvervagend af.
-export const ZoekKaart = ({ adresRegel, gemeente, provincie, fase }: ZoekKaartProps) => {
+export const ZoekKaart = ({ adresRegel, gemeente, provincie, fase, klaar }: ZoekKaartProps) => {
   const stappen = [
     "Landelijke regelingen doorzoeken",
     provincie ? `Provinciale regelingen voor ${provincie} doorzoeken` : "Provinciale regelingen doorzoeken",
     gemeente ? `Regelingen van gemeente ${gemeente} doorzoeken` : "Gemeentelijke regelingen doorzoeken",
   ];
   const idx = Math.min(fase, stappen.length - 1);
+  const { doel, duurMs } = doelVulling(fase, klaar);
+  const vulling = useVloeiend(doel, duurMs);
+  const procent = Math.round(vulling * 100);
 
   return (
     <div
@@ -31,7 +37,21 @@ export const ZoekKaart = ({ adresRegel, gemeente, provincie, fase }: ZoekKaartPr
     >
       <p className="text-[13.5px] text-muted-foreground">We zoeken de regelingen voor {adresRegel}</p>
 
-      <Loader2 size={26} className="mx-auto mt-8 animate-spin text-accent" aria-hidden="true" />
+      {/* Het blaadje uit het logo vult zich met de echte voortgang. Vol is het
+          precies het blad uit de favicon, en dat is ook het moment dat de regelingen er zijn. */}
+      <div
+        className="mx-auto mt-7 flex flex-col items-center"
+        role="progressbar"
+        aria-label="Voortgang van het zoeken"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={procent}
+      >
+        <Blaadje vulling={vulling} className="h-[96px] w-[96px] md:h-[112px] md:w-[112px]" />
+        <span className="mt-2 text-[13px] font-semibold tabular-nums text-muted-foreground" aria-hidden="true">
+          {procent}%
+        </span>
+      </div>
 
       {/* Absoluut gestapeld zodat de stappen rustig in elkaar overvloeien
           zonder de layout te laten springen. */}
@@ -48,20 +68,6 @@ export const ZoekKaart = ({ adresRegel, gemeente, provincie, fase }: ZoekKaartPr
           >
             {label}
           </p>
-        ))}
-      </div>
-
-      {/* Voortgangsstippen: de actieve rekt rustig uit tot een okerbalkje. */}
-      <div className="mt-7 flex items-center justify-center gap-2.5" aria-hidden="true">
-        {stappen.map((_, i) => (
-          <span
-            key={i}
-            className="h-2 rounded-full transition-all duration-500 ease-out"
-            style={{
-              width: i === idx ? 24 : 8,
-              backgroundColor: i <= idx ? "hsl(var(--accent))" : "hsl(var(--border))",
-            }}
-          />
         ))}
       </div>
     </div>
