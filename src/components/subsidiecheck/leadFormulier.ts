@@ -20,6 +20,7 @@ import {
 // mailblok en het vraagblok. Daarom zit de testmodus-check hier en niet in de
 // componenten. Eén plek, geen pad dat er per ongeluk langs kan.
 import { isTestmodus } from "@/config/testmodus";
+import { leadBron, onthoudenHerkomst } from "@/lib/herkomst";
 import type { ToestemmingVelden } from "./toestemming";
 
 /** Logt wat er in testmodus níet is weggeschreven, zodat je het toch kunt nalezen. */
@@ -184,11 +185,12 @@ export async function schrijfSubsidiecheckLead(args: {
     // want die heeft het overzicht al. CHECK op de kolom: alleen
     // 'contactformulier', 'subsidietool' of NULL.
     formulier: "subsidietool",
-    // Eigen lead uit onze eigen tool, dus bron "Voortraject". Het CRM normaliseert
-    // dit (trigger `normaliseer_lead_bron`) via de naam in `lead_bronnen` naar de
-    // code `voortraject`; vóór deze wijziging viel "Subsidiecheck" terug op
-    // `website`. Welk formulier de lead opleverde staat in `formulier` hierboven.
-    bron: "Voortraject",
+    // Waar de bezoeker vandaan kwam: een bekende `?via=`-code (flyer, partner,
+    // deellink; zie src/lib/herkomst.ts), anders "Voortraject". Het CRM
+    // normaliseert dat (trigger `normaliseer_lead_bron`): een code gaat er
+    // rechtstreeks in, "Voortraject" via de naam in `lead_bronnen` naar de code
+    // `voortraject`. Welk formulier de lead opleverde staat in `formulier` hierboven.
+    bron: leadBron(),
     // `status`, `prioriteit` en `toegewezen_aan` sturen we bewust NIET mee: de
     // kolom heeft DEFAULT 'nieuw', en het CRM zet die drie bij een anonieme
     // insert toch terug (trigger `publieke_lead_velden_vastzetten`).
@@ -266,6 +268,10 @@ export async function verstuurSubsidiecheckLead(args: {
       email: waarden.email,
       telefoon: waarden.telefoon,
       honeypot: honeypot ?? "",
+      // Bekende herkomstcode of niets; de function houdt hem zelf nog een keer
+      // tegen haar eigen lijst. Een oudere function negeert dit veld en schrijft
+      // gewoon "Voortraject".
+      herkomst: onthoudenHerkomst() ?? undefined,
       notitie,
       energielabel: verrijking?.energielabel,
       bouwjaar: verrijking?.bouwjaar,
@@ -375,6 +381,8 @@ export async function verstuurSubsidiecheckBericht(args: {
       email: waarden.email,
       telefoon: waarden.telefoon || undefined,
       honeypot: honeypot ?? "",
+      // Alleen van belang als de function hier een nieuwe lead van moet maken.
+      herkomst: onthoudenHerkomst() ?? undefined,
       input: {
         postcode: normalizePostcode(input.postcode),
         huisnummer: input.huisnummer,

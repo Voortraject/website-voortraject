@@ -3,6 +3,7 @@ import { CheckCircle, Loader2, Mail, MapPin, Phone } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { formulierFoutMelding } from "@/lib/formulierFout";
+import { leadBron } from "@/lib/herkomst";
 import { pushGtmEvent } from "@/lib/gtm";
 import { Footer } from "@/components/Footer";
 import { ReviewsCompact } from "@/components/ReviewsCompact";
@@ -285,11 +286,14 @@ const Contact = () => {
         straat: bewoner.straatnaam.trim() || null,
         stad: bewoner.plaatsnaam.trim() || null,
         notities,
-        // Eigen lead van onze eigen site: bron "Voortraject". Het CRM
-        // normaliseert dat (trigger `normaliseer_lead_bron`) via de naam in
-        // `lead_bronnen` naar de code `voortraject`. De oude waarde "Website"
-        // werd code `website`, en die bron is in het CRM niet meer in gebruik.
-        bron: "Voortraject",
+        // Waar de bezoeker vandaan kwam: een bekende `?via=`-code uit deze
+        // sessie (flyer, partner, deellink; zie src/lib/herkomst.ts), anders
+        // "Voortraject". Het CRM normaliseert dat (trigger
+        // `normaliseer_lead_bron`): een code gaat er rechtstreeks in,
+        // "Voortraject" via de naam in `lead_bronnen` naar de code `voortraject`.
+        // De oude waarde "Website" werd code `website`, en die bron is in het CRM
+        // niet meer in gebruik.
+        bron: leadBron(),
         // Welk formulier de lead opleverde. n8n bepaalt hiermee de taaktitel én
         // of de bevestigingsmail ("binnen 1 werkdag contact") uitgaat. Er staat een
         // CHECK op: alleen 'contactformulier', 'subsidietool' of NULL.

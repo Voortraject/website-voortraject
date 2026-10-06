@@ -27,6 +27,10 @@ export type DeelKanaal = "link" | "mail";
  * stuurt geen referrer mee, dus zo'n bezoeker telt als direct verkeer en het
  * effect van delen is niet te meten. Kort gehouden — de ontvanger ziet deze URL
  * in zijn chat staan, en een regel vol parameters leest als spam.
+ *
+ * Daarom ook geen aparte `via=deel`: `utm_source=deel` telt zelf al als herkomst
+ * voor het CRM (zie src/lib/herkomst.ts), en zo tellen de links die al rondgaan
+ * ook mee.
  */
 export const deelUrl = (kanaal: DeelKanaal): string =>
   `${SITE_URL}/subsidiecheck?utm_source=deel&utm_medium=${kanaal}`;

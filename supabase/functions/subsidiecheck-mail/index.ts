@@ -2,8 +2,8 @@
 //
 // De zachte conversieroute "Mail mij dit overzicht". Doet twee dingen serverside:
 //   1. schrijft de lead naar `leads_bewoners` in het CRM-project (via
-//      service_role — dezelfde tabel/kolommen als het contactformulier, alleen
-//      bron: "Voortraject"), en
+//      service_role — dezelfde tabel/kolommen als het contactformulier; `bron`
+//      is een bekende herkomstcode uit `herkomst` of anders "Voortraject"), en
 //   2. stuurt de bezoeker het gevonden subsidieoverzicht per e-mail via Resend
 //      (API-key blijft server-side geheim), met een kopie naar het team.
 //
@@ -205,6 +205,23 @@ const ALLE_MAATREGELEN = [
 // anders dan deze vier laat de insert falen, dus onbekende invoer → NULL.
 const BEWONERTYPES = ["woningeigenaar", "huurder", "vve", "verhuurder"] as const;
 
+// Herkomstcodes die als `bron` op de lead mogen (flyer, bord, deellink, partners).
+// KOPIE van HERKOMST_CODES in src/lib/herkomst.ts; src/test/herkomst.test.ts houdt
+// ze gelijk. Deze controle is de laag die telt: de aanroep is met de publieke
+// anon-key na te bootsen, en zonder lijst kwam elke bestaande CRM-code erdoor
+// (ook `ingekochte_lead` of `d2d`). Onbekend → "Voortraject". Elke code moet als
+// rij in `lead_bronnen` (tenant 1) bestaan, anders maakt het CRM er `website` van.
+const HERKOMST_CODES = [
+  "flyer",
+  "bord",
+  "deel",
+  "050energielabels",
+  "duurzaam_aankopen",
+  "enerma",
+  "subsidieloket",
+  "klaas_koop_hypotheken",
+] as const;
+
 // De schrijfwijze van Milieu Centraal zelf, gelijk aan MAATREGEL_LABELS in
 // src/lib/subsidies/types.ts. Deno kan src/ niet importeren, dus dit is een
 // kopie: pas ze samen aan en deploy deze function mee. Kent deze kopie een
@@ -271,6 +288,8 @@ type Payload = {
   leadId?: string;
   /** Kopregel voor `notities`, bijv. de gekozen termijn uit de poort. */
   notitie?: string;
+  /** Herkomstcode uit `?via=` (zie HERKOMST_CODES); alleen een bekende telt. */
+  herkomst?: string;
   /** Verrijking uit publieke bronnen (EP-Online, BAG): scheelt het team opzoekwerk. */
   energielabel?: string;
   bouwjaar?: number;
@@ -946,6 +965,10 @@ Deno.serve(async (req: Request) => {
   // dan raken we de hele lead kwijt.
   const typeBewoner = BEWONERTYPES.find((t) => t === input.bewonertype) ?? null;
 
+  // Herkomst: alleen een code van de lijst, anders onze eigen bron. Streng, want
+  // hier schrijven we met service_role.
+  const bron = HERKOMST_CODES.find((c) => c === payload.herkomst) ?? "Voortraject";
+
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
@@ -1018,7 +1041,7 @@ Deno.serve(async (req: Request) => {
     subsidiecheck_interesses: interesses,
     subsidiecheck_type_bewoner: typeBewoner,
     formulier: "subsidietool",
-    bron: "Voortraject",
+    bron,
     // `status`, `prioriteit` en `toegewezen_aan` sturen we bewust NIET mee. De
     // kolom heeft DEFAULT 'nieuw', dus er verandert niets aan de uitkomst.
     //
