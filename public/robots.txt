@@ -1,24 +1,29 @@
-# /offerte/ zijn persoonlijke offertelinks (WhatsApp); nooit crawlen. Elke groep apart,
+# /offerte/ en /adviesgesprek/ zijn persoonlijke links (WhatsApp); nooit crawlen. Elke groep apart,
 # want een crawler met een eigen groep leest de groep * niet.
 User-agent: Googlebot
 Allow: /
 Disallow: /offerte/
+Disallow: /adviesgesprek/
 
 User-agent: Bingbot
 Allow: /
 Disallow: /offerte/
+Disallow: /adviesgesprek/
 
 User-agent: Twitterbot
 Allow: /
 Disallow: /offerte/
+Disallow: /adviesgesprek/
 
 User-agent: facebookexternalhit
 Allow: /
 Disallow: /offerte/
+Disallow: /adviesgesprek/
 
 User-agent: *
 Allow: /
 Disallow: /offerte/
+Disallow: /adviesgesprek/
 
 # Standaardmanier waarop crawlers de sitemap vinden, ook zonder Search Console.
 # Absolute URL is verplicht. De sitemap wordt gegenereerd bij dev/build,
