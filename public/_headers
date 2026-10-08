@@ -9,3 +9,9 @@
 # Wijzigt het logo, geef het dan een NIEUWE bestandsnaam in plaats van dit te verlagen.
 /mail/*
   Cache-Control: public, max-age=2592000
+
+# Kopbeelden van de WhatsApp-sjablonen (n8n 77ki283aqu6PxqTH, BANNER_BASIS). Meta haalt ze op
+# bij elk verstuurd bericht. Zelfde afspraak als /mail/: verwijzingen dragen ?v=1, en een nieuw
+# beeld krijgt een nieuwe bestandsnaam of versie. Vraag een nieuwe URL pas op ná de deploy.
+/whatsapp/*
+  Cache-Control: public, max-age=2592000

@@ -10,6 +10,7 @@ import {
   handtekeningHtml,
   kiesSamenvatting,
   knopHtml,
+  rondeHaakjes,
   saneerHtml,
   samenvattingHtml,
   splitsAfzenderBlok,
@@ -168,6 +169,66 @@ describe("bouwInhoud: de mail, met de afwijkingen van de webpagina", () => {
     const h = bouwInhoud(samenvatting({ mailTekst: oud }));
     expect(h).toContain(`<div>Tekst.</div><div>Met vriendelijke groet,</div><p style="margin:32px 0 0;">${knopHtml(LINK_A, "Bekijk of onderteken je offerte")}</p>`);
     expect(bouwInhoud(samenvatting({ mailTekst: oud, knoppen: [], stand: "getekend" }))).not.toContain(STAND_TEKST.getekend);
+  });
+});
+
+describe("rondeHaakjes: oude samenvattingen krijgen de huidige haakjes boven de stappenbalk", () => {
+  // De fixtures zijn de uitvoer van stappenbalk() uit src/lib/samenvattingMail.ts (CRM-repo),
+  // vóór en na #989, met labels Jij/Voortraject. De rij "Jij"/"Voortraject" daarvan is byte voor
+  // byte gelijk aan wat er in verstuurde samenvattingen staat (vergeleken op 08-10-2026).
+  const fixture = (naam: string) =>
+    readFileSync(`src/test/fixtures/stappenbalk-haakjes-${naam}.html`, "utf8").trim();
+  const OUD = fixture("oud");
+  const NIEUW = fixture("nieuw");
+  const tekst = (balk: string) =>
+    "<div>Beste Annie,</div><div><br></div><div>Zo gaat het verder:</div>" + balk +
+    "<div><br></div><div>{{ONDERTEKENLINK}}</div><div><br></div>" +
+    "<div>Met vriendelijke groet,</div><div>Michael Kruizenga</div><div>06 43420895</div>";
+
+  it("maakt van de oude balk precies de nieuwe", () => {
+    expect(OUD).not.toBe(NIEUW);
+    expect(rondeHaakjes(OUD)).toBe(NIEUW);
+  });
+
+  it("laat de nieuwe balk en de rest van de tekst letterlijk staan", () => {
+    expect(rondeHaakjes(NIEUW)).toBe(NIEUW);
+    expect(rondeHaakjes(tekst(OUD))).toBe(tekst(NIEUW));
+    expect(rondeHaakjes(TEKST)).toBe(TEKST);
+  });
+
+  it("verandert de stappen en de woorden eronder niet", () => {
+    const vanafStappen = (h: string) => h.slice(h.indexOf('<tr><td width="25%" bgcolor'));
+    expect(vanafStappen(rondeHaakjes(OUD))).toBe(vanafStappen(OUD));
+  });
+
+  it("neemt labels en kleuren over uit de oude rij", () => {
+    const anders = OUD.split(">Jij<").join(">Jullie<").split("#E8B547").join("#ABCDEF");
+    const uit = rondeHaakjes(anders);
+    expect(uit).toContain(">Jullie<");
+    expect(uit).toContain('bgcolor="#ABCDEF" style="padding:3px 0 0 3px;border-radius:8px 0 0 0;"');
+    expect(uit).not.toContain("line-height:2px");
+  });
+
+  it("vervangt niets als het patroon niet exact klopt", () => {
+    const varianten = [
+      OUD.replace('style="padding:0 0 2px;"', 'style="padding:0 0 3px;"'),
+      OUD.replace("line-height:5px;", "line-height:6px;"),
+      OUD.replace("></td><td width=\"40%\"", ">\n</td><td width=\"40%\""),
+      // Twee kleuren in één haakje: geen oude haakje.
+      OUD.replace('bgcolor="#152C4E" style="font-size:1px;line-height:5px;"', 'bgcolor="#000000" style="font-size:1px;line-height:5px;"'),
+    ];
+    for (const v of varianten) {
+      expect(v).not.toBe(OUD);
+      expect(rondeHaakjes(v)).toBe(v);
+    }
+  });
+
+  it("toont de ronde haakjes op de pagina, door het saneren heen", () => {
+    const h = bouwInhoud(samenvatting({ mailTekst: tekst(OUD) }));
+    expect(h).toContain(saneerHtml(NIEUW));
+    expect(h).toContain("border-radius:8px 0 0 0");
+    expect(h).not.toContain("line-height:2px");
+    expect(bouwInhoud(samenvatting({ mailTekst: tekst(OUD) }))).toBe(bouwInhoud(samenvatting({ mailTekst: tekst(NIEUW) })));
   });
 });
 

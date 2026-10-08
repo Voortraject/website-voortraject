@@ -21,7 +21,9 @@
 //   * staat er niets meer open, dan komt er een korte regel op de plek van de knop (STAND_TEKST);
 //   * de regel "Werkt de knop niet? Gebruik dan deze link" ({{ONDERTEKENLINK_TEKST}}) vervalt;
 //   * onder de handtekening het blok "Liever even overleggen?" met de knop "Bel me terug";
-//   * een paar regels CSS voor de telefoon (zie STIJL).
+//   * een paar regels CSS voor de telefoon (zie STIJL);
+//   * oude samenvattingen (vóór 02-10-2026) krijgen de huidige ronde haakjes boven de
+//     stappenbalk (zie rondeHaakjes).
 // De kleuren staan als hex in de HTML, net als in de mail: dit is de mail, niet de website-app,
 // dus de Tailwind-tokens gelden hier niet.
 //
@@ -175,6 +177,88 @@ export const LOGO_URL = "https://voortraject.nl/mail/voortraject-logo-mail.png?v
 const omslag = (body, belRij) =>
   `<table class="shell" role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #FBFAF7; padding: 32px 16px; font-family: 'Inter', Arial, sans-serif;"> <tr><td align="center"> <table class="kaart" role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width: 640px; background-color: #FFFFFF; border-radius: 12px; overflow: hidden;"> <tr><td style="background-color: #152C4E; background-image: linear-gradient(#152C4E,#152C4E); padding: 32px 24px; text-align: center;"> <img src="${LOGO_URL}" alt="voortraject" width="216" height="60" style="height:60px;width:216px;display:inline-block;border:0;outline:none;text-decoration:none;color:#FFFFFF;font-size:24px;font-weight:700;font-family:Arial,Helvetica,sans-serif;"> </td></tr> <tr><td class="inhoud" style="padding: 40px 32px; color: #152C4E; line-height: 1.6; font-size: 16px;"> ${body} </td></tr>${belRij} <tr><td style="background-color: #FBFAF7; padding: 24px 32px; text-align: center; border-top: 1px solid #E5E7EB;"> <p style="font-size: 12px; color: #6B7280; margin: 0; line-height: 1.6;"> <strong style="color: #152C4E;">Voortraject</strong><br> info@voortraject.nl<br> </p> </td></tr> </table> </td></tr> </table>`;
 
+// ─── Oude haakjes boven de stappenbalk ───────────────────────────────────────────────────────
+// Tot 02-10-2026 (CRM-PR #989) had de rij "Jij" / "Voortraject" boven de stappenbalk rechte,
+// dunne haakjes (lijn 2px, uiteinden 2×5px). Samenvattingen van daarvoor staan zo in
+// samenvattingen.mail_tekst. De pagina toont ze met de huidige ronde haakjes, zodat elke
+// samenvatting er hetzelfde uitziet. Alleen bij een exacte match met de oude opbouw; al het
+// andere (de nieuwe vorm, een onbekende variant) blijft letterlijk staan. Kleuren en labels
+// komen uit de oude rij zelf, de stappen en de woorden eronder worden niet aangeraakt.
+//
+// OUD is de opbouw uit src/lib/samenvattingMail.ts (CRM-repo) vóór #989, NIEUW die van erna
+// (functie stappenbalk, hoek/haakje/wie). Beide letterlijk; vergeleken met verstuurde
+// samenvattingen op 08-10-2026: precies twee vormen, deze twee.
+const TABEL = '<table width="100%" cellpadding="0" cellspacing="0" border="0"><tbody>';
+
+const oudeLijn = (k) =>
+  `${TABEL}<tr><td height="2" bgcolor="${k}" style="font-size:1px;line-height:2px;">&nbsp;</td></tr></tbody></table>`;
+const oudUiteinde = (k) =>
+  '<table width="2" cellpadding="0" cellspacing="0" border="0"><tbody><tr>' +
+  `<td width="2" height="5" bgcolor="${k}" style="font-size:1px;line-height:5px;">&nbsp;</td></tr></tbody></table>`;
+const oudHaakje = (k, label) =>
+  `${TABEL}<tr>` +
+  `<td width="2" valign="bottom">${oudeLijn(k)}</td>` +
+  `<td width="40%" valign="bottom">${oudeLijn(k)}</td>` +
+  `<td align="center" style="font-size:11px;font-weight:700;line-height:1.2;padding:0 6px;color:${k};">${label}</td>` +
+  `<td width="40%" valign="bottom">${oudeLijn(k)}</td>` +
+  `<td width="2" valign="bottom">${oudeLijn(k)}</td>` +
+  `</tr><tr>` +
+  `<td width="2">${oudUiteinde(k)}</td>` +
+  '<td style="font-size:1px;line-height:5px;">&nbsp;</td>'.repeat(3) +
+  `<td width="2">${oudUiteinde(k)}</td>` +
+  `</tr></tbody></table>`;
+const oudeWie = (k1, l1, rest, k2, l2) =>
+  `<tr><td valign="bottom" style="padding:0 0 2px;">${oudHaakje(k1, l1)}</td><td width="8">&nbsp;</td>` +
+  `<td colspan="${rest}" valign="bottom" style="padding:0 0 2px;">${oudHaakje(k2, l2)}</td></tr>`;
+
+const nieuweHoek = (links, k) =>
+  `${TABEL}<tr>` +
+  `<td bgcolor="${k}" style="padding:${links ? "3px 0 0 3px" : "3px 3px 0 0"};` +
+  `border-radius:${links ? "8px 0 0 0" : "0 8px 0 0"};">` +
+  `${TABEL}<tr>` +
+  `<td bgcolor="#FFFFFF" height="8" style="font-size:1px;line-height:1px;` +
+  `border-radius:${links ? "5px 0 0 0" : "0 5px 0 0"};">&nbsp;</td>` +
+  `</tr></tbody></table></td></tr></tbody></table>`;
+const nieuwHaakje = (k, label) =>
+  `${TABEL}<tr>` +
+  `<td width="45%" valign="top" style="padding:6px 0 0;">${nieuweHoek(true, k)}</td>` +
+  `<td align="center" valign="top" style="font-size:11px;font-weight:700;line-height:15px;padding:0 6px;color:${k};">${label}</td>` +
+  `<td width="45%" valign="top" style="padding:6px 0 0;">${nieuweHoek(false, k)}</td>` +
+  `</tr></tbody></table>`;
+const nieuweWie = (k1, l1, rest, k2, l2) =>
+  `<tr><td valign="bottom" style="padding:0 0 4px;">${nieuwHaakje(k1, l1)}</td><td width="8">&nbsp;</td>` +
+  `<td colspan="${rest}" valign="bottom" style="padding:0 0 4px;">${nieuwHaakje(k2, l2)}</td></tr>`;
+
+// De oude rij als patroon: de opbouw letterlijk (ge-escaped), met plaatshouders voor kleur,
+// label en colspan. Binnen één haakje moet de kleur overal dezelfde zijn (terugverwijzing).
+const OUDE_WIE = (() => {
+  const re = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const [K1, L1, R, K2, L2] = ["\u0001", "\u0002", "\u0003", "\u0004", "\u0005"];
+  const groepen = {
+    [K1]: ["k1", "#[0-9A-Fa-f]{6}"],
+    [L1]: ["l1", "[^<>]{1,60}"],
+    [R]: ["rest", "\\d{1,2}"],
+    [K2]: ["k2", "#[0-9A-Fa-f]{6}"],
+    [L2]: ["l2", "[^<>]{1,60}"],
+  };
+  const gezien = new Set();
+  const bron = re(oudeWie(K1, L1, R, K2, L2)).replace(/[\u0001-\u0005]/g, (p) => {
+    const [naam, patroon] = groepen[p];
+    if (gezien.has(p)) return `\\k<${naam}>`;
+    gezien.add(p);
+    return `(?<${naam}>${patroon})`;
+  });
+  return new RegExp(bron, "g");
+})();
+
+/** Vervangt de oude haakjesrij door de huidige vorm; al het andere blijft letterlijk staan. */
+export function rondeHaakjes(html) {
+  return String(html ?? "").replace(OUDE_WIE, (...args) => {
+    const g = args[args.length - 1];
+    return nieuweWie(g.k1, g.l1, g.rest, g.k2, g.l2);
+  });
+}
+
 // ─── Wat de webpagina anders doet ────────────────────────────────────────────────────────────
 
 /**
@@ -232,7 +316,7 @@ const NA_TEKENEN_ERONDER = new RegExp(
  * knoppen invullen, handtekening eronder), met de drie afwijkingen van de webpagina.
  */
 export function bouwInhoud({ mailTekst, term, stand, knoppen }) {
-  const afzender = splitsAfzenderBlok(saneerHtml(mailTekst));
+  const afzender = splitsAfzenderBlok(saneerHtml(rondeHaakjes(mailTekst)));
   // De vangnetregel onder de knop is voor mailclients die de knop niet tekenen. Op de webpagina
   // werkt de knop altijd, dus de regel gaat weg, met de lege regel ervoor.
   let body = afzender.tekst.replace(TERUGVAL_REGEL, "").split(PLAATSHOUDER_TEKST).join("");
