@@ -87,6 +87,8 @@ Samenwerkingsverband Noord-Nederland (SNN). Voor het indienen van een subsidieaa
 
 Verwerkers. Voor onze dienstverlening maken wij gebruik van ICT-leveranciers die in onze opdracht persoonsgegevens verwerken, waaronder leveranciers van onze database, hosting, e-mail, automatisering, telefonie, websiteanalyse en cookiebeheer. Met deze partijen sluiten wij verwerkersovereenkomsten conform artikel 28 AVG.
 
+WhatsApp. Wij kunnen u via WhatsApp berichten sturen over uw aanvraag en uw offertes, bijvoorbeeld met een link waarmee u uw offerte kunt bekijken. Daarvoor delen wij uw naam en telefoonnummer met WhatsApp Ireland Ltd. (onderdeel van Meta), die deze gegevens als verwerker in onze opdracht verwerkt. Wilt u geen WhatsApp-berichten meer van ons ontvangen? Stuur dan STOP als antwoord op een van onze berichten.
+
 Wij verstrekken uw persoonsgegevens niet aan derden voor hun eigen commerciële doeleinden.`,
   },
   {
@@ -177,7 +179,7 @@ const Privacy = () => {
                 fontStyle: "italic",
               }}
             >
-              Versie september 2026
+              Versie oktober 2026
             </p>
 
             {sections.map((section) => (
