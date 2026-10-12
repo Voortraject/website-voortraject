@@ -622,3 +622,16 @@ laat dat veld dus weg en zet weer eigen tekst in een mail naar elk adres.
   kwaadaardige request. Zo'n test vond hier meteen nog een gat: `bewonertype: "toString"` vond
   via een gewone objectlookup de prototypefunctie. Gebruik voor opzoektabellen met invoer van
   buiten altijd `hasOwnProperty`.
+
+## 2026-10-12 — Een fail-open die stil faalt, ziet eruit als een geslaagde test
+**Context:** Na de livegang van Turnstile kreeg een echte browser netjes zijn overzichtsmail.
+Dat leek het bewijs dat Turnstile werkte. In de log stond echter "niet bereikbaar, doorgelaten":
+de controle bereikte Cloudflare nooit en liet alles door. Een request met een nep-token kreeg
+óók een mail. De `catch` gaf alleen "onbekend" terug, zonder de fout te loggen.
+**Lesson:**
+- **Test een beveiliging altijd ook negatief.** "Een goede inzending komt erdoor" bewijst bij een
+  fail-open niets. Het bewijs is dat een slechte (nep-token, geen token) wordt tegengehouden.
+- **Elke fail-open logt waarom.** Status, foutnaam en -melding, nooit het geheim of het token.
+  Zonder dat is "storing" niet te onderscheiden van "de code werkt nooit".
+- **Log ook de uitkomst "ok" niet weg in stilte bij een nieuwe controle**: kijk na de eerste
+  echte inzending in de log welke tak hij nam, in plaats van uit te gaan van het resultaat.

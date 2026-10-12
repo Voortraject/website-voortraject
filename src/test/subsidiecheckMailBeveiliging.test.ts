@@ -351,7 +351,12 @@ describe("adresregel in de mail aan de bezoeker", () => {
 
 describe("Turnstile", () => {
   const antwoord = (data: unknown, ok = true) =>
-    vi.fn(async () => ({ ok, json: async () => data }) as unknown as Response) as unknown as typeof fetch;
+    vi.fn(async () => ({ ok, status: ok ? 200 : 500, json: async () => data, text: async () => JSON.stringify(data) }) as unknown as Response) as unknown as typeof fetch;
+  // De log mag in de testuitvoer niet als ruis verschijnen, maar moet er wel zijn.
+  const stil = () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+  };
 
   it("staat uit zonder secret", async () => {
     expect(await controleerTurnstile("tok", undefined, "1.2.3.4", antwoord({ success: true }))).toBe("uit");
@@ -369,11 +374,41 @@ describe("Turnstile", () => {
     expect(await controleerTurnstile("tok", "geheim", "1.2.3.4", antwoord({ success: false }))).toBe("geweigerd");
   });
 
-  it("onbekend als Cloudflare niet antwoordt", async () => {
+  it("onbekend als Cloudflare niet antwoordt, en zegt in de log waarom", async () => {
+    stil();
     expect(await controleerTurnstile("tok", "geheim", "1.2.3.4", antwoord({}, false))).toBe("onbekend");
+    expect(console.error).toHaveBeenLastCalledWith(expect.stringContaining("HTTP 500"));
     const kapot = vi.fn(async () => {
-      throw new Error("netwerk");
+      throw new TypeError("netwerk weg");
     }) as unknown as typeof fetch;
     expect(await controleerTurnstile("tok", "geheim", "1.2.3.4", kapot)).toBe("onbekend");
+    expect(console.error).toHaveBeenLastCalledWith(expect.any(String), "TypeError: netwerk weg");
+  });
+
+  it("een fout in onze eigen secret is geen bot: doorlaten en luid loggen", async () => {
+    stil();
+    const f = antwoord({ success: false, "error-codes": ["invalid-input-secret"] });
+    expect(await controleerTurnstile("tok", "geheim", "1.2.3.4", f)).toBe("onbekend");
+    expect(console.error).toHaveBeenLastCalledWith(expect.stringContaining("invalid-input-secret"));
+  });
+
+  it("een ongeldig token wordt geweigerd, met de code van Cloudflare in de log", async () => {
+    stil();
+    const f = antwoord({ success: false, "error-codes": ["invalid-input-response"] });
+    expect(await controleerTurnstile("tok", "geheim", "1.2.3.4", f)).toBe("geweigerd");
+    expect(console.warn).toHaveBeenLastCalledWith(expect.stringContaining("invalid-input-response"));
+  });
+
+  it("stuurt een formulier-aanvraag met de secret zonder witruimte", async () => {
+    const f = antwoord({ success: true });
+    await controleerTurnstile("tok", "  geheim\n", "2a02:a46b::1", f);
+    const [url, opties] = (f as unknown as { mock: { calls: [string, RequestInit][] } }).mock.calls[0];
+    expect(url).toBe("https://challenges.cloudflare.com/turnstile/v0/siteverify");
+    expect(opties.method).toBe("POST");
+    expect(opties.headers).toMatchObject({ "Content-Type": "application/x-www-form-urlencoded" });
+    const velden = new URLSearchParams(opties.body as string);
+    expect(velden.get("secret")).toBe("geheim");
+    expect(velden.get("response")).toBe("tok");
+    expect(velden.get("remoteip")).toBe("2a02:a46b::1");
   });
 });

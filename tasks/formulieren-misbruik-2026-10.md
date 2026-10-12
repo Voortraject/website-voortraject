@@ -79,3 +79,19 @@ telt hij vanaf het moment dat het formulier verschijnt, niet vanaf de zoekanimat
   mail), honeypot (niets), te snel (niets), tweede keer binnen 24 uur (niets). De aangemaakte
   lead-id's melden zodat ze opgeruimd kunnen worden.
 - Turnstile-sleutels aanmaken en zetten; daarna nog een keer testen.
+
+## Na de livegang (12-10)
+- `subsidiecheck-mail` v52 gedeployed en teruggelezen. De tests normaal, honeypot, te snel en
+  tweede keer binnen 24 uur slaagden. De browsertest met een echt token ook (mail met 12
+  regelingen en een BAG-adres).
+- **Maar:** Turnstile werd live nooit echt gecontroleerd. Elke aanroep van siteverify vanuit de
+  edge function eindigde in "niet bereikbaar", en de function liet dan bewust door. Een
+  request met een nep-token kreeg dus ook een mail. De oorzaak was niet te zien, omdat de fout
+  niet werd gelogd. Vanaf een gewone machine werkt dezelfde aanroep wel.
+- Fix (PR fix/turnstile-siteverify): status, antwoord en foutmelding komen nu in de log; fetch
+  wordt expliciet op globalThis aangeroepen met expliciete headers en een tekstbody; witruimte
+  rond de secret wordt weggehaald. Een secret die Cloudflare niet accepteert, telt als storing
+  (doorlaten en luid loggen), niet als bot.
+- Controle na de deploy: een request met een nep-token moet "Turnstile weigert het token"
+  opleveren, plus een lead maar geen mail. Komt er weer "niet bereikbaar", dan staat de echte
+  oorzaak nu in de log.

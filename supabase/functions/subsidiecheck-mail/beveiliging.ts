@@ -238,20 +238,44 @@ export async function controleerTurnstile(
   token: unknown,
   secret: string | undefined,
   ip: string,
-  doeFetch: typeof fetch = fetch,
+  // Via een eigen pijlfunctie en niet `= fetch`: zo wordt fetch altijd op
+  // globalThis aangeroepen, hoe de runtime hem ook heeft ingericht.
+  doeFetch: typeof fetch = (invoer, opties) => globalThis.fetch(invoer, opties),
 ): Promise<"ok" | "geweigerd" | "uit" | "onbekend"> {
-  if (!secret) return "uit";
+  const sleutel = secret?.trim();
+  if (!sleutel) return "uit";
   if (typeof token !== "string" || !token || token.length > 2048) return "geweigerd";
   const stop = new AbortController();
   const timer = setTimeout(() => stop.abort(), 5000);
   try {
-    const body = new URLSearchParams({ secret, response: token });
+    const body = new URLSearchParams({ secret: sleutel, response: token });
     if (ip && ip !== "onbekend") body.set("remoteip", ip);
-    const res = await doeFetch(SITEVERIFY, { method: "POST", body, signal: stop.signal });
-    if (!res.ok) return "onbekend";
-    const data = (await res.json()) as { success?: unknown };
-    return data.success === true ? "ok" : "geweigerd";
-  } catch {
+    const res = await doeFetch(SITEVERIFY, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" },
+      body: body.toString(),
+      signal: stop.signal,
+    });
+    if (!res.ok) {
+      // Tot oktober 2026 stond hier een kale `return`, en daardoor bleef
+      // onzichtbaar dat de controle live nooit slaagde. Status en antwoord horen
+      // in de log; het token en de secret niet.
+      console.error(`Turnstile siteverify gaf HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
+      return "onbekend";
+    }
+    const data = (await res.json()) as { success?: unknown; "error-codes"?: unknown };
+    if (data.success === true) return "ok";
+    const codes = Array.isArray(data["error-codes"]) ? data["error-codes"].map(String) : [];
+    // Een fout in ónze sleutel is geen bot. Weigeren zou dan elke echte bezoeker
+    // zijn mail kosten, dus doorlaten en luid loggen, net als bij een storing.
+    if (codes.some((c) => c === "invalid-input-secret" || c === "missing-input-secret")) {
+      console.error(`Turnstile: de secret wordt niet geaccepteerd (${codes.join(", ")})`);
+      return "onbekend";
+    }
+    console.warn(`Turnstile weigert het token (${codes.join(", ") || "geen code"})`);
+    return "geweigerd";
+  } catch (err) {
+    console.error("Turnstile siteverify niet bereikbaar", err instanceof Error ? `${err.name}: ${err.message}` : String(err));
     return "onbekend";
   } finally {
     clearTimeout(timer);
