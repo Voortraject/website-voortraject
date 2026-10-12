@@ -43,7 +43,35 @@
 // belangrijkste leadroute. Bestaat de functie nog niet, dan valt deze function
 // terug op een ruime rem in het geheugen van de isolate en logt dat.
 
+//
+// Beveiliging tegen misbruik (oktober 2026, na een Spamhaus-listing; zie
+// beveiliging.ts en tasks/formulieren-misbruik-2026-10.md). Volgorde in de handler:
+//   honeypot en te snel ingevuld → stil 200, niets opslaan, niets mailen;
+//   ongeldig of systeemadres     → 400;
+//   volumerem per IP              → 429;
+//   domein zonder mailserver      → 400;
+//   al een overzicht in 24 uur    → stil 200 met het bestaande lead-id, geen mail;
+//   Turnstile geweigerd           → lead wel opslaan (de lead is leidend), geen mail.
+// De regelingen in de mail komen uit onze eigen bron, niet uit de request.
+//
+// Optionele secret: TURNSTILE_SECRET_KEY. Ontbreekt hij, dan staat die controle
+// uit en logt de function dat bij elke inzending.
+
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  bouwEswFilterQuery,
+  controleerTurnstile,
+  emailSyntaxGeldig,
+  escapeIlike,
+  heeftMailserver,
+  isSysteemadres,
+  naarMailRegeling,
+  regelingenUitBrowser,
+  schoonOverzichtUrl,
+  teSnelIngevuld,
+  VENSTER_PER_ADRES_MS,
+  type MailRegeling,
+} from "./beveiliging.ts";
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 const TENANT_ID = "00000000-0000-0000-0000-000000000001";
@@ -83,7 +111,6 @@ const LENING_KLEUR = "#3A6EA5";
 const SUBSIDIE_VLAK = "#F0F6F4";
 const LENING_VLAK = "#EEF3F9";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const NAME_RE = /^[\p{L}\s'-]+$/u;
 const POSTCODE_RE = /^[1-9][0-9]{3}[A-Z]{2}$/;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -243,20 +270,9 @@ const TERUGVAL_VENSTER_MS = 10 * 60 * 1000;
 const TERUGVAL_MAX = 6;
 const rateHits = new Map<string, number[]>();
 
-type Regeling = {
-  id?: string;
-  titel?: string;
-  niveau?: string;
-  type?: string;
-  aanbieder?: string;
-  omschrijving?: string;
-  bedragIndicatie?: string;
-  /** Uitzondering die de bron zelf als "Let op" markeert. Zeldzaam, dus zwaar. */
-  letOp?: string;
-  /** Einddatum (ISO). De client stuurt hem alleen mee als hij binnen drie maanden valt. */
-  looptAfOp?: string;
-  bronUrl?: string;
-};
+// `letOp` is de uitzondering die de bron zelf als "Let op" markeert (zeldzaam,
+// dus zwaar); `looptAfOp` staat er alleen als de einddatum binnen drie maanden valt.
+type Regeling = MailRegeling;
 
 type Payload = {
   /**
@@ -291,6 +307,10 @@ type Payload = {
   email?: string;
   telefoon?: string;
   honeypot?: string;
+  /** Hoe lang het formulier open stond (ms). Korter dan MIN_INVULTIJD_MS → genegeerd. */
+  duurMs?: number;
+  /** Token van de onzichtbare Turnstile-controle op de gegevensstap. */
+  turnstileToken?: string;
   input?: {
     postcode?: string;
     huisnummer?: string;
@@ -299,7 +319,11 @@ type Payload = {
     maatregelen?: string[];
   };
   adres?: { straatnaam?: string; woonplaatsnaam?: string };
-  regelingen?: Regeling[];
+  /**
+   * De lijst zoals de browser hem toonde. Alleen nog een terugval voor als onze
+   * eigen bron niet antwoordt, en dan zonder links (zie regelingenUitBrowser).
+   */
+  regelingen?: unknown;
   /** Deelbare URL van het volledige resultaat op de site (voor de online-link). */
   overzichtUrl?: string;
 };
@@ -847,6 +871,87 @@ async function haalBeoordeling(supabase: StatsClient): Promise<{ score: string; 
   }
 }
 
+/**
+ * De regelingen uit onze eigen bron: de function `subsidiecheck` in dit project,
+ * met exact de aanvraag die de browser ook deed (zie bouwEswFilterQuery). Dat is
+ * de lijst die de bezoeker op het scherm zag, en nu ook de enige die in de mail
+ * komt. Geeft null als de bron niet antwoordt; dan valt de aanroeper terug.
+ */
+async function haalEigenRegelingen(postcode: string, filterQuery: string | null): Promise<Regeling[] | null> {
+  if (!filterQuery) return null;
+  const basis = Deno.env.get("SUPABASE_URL");
+  const anon = Deno.env.get("SUPABASE_ANON_KEY");
+  if (!basis) return null;
+  try {
+    const res = await fetch(
+      `${basis}/functions/v1/subsidiecheck?postalcode=${encodeURIComponent(postcode)}&${filterQuery}`,
+      {
+        headers: { Accept: "application/json", ...(anon ? { apikey: anon, Authorization: `Bearer ${anon}` } : {}) },
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+    if (!res.ok) {
+      console.error(`Eigen bron (subsidiecheck) gaf status ${res.status}`);
+      return null;
+    }
+    const data = (await res.json()) as { regelingen?: unknown };
+    if (!Array.isArray(data.regelingen)) return null;
+    return data.regelingen
+      .filter((r): r is Record<string, unknown> => typeof r === "object" && r !== null)
+      .map((r) => naarMailRegeling(r));
+  } catch (err) {
+    console.error("Eigen bron (subsidiecheck) niet bereikbaar", err);
+    return null;
+  }
+}
+
+type ZoekClient = {
+  from: (tabel: string) => {
+    select: (kolommen: string) => {
+      eq: (kolom: string, waarde: string) => {
+        eq: (kolom: string, waarde: string) => {
+          ilike: (kolom: string, patroon: string) => {
+            gte: (kolom: string, waarde: string) => {
+              order: (kolom: string, opties: { ascending: boolean }) => {
+                limit: (n: number) => PromiseLike<{ data: { id?: unknown }[] | null; error: unknown }>;
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+};
+
+/**
+ * Het id van een subsidietool-lead voor dit adres uit de afgelopen 24 uur, of
+ * null. Hoofdletterongevoelig, want zo leest een mailserver een adres ook.
+ * Faalt de query, dan "geen": fail open, net als de volumerem.
+ */
+async function eerderOverzicht(supabase: ZoekClient, email: string): Promise<string | null> {
+  try {
+    const sinds = new Date(Date.now() - VENSTER_PER_ADRES_MS).toISOString();
+    const { data, error } = await supabase
+      .from("leads_bewoners")
+      .select("id")
+      .eq("tenant_id", TENANT_ID)
+      .eq("formulier", "subsidietool")
+      .ilike("email", escapeIlike(email))
+      .gte("aangemaakt_op", sinds)
+      .order("aangemaakt_op", { ascending: false })
+      .limit(1);
+    if (error) {
+      console.error("Limiet per adres niet te controleren", error);
+      return null;
+    }
+    const id = data?.[0]?.id;
+    return typeof id === "string" ? id : null;
+  } catch (err) {
+    console.error("Limiet per adres niet te controleren", err);
+    return null;
+  }
+}
+
 // ---- Handler ----
 
 Deno.serve(async (req: Request) => {
@@ -864,6 +969,9 @@ Deno.serve(async (req: Request) => {
 
   // Honeypot: stil "gelukt" teruggeven zodat bots geen signaal krijgen.
   if (payload.honeypot && payload.honeypot.trim() !== "") return json({ ok: true, mailed: false });
+  // Te snel ingevuld: zelfde stille reactie. De client houdt een mens al tegen
+  // vóór deze grens (met een melding), dus wie hier komt is geen mens.
+  if (teSnelIngevuld(payload.duurMs)) return json({ ok: true, mailed: false });
 
   // Naamvelden: de site stuurt voornaam/tussenvoegsel/achternaam; de database-
   // trigger stelt daar zelf `naam` uit samen. Oude gecachte bundles sturen nog
@@ -901,8 +1009,11 @@ Deno.serve(async (req: Request) => {
   }
 
   const email = (payload.email ?? "").trim();
-  if (!EMAIL_RE.test(email) || email.length > 255) {
+  if (!emailSyntaxGeldig(email)) {
     return json({ error: "Dit lijkt geen geldig e-mailadres." }, 400);
+  }
+  if (isSysteemadres(email)) {
+    return json({ error: "Gebruik een persoonlijk e-mailadres." }, 400);
   }
   // De client vraagt het telefoonnummer verplicht op; serverside blijven we
   // mild (bij ontbreken/ongeldig → null) zodat een lead nooit verloren gaat.
@@ -914,8 +1025,6 @@ Deno.serve(async (req: Request) => {
   const postcode = normalizePostcode(input.postcode ?? "");
   if (!POSTCODE_RE.test(postcode)) return json({ error: "Ongeldige postcode." }, 400);
 
-  // Kap de lijst af tegen misbruik; behoud de volgorde.
-  const regelingen = Array.isArray(payload.regelingen) ? payload.regelingen.slice(0, 60) : [];
   const maatregelen = Array.isArray(input.maatregelen) ? input.maatregelen : [];
 
   // De adresvelden gaan ongewijzigd de CRM-database in en komen daarna in de
@@ -1030,10 +1139,8 @@ Deno.serve(async (req: Request) => {
 
   const volledigeNaam = [voornaam, tussenvoegsel, achternaam].filter(Boolean).join(" ") || legacyNaam;
   const teamAdres = Deno.env.get("MAIL_TEAM") || Deno.env.get("MAIL_BCC") || DEFAULT_REPLY_TO;
-  const overzichtUrlSchoon =
-    typeof payload.overzichtUrl === "string" && /^https?:\/\//i.test(payload.overzichtUrl)
-      ? payload.overzichtUrl
-      : undefined;
+  // Alleen een link naar onze eigen subsidiecheck; zie schoonOverzichtUrl.
+  const overzichtUrlSchoon = schoonOverzichtUrl(payload.overzichtUrl);
 
   // ---- Route "bericht": een vraag die de bezoeker op het resultaat stelt ----
   // De vraag komt in `notities` op de lead en gaat per mail naar het team. Kwam de
@@ -1143,6 +1250,38 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true, mailed, nieuweLead });
   }
 
+  // ---- Gewone route: lead + overzicht naar het adres dat de bezoeker typte ----
+  // Hier gaat mail naar een vreemd adres, dus hier zitten de zwaarste controles.
+  // Ná de volumerem, zodat de DNS-vraag en de opzoeking per adres niet
+  // onbegrensd door te drukken zijn.
+
+  // Een domein zonder mailserver levert alleen bounces op, en bounces kosten
+  // reputatie. Vangt ook typfouten als "gmial.com". Bij twijfel: doorlaten.
+  const domein = email.split("@")[1] ?? "";
+  const mailserver = await heeftMailserver(domein, (d, t): Promise<unknown[]> =>
+    t === "MX" ? Deno.resolveDns(d, "MX") : t === "A" ? Deno.resolveDns(d, "A") : Deno.resolveDns(d, "AAAA"),
+  );
+  if (mailserver === "nee") {
+    return json({ error: "Dit e-mailadres lijkt niet te bestaan. Controleer het even." }, 400);
+  }
+  if (mailserver === "onbekend") console.warn("Mailserver-check onbeslist, adres doorgelaten");
+
+  // Maximaal één overzicht per adres per 24 uur. Een tweede keer: geen nieuwe
+  // lead en geen mail, wel het id van de lead die er al is, zodat een vraag op
+  // het resultaat daar terechtkomt. Stil "gelukt": de bezoeker heeft het
+  // overzicht al, en een bot leert er niets van.
+  const bestaandeLead = await eerderOverzicht(supabase as unknown as ZoekClient, email);
+  if (bestaandeLead) return json({ ok: true, mailed: false, leadId: bestaandeLead });
+
+  // Turnstile. Geweigerd → de lead slaan we wél op (de lead is leidend, en een
+  // echte bezoeker met een geblokkeerd script mag niet verdwijnen), maar er gaat
+  // geen mail naar het ingetypte adres. Het team ziet de lead en volgt op.
+  const turnstile = await controleerTurnstile(payload.turnstileToken, Deno.env.get("TURNSTILE_SECRET_KEY"), ip);
+  if (turnstile === "uit") console.warn("TURNSTILE_SECRET_KEY ontbreekt: Turnstile-controle staat uit");
+  if (turnstile === "onbekend") console.warn("Turnstile niet bereikbaar, inzending doorgelaten");
+  if (turnstile === "geweigerd") console.warn("Turnstile geweigerd: lead opgeslagen, geen overzichtsmail");
+  const magMailen = turnstile !== "geweigerd";
+
   let leadId: string | null = null;
   try {
     // `notities` bevat hooguit de kopregel uit de poort (bijv. de termijn waarop
@@ -1160,7 +1299,13 @@ Deno.serve(async (req: Request) => {
   // 2) E-mail versturen (bonus — lead staat al veilig).
   const apiKey = Deno.env.get("RESEND_API_KEY");
   let mailed = false;
-  if (apiKey) {
+  if (apiKey && magMailen) {
+    // De lijst uit onze eigen bron, niet uit de request: wat een bezoeker
+    // meestuurt komt zo nooit als tekst of link in een mail vanaf ons domein.
+    // Antwoordt de bron niet, dan de lijst uit de browser zonder links.
+    const eigen = await haalEigenRegelingen(postcode, bouwEswFilterQuery(typeBewoner, maatregelen));
+    if (!eigen) console.warn("Eigen bron niet beschikbaar: overzicht uit de browser, zonder links");
+    const regelingen = eigen ?? regelingenUitBrowser(payload.regelingen);
     const html = bouwEmailHtml({
       aanhef,
       adresregel: adresregel || "jouw woning",
@@ -1179,7 +1324,7 @@ Deno.serve(async (req: Request) => {
       subject: `Je subsidieoverzicht: ${regelingen.length} ${regelingen.length === 1 ? "regeling" : "regelingen"} voor je woning`,
       html,
     });
-  } else {
+  } else if (!apiKey) {
     console.warn("RESEND_API_KEY ontbreekt — lead opgeslagen, geen automatische mail verstuurd.");
   }
 

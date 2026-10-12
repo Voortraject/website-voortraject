@@ -10,7 +10,13 @@ import type { SubsidieCheckInput } from "@/lib/subsidies";
 
 import { Bewijsregel } from "./Bewijsregel";
 import { leesContact } from "./contactOpslag";
-import { MAX_BERICHT, valideerBericht, valideerContact, verstuurSubsidiecheckBericht } from "./leadFormulier";
+import {
+  MAX_BERICHT,
+  MIN_INVULTIJD_MS,
+  valideerBericht,
+  valideerContact,
+  verstuurSubsidiecheckBericht,
+} from "./leadFormulier";
 
 const inputClass =
   "w-full rounded-lg border border-input bg-background px-4 py-3.5 text-[16px] text-foreground outline-none transition min-h-[52px] focus:border-accent focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.18)]";
@@ -80,7 +86,8 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
       setVerstuurd(true); // stil doorlaten voor bots, niets wegschrijven
       return;
     }
-    if (Date.now() - geladenOp.current < 2000) {
+    const duurMs = Date.now() - geladenOp.current;
+    if (duurMs < MIN_INVULTIJD_MS) {
       setFout("Even geduld. Wacht een moment voordat je verstuurt.");
       return;
     }
@@ -119,6 +126,7 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
         leadId: bekend?.leadId,
         overzichtUrl,
         honeypot,
+        duurMs,
       });
       pushGtmEvent("subsidiecheck_vraag", {
         bewonertype: input.bewonertype,

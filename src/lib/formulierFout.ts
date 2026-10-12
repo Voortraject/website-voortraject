@@ -27,11 +27,18 @@ export const RATE_LIMIT_MELDING =
  */
 export class MailFunctieFout extends Error {
   readonly status: number;
+  /**
+   * De melding van de function bij een invoerfout (HTTP 400), bijvoorbeeld "Dit
+   * e-mailadres lijkt niet te bestaan". Die kan de browser niet zelf vaststellen,
+   * dus de bezoeker moet hem te zien krijgen in plaats van "er ging iets mis".
+   */
+  readonly melding?: string;
 
-  constructor(status: number, wat = "subsidiecheck-mail") {
+  constructor(status: number, wat = "subsidiecheck-mail", melding?: string) {
     super(`${wat} gaf status ${status}`);
     this.name = "MailFunctieFout";
     this.status = status;
+    this.melding = melding;
   }
 }
 
@@ -53,5 +60,7 @@ export function isRateLimitFout(err: unknown): boolean {
  * omdat het ene naar de mail verwijst en het andere naar WhatsApp).
  */
 export function formulierFoutMelding(err: unknown, standaard: string): string {
-  return isRateLimitFout(err) ? RATE_LIMIT_MELDING : standaard;
+  if (isRateLimitFout(err)) return RATE_LIMIT_MELDING;
+  if (err instanceof MailFunctieFout && err.status === 400 && err.melding) return err.melding;
+  return standaard;
 }
