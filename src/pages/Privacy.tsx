@@ -2,6 +2,33 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
 
+// Maakt van `[tekst](https://…)` in een sectietekst een echte link. De teksten
+// blijven zo gewone strings (met `pre-line` voor de alinea's), en een verwijzing
+// zoals naar de Turnstile Privacy Addendum is toch aan te klikken.
+const LINK_RE = /\[([^\]]+)\]\((https:\/\/[^)\s]+)\)/g;
+
+function metLinks(tekst: string) {
+  const delen = [];
+  let vanaf = 0;
+  for (const m of tekst.matchAll(LINK_RE)) {
+    delen.push(tekst.slice(vanaf, m.index));
+    delen.push(
+      <a
+        key={m.index}
+        href={m[2]}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-primary underline underline-offset-2 hover:text-accent-hover"
+      >
+        {m[1]}
+      </a>,
+    );
+    vanaf = (m.index ?? 0) + m[0].length;
+  }
+  delen.push(tekst.slice(vanaf));
+  return delen;
+}
+
 const sections = [
   {
     title: "1. Wie zijn wij?",
@@ -88,6 +115,8 @@ Samenwerkingsverband Noord-Nederland (SNN). Voor het indienen van een subsidieaa
 Verwerkers. Voor onze dienstverlening maken wij gebruik van ICT-leveranciers die in onze opdracht persoonsgegevens verwerken, waaronder leveranciers van onze database, hosting, e-mail, automatisering, telefonie, websiteanalyse en cookiebeheer. Met deze partijen sluiten wij verwerkersovereenkomsten conform artikel 28 AVG.
 
 WhatsApp. Wij kunnen u via WhatsApp berichten sturen over uw aanvraag en uw offertes, bijvoorbeeld met een link waarmee u uw offerte kunt bekijken. Daarvoor delen wij uw naam en telefoonnummer met WhatsApp Ireland Ltd. (onderdeel van Meta), die deze gegevens als verwerker in onze opdracht verwerkt. Wilt u geen WhatsApp-berichten meer van ons ontvangen? Stuur dan STOP als antwoord op een van onze berichten.
+
+Om onze formulieren te beschermen tegen spam en bots gebruiken we Cloudflare Turnstile. Lees in de [Turnstile Privacy Addendum](https://www.cloudflare.com/turnstile-privacy-policy/) hoe Cloudflare daarbij met je gegevens omgaat.
 
 Wij verstrekken uw persoonsgegevens niet aan derden voor hun eigen commerciële doeleinden.`,
   },
@@ -204,7 +233,7 @@ const Privacy = () => {
                     whiteSpace: "pre-line",
                   }}
                 >
-                  {section.content}
+                  {metLinks(section.content)}
                 </div>
               </div>
             ))}
