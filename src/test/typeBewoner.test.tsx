@@ -80,7 +80,6 @@ const verstuur = async (bewonertype: Bewonertype) => {
     waarden: uitkomst.waarden,
     input: maakInput(bewonertype),
     adres,
-    regelingen: [],
   });
   return insertMock.mock.calls[0];
 };

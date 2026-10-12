@@ -122,8 +122,9 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
   const queryClient = useQueryClient();
 
   // De regelingen worden hier opgehaald, niet pas bij het verzenden: dat zet de
-  // cache klaar zodat het resultaat straks meteen staat en de mail het echte
-  // overzicht kan meesturen. Zelfde querysleutel als StapResultaat.
+  // cache klaar zodat het resultaat straks meteen staat. Zelfde querysleutel als
+  // StapResultaat. (De mail stuurt ze niet meer mee: de function haalt de lijst
+  // sinds oktober 2026 zelf op bij onze eigen bron.)
   //
   // Nieuw is dat we het zoeken hier ook laten zíen, en daarna het aantal noemen.
   // Twee redenen. Ten eerste stond de zoeksequentie eerst op het resultaat, dus
@@ -282,7 +283,6 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         waarden: resultaat.waarden,
         input,
         adres,
-        regelingen: opgehaald,
         notitie,
         verrijking: await verrijkingBelofte,
         toestemming,

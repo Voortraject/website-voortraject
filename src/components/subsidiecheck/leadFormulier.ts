@@ -4,11 +4,9 @@ import { normalizePostcode, type PdokAdres } from "@/lib/pdok";
 import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
 import {
   ALLE_MAATREGELEN,
-  looptBinnenkortAf,
   MAATREGEL_LABELS,
   type Maatregel,
   type SubsidieCheckInput,
-  type SubsidieRegeling,
 } from "@/lib/subsidies";
 
 // Gedeelde logica voor de twee lead-formulieren van de subsidiecheck: de
@@ -247,7 +245,6 @@ export async function verstuurSubsidiecheckLead(args: {
   waarden: ContactSchoon;
   input: SubsidieCheckInput;
   adres: Pick<PdokAdres, "straatnaam" | "woonplaatsnaam">;
-  regelingen: SubsidieRegeling[];
   /** Kopregel voor `notities`, bijv. de gekozen termijn uit de poort. */
   notitie?: string;
   verrijking?: LeadVerrijking;
@@ -260,11 +257,10 @@ export async function verstuurSubsidiecheckLead(args: {
   /** Token van de onzichtbare Turnstile-controle, als die geladen is. */
   turnstileToken?: string;
 }): Promise<{ leadId?: string }> {
-  const { waarden, input, adres, regelingen, notitie, verrijking, toestemming, overzichtUrl, honeypot, duurMs, turnstileToken } =
-    args;
+  const { waarden, input, adres, notitie, verrijking, toestemming, overzichtUrl, honeypot, duurMs, turnstileToken } = args;
 
   if (isTestmodus()) {
-    meldTestmodus("lead + overzichtmail overgeslagen", { waarden, input, notitie, aantalRegelingen: regelingen.length });
+    meldTestmodus("lead + overzichtmail overgeslagen", { waarden, input, notitie });
     return {};
   }
 
@@ -310,27 +306,9 @@ export async function verstuurSubsidiecheckLead(args: {
       },
       adres: { straatnaam: adres.straatnaam, woonplaatsnaam: adres.woonplaatsnaam },
       overzichtUrl,
-      // Sinds oktober 2026 haalt de function de regelingen voor de mail zelf op
-      // bij onze eigen bron en leest hij deze lijst niet meer. Hij gaat alleen
-      // nog mee voor de oudere function die live staat tot de nieuwe is
-      // gedeployed; daarna kan dit veld weg.
-      // Alleen wat de mail nodig heeft — geen interne filtervelden meesturen.
-      regelingen: regelingen.map((r) => ({
-        titel: r.titel,
-        niveau: r.niveau,
-        type: r.type,
-        bedragIndicatie: r.bedragIndicatie,
-        omschrijving: r.omschrijving,
-        // De "Let op" van de bron hoort in de mail net zo goed als op de site:
-        // bij ISDE staat daar dat je in ons werkgebied de Isolatieaanpak kunt
-        // nemen. Een oudere function negeert dit veld gewoon.
-        letOp: r.letOp,
-        // Alleen een deadline die er echt is. De bron zet op de meeste
-        // regelingen 2050 neer; die filtering doen we hier, zodat de mail maar
-        // op één plek hoeft te weten wat "binnenkort" betekent.
-        looptAfOp: looptBinnenkortAf(r.looptAfOp) ? r.looptAfOp : undefined,
-        bronUrl: r.bronUrl,
-      })),
+      // Geen `regelingen` meer: de function haalt de lijst voor de mail sinds
+      // oktober 2026 zelf op bij onze eigen bron en zet nooit tekst uit deze
+      // request in de mail (zie supabase/functions/subsidiecheck-mail/overzichtMail.ts).
     }),
   });
   // Bewust géén terugval op de directe insert bij een fout: die insert is de

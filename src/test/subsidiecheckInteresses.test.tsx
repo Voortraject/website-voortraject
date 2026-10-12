@@ -98,7 +98,7 @@ describe("bouwSubsidiecheckInteresses", () => {
 
 describe("subsidiecheck-lead", () => {
   it("schrijft de interesses naar de eigen kolom en laat notities leeg", async () => {
-    await verstuurSubsidiecheckLead({ waarden: contact(), input, adres, regelingen: [] });
+    await verstuurSubsidiecheckLead({ waarden: contact(), input, adres });
 
     const [tabel, rij] = insertMock.mock.calls[0];
     expect(tabel).toBe("leads_bewoners");
