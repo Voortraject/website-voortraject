@@ -33,7 +33,7 @@ describe("de deelbare link", () => {
 // de site — of helemaal niet.
 describe("de deel-URL in de overzichtsmail", () => {
   it("is dezelfde link, met medium 'mail'", () => {
-    const mail = readFileSync("supabase/functions/subsidiecheck-mail/index.ts", "utf8");
+    const mail = readFileSync("supabase/functions/subsidiecheck-mail/overzichtMail.ts", "utf8");
     expect(mail).toContain(deelUrl("mail"));
   });
 });

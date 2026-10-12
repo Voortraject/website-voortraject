@@ -116,7 +116,7 @@ Verwerkers. Voor onze dienstverlening maken wij gebruik van ICT-leveranciers die
 
 WhatsApp. Wij kunnen u via WhatsApp berichten sturen over uw aanvraag en uw offertes, bijvoorbeeld met een link waarmee u uw offerte kunt bekijken. Daarvoor delen wij uw naam en telefoonnummer met WhatsApp Ireland Ltd. (onderdeel van Meta), die deze gegevens als verwerker in onze opdracht verwerkt. Wilt u geen WhatsApp-berichten meer van ons ontvangen? Stuur dan STOP als antwoord op een van onze berichten.
 
-Om onze formulieren te beschermen tegen spam en bots gebruiken we Cloudflare Turnstile. Lees in de [Turnstile Privacy Addendum](https://www.cloudflare.com/turnstile-privacy-policy/) hoe Cloudflare daarbij met je gegevens omgaat.
+Om onze formulieren te beschermen tegen spam en bots gebruiken wij Cloudflare Turnstile. In de [Turnstile Privacy Addendum](https://www.cloudflare.com/turnstile-privacy-policy/) leest u hoe Cloudflare daarbij met uw gegevens omgaat.
 
 Wij verstrekken uw persoonsgegevens niet aan derden voor hun eigen commerciële doeleinden.`,
   },
@@ -124,7 +124,7 @@ Wij verstrekken uw persoonsgegevens niet aan derden voor hun eigen commerciële 
     title: "9. Doorgifte buiten de Europese Economische Ruimte (EER)",
     content: `Wij verwerken uw gegevens bij voorkeur binnen de EER. Onze database en een deel van onze systemen zijn in de EER ondergebracht.
 
-Voor websiteanalyse en e-mail maken wij gebruik van diensten van Amerikaanse partijen (waaronder Google en Microsoft). Hierbij kunnen persoonsgegevens naar de Verenigde Staten worden doorgegeven. Deze doorgifte vindt plaats op basis van het EU-VS Data Privacy Framework en/of de standaardcontractbepalingen van de Europese Commissie, met inachtneming van hoofdstuk V AVG en passende waarborgen.`,
+Voor websiteanalyse, e-mail en de beveiliging van onze formulieren maken wij gebruik van diensten van Amerikaanse partijen (waaronder Google, Microsoft en Cloudflare). Hierbij kunnen persoonsgegevens naar de Verenigde Staten worden doorgegeven. Deze doorgifte vindt plaats op basis van het EU-VS Data Privacy Framework en/of de standaardcontractbepalingen van de Europese Commissie, met inachtneming van hoofdstuk V AVG en passende waarborgen.`,
   },
   {
     title: "10. Hoe lang bewaren wij uw gegevens?",

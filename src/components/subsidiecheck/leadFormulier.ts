@@ -311,9 +311,9 @@ export async function verstuurSubsidiecheckLead(args: {
       adres: { straatnaam: adres.straatnaam, woonplaatsnaam: adres.woonplaatsnaam },
       overzichtUrl,
       // Sinds oktober 2026 haalt de function de regelingen voor de mail zelf op
-      // bij onze eigen bron. Deze lijst is alleen nog zijn terugval als die bron
-      // niet antwoordt, en dan zonder links. Een oudere function gebruikt hem nog
-      // gewoon, dus de vorm blijft gelijk.
+      // bij onze eigen bron en leest hij deze lijst niet meer. Hij gaat alleen
+      // nog mee voor de oudere function die live staat tot de nieuwe is
+      // gedeployed; daarna kan dit veld weg.
       // Alleen wat de mail nodig heeft — geen interne filtervelden meesturen.
       regelingen: regelingen.map((r) => ({
         titel: r.titel,

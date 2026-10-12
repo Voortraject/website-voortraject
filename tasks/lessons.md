@@ -607,3 +607,18 @@ andere sessie die daar op dat moment werkt (zie de les van 2026-08-10).
 **Lesson:**
 - **Ook voor alleen lezen: een eigen worktree** (`git worktree add --detach <scratchpad>/wt
   origin/main`) of `git show origin/main:<pad>`. Nooit `checkout` of `switch` in de gedeelde map.
+
+## 2026-10-12 — Een terugval is een route die de aanvaller kiest
+**Context:** De eerste versie van de beveiliging van `subsidiecheck-mail` haalde de regelingen
+uit onze eigen bron en viel, "als die niet antwoordt", terug op de lijst uit de browser (zonder
+links). De opdrachtgever zag dat de terugval ook aansprong bij een ontbrekend bewonertype. Een bot
+laat dat veld dus weg en zet weer eigen tekst in een mail naar elk adres.
+**Lesson:**
+- **Vraag bij elke terugval: kan de aanroeper hem afdwingen?** Zo ja, dan is het geen terugval
+  maar een tweede ingang, en geldt voor die ingang dezelfde eis als voor de hoofdroute.
+- **Bij mail naar een vreemd adres: nooit tekst uit de request,** ook niet "ingekort" of "zonder
+  links". Mailprogramma's maken van een kale domeinnaam vanzelf een link. Liever een kalere mail.
+- **Laat de functie die de mail bouwt zelf de rauwe request lezen**, en test die met een
+  kwaadaardige request. Zo'n test vond hier meteen nog een gat: `bewonertype: "toString"` vond
+  via een gewone objectlookup de prototypefunctie. Gebruik voor opzoektabellen met invoer van
+  buiten altijd `hasOwnProperty`.

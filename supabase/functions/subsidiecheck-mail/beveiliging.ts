@@ -159,7 +159,11 @@ export const MAATREGEL_FILTER_ID: Record<string, string> = {
  * Geeft null bij een onbekend bewonertype: dan kunnen we de lijst niet zelf ophalen.
  */
 export function bouwEswFilterQuery(bewonertype: string | null, maatregelen: string[]): string | null {
-  const resident = bewonertype ? BEWONERTYPE_RESIDENT[bewonertype] : undefined;
+  // Eigen sleutels alleen: een gewone lookup vindt ook "toString" op het prototype.
+  const resident =
+    bewonertype && Object.prototype.hasOwnProperty.call(BEWONERTYPE_RESIDENT, bewonertype)
+      ? BEWONERTYPE_RESIDENT[bewonertype]
+      : undefined;
   if (!resident) return null;
   const gekozen = maatregelen.length > 0 ? maatregelen : Object.keys(MAATREGEL_FILTER_ID);
   const params = new URLSearchParams();
@@ -213,26 +217,6 @@ export function naarMailRegeling(r: Record<string, unknown>, nu = new Date()): M
     looptAfOp,
     bronUrl: typeof r.bronUrl === "string" && /^https?:\/\//i.test(r.bronUrl) ? r.bronUrl : undefined,
   };
-}
-
-/**
- * Terugval als onze eigen bron niet antwoordt: de lijst uit de browser, maar
- * ingekort en zónder links en deadlines. Een link of datum die niet van ons
- * komt, hoort niet in een mail vanaf ons domein; een regel tekst minder is
- * het kleinste kwaad.
- */
-export function regelingenUitBrowser(lijst: unknown): MailRegeling[] {
-  if (!Array.isArray(lijst)) return [];
-  return lijst.slice(0, 60).map((r) => {
-    const o = (typeof r === "object" && r !== null ? r : {}) as Record<string, unknown>;
-    return {
-      titel: tekst(o.titel, 120),
-      niveau: tekst(o.niveau, 20),
-      type: tekst(o.type, 20),
-      bedragIndicatie: tekst(o.bedragIndicatie, 60),
-      omschrijving: tekst(o.omschrijving, 300),
-    };
-  });
 }
 
 // ---- Turnstile ----

@@ -16,11 +16,15 @@ import {
   MAATREGEL_FILTER_ID,
   MIN_INVULTIJD_MS,
   naarMailRegeling,
-  regelingenUitBrowser,
   schoonOverzichtUrl,
   SYSTEEMADRESSEN,
   teSnelIngevuld,
 } from "../../supabase/functions/subsidiecheck-mail/beveiliging";
+import {
+  mailAdresregel,
+  maakOverzichtMail,
+  schoonHuisnummer,
+} from "../../supabase/functions/subsidiecheck-mail/overzichtMail";
 import {
   EMAIL_RE as CLIENT_EMAIL_RE,
   SYSTEEMADRESSEN as CLIENT_SYSTEEMADRESSEN,
@@ -230,34 +234,118 @@ describe("regelingen in de mail", () => {
     expect(naarMailRegeling({ bronUrl: "javascript:alert(1)" }, nu).bronUrl).toBeUndefined();
   });
 
-  it("terugval uit de browser: geen links, geen datums, ingekort en begrensd", () => {
-    const lijst = Array.from({ length: 80 }, () => ({
-      titel: "Win een prijs ".repeat(50),
-      omschrijving: "Klik hier",
-      bronUrl: "https://evil.example",
-      letOp: "<a href=https://evil.example>klik</a>",
-      looptAfOp: "2026-11-01",
-    }));
-    const schoon = regelingenUitBrowser(lijst);
-    expect(schoon).toHaveLength(60);
-    expect(schoon[0].titel!.length).toBeLessThanOrEqual(120);
-    for (const r of schoon) {
-      expect(r).not.toHaveProperty("bronUrl");
-      expect(r).not.toHaveProperty("letOp");
-      expect(r).not.toHaveProperty("looptAfOp");
+  it("de function leest de lijst en het adres uit de request nergens meer", () => {
+    // Bewaakt het gat dat tot oktober 2026 openstond.
+    for (const pad of ["index.ts", "overzichtMail.ts", "beveiliging.ts"]) {
+      const bron = readFileSync(`supabase/functions/subsidiecheck-mail/${pad}`, "utf8");
+      expect(bron, pad).not.toMatch(/payload\.regelingen|regelingenUitBrowser/);
     }
-    expect(regelingenUitBrowser("geen lijst")).toEqual([]);
-    expect(regelingenUitBrowser([null, 3])).toHaveLength(2);
+  });
+});
+
+describe("de overzichtsmail aan de bezoeker", () => {
+  // Wat een bot zou meesturen: eigen titels, teksten, links en een eigen adres.
+  const VREEMD = [
+    "Win een iPhone",
+    "Klik op evil.example",
+    "https://evil.example/winactie",
+    "Nepstraat",
+    "Spamstad",
+    "Gratis geld",
+  ];
+  const aanval = (input: Record<string, unknown>) => ({
+    input: { postcode: "9711 AA", huisnummer: "12", ...input },
+    adres: { straatnaam: "Nepstraat", woonplaatsnaam: "Spamstad" },
+    overzichtUrl: "https://evil.example/winactie",
+    regelingen: Array.from({ length: 60 }, () => ({
+      titel: "Win een iPhone",
+      omschrijving: "Klik op evil.example",
+      bedragIndicatie: "Gratis geld",
+      bronUrl: "https://evil.example/winactie",
+      letOp: "Gratis geld",
+    })),
+  });
+  const eigenLijst = [
+    { titel: "ISDE", niveau: "rijk", type: "subsidie", omschrijving: "Voor isolatie", bronUrl: "https://www.rvo.nl/isde" },
+  ];
+
+  const maak = (payload: Parameters<typeof maakOverzichtMail>[0]["payload"], bron = vi.fn(async () => eigenLijst)) =>
+    maakOverzichtMail({
+      payload,
+      aanhef: "Hallo Jan",
+      haalRegelingen: bron,
+      haalBagAdres: async () => null,
+    });
+
+  it("zonder bewonertype: geen enkele titel, tekst, link of adres uit de request in de mail", async () => {
+    const bron = vi.fn(async () => eigenLijst);
+    const mail = await maak(aanval({ bewonertype: undefined, maatregelen: ["isolatie"] }), bron);
+    expect(mail).not.toBeNull();
+    for (const vreemd of VREEMD) {
+      expect(mail!.html, vreemd).not.toContain(vreemd);
+      expect(mail!.onderwerp, vreemd).not.toContain(vreemd);
+    }
+    expect(mail!.html).not.toContain("evil");
+    // Zonder geldig bewonertype vragen we de bron niet eens: dan geen lijst.
+    expect(bron).not.toHaveBeenCalled();
+    expect(mail!.metLijst).toBe(false);
+    expect(mail!.onderwerp).toBe("Je subsidieoverzicht voor je woning");
+    expect(mail!.html).toContain("staat online voor je klaar");
+    expect(mail!.html).toContain('href="https://voortraject.nl/subsidiecheck"');
   });
 
-  it("de function zet nooit de rauwe lijst uit de request in de mail", () => {
-    // Bewaakt het gat dat tot oktober 2026 openstond: `payload.regelingen` mag
-    // alleen nog via de terugval regelingenUitBrowser naar binnen.
-    const bron = readFileSync("supabase/functions/subsidiecheck-mail/index.ts", "utf8");
-    const gebruik = bron.match(/payload\.regelingen/g) ?? [];
-    expect(gebruik).toHaveLength(1);
-    expect(bron).toContain("regelingenUitBrowser(payload.regelingen)");
-    expect(bron).not.toMatch(/payload\.overzichtUrl(?!\))/);
+  it("met een ongeldig bewonertype of als onze bron niet antwoordt: ook geen lijst", async () => {
+    for (const mail of [
+      await maak(aanval({ bewonertype: "toString" })),
+      await maak(aanval({ bewonertype: "huurder" }), vi.fn(async () => null)),
+    ]) {
+      expect(mail!.metLijst).toBe(false);
+      for (const vreemd of VREEMD) expect(mail!.html, vreemd).not.toContain(vreemd);
+    }
+  });
+
+  it("met een geldig bewonertype: alleen de lijst uit onze eigen bron", async () => {
+    const bron = vi.fn(async () => eigenLijst);
+    const mail = await maak(aanval({ bewonertype: "woningeigenaar", maatregelen: ["isolatie"] }), bron);
+    expect(bron).toHaveBeenCalledWith("9711AA", "type-of-resident=Woningeigenaar&filter=1503");
+    expect(mail!.metLijst).toBe(true);
+    expect(mail!.onderwerp).toBe("Je subsidieoverzicht: 1 regeling voor je woning");
+    expect(mail!.html).toContain("ISDE");
+    expect(mail!.html).toContain("https://www.rvo.nl/isde");
+    for (const vreemd of VREEMD) expect(mail!.html, vreemd).not.toContain(vreemd);
+  });
+
+  it("neemt een geldige link naar ons eigen overzicht wel over", async () => {
+    const mail = await maak({
+      input: { postcode: "9711AA", huisnummer: "12", bewonertype: "huurder" },
+      overzichtUrl: "https://voortraject.nl/subsidiecheck?pc=9711AA&hn=12",
+    });
+    expect(mail!.html).toContain('href="https://voortraject.nl/subsidiecheck?pc=9711AA&amp;hn=12"');
+  });
+
+  it("bouwt geen mail bij een ongeldige postcode of een huisnummer met tekst", async () => {
+    expect(await maak({ input: { postcode: "evil.example", huisnummer: "12" } })).toBeNull();
+    expect(await maak({ input: { postcode: "9711AA", huisnummer: "12 evil.example" } })).toBeNull();
+  });
+});
+
+describe("adresregel in de mail aan de bezoeker", () => {
+  it("straat en plaats uit de BAG, huisnummer en toevoeging alleen als ze streng kloppen", () => {
+    const huis = schoonHuisnummer("12", "A")!;
+    expect(mailAdresregel("9711AA", huis, { straat: "Burg. J. Grommersstraat", plaats: "Groningen" })).toBe(
+      "Burg. J. Grommersstraat 12 A, Groningen",
+    );
+    expect(mailAdresregel("9711AA", huis, null)).toBe("postcode 9711 AA, huisnummer 12 A");
+    expect(schoonHuisnummer("12", "evil.example")).toEqual({ nummer: "12", toevoeging: "" });
+    expect(schoonHuisnummer("0", "")).toBeNull();
+    expect(schoonHuisnummer("123456", "")).toBeNull();
+  });
+
+  it("valt terug op de postcode als de BAG iets onverwachts teruggeeft", () => {
+    const huis = schoonHuisnummer("12", "")!;
+    expect(mailAdresregel("9711AA", huis, { straat: "<a href=x>", plaats: "Groningen" })).toBe(
+      "postcode 9711 AA, huisnummer 12",
+    );
   });
 });
 

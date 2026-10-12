@@ -40,10 +40,18 @@ want die laten zien wie er nog meer namens voortraject.nl mailt.
 ## Wat er is gebouwd (PR: fix/subsidietool-mail-beveiliging)
 In `subsidiecheck-mail` (logica in `beveiliging.ts`, getest in
 `src/test/subsidiecheckMailBeveiliging.test.ts`):
-1. **De mail toont alleen inhoud uit onze eigen bron.** De function haalt de regelingen zelf op
-   via de function `subsidiecheck`, met dezelfde aanvraag als de browser. Antwoordt die niet, dan
-   de lijst uit de browser, maar ingekort en zonder links, deadlines of "Let op". `overzichtUrl`
-   wordt alleen nog geaccepteerd als link naar `https://voortraject.nl/subsidiecheck`.
+1. **In de mail aan de bezoeker komt geen tekst uit de request.** De opbouw staat in
+   `overzichtMail.ts`; `maakOverzichtMail` krijgt de rauwe request en leest daar alleen
+   postcode, huisnummer, toevoeging, bewonertype, maatregelen en de link uit.
+   - Regelingen: zelf opgehaald via de function `subsidiecheck`, met dezelfde aanvraag als de
+     browser. Geen geldig bewonertype of geen antwoord van de bron: een mail zónder lijst, met
+     een knop naar het overzicht online. (Een eerste versie viel terug op de lijst uit de
+     browser; een bot kon die terugval afdwingen door het bewonertype weg te laten.)
+   - Adresregel: straat en plaats uit de BAG (PDOK Locatieserver, dezelfde bron als de
+     adreszoeker op de site), anders "postcode …, huisnummer …". Huisnummer en toevoeging moeten
+     er streng uitzien. De lead en de teammail houden het adres uit de request.
+   - Link: alleen naar `https://voortraject.nl/subsidiecheck`, anders de check zelf.
+   - Aanhef: uit naamvelden met alleen letters, spatie, apostrof en streepje.
 2. **Honeypot en tijdscontrole aan de serverkant.** Onder de 3 seconden of met een ingevulde
    honeypot: 200, niets opgeslagen, niets gemaild. Ontbreekt de duur (oude bundle), dan door.
 3. **Maximaal één overzicht per adres per 24 uur**, opgezocht in `leads_bewoners` (tenant,

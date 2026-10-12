@@ -19,8 +19,13 @@ describe("privacyverklaring", () => {
     const link = screen.getByRole("link", { name: "Turnstile Privacy Addendum" });
     expect(link.getAttribute("href")).toBe("https://www.cloudflare.com/turnstile-privacy-policy/");
     expect(link.parentElement?.textContent).toContain(
-      "Om onze formulieren te beschermen tegen spam en bots gebruiken we Cloudflare Turnstile. Lees in de Turnstile Privacy Addendum hoe Cloudflare daarbij met je gegevens omgaat.",
+      "Om onze formulieren te beschermen tegen spam en bots gebruiken wij Cloudflare Turnstile. In de Turnstile Privacy Addendum leest u hoe Cloudflare daarbij met uw gegevens omgaat.",
     );
+  });
+
+  it("noemt Cloudflare bij de doorgifte buiten de EER, naast Google en Microsoft", () => {
+    const { container } = render(<Privacy />);
+    expect(container.textContent).toContain("(waaronder Google, Microsoft en Cloudflare)");
   });
 
   it("laat geen ruwe link-opmaak op de pagina staan", () => {

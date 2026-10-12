@@ -71,7 +71,7 @@ describe("eersteStapTekst", () => {
 // een tweede keer. Deze test faalt zodra de twee uit elkaar lopen: dan leest de
 // bewoner op de site iets anders dan in zijn mail, over hetzelfde huis.
 describe("eersteStapTekst in de overzichtsmail", () => {
-  const mail = readFileSync("supabase/functions/subsidiecheck-mail/index.ts", "utf8");
+  const mail = readFileSync("supabase/functions/subsidiecheck-mail/overzichtMail.ts", "utf8");
 
   it("gebruikt letterlijk dezelfde uitspraken over de woningvoorraad", () => {
     for (const jaar of [1900, 1980, 2000]) {
