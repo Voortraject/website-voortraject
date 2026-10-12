@@ -589,3 +589,36 @@ zien hoe het team er nú uitziet; de foto's op de site waren verouderd.
   het huidige beeld bewust is, in plaats van het meteen als fout te benoemen.
 - Wel altijd blijven letten op echte AI-fouten (vervormde handen, kleding van de ene persoon op de
   andere), maar formuleer dat als vraag, niet als oordeel.
+
+## 2026-10-12 — Een rolaccount is bij bewoners vaak gewoon een persoon
+**Context:** In het voorstel voor de beveiliging van de subsidietool stond "rolaccounts weigeren
+(info@, admin@ …)". De opdrachtgever corrigeerde: veel huishoudens gebruiken info@achternaam.nl.
+**Lesson:**
+- **Weiger alleen adressen die per definitie geen mens zijn:** abuse@, postmaster@, noreply@,
+  no-reply@, mailer-daemon@. Wat bij een bedrijf een rolaccount is (info@, contact@, admin@), is
+  op een eigen domein van een gezin het persoonlijke adres.
+- Bij twijfel liever doorlaten en het risico met een andere laag dekken (limiet per adres,
+  Turnstile) dan een echte bewoner een foutmelding geven die hij niet begrijpt.
+
+## 2026-10-12 — Lees origin/main nooit door de gedeelde werkmap om te zetten
+**Context:** Voor een alleen-lezen onderzoek deed ik `git checkout --detach origin/main` in de
+gedeelde werkmap. Die was schoon en ik zette hem meteen terug, maar HEAD verschuiven raakt elke
+andere sessie die daar op dat moment werkt (zie de les van 2026-08-10).
+**Lesson:**
+- **Ook voor alleen lezen: een eigen worktree** (`git worktree add --detach <scratchpad>/wt
+  origin/main`) of `git show origin/main:<pad>`. Nooit `checkout` of `switch` in de gedeelde map.
+
+## 2026-10-12 — Een terugval is een route die de aanvaller kiest
+**Context:** De eerste versie van de beveiliging van `subsidiecheck-mail` haalde de regelingen
+uit onze eigen bron en viel, "als die niet antwoordt", terug op de lijst uit de browser (zonder
+links). De opdrachtgever zag dat de terugval ook aansprong bij een ontbrekend bewonertype. Een bot
+laat dat veld dus weg en zet weer eigen tekst in een mail naar elk adres.
+**Lesson:**
+- **Vraag bij elke terugval: kan de aanroeper hem afdwingen?** Zo ja, dan is het geen terugval
+  maar een tweede ingang, en geldt voor die ingang dezelfde eis als voor de hoofdroute.
+- **Bij mail naar een vreemd adres: nooit tekst uit de request,** ook niet "ingekort" of "zonder
+  links". Mailprogramma's maken van een kale domeinnaam vanzelf een link. Liever een kalere mail.
+- **Laat de functie die de mail bouwt zelf de rauwe request lezen**, en test die met een
+  kwaadaardige request. Zo'n test vond hier meteen nog een gat: `bewonertype: "toString"` vond
+  via een gewone objectlookup de prototypefunctie. Gebruik voor opzoektabellen met invoer van
+  buiten altijd `hasOwnProperty`.

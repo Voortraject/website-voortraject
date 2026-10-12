@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react";
 import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
 import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
 import { formulierFoutMelding } from "@/lib/formulierFout";
+import { MIN_INVULTIJD_MS } from "@/lib/invultijd";
 import { pushGtmEvent } from "@/lib/gtm";
 
 // Zakelijk contactformulier, hoort bij /zakelijk. Dit is sinds de bewoner-only
@@ -157,7 +158,7 @@ export const ZakelijkContactFormulier = () => {
       setSubmitted(true);
       return;
     }
-    if (Date.now() - pageLoadedAt.current < 2000) {
+    if (Date.now() - pageLoadedAt.current < MIN_INVULTIJD_MS) {
       setErrorMsg("Even geduld, wacht een moment voordat je het formulier verstuurt.");
       return;
     }

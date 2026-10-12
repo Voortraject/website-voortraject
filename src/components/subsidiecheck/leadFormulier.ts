@@ -27,7 +27,24 @@ function meldTestmodus(wat: string, payload: unknown): void {
   console.info(`[subsidiecheck testmodus] ${wat}. Dit zou naar het CRM zijn gegaan:`, payload);
 }
 
-export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+// Dezelfde regels als de edge function (supabase/functions/subsidiecheck-mail/
+// beveiliging.ts), zodat een bezoeker de melding bij het veld ziet in plaats van
+// een storing na het verzenden. src/test/subsidiecheckMailBeveiliging.test.ts
+// bewaakt dat de kopieën gelijk blijven. Een `+` in het adres mag.
+export const EMAIL_RE =
+  /^(?!\.)(?!.*\.\.)[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}(?<!\.)@(?=.{1,253}$)(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/;
+export const EMAIL_MAX = 254;
+
+/** Adressen van systemen, niet van mensen. Bewust níet info@ (info@achternaam.nl). */
+export const SYSTEEMADRESSEN = ["abuse", "postmaster", "noreply", "no-reply", "mailer-daemon"] as const;
+
+export function isSysteemadres(email: string): boolean {
+  const lokaal = email.split("@")[0]?.split("+")[0]?.toLowerCase() ?? "";
+  return (SYSTEEMADRESSEN as readonly string[]).includes(lokaal);
+}
+
+export { MIN_INVULTIJD_MS } from "@/lib/invultijd";
+
 export const NAME_RE = /^[\p{L}\s'-]+$/u;
 
 // De nummercheck woont in src/lib/telefoon.ts en wordt gedeeld met het
@@ -82,7 +99,8 @@ export function valideerContact(
     return { fout: "Vul je achternaam in." };
 
   const email = velden.email.trim();
-  if (!EMAIL_RE.test(email) || email.length > 255) return { fout: "Dit lijkt geen geldig e-mailadres." };
+  if (!EMAIL_RE.test(email) || email.length > EMAIL_MAX) return { fout: "Dit lijkt geen geldig e-mailadres." };
+  if (isSysteemadres(email)) return { fout: "Gebruik een persoonlijk e-mailadres." };
 
   const telefoon = velden.telefoon.trim();
   if (!telefoon && telefoonVerplicht) return { fout: "Vul je telefoonnummer in." };
@@ -237,8 +255,13 @@ export async function verstuurSubsidiecheckLead(args: {
   toestemming?: ToestemmingVelden;
   overzichtUrl?: string;
   honeypot?: string;
+  /** Hoe lang het formulier open stond; de function negeert te snelle inzendingen. */
+  duurMs?: number;
+  /** Token van de onzichtbare Turnstile-controle, als die geladen is. */
+  turnstileToken?: string;
 }): Promise<{ leadId?: string }> {
-  const { waarden, input, adres, regelingen, notitie, verrijking, toestemming, overzichtUrl, honeypot } = args;
+  const { waarden, input, adres, regelingen, notitie, verrijking, toestemming, overzichtUrl, honeypot, duurMs, turnstileToken } =
+    args;
 
   if (isTestmodus()) {
     meldTestmodus("lead + overzichtmail overgeslagen", { waarden, input, notitie, aantalRegelingen: regelingen.length });
@@ -266,6 +289,8 @@ export async function verstuurSubsidiecheckLead(args: {
       email: waarden.email,
       telefoon: waarden.telefoon,
       honeypot: honeypot ?? "",
+      duurMs,
+      turnstileToken,
       notitie,
       energielabel: verrijking?.energielabel,
       bouwjaar: verrijking?.bouwjaar,
@@ -285,6 +310,10 @@ export async function verstuurSubsidiecheckLead(args: {
       },
       adres: { straatnaam: adres.straatnaam, woonplaatsnaam: adres.woonplaatsnaam },
       overzichtUrl,
+      // Sinds oktober 2026 haalt de function de regelingen voor de mail zelf op
+      // bij onze eigen bron en leest hij deze lijst niet meer. Hij gaat alleen
+      // nog mee voor de oudere function die live staat tot de nieuwe is
+      // gedeployed; daarna kan dit veld weg.
       // Alleen wat de mail nodig heeft — geen interne filtervelden meesturen.
       regelingen: regelingen.map((r) => ({
         titel: r.titel,
@@ -307,8 +336,9 @@ export async function verstuurSubsidiecheckLead(args: {
   // Bewust géén terugval op de directe insert bij een fout: die insert is de
   // route die de volumerem in het CRM juist moet tegenhouden, dus terugvallen bij
   // een 429 zou de rem om zeep helpen. De fout draagt de status mee zodat het
-  // formulier "te druk" van "storing" kan onderscheiden.
-  if (!res.ok) throw new MailFunctieFout(res.status);
+  // formulier "te druk" van "storing" kan onderscheiden, en bij een 400 de
+  // melding van de function ("Dit e-mailadres lijkt niet te bestaan").
+  if (!res.ok) throw new MailFunctieFout(res.status, "subsidiecheck-mail", await leesMelding(res));
 
   // Het id is meegenomen sinds de function het teruggeeft; oudere versies (of een
   // gefaalde parse) leveren gewoon niets op en dan valt een later bericht terug
@@ -348,8 +378,10 @@ export async function verstuurSubsidiecheckBericht(args: {
   leadId?: string;
   overzichtUrl?: string;
   honeypot?: string;
+  /** Hoe lang het formulier open stond; de function negeert te snelle inzendingen. */
+  duurMs?: number;
 }): Promise<void> {
-  const { waarden, bericht, input, adres, leadId, overzichtUrl, honeypot } = args;
+  const { waarden, bericht, input, adres, leadId, overzichtUrl, honeypot, duurMs } = args;
 
   if (isTestmodus()) return meldTestmodus("vraag niet verstuurd", { waarden, input, bericht });
 
@@ -375,6 +407,7 @@ export async function verstuurSubsidiecheckBericht(args: {
       email: waarden.email,
       telefoon: waarden.telefoon || undefined,
       honeypot: honeypot ?? "",
+      duurMs,
       input: {
         postcode: normalizePostcode(input.postcode),
         huisnummer: input.huisnummer,
@@ -386,5 +419,16 @@ export async function verstuurSubsidiecheckBericht(args: {
       overzichtUrl,
     }),
   });
-  if (!res.ok) throw new MailFunctieFout(res.status, "subsidiecheck-mail (bericht)");
+  if (!res.ok) throw new MailFunctieFout(res.status, "subsidiecheck-mail (bericht)", await leesMelding(res));
+}
+
+/** De melding uit een 400 van de function, of undefined. Alleen bij 400: dat zijn invoerfouten. */
+async function leesMelding(res: Response): Promise<string | undefined> {
+  if (res.status !== 400) return undefined;
+  try {
+    const data = (await res.json()) as { error?: unknown };
+    return typeof data.error === "string" && data.error.length <= 200 ? data.error : undefined;
+  } catch {
+    return undefined;
+  }
 }

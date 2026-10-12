@@ -11,12 +11,14 @@ import { formulierFoutMelding } from "@/lib/formulierFout";
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
 import { subsidieProvider, type SubsidieCheckInput, type SubsidieRegeling } from "@/lib/subsidies";
+import { useTurnstile } from "@/lib/turnstile";
 
 import { Bewijsregel } from "./Bewijsregel";
 import { bewaarContact } from "./contactOpslag";
 import { Energielabel } from "./Energielabel";
 import { Luchtfoto } from "./Luchtfoto";
 import {
+  MIN_INVULTIJD_MS,
   schrijfSubsidiecheckLead,
   valideerContact,
   verstuurSubsidiecheckLead,
@@ -145,6 +147,17 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
   const overslaan = zoekFout || tijdOp;
   const fase = useLaadsequentie(!zoekBezig, overslaan);
   const aantal = gevonden?.length ?? 0;
+  // Het formulier staat pas in beeld na de zoekanimatie (zie de early return hieronder).
+  const formulierInBeeld = !((zoekBezig && !overslaan) || fase < 3);
+  // Onzichtbare controle dat hier een mens zit; het token gaat mee naar de
+  // mailfunctie en wordt dáár gecontroleerd. Zie src/lib/turnstile.ts.
+  const turnstile = useTurnstile(formulierInBeeld);
+  // De invultijd telt vanaf het moment dat het formulier verschijnt, niet vanaf
+  // het begin van de zoekanimatie: anders zit de animatie al in die 3 seconden
+  // en zegt de controle niets meer.
+  useEffect(() => {
+    if (formulierInBeeld) geladenOp.current = Date.now();
+  }, [formulierInBeeld]);
 
   // Wat we van de woning weten. Dubbel nut: het vult het kaartje hieronder én het
   // gaat als verrijking mee naar de lead, zodat het team het niet hoeft op te
@@ -188,7 +201,8 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
       onOntgrendeld(); // stil doorlaten voor bots (geen lead wegschrijven)
       return;
     }
-    if (Date.now() - geladenOp.current < 2000) {
+    const duurMs = Date.now() - geladenOp.current;
+    if (duurMs < MIN_INVULTIJD_MS) {
       setFout("Even geduld. Wacht een moment voordat je verstuurt.");
       return;
     }
@@ -275,6 +289,8 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         // Deelbare URL van dit resultaat (voor de "bekijk online"-link in de mail).
         overzichtUrl: typeof window !== "undefined" ? window.location.href : undefined,
         honeypot,
+        duurMs,
+        turnstileToken: turnstile.token(),
       });
       // Onthouden voor de rest van deze sessie: het resultaat vraagt deze gegevens
       // dan niet opnieuw, en een vraag daar landt bij dezelfde lead.
@@ -295,6 +311,8 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
       setFout(
         formulierFoutMelding(err, "Er ging iets mis. Probeer het later nog eens of mail ons op info@voortraject.nl."),
       );
+      // Een Turnstile-token is maar één keer bruikbaar; vraag een nieuw aan voor de volgende poging.
+      turnstile.reset();
       setBezig(false);
     }
   };
@@ -581,6 +599,10 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
           {fout}
         </p>
       )}
+
+      {/* Turnstile (onzichtbaar). Blijft leeg, behalve als Cloudflare twijfelt en
+          de bezoeker één klik laat doen. */}
+      <div ref={turnstile.ref} className="mt-3 empty:hidden" />
 
       <button
         type="submit"

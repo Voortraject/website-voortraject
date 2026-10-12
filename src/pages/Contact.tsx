@@ -3,6 +3,7 @@ import { CheckCircle, Loader2, Mail, MapPin, Phone } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { formulierFoutMelding } from "@/lib/formulierFout";
+import { MIN_INVULTIJD_MS } from "@/lib/invultijd";
 import { pushGtmEvent } from "@/lib/gtm";
 import { Footer } from "@/components/Footer";
 import { ReviewsCompact } from "@/components/ReviewsCompact";
@@ -247,8 +248,9 @@ const Contact = () => {
       setSubmitted(true);
       return;
     }
-    // Time on page check (min 2s)
-    if (Date.now() - pageLoadedAt.current < 2000) {
+    // Time on page check (min 3s). Alleen in de browser: deze insert gaat
+    // rechtstreeks naar het CRM, de controle aan de serverkant ligt daar.
+    if (Date.now() - pageLoadedAt.current < MIN_INVULTIJD_MS) {
       setErrorMsg("Even geduld, wacht een moment voordat je het formulier verstuurt.");
       return;
     }
