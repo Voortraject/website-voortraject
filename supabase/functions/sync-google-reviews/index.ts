@@ -9,7 +9,14 @@
 // Benodigde secrets (Supabase → Project Settings → Edge Functions → Secrets):
 //   GOOGLE_MAPS_API_KEY  — key met Places API (New) ingeschakeld
 //   GOOGLE_PLACE_ID      — Place ID van Voortraject
+//   REVIEWS_SYNC_SECRET  — gedeeld geheim; de cron stuurt het mee in `x-poller-secret`
 // SUPABASE_URL en SUPABASE_SERVICE_ROLE_KEY worden automatisch geïnjecteerd.
+//
+// Waarom het geheim: deze function staat open (verify_jwt = false, want pg_cron heeft geen
+// gebruiker om een JWT van te lenen). Zonder slot kan iedereen die de URL kent hem aanroepen.
+// Kosten levert dat niet op (Google Cloud heeft een daglimiet van 10 Place Details-verzoeken),
+// maar wie de limiet opmaakt, blokkeert de echte sync voor die dag. De cron-taak met het
+// geheim staat in de CRM-repo; schemawijzigingen gaan alleen daarvandaan.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -23,7 +30,14 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
-Deno.serve(async () => {
+Deno.serve(async (req: Request) => {
+  // Vóór alles anders: zonder geldig geheim geen aanroep bij Google.
+  const verwacht = Deno.env.get("REVIEWS_SYNC_SECRET");
+  if (!verwacht) return json({ error: "De sync is niet ingesteld op de server." }, 500);
+  if (req.headers.get("x-poller-secret") !== verwacht) {
+    return json({ error: "Geen toegang." }, 401);
+  }
+
   try {
     const apiKey = Deno.env.get("GOOGLE_MAPS_API_KEY");
     const placeId = Deno.env.get("GOOGLE_PLACE_ID");
