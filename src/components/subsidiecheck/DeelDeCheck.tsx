@@ -47,7 +47,8 @@ export const DeelDeCheck = ({ bewonertype }: DeelDeCheckProps) => {
   // beide. Het adviesblok is de belangrijkste stap; dit is een gunst die we
   // vragen. Een scheidingslijn markeert genoeg dat er iets nieuws begint.
   return (
-    <section aria-label="Deel de subsidiecheck" className="mt-10 border-t border-border pt-8">
+    // Geen scheidslijn erboven: het blok staat op zichzelf, met lucht eromheen.
+    <section aria-label="Deel de subsidiecheck" data-veer className="mt-12 pb-4">
       {/* Vraag en knop naast elkaar, dus twee regels in plaats van vier. Onder
           elkaar woog dit terzijde zwaarder dan het adviesblok erboven, en dat is
           de stap die er zakelijk toe doet. Op mobiel klapt het netjes onder
@@ -56,19 +57,24 @@ export const DeelDeCheck = ({ bewonertype }: DeelDeCheckProps) => {
         {/* Geen "moet doen": niemand moet iets. Dit is een tip die de ander geld
             kan schelen, dus wie hem doorgeeft bewijst een dienst, en dat is ook
             precies de reden dat mensen zoiets doorsturen. */}
-        <h3 className="min-w-0 font-display text-[19px] font-semibold text-primary md:text-[21px]">
-          Ken je buren of familie die hier wat aan hebben?
-        </h3>
+        {/* Een extra verzoek staat onderaan, onder een kort vetgedrukt kopje,
+            met één zin waarom het de ander iets oplevert. */}
+        <div className="min-w-0">
+          <h3 className="text-[17px] font-extrabold text-primary">Ken je buren of familie die hier wat aan hebben?</h3>
+          <p className="mt-0.5 text-[15px] text-[hsl(var(--rs-tekst-zacht))]">
+            Huizen uit dezelfde tijd komen vaak voor dezelfde subsidie in aanmerking.
+          </p>
+        </div>
 
         <button
           type="button"
           onClick={kopieer}
           aria-live="polite"
-          className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-full border border-border bg-card px-5 py-3 text-[15px] font-semibold text-primary transition-colors hover:border-primary/40 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:self-auto"
+          className="rs-knop rs-knop-licht shrink-0 self-start px-5 py-3 text-[15px] sm:self-auto"
         >
           {gekopieerd ? (
             <>
-              <Check size={17} strokeWidth={2.5} className="text-accent" aria-hidden="true" />
+              <Check size={17} strokeWidth={2.5} className="text-[hsl(var(--subsidie))]" aria-hidden="true" />
               Link gekopieerd
             </>
           ) : (

@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, MessageCircle } from "lucide-react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Check } from "lucide-react";
 
 import { isTestmodus } from "@/config/testmodus";
 import { useLaadsequentie } from "@/hooks/useLaadsequentie";
@@ -8,6 +8,7 @@ import { usePandContour } from "@/hooks/usePandContour";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
 import { useWoningInfo } from "@/hooks/useWoningInfo";
 import { pushGtmEvent } from "@/lib/gtm";
+import { inNijBegunGebied } from "@/lib/nijBegun";
 import type { PdokAdres } from "@/lib/pdok";
 import {
   groepeerPerNiveau,
@@ -16,9 +17,11 @@ import {
   subsidieProvider,
   type SubsidieCheckInput,
   topBedragen,
-  WAAROM_GROEPEN,
 } from "@/lib/subsidies";
 
+import "./resultaat.css";
+
+import { useStaffel } from "./beweging";
 import { Bewijsregel } from "./Bewijsregel";
 import { leesContact } from "./contactOpslag";
 import { DeelDeCheck } from "./DeelDeCheck";
@@ -29,6 +32,11 @@ import { kanOverzichtMailen } from "./leadFormulier";
 import { MobieleActiebalk } from "./MobieleActiebalk";
 import { Samenvatting } from "./Samenvatting";
 import { SubsidieCard } from "./SubsidieCard";
+import { LastigsteVraag } from "./LastigsteVraag";
+import { IsolatieplanRij, LabelRegel, MiniTellers, Tellers } from "./Tellers";
+import { stuurSessieBericht } from "./uitzoekAanvraag";
+import { useBreed } from "./useBreed";
+import { useUitzoek } from "./useUitzoek";
 import { scrollNaarVraag } from "./vraagFocus";
 import { Woningpaneel } from "./Woningpaneel";
 import { ZoekKaart } from "./Zoeksequentie";
@@ -41,7 +49,19 @@ interface StapResultaatProps {
   netBinnen?: boolean;
 }
 
-export const StapResultaat = ({ input, adres, netBinnen = false }: StapResultaatProps) => {
+// De vragen die een knop elders op het resultaat in het vraagblok zet.
+const LABEL_VRAAG =
+  "Ik wil graag een energielabel laten aanvragen voor mijn woning. Kunnen jullie dat voor mij regelen?";
+const PLAN_VRAAG = "Ik wil graag een isolatieplan aanvragen voor mijn woning. Kunnen jullie dat voor mij regelen?";
+// Als de oker knop niet in één klik kan (geen gegevens uit de poort in deze
+// sessie), staat het verzoek zo klaar in het vraagblok.
+const UITZOEK_VRAAG = "Ik wil graag dat jullie gratis uitzoeken wat ik voor mijn woning kan krijgen.";
+
+export const StapResultaat = ({
+  input,
+  adres,
+  netBinnen = false,
+}: StapResultaatProps) => {
   const { data: regelingen, isPending, isError, refetch } = useSubsidieCheck(input);
   const { data: woning, isPending: woningBezig } = useWoningInfo(input.postcode, input.huisnummer, input.toevoeging);
   // Pand + 3D-model op topniveau (dus vóór de vroege returns): ze starten meteen
@@ -95,11 +115,14 @@ export const StapResultaat = ({ input, adres, netBinnen = false }: StapResultaat
   // tussendoor heeft leeggemaakt; zonder die teller verandert het object niet
   // en gebeurt er bij de tweede klik niets.
   const [voorstel, setVoorstel] = useState<{ tekst: string; n: number } | undefined>();
-  const vraagMetVoorstel = (tekst: string, plek: string) => {
-    setVoorstel((huidig) => ({ tekst, n: (huidig?.n ?? 0) + 1 }));
-    pushGtmEvent("subsidiecheck_vraag_cta", { bewonertype: input.bewonertype, plek });
-    scrollNaarVraag();
-  };
+  const vraagMetVoorstel = useCallback(
+    (tekst: string, plek: string) => {
+      setVoorstel((huidig) => ({ tekst, n: (huidig?.n ?? 0) + 1 }));
+      pushGtmEvent("subsidiecheck_vraag_cta", { bewonertype: input.bewonertype, plek });
+      scrollNaarVraag();
+    },
+    [input.bewonertype],
+  );
 
   const groepen = useMemo(() => groepeerPerNiveau(regelingen ?? []), [regelingen]);
   const samenvatting = useMemo(() => maakSamenvatting(regelingen ?? []), [regelingen]);
@@ -109,46 +132,49 @@ export const StapResultaat = ({ input, adres, netBinnen = false }: StapResultaat
   // precies ziet waar de vraag over gaat.
   const overzichtUrl = typeof window !== "undefined" ? window.location.href : undefined;
   const whatsappBericht = `Hallo, ik heb de subsidiecheck gedaan voor ${adresRegel}. Ik heb daar een vraag over:`;
+  const nijBegun = inNijBegunGebied(adres);
+
+  // De oker knop "Laat gratis uitzoeken wat ik krijg". Eén klik dient het
+  // verzoek in met de gegevens uit de poort; de hoofdtegel en de mobiele
+  // actiebalk delen deze toestand, want het is dezelfde knop.
+  const geenContact = useCallback(() => vraagMetVoorstel(UITZOEK_VRAAG, "uitzoeken"), [vraagMetVoorstel]);
+  const aanvraag = useUitzoek({ input, adres, overzichtUrl, geenContact });
+  const knopZone = useRef<HTMLDivElement>(null);
+  const pagina = useRef<HTMLDivElement>(null);
+  const breed = useBreed();
+  const resultaatSinds = useRef(Date.now());
+  const stuurLastigst = useCallback(
+    async (bericht: string) => {
+      await stuurSessieBericht({ input, adres, overzichtUrl, sindsMs: resultaatSinds.current, bericht });
+    },
+    [input, adres, overzichtUrl],
+  );
+  const vraagLabel = () => vraagMetVoorstel(LABEL_VRAAG, "energielabel");
+  const vraagPlan = () => vraagMetVoorstel(PLAN_VRAAG, "isolatieplan");
 
   // Eén woningpaneel-element, gebruikt in zowel de "geen regelingen"-tak als het
-  // normale resultaat — zo verschijnt het in elke situatie (bewonertype/aantal).
-  // De contactknop staat onder het woningkaartje, buiten het witte vlak: binnenin
-  // leek de knop over de foto's te gaan.
+  // normale resultaat, zodat het in elke situatie verschijnt.
   //
-  // Het label was "Ik heb een vraag". Dat vraagt de bezoeker om zelf al een vraag
-  // te hebben, en op dit punt heeft hij vooral een lijst gezien waar hij nog geen
-  // weg in weet. "Ik wil gratis advies" biedt aan wat Voortraject werkelijk doet,
-  // en gratis en vrijblijvend is het ook echt.
+  // Hier stond onder het paneel nog de knop "Ik wil gratis advies". Die is weg:
+  // de oker knop in de hoofdtegel ernaast is de ene volgende stap, en een
+  // tweede knop naar hetzelfde doel maakte het scherm drukker zonder iets toe te
+  // voegen.
   const woningpaneel = (
-    <div className="flex flex-col gap-3">
-      <Woningpaneel
-        adres={adres}
-        input={input}
-        pand={pand ?? null}
-        pandBezig={pandBezig}
-        model={model}
-        modelBezig={modelBezig}
-      />
-      {/* Alleen vanaf md. Op mobiel staat onderaan het scherm permanent de
-          actiebalk met "Stel je vraag", die precies hetzelfde doet en die altijd
-          in beeld is. Deze knop erbij maakte het de derde of vierde route naar
-          hetzelfde vraagblok binnen één telefoonscherm (label aanvragen, de
-          eerste stap, deze knop, en de balk), en dat las als een opeenstapeling
-          van oproepen in plaats van als één duidelijke volgende stap. Op desktop
-          bestaat die balk niet, dus daar blijft de knop nodig. */}
-      <button
-        type="button"
-        onClick={() => {
-          pushGtmEvent("subsidiecheck_vraag_cta", { bewonertype: input.bewonertype, plek: "woningpaneel" });
-          scrollNaarVraag();
-        }}
-        className="hidden w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-[14px] font-semibold text-primary-foreground transition-opacity hover:opacity-90 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:inline-flex"
-      >
-        <MessageCircle size={16} strokeWidth={2} aria-hidden="true" />
-        Ik wil gratis advies
-      </button>
-    </div>
+    <Woningpaneel
+      adres={adres}
+      input={input}
+      pand={pand ?? null}
+      pandBezig={pandBezig}
+      model={model}
+      modelBezig={modelBezig}
+    />
   );
+
+  // De eerste stap: één uitspraak over woningen uit dit bouwjaar, zonder link.
+  // Desktop: in de hoofdtegel, onder het aantal, als context bij de knop. Daar
+  // blijft hij staan: in de smalle woningkolom zou de zin die kolom hoger maken
+  // dan de hoofdtegel, en dan is er weer lege ruimte. Telefoon: bij de woning.
+  const eersteStap = <EersteStap bouwjaar={pand?.bouwjaar} bewonertype={input.bewonertype} />;
 
   // Eén event per getoond resultaat (ook bij 0 regelingen — dat is óók funnel-data).
   const resultaatGemeld = useRef(false);
@@ -162,6 +188,9 @@ export const StapResultaat = ({ input, adres, netBinnen = false }: StapResultaat
       provincie: input.provincie ?? "",
     });
   }, [laden, isError, regelingen, input]);
+
+  // Blokken veren gestaffeld in; wat lager staat wacht tot het in beeld scrolt.
+  useStaffel(pagina, !laden && !isError && (regelingen?.length ?? 0) > 0);
 
   if (isError) {
     return (
@@ -212,7 +241,7 @@ export const StapResultaat = ({ input, adres, netBinnen = false }: StapResultaat
   }
 
   return (
-    <div>
+    <div ref={pagina}>
       {/* Zolang de mock actief is: eerlijk melden dat dit voorbeelddata is.
           Verdwijnt vanzelf zodra de echte provider is aangesloten. */}
       {subsidieProvider.naam === "Voorbeeldgegevens" && (
@@ -222,19 +251,13 @@ export const StapResultaat = ({ input, adres, netBinnen = false }: StapResultaat
         </p>
       )}
 
-      {/* Het aankomstmoment. Stond hier eerder als okergele pill met "Klaar.
-          Dit is jouw overzicht." Twee dingen klopten daar niet aan. Het vierde
-          iets: een gevulde accentcirkel met een vinkje is de vormtaal van een
-          gelukte betaling, niet van een adviesbureau. En bij een bezoeker
-          zonder mail zei hij letterlijk wat de kop erboven al zegt ("Jouw
-          subsidieoverzicht"), dus dan was het een regel om een regel.
-          Nu verschijnt hij alléén als er echt iets te melden valt: dat de mail
-          onderweg is. Dat is informatie die nergens anders staat. Zonder mail
-          is de schermwissel zelf de bevestiging. */}
+      {/* Het aankomstmoment, alléén als er echt iets te melden valt: dat de mail
+          onderweg is. Dat is informatie die nergens anders staat. Zonder mail is
+          de schermwissel zelf de bevestiging. */}
       {netBinnen && gemaildNaar && (
         <p
           role="status"
-          className={`mb-4 flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-center text-[13.5px] text-muted-foreground ${
+          className={`mb-4 flex items-center justify-center gap-2 text-center text-[14px] text-[hsl(var(--rs-tekst-zacht))] ${
             beweeg ? "animate-onthul" : ""
           }`}
         >
@@ -245,121 +268,132 @@ export const StapResultaat = ({ input, adres, netBinnen = false }: StapResultaat
         </p>
       )}
 
-      {/* Split-hero: links het persoonlijke woningpaneel (luchtfoto +
-          energielabel), rechts de samenvatting — die het zwaartepunt houdt
-          (bredere kolom). Op mobiel onder elkaar, woningpaneel eerst. */}
-      <div
-        className={`grid gap-4 md:grid-cols-[1fr_300px] md:items-start md:gap-6 ${beweeg ? "animate-onthul" : ""}`}
-        // Het overzicht bouwt zich op in drie korte stappen: bevestiging (0ms),
-        // de conclusie met het woningpaneel (120ms), en daaronder de lijst met
-        // regelingen (260ms). Niet groter maken: blokken die verder dan een
-        // halve seconde uit elkaar liggen lezen als losse gebeurtenissen in
-        // plaats van als één scherm dat zich opbouwt.
-        style={beweeg ? { animationDelay: "120ms" } : undefined}
-      >
-        {/* De piek: conclusie eerst (inverted pyramid), dan pas de lijst. De
-            foto staat rechts (smalle kolom), de samenvatting links (breed). */}
-        <Samenvatting
-          data={samenvatting}
-          bewonertype={input.bewonertype}
-          plaats={input.gemeente ?? input.provincie}
-          // De eerste stap staat in de samenvattingskaart zelf, op de plek waar
-          // eerder de aangevinkte maatregelen stonden. Daar sluit de piek van
-          // het scherm af met iets dat verder helpt in plaats van met een
-          // herhaling van de eigen keuze.
-          voet={
-            <EersteStap
-              bouwjaar={pand?.bouwjaar}
-              bewonertype={input.bewonertype}
-              onVraag={(voorstel) => vraagMetVoorstel(voorstel, "eerste_stap")}
-            />
-          }
-          bedragen={bedragen}
-          energielabel={woning?.energielabel ?? null}
-          energielabelBezig={woningBezig}
-          // "Label aanvragen" stuurde de bezoeker naar /contact, waar hij alles
-          // opnieuw moest invullen wat hij hier al gaf. Nu springt hij naar het
-          // vraagblok onderaan met de aanvraag al ingevuld: alleen nog versturen.
-          onLabelAanvraag={() =>
-            vraagMetVoorstel(
-              "Ik wil graag een energielabel laten aanvragen voor mijn woning. Kunnen jullie dat voor mij regelen?",
-              "energielabel",
-            )
-          }
-        />
-        {woningpaneel}
+      {/* De indeling volgt één hiërarchie: eerst de kern (het aantal en de ene
+          volgende stap), dan snel de regelingen zelf, en wat ondersteunt
+          (woning, bouwjaar, label) daarna.
+
+          Telefoon: de tellers als mini-rij in de hoofdtegel, het isolatieplan
+          als één lage rij eronder, dan meteen de regelingen. De woning met de
+          bouwjaarzin en het label staat na de eerste groep: daar onderbreekt
+          hij de lijst rustig in plaats van hem weg te duwen.
+
+          Desktop: de hoofdtegel breed met de woning als smalle kolom ernaast,
+          daaronder de tellers met het isolatieplan, dan de regelingen. */}
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-stretch">
+        {/* Op desktop even hoog als het woningpaneel ernaast. */}
+        <div data-veer className="flex min-w-0 [&>section]:min-w-0 [&>section]:flex-1">
+          <Samenvatting
+            ref={knopZone}
+            data={samenvatting}
+            bewonertype={input.bewonertype}
+            plaats={input.gemeente ?? input.provincie}
+            // "Waaronder …" alleen op desktop: op de telefoon komt de eerste
+            // regeling zo eerder in beeld, en de mini-rij noemt de aantallen al.
+            bedragen={breed ? bedragen : {}}
+            voet={breed ? eersteStap : undefined}
+            tellers={
+              breed ? undefined : <MiniTellers subsidies={samenvatting.subsidies} leningen={samenvatting.leningen} />
+            }
+            aanvraag={aanvraag}
+            // Na de klik: één vraag die het belgesprek helpt. Bewaard bij
+            // dezelfde lead, via dezelfde route als de knop zelf.
+            naAanvraag={<LastigsteVraag verstuur={stuurLastigst} />}
+          />
+        </div>
+        {breed && woningpaneel}
       </div>
 
-      {/* Bronvermelding — de subsidie-informatie komt uit de Energiesubsidiewijzer
-          van Milieu Centraal. Staat bewust bij de getoonde regelingen. */}
-      <p className="mt-6 text-center text-[12.5px] leading-relaxed text-muted-foreground">
-        Subsidie-informatie in samenwerking met voorlichtingsorganisatie{" "}
-        <a
-          href="https://www.milieucentraal.nl"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="rounded-sm underline underline-offset-2 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          Milieu Centraal
-        </a>
-        .
-      </p>
+      {breed ? (
+        // Tellers zoals het CRM-dashboard, plus het isolatieplan in het Nij
+        // Begun-gebied (anders het energielabel). "Label aanvragen" en het
+        // isolatieplan springen naar het vraagblok met de aanvraag al ingevuld.
+        <Tellers
+          className="mt-4 grid"
+          subsidies={samenvatting.subsidies}
+          leningen={samenvatting.leningen}
+          nijBegun={nijBegun}
+          energielabel={woning?.energielabel ?? null}
+          energielabelBezig={woningBezig}
+          onLabelAanvraag={vraagLabel}
+          onIsolatieplan={vraagPlan}
+        />
+      ) : (
+        nijBegun && (
+          <div className="mt-4">
+            <IsolatieplanRij onIsolatieplan={vraagPlan} />
+          </div>
+        )
+      )}
 
-      {/* Groepen onder elkaar (landelijk → lokaal, layer-cake-scan), met de
-          kaarten binnen een groep naast elkaar op desktop. Derde en laatste
-          stap van de aankomst; zie de toelichting bij de hero hierboven. */}
-      <div
-        className={`mt-8 flex flex-col gap-8 ${beweeg ? "animate-onthul" : ""}`}
-        style={beweeg ? { animationDelay: "260ms" } : undefined}
-      >
-        {/* Waarom de lijst in groepen staat. Zonder deze zin leest de indeling
-            als ambtenarij; mét deze zin is het het argument dat ertoe doet.
-            Alleen bij twee of meer groepen: bij één groep valt er niets te
-            combineren en zou de zin een loze belofte zijn. */}
-        {groepen.length > 1 && (
-          <p className="-mt-2 text-[14px] leading-relaxed text-muted-foreground">{WAAROM_GROEPEN}</p>
-        )}
+      {/* De regelingen: groepen onder elkaar (landelijk naar lokaal), met de
+          kaarten binnen een groep naast elkaar op desktop. */}
+      <div className="mt-8 flex flex-col gap-8 lg:mt-10 lg:gap-9">
+        {/* Hier stond "Deze regelingen komen van verschillende overheden.
+            Daarom kun je ze vaak naast elkaar aanvragen." Eraf op verzoek van
+            de opdrachtgever (oktober 2026): de groepskoppen zeggen het al, en
+            elke regel vóór de eerste regeling duwt die verder naar beneden. */}
+        {groepen.map(({ niveau, regelingen: groep }, i) => (
+          <Fragment key={niveau}>
+            <section aria-label={NIVEAU_LABELS[niveau]}>
+              <h2 className="flex items-baseline gap-2.5 font-display text-[20px] font-bold tracking-[-0.015em] text-primary lg:text-[22px]">
+                {NIVEAU_LABELS[niveau]}
+                <span className="font-sans text-[15px] font-bold tracking-normal text-[hsl(var(--rs-tekst-zacht))] lg:text-[16px]">
+                  {groep.length}
+                </span>
+              </h2>
+              <div className="mt-3.5 grid grid-cols-1 items-start gap-4 md:grid-cols-2 lg:mt-4">
+                {groep.map((regeling) => (
+                  <div key={regeling.id} data-veer>
+                    <SubsidieCard regeling={regeling} />
+                  </div>
+                ))}
+              </div>
+            </section>
 
-        {groepen.map(({ niveau, regelingen: groep }) => (
-          <section key={niveau} aria-label={NIVEAU_LABELS[niveau]}>
-            <h2 className="mb-3 flex items-center gap-2 text-[14px] font-semibold uppercase tracking-[0.08em] text-primary">
-              {NIVEAU_LABELS[niveau]}
-              <span className="font-normal text-muted-foreground">· {groep.length}</span>
-            </h2>
-            <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
-              {groep.map((regeling, i) => (
-                // Bij de aankomst animeert de groep als geheel (hierboven), dus
-                // dan niet ook nog per kaart: twee geneste animaties over
-                // elkaar heen maken de opbouw troebel. Bij een herlaad of een
-                // gedeelde link beweegt de groep niet en doen de kaarten hun
-                // eigen trapje, precies zoals voorheen.
-                <div
-                  key={regeling.id}
-                  className={beweeg ? "" : "animate-fade-up"}
-                  style={beweeg ? undefined : { animationDelay: `${Math.min(i * 50, 300)}ms` }}
-                >
-                  <SubsidieCard regeling={regeling} />
-                </div>
-              ))}
-            </div>
-          </section>
+            {!breed && i === 0 && (
+              <Woningpaneel
+                adres={adres}
+                input={input}
+                pand={pand ?? null}
+                pandBezig={pandBezig}
+                model={model}
+                modelBezig={modelBezig}
+              >
+                {eersteStap}
+                <LabelRegel
+                  energielabel={woning?.energielabel ?? null}
+                  bezig={woningBezig}
+                  onLabelAanvraag={vraagLabel}
+                />
+              </Woningpaneel>
+            )}
+          </Fragment>
         ))}
       </div>
 
-      <p className="mt-6 text-[12px] italic text-muted-foreground">
-        Indicatief overzicht op basis van je postcode. Aan dit overzicht kunnen geen rechten worden ontleend.
-      </p>
+      {/* Bronvermelding (Energiesubsidiewijzer van Milieu Centraal) en het
+          voorbehoud, samen onder de lijst: ze horen bij de regelingen, maar
+          hoeven niet vóór de eerste regeling te staan. */}
+      <div className="mt-8 grid gap-1.5 text-[14px] leading-relaxed text-[hsl(var(--rs-tekst-zacht))]">
+        <p>
+          Subsidie-informatie in samenwerking met voorlichtingsorganisatie{" "}
+          <a
+            href="https://www.milieucentraal.nl"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-sm font-bold text-primary underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            Milieu Centraal
+          </a>
+          .
+        </p>
+        <p>Indicatief overzicht op basis van je postcode. Aan dit overzicht kunnen geen rechten worden ontleend.</p>
+      </div>
 
-      {/* De contactstap: één veld voor wie door de poort kwam, plus WhatsApp en
-          bellen voor wie liever niet typt. Verving de losse "Plan een gratis
-          gesprek"-link naar /contact, waar de bezoeker álles opnieuw invulde wat
-          hij hier al had gegeven.
-
-          Hierboven stond ook nog "Ontvang dit overzicht in je mail". Dat blok
-          vroeg naam, e-mail en telefoon — precies wat de poort een stap eerder al
-          heeft opgehaald. Het bestond alleen voor de flow zónder poort, en die
-          bestaat niet meer. */}
-      <div className="mt-10">
+      {/* Het vraagblok: één veld voor wie door de poort kwam, plus WhatsApp voor
+          wie liever niet typt. Hier landen ook "Label aanvragen", het
+          isolatieplan en de vraag bij de eerste stap. */}
+      <div className="mt-12">
         <DirectContact input={input} adres={adres} overzichtUrl={overzichtUrl} voorstel={voorstel} />
       </div>
 
@@ -389,7 +423,11 @@ export const StapResultaat = ({ input, adres, netBinnen = false }: StapResultaat
           adviesblok, zodat de twee niet om dezelfde aandacht vechten. */}
       <DeelDeCheck bewonertype={input.bewonertype} />
 
-      <MobieleActiebalk whatsappBericht={whatsappBericht} bewonertype={input.bewonertype} />
+      <MobieleActiebalk
+        whatsappBericht={whatsappBericht}
+        bewonertype={input.bewonertype}
+        aanvraag={{ status: aanvraag.status, start: aanvraag.start, knopZone }}
+      />
     </div>
   );
 };

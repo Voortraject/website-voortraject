@@ -32,9 +32,10 @@ export const WoningModel = ({ model, isPending }: WoningModelProps) => {
   if (!isPending && !g) return null;
 
   return (
-    // Mobiel staat dit blok naast de luchtfoto (scheidingslijn links), vanaf md
-    // eronder (scheidingslijn boven). Zelfde 3:2 als de foto. Zie Woningpaneel.
-    <div className="relative aspect-[3/2] w-full border-l border-border bg-card-soft md:border-l-0 md:border-t">
+    // Vult het vak dat het woningpaneel ervoor maakt (een lage band op de
+    // telefoon, de onderste helft van de smalle kolom op desktop), met eigen
+    // ronde hoeken en zonder scheidingslijn. Zie Woningpaneel.
+    <div className="relative h-full w-full overflow-hidden rounded-[14px] bg-card-soft">
       {isPending || !g ? (
         <div className="flex h-full w-full items-center justify-center" aria-live="polite" aria-busy="true">
           <Loader2 size={22} className="animate-spin text-muted-foreground" aria-hidden="true" />

@@ -1,37 +1,26 @@
-import { useId, useState, type ReactNode } from "react";
-import { CalendarClock, ChevronDown, ExternalLink, Info, type LucideIcon } from "lucide-react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { ArrowRight, CalendarClock, ChevronDown, Euro, Info, Percent, type LucideIcon } from "lucide-react";
 
 import { formateerDatum, looptBinnenkortAf, TYPE_LABELS, type SubsidieRegeling } from "@/lib/subsidies";
 
-import { TYPE_KAART, TYPE_PILL } from "./niveauKleuren";
+import { minderBeweging } from "./beweging";
+import { TYPE_BADGE, TYPE_TEKST, TYPE_VLAK } from "./niveauKleuren";
+import { useBreed } from "./useBreed";
 
-// De maatregelregel is terug, maar alleen waar hij iets zegt.
-//
-// Hij stond hier eerder en is weggehaald omdat de scrape per regeling geen
-// maatregelen leverde: `regeling.maatregelen` bevatte dan altijd alle acht en
-// elke kaart kreeg dezelfde onjuiste zin. De officiële API levert ze wél. Maar
-// alles opsommen is nog steeds verkeerd: gemeten over Noord-Nederland dekt de
-// helft van de regelingen er drie tot zeven, en dan wordt het een waslijst die
-// niets toevoegt aan de omschrijving erboven.
-//
-// Daarom tonen we hem alleen als hij een béperking is (zie beperktTotVan in
-// energiesubsidiewijzerApi.ts): dat is precies wat iemand moet weten die met een
-// warmtepomp in zijn hoofd naar een isolatiesubsidie kijkt. Vijftien van de
-// vijfendertig regelingen in het noorden vallen daaronder, bijna allemaal
-// "alleen voor isolatie en glas".
+// Alleen de eerste zin: de kaart moet in één oogopslag zeggen wat het is.
+const eersteZin = (s: string) => s.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? s;
+
+// De maatregelregel ("Alleen isolatie en glas") staat er alleen als hij een
+// béperking is (zie beperktTotVan in energiesubsidiewijzerApi.ts): dat is
+// precies wat iemand moet weten die met een warmtepomp in zijn hoofd naar een
+// isolatiesubsidie kijkt. Alles opsommen werd een waslijst.
 
 // Elke melding op de kaart heeft dezelfde vorm: een icoon, vetgedrukt "Let op:"
-// en dan de mededeling. Zo ziet een bezoeker meteen dat er iets is dat hij moet
-// weten, of het nu om een deadline of om een uitzondering gaat, en hoeft hij
-// niet per regel opnieuw uit te vinden wat voor soort regel dit is. Het icoon
-// verschilt wél, want dát vertelt wat vóór melding het is.
-//
-// Bewust geen pill: een gevuld vlak met ronde hoeken leest als een knop en hier
-// valt niets te klikken. Zelfde afweging als bij het feitje op stap 1, zie de
-// toelichting in StapAdres.tsx.
+// en dan de mededeling. Het icoon verschilt wél, want dát vertelt wat voor
+// melding het is. Bewust geen gevuld vlak: dat leest als een knop.
 const Melding = ({ icoon: Icoon, children }: { icoon: LucideIcon; children: ReactNode }) => (
-  <p className="mt-2 flex items-start gap-1.5 text-[13px] leading-snug text-primary">
-    <Icoon size={14} strokeWidth={2} aria-hidden="true" className="mt-[3px] shrink-0 text-accent" />
+  <p className="mt-2.5 flex items-start gap-1.5 text-[14px] leading-snug text-primary">
+    <Icoon size={15} strokeWidth={2} aria-hidden="true" className="mt-[2px] shrink-0" />
     <span>
       <span className="font-semibold">Let op: </span>
       {children}
@@ -39,58 +28,83 @@ const Melding = ({ icoon: Icoon, children }: { icoon: LucideIcon; children: Reac
   </p>
 );
 
-// Eén regeling in het resultaat. Gesloten toont de kaart alles om te beslissen
-// (type, titel, bedrag rechtsboven, één regel uitleg, maatregelen). De uitklap
-// geeft verdieping (voor wie, voorwaarde, officiële bron) volgens het
-// drielagenmodel: beslissen → begrijpen → verifiëren. De linkerrand en de pill
-// in de type-kleur (groen = subsidie, terracotta = lening) maken meteen duidelijk
-// of het geld is dat je krijgt of leent.
-export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
+/**
+ * Open en dicht met beweging. De inhoud staat alleen in de DOM als hij open is
+ * (of nog aan het dichtgaan), zodat hij dicht ook voor schermlezers en zoeken
+ * echt weg is. Bij openen eerst dicht renderen en één frame later open zetten,
+ * anders valt er niets te animeren.
+ */
+function useUitklap() {
   const [open, setOpen] = useState(false);
-  const regionId = useId();
+  const [gemount, setGemount] = useState(false);
+  const [zichtbaar, setZichtbaar] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => () => clearTimeout(timer.current), []);
 
+  useEffect(() => {
+    clearTimeout(timer.current);
+    if (open) {
+      setGemount(true);
+      if (minderBeweging() || typeof requestAnimationFrame !== "function") setZichtbaar(true);
+      else requestAnimationFrame(() => requestAnimationFrame(() => setZichtbaar(true)));
+    } else {
+      setZichtbaar(false);
+      if (minderBeweging()) setGemount(false);
+      else timer.current = setTimeout(() => setGemount(false), 550);
+    }
+  }, [open]);
+
+  return { open, setOpen, gemount, zichtbaar };
+}
+
+// Eén regeling in het resultaat. Gesloten toont de kaart alles om te beslissen:
+// soort, bedrag groot in de soortkleur, titel en de omschrijving. De uitklap
+// geeft verdieping (voor wie, voorwaarde, officiële bron): beslissen, begrijpen,
+// verifiëren.
+export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
+  const { open, setOpen, gemount, zichtbaar } = useUitklap();
+  const regionId = useId();
   const eindigtBinnenkort = looptBinnenkortAf(regeling.looptAfOp);
+  const BadgeIcoon = regeling.type === "lening" ? Percent : Euro;
+  // Op de telefoon alleen de eerste zin op de dichte kaart; de rest staat in de
+  // uitklap. Zo blijft de lijst kort en komt de volgende regeling eerder in beeld.
+  const breed = useBreed();
+  const kort = breed ? regeling.omschrijving : eersteZin(regeling.omschrijving);
+  const restInUitklap = !breed && kort !== regeling.omschrijving;
 
   return (
-    // Mobiel iets krapper: met elf kaarten onder elkaar telt elke geschrapte
-    // pixel dubbel. Op md+ blijft de kaart ruim.
-    <article className={`rounded-lg border border-l-4 p-4 shadow-card md:p-5 ${TYPE_KAART[regeling.type]}`}>
-      {/* Kicker (type) links, bedrag rechts — vaste plek, zodat je verticaal
-          langs de bedragen kunt scannen en een lening nooit als subsidie leest. */}
-      <div className="flex items-start justify-between gap-4">
-        <span
-          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-[0.06em] ${TYPE_PILL[regeling.type]}`}
-        >
-          {TYPE_LABELS[regeling.type]}
+    <article className={`rs-kaart ${TYPE_VLAK[regeling.type]} px-5 pb-3.5 pt-4 md:px-6 md:pb-4 md:pt-6`}>
+      {/* Soort en bedrag links, het ronde icoon rechts: zo scan je verticaal
+          langs de bedragen en leest een lening nooit als subsidie. */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className={`text-[12px] font-extrabold uppercase tracking-[0.07em] ${TYPE_TEKST[regeling.type]}`}>
+            {TYPE_LABELS[regeling.type]}
+          </p>
+          {regeling.bedragIndicatie && (
+            <p
+              className={`mt-0.5 font-display text-[21px] font-extrabold leading-tight tracking-[-0.01em] md:mt-1 md:text-[26px] ${TYPE_TEKST[regeling.type]}`}
+            >
+              {regeling.bedragIndicatie}
+            </p>
+          )}
+        </div>
+        <span className={`rs-badge ${TYPE_BADGE[regeling.type]}`} aria-hidden="true">
+          <BadgeIcoon size={18} strokeWidth={2.2} />
         </span>
-        {regeling.bedragIndicatie && (
-          <span className="whitespace-nowrap text-right text-[15px] font-semibold text-primary">
-            {regeling.bedragIndicatie}
-          </span>
-        )}
       </div>
 
-      <h3 className="mt-2 font-display text-[17px] font-semibold leading-snug text-primary md:text-[18px]">
+      <h3 className="mt-2.5 font-display text-[17px] font-bold leading-snug text-primary md:mt-3 md:text-[19px]">
         {regeling.titel}
       </h3>
-      {/* Alleen als de regeling maar één of twee maatregelen dekt: dan is het
-          een beperking en hoort hij vóór de klik te staan, niet in de uitklap.
-
-          Bewust "Alleen X" en niet "Alleen voor X". De labels komen van Milieu
-          Centraal en zijn niet allemaal zelfstandige naamwoorden: naast
-          "zonnepanelen" en "isolatie en glas" bestaan er ook werkwoordsvormen
-          als "asbest verwijderen" en "tuin vergroenen". Na "voor" leest zo'n
-          label krom, en dat is geen randgeval: "Alleen voor asbest verwijderen"
-          stond in negentien procent van de noordelijke overzichten. Zonder dat
-          voorzetsel klopt élke schrijfwijze die de bron kan bedenken, dus dit
-          blijft ook goed als we ooit een maatregel toevoegen. */}
+      {/* Bewust "Alleen X" en niet "Alleen voor X": de labels van Milieu
+          Centraal zijn niet allemaal zelfstandige naamwoorden ("asbest
+          verwijderen"), en na "voor" leest zo'n label krom. */}
       {regeling.beperktTot && (
-        <p className="mt-1.5 text-[13px] font-medium text-muted-foreground">Alleen {regeling.beperktTot}</p>
+        <p className="mt-1.5 text-[14px] font-bold text-primary">Alleen {regeling.beperktTot}</p>
       )}
 
-      {/* Op mobiel blijft de gesloten kaart compact (badge, titel, bedrag,
-          maatregelregel); de omschrijving verhuist daar naar de uitklap. */}
-      <p className="mt-1.5 hidden text-[15px] leading-relaxed text-foreground/80 md:block">{regeling.omschrijving}</p>
+      <p className="mt-1.5 text-[14.5px] leading-relaxed text-[hsl(var(--rs-tekst-zacht))] lg:mt-2 lg:text-[15px]">{kort}</p>
 
       {/* Einddatum, alleen als hij binnen drie maanden valt. De bron zet op de
           meeste regelingen 2050 neer, dus een datum die hier verschijnt is een
@@ -99,96 +113,68 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
         <Melding icoon={CalendarClock}>aanvragen kan tot {formateerDatum(regeling.looptAfOp)}.</Melding>
       )}
 
-      {/* "Let op" komt letterlijk van de bron en is zeldzaam (één op de dertig).
-          Bij ISDE staat hier dat je in Groningen en Noord-Drenthe beter de
-          Isolatieaanpak kunt nemen: precies ons werkgebied, en precies het soort
-          dubbeling waar een bewoner zelf niet uitkomt.
-
-          Die tekst is wel lang (bij ISDE 428 tekens). In een gevuld vlak op de
-          dichte kaart werd dat een blok van zes regels dat de hele lijst uit
-          balans trok. Hier staat daarom alleen de melding zelf, als één rustige
-          regel zoals de einddatum erboven; de tekst van de bron staat bovenaan
-          de uitklap, achter dezelfde knop waar ook de voorwaarden zitten. */}
+      {/* "Let op" komt letterlijk van de bron en is zeldzaam, maar lang (bij ISDE
+          428 tekens). Op de kaart alleen dát er iets is; de tekst staat bovenaan
+          de uitklap. */}
       {regeling.letOp && <Melding icoon={Info}>er geldt een uitzondering, zie de voorwaarden.</Melding>}
 
-      {/* Aanbieder en uitklapknop op één regel, ook op mobiel: onder elkaar kostte
-          dat per kaart een extra regel, en met elf kaarten is dat een half scherm
-          scrollen. De knop wijkt nooit.
-
-          De aanbieder stond hier afgekapt (`truncate`), wat prima werkte zolang
-          er "Rijksoverheid" of "Gemeente" stond. Sinds de officiële API de échte
-          naam levert, leverde dat op mobiel "Rijksdienst voor Onder…" op: midden
-          in een woord afgebroken en daarmee onleesbaar. Nu breekt de naam af op
-          een spatie en mag hij een tweede regel gebruiken. Dat kost alleen ruimte
-          bij de paar lange namen, en die informatie is het waard. */}
-      <div className="mt-3 flex items-center justify-between gap-3 border-t border-border/60 pt-2.5 md:mt-4 md:pt-3">
-        <span className="min-w-0 text-[13px] leading-snug text-muted-foreground">{regeling.aanbieder}</span>
+      <div className="mt-3 flex items-center justify-between gap-3 md:mt-4">
+        <span className="min-w-0 text-[14px] font-semibold leading-snug text-[hsl(var(--rs-tekst-zacht))]">
+          {regeling.aanbieder}
+        </span>
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-controls={regionId}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-sm text-[14px] font-medium text-primary transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="rs-knop inline-flex min-h-[40px] shrink-0 gap-1.5 bg-card/70 px-3.5 py-2 text-[14px] font-bold text-primary hover:bg-card"
         >
           {open ? "Minder tonen" : "Bekijk voorwaarden"}
-          <ChevronDown
-            size={15}
-            strokeWidth={2}
-            className={`transition-transform ${open ? "rotate-180" : ""}`}
-            aria-hidden="true"
-          />
+          <ChevronDown size={16} strokeWidth={2.2} className="rs-chevron" aria-hidden="true" />
         </button>
       </div>
 
-      {open && (
-        <div id={regionId} className="mt-3 flex flex-col gap-3 border-t border-border/60 pt-3 text-[14px] leading-relaxed">
-          <p className="text-foreground/80 md:hidden">{regeling.omschrijving}</p>
-          {/* De uitzondering staat bovenaan: wie hier klikt na de melding op de
-              dichte kaart, wil eerst wéten wat die uitzondering is. */}
-          {regeling.letOp && (
-            <div className="flex gap-2 rounded-md bg-secondary/60 p-3">
-              <Info size={15} strokeWidth={2} aria-hidden="true" className="mt-0.5 shrink-0 text-primary" />
-              <p className="text-[13.5px] leading-relaxed text-foreground/80">
-                <span className="font-semibold text-primary">Let op: </span>
-                {regeling.letOp}
-              </p>
+      {gemount && (
+        <div id={regionId} className="rs-uitklap" data-open={zichtbaar}>
+          <div>
+            <div className="rs-uitklap-binnen mt-3.5 grid gap-2.5 rounded-2xl bg-card/75 p-4 text-[15px] leading-relaxed">
+              {restInUitklap && <p className="text-foreground">{regeling.omschrijving}</p>}
+              {regeling.letOp && (
+                <p className="text-foreground">
+                  <span className="font-semibold text-primary">Let op: </span>
+                  {regeling.letOp}
+                </p>
+              )}
+              {regeling.bedragToelichting && (
+                <p>
+                  <span className="font-semibold text-primary">Bedrag: </span>
+                  <span className="text-foreground">{regeling.bedragToelichting}</span>
+                </p>
+              )}
+              {regeling.voorWie && (
+                <p>
+                  <span className="font-semibold text-primary">Voor wie: </span>
+                  <span className="text-foreground">{regeling.voorWie}</span>
+                </p>
+              )}
+              {regeling.belangrijksteVoorwaarde && (
+                <p>
+                  <span className="font-semibold text-primary">Belangrijkste voorwaarde: </span>
+                  <span className="text-foreground">{regeling.belangrijksteVoorwaarde}</span>
+                </p>
+              )}
+              <a
+                href={regeling.bronUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rs-met-pijl inline-flex items-center gap-1.5 self-start rounded-sm font-bold text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                aria-label={`Naar de officiële regeling: ${regeling.titel} (opent in nieuw tabblad)`}
+              >
+                Naar de officiële regeling
+                <ArrowRight size={15} strokeWidth={2.2} className="rs-pijl" aria-hidden="true" />
+              </a>
             </div>
-          )}
-          {/* De bedragzin van de bron zelf. Het slot rechtsboven heeft maar
-              ruimte voor één cijfer; hier staat waar dat cijfer op slaat, en bij
-              een regeling zónder cijfer staat hier waaróm er geen bedrag is. */}
-          {regeling.bedragToelichting && (
-            <p>
-              <span className="font-semibold text-primary">Bedrag: </span>
-              <span className="text-foreground/80">{regeling.bedragToelichting}</span>
-            </p>
-          )}
-          {regeling.voorWie && (
-            <p>
-              <span className="font-semibold text-primary">Voor wie: </span>
-              <span className="text-foreground/80">{regeling.voorWie}</span>
-            </p>
-          )}
-          {regeling.belangrijksteVoorwaarde && (
-            <p>
-              <span className="font-semibold text-primary">Belangrijkste voorwaarde: </span>
-              <span className="text-foreground/80">{regeling.belangrijksteVoorwaarde}</span>
-            </p>
-          )}
-          {/* De zin "Vaak te combineren met andere regelingen…" stond hier op
-              élke kaart. Twaalf keer dezelfde belofte leest als behang, niet als
-              uitleg. Hij staat nu één keer op het resultaat, waar de vraag "moet
-              ik hieruit kiezen?" ook echt opkomt. */}
-          <a
-            href={regeling.bronUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 self-start rounded-sm text-[14px] font-semibold text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            aria-label={`Naar de officiële regeling: ${regeling.titel} (opent in nieuw tabblad)`}
-          >
-            Naar de officiële regeling
-            <ExternalLink size={13} strokeWidth={2} aria-hidden="true" />
-          </a>
+          </div>
         </div>
       )}
     </article>

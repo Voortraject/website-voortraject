@@ -1,0 +1,197 @@
+/* Resultaat van de subsidiecheck, huisstijl oktober 2026 (variant A).
+ *
+ * Wat Tailwind niet netjes kan (verlopen, gelaagde schaduwen, veer-animaties)
+ * staat hier, alleen met tokens uit src/index.css: geen losse kleuren.
+ * Rust is het uitgangspunt: geen randen of scheidslijnen, diepte met zachte
+ * schaduw, één oker knop.
+ */
+
+/* ---- Vlakken ---- */
+.rs-hoofd {
+  position: relative;
+  border-radius: 28px;
+  background-image: linear-gradient(
+    180deg,
+    hsl(var(--rs-hoofd-van)) 0%,
+    hsl(var(--rs-hoofd-midden)) 40%,
+    hsl(var(--rs-hoofd-naar)) 78%,
+    hsl(var(--card)) 100%
+  );
+  box-shadow: var(--rs-schaduw);
+}
+
+.rs-wit {
+  border-radius: 28px;
+  background-color: hsl(var(--card));
+  box-shadow: var(--rs-schaduw);
+}
+
+.rs-teller {
+  border-radius: 22px;
+  box-shadow: var(--rs-schaduw);
+  min-width: 0;
+}
+.rs-vlak-subsidie { background-image: linear-gradient(180deg, hsl(var(--subsidie-van)), hsl(var(--subsidie-naar))); }
+.rs-vlak-lening { background-image: linear-gradient(180deg, hsl(var(--lening-van)), hsl(var(--lening-naar))); }
+.rs-vlak-zand { background-image: linear-gradient(180deg, hsl(var(--rs-zand-van)), var(--card-soft)); }
+
+/* Het ronde icoon rechtsboven, zoals de CRM-kaarten. */
+.rs-badge {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 9999px;
+  color: hsl(var(--primary-foreground));
+}
+.rs-badge-subsidie {
+  background-image: linear-gradient(145deg, hsl(var(--subsidie-licht)), hsl(var(--subsidie)));
+  box-shadow: 0 6px 14px hsl(var(--subsidie) / 0.32);
+}
+.rs-badge-lening {
+  background-image: linear-gradient(145deg, hsl(var(--lening-licht)), hsl(var(--lening)));
+  box-shadow: 0 6px 14px hsl(var(--lening) / 0.32);
+}
+.rs-badge-ink {
+  background-image: linear-gradient(145deg, hsl(var(--rs-ink-licht)), hsl(var(--primary)));
+  box-shadow: 0 8px 18px hsl(var(--primary) / 0.25);
+}
+.rs-badge-groot { width: 46px; height: 46px; }
+/* Het kleine vinkje naast "Je aanvraag is binnen". */
+.rs-badge-mini { width: 24px; height: 24px; }
+/* Het huisicoon naast de kop: op de telefoon kleiner, zodat kop en icoon op
+   één regel passen. */
+.rs-badge-kop { width: 34px; height: 34px; }
+@media (min-width: 640px) { .rs-badge-kop { width: 46px; height: 46px; } }
+
+/* Regelingkaart: verloop per soort, schaduw, tilt iets op bij aanwijzen. */
+.rs-kaart {
+  border-radius: 22px;
+  box-shadow: var(--rs-schaduw);
+  transition: transform 0.5s var(--rs-veer), box-shadow 0.4s var(--rs-zacht-uit);
+  min-width: 0;
+}
+@media (hover: hover) {
+  .rs-kaart:hover { transform: translateY(-3px); box-shadow: var(--rs-schaduw-hoog); }
+}
+
+/* Het donkere vraagblok onderaan. */
+.rs-donker {
+  border-radius: 28px;
+  color: hsl(var(--primary-foreground));
+  background-color: hsl(var(--primary));
+  background-image:
+    radial-gradient(120% 90% at 85% 0%, hsl(var(--rs-ink-licht) / 0.55), transparent 60%),
+    linear-gradient(160deg, hsl(var(--rs-ink-licht)), hsl(var(--primary)));
+  box-shadow: 0 24px 60px hsl(var(--primary) / 0.28);
+}
+.rs-glas {
+  color: hsl(var(--primary-foreground));
+  background-color: hsl(var(--primary-foreground) / 0.1);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+/* De bevestiging in het vraagblok staat op donker. De tekstklassen daar zijn
+   gedeeld met een open PR (de termijntekst), dus de kleur komt hier vandaan in
+   plaats van uit een gewijzigde regel in DirectContact.tsx. */
+.rs-vraagblok [role="status"] p { color: hsl(var(--primary-foreground) / 0.85); }
+.rs-vraagblok [role="status"] .text-foreground { color: hsl(var(--primary-foreground)); }
+.rs-glas::placeholder { color: hsl(var(--primary-foreground) / 0.65); }
+.rs-glas:focus { outline: none; background-color: hsl(var(--primary-foreground) / 0.15); box-shadow: 0 0 0 3px hsl(var(--accent) / 0.55); }
+
+/* De keuzes in "Wat vind je het lastigst?": witte rijen met schaduw, de
+   gekozen rij krijgt een blauwgrijs verloop en een inktblauwe rand van licht. */
+.rs-keuze {
+  background-color: hsl(var(--card));
+  box-shadow: 0 1px 2px hsl(var(--primary) / 0.06), 0 6px 16px hsl(var(--primary) / 0.07);
+  transition: transform 0.3s var(--rs-veer), box-shadow 0.3s ease, background-color 0.3s ease;
+}
+.rs-keuze:active { transform: scale(0.98); }
+.rs-keuze:focus-visible { outline: 3px solid hsl(var(--accent)); outline-offset: 2px; }
+@media (hover: hover) { .rs-keuze:hover { transform: translateY(-2px); } }
+.rs-keuze-aan {
+  background-image: linear-gradient(180deg, hsl(var(--rs-hoofd-midden)), hsl(var(--rs-hoofd-naar)));
+  box-shadow: inset 0 0 0 2px hsl(var(--primary)), 0 10px 24px hsl(var(--primary) / 0.12);
+}
+
+/* ---- Knoppen ---- */
+.rs-knop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border-radius: 9999px;
+  font-weight: 800;
+  min-height: 48px;
+  transition: transform 0.45s var(--rs-veer), box-shadow 0.35s var(--rs-zacht-uit), background-color 0.25s ease;
+}
+.rs-knop:active { transform: translateY(0) scale(0.96); transition-duration: 0.12s; }
+.rs-knop:focus-visible { outline: 3px solid hsl(var(--accent)); outline-offset: 3px; }
+@media (hover: hover) {
+  .rs-knop:hover { transform: translateY(-2px); }
+}
+.rs-knop:disabled { cursor: progress; transform: none; }
+.rs-knop-oker {
+  color: hsl(var(--primary));
+  background-color: hsl(var(--accent));
+  background-image: linear-gradient(180deg, hsl(var(--rs-oker-licht)), hsl(var(--accent)));
+  box-shadow: 0 8px 22px hsl(var(--accent) / 0.38);
+}
+.rs-knop-oker:hover { box-shadow: 0 14px 30px hsl(var(--accent) / 0.48); }
+.rs-knop-licht {
+  color: hsl(var(--primary));
+  background-color: hsl(var(--card));
+  box-shadow: var(--rs-schaduw);
+}
+.rs-knop-licht:hover { box-shadow: var(--rs-schaduw-hoog); }
+.rs-knop-glas {
+  color: hsl(var(--primary-foreground));
+  background-color: hsl(var(--primary-foreground) / 0.1);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.rs-knop-glas:hover { background-color: hsl(var(--primary-foreground) / 0.16); }
+
+/* Pijltje dat meeveert in een tekstlink of tegelknop. */
+.rs-pijl { transition: transform 0.4s var(--rs-veer); }
+.rs-met-pijl:hover .rs-pijl { transform: translateX(4px); }
+
+/* ---- Uitklap: vloeiend open, de inhoud schuift een fractie later in ---- */
+.rs-uitklap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.55s var(--rs-zacht-uit); }
+.rs-uitklap[data-open="true"] { grid-template-rows: 1fr; }
+.rs-uitklap > div { overflow: hidden; min-height: 0; }
+.rs-uitklap-binnen {
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.35s ease, transform 0.5s var(--rs-veer);
+}
+.rs-uitklap[data-open="true"] .rs-uitklap-binnen { opacity: 1; transform: none; transition-delay: 0.08s; }
+.rs-chevron { transition: transform 0.5s var(--rs-veer); }
+[aria-expanded="true"] .rs-chevron { transform: rotate(180deg); }
+
+/* ---- Beweging ---- */
+@keyframes rs-veer-in {
+  0% { transform: translateY(22px) scale(0.97); opacity: 0.001; }
+  60% { opacity: 1; }
+  100% { transform: none; opacity: 1; }
+}
+@keyframes rs-pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  70% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+/* Gestaffeld inveren; wat lager staat wacht tot het in beeld scrolt. */
+.rs-in { animation: rs-veer-in 0.9s var(--rs-veer) both; animation-delay: calc(var(--i, 0) * 70ms); }
+.rs-wacht { transform: translateY(22px) scale(0.97); opacity: 0.001; }
+.rs-pop { animation: rs-pop 0.55s var(--rs-veer) both; animation-delay: 0.1s; }
+
+/* Mobiele actiebalk: veert pas in beeld als de hoofdknop eruit is. */
+.rs-actiebalk { transition: transform 0.7s var(--rs-veer); }
+.rs-actiebalk[data-weg="true"] { transform: translateY(140%); }
+
+@media (prefers-reduced-motion: reduce) {
+  .rs-in, .rs-pop { animation: none; }
+  .rs-wacht { transform: none; opacity: 1; }
+  .rs-kaart, .rs-keuze, .rs-knop, .rs-uitklap, .rs-uitklap-binnen, .rs-chevron, .rs-pijl, .rs-actiebalk { transition: none; }
+}

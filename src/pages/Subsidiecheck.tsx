@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Loader2, MapPin, Pencil, SlidersHorizontal } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
@@ -341,11 +341,13 @@ const SubsidiecheckLive = () => {
               <h1
                 ref={kopRef}
                 tabIndex={-1}
+                // Op het resultaat staat de titel zichtbaar in de hoofdtegel. Deze
+                // h1 blijft dan voor schermlezers en voor de focus bij een stapwissel.
                 className={`instap-display mt-7 text-balance text-center leading-[1.08] text-primary outline-none md:mt-8 ${
                   stap === 2
                     ? "whitespace-nowrap text-[length:min(23.5px,calc((100vw_-_48px)/12.6))] tracking-[-0.025em] sm:whitespace-normal sm:text-[length:clamp(28px,4vw,38px)] sm:tracking-[-0.02em]"
                     : "text-[length:clamp(28px,5vw,38px)]"
-                }`}
+                } ${stap === RESULTAAT_STAP ? "sr-only" : ""}`}
               >
                 {kop.titel}
               </h1>
@@ -357,35 +359,9 @@ const SubsidiecheckLive = () => {
 
               {/* Bevestigd adres als subtiele pill boven stap 2 en 3 —
                   visueel te onderscheiden van de content eromheen. */}
-              {stap === RESULTAAT_STAP && adres && (
-                <div className="mt-4 flex justify-center">
-                  <p className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full border border-border bg-card px-4 py-2 text-[13.5px] text-foreground/80 shadow-subtle">
-                    <span className="inline-flex items-center gap-1.5">
-                      <MapPin size={13} className="text-muted-foreground" aria-hidden="true" />
-                      {adres.straatnaam} {hn.trim()}
-                      {tv.trim() ? ` ${tv.trim()}` : ""}, {adres.woonplaatsnaam}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
-                      className="inline-flex items-center gap-1 text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
-                    >
-                      <Pencil size={12} aria-hidden="true" />
-                      adres wijzigen
-                    </button>
-                    <button
-                      type="button"
-                      // Alleen de situatie/interesses aanpassen: terug naar stap 1
-                      // (adres blijft compact) met de situatie-uitklap open.
-                      onClick={() => setSearchParams(metHandmatig({ ...paramsMetKeuzes(pc, hn), sit: "1" }))}
-                      className="inline-flex items-center gap-1 text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
-                    >
-                      <SlidersHorizontal size={12} aria-hidden="true" />
-                      situatie aanpassen
-                    </button>
-                  </p>
-                </div>
-              )}
+              {/* Het adres met "adres wijzigen" en "situatie aanpassen" stond hier
+                  als pil boven het resultaat. Het adres staat nu bij de luchtfoto;
+                  aanpassen kan via de stap "Jouw woning" in de voortgang. */}
 
               <div className="mt-6">
                 {adresZoeken ? (
@@ -455,6 +431,8 @@ const SubsidiecheckLive = () => {
                   )
                 ) : (
                   checkInput && adres && (
+                    // Adres of situatie aanpassen: via de stap "Jouw woning" in de
+                    // voortgang hierboven (onStapKlik), die terugvoert naar stap 1.
                     <StapResultaat input={checkInput} adres={adres} netBinnen={netBinnen} />
                   )
                 )}
