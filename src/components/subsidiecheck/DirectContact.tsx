@@ -18,8 +18,9 @@ import {
   verstuurSubsidiecheckBericht,
 } from "./leadFormulier";
 
+// Matglas op het donkere vlak: geen rand, de focus is een oker gloed.
 const inputClass =
-  "w-full rounded-lg border border-input bg-background px-4 py-3.5 text-[16px] text-foreground outline-none transition min-h-[52px] focus:border-accent focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.18)]";
+  "rs-glas w-full rounded-[18px] border-0 px-[18px] py-4 text-[16px] leading-normal transition min-h-[52px]";
 
 interface DirectContactProps {
   input: SubsidieCheckInput;
@@ -150,7 +151,7 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => pushGtmEvent("subsidiecheck_whatsapp", { bewonertype: input.bewonertype })}
-      className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-3 text-[15px] font-semibold text-primary transition-colors hover:border-primary/40 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+      className="rs-knop rs-knop-glas px-5 py-3 text-[15px]"
     >
       <WhatsAppLogo size={18} />
       Vraag via WhatsApp
@@ -161,8 +162,7 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
     return (
       <div
         id="sc-vraag"
-        className="scroll-mt-24 rounded-xl border border-border p-6 md:p-8"
-        style={{ backgroundColor: "var(--card-soft)" }}
+        className="rs-donker rs-vraagblok scroll-mt-24 p-7 md:p-11"
       >
         <div role="status" className="flex items-start gap-3">
           <span
@@ -172,7 +172,7 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
             <Check size={18} strokeWidth={3} className="text-primary" />
           </span>
           <div>
-            <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
+            <h3 className="font-display text-[21px] font-bold text-primary-foreground md:text-[23px]">
               Je vraag is bij ons binnen
             </h3>
             {/* De punt staat op dezelfde regel als de sluitende accolade. Op een
@@ -197,18 +197,21 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
   return (
     <div
       id="sc-vraag"
-      className="scroll-mt-24 rounded-xl border border-border p-6 md:p-8"
-      style={{ backgroundColor: "var(--card-soft)" }}
+      data-veer
+      className="rs-donker rs-vraagblok scroll-mt-24 p-7 md:p-11"
     >
       {/* Dekt beide routes hierheen: de knop "Ik wil gratis advies" bij het
           woningpaneel en "Stel je vraag" in de mobiele actiebalk. Stond hier
           eerder als "Een vraag over jouw overzicht?"; dat sloot de bezoeker uit
           die geen vraag heeft maar wel wil weten wat hij nu het beste doet. */}
-      <h3 className="font-display text-[19px] font-semibold text-primary md:text-[21px]">
+      <h3 className="font-display text-[24px] font-bold leading-tight text-primary-foreground md:text-[30px]">
         Gratis advies over jouw overzicht
       </h3>
+      <p className="mt-2 max-w-[56ch] text-[16px] leading-relaxed text-primary-foreground/85">
+        Een adviseur kijkt met je mee welke regelingen je voor jouw woning kunt combineren.
+      </p>
 
-      <form onSubmit={handleSubmit} noValidate className="mt-4">
+      <form onSubmit={handleSubmit} noValidate className="mt-6">
         {/* Honeypot: gewoon tekstveld, alleen met CSS uit beeld. Zie StapGegevens. */}
         <div
           aria-hidden="true"
@@ -227,7 +230,7 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
           </label>
         </div>
 
-        <label className="sr-only" htmlFor="sc-vraag-tekst">
+        <label className="mb-2 block text-[15px] font-bold text-primary-foreground" htmlFor="sc-vraag-tekst">
           Je vraag
         </label>
         <textarea
@@ -302,18 +305,18 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
         )}
 
         {fout && (
-          <p role="alert" className="mt-3 text-[14px] text-destructive">
+          <p role="alert" className="mt-3 text-[14px] font-semibold text-accent">
             {fout}
           </p>
         )}
 
         {/* Versturen en WhatsApp naast elkaar: twee even makkelijke routes naar
             hetzelfde antwoord. Op mobiel onder elkaar, volle breedte. */}
-        <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
           <button
             type="submit"
             disabled={bezig}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-7 py-3 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-70 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="rs-knop rs-knop-oker px-7 py-3 text-[15px] disabled:opacity-70"
           >
             {bezig ? (
               <>

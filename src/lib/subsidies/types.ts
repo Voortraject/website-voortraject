@@ -143,16 +143,6 @@ export const NIVEAU_LABELS: Record<SubsidieNiveau, string> = {
   overig: "Van andere organisaties",
 };
 
-// Waarom er groepen staan, in één zin. Zonder deze zin is de indeling een
-// ambtelijke ordening; mét deze zin is het het argument dat ertoe doet, want
-// verschillende potten betekent dat je ze vaak naast elkaar kunt aanvragen.
-// Deze zin stond ooit op élke kaart en is toen weggehaald omdat hij twaalf keer
-// herhaald werd; hij hoorde daarna één keer op het resultaat te komen, maar dat
-// is er nooit van gekomen. "Vaak" en niet "altijd": stapelen mag lang niet
-// overal, en dat uitzoeken is precies waar wij voor zijn.
-export const WAAROM_GROEPEN =
-  "Deze regelingen komen van verschillende overheden. Daarom kun je ze vaak naast elkaar aanvragen.";
-
 export const TYPE_LABELS: Record<SubsidieType, string> = {
   subsidie: "Subsidie",
   lening: "Lening",

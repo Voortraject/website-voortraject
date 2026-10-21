@@ -20,11 +20,8 @@ interface EersteStapProps {
 // regelingen. Op die plek is de aandacht het hoogst, en het kadert de lijst die
 // eronder volgt: hier staat waaróm die regelingen relevant kunnen zijn.
 //
-// Vorm: geen vlak, geen rand, geen balk. Dit blok stond eerst in een zachte
-// strook met een okeraccent, maar binnen de samenvattingskaart staat op mobiel
-// óók al het energielabel-blok in een eigen vlak, en dan wordt de kaart een
-// stapel doosjes. De scheidingslijn erboven markeert het al genoeg; wat overblijft
-// is een alinea met één klikbare zin eronder, en dat is precies wat het is.
+// Vorm: geen vlak, geen rand, geen balk. Een alinea in de hoofdtegel met één
+// klikbare zin eronder, en dat is precies wat het is.
 //
 // Voor de inhoud en de bronnen: zie eersteStapTekst.ts.
 export const EersteStap = ({ bouwjaar, bewonertype, onVraag }: EersteStapProps) => {
@@ -33,14 +30,15 @@ export const EersteStap = ({ bouwjaar, bewonertype, onVraag }: EersteStapProps) 
 
   return (
     <section aria-label="Een eerste stap">
-      <p className="text-[15px] leading-relaxed text-foreground sm:text-[15.5px]">{tekst.zinnen.join(" ")}</p>
+      <p className="text-[14.5px] leading-[1.7] text-foreground sm:text-[15.5px] md:text-[16px]">{tekst.zinnen.join(" ")}</p>
       <button
         type="button"
         onClick={() => onVraag(tekst.voorstel)}
-        className="mt-2.5 inline-flex items-center gap-1.5 rounded-sm text-left text-[15px] font-semibold text-primary underline underline-offset-4 transition-colors hover:text-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:text-[15.5px]"
+        className="rs-met-pijl mt-3 block rounded-sm text-left text-[14.5px] font-bold sm:text-[15.5px] text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-[16px]"
       >
         {tekst.vraag}
-        <ArrowRight size={16} strokeWidth={2.25} className="shrink-0" aria-hidden="true" />
+        {/* Het pijltje direct achter het laatste woord, ook als de zin breekt. */}
+        <ArrowRight size={16} strokeWidth={2.25} className="rs-pijl ml-1.5 inline align-[-3px]" aria-hidden="true" />
       </button>
     </section>
   );

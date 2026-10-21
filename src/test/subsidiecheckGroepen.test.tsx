@@ -32,7 +32,6 @@ import { StapResultaat } from "@/components/subsidiecheck/StapResultaat";
 import type { PdokAdres } from "@/lib/pdok";
 import {
   subsidieProvider,
-  WAAROM_GROEPEN,
   type SubsidieCheckInput,
   type SubsidieRegeling,
 } from "@/lib/subsidies";
@@ -100,17 +99,14 @@ describe("groepen op het resultaat", () => {
     expect(screen.getByText("Van andere organisaties")).toBeInTheDocument();
   });
 
-  it("legt één keer uit waarom er groepen zijn", async () => {
+  it("legt de groepen niet meer uit met een losse zin", async () => {
+    // "Deze regelingen komen van verschillende overheden. Daarom kun je ze
+    // vaak naast elkaar aanvragen." stond boven de lijst. Op verzoek van de
+    // opdrachtgever eraf (oktober 2026): de groepskoppen zeggen het al, en
+    // elke regel vóór de eerste regeling duwt die verder naar beneden.
     toon([regeling("a", "rijk"), regeling("b", "gemeente")]);
 
-    expect(await screen.findAllByText(WAAROM_GROEPEN)).toHaveLength(1);
-  });
-
-  it("laat die uitleg weg als alles in één groep valt", async () => {
-    // Dan valt er niets naast elkaar te leggen en zou de zin een loze belofte zijn.
-    toon([regeling("a", "rijk"), regeling("b", "rijk")]);
-
     await screen.findByText("Van de Rijksoverheid");
-    expect(screen.queryByText(WAAROM_GROEPEN)).toBeNull();
+    expect(screen.queryByText(/verschillende overheden/i)).toBeNull();
   });
 });
