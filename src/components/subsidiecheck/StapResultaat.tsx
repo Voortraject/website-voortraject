@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Check } from "lucide-react";
 
 import { isTestmodus } from "@/config/testmodus";
@@ -32,7 +32,9 @@ import { kanOverzichtMailen } from "./leadFormulier";
 import { MobieleActiebalk } from "./MobieleActiebalk";
 import { Samenvatting } from "./Samenvatting";
 import { SubsidieCard } from "./SubsidieCard";
+import { LastigsteVraag } from "./LastigsteVraag";
 import { IsolatieplanRij, LabelRegel, MiniTellers, Tellers } from "./Tellers";
+import { stuurSessieBericht } from "./uitzoekAanvraag";
 import { useBreed } from "./useBreed";
 import { useUitzoek } from "./useUitzoek";
 import { scrollNaarVraag } from "./vraagFocus";
@@ -49,11 +51,6 @@ interface StapResultaatProps {
   onAdresWijzigen?: () => void;
   /** Terug naar stap 1 met de situatie-uitklap open. */
   onSituatieAanpassen?: () => void;
-  /**
-   * Verschijnt in de bevestiging na "Laat gratis uitzoeken wat ik krijg". Hier
-   * komt de vervolgvraag die het belgesprek helpt; die is een eigen stap.
-   */
-  naAanvraag?: ReactNode;
 }
 
 // De vragen die een knop elders op het resultaat in het vraagblok zet.
@@ -70,7 +67,6 @@ export const StapResultaat = ({
   netBinnen = false,
   onAdresWijzigen,
   onSituatieAanpassen,
-  naAanvraag,
 }: StapResultaatProps) => {
   const { data: regelingen, isPending, isError, refetch } = useSubsidieCheck(input);
   const { data: woning, isPending: woningBezig } = useWoningInfo(input.postcode, input.huisnummer, input.toevoeging);
@@ -152,6 +148,13 @@ export const StapResultaat = ({
   const knopZone = useRef<HTMLDivElement>(null);
   const pagina = useRef<HTMLDivElement>(null);
   const breed = useBreed();
+  const resultaatSinds = useRef(Date.now());
+  const stuurLastigst = useCallback(
+    async (bericht: string) => {
+      await stuurSessieBericht({ input, adres, overzichtUrl, sindsMs: resultaatSinds.current, bericht });
+    },
+    [input, adres, overzichtUrl],
+  );
   const vraagLabel = () => vraagMetVoorstel(LABEL_VRAAG, "energielabel");
   const vraagPlan = () => vraagMetVoorstel(PLAN_VRAAG, "isolatieplan");
 
@@ -286,7 +289,7 @@ export const StapResultaat = ({
 
           Desktop: de hoofdtegel breed met de woning als smalle kolom ernaast,
           daaronder de tellers met het isolatieplan, dan de regelingen. */}
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-stretch">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-stretch">
         {/* Op desktop even hoog als het woningpaneel ernaast. */}
         <div data-veer className="flex min-w-0 [&>section]:min-w-0 [&>section]:flex-1">
           <Samenvatting
@@ -294,7 +297,6 @@ export const StapResultaat = ({
             data={samenvatting}
             bewonertype={input.bewonertype}
             plaats={input.gemeente ?? input.provincie}
-            adresRegel={adresRegel}
             onAdresWijzigen={onAdresWijzigen}
             onSituatieAanpassen={onSituatieAanpassen}
             bedragen={bedragen}
@@ -303,7 +305,9 @@ export const StapResultaat = ({
               breed ? undefined : <MiniTellers subsidies={samenvatting.subsidies} leningen={samenvatting.leningen} />
             }
             aanvraag={aanvraag}
-            naAanvraag={naAanvraag}
+            // Na de klik: één vraag die het belgesprek helpt. Bewaard bij
+            // dezelfde lead, via dezelfde route als de knop zelf.
+            naAanvraag={<LastigsteVraag verstuur={stuurLastigst} />}
           />
         </div>
         {breed && woningpaneel}

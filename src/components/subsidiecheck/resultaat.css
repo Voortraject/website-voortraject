@@ -58,6 +58,8 @@
   box-shadow: 0 8px 18px hsl(var(--primary) / 0.25);
 }
 .rs-badge-groot { width: 46px; height: 46px; }
+/* Het kleine vinkje naast "Je aanvraag is binnen". */
+.rs-badge-mini { width: 24px; height: 24px; }
 /* Het huisicoon naast de kop: op de telefoon kleiner, zodat kop en icoon op
    één regel passen. */
 .rs-badge-kop { width: 34px; height: 34px; }
@@ -97,6 +99,21 @@
 .rs-vraagblok [role="status"] .text-foreground { color: hsl(var(--primary-foreground)); }
 .rs-glas::placeholder { color: hsl(var(--primary-foreground) / 0.65); }
 .rs-glas:focus { outline: none; background-color: hsl(var(--primary-foreground) / 0.15); box-shadow: 0 0 0 3px hsl(var(--accent) / 0.55); }
+
+/* De keuzes in "Wat vind je het lastigst?": witte rijen met schaduw, de
+   gekozen rij krijgt een blauwgrijs verloop en een inktblauwe rand van licht. */
+.rs-keuze {
+  background-color: hsl(var(--card));
+  box-shadow: 0 1px 2px hsl(var(--primary) / 0.06), 0 6px 16px hsl(var(--primary) / 0.07);
+  transition: transform 0.3s var(--rs-veer), box-shadow 0.3s ease, background-color 0.3s ease;
+}
+.rs-keuze:active { transform: scale(0.98); }
+.rs-keuze:focus-visible { outline: 3px solid hsl(var(--accent)); outline-offset: 2px; }
+@media (hover: hover) { .rs-keuze:hover { transform: translateY(-2px); } }
+.rs-keuze-aan {
+  background-image: linear-gradient(180deg, hsl(var(--rs-hoofd-midden)), hsl(var(--rs-hoofd-naar)));
+  box-shadow: inset 0 0 0 2px hsl(var(--primary)), 0 10px 24px hsl(var(--primary) / 0.12);
+}
 
 /* ---- Knoppen ---- */
 .rs-knop {
@@ -176,5 +193,5 @@
 @media (prefers-reduced-motion: reduce) {
   .rs-in, .rs-pop { animation: none; }
   .rs-wacht { transform: none; opacity: 1; }
-  .rs-kaart, .rs-knop, .rs-uitklap, .rs-uitklap-binnen, .rs-chevron, .rs-pijl, .rs-actiebalk { transition: none; }
+  .rs-kaart, .rs-keuze, .rs-knop, .rs-uitklap, .rs-uitklap-binnen, .rs-chevron, .rs-pijl, .rs-actiebalk { transition: none; }
 }

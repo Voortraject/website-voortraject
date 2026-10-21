@@ -49,7 +49,7 @@ export const Woningpaneel = ({ adres, input, pand, pandBezig, model, modelBezig,
           staan ze in de smalle kolom onder elkaar en vullen ze precies de
           hoogte die de hoofdtegel ernaast bepaalt: absoluut gepositioneerd,
           dus de beelden rekken de rij zelf niet op. */}
-      <div className="relative h-[96px] sm:h-[150px] lg:h-auto lg:min-h-[260px] lg:flex-1">
+      <div className="relative h-[96px] sm:h-[150px] lg:h-auto lg:min-h-[140px] lg:flex-1">
         <div
           className={`h-full lg:absolute lg:inset-0 ${
             toontFoto && toont3d ? "grid grid-cols-[1.5fr_1fr] gap-2 lg:grid-cols-1 lg:grid-rows-2 lg:gap-2.5" : ""

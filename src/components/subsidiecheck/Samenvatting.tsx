@@ -1,5 +1,5 @@
 import { forwardRef, useId, type ReactNode } from "react";
-import { Check, House, Loader2, MapPin } from "lucide-react";
+import { Check, House, Loader2 } from "lucide-react";
 
 import { type Bewonertype, formatEuro, type Samenvatting as SamenvattingData, type TopBedrag } from "@/lib/subsidies";
 
@@ -28,8 +28,6 @@ interface SamenvattingProps {
   bewonertype: Bewonertype;
   /** Gemeente, of anders provincie: voor de situatie-terugkoppeling. */
   plaats?: string;
-  /** "Verlengde Hereweg 12, Groningen". */
-  adresRegel: string;
   onAdresWijzigen?: () => void;
   onSituatieAanpassen?: () => void;
   /** Sterkste concrete bedragen om als teaser uit te lichten (topBedragen()). */
@@ -60,7 +58,6 @@ export const Samenvatting = forwardRef<HTMLDivElement, SamenvattingProps>(functi
     data,
     bewonertype,
     plaats,
-    adresRegel,
     onAdresWijzigen,
     onSituatieAanpassen,
     bedragen,
@@ -77,7 +74,10 @@ export const Samenvatting = forwardRef<HTMLDivElement, SamenvattingProps>(functi
 
   return (
     <section aria-labelledby={titelId} className="rs-hoofd px-5 pb-6 pt-5 sm:px-8 sm:pb-7 sm:pt-6 md:px-9 md:pb-8 md:pt-8">
-      {/* Kop en huisicoon op één regel; daaronder het adres op één regel. */}
+      {/* Kop en huisicoon op één regel. Het adres staat hier niet: dat staat
+          al bij de luchtfoto in het woningpaneel. "adres wijzigen" en
+          "situatie aanpassen" blijven vanaf sm bereikbaar, klein onder de kop;
+          op de telefoon kan het via de voortgang bovenaan. */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           {/* De pagina zelf heeft de h1 (voor schermlezers en de focus bij een
@@ -86,22 +86,20 @@ export const Samenvatting = forwardRef<HTMLDivElement, SamenvattingProps>(functi
           <p id={titelId} aria-hidden="true" className="whitespace-nowrap font-display text-[21px] font-bold leading-tight tracking-[-0.015em] text-primary sm:text-[26px] md:text-[30px]">
             Jouw subsidieoverzicht
           </p>
-          <div className="mt-1.5 flex items-center gap-x-4 text-[13.5px] text-[hsl(var(--rs-tekst-zacht))] sm:mt-2 sm:flex-wrap sm:gap-y-1.5 sm:text-[14px]">
-            <span className="inline-flex min-w-0 items-center gap-1.5">
-              <MapPin size={15} strokeWidth={2} aria-hidden="true" className="shrink-0" />
-              <span className="truncate">{adresRegel}</span>
-            </span>
-            {onAdresWijzigen && (
-              <button type="button" onClick={onAdresWijzigen} className={`hidden sm:inline ${linkKnop}`}>
-                adres wijzigen
-              </button>
-            )}
-            {onSituatieAanpassen && (
-              <button type="button" onClick={onSituatieAanpassen} className={`hidden sm:inline ${linkKnop}`}>
-                situatie aanpassen
-              </button>
-            )}
-          </div>
+          {(onAdresWijzigen || onSituatieAanpassen) && (
+            <div className="mt-1.5 hidden flex-wrap items-center gap-x-4 gap-y-1 sm:flex">
+              {onAdresWijzigen && (
+                <button type="button" onClick={onAdresWijzigen} className={linkKnop}>
+                  adres wijzigen
+                </button>
+              )}
+              {onSituatieAanpassen && (
+                <button type="button" onClick={onSituatieAanpassen} className={linkKnop}>
+                  situatie aanpassen
+                </button>
+              )}
+            </div>
+          )}
         </div>
         <span className="rs-badge rs-badge-ink rs-badge-kop" aria-hidden="true">
           <House size={18} strokeWidth={2.1} />
@@ -140,19 +138,19 @@ export const Samenvatting = forwardRef<HTMLDivElement, SamenvattingProps>(functi
         {aanvraag.status === "binnen" ? (
           // Na de klik: de knop maakt plaats voor de bevestiging. Geen termijn:
           // het team belt wel alle leads, maar we beloven geen moment.
-          <div role="status" className="flex items-start gap-3.5">
-            <span className="rs-badge rs-badge-subsidie rs-badge-groot rs-pop" aria-hidden="true">
-              <Check size={22} strokeWidth={3} />
-            </span>
-            <div className="min-w-0">
-              <p className="font-display text-[21px] font-bold leading-tight text-primary md:text-[23px]">
+          <div>
+            <div role="status">
+              <p className="flex items-center gap-2.5 font-display text-[21px] font-bold leading-tight text-primary md:text-[23px]">
+                <span className="rs-badge rs-badge-subsidie rs-badge-mini rs-pop" aria-hidden="true">
+                  <Check size={13} strokeWidth={3.2} />
+                </span>
                 Je aanvraag is binnen
               </p>
-              <p className="mt-1.5 max-w-[52ch] text-[15.5px] leading-relaxed text-[hsl(var(--rs-tekst-zacht))]">
+              <p className="mt-2 text-[15.5px] leading-relaxed text-[hsl(var(--rs-tekst-zacht))]">
                 We nemen contact met je op en zoeken uit wat er voor jouw huis echt in zit.
               </p>
-              {naAanvraag && <div className="mt-5">{naAanvraag}</div>}
             </div>
+            {naAanvraag && <div className="mt-5">{naAanvraag}</div>}
           </div>
         ) : (
           <>

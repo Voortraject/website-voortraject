@@ -162,7 +162,7 @@ const Teller = ({
   badge: ReactNode;
   kleur: string;
 }) => (
-  <div role="group" aria-label={titel} data-veer className={`rs-teller ${vlak} flex items-center gap-3.5 px-5 py-3.5`}>
+  <div role="group" aria-label={titel} data-veer className={`rs-teller ${vlak} flex items-center gap-3.5 px-5 py-2.5`}>
     {badge}
     <div className="min-w-0 flex-1">
       <p className="text-[15px] font-bold leading-tight text-primary">{titel}</p>
@@ -170,7 +170,7 @@ const Teller = ({
     </div>
     <TelOp
       waarde={waarde}
-      className={`font-display text-[40px] font-extrabold leading-none tracking-[-0.03em] ${kleur}`}
+      className={`font-display text-[34px] font-extrabold leading-none tracking-[-0.03em] ${kleur}`}
     />
   </div>
 );

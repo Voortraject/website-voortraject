@@ -82,14 +82,15 @@ describe("resultaatscherm in de huisstijl", () => {
     expect(tegel.getByRole("button", { name: "Laat gratis uitzoeken wat ik krijg" })).toBeInTheDocument();
     expect(
       tegel.getByText(
-        "Dit overzicht is een indicatie. We zoeken voor je uit wat er voor jouw huis echt in zit. Je zit nergens aan vast.",
+        "Dit overzicht is een indicatie. We zoeken voor je uit wat er voor jouw huis echt in zit.",
       ),
     ).toBeInTheDocument();
+    expect(tegel.queryByText(/nergens aan vast/i)).toBeNull();
     expect(tegel.getByText("3")).toBeInTheDocument();
   });
 
-  it("één klik dient het verzoek in en toont dat het binnen is, met ruimte voor een vervolgvraag", async () => {
-    toon(groningen, { naAanvraag: <p>vervolgvraag</p> });
+  it("één klik dient het verzoek in en toont dat het binnen is, met de vraag wat het lastigst is", async () => {
+    toon(groningen);
     const tegel = await hoofdtegel();
     fireEvent.click(tegel.getByRole("button", { name: "Laat gratis uitzoeken wat ik krijg" }));
 
@@ -97,9 +98,17 @@ describe("resultaatscherm in de huisstijl", () => {
     expect(
       tegel.getByText("We nemen contact met je op en zoeken uit wat er voor jouw huis echt in zit."),
     ).toBeInTheDocument();
-    expect(tegel.getByText("vervolgvraag")).toBeInTheDocument();
+    expect(tegel.getByText("Wat vind je het lastigst?")).toBeInTheDocument();
+    expect(tegel.getAllByRole("checkbox")).toHaveLength(4);
     expect(vraagUitzoekenAan).toHaveBeenCalledTimes(1);
     expect(tegel.queryByRole("button", { name: "Laat gratis uitzoeken wat ik krijg" })).toBeNull();
+  });
+
+  it("de hoofdtegel herhaalt het adres niet: dat staat bij de luchtfoto", async () => {
+    toon(groningen);
+    const tegel = await hoofdtegel();
+    expect(tegel.queryByText(/Verlengde Hereweg/)).toBeNull();
+    expect(screen.getByRole("region", { name: "Jouw woning" })).toHaveTextContent("Verlengde Hereweg 12");
   });
 
   it("toont een eerlijke melding als het verzoek niet aankomt", async () => {
