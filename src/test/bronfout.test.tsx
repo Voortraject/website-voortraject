@@ -109,7 +109,7 @@ describe("gegevens-poort bij een bronfout", () => {
     await screen.findByPlaceholderText(/Je voornaam/, {}, { timeout: 5000 });
     vulIn();
     nu += 5_000;
-    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^Bekijk mijn/ }));
 
     // De poort retry't de bron één keer (met backoff) voordat hij opgeeft.
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled(), { timeout: 5_000 });
@@ -145,7 +145,7 @@ describe("gegevens-poort bij een bronfout", () => {
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
     nu += 5_000;
-    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^Bekijk mijn/ }));
 
     await screen.findByRole("alert");
     expect(insertMock).not.toHaveBeenCalled();
@@ -164,7 +164,7 @@ describe("gegevens-poort bij een bronfout", () => {
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
     nu += 5_000;
-    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^Bekijk mijn/ }));
 
     await screen.findByRole("alert");
     expect(insertMock).not.toHaveBeenCalled();
@@ -181,19 +181,19 @@ describe("gegevens-poort bij een bronfout", () => {
     await screen.findByPlaceholderText(/Je voornaam/, {}, { timeout: 5000 });
     // Bewust in omgekeerde volgorde aanklikken: de notitie moet de volgorde van
     // de tegels aanhouden, niet die van het klikken.
-    fireEvent.click(screen.getByRole("checkbox", { name: /Een uitvoerder vinden/ }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /Betrouwbare uitvoerder/ }));
     fireEvent.click(screen.getByRole("checkbox", { name: /Subsidies uitzoeken/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
     vul(screen.getByPlaceholderText(/Je telefoonnummer/), "0612345678");
     nu += 5_000;
-    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^Bekijk mijn/ }));
 
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled(), { timeout: 5_000 });
     const [, rij] = insertMock.mock.calls[0];
     expect((rij.notities as string).split("\n")[0]).toBe(
-      "Wil hulp met: Subsidies uitzoeken, Een uitvoerder vinden",
+      "Wil hulp met: Subsidies uitzoeken, Betrouwbare uitvoerder",
     );
   });
 });

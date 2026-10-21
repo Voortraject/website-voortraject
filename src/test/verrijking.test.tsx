@@ -102,7 +102,7 @@ const vulInEnVerstuur = () => {
   fireEvent.change(screen.getByPlaceholderText(/Je e-mailadres/), { target: { value: "jan@example.nl" } });
   fireEvent.change(screen.getByPlaceholderText(/Je telefoonnummer/), { target: { value: "0612345678" } });
   nu += 5_000;
-  fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
+  fireEvent.click(screen.getByRole("button", { name: /^Bekijk mijn/ }));
 };
 
 describe("verrijking van de subsidietool-lead", () => {

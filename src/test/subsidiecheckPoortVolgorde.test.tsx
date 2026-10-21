@@ -75,10 +75,10 @@ describe("de poort zoekt eerst, vraagt daarna", () => {
 
     toon(<StapGegevens input={input} adres={adres} onOntgrendeld={() => {}} />);
 
-    expect(await screen.findByText(/We vonden/)).toBeInTheDocument();
-    expect(screen.getByText(/12 regelingen/)).toBeInTheDocument();
+    expect(await screen.findByText("regelingen gevonden")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Bekijk mijn 12 regelingen" })).toBeInTheDocument();
     // Het adres erbij, zodat het over dít huis gaat en niet over een gemiddelde.
-    // Meerdere treffers: de telling noemt het adres én het woningkaartje eronder.
+    // In de woningtegel, naast de telling.
     expect(screen.getAllByText(/Hoofdstraat 12/).length).toBeGreaterThan(0);
   });
 
@@ -99,7 +99,7 @@ describe("de poort zoekt eerst, vraagt daarna", () => {
     toon(<StapGegevens input={input} adres={adres} onOntgrendeld={() => {}} />);
 
     expect(await screen.findByPlaceholderText(/Je voornaam/)).toBeInTheDocument();
-    expect(screen.queryByText(/We vonden/)).toBeNull();
+    expect(screen.queryByText("regelingen gevonden")).toBeNull();
   });
 
   it("laat de bezoeker ook bij een bronfout gewoon bij het formulier komen", async () => {
@@ -110,6 +110,6 @@ describe("de poort zoekt eerst, vraagt daarna", () => {
     // useSubsidieCheck zet zelf `retry: 1`, dus de client-instelling telt hier
     // niet: de fout is pas na de retry definitief.
     expect(await screen.findByPlaceholderText(/Je voornaam/, {}, { timeout: 5000 })).toBeInTheDocument();
-    expect(screen.queryByText(/We vonden/)).toBeNull();
+    expect(screen.queryByText("regelingen gevonden")).toBeNull();
   });
 });
