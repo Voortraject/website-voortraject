@@ -354,8 +354,8 @@ const SubsidiecheckLive = () => {
               {/* Bevestigd adres als subtiele pill boven stap 2 en 3 —
                   visueel te onderscheiden van de content eromheen. */}
               {/* Het adres met "adres wijzigen" en "situatie aanpassen" stond hier
-                  als pil boven het resultaat; het staat nu in de hoofdtegel zelf
-                  (zie Samenvatting), bij de titel waar het bij hoort. */}
+                  als pil boven het resultaat. Het adres staat nu bij de luchtfoto;
+                  aanpassen kan via de stap "Jouw woning" in de voortgang. */}
 
               <div className="mt-6">
                 {adresZoeken ? (
@@ -425,13 +425,9 @@ const SubsidiecheckLive = () => {
                   )
                 ) : (
                   checkInput && adres && (
-                    <StapResultaat
-                      input={checkInput}
-                      adres={adres}
-                      netBinnen={netBinnen}
-                      onAdresWijzigen={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
-                      onSituatieAanpassen={() => setSearchParams(metHandmatig({ ...paramsMetKeuzes(pc, hn), sit: "1" }))}
-                    />
+                    // Adres of situatie aanpassen: via de stap "Jouw woning" in de
+                    // voortgang hierboven (onStapKlik), die terugvoert naar stap 1.
+                    <StapResultaat input={checkInput} adres={adres} netBinnen={netBinnen} />
                   )
                 )}
               </div>

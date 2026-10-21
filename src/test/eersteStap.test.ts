@@ -46,23 +46,18 @@ describe("eersteStapTekst", () => {
     }
   });
 
-  it("vraagt huurders wat er in hun situatie mogelijk is", () => {
-    const huurder = eersteStapTekst(1962, "huurder");
-    expect(huurder?.vraag).toBe("Ik wil weten wat er in mijn situatie mogelijk is");
-    expect(huurder?.voorstel).toMatch(/^Ik huur een woning uit 1962\./);
-    // De uitspraak over de voorraad blijft wél gewoon staan.
-    expect(huurder?.zinnen[1]).toMatch(/geen isolatie mee/);
+  it("zegt huurders hetzelfde over de woningvoorraad", () => {
+    expect(eersteStapTekst(1962, "huurder")?.zinnen[1]).toMatch(/geen isolatie mee/);
   });
 
   it("stuurt bij nieuwere woningen naar verwarming en opwek in plaats van de schil", () => {
-    const nieuw = eersteStapTekst(2007, "woningeigenaar");
-    expect(nieuw?.zinnen[2]).toMatch(/verwarming en opwek/);
-    expect(nieuw?.vraag).toBe("Ik wil weten waar bij mijn huis de winst zit");
+    expect(eersteStapTekst(2007, "woningeigenaar")?.zinnen[2]).toMatch(/verwarming en opwek/);
   });
 
-  it("geeft een voorstel dat het bouwjaar meeneemt, zodat het team context heeft", () => {
-    expect(eersteStapTekst(1962, "woningeigenaar")?.voorstel).toContain("1962");
-    expect(eersteStapTekst(2007, "woningeigenaar")?.voorstel).toContain("2007");
+  it("is alleen nog een uitspraak, zonder klikbare vraag eronder", () => {
+    // De vraag ("Ik wil weten wat er al gedaan is en wat er nog kan →") is
+    // weg: de hoofdtegel heeft één focus, de oker knop.
+    expect(Object.keys(eersteStapTekst(1962, "woningeigenaar")!)).toEqual(["zinnen"]);
   });
 });
 

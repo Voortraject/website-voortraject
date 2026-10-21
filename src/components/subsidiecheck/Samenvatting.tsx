@@ -28,8 +28,6 @@ interface SamenvattingProps {
   bewonertype: Bewonertype;
   /** Gemeente, of anders provincie: voor de situatie-terugkoppeling. */
   plaats?: string;
-  onAdresWijzigen?: () => void;
-  onSituatieAanpassen?: () => void;
   /** Sterkste concrete bedragen om als teaser uit te lichten (topBedragen()). */
   bedragen: { subsidie?: TopBedrag; lening?: TopBedrag };
   /** De eerste stap: de zin over het bouwjaar met een vraag eronder (desktop). */
@@ -41,9 +39,6 @@ interface SamenvattingProps {
   /** Komt in de bevestiging na de klik, bijvoorbeeld een vervolgvraag. */
   naAanvraag?: ReactNode;
 }
-
-const linkKnop =
-  "rounded-sm text-[13.5px] font-semibold text-primary underline underline-offset-[3px] transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
 
 // De hoofdtegel bovenaan het resultaat: de piek van de flow (peak-end).
 // Eerst de conclusie (het aantal, groot), dan wat het voor dít huis betekent
@@ -58,8 +53,6 @@ export const Samenvatting = forwardRef<HTMLDivElement, SamenvattingProps>(functi
     data,
     bewonertype,
     plaats,
-    onAdresWijzigen,
-    onSituatieAanpassen,
     bedragen,
     voet,
     tellers,
@@ -74,10 +67,9 @@ export const Samenvatting = forwardRef<HTMLDivElement, SamenvattingProps>(functi
 
   return (
     <section aria-labelledby={titelId} className="rs-hoofd px-5 pb-6 pt-5 sm:px-8 sm:pb-7 sm:pt-6 md:px-9 md:pb-8 md:pt-8">
-      {/* Kop en huisicoon op één regel. Het adres staat hier niet: dat staat
-          al bij de luchtfoto in het woningpaneel. "adres wijzigen" en
-          "situatie aanpassen" blijven vanaf sm bereikbaar, klein onder de kop;
-          op de telefoon kan het via de voortgang bovenaan. */}
+      {/* Kop en huisicoon op één regel. Eén focus: de oker knop. Geen adres
+          (dat staat bij de luchtfoto) en geen wijzig-links: adres en situatie
+          aanpassen kan via de stap "Jouw woning" in de voortgang bovenaan. */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           {/* De pagina zelf heeft de h1 (voor schermlezers en de focus bij een
@@ -86,20 +78,6 @@ export const Samenvatting = forwardRef<HTMLDivElement, SamenvattingProps>(functi
           <p id={titelId} aria-hidden="true" className="whitespace-nowrap font-display text-[21px] font-bold leading-tight tracking-[-0.015em] text-primary sm:text-[26px] md:text-[30px]">
             Jouw subsidieoverzicht
           </p>
-          {(onAdresWijzigen || onSituatieAanpassen) && (
-            <div className="mt-1.5 hidden flex-wrap items-center gap-x-4 gap-y-1 sm:flex">
-              {onAdresWijzigen && (
-                <button type="button" onClick={onAdresWijzigen} className={linkKnop}>
-                  adres wijzigen
-                </button>
-              )}
-              {onSituatieAanpassen && (
-                <button type="button" onClick={onSituatieAanpassen} className={linkKnop}>
-                  situatie aanpassen
-                </button>
-              )}
-            </div>
-          )}
         </div>
         <span className="rs-badge rs-badge-ink rs-badge-kop" aria-hidden="true">
           <House size={18} strokeWidth={2.1} />

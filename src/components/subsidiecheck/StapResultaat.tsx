@@ -47,10 +47,6 @@ interface StapResultaatProps {
   /** De bezoeker komt hier net vandaan de poort (niet via een herlaad of een
       gedeelde link). Dan tonen we het aankomstmoment. */
   netBinnen?: boolean;
-  /** Terug naar stap 1 om het adres te wijzigen. */
-  onAdresWijzigen?: () => void;
-  /** Terug naar stap 1 met de situatie-uitklap open. */
-  onSituatieAanpassen?: () => void;
 }
 
 // De vragen die een knop elders op het resultaat in het vraagblok zet.
@@ -65,8 +61,6 @@ export const StapResultaat = ({
   input,
   adres,
   netBinnen = false,
-  onAdresWijzigen,
-  onSituatieAanpassen,
 }: StapResultaatProps) => {
   const { data: regelingen, isPending, isError, refetch } = useSubsidieCheck(input);
   const { data: woning, isPending: woningBezig } = useWoningInfo(input.postcode, input.huisnummer, input.toevoeging);
@@ -176,15 +170,11 @@ export const StapResultaat = ({
     />
   );
 
-  // De eerste stap: één uitspraak over woningen uit dit bouwjaar, met een vraag
-  // die het vraagblok invult. Desktop: in de hoofdtegel. Telefoon: bij de woning.
-  const eersteStap = (
-    <EersteStap
-      bouwjaar={pand?.bouwjaar}
-      bewonertype={input.bewonertype}
-      onVraag={(voorstel) => vraagMetVoorstel(voorstel, "eerste_stap")}
-    />
-  );
+  // De eerste stap: één uitspraak over woningen uit dit bouwjaar, zonder link.
+  // Desktop: in de hoofdtegel, onder het aantal, als context bij de knop. Daar
+  // blijft hij staan: in de smalle woningkolom zou de zin die kolom hoger maken
+  // dan de hoofdtegel, en dan is er weer lege ruimte. Telefoon: bij de woning.
+  const eersteStap = <EersteStap bouwjaar={pand?.bouwjaar} bewonertype={input.bewonertype} />;
 
   // Eén event per getoond resultaat (ook bij 0 regelingen — dat is óók funnel-data).
   const resultaatGemeld = useRef(false);
@@ -297,9 +287,9 @@ export const StapResultaat = ({
             data={samenvatting}
             bewonertype={input.bewonertype}
             plaats={input.gemeente ?? input.provincie}
-            onAdresWijzigen={onAdresWijzigen}
-            onSituatieAanpassen={onSituatieAanpassen}
-            bedragen={bedragen}
+            // "Waaronder …" alleen op desktop: op de telefoon komt de eerste
+            // regeling zo eerder in beeld, en de mini-rij noemt de aantallen al.
+            bedragen={breed ? bedragen : {}}
             voet={breed ? eersteStap : undefined}
             tellers={
               breed ? undefined : <MiniTellers subsidies={samenvatting.subsidies} leningen={samenvatting.leningen} />

@@ -104,6 +104,22 @@ describe("resultaatscherm in de huisstijl", () => {
     expect(tegel.queryByRole("button", { name: "Laat gratis uitzoeken wat ik krijg" })).toBeNull();
   });
 
+  it("de hoofdtegel heeft één focus: alleen de oker knop, geen links", async () => {
+    toon(groningen, { onAdresWijzigen: () => {}, onSituatieAanpassen: () => {} });
+    const tegel = await hoofdtegel();
+    expect(tegel.getAllByRole("button").map((k) => k.textContent)).toEqual(["Laat gratis uitzoeken wat ik krijg"]);
+    expect(screen.queryByText(/Ik wil weten/)).toBeNull();
+    expect(screen.queryByText(/adres wijzigen|situatie aanpassen/i)).toBeNull();
+    // De bouwjaarzin zelf blijft (op de telefoon bij de woning).
+    expect(screen.getByText(/Jouw huis is uit 1914\./)).toBeInTheDocument();
+  });
+
+  it("telefoon: geen 'Waaronder'-regel, die staat alleen op desktop", async () => {
+    toon(groningen);
+    const tegel = await hoofdtegel();
+    expect(tegel.queryByText(/Waaronder/)).toBeNull();
+  });
+
   it("de hoofdtegel herhaalt het adres niet: dat staat bij de luchtfoto", async () => {
     toon(groningen);
     const tegel = await hoofdtegel();
@@ -161,6 +177,8 @@ describe("resultaatscherm in de huisstijl", () => {
       expect(within(screen.getByRole("group", { name: "Leningen" })).getByText("1")).toBeInTheDocument();
       const woning = screen.getByRole("region", { name: "Jouw woning" });
       expect(woning.compareDocumentPosition(screen.getByText("Regeling a")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      // Op desktop staat "Waaronder …" wel in de hoofdtegel.
+      expect((await hoofdtegel()).getByText(/Waaronder/)).toBeInTheDocument();
     } finally {
       window.matchMedia = oud;
     }
