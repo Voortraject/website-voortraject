@@ -179,11 +179,11 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
                 eigen regel voegt JSX er een spatie voor in, en dan lees je
                 "…@voorbeeld.nl . Je hoeft niets voor te bereiden." */}
             <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-foreground/80">
-              We reageren binnen 1 werkdag
+              We nemen contact met je op
               {antwoordAdres ? (
                 <>
                   {" "}
-                  op <span className="font-semibold text-foreground">{antwoordAdres}</span>
+                  via <span className="font-semibold text-foreground">{antwoordAdres}</span>
                 </>
               ) : null}. Je hoeft niets voor te bereiden.
             </p>
@@ -331,9 +331,10 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
         </div>
 
         {/* Hier stond "We antwoorden binnen 1 werkdag op <e-mailadres>." Twee
-            redenen om die weg te halen. De belofte komt na het verzenden
-            sowieso ("Je vraag is bij ons binnen · We reageren binnen 1 werkdag op
-            …"), dus vooraf is het een herhaling. En het terugkaatsen van het
+            redenen om die weg te halen. De bevestiging komt na het verzenden
+            sowieso ("Je vraag is bij ons binnen · We nemen contact met je op
+            via …"), dus vooraf is het een herhaling. (Een termijn beloven we
+            sinds oktober 2026 nergens meer in de tool.) En het terugkaatsen van het
             e-mailadres van de bezoeker, vlak onder de knop, leest als een
             bevestiging van iets wat nog niet gebeurd is. */}
       </form>
