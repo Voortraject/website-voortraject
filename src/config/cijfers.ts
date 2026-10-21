@@ -51,13 +51,11 @@ export const GEMIDDELD_AANTAL_REGELINGEN = 9;
  * geldt voor woningeigenaren: dat is de groep waarop gemeten is en de standaard
  * op stap 1. Voor huurders, VvE's en verhuurders tonen we de regel daarom niet.
  *
- * De zin sluit bewust aan op de subregel erboven ("… dan zoeken we alle
- * regelingen"): "er" zijn die regelingen. Zo staat het woord niet twee regels
- * onder elkaar en leest het als één alinea in plaats van twee losse mededelingen.
- * Verhuist deze zin ooit naar een plek zónder die subregel, schrijf het
- * onderwerp dan weer voluit.
+ * Sinds de instap in de huisstijl van oktober 2026 staat de zin achter een
+ * kortere eerste zin ("Vul je adres in."), dus het onderwerp staat er weer
+ * voluit. Op een telefoon is het samen precies twee regels.
  */
-export const GEMIDDELDE_REGELINGEN_ZIN = `Gemiddeld vinden we er ${GEMIDDELD_AANTAL_REGELINGEN} per adres.`;
+export const GEMIDDELDE_REGELINGEN_ZIN = `Gemiddeld vinden we ${GEMIDDELD_AANTAL_REGELINGEN} regelingen per adres.`;
 
 /* ------------------------------------------------------------------ *
  * "Voortraject in cijfers": de drie getallen in de cijferband

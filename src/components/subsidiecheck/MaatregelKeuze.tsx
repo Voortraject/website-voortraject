@@ -45,37 +45,23 @@ export const MaatregelKeuze = ({ gekozen, onWijzig }: MaatregelKeuzeProps) => {
     onWijzig(volgende.length === ALLE_MAATREGELEN.length ? [] : volgende);
   };
 
+  // Huisstijl van oktober 2026: witte chips met schaduw, gekozen inktblauw
+  // (.instap-chip in src/index.css). Oker blijft voor de hoofdknop.
+  const chip =
+    "instap-chip inline-flex min-h-[38px] items-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:min-h-[44px] sm:gap-[7px] sm:px-[15px] sm:py-2.5 sm:text-[14.5px]";
+
   return (
-    <div className="flex flex-wrap gap-2">
-      <button
-        type="button"
-        aria-pressed={allesModus}
-        onClick={() => onWijzig([])}
-        className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1.5 text-[12px] font-semibold transition-colors min-h-[34px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-1.5 sm:px-4 sm:py-2.5 sm:text-[14px] sm:min-h-[44px] ${
-          allesModus
-            ? "border-primary bg-primary text-primary-foreground"
-            : "border-border bg-card text-primary hover:border-primary/40"
-        }`}
-      >
+    <div className="flex flex-wrap gap-2 sm:gap-[9px]">
+      <button type="button" aria-pressed={allesModus} onClick={() => onWijzig([])} className={chip}>
         Alles
       </button>
       {ALLE_MAATREGELEN.map((m) => {
         const Icon = MAATREGEL_ICONS[m];
         const actief = gekozen.includes(m);
         return (
-          <button
-            key={m}
-            type="button"
-            aria-pressed={actief}
-            onClick={() => toggle(m)}
-            className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1.5 text-[12px] font-medium transition-colors min-h-[34px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-1.5 sm:px-4 sm:py-2.5 sm:text-[14px] sm:min-h-[44px] ${
-              actief
-                ? "border-accent bg-accent/15 text-primary"
-                : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-primary"
-            }`}
-          >
+          <button key={m} type="button" aria-pressed={actief} onClick={() => toggle(m)} className={chip}>
             {/* Icoon kost mobiel breedte → alleen op sm+ (helpt bij max 3 regels). */}
-            <Icon size={15} strokeWidth={2} aria-hidden="true" className={`hidden sm:block ${actief ? "text-primary" : ""}`} />
+            <Icon size={16} strokeWidth={2} aria-hidden="true" className="hidden sm:block" />
             {MAATREGEL_LABELS[m]}
           </button>
         );

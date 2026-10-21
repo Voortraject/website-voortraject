@@ -21,10 +21,12 @@ interface BewonertypeKeuzeProps {
   onKies: (type: Bewonertype) => void;
 }
 
-// Bewonertype als grote tapbare kaarten (radiogroup). Controlled, zodat het
+// Bewonertype als grote tapbare tegels (radiogroup). Controlled, zodat het
 // zowel los als binnen de gecombineerde eerste stap gebruikt kan worden.
+// Huisstijl van oktober 2026: witte tegels met schaduw, de gekozen tegel krijgt
+// een blauw verloop en een vinkje dat inveert (.instap-keus in src/index.css).
 export const BewonertypeKeuze = ({ waarde, onKies }: BewonertypeKeuzeProps) => (
-  <div className="grid grid-cols-2 gap-2 sm:gap-3" role="radiogroup" aria-label="Type bewoner">
+  <div className="grid grid-cols-2 gap-2.5 sm:gap-3" role="radiogroup" aria-label="Type bewoner">
     {(Object.keys(BEWONERTYPE_LABELS) as Bewonertype[]).map((type) => {
       const Icon = TYPE_ICONS[type];
       const actief = waarde === type;
@@ -35,24 +37,24 @@ export const BewonertypeKeuze = ({ waarde, onKies }: BewonertypeKeuzeProps) => (
           role="radio"
           aria-checked={actief}
           onClick={() => onKies(type)}
-          className={`relative flex items-start gap-2 rounded-lg border-2 px-3 py-3 text-left transition-colors min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-3 sm:px-4 ${
-            actief ? "border-accent bg-accent/10" : "border-border bg-card hover:border-primary/30"
-          }`}
+          className="instap-keus relative flex min-h-[56px] items-center gap-2 rounded-[18px] px-2.5 py-3 text-left text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:items-start sm:gap-3 sm:px-4 sm:py-[15px]"
         >
-          <Icon size={22} strokeWidth={1.75} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
-          <span>
-            <span className="block text-[14px] font-semibold leading-snug text-primary sm:text-[15px]">
-              {BEWONERTYPE_LABELS[type]}
-            </span>
+          <Icon size={20} strokeWidth={1.8} className="shrink-0 sm:mt-0.5 sm:h-[22px] sm:w-[22px]" aria-hidden="true" />
+          <span className="sm:pr-5">
+            <span className="block text-[13.5px] font-bold leading-snug sm:text-[15.5px]">{BEWONERTYPE_LABELS[type]}</span>
             {/* Toelichting kost mobiel te veel ruimte → alleen op sm+. */}
-            <span className="mt-0.5 hidden text-[13px] text-muted-foreground sm:block">{TYPE_TOELICHTING[type]}</span>
+            <span className="mt-0.5 hidden text-[13.5px] font-medium text-instap-zacht sm:block">
+              {TYPE_TOELICHTING[type]}
+            </span>
           </span>
+          {/* Op een telefoon is de tegel te smal voor een vinkje naast het label;
+              daar zegt het blauwe verloop met de rand genoeg. */}
           {actief && (
             <span
-              className="absolute right-2.5 top-2.5 hidden h-5 w-5 items-center justify-center rounded-full bg-accent sm:flex"
+              className="instap-vinkje absolute right-2.5 top-2.5 hidden h-[22px] w-[22px] items-center justify-center rounded-full sm:flex"
               aria-hidden="true"
             >
-              <Check size={13} strokeWidth={3} className="text-primary" />
+              <Check size={13} strokeWidth={3} />
             </span>
           )}
         </button>

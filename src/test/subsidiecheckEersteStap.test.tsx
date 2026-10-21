@@ -131,7 +131,7 @@ describe("de keuzeregel boven de knop", () => {
 
     // De standaard, in lopende tekst: er valt hier voor de meeste bezoekers
     // niets te kiezen, dus het hoort geen blok te zijn dat om aandacht vraagt.
-    expect(screen.getByText(/We zoeken voor woningeigenaren op alle maatregelen/i)).toBeInTheDocument();
+    expect(screen.getByText(/Woningeigenaar, alle maatregelen\./)).toBeInTheDocument();
     expect(screen.queryByText("Waarop we zoeken")).toBeNull();
   });
 
@@ -152,7 +152,8 @@ describe("de keuzeregel boven de knop", () => {
 
     expect(screen.getByText("Ik ben…")).toBeInTheDocument();
     expect(screen.getByText("Waar ben je in geïnteresseerd?")).toBeInTheDocument();
-    expect(screen.queryByText(/We zoeken voor/i)).toBeNull();
+    // De samenvattende regel blijft staan, nu met "Klaar" om dicht te klappen.
+    expect(screen.getByRole("button", { name: "Klaar" })).toHaveAttribute("aria-expanded", "true");
   });
 
   it("toont de zin niet als de bezoeker al van de standaard afwijkt", () => {
@@ -160,7 +161,7 @@ describe("de keuzeregel boven de knop", () => {
     // meteen open te staan in plaats van samengevat te zijn.
     stapAdres({ initBewonertype: "huurder" });
 
-    expect(screen.queryByText(/We zoeken voor/i)).toBeNull();
+    expect(screen.getByRole("button", { name: "Klaar" })).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByText("Ik ben…")).toBeInTheDocument();
   });
 });
@@ -213,14 +214,14 @@ describe("voortgangsindicator", () => {
     // De expliciete USWDS-regel: de huidige stap moet zich van allebei de andere
     // toestanden onderscheiden, anders weet de bezoeker niet waar hij staat.
     const { container } = render(<Voortgang stappen={STAPPEN} huidige={2} />);
-    // h-7 onderscheidt de cirkels van de verbindingsbalkjes.
-    const cirkels = container.querySelectorAll("span[aria-hidden='true'][class*='h-7']");
+    const cirkels = container.querySelectorAll("[data-stap-status]");
 
     const klassen = [...cirkels].map((c) => c.className);
     const [afgerond, actief, komend] = klassen;
-    expect(afgerond).toContain("bg-primary");
-    expect(actief).toContain("bg-accent");
-    expect(komend).toContain("border-border");
+    // Afgerond groen met een vinkje, huidig inktblauw, nog te doen wit met schaduw.
+    expect(afgerond).toContain("instap-stap-klaar");
+    expect(actief).toContain("instap-stap-nu");
+    expect(komend).toContain("instap-stap-straks");
     expect(new Set(klassen).size).toBe(klassen.length);
   });
 

@@ -31,12 +31,19 @@
  * bestaande leads staan met de tekst die zíj destijds zagen.
  */
 // Mailen staat vooraan, bellen erachter. Beide kanalen staan er even hard in,
-// dus juridisch verandert er niets, maar het eerste woord bepaalt wel waar de
-// bezoeker aan denkt. Mail is het kanaal dat hij net zelf heeft gekozen (zijn
-// overzicht komt per mail), bellen is de verrassing. In die volgorde leest de
-// zin als een aanvulling in plaats van als een aankondiging.
-export const TOESTEMMING_TEKST =
-  "Door te versturen mogen wij je mailen of bellen over jouw verduurzaming.";
+// maar het eerste woord bepaalt waar de bezoeker aan denkt. Mail is het kanaal
+// dat hij net zelf heeft gekozen (zijn overzicht komt per mail), bellen is de
+// verrassing. In die volgorde leest de zin als een aanvulling in plaats van als
+// een aankondiging.
+//
+// Ingekort op 2026-10-21, met akkoord van de opdrachtgever, zodat hij als één
+// regel onder de knop past (de huisstijl van de instap). Was: "Door te
+// versturen mogen wij je mailen of bellen over jouw verduurzaming.", met
+// "Je gegevens blijven bij ons." ervoor. Wat de toestemming draagt, staat er
+// nog steeds: het kanaal (mailen of bellen) en het onderwerp (je
+// verduurzaming), pal bij de knop. "Alleen" maakt de afspraak eerder smaller
+// dan breder. Oude leads houden hun eigen tekst in `toestemming_tekst`.
+export const TOESTEMMING_TEKST = "We mailen of bellen je alleen over je verduurzaming.";
 
 /**
  * De kolomwaarden voor `leads_bewoners` (zie de migratie van 2026-08-10): het

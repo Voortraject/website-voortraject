@@ -274,7 +274,7 @@ describe("subsidiecheck gegevenspoort", () => {
     await screen.findByPlaceholderText(/Je voornaam/);
     vulIn();
     wachtEvenAf();
-    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^Bekijk mijn/ }));
 
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled());
     expect(insertMock).toHaveBeenCalledTimes(1);
@@ -292,7 +292,7 @@ describe("subsidiecheck gegevenspoort", () => {
     vulIn();
     vul(honeypotVan(container), "https://spam.example");
     wachtEvenAf();
-    fireEvent.click(screen.getByRole("button", { name: /Bekijk mijn subsidieoverzicht/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^Bekijk mijn/ }));
 
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled());
     expect(insertMock).not.toHaveBeenCalled();
