@@ -1,6 +1,6 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, ChevronDown, Loader2, MapPin } from "lucide-react";
+import { Check, Home, Loader2, MapPin } from "lucide-react";
 
 import { SUBSIDIECHECK_BELOFTES } from "@/config/beloftes";
 import { GEMIDDELDE_REGELINGEN_ZIN } from "@/config/cijfers";
@@ -9,7 +9,7 @@ import { pushGtmEvent } from "@/lib/gtm";
 import { displayPostcode, normalizePostcode, POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib/pdok";
 import {
   ALLE_MAATREGELEN,
-  BEWONERTYPE_MEERVOUD,
+  BEWONERTYPE_LABELS,
   type Bewonertype,
   type Maatregel,
   MAATREGEL_LABELS,
@@ -19,8 +19,9 @@ import { Bewijsregel } from "./Bewijsregel";
 import { BewonertypeKeuze } from "./BewonertypeKeuze";
 import { MaatregelKeuze } from "./MaatregelKeuze";
 
-const inputClass =
-  "w-full rounded-lg border border-input bg-background px-4 py-3.5 text-[16px] text-foreground outline-none transition min-h-[52px] focus:border-accent focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.18)]";
+// Wit en zacht verzonken, geen harde rand (.instap-invoer in src/index.css).
+// 16px voorkomt dat iOS inzoomt bij het tikken in een veld.
+const inputClass = "instap-invoer w-full min-h-[54px] px-3 text-[16px] font-medium sm:px-4";
 
 // Typt mee met de gebruiker: hoofdletters, alleen geldige tekens.
 const formatPostcode = (v: string) => v.toUpperCase().replace(/[^0-9A-Z ]/g, "").slice(0, 7);
@@ -110,6 +111,26 @@ export const StapAdres = ({
       (!!initBewonertype && initBewonertype !== "woningeigenaar") ||
       (initMaatregelen.length > 0 && initMaatregelen.length < ALLE_MAATREGELEN.length),
   );
+  // De keuzes klappen vloeiend open en dicht (.instap-klap). Ze staan alleen in
+  // de DOM zolang ze open zijn of aan het dichtklappen: dicht horen ze niet in
+  // de tabvolgorde of bij een schermlezer.
+  const [keuzesInBeeld, setKeuzesInBeeld] = useState(keuzesUit);
+  const klapTimer = useRef<number>();
+  const zetKeuzesUit = (open: boolean) => {
+    window.clearTimeout(klapTimer.current);
+    const rustig = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (open) {
+      // Eerst in de DOM (dicht), dan open, zodat de hoogte echt kan aanlopen.
+      setKeuzesInBeeld(true);
+      if (rustig) setKeuzesUit(true);
+      else requestAnimationFrame(() => requestAnimationFrame(() => setKeuzesUit(true)));
+    } else {
+      setKeuzesUit(false);
+      if (rustig) setKeuzesInBeeld(false);
+      else klapTimer.current = window.setTimeout(() => setKeuzesInBeeld(false), 560);
+    }
+  };
+  useEffect(() => () => window.clearTimeout(klapTimer.current), []);
 
   // Handmatig invulblok als PDOK het adres niet herkent (bv. nieuwbouw).
   const [nietGevonden, setNietGevonden] = useState(!!foutmelding);
@@ -123,15 +144,16 @@ export const StapAdres = ({
 
   const gekozenMaatregelen = (): Maatregel[] => (maatregelen.length === 0 ? [...ALLE_MAATREGELEN] : maatregelen);
 
-  // Korte samenvatting van de interesses voor de ingeklapte regel. Staat
-  // middenin een zin ("We zoeken voor woningeigenaren op …"), dus zonder
-  // hoofdletter; de maatregellabels zelf houden hun eigen schrijfwijze.
-  const maatregelSamenvatting =
+  // Korte samenvatting van de interesses voor de regel boven de knop. Staat
+  // na een komma ("Woningeigenaar, alle maatregelen."), dus de eerste letter
+  // klein; de rest van de maatregellabels houdt zijn eigen schrijfwijze.
+  const samenvattingRuw =
     maatregelen.length === 0
       ? "alle maatregelen"
       : maatregelen.length <= 2
         ? maatregelen.map((m) => MAATREGEL_LABELS[m]).join(" en ")
         : `${maatregelen.length} maatregelen`;
+  const maatregelSamenvatting = samenvattingRuw.charAt(0).toLowerCase() + samenvattingRuw.slice(1);
 
   // Live adrescheck: een halve seconde na de laatste toetsaanslag zoeken we het
   // adres al op. Dat doet drie dingen tegelijk: de bezoeker ziet meteen dat we
@@ -256,329 +278,337 @@ export const StapAdres = ({
           overzicht tweehonderd euro of achtduizend waard is, en dan is zelfs een
           kort formulier te duur.
 
-          Vorm: gewoon de tweede zin van dezelfde alinea. Dit stond eerst als
-          losse pill met een okeren lampje tussen de subregel en de velden, en
-          dat was precies het probleem: een gevuld vlak met ronde hoeken leest
-          als een knop, dus het oog ging erheen terwijl er niets te doen viel. Het
-          was bovendien het derde gecentreerde blok boven de velden, met de
-          bewijsrij ónder de knop erbij ingeklemd. Als tweede zin zegt het
-          hetzelfde en trekt het de aandacht niet weg van het enige dat hier moet
-          gebeuren: het adres invullen. Zelfde afweging als bij de ingeklapte
-          situatieregel verderop en bij EersteStap op het resultaat.
+          Vorm (huisstijl oktober 2026): twee korte zinnen, op een telefoon elk
+          op een eigen regel, dus precies twee regels. Geen pill of vlak: dat
+          leest als een knop terwijl er niets te doen valt.
 
           Het getal is gemeten en niet geschat (zie src/config/cijfers.ts en
           scripts/meet-subsidieaantal.mjs), naar beneden afgerond, en het is het
           landelijke gemiddelde: bewust zonder regio, zodat iemand uit Friesland
           of Overijssel zich niet buitengesloten voelt. Voor huurders, VvE's en
-          verhuurders tonen we alleen de eerste zin: die groepen krijgen een
+          verhuurders tonen we alleen een gewone zin: die groepen krijgen een
           andere lijst, en dan zou het cijfer een niet-nagemeten belofte zijn. */}
       {!bevestigdAdres && (
-        // De negatieve bovenmarge heft de mt-6 van de formulierwrapper op, zodat
-        // deze regel net zo dicht onder de kop hangt als een gewone subregel.
-        //
-        // De hele zin past op een breed scherm op één regel (599px bij 15px,
-        // binnen de 640px die de kolom breed is). Past hij niet, dan houdt de
-        // nowrap-span de tweede zin bij elkaar: hij breekt dan netjes op de punt
-        // en nooit middenin, ook niet op een telefoon.
-        <p className="mx-auto -mt-4 mb-6 text-center text-[14px] leading-relaxed text-muted-foreground sm:text-[15px]">
-          Vul je adres in, dan zoeken we alle regelingen.{" "}
-          {bewonertype === "woningeigenaar" && (
-            <span className="whitespace-nowrap">{GEMIDDELDE_REGELINGEN_ZIN}</span>
+        // De negatieve bovenmarge heft een deel van de mt-6 van de
+        // formulierwrapper op, zodat deze regel als subregel onder de kop hangt.
+        <p className="mx-auto -mt-3 mb-[30px] max-w-[46ch] text-center text-[15.5px] leading-normal text-instap-zacht sm:text-[16.5px]">
+          {bewonertype === "woningeigenaar" ? (
+            <>
+              Vul je adres in. <span className="block sm:inline">{GEMIDDELDE_REGELINGEN_ZIN}</span>
+            </>
+          ) : (
+            "Vul je adres in, dan zoeken we alle regelingen."
           )}
         </p>
       )}
 
-      {/* Adres: compacte bevestiging (bv. vanaf de homepage) of invulvelden. */}
-      {bevestigdAdres ? (
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-card px-4 py-3 shadow-subtle">
-          <span className="inline-flex items-center gap-2 text-[15px] text-foreground">
-            <MapPin size={16} className="text-muted-foreground" aria-hidden="true" />
-            {bevestigdAdres.straatnaam} {huisnummer.trim()}
-            {toevoeging.trim() ? ` ${toevoeging.trim()}` : ""}, {bevestigdAdres.woonplaatsnaam}
+      {/* Eén lichte tegel met alles wat hier moet gebeuren: adres, de
+          herkenning, de keuzes en de knop. Zacht verloop van boven naar wit
+          en schaduw in plaats van een rand, zoals de kaarten in het CRM. */}
+      <div
+        className="instap-tegel instap-in rounded-[24px] p-[18px] shadow-instap-tegel sm:p-[26px]"
+        style={{ ["--i" as string]: 3 }}
+      >
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-[13.5px] font-bold tracking-[0.02em] text-primary/75 sm:text-[14px]">Jouw adres</span>
+          <span
+            className="instap-rondje flex h-10 w-10 shrink-0 items-center justify-center rounded-full sm:h-11 sm:w-11"
+            aria-hidden="true"
+          >
+            <Home size={20} strokeWidth={1.8} />
           </span>
+        </div>
+
+        {/* Adres: compacte bevestiging (bv. vanaf de homepage) of invulvelden. */}
+        {bevestigdAdres ? (
+          <div className="mt-3.5 flex flex-wrap items-center gap-x-3 gap-y-2">
+            <span className="instap-herkend inline-flex items-center gap-2 rounded-full py-[7px] pl-2 pr-3.5 text-[14.5px] font-bold">
+              <span className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-instap-subsidie text-primary-foreground">
+                <MapPin size={12} strokeWidth={2.5} aria-hidden="true" />
+              </span>
+              {bevestigdAdres.straatnaam} {huisnummer.trim()}
+              {toevoeging.trim() ? ` ${toevoeging.trim()}` : ""}, {bevestigdAdres.woonplaatsnaam}
+            </span>
+            <button
+              type="button"
+              onClick={onAdresWijzigen}
+              className="rounded-sm text-[14px] font-bold text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              adres wijzigen
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* Postcode, huisnummer en toevoeging blijven ook op een telefoon op
+                één regel. "Optioneel" staat in het veld zelf, zodat de drie
+                labels op één regel passen; voor schermlezers staat het in het
+                label. */}
+            <div className="mt-3.5 grid grid-cols-[1.15fr_0.95fr_1.15fr] items-end gap-2 sm:grid-cols-[1.4fr_1fr_1fr] sm:gap-3">
+              <div className="min-w-0">
+                <label htmlFor="sc-postcode" className="mb-1.5 block text-[13px] font-bold text-primary sm:text-[14px]">
+                  Postcode
+                </label>
+                <input
+                  id="sc-postcode"
+                  name="postcode"
+                  type="text"
+                  inputMode="text"
+                  autoComplete="postal-code"
+                  placeholder="9711 AB"
+                  className={inputClass}
+                  value={postcode}
+                  onChange={(e) => {
+                    setPostcode(formatPostcode(e.target.value));
+                    setFout(null);
+                  }}
+                  aria-invalid={!!fout}
+                  aria-describedby={fout ? "sc-adres-fout" : undefined}
+                  maxLength={7}
+                />
+              </div>
+              <div className="min-w-0">
+                <label htmlFor="sc-huisnummer" className="mb-1.5 block text-[13px] font-bold text-primary sm:text-[14px]">
+                  Huisnummer
+                </label>
+                <input
+                  id="sc-huisnummer"
+                  name="huisnummer"
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="12"
+                  className={inputClass}
+                  value={huisnummer}
+                  onChange={(e) => {
+                    setHuisnummer(e.target.value);
+                    setFout(null);
+                  }}
+                  maxLength={6}
+                />
+              </div>
+              <div className="min-w-0">
+                <label
+                  htmlFor="sc-toevoeging"
+                  className="mb-1.5 block whitespace-nowrap text-[13px] font-bold text-primary sm:text-[14px]"
+                >
+                  Toevoeging <span className="sr-only">(optioneel)</span>
+                </label>
+                <input
+                  id="sc-toevoeging"
+                  name="toevoeging"
+                  type="text"
+                  placeholder="Optioneel"
+                  className={inputClass}
+                  value={toevoeging}
+                  onChange={(e) => {
+                    setToevoeging(e.target.value);
+                    setFout(null);
+                  }}
+                  maxLength={10}
+                />
+              </div>
+            </div>
+
+            {fout && (
+              <p id="sc-adres-fout" role="alert" className="mt-3 text-[14px] text-destructive">
+                {fout}
+              </p>
+            )}
+
+            {/* Terugkoppeling van de live check. Een herkend adres is een kleine
+                beloning: een groene pil die zacht inveert. "Niet herkend" is
+                bewust rustig gehouden (geen rood): je typt nog, en het handmatige
+                blok vangt een onbekend adres straks alsnog op. */}
+            {!fout && (zoektLive || gevonden || nietHerkend) && (
+              <div className="mt-3.5" aria-live="polite">
+                {zoektLive ? (
+                  <p className="flex items-center gap-1.5 text-[14px] text-instap-zacht">
+                    <Loader2 size={14} className="animate-spin" aria-hidden="true" />
+                    Adres controleren…
+                  </p>
+                ) : gevonden ? (
+                  <p className="instap-herkend inline-flex items-center gap-2 rounded-full py-[7px] pl-2 pr-3.5 text-[14.5px] font-bold">
+                    <span className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-instap-subsidie text-primary-foreground">
+                      <Check size={13} strokeWidth={3} aria-hidden="true" />
+                    </span>
+                    {gevonden.straatnaam} {huisnummer.trim()}
+                    {toevoeging.trim() ? ` ${toevoeging.trim()}` : ""}, {gevonden.woonplaatsnaam}
+                  </p>
+                ) : (
+                  <p className="flex items-center gap-1.5 text-[14px] text-instap-zacht">
+                    <MapPin size={14} aria-hidden="true" />
+                    Dit adres herkennen we nog niet.
+                  </p>
+                )}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Situatie en interesses staan standaard goed, dus samen achter één
+            korte regel ("Woningeigenaar, alle maatregelen. Aanpassen"). Een
+            omkaderd blok met een kop leest als "hier moet ik iets", en dat is
+            een kleine rem vlak voor de belangrijkste klik van de pagina. Wie het
+            wél wil aanpassen klapt de keuzes vloeiend open in dezelfde tegel. */}
+        <p className="mt-4 text-[14.5px] leading-relaxed text-instap-zacht">
+          {BEWONERTYPE_LABELS[bewonertype]}, {maatregelSamenvatting}.{" "}
           <button
             type="button"
-            onClick={onAdresWijzigen}
-            className="inline-flex items-center gap-1 rounded-sm text-[13.5px] text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            aria-expanded={keuzesUit}
+            aria-controls="sc-keuzes"
+            onClick={() => zetKeuzesUit(!keuzesUit)}
+            className="rounded-sm font-bold text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
-            adres wijzigen
+            {keuzesUit ? "Klaar" : "Aanpassen"}
           </button>
+        </p>
+        <div id="sc-keuzes" className="instap-klap" data-open={keuzesUit}>
+          {/* De binnenrand geeft de schaduw van de tegels ruimte; zonder die
+              rand snijdt de overflow van het uitklappen hem af. */}
+          <div className="-mx-4 -mb-4 px-4 pb-6">
+            {keuzesInBeeld && (
+              <>
+                <fieldset className="mt-5">
+                  <legend className="mb-3 block text-[15px] font-extrabold text-primary">Ik ben…</legend>
+                  <BewonertypeKeuze waarde={bewonertype} onKies={setBewonertype} />
+                </fieldset>
+                <fieldset className="mt-6">
+                  <legend className="mb-3 block text-[15px] font-extrabold text-primary">
+                    Waar ben je in geïnteresseerd?
+                  </legend>
+                  <MaatregelKeuze gekozen={maatregelen} onWijzig={setMaatregelen} />
+                </fieldset>
+              </>
+            )}
+          </div>
         </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-[2fr_1.2fr_1fr] gap-3">
-            <div>
-              <label htmlFor="sc-postcode" className="mb-2 block text-[14px] font-semibold text-foreground">
-                Postcode
-              </label>
+
+        <button
+          type="submit"
+          disabled={bezig}
+          className="instap-knop mt-6 inline-flex min-h-[58px] w-full items-center justify-center gap-2.5 rounded-full px-7 text-[16.5px] font-extrabold disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          {bezig ? (
+            <>
+              <Loader2 size={18} className="animate-spin" aria-hidden="true" />
+              Adres zoeken…
+            </>
+          ) : (
+            knopLabel
+          )}
+        </button>
+
+        {/* Handmatig adres invullen als PDOK het niet herkent (bv. nieuwbouw). */}
+        {!bevestigdAdres && nietGevonden && (
+          <div className="mt-5 rounded-[18px] bg-card p-4 shadow-instap-klein">
+            <p className="text-[14.5px] font-bold text-primary">Adres niet gevonden? Vul het handmatig in.</p>
+            <p className="mt-1 text-[13.5px] leading-relaxed text-instap-zacht">
+              Handig bij bijvoorbeeld een nieuwbouwadres. Je subsidieoverzicht werkt gewoon op basis van je postcode;
+              alleen de luchtfoto van je woning tonen we dan niet.
+            </p>
+            <div className="mt-3 grid grid-cols-[2fr_1fr_1fr] gap-2 sm:gap-3">
               <input
-                id="sc-postcode"
-                name="postcode"
                 type="text"
                 inputMode="text"
                 autoComplete="postal-code"
-                placeholder="9711 AB"
+                aria-label="Postcode"
+                placeholder="Postcode"
                 className={inputClass}
-                value={postcode}
-                onChange={(e) => {
-                  setPostcode(formatPostcode(e.target.value));
-                  setFout(null);
-                }}
-                aria-invalid={!!fout}
-                aria-describedby={fout ? "sc-adres-fout" : undefined}
+                value={mPostcode}
                 maxLength={7}
+                onChange={(e) => {
+                  setMPostcode(formatPostcode(e.target.value));
+                  setMFout(null);
+                }}
               />
-            </div>
-            <div>
-              <label htmlFor="sc-huisnummer" className="mb-2 block text-[14px] font-semibold text-foreground">
-                Huisnummer
-              </label>
               <input
-                id="sc-huisnummer"
-                name="huisnummer"
                 type="text"
                 inputMode="numeric"
-                placeholder="12"
+                aria-label="Huisnummer"
+                placeholder="Huisnummer"
                 className={inputClass}
-                value={huisnummer}
-                onChange={(e) => {
-                  setHuisnummer(e.target.value);
-                  setFout(null);
-                }}
+                value={mHuisnr}
                 maxLength={6}
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="sc-toevoeging"
-                className="mb-2 block whitespace-nowrap text-[14px] font-semibold text-foreground"
-              >
-                Toevoeging <span className="hidden font-normal text-muted-foreground sm:inline">(optioneel)</span>
-              </label>
-              <input
-                id="sc-toevoeging"
-                name="toevoeging"
-                type="text"
-                placeholder="A"
-                className={inputClass}
-                value={toevoeging}
                 onChange={(e) => {
-                  setToevoeging(e.target.value);
-                  setFout(null);
+                  setMHuisnr(e.target.value);
+                  setMFout(null);
                 }}
+              />
+              <input
+                type="text"
+                aria-label="Toevoeging (optioneel)"
+                placeholder="Toev."
+                className={inputClass}
+                value={mToevoeging}
                 maxLength={10}
+                onChange={(e) => {
+                  setMToevoeging(e.target.value);
+                  setMFout(null);
+                }}
               />
             </div>
+            <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3">
+              <input
+                type="text"
+                aria-label="Straatnaam"
+                placeholder="Straatnaam"
+                className={inputClass}
+                value={straat}
+                maxLength={80}
+                onChange={(e) => {
+                  setStraat(e.target.value);
+                  setMFout(null);
+                }}
+              />
+              <input
+                type="text"
+                aria-label="Plaats"
+                placeholder="Plaats"
+                className={inputClass}
+                value={stad}
+                maxLength={80}
+                onChange={(e) => {
+                  setStad(e.target.value);
+                  setMFout(null);
+                }}
+              />
+            </div>
+            {mFout && (
+              <p role="alert" className="mt-3 text-[13px] text-destructive">
+                {mFout}
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={handleHandmatig}
+              className="mt-3 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-primary px-6 py-2.5 text-[14px] font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              Ga verder met dit adres
+            </button>
           </div>
-
-          {fout && (
-            <p id="sc-adres-fout" role="alert" className="mt-3 text-[14px] text-destructive">
-              {fout}
-            </p>
-          )}
-
-          {/* Terugkoppeling van de live check. "Niet herkend" is bewust rustig
-              gehouden (geen rood): je typt nog, en het handmatige blok vangt een
-              onbekend adres straks alsnog op. */}
-          {!fout && (zoektLive || gevonden || nietHerkend) && (
-            <p className="mt-2.5 flex items-center gap-1.5 text-[13.5px]" aria-live="polite">
-              {zoektLive ? (
-                <>
-                  <Loader2 size={14} className="animate-spin text-muted-foreground" aria-hidden="true" />
-                  <span className="text-muted-foreground">Adres controleren…</span>
-                </>
-              ) : gevonden ? (
-                <>
-                  <Check size={14} strokeWidth={2.5} className="text-[hsl(var(--subsidie))]" aria-hidden="true" />
-                  <span className="text-foreground">
-                    {gevonden.straatnaam} {huisnummer.trim()}
-                    {toevoeging.trim() ? ` ${toevoeging.trim()}` : ""}, {gevonden.woonplaatsnaam}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <MapPin size={14} className="text-muted-foreground" aria-hidden="true" />
-                  <span className="text-muted-foreground">Dit adres herkennen we nog niet.</span>
-                </>
-              )}
-            </p>
-          )}
-        </>
-      )}
-
-      {/* Situatie en interesses staan standaard goed, dus samen achter één rustige
-          regel. Eerder stonden hier twee blokken met elk een donkere pill; die
-          las als een knop terwijl er niets te doen viel, en trok de aandacht weg
-          van het enige dat de bezoeker hier écht moet invullen: zijn adres. */}
-      {keuzesUit ? (
-        <div className="mt-6 animate-fade-up">
-          <fieldset>
-            <legend className="mb-3 block text-[14px] font-semibold text-foreground">Ik ben…</legend>
-            <BewonertypeKeuze waarde={bewonertype} onKies={setBewonertype} />
-          </fieldset>
-          <fieldset className="mt-6">
-            <legend className="mb-3 block text-[14px] font-semibold text-foreground">
-              Waar ben je in geïnteresseerd?
-            </legend>
-            <MaatregelKeuze gekozen={maatregelen} onWijzig={setMaatregelen} />
-          </fieldset>
-        </div>
-      ) : (
-        // Eén zin in plaats van een omkaderd blok met een kopje. Dit stond
-        // precies tussen het laatste veld en de knop, dus in de blikrichting
-        // naar de CTA, terwijl er voor verreweg de meeste bezoekers niets te
-        // kiezen valt: de standaard klopt al. Een omkaderd blok met een kop
-        // leest als "hier moet ik iets", en dat is elke keer weer een kleine
-        // rem vlak voor de belangrijkste klik van de pagina. Wie het wél wil
-        // aanpassen ziet de link nog gewoon staan.
-        <p className="mt-5 text-[13.5px] leading-relaxed text-muted-foreground">
-          We zoeken voor {BEWONERTYPE_MEERVOUD[bewonertype]} op {maatregelSamenvatting}.{" "}
-          <button
-            type="button"
-            aria-expanded={false}
-            onClick={() => setKeuzesUit(true)}
-            className="inline-flex items-center gap-1 rounded-sm font-medium text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            Aanpassen
-            <ChevronDown size={13} aria-hidden="true" />
-          </button>
-        </p>
-      )}
-
-      <button
-        type="submit"
-        disabled={bezig}
-        className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-70 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        {bezig ? (
-          <>
-            <Loader2 size={16} className="animate-spin" aria-hidden="true" />
-            Adres zoeken…
-          </>
-        ) : (
-          knopLabel
         )}
-      </button>
+      </div>
 
-      {/* Handmatig adres invullen als PDOK het niet herkent (bv. nieuwbouw). */}
-      {!bevestigdAdres && nietGevonden && (
-        <div className="mt-5 rounded-lg border border-border p-4" style={{ backgroundColor: "var(--card-soft)" }}>
-          <p className="text-[14px] font-semibold text-primary">Adres niet gevonden? Vul het handmatig in.</p>
-          <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
-            Handig bij bijvoorbeeld een nieuwbouwadres. Je subsidieoverzicht werkt gewoon op basis van je postcode;
-            alleen de luchtfoto van je woning tonen we dan niet.
-          </p>
-          <div className="mt-3 grid grid-cols-[2fr_1fr_1fr] gap-3">
-            <input
-              type="text"
-              inputMode="text"
-              autoComplete="postal-code"
-              aria-label="Postcode"
-              placeholder="Postcode"
-              className={inputClass}
-              value={mPostcode}
-              maxLength={7}
-              onChange={(e) => {
-                setMPostcode(formatPostcode(e.target.value));
-                setMFout(null);
-              }}
-            />
-            <input
-              type="text"
-              inputMode="numeric"
-              aria-label="Huisnummer"
-              placeholder="Huisnummer"
-              className={inputClass}
-              value={mHuisnr}
-              maxLength={6}
-              onChange={(e) => {
-                setMHuisnr(e.target.value);
-                setMFout(null);
-              }}
-            />
-            <input
-              type="text"
-              aria-label="Toevoeging (optioneel)"
-              placeholder="Toev."
-              className={inputClass}
-              value={mToevoeging}
-              maxLength={10}
-              onChange={(e) => {
-                setMToevoeging(e.target.value);
-                setMFout(null);
-              }}
-            />
-          </div>
-          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <input
-              type="text"
-              aria-label="Straatnaam"
-              placeholder="Straatnaam"
-              className={inputClass}
-              value={straat}
-              maxLength={80}
-              onChange={(e) => {
-                setStraat(e.target.value);
-                setMFout(null);
-              }}
-            />
-            <input
-              type="text"
-              aria-label="Plaats"
-              placeholder="Plaats"
-              className={inputClass}
-              value={stad}
-              maxLength={80}
-              onChange={(e) => {
-                setStad(e.target.value);
-                setMFout(null);
-              }}
-            />
-          </div>
-          {mFout && (
-            <p role="alert" className="mt-3 text-[13px] text-destructive">
-              {mFout}
-            </p>
-          )}
-          <button
-            type="button"
-            onClick={handleHandmatig}
-            className="mt-3 inline-flex items-center justify-center gap-2 rounded-full border border-primary px-6 py-2.5 text-[14px] font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            Ga verder met dit adres
-          </button>
-        </div>
-      )}
+      {/* De drie beloftes en onze echte Google-score, onder de tegel. De teksten
+          staan in src/config/beloftes.ts, gedeeld met de CTA op de homepage.
+          Score als sterren, cijfer en Google-logo, zonder aantal reviews: zelfde
+          vorm als in de overzichtsmail.
 
-      {/* Hier stond "Daarna vragen we kort je gegevens…". Die regel kwam uit een
-          tijd waarin stap 1 nog "geen account nodig" beloofde: dan is het
-          gegevensscherm erna een onaangename verrassing. Die belofte is
-          verdwenen (zie src/config/beloftes.ts) en daarmee de tegenspraak.
-          Wat er hierna komt staat bovendien gewoon in de voortgangsindicator:
-          stap 2 heet "Je gegevens". Een derde keer hetzelfde zeggen is ruis. */}
-
-      {/* De drie beloftes en onze echte Google-score. De teksten staan in
-          src/config/beloftes.ts, gedeeld met de CTA op de homepage.
-
-          Op mobiel stonden hier eerder puntjes in plaats van vinkjes en was de
-          score helemaal verborgen, omdat het onder de knop een stapel van vier
-          regels werd. Die stapel is er niet meer (de geruststelling over het
-          adres is weg), dus vinkjes en score kunnen terug: het bewijs hoort bij
-          de knop, en op een telefoon niet minder dan op een laptop.
-
-          Bewust `alsLink={false}`: een link met target="_blank" pal naast de
+          Bewust `alsLink={false}`: een link met target="_blank" pal onder de
           verzendknop is een uitgang precies waar we er geen willen. Zie de
           toelichting in Bewijsregel zelf. */}
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-        <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[12px] text-muted-foreground sm:gap-x-4 sm:text-[13px]">
+      <div
+        className="instap-in mt-[26px] flex flex-col items-center gap-2 sm:mt-[18px]"
+        style={{ ["--i" as string]: 5 }}
+      >
+        <ul className="flex flex-wrap items-center justify-center gap-x-3.5 gap-y-1 text-[13.5px] font-semibold text-instap-zacht">
           {SUBSIDIECHECK_BELOFTES.map((belofte) => (
             <li key={belofte} className="inline-flex items-center gap-1.5 whitespace-nowrap">
-              <Check size={13} strokeWidth={2.5} className="shrink-0 text-accent" aria-hidden="true" />
+              <Check size={15} strokeWidth={2.5} className="shrink-0 text-instap-subsidie" aria-hidden="true" />
               {belofte}
             </li>
           ))}
         </ul>
-        <Bewijsregel alsLink={false} />
+        <Bewijsregel alsLink={false} zonderAantal />
       </div>
     </form>
   );

@@ -15,6 +15,12 @@ interface BewijsregelProps {
    * uitweg niet.
    */
   alsLink?: boolean;
+  /**
+   * Alleen sterren, cijfer en het Google-logo, zonder "33 reviews". De instap
+   * van de subsidietool toont het zo, net als de overzichtsmail: het cijfer
+   * zegt genoeg en het aantal leest daar als ruis. Standaard staat het er wel.
+   */
+  zonderAantal?: boolean;
 }
 
 // Eén rustige regel met onze échte Google-beoordeling, bedoeld voor de twee
@@ -25,12 +31,12 @@ interface BewijsregelProps {
 // De cijfers komen live uit de gesynchroniseerde Google-data (`sync-google-reviews`),
 // dus ze zijn altijd actueel en niemand hoeft ze bij te werken. Zijn ze er niet,
 // dan toont dit component niets. Liever geen bewijs dan een verzonnen cijfer.
-export const Bewijsregel = ({ className = "", alsLink = true }: BewijsregelProps) => {
+export const Bewijsregel = ({ className = "", alsLink = true, zonderAantal = false }: BewijsregelProps) => {
   const { stats } = useGoogleReviews();
   if (stats?.rating == null) return null;
 
   const score = stats.rating.toLocaleString("nl-NL", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-  const aantal = stats.user_rating_count;
+  const aantal = zonderAantal ? null : stats.user_rating_count;
   const omschrijving = `${score} van 5 op Google${aantal != null ? `, ${aantal} reviews` : ""}`;
 
   const inhoud = (

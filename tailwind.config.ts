@@ -60,6 +60,11 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Instap van de subsidietool (zie het instap-blok in src/index.css).
+        instap: {
+          zacht: "hsl(var(--instap-zacht))",
+          subsidie: "hsl(var(--subsidie))",
+        },
       },
       borderRadius: {
         xl: "1.25rem",                              /* 20px cards */
@@ -70,6 +75,9 @@ export default {
       boxShadow: {
         subtle: "0 1px 3px rgba(0,0,0,0.05)",
         card: "0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03)",
+        // Instap van de subsidietool: diepte met zachte schaduw in inktblauw.
+        "instap-tegel": "0 1px 2px hsl(var(--primary) / 0.06), 0 14px 36px hsl(var(--primary) / 0.10)",
+        "instap-klein": "0 1px 2px hsl(var(--primary) / 0.06), 0 6px 16px hsl(var(--primary) / 0.07)",
       },
       keyframes: {
         "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },

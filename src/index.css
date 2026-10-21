@@ -139,6 +139,27 @@
     --subsidie: 154 46% 34%;   /* groen */
     --lening: 211 48% 44%;     /* staalblauw */
 
+    /* Instap van de subsidietool (beginscherm, zoeken, gegevenspagina), huisstijl
+       oktober 2026. Zachte verlopen zoals de kaarten in het CRM-dashboard, diepte
+       met schaduw in plaats van randen. Alleen gebruikt door de klassen
+       .instap-* onderaan dit bestand. */
+    --instap-tegel-boven: 218 52% 94%;     /* #E8EEF8 blauwgrijs */
+    --instap-tegel-midden: 220 50% 98%;    /* #F6F8FC */
+    --instap-groen-boven: 148 33% 91%;     /* #E1F0E8 */
+    --instap-groen-midden: 144 29% 97%;    /* #F4F9F6 */
+    --instap-herkend-boven: 150 36% 92%;   /* #E3F1EA */
+    --instap-herkend-onder: 146 36% 96%;   /* #F1F8F4 */
+    --instap-gekozen-boven: 219 50% 93%;   /* #E4EBF7 */
+    --instap-gekozen-onder: 220 60% 97%;   /* #F5F8FD */
+    --instap-ink-licht: 215 54% 26%;       /* #1F3D68 */
+    --instap-ink-zacht: 215 42% 39%;       /* #3A5C8E */
+    --instap-ink-lijn: 216 33% 46%;        /* #4F6E9C */
+    --instap-subsidie-licht: 155 42% 41%;  /* #3D9470 */
+    --instap-oker-licht: 42 82% 67%;       /* #F0C565 */
+    --instap-zacht: 218 17% 35%;           /* #4A5568 */
+    --instap-lijn: 220 22% 92%;            /* #E9ECF2 */
+    --instap-placeholder: 215 11% 59%;     /* #8A94A3 */
+
     /* Energielabel-schaal (subsidiecheck-woningpaneel). De officiële EU/NL
        energielabel-kleuren zijn een vaste externe standaard (groen = zuinig →
        rood = onzuinig): een gerechtvaardigde uitzondering op "geen eigen
@@ -414,4 +435,143 @@
     filter: blur(4px);
     transform: scale(0.97);
   }
+}
+
+/* ------------------------------------------------------------------ *
+ * Instap van de subsidietool (huisstijl oktober 2026)
+ *
+ * Beginscherm, zoekscherm en gegevenspagina. Eén lichte tegel per stap met een
+ * zacht verloop van boven naar wit, schaduw in plaats van randen, en oker
+ * alleen voor de hoofdknop. Prototype: claude.ai/artifact/NVEtD8X7M8ESajMGEZ1X94.
+ * ------------------------------------------------------------------ */
+@layer components {
+  .instap-display { font-family: 'Inter Tight', 'Inter', sans-serif; font-weight: 700; letter-spacing: -0.02em; }
+
+  .instap-tegel {
+    background: linear-gradient(180deg, hsl(var(--instap-tegel-boven)) 0%, hsl(var(--instap-tegel-midden)) 46%, hsl(var(--card)) 100%);
+  }
+  .instap-tegel-groen {
+    background: linear-gradient(180deg, hsl(var(--instap-groen-boven)) 0%, hsl(var(--instap-groen-midden)) 50%, hsl(var(--card)) 100%);
+  }
+
+  /* Het ronde icoon rechtsboven, zoals de kaarten in het CRM. */
+  .instap-rondje {
+    background: linear-gradient(145deg, hsl(var(--instap-ink-zacht)), hsl(var(--primary)));
+    color: hsl(var(--primary-foreground));
+    box-shadow: 0 8px 18px hsl(var(--primary) / 0.25);
+  }
+
+  /* Voortgang: afgerond groen met vinkje, nu inktblauw, straks wit. */
+  .instap-stap-klaar {
+    background: linear-gradient(145deg, hsl(var(--instap-subsidie-licht)), hsl(var(--subsidie)));
+    color: hsl(var(--primary-foreground));
+    box-shadow: 0 6px 14px hsl(var(--subsidie) / 0.25);
+  }
+  .instap-stap-nu {
+    background: linear-gradient(145deg, hsl(var(--instap-ink-licht)), hsl(var(--primary)));
+    color: hsl(var(--primary-foreground));
+    box-shadow: 0 6px 16px hsl(var(--primary) / 0.28);
+  }
+  .instap-stap-straks {
+    background: hsl(var(--card));
+    color: hsl(var(--primary));
+    box-shadow: 0 1px 2px hsl(var(--primary) / 0.06), 0 6px 16px hsl(var(--primary) / 0.07);
+  }
+  .instap-lijn { background: hsl(var(--instap-lijn)); }
+  .instap-lijn-vul { background: linear-gradient(90deg, hsl(var(--instap-ink-licht)), hsl(var(--instap-ink-lijn))); }
+
+  /* Invoervelden: wit en zacht verzonken, geen harde rand. */
+  .instap-invoer {
+    border: 0;
+    border-radius: 14px;
+    background: hsl(var(--card));
+    color: hsl(var(--foreground));
+    box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.08), 0 2px 6px hsl(var(--primary) / 0.05);
+    transition: box-shadow 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .instap-invoer::placeholder { color: hsl(var(--instap-placeholder)); }
+  .instap-invoer:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2px hsl(var(--primary)), 0 0 0 5px hsl(var(--primary) / 0.1);
+    transform: translateY(-1px);
+  }
+
+  .instap-herkend {
+    background: linear-gradient(180deg, hsl(var(--instap-herkend-boven)), hsl(var(--instap-herkend-onder)));
+    color: hsl(var(--subsidie));
+    animation: instap-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  /* De ene oker knop. */
+  .instap-knop {
+    background: linear-gradient(180deg, hsl(var(--instap-oker-licht)) 0%, hsl(var(--accent)) 100%);
+    color: hsl(var(--primary));
+    box-shadow: 0 10px 24px hsl(var(--accent) / 0.38), inset 0 1px 0 hsl(var(--card) / 0.5);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  }
+  .instap-knop:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px hsl(var(--accent) / 0.45), inset 0 1px 0 hsl(var(--card) / 0.5);
+  }
+  .instap-knop:active:not(:disabled) { transform: scale(0.98); }
+
+  /* Keuzetegels (situatie, hulpvraag): wit met schaduw, gekozen met een blauw verloop. */
+  .instap-keus {
+    background: hsl(var(--card));
+    box-shadow: 0 1px 2px hsl(var(--primary) / 0.06), 0 6px 16px hsl(var(--primary) / 0.07);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, background 0.3s ease;
+  }
+  .instap-keus:hover { transform: translateY(-2px); box-shadow: 0 2px 4px hsl(var(--primary) / 0.06), 0 14px 28px hsl(var(--primary) / 0.12); }
+  .instap-keus:active { transform: scale(0.97); }
+  .instap-keus[aria-checked="true"] {
+    background: linear-gradient(180deg, hsl(var(--instap-gekozen-boven)) 0%, hsl(var(--instap-gekozen-onder)) 100%);
+    box-shadow: inset 0 0 0 2px hsl(var(--primary)), 0 10px 24px hsl(var(--primary) / 0.12);
+  }
+  .instap-vinkje {
+    background: linear-gradient(145deg, hsl(var(--instap-ink-licht)), hsl(var(--primary)));
+    color: hsl(var(--primary-foreground));
+    animation: instap-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  /* Maatregelchips. */
+  .instap-chip {
+    background: hsl(var(--card));
+    color: hsl(var(--primary));
+    box-shadow: 0 1px 2px hsl(var(--primary) / 0.06), 0 6px 16px hsl(var(--primary) / 0.07);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s ease, color 0.25s ease;
+  }
+  .instap-chip:hover { transform: translateY(-2px); }
+  .instap-chip:active { transform: scale(0.95); }
+  .instap-chip[aria-pressed="true"] {
+    background: linear-gradient(145deg, hsl(var(--instap-ink-licht)), hsl(var(--primary)));
+    color: hsl(var(--primary-foreground));
+    box-shadow: 0 8px 18px hsl(var(--primary) / 0.25);
+  }
+
+  /* Vloeiend uitklappen binnen de tegel. */
+  .instap-klap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.55s cubic-bezier(0.22, 1, 0.36, 1); }
+  .instap-klap[data-open="true"] { grid-template-rows: 1fr; }
+  .instap-klap > div { overflow: hidden; min-height: 0; }
+
+  /* Binnenkomst: gestaffeld omhoog veren. --i bepaalt de volgorde. */
+  .instap-in { animation: instap-veer-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both; animation-delay: calc(var(--i, 0) * 70ms + 60ms); }
+
+  /* De stille laadregel op het zoekscherm: vinkje en tekst vervagen samen. */
+  .instap-laadregel { transition: opacity 0.45s ease; }
+  .instap-laadregel[data-uit="true"] { opacity: 0; }
+}
+
+@keyframes instap-veer-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes instap-pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  70% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .instap-in, .instap-herkend, .instap-vinkje { animation: none; }
+  .instap-klap, .instap-laadregel, .instap-knop, .instap-keus, .instap-chip, .instap-invoer { transition: none; }
 }

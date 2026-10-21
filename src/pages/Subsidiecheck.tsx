@@ -334,14 +334,20 @@ const SubsidiecheckLive = () => {
                 onStapKlik={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
               />
 
+              {/* Op stap 2 staat de kop op een telefoon op één regel: dat scheelt
+                  een regel boven een formulier dat al lang genoeg is. De grootte
+                  schaalt dan mee met de breedte (24px minus de paginamarges,
+                  gedeeld door de breedte van de zin), met 23,5px als bovengrens. */}
               <h1
                 ref={kopRef}
                 tabIndex={-1}
-                // Op het resultaat staat de titel zichtbaar in de hoofdtegel, met
-                // het adres en de wijzig-links erbij. Deze h1 blijft dan voor
-                // schermlezers en voor de focus bij een stapwissel.
-                className={`h2-section mt-5 text-center outline-none md:mt-6 ${stap === RESULTAAT_STAP ? "sr-only" : ""}`}
-                style={{ fontSize: "clamp(26px, 4vw, 38px)" }}
+                // Op het resultaat staat de titel zichtbaar in de hoofdtegel. Deze
+                // h1 blijft dan voor schermlezers en voor de focus bij een stapwissel.
+                className={`instap-display mt-7 text-balance text-center leading-[1.08] text-primary outline-none md:mt-8 ${
+                  stap === 2
+                    ? "whitespace-nowrap text-[length:min(23.5px,calc((100vw_-_48px)/12.6))] tracking-[-0.025em] sm:whitespace-normal sm:text-[length:clamp(28px,4vw,38px)] sm:tracking-[-0.02em]"
+                    : "text-[length:clamp(28px,5vw,38px)]"
+                } ${stap === RESULTAAT_STAP ? "sr-only" : ""}`}
               >
                 {kop.titel}
               </h1>

@@ -27,8 +27,33 @@ import {
 import { TOESTEMMING_TEKST, toestemmingVelden } from "./toestemming";
 import { ZoekKaart } from "./Zoeksequentie";
 
-const inputClass =
-  "w-full rounded-lg border border-input bg-background px-4 py-3.5 text-[16px] text-foreground outline-none transition min-h-[52px] focus:border-accent focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.18)]";
+// Wit en zacht verzonken, geen harde rand (.instap-invoer in src/index.css).
+const inputClass = "instap-invoer w-full min-h-[54px] px-4 text-[16px] font-medium";
+
+/**
+ * Telt in ruim een halve seconde op van 0 naar `doel`, met een zachte rem aan
+ * het eind. Bij prefers-reduced-motion staat het getal er meteen.
+ */
+const useOptellen = (doel: number) => {
+  const [waarde, setWaarde] = useState(0);
+  useEffect(() => {
+    const rustig = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (rustig || doel === 0) {
+      setWaarde(doel);
+      return;
+    }
+    let frame = 0;
+    const start = performance.now() + 350;
+    const stap = (nu: number) => {
+      const t = Math.min(1, Math.max(0, (nu - start) / 900));
+      setWaarde(Math.round(doel * (1 - Math.pow(1 - t, 3))));
+      if (t < 1) frame = requestAnimationFrame(stap);
+    };
+    frame = requestAnimationFrame(stap);
+    return () => cancelAnimationFrame(frame);
+  }, [doel]);
+  return waarde;
+};
 
 // Waar kunnen we je mee helpen? Bewust géén vraag naar een termijn ("wanneer wil
 // je aan de slag?"): daar kiest bijna iedereen de vrijblijvendste optie, en dan
@@ -41,7 +66,11 @@ const inputClass =
 const HULPVRAGEN = [
   { id: "subsidies", label: "Subsidies uitzoeken", Icon: BadgeEuro },
   { id: "aanvraag", label: "De aanvraag regelen", Icon: FileCheck },
-  { id: "uitvoerder", label: "Een uitvoerder vinden", Icon: HardHat },
+  // "Betrouwbare uitvoerder" sinds 2026-10-21: "betrouwbaar" is precies de
+  // drempel, en zo past het label op een telefoon in twee regels. De id blijft
+  // "uitvoerder" (GTM en het CRM lezen die), alleen de tekst in de notitie
+  // ("Wil hulp met: …") verandert voor nieuwe leads.
+  { id: "uitvoerder", label: "Betrouwbare uitvoerder", Icon: HardHat },
   { id: "plan", label: "Een plan voor mijn huis", Icon: Home },
 ] as const;
 
@@ -150,6 +179,13 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
   const aantal = gevonden?.length ?? 0;
   // Het formulier staat pas in beeld na de zoekanimatie (zie de early return hieronder).
   const formulierInBeeld = !((zoekBezig && !overslaan) || fase < 3);
+  // Het getal in de woningtegel telt op. Staat hier, vóór de early return
+  // hieronder, omdat hooks altijd in dezelfde volgorde moeten lopen. Het doel
+  // is dezelfde waarde die de telling verderop bevriest, zodat het getal en de
+  // knop nooit iets anders zeggen.
+  const teller = useOptellen(
+    formulierInBeeld ? (bevrorenAantal.current ?? (zoekBezig || zoekFout ? 0 : aantal)) : 0,
+  );
   // Onzichtbare controle dat hier een mens zit; het token gaat mee naar de
   // mailfunctie en wordt dáár gecontroleerd. Zie src/lib/turnstile.ts.
   const turnstile = useTurnstile(formulierInBeeld);
@@ -346,78 +382,61 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      {/* De uitkomst als getal, nog zonder inhoud: dít is waarom de bezoeker
-          zijn gegevens geeft. Hij weet nu dát er iets is, maar niet wát.
-          Bij nul (of een bronfout) laten we deze regel weg: "We vonden 0
-          regelingen" vlak boven een gegevensvraag is geen aanbod.
+      {/* Wat we alvast teruggeven: de woning zelf, met daarnaast de uitkomst als
+          getal. Hij weet nu dát er iets is, maar niet wát. Op een breed scherm
+          staat de telling rechts van de foto, zodat de tegel laag blijft en het
+          formulier eerder in beeld komt; op een telefoon eronder.
 
-          "Jouw woning" en niet het adres: het exacte adres staat in het kaartje
-          eronder, met foto en bouwjaar erbij. Twee keer hetzelfde adres binnen
-          een handbreedte las als herhaling. */}
-      {telling > 0 && (
-        <p
-          className={`mb-4 text-center font-display text-[19px] font-semibold leading-snug text-primary md:text-[22px] ${naarAchtergrond}`}
-        >
-          We vonden{" "}
-          <span className="text-[hsl(var(--subsidie))]">
-            {telling} {telling === 1 ? "regeling" : "regelingen"}
-          </span>{" "}
-          voor jouw woning.
-        </p>
-      )}
+          Hier stonden ook "We vonden … voor jouw woning" boven de tegel en "Nog
+          geen geregistreerd energielabel" erin. De telling staat nu in de tegel
+          zelf, en een ontbrekend label is op dit moment geen nieuws. Een echt
+          label tonen we wel, compact: dat is gratis informatie over dít huis.
 
-      {/* Wat we alvast teruggeven: de woning zelf. */}
+          Bij nul regelingen (of een bronfout) laten we de telling weg: "0
+          regelingen gevonden" vlak boven een gegevensvraag is geen aanbod. */}
       <div
-        className={`overflow-hidden rounded-2xl border-2 bg-card shadow-card ${naarAchtergrond}`}
-        style={{ borderColor: "hsl(var(--accent) / 0.8)" }}
+        className={`instap-tegel-groen instap-in rounded-[24px] p-[18px] shadow-instap-tegel sm:p-[26px] ${naarAchtergrond}`}
+        style={{ ["--i" as string]: 2 }}
       >
-        {/* Mobiel de foto als brede band bovenaan en de tekst eronder: naast
-            elkaar werd de foto een smalle strook en brak elke regel in tweeën.
-            Vanaf sm past het wél naast elkaar. */}
-        <div className="flex flex-col sm:flex-row sm:items-stretch">
+        <div className="grid grid-cols-1 items-center gap-4 sm:grid-cols-[230px_1fr] sm:gap-6">
           <Luchtfoto
             adres={adres}
             adresRegel={adresKort}
             pand={pand ?? null}
             pandBezig={pandBezig}
-            // Mobiel een lage band (2:1) zodat dit blok weinig hoogte kost; vanaf
-            // sm een vaste kolom die de volle kaarthoogte vult, tot aan de rand.
-            className="aspect-[2/1] sm:aspect-auto sm:w-[240px] sm:shrink-0"
+            className="aspect-[2/1] rounded-2xl shadow-instap-klein sm:aspect-[5/4]"
             verbergBron
           />
-          <div className="flex-1 p-4 sm:p-5">
-            {/* Hier stond "We hebben jouw woning gevonden". Dat zei de regel
-                erboven ("We vonden … voor jouw woning") al, en de foto met het
-                adres eronder laat het gewoon zien. */}
-            <p className="font-display text-[17px] font-semibold leading-snug text-primary sm:text-[19px]">
-              {adresKort}
-            </p>
-            <p className="text-[13px] text-muted-foreground">
+          <div className="min-w-0">
+            <h2 className="instap-display text-[22px] leading-tight text-primary">{adresKort}</h2>
+            <p className="mt-0.5 text-[15px] text-instap-zacht">
               {adres.woonplaatsnaam}
               {pand?.bouwjaar ? ` · Bouwjaar ${pand.bouwjaar}` : ""}
             </p>
-
-            {/* Het energielabel is echte, opzoekbare informatie die de bezoeker
-                hier gratis krijgt. Zelfde gekleurde schaal als op het resultaat,
-                zodat het meteen herkenbaar is. Nog aan het laden → niets tonen;
-                geen label → dat is ook een antwoord. */}
-            {!woningBezig && (
-              <div className="mt-4">
-                {woning?.energielabel ? (
-                  <>
-                    <p className="mb-1.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-                      Energielabel
-                    </p>
-                    <Energielabel klasse={woning.energielabel.klasse} compact />
-                  </>
-                ) : (
-                  <p className="text-[13.5px] text-foreground/80">Nog geen geregistreerd energielabel</p>
-                )}
+            {!woningBezig && woning?.energielabel && (
+              <div className="mt-3">
+                <Energielabel klasse={woning.energielabel.klasse} compact />
               </div>
+            )}
+            {telling > 0 && (
+              <>
+                <div className="mt-3.5 flex items-center gap-2.5 sm:mt-[18px]">
+                  <span
+                    className="instap-display text-[48px] leading-[0.95] tracking-[-0.03em] text-instap-subsidie sm:text-[52px]"
+                    aria-hidden="true"
+                  >
+                    {teller}
+                  </span>
+                  <span className="sr-only">{telling}</span>
+                  <p className="text-[18px] font-bold leading-snug text-primary">
+                    {telling === 1 ? "regeling gevonden" : "regelingen gevonden"}
+                  </p>
+                </div>
+                <p className="mt-1 text-[15px] leading-snug text-instap-zacht">Vul je gegevens in, dan zie je ze meteen.</p>
+              </>
             )}
           </div>
         </div>
-
       </div>
 
       {/* Honeypot: gewoon tekstveld (géén type="hidden" — dat slaan bots juist over),
@@ -433,218 +452,205 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         </label>
       </div>
 
-      {/* Eerst de gegevens: dat is waar deze stap over gaat en wat de bezoeker
-          hier verwacht. De vraag eronder voelt daarna als een laatste detail in
-          plaats van als een drempel vooraf. */}
-      <fieldset className={`mt-4 ${naarAchtergrond}`}>
-        <legend className="mb-3 block text-[14px] font-semibold text-foreground">
-          Waar mogen we je overzicht naartoe sturen?
-        </legend>
+      <div className="instap-in mt-[18px] rounded-[24px] bg-card p-[18px] shadow-instap-tegel sm:p-[26px]" style={{ ["--i" as string]: 3 }}>
+        {/* Eerst de gegevens: dat is waar deze stap over gaat en wat de bezoeker
+            hier verwacht. De vraag eronder voelt daarna als een laatste detail in
+            plaats van als een drempel vooraf. */}
+        <fieldset className={naarAchtergrond}>
+          <legend className="mb-3 block text-[15px] font-extrabold leading-snug text-primary">
+            Waar mogen we je overzicht naartoe sturen?
+          </legend>
 
-        {/* Voor- en achternaam staan altijd naast elkaar, ook op mobiel: het zijn
-            korte velden en samen vormen ze één ding. E-mail en telefoon krijgen op
-            mobiel de volle breedte. */}
-        <div className="grid grid-cols-2 gap-3">
-          <label className="sr-only" htmlFor="sc-gg-voornaam">
-            Je voornaam (verplicht)
-          </label>
-          <input
-            id="sc-gg-voornaam"
-            type="text"
-            autoComplete="given-name"
-            aria-required="true"
-            placeholder="Je voornaam"
-            className={inputClass}
-            value={voornaam}
-            onChange={(e) => {
-              setVoornaam(e.target.value);
-              setFout(null);
-            }}
-            maxLength={100}
+          {/* Voor- en achternaam staan altijd naast elkaar, ook op mobiel: het zijn
+              korte velden en samen vormen ze één ding. E-mail en telefoon krijgen
+              de volle breedte. */}
+          <div className="grid grid-cols-2 gap-3">
+            <label className="sr-only" htmlFor="sc-gg-voornaam">
+              Je voornaam (verplicht)
+            </label>
+            <input
+              id="sc-gg-voornaam"
+              type="text"
+              autoComplete="given-name"
+              aria-required="true"
+              placeholder="Je voornaam"
+              className={inputClass}
+              value={voornaam}
+              onChange={(e) => {
+                setVoornaam(e.target.value);
+                setFout(null);
+              }}
+              maxLength={100}
+            />
+            <label className="sr-only" htmlFor="sc-gg-achternaam">
+              Je achternaam (verplicht)
+            </label>
+            <input
+              id="sc-gg-achternaam"
+              type="text"
+              autoComplete="family-name"
+              aria-required="true"
+              placeholder="Je achternaam"
+              className={inputClass}
+              value={achternaam}
+              onChange={(e) => {
+                setAchternaam(e.target.value);
+                setFout(null);
+              }}
+              maxLength={100}
+            />
+            <label className="sr-only" htmlFor="sc-gg-email">
+              Je e-mailadres (verplicht)
+            </label>
+            <input
+              id="sc-gg-email"
+              type="email"
+              autoComplete="email"
+              aria-required="true"
+              placeholder="Je e-mailadres"
+              className={`${inputClass} col-span-2`}
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setFout(null);
+              }}
+              maxLength={255}
+            />
+            {/* Telefoon is op verzoek van de opdrachtgever weer verplicht. Let op:
+                een verplicht nummer is aantoonbaar de duurste veldkeuze in een
+                formulier; als de leadaantallen teruglopen is dit de eerste knop om
+                aan te draaien. */}
+            <label className="sr-only" htmlFor="sc-gg-telefoon">
+              Je telefoonnummer (verplicht)
+            </label>
+            <input
+              id="sc-gg-telefoon"
+              type="tel"
+              autoComplete="tel"
+              inputMode="tel"
+              aria-required="true"
+              placeholder="Je telefoonnummer"
+              className={`${inputClass} col-span-2`}
+              value={telefoon}
+              onChange={(e) => {
+                setTelefoon(e.target.value);
+                setFout(null);
+              }}
+              maxLength={20}
+            />
+          </div>
+        </fieldset>
+
+        {/* Geruststelling hoort bij de velden die de twijfel veroorzaken, niet
+            onderaan de pagina (Baymard). Een gezicht en een korte, lichte zin:
+            "denkt graag met je mee". Eerder stond hier "belt je om je overzicht
+            samen door te nemen"; de opdrachtgever vond dat terecht benauwend
+            voor wie nog twijfelt. Dat we mogen bellen staat al in de regel onder
+            de knop. De score staat er bewust zonder link: zie Bewijsregel. */}
+        <div className={`mt-7 flex items-center gap-3.5 ${naarAchtergrond}`}>
+          <img
+            src={adviseurFoto}
+            alt=""
+            width={64}
+            height={64}
+            loading="lazy"
+            className="h-16 w-16 shrink-0 rounded-full object-cover shadow-instap-klein"
           />
-          <label className="sr-only" htmlFor="sc-gg-achternaam">
-            Je achternaam (verplicht)
-          </label>
-          <input
-            id="sc-gg-achternaam"
-            type="text"
-            autoComplete="family-name"
-            aria-required="true"
-            placeholder="Je achternaam"
-            className={inputClass}
-            value={achternaam}
-            onChange={(e) => {
-              setAchternaam(e.target.value);
-              setFout(null);
-            }}
-            maxLength={100}
-          />
-          <label className="sr-only" htmlFor="sc-gg-email">
-            Je e-mailadres (verplicht)
-          </label>
-          <input
-            id="sc-gg-email"
-            type="email"
-            autoComplete="email"
-            aria-required="true"
-            placeholder="Je e-mailadres"
-            className={`${inputClass} col-span-2 sm:col-span-1`}
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setFout(null);
-            }}
-            maxLength={255}
-          />
-          {/* Telefoon is op verzoek van de opdrachtgever weer verplicht. Let op:
-              een verplicht nummer is aantoonbaar de duurste veldkeuze in een
-              formulier; als de leadaantallen teruglopen is dit de eerste knop om
-              aan te draaien. */}
-          <label className="sr-only" htmlFor="sc-gg-telefoon">
-            Je telefoonnummer (verplicht)
-          </label>
-          <input
-            id="sc-gg-telefoon"
-            type="tel"
-            autoComplete="tel"
-            inputMode="tel"
-            aria-required="true"
-            placeholder="Je telefoonnummer"
-            className={`${inputClass} col-span-2 sm:col-span-1`}
-            value={telefoon}
-            onChange={(e) => {
-              setTelefoon(e.target.value);
-              setFout(null);
-            }}
-            maxLength={20}
-          />
+          <div className="min-w-0">
+            <p className="text-[15px] leading-snug text-foreground">
+              <span className="font-bold">Tim</span> of een collega denkt graag met je mee.
+            </p>
+            <Bewijsregel className="mt-1" alsLink={false} zonderAantal />
+          </div>
         </div>
-      </fieldset>
 
-      {/* Geruststelling hoort bij de velden die de twijfel veroorzaken, niet
-          onderaan de pagina. Baymard ziet in zijn checkout-onderzoek dat mensen
-          alleen díe delen van een pagina als veilig ervaren waar het signaal
-          staat, en beveelt aan het pal naast de gevoelige velden te zetten. Hier
-          stond het bewijs onder de verzendknop; daar komt de twijfel te laat.
-          De score staat er bewust zónder link: zie Bewijsregel.
+        {/* Meerdere antwoorden mogen: zie de toelichting bij HULPVRAGEN hierboven. */}
+        <fieldset className={`mt-[30px] ${naarAchtergrond}`}>
+          <legend className="mb-3 block text-[15px] font-extrabold text-primary">Waar kunnen we je mee helpen?</legend>
+          <div
+            className="grid grid-cols-2 gap-2.5 sm:gap-3"
+            role="group"
+            aria-label="Waar kunnen we je mee helpen? Meerdere antwoorden mogelijk."
+          >
+            {HULPVRAGEN.map(({ id, label, Icon }) => {
+              const actief = hulpvragen.includes(id);
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  role="checkbox"
+                  aria-checked={actief}
+                  onClick={() => {
+                    setHulpvragen((huidig) => (huidig.includes(id) ? huidig.filter((h) => h !== id) : [...huidig, id]));
+                    setFout(null);
+                  }}
+                  className="instap-keus relative flex min-h-[64px] items-center gap-2.5 rounded-[18px] px-3 py-[13px] text-left text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-3 sm:px-4 sm:py-[15px]"
+                >
+                  <Icon size={21} strokeWidth={1.8} className="shrink-0" aria-hidden="true" />
+                  <span className="text-[14px] font-bold leading-snug sm:pr-5 sm:text-[15.5px]">{label}</span>
+                  {/* Op een telefoon is de tegel te smal voor een vinkje naast de
+                      tekst; daar zegt het blauwe verloop met de rand genoeg. */}
+                  {actief && (
+                    <span
+                      className="instap-vinkje absolute right-2.5 top-2.5 hidden h-[22px] w-[22px] items-center justify-center rounded-full sm:flex"
+                      aria-hidden="true"
+                    >
+                      <Check size={13} strokeWidth={3} />
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
 
-          Het gezicht en de zin erbij doen nog iets tweeds. Deze stap vraagt een
-          telefoonnummer omdat het team bewoners telefonisch opvolgt, en dan hoort
-          de bezoeker vóór het invullen te weten dat er iemand belt. Dat is niet
-          alleen netjes, het is ook wat het nummer van een drempel in een dienst
-          verandert. */}
-      <div
-        className={`mt-6 flex items-center gap-3 rounded-xl border border-border p-3.5 ${naarAchtergrond}`}
-        style={{ backgroundColor: "var(--card-soft)" }}
-      >
-        <img
-          src={adviseurFoto}
-          alt=""
-          width={44}
-          height={44}
-          loading="lazy"
-          className="h-11 w-11 shrink-0 rounded-full object-cover"
-        />
-        <div className="min-w-0">
-          <p className="text-[13.5px] leading-snug text-foreground">
-            <span className="font-semibold">Tim</span>, bewonersadviseur. Hij of een collega denkt gratis en
-            vrijblijvend met je mee.
+        {fout && (
+          <p role="alert" className="mt-3 text-[14px] text-destructive">
+            {fout}
           </p>
-          <Bewijsregel className="mt-1.5" alsLink={false} />
-        </div>
-      </div>
-
-      {/* Meerdere antwoorden mogen: zie de toelichting bij HULPVRAGEN hierboven. */}
-      <fieldset className={`mt-6 ${naarAchtergrond}`}>
-        {/* "Meerdere antwoorden mogelijk" staat er niet meer. De tegels zijn
-            checkboxes (role="checkbox"), dus wie er twee aanklikt ziet gewoon
-            dat het kan; wie er één aanklikt mist niets. De regel loste een
-            probleem op dat de bezoeker niet heeft. */}
-        <legend className="mb-3 block text-[14px] font-semibold text-foreground">Waar kunnen we je mee helpen?</legend>
-        <div className="grid grid-cols-2 gap-2 sm:gap-3" role="group" aria-label="Waar kunnen we je mee helpen? Meerdere antwoorden mogelijk.">
-          {HULPVRAGEN.map(({ id, label, Icon }) => {
-            const actief = hulpvragen.includes(id);
-            return (
-              <button
-                key={id}
-                type="button"
-                role="checkbox"
-                aria-checked={actief}
-                onClick={() => {
-                  setHulpvragen((huidig) => (huidig.includes(id) ? huidig.filter((h) => h !== id) : [...huidig, id]));
-                  setFout(null);
-                }}
-                className={`relative flex items-center gap-2.5 rounded-lg border-2 px-3 py-3 text-left text-[14px] font-semibold leading-snug text-primary transition-colors min-h-[56px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-3 sm:px-4 sm:text-[15px] ${
-                  actief ? "border-accent bg-accent/10" : "border-border bg-card hover:border-primary/30"
-                }`}
-              >
-                <Icon size={20} strokeWidth={1.75} className="shrink-0 text-primary" aria-hidden="true" />
-                <span>{label}</span>
-                {actief && (
-                  <span
-                    className="absolute right-2 top-2 hidden h-5 w-5 items-center justify-center rounded-full bg-accent sm:flex"
-                    aria-hidden="true"
-                  >
-                    <Check size={13} strokeWidth={3} className="text-primary" />
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </fieldset>
-
-      {fout && (
-        <p role="alert" className="mt-3 text-[14px] text-destructive">
-          {fout}
-        </p>
-      )}
-
-      {/* Turnstile (onzichtbaar). Blijft leeg, behalve als Cloudflare twijfelt en
-          de bezoeker één klik laat doen. */}
-      <div ref={turnstile.ref} className="mt-3 empty:hidden" />
-
-      <button
-        type="submit"
-        disabled={bezig}
-        // Bewust géén `disabled:opacity-70`. De knop is tijdens het klaarzetten
-        // wel uitgeschakeld, maar hij draagt op dat moment de enige melding op
-        // het scherm; alles eromheen staat al op 45%. Zou hij ook vervagen, dan
-        // is het belangrijkste element het zwakste en leest het scherm als
-        // "er is iets misgegaan" in plaats van "er wordt gewerkt".
-        className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-7 py-3.5 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover disabled:cursor-not-allowed min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        {bezig ? (
-          <>
-            <Loader2 size={16} className="animate-spin" aria-hidden="true" />
-            {/* Niet "Versturen…", want dat beschrijft wat de bezoeker doet.
-                Dit beschrijft wat wij doen, en het is waar: op dit moment gaat
-                de lead naar het team en vertrekt de mail met het overzicht. */}
-            Je overzicht wordt klaargezet…
-          </>
-        ) : (
-          "Bekijk mijn subsidieoverzicht"
         )}
-      </button>
 
-      {/* Hier stond "Geen nieuwsbrief, alleen jouw overzicht." Die zin nóemt het
-          gevreesde ding, en dat is precies het patroon dat averechts werkt: vier
-          experimenten in de Journal of Consumer Research laten zien dat een
-          privacygarantie zorgen wekt "which, without assurances, would have
-          remained dormant". Dus geen ontkenning meer, maar gewoon zeggen waar we
-          de gegevens voor gebruiken. Dat is meteen wat de AVG hier vraagt.
+        {/* Turnstile (onzichtbaar). Blijft leeg, behalve als Cloudflare twijfelt en
+            de bezoeker één klik laat doen. */}
+        <div ref={turnstile.ref} className="mt-3 empty:hidden" />
 
-          De score staat niet meer onder de knop maar bij de velden hierboven. */}
-      {/* "Blijven bij ons" is bewust drie woorden en geen alinea. In deze markt
-          verkopen de offertesites je gegevens door aan tot zes bedrijven, en hun
-          recensies staan vol met bezoekers die daarna door onbekende nummers
-          werden gebeld. Wij doen dat niet: de lead gaat naar ons eigen CRM en
-          verder nergens heen. Dat is dus een ware claim, en een die de
-          concurrent niet kan maken. Kort houden, want een uitgebreide
-          privacybelofte wekt juist de zorg die ze wil wegnemen. */}
-      <p className="mt-3 text-[12px] text-muted-foreground">
-        Je gegevens blijven bij ons. {TOESTEMMING_TEKST}
-      </p>
+        <button
+          type="submit"
+          disabled={bezig}
+          // Bewust géén `disabled:opacity-70`. De knop is tijdens het klaarzetten
+          // wel uitgeschakeld, maar hij draagt op dat moment de enige melding op
+          // het scherm; alles eromheen staat al op 45%. Zou hij ook vervagen, dan
+          // is het belangrijkste element het zwakste en leest het scherm als
+          // "er is iets misgegaan" in plaats van "er wordt gewerkt".
+          className="instap-knop mt-6 inline-flex min-h-[58px] w-full items-center justify-center gap-2.5 rounded-full px-7 text-[16.5px] font-extrabold disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          {bezig ? (
+            <>
+              <Loader2 size={18} className="animate-spin" aria-hidden="true" />
+              {/* Niet "Versturen…", want dat beschrijft wat de bezoeker doet.
+                  Dit beschrijft wat wij doen, en het is waar: op dit moment gaat
+                  de lead naar het team en vertrekt de mail met het overzicht. */}
+              Je overzicht wordt klaargezet…
+            </>
+          ) : telling > 0 ? (
+            // Het getal herhaalt waarom de bezoeker hier invult.
+            `Bekijk mijn ${telling} ${telling === 1 ? "regeling" : "regelingen"}`
+          ) : (
+            "Bekijk mijn subsidieoverzicht"
+          )}
+        </button>
+
+        {/* De toestemmingstekst, en verder niets: één regel onder de knop. Zie
+            toestemming.ts voor waarom hij er zo staat en waarom hij letterlijk
+            mee de lead in gaat. Hier stond eerder ook "Je gegevens blijven bij
+            ons."; die viel weg om de regel op een telefoon op één regel te
+            houden (akkoord opdrachtgever, 2026-10-21). Bewust geen ontkenning
+            van wat de bezoeker vreest ("geen nieuwsbrief"): een privacygarantie
+            wekt juist de zorg die ze wil wegnemen. */}
+        <p className="mt-4 text-center text-[13px] leading-normal text-primary/70 min-[380px]:whitespace-nowrap sm:text-[13.5px]">
+          {TOESTEMMING_TEKST}
+        </p>
+      </div>
     </form>
   );
 };
