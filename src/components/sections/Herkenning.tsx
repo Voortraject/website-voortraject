@@ -47,11 +47,11 @@ export const Herkenning = () => {
   useStaffel(sectie);
 
   return (
-    // Een eigen zacht oker band (oktober 2026, "heel veel wit zo"): breekt het
-    // lange witte stuk van hero tot "Waar we bij helpen". Eerst blauwgrijs, maar
-    // dat oogde koud; oker is warm en duidelijk anders dan het zand eronder.
-    // De tegels zijn hier wit, zand zou in de band verdwijnen.
-    <section ref={sectie} className="section-pad-home hs-band-oker" aria-labelledby="herkenning-title">
+    // Een warm verloop van crème naar zand (oktober 2026, "heel veel wit zo"):
+    // breekt het lange witte stuk na de hero en loopt zonder rand over in
+    // "Waar we bij helpen". Blauwgrijs en egaal oker zijn geprobeerd; blauw oogde
+    // koud. De tegels zijn hier wit, zand zou in het verloop verdwijnen.
+    <section ref={sectie} className="section-pad-home hs-band-verloop" aria-labelledby="herkenning-title">
       <div className="container-home">
         {/* Herken je dit? Telefoon: swipen, desktop: drie tegels naast elkaar */}
         <h2 id="herkenning-title" className="hs-h2" data-veer>

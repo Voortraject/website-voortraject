@@ -12,7 +12,7 @@ export type TrustCard = {
 const TINTEN = {
   /** Zand-verloop. */
   zand: "hs-zand",
-  /** Wit (de kaart zelf): de twijfels in "Herken je dit?", op de oker band. */
+  /** Wit (de kaart zelf): de twijfels in "Herken je dit?", op het warme verloop. */
   wit: "",
   /** Blauwgrijs: de redenen in "Waarom bewoners voor ons kiezen". */
   blauw: "hs-blauw-zacht",

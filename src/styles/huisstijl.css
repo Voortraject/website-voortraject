@@ -92,8 +92,9 @@
   }
   /* De warme band om de andere sectie. */
   .hs-band { background-color: hsl(var(--muted)); }
-  /* Tweede bandkleur: een zachte tint van de oker huiskleur (warmer dan blauwgrijs). */
-  .hs-band-oker { background-color: hsl(var(--accent) / 0.16); }
+  /* Warm verloop: crème bovenaan, onderaan precies het zand van hs-band. Zo loopt
+     het zonder rand over in een zandband eronder ("Waar we bij helpen"). */
+  .hs-band-verloop { background-image: linear-gradient(180deg, var(--card-soft), hsl(var(--muted))); }
 
   /* Een tegel die je kunt aanklikken tilt iets op. */
   .hs-klik { transition: transform 0.5s var(--rs-veer), box-shadow 0.4s var(--rs-zacht-uit); }
