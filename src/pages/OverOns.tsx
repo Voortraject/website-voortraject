@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
@@ -5,13 +6,12 @@ import { CtaButton } from "@/components/CtaButton";
 import { Cijfers } from "@/components/sections/Cijfers";
 import { UserCheck, ShieldCheck, Zap, FolderCheck, Mail } from "lucide-react";
 import { TEAM, teamJsonLd } from "@/config/team";
-
-const accent = { color: "hsl(var(--accent))" };
+import { useStaffel } from "@/lib/beweging";
 
 const howWeWork = [
   {
     icon: UserCheck,
-    title: "\u00C9\u00E9n vaste begeleider",
+    title: "Één vaste begeleider",
     desc: "Je werkt altijd met dezelfde persoon. Die kent jouw dossier, jouw woning en jouw situatie.",
   },
   {
@@ -31,10 +31,12 @@ const howWeWork = [
   },
 ];
 
-
-
-
+// Huisstijl oktober 2026 (src/styles/huisstijl.css): koppen met een oker
+// markeerstreep, tegels met schaduw in plaats van randen, inktblauwe rondjes.
 const OverOns = () => {
+  const main = useRef<HTMLElement>(null);
+  useStaffel(main);
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Seo
@@ -44,44 +46,39 @@ const OverOns = () => {
         jsonLd={teamJsonLd}
       />
       <Header />
-      <main className="flex-1">
+      <main ref={main} className="flex-1">
         {/* Origin story */}
-        <section className="py-12 md:py-16" style={{ backgroundColor: "#F5F2EC" }}>
+        <section className="hs-band pt-10 pb-12 md:py-[88px]">
           <div className="container-content">
-            <h2 className="h2-section text-center mb-6">
-              Hoe Voortraject is <span style={accent}>ontstaan</span>
+            <h2 className="hs-h2 text-center">
+              Hoe Voortraject is <span className="hs-accent">ontstaan</span>
             </h2>
-            <div
-              className="mx-auto text-center max-w-3xl"
-              style={{ color: "#4B4B4B", fontSize: 17, lineHeight: 1.6, fontWeight: 400 }}
-            >
+            <div className="hs-tekst mx-auto mt-4 md:mt-6 max-w-3xl text-center text-[16.5px] md:text-[18px] leading-[1.6]">
               <p className="mb-4">
                 Verduurzamingsbedrijven verloren te veel tijd aan alles behalve bouwen. Bewoners wachtten maanden op duidelijkheid en werden van het kastje naar de muur gestuurd.
               </p>
               <p className="mb-4">
                 Wij zagen dat het anders kon. Niet met een loket of een app, maar met mensen die het voortraject serieus nemen: van eerste vraag tot getekend akkoord en verder. Geen verkooppraatje, geen standaardadvies. Gewoon iemand die meekijkt, regelt en opvolgt.
               </p>
-              <p>Dat is Voortraject.</p>
+              <p className="font-bold text-primary">Dat is Voortraject.</p>
             </div>
           </div>
         </section>
 
-        {/* Team */}
-        <section className="py-12 md:py-16 bg-white">
+        {/* Team. Op de telefoon een lage tegel met de foto náást de naam (vier
+            portretten onder elkaar kostten anders ruim twee schermen); vanaf sm
+            de staande kaart. De foto's zijn 4:5 met de ogen op 31%, dus het
+            fotovak blijft 4:5 en de uitsnede bovenaan. */}
+        <section className="py-12 md:py-[88px]" aria-label="Het team">
           <div className="container-content">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 max-w-6xl mx-auto">
               {TEAM.map((p) => (
                 <article
                   key={p.name}
-                  className="bg-white rounded-2xl overflow-hidden transition-all duration-200 ease-out hover:-translate-y-1 flex flex-col w-full max-w-[400px] mx-auto sm:max-w-none"
-                  style={{
-                    border: "1px solid #E5E2DB",
-                    boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 12px 36px rgba(21,44,78,0.14)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 4px 24px rgba(21,44,78,0.06)")}
+                  data-veer
+                  className="hs-tegel overflow-hidden flex flex-row sm:flex-col"
                 >
-                  <div className="w-full overflow-hidden aspect-[4/5]" style={{ backgroundColor: "#FAFAFA" }}>
+                  <div className="w-[104px] shrink-0 sm:w-full aspect-[4/5] overflow-hidden bg-secondary">
                     <img
                       src={p.img}
                       alt={p.name}
@@ -90,29 +87,23 @@ const OverOns = () => {
                       style={{ objectPosition: "top center" }}
                     />
                   </div>
-                  <div className="p-6 flex-1 flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="font-display font-bold text-primary text-[20px] tracking-[-0.01em] leading-tight">
-                        {p.name}
-                      </h3>
-                      <p className="text-muted-foreground text-[14px] leading-tight" style={{ marginTop: 4 }}>
-                        {p.specialty}
-                      </p>
+                  <div className="min-w-0 flex-1 flex flex-col justify-center px-4 py-4 sm:justify-start sm:px-6 sm:py-5">
+                    <div className="flex items-center justify-between gap-3">
+                      <h3 className="hs-h3 text-[19px] md:text-[20px]">{p.name}</h3>
+                      {/* Direct mailen naar de persoon zelf: wie al weet wie hij
+                          nodig heeft, hoeft niet langs het contactformulier. Het
+                          adres staat alleen in de link, niet als tekst op de
+                          kaart. */}
+                      <a
+                        href={`mailto:${p.email}`}
+                        title={`Mail ${p.name}: ${p.email}`}
+                        aria-label={`Mail ${p.name} op ${p.email}`}
+                        className="hs-rondje hs-klik h-9 w-9 bg-[hsl(var(--rs-hoofd-midden))] text-primary focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-accent"
+                      >
+                        <Mail className="w-[17px] h-[17px]" aria-hidden="true" />
+                      </a>
                     </div>
-                    {/* Direct mailen naar de persoon zelf: wie al weet wie hij
-                        nodig heeft, hoeft niet langs het contactformulier. Het
-                        adres staat alleen in de link, niet als tekst op de
-                        kaart. De knop is 36px en wordt met -6px omhoog gezet,
-                        zodat zijn midden op de regel van de naam uitkomt. */}
-                    <a
-                      href={`mailto:${p.email}`}
-                      title={`Mail ${p.name}: ${p.email}`}
-                      aria-label={`Mail ${p.name} op ${p.email}`}
-                      className="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-full border border-border text-muted-foreground hover:text-accent hover:border-accent focus-visible:text-accent focus-visible:border-accent transition-colors duration-150"
-                      style={{ marginTop: -6 }}
-                    >
-                      <Mail className="w-[18px] h-[18px]" aria-hidden="true" />
-                    </a>
+                    <p className="hs-tekst mt-0.5 text-[14px] leading-snug">{p.specialty}</p>
                   </div>
                 </article>
               ))}
@@ -125,95 +116,48 @@ const OverOns = () => {
         <Cijfers />
 
         {/* Hoe wij werken */}
-        <section className="py-12 md:py-[72px]" style={{ backgroundColor: "#F5F2EC" }}>
+        <section className="hs-band py-12 md:py-[88px]">
           <div className="container-content">
-            <div className="text-center mb-12">
-              <h2
-                style={{
-                  fontFamily: "'Inter Tight', sans-serif",
-                  fontWeight: 700,
-                  color: "#152C4E",
-                  fontSize: "clamp(28px, 4vw, 40px)",
-                  letterSpacing: "-0.02em",
-                  lineHeight: 1.2,
-                }}
-              >
-                Hoe wij <span style={accent}>werken</span>
+            <div className="text-center mb-6 md:mb-10">
+              <h2 className="hs-h2">
+                Hoe wij <span className="hs-accent">werken</span>
               </h2>
-              <p
-                className="mx-auto mt-4"
-                style={{ color: "#6B6B6B", fontSize: 16, lineHeight: 1.6, maxWidth: 540, fontWeight: 400 }}
-              >
+              <p className="hs-tekst mx-auto mt-3 md:mt-4 max-w-[560px] text-[16px] md:text-[18px] leading-[1.6]">
                 Geen groot kantoor, geen anonieme helpdesk. Wij werken met een klein, vast team dat het hele traject overziet.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl mx-auto">
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 max-w-4xl mx-auto">
               {howWeWork.map(({ icon: Icon, title, desc }) => (
-                <div
+                <li
                   key={title}
-                  className="rounded-2xl p-7 shadow-sm"
-                  style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E2DB" }}
+                  data-veer
+                  className="hs-tegel hs-blauw-zacht p-[18px] md:p-6"
                 >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: "#E8B547" }}
-                    >
-                      <Icon size={20} color="#152C4E" />
-                    </div>
-                    <h3
-                      style={{
-                        fontFamily: "'Inter Tight', sans-serif",
-                        fontWeight: 600,
-                        color: "#152C4E",
-                        fontSize: 16,
-                        lineHeight: 1.3,
-                      }}
-                    >
-                      {title}
-                    </h3>
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="hs-h3">{title}</h3>
+                    <span className="hs-rondje hs-rondje-ink" aria-hidden="true">
+                      <Icon size={19} strokeWidth={2} />
+                    </span>
                   </div>
-                  <p style={{ color: "#6B6B6B", fontSize: 14, lineHeight: 1.6, marginTop: 8, fontWeight: 400 }}>
-                    {desc}
-                  </p>
-                </div>
+                  <p className="hs-tekst mt-2 text-[15px] leading-[1.6]">{desc}</p>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </section>
-
       </main>
       <Footer
         cta={
-          /* CTA */
-          <section className="py-[60px] text-primary-foreground">
+          /* Slot-CTA in het donkere paneel van de footer. */
+          <section className="hs-op-donker pt-[60px] pb-4 md:pt-[88px]">
             <div className="container-content text-center flex flex-col items-center">
-              <h2
-                className="font-display"
-                style={{
-                  fontWeight: 600,
-                  fontSize: "clamp(28px, 4.5vw, 40px)",
-                  color: "#FFFFFF",
-                  letterSpacing: "-0.02em",
-                  lineHeight: 1.2,
-                  marginBottom: 16,
-                }}
-              >
+              <h2 className="hs-h2 max-w-[900px] text-primary-foreground">
                 Wil je weten wie je aan de lijn krijgt?
               </h2>
-              <p
-                style={{
-                  color: "#FFFFFF",
-                  opacity: 0.8,
-                  fontSize: 17,
-                  lineHeight: 1.6,
-                  maxWidth: 640,
-                  marginBottom: 32,
-                }}
-              >
+              <p className="mt-3.5 max-w-[560px] text-[16px] leading-[1.6] text-primary-foreground/85">
                 Plan een vrijblijvende kennismaking. We vertellen je precies wie wat doet en hoe een traject eruitziet.
               </p>
-              <CtaButton href="/contact" className="px-8 w-full sm:w-auto">
+              <CtaButton href="/contact" className="mt-7 w-full sm:w-auto">
                 Plan een kennismaking
               </CtaButton>
             </div>

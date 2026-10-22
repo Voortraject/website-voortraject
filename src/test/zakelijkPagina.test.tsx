@@ -53,4 +53,15 @@ describe("pagina /zakelijk", () => {
 
     expect(container.querySelector("#contact")).not.toBeNull();
   });
+
+  // Huisstijl oktober 2026: rustige tegels zonder rand, en zonder het oude
+  // effect dat de andere kaarten vervaagde zodra je er één aanwees (te druk).
+  it("zet de doelgroepen in rustige tegels zonder blur-grid", () => {
+    const { container } = render(<Zakelijk />);
+
+    expect(container.querySelector(".card-grid")).toBeNull();
+    const kaart = screen.getByRole("heading", { name: /Installateurs/ }).closest("article");
+    expect(kaart).toHaveClass("hs-tegel");
+    expect(kaart?.className.split(" ")).not.toContain("border");
+  });
 });
