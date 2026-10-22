@@ -43,8 +43,10 @@ export const Hero = () => {
           staat de tekst), op desktop donker aan de linkerkant. */}
       <div className="home-hero-waas absolute inset-0" aria-hidden="true" />
 
-      {/* pb houdt rekening met de logotegel, die over de onderrand schuift. */}
-      <div className="relative container-content flex min-h-[640px] items-end pt-32 pb-[72px] md:min-h-[720px] md:items-center md:pt-[12.5rem] md:pb-[104px] lg:min-h-[84vh]">
+      {/* pb houdt rekening met de logotegel, die over de onderrand schuift. Op de
+          telefoon ruimer (116 px): zonder de glasknop zakt de inhoud anders te
+          ver, en zo staat "subsidies" op de kin van de rechterpersoon. */}
+      <div className="relative container-content flex min-h-[640px] items-end pt-32 pb-[116px] md:min-h-[720px] md:items-center md:pt-[12.5rem] md:pb-[104px] lg:min-h-[84vh]">
         <div className="w-full min-w-0 max-w-5xl">
           <h1 id="hero-title" className="home-hero-kop text-primary-foreground">
             <span>Gratis advies over</span>
@@ -76,8 +78,10 @@ export const Hero = () => {
               </CtaButton>
             </div>
             {/* Secundaire CTA naar het contactformulier; bellen kan nog via de
-                header-pill en de WhatsApp-knop. */}
-            <CtaButton href="/contact" variant="glas">
+                header-pill en de WhatsApp-knop. Op de telefoon weg (oktober
+                2026): één knop in de hero is rustiger, en het gesprek staat
+                verderop nog bij "Van twijfel naar een compleet plan". */}
+            <CtaButton href="/contact" variant="glas" className="max-md:hidden">
               Plan een gratis gesprek
             </CtaButton>
           </div>
