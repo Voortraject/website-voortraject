@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown, LayoutGrid, Search } from "lucide-react";
+import { Menu, X, ChevronDown, LayoutGrid, Search, ArrowRight } from "lucide-react";
 import logoVoortrajectBlauw from "@/assets/logo-voortraject-blauw.png";
+import logoVoortrajectWit from "@/assets/logo-voortraject.png";
 
 const pillShadow = {
   boxShadow:
@@ -69,9 +70,16 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
   // Zie docs/tracking.md.
   const sluitNaKlik = () => setTimeout(onClose, 0);
 
+  // Huisstijl oktober 2026: een dicht inktblauw paneel met stil licht (hs-donker),
+  // ronde onderhoeken, grote koppen met een pijl, submenu's in een glazen tegel
+  // en de oker knop onderaan. Eerder was het paneel doorschijnend en las je de
+  // herotekst erdoorheen. De klik-afhandeling hierboven en hieronder is
+  // ongewijzigd (meting, zie docs/tracking.md en mobielMenuKlik.test.tsx).
+  const kop = "font-['Inter_Tight',_'Inter',_sans-serif] text-[22px] font-bold tracking-[-0.02em] text-primary-foreground";
+
   return (
     <div
-      className="fixed inset-0 z-50 lg:hidden flex flex-col animate-fade-up"
+      className="fixed inset-0 z-50 lg:hidden flex flex-col bg-primary/45 animate-fade-up"
       // Sluit alleen bij een klik op de achtergrond zelf, niet op het paneel
       // erbinnen. Dit stond eerder als een stopPropagation() op het paneel,
       // maar dat brak de meting: React koppelt zijn listeners op de
@@ -83,53 +91,62 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div
-        className="relative flex flex-col max-h-full overflow-y-auto pt-[env(safe-area-inset-top)]"
-        style={{ backgroundColor: "hsl(var(--primary) / 0.95)", backdropFilter: "blur(8px)" }}
-      >
-        <button
-          className="absolute top-[calc(0.75rem_+_env(safe-area-inset-top))] right-3 p-2 text-white z-10"
-          aria-label="Menu sluiten"
-          onClick={onClose}
-        >
-          <X size={24} />
-        </button>
-        <nav className="container-content flex flex-col gap-1 pt-3 pb-6" aria-label="Mobiele navigatie">
+      <div className="hs-donker relative flex max-h-full flex-col overflow-y-auto rounded-b-[28px] pt-[env(safe-area-inset-top)] shadow-[0_24px_60px_hsl(var(--primary)/0.45)]">
+        <div className="container-content flex items-center justify-between pt-4">
+          <img src={logoVoortrajectWit} alt="Voortraject" className="h-9 w-auto" />
+          <button
+            type="button"
+            className="hs-knop-glas grid h-12 w-12 place-items-center rounded-full"
+            aria-label="Menu sluiten"
+            onClick={onClose}
+          >
+            <X size={22} aria-hidden="true" />
+          </button>
+        </div>
+        <nav className="container-content flex flex-col pt-3 pb-7" aria-label="Mobiele navigatie">
           {links.map((l) =>
             l.dropdown ? (
-              <div key={l.href} className="border-b border-white/10">
+              <div key={l.href} className="border-b border-primary-foreground/10">
                 <button
                   type="button"
-                  className="w-full flex items-center justify-between py-4 text-2xl font-display font-semibold tracking-tight text-white"
+                  className={`flex w-full items-center justify-between gap-4 py-[18px] text-left ${kop}`}
                   onClick={() =>
                     setOpenSection(openSection === l.href ? null : l.href)
                   }
                   aria-expanded={openSection === l.href}
                 >
                   {l.label}
-                  <ChevronDown
-                    size={22}
-                    className={`transition-transform ${openSection === l.href ? "rotate-180" : ""}`}
-                  />
+                  <span className="hs-rondje hs-rondje-glas h-9 w-9" aria-hidden="true">
+                    <ChevronDown
+                      size={18}
+                      strokeWidth={2.2}
+                      className={`transition-transform duration-300 motion-reduce:transition-none ${openSection === l.href ? "rotate-180" : ""}`}
+                    />
+                  </span>
                 </button>
                 {openSection === l.href && (
-                  <div className="pb-4 pl-2 flex flex-col gap-2">
+                  <div className="mb-4 grid gap-0.5 rounded-[20px] bg-primary-foreground/[0.07] p-2">
                     {l.dropdown.map((s) =>
                       s.tool || s.overzicht ? (
                         <a
                           key={s.href}
                           href={s.href}
                           onClick={sluitNaKlik}
-                          className="inline-flex items-center gap-2 py-2 text-lg font-semibold text-white hover:text-accent"
+                          className="flex items-center gap-3 rounded-[14px] px-3 py-2.5 text-[16.5px] font-bold text-primary-foreground hover:bg-primary-foreground/10"
                         >
-                          {s.tool ? (
-                            <Search size={17} strokeWidth={2} aria-hidden="true" />
-                          ) : (
-                            <LayoutGrid size={17} strokeWidth={2} aria-hidden="true" />
-                          )}
+                          <span
+                            className={`hs-rondje h-8 w-8 ${s.tool ? "hs-rondje-oker" : "hs-rondje-glas"}`}
+                            aria-hidden="true"
+                          >
+                            {s.tool ? (
+                              <Search size={15} strokeWidth={2.2} />
+                            ) : (
+                              <LayoutGrid size={15} strokeWidth={2.2} />
+                            )}
+                          </span>
                           {s.label}
                           {s.tool && (
-                            <span className="rounded-full bg-accent/30 px-2 py-0.5 text-[11px] font-semibold text-white">
+                            <span className="rounded-full bg-accent/25 px-2 py-0.5 text-[11px] font-bold text-primary-foreground">
                               Tool
                             </span>
                           )}
@@ -139,9 +156,10 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
                           key={s.href}
                           href={s.href}
                           onClick={sluitNaKlik}
-                          className="py-2 text-lg text-white/80 hover:text-accent"
+                          className="flex items-center justify-between gap-3 rounded-[14px] px-3 py-2.5 text-[16px] font-semibold text-primary-foreground/85 hover:bg-primary-foreground/10 hover:text-primary-foreground"
                         >
                           {s.label}
+                          <ArrowRight size={16} className="shrink-0 text-primary-foreground/40" aria-hidden="true" />
                         </a>
                       ),
                     )}
@@ -153,22 +171,21 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
                 key={l.href}
                 href={l.href}
                 onClick={sluitNaKlik}
-                className="py-4 text-2xl font-display font-semibold tracking-tight text-white border-b border-white/10"
+                className={`flex items-center justify-between gap-4 border-b border-primary-foreground/10 py-[18px] ${kop}`}
               >
                 {l.label}
+                <ArrowRight size={20} className="shrink-0 text-primary-foreground/45" aria-hidden="true" />
               </a>
             )
           )}
-          <div className="mt-5 flex items-center gap-3">
-            <a
-              href="/subsidiecheck"
-              onClick={sluitNaKlik}
-              className="flex-1 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-base font-semibold bg-accent text-primary"
-            >
-              <Search size={18} strokeWidth={2} aria-hidden="true" />
-              Check jouw subsidies
-            </a>
-          </div>
+          <a
+            href="/subsidiecheck"
+            onClick={sluitNaKlik}
+            className="hs-knop hs-knop-oker mt-7 w-full"
+          >
+            <Search size={18} strokeWidth={2.2} aria-hidden="true" />
+            Check jouw subsidies
+          </a>
         </nav>
       </div>
     </div>
