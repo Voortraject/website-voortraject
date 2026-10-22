@@ -170,7 +170,13 @@ export const ScorePil = ({ compact = false }: { compact?: boolean }) => {
     >
       <Sterren waarde={stats?.rating ?? 5} size={compact ? 14 : 16} />
       <span>{ratingLabel}</span>
-      {compact && <GoogleG size={16} />}
+      {/* Op de telefoon past de G er niet meer naast en valt hij los op een
+          tweede regel; "op Google" staat er al, en elke kaart heeft zijn eigen G. */}
+      {compact && (
+        <span className="hidden sm:inline-flex">
+          <GoogleG size={16} />
+        </span>
+      )}
     </a>
   );
 };

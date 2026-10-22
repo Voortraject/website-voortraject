@@ -104,6 +104,12 @@
     radial-gradient(70% 55% at 88% 0%, hsl(var(--rs-ink-licht) / 0.9), transparent 70%),
     radial-gradient(60% 50% at 0% 40%, hsl(var(--accent) / 0.1), transparent 70%);
 }
+/* De ronde bovenhoeken tonen de kleur van de footer zelf (bg-background). Eindigt
+ * de pagina op een zandband (de FAQ op de homepagina, "Hoe wij werken" op /over-ons),
+ * dan krijgen de hoeken die kleur, anders staat er een lichte strook met een
+ * harde rand tussen band en paneel. Specifieker dan bg-background, dus de
+ * volgorde in de bundel maakt niet uit. */
+main:has(> section.hs-band:last-child) + footer { background-color: hsl(var(--muted)); }
 
 @media (prefers-reduced-motion: reduce) {
   .ho-faq-item, .ho-faq-chev, .ho-faq-klap { transition: none; }
