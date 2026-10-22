@@ -1,14 +1,16 @@
-import { ArrowRight, ChevronRight } from "lucide-react";
+import { useRef } from "react";
+import { ArrowRight, Search } from "lucide-react";
 
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
 import { CtaButton } from "@/components/CtaButton";
-import { OfBelOnsCta } from "@/components/OfBelOnsCta";
 import { SubsidiecheckCta } from "@/components/sections/SubsidiecheckCta";
-import { Accent, Sectie, SectieKop } from "@/components/maatregel/primitieven";
-import { KLEUR } from "@/components/maatregel/stijl";
+import { Kruimelpad } from "@/components/maatregel/Kruimelpad";
+import { SlotCta } from "@/components/maatregel/SlotCta";
+import { Accent, NummerRondje, Sectie, SectieKop } from "@/components/maatregel/primitieven";
 import { MAATREGEL_VOLGORDE, MAATREGELEN, ROUTE, type MaatregelSlug } from "@/data/maatregelen";
+import { useStaffel } from "@/lib/beweging";
 import { SITE_URL } from "@/lib/site";
 
 import heroImage from "@/assets/helpen-subsidies.webp";
@@ -81,17 +83,21 @@ const jsonLd = [
 
 const MaatregelKaart = ({ slug, groot = false }: { slug: MaatregelSlug; groot?: boolean }) => {
   const maatregel = MAATREGELEN[slug];
+  // Op de telefoon een lage tegel met de foto ernaast, zodat zeven kaarten
+  // geen zeven schermen kosten; vanaf sm de foto erboven (of ernaast voor de
+  // brede onderhoudskaart).
   return (
     <a
       href={maatregel.href}
-      className={`group flex overflow-hidden rounded-2xl transition-shadow hover:shadow-lg ${
-        groot ? "flex-col sm:flex-row" : "flex-col"
+      className={`vd-beeld hs-tegel hs-klik group flex h-full flex-row overflow-hidden ${
+        groot ? "" : "sm:flex-col"
       }`}
-      style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
+      data-veer
     >
       <div
-        className={`overflow-hidden shrink-0 ${groot ? "sm:w-[280px]" : ""}`}
-        style={{ aspectRatio: groot ? "16 / 10" : "16 / 9", backgroundColor: KLEUR.warm }}
+        className={`relative w-[112px] shrink-0 overflow-hidden bg-[hsl(var(--rs-hoofd-midden))] ${
+          groot ? "sm:min-h-[190px] sm:w-[280px]" : "sm:aspect-video sm:w-full"
+        }`}
       >
         <img
           src={BEELD[slug]}
@@ -99,276 +105,167 @@ const MaatregelKaart = ({ slug, groot = false }: { slug: MaatregelSlug; groot?: 
           width={800}
           height={450}
           loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          className="absolute inset-0 h-full w-full object-cover"
         />
       </div>
-      <div className="flex-1 p-6 flex flex-col">
-        <h3
-          className="text-[19px] font-semibold"
-          style={{ color: KLEUR.navy, margin: 0, lineHeight: 1.3 }}
-        >
-          {maatregel.label}
-        </h3>
-        <p
-          className="text-[15.5px] leading-relaxed"
-          style={{ color: KLEUR.navy, opacity: 0.72, margin: "10px 0 0 0" }}
-        >
-          {maatregel.kernvraag}
-        </p>
-        <span
-          className="mt-5 inline-flex items-center gap-1.5 text-[15px] font-semibold"
-          style={{ color: KLEUR.navy }}
-        >
+      <div className="flex min-w-0 flex-1 flex-col px-4 py-4 sm:p-6">
+        <h3 className="hs-h3 m-0">{maatregel.label}</h3>
+        <p className="vd-tekst mb-0 mt-1.5 sm:mt-2 sm:text-[15.5px]">{maatregel.kernvraag}</p>
+        <span className="hs-pijl-link mt-2 sm:mt-auto sm:pt-4">
           Lees verder
-          <ArrowRight
-            size={15}
-            aria-hidden="true"
-            className="transition-transform group-hover:translate-x-0.5"
-          />
+          <ArrowRight size={17} strokeWidth={2.2} className="hs-pijl" aria-hidden="true" />
         </span>
       </div>
     </a>
   );
 };
 
-const Verduurzamen = () => (
-  <div className="min-h-screen flex flex-col" style={{ backgroundColor: KLEUR.zand }}>
-    <Seo
-      title="Verduurzamen | Voortraject"
-      description="De verduurzamingsroute in drie stappen: eerst beperken wat je verbruikt, dan zelf opwekken, dan slim gebruiken. Met per maatregel wat het oplevert en waar je op let."
-      path="/verduurzamen"
-      jsonLd={jsonLd}
-    />
-    <Header />
-    <main className="flex-1">
-      {/* 1 — HERO */}
-      <section
-        data-bg="zand"
-        className="w-full py-12 md:py-[72px]"
-        style={{ backgroundColor: KLEUR.zand }}
-      >
-        <div className="mx-auto max-w-[1180px] px-6">
-          <nav aria-label="Kruimelpad" className="mb-5">
-            <ol
-              className="flex flex-wrap items-center gap-1.5 text-[13px]"
-              style={{ color: KLEUR.navy }}
-            >
-              <li>
-                <a
-                  href="/"
-                  className="underline-offset-4 transition-colors hover:underline"
-                  style={{ opacity: 0.7 }}
+const Verduurzamen = () => {
+  const mainRef = useRef<HTMLElement>(null);
+  useStaffel(mainRef);
+  return (
+    <div className="min-h-screen flex flex-col bg-background">
+      <Seo
+        title="Verduurzamen | Voortraject"
+        description="De verduurzamingsroute in drie stappen: eerst beperken wat je verbruikt, dan zelf opwekken, dan slim gebruiken. Met per maatregel wat het oplevert en waar je op let."
+        path="/verduurzamen"
+        jsonLd={jsonLd}
+      />
+      <Header ctaNaElement="verduurzamen-hero-knop" />
+      <main className="flex-1" ref={mainRef}>
+        {/* 1 — HERO */}
+        <section data-bg="zand" className="w-full bg-background pt-5 pb-12 md:pt-8 md:pb-20">
+          <div className="mx-auto max-w-[1180px] px-6">
+            <Kruimelpad />
+            {/* Zelfde opzet als de hero van de zeven maatregelpagina's: tekst
+                links, beeld rechts. Zo herkent de bezoeker de sectie meteen als
+                hij van een maatregelpagina naar de hub gaat. */}
+            <div className="flex flex-col gap-8 md:flex-row md:items-center md:gap-12">
+              <div className="min-w-0 md:flex-1">
+                <h1
+                  className="m-0 text-[clamp(29px,8.2vw,34px)] font-bold leading-[1.08] tracking-[-0.03em] text-primary md:text-[clamp(38px,4.4vw,52px)] [text-wrap:balance]"
+                  style={{ fontFamily: "'Inter Tight', 'Inter', sans-serif" }}
                 >
-                  Home
-                </a>
-              </li>
-              <ChevronRight size={13} aria-hidden="true" style={{ opacity: 0.45 }} />
-              <li aria-current="page" style={{ fontWeight: 600 }}>
-                Verduurzamen
-              </li>
-            </ol>
-          </nav>
-          {/* Zelfde opzet als de hero van de zeven maatregelpagina's: tekst
-              links, beeld rechts in 4/3. Zo herkent de bezoeker de sectie
-              meteen als hij van een maatregelpagina naar de hub gaat. */}
-          <div className="flex flex-col md:flex-row md:items-center gap-10 md:gap-12">
-            <div className="md:flex-1 min-w-0">
-            <h1
-              className="font-display"
-              style={{
-                color: KLEUR.navy,
-                fontWeight: 700,
-                fontSize: "clamp(32px, 4.4vw, 48px)",
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
-                margin: 0,
-              }}
-            >
-              <Accent tekst="Verduurzamen, in de volgorde die [[werkt]]" />
-            </h1>
-            <p
-              className="mt-5 text-base md:text-lg leading-relaxed"
-              style={{ color: KLEUR.navy, opacity: 0.85, maxWidth: 560 }}
-            >
-              De volgorde bepaalt wat je overhoudt. Zonnepanelen op een tochtig huis leveren minder
-              op dan dezelfde panelen op een geïsoleerd huis, en een warmtepomp in een slecht
-              geïsoleerde woning verbruikt meer dan hij bespaart. Daarom eerst beperken, dan
-              opwekken, dan slim gebruiken.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
-              <CtaButton href="/subsidiecheck" variant="primary">
-                Check jouw subsidies
-                <ArrowRight size={16} />
-              </CtaButton>
-              <a
-                href="/contact"
-                className="inline-flex items-center gap-2 text-[15px] font-semibold underline-offset-4 transition-colors hover:underline"
-                style={{ color: KLEUR.navy }}
-              >
-                Of plan een gratis gesprek
-                <ArrowRight size={15} aria-hidden="true" />
-              </a>
-            </div>
-            </div>
-            <div
-              className="md:flex-1 overflow-hidden rounded-2xl"
-              style={{ border: `1px solid ${KLEUR.rand}`, aspectRatio: "4 / 3" }}
-            >
-              <img
-                src={heroImage}
-                alt="Adviseur van Voortraject bespreekt de mogelijkheden met een bewoner aan tafel"
-                className="w-full h-full object-cover"
-                style={{ objectPosition: "center 58%" }}
-                width={1200}
-                height={900}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 2 — DE ROUTE IN DRIE STAPPEN */}
-      <Sectie bg="navy" id="route">
-        <div className="text-center">
-          <SectieKop center opDonker>
-            <Accent tekst="De route in [[drie]] stappen" />
-          </SectieKop>
-          <p
-            className="mt-4 mx-auto text-base leading-relaxed"
-            style={{ color: KLEUR.wit, opacity: 0.8, maxWidth: 660 }}
-          >
-            Elke stap maakt de volgende goedkoper. Sla je hem over, dan betaal je de rekening
-            verderop.
-          </p>
-        </div>
-
-        <ol
-          className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5"
-          style={{ listStyle: "none", padding: 0, margin: "40px 0 0 0" }}
-        >
-          {ROUTE.map((stap, i) => {
-            const hier = MAATREGEL_VOLGORDE.filter((slug) => MAATREGELEN[slug].stap === stap.stap);
-            return (
-              <li
-                key={stap.stap}
-                className="rounded-2xl p-6 flex flex-col"
-                style={{ backgroundColor: "hsl(var(--card) / 0.07)", border: "1px solid hsl(var(--card) / 0.14)" }}
-              >
-                <span
-                  className="font-display tabular-nums"
-                  style={{ color: KLEUR.goud, fontWeight: 700, fontSize: 26, lineHeight: 1 }}
-                  aria-hidden="true"
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3
-                  className="mt-3 text-[19px] font-semibold"
-                  style={{ color: KLEUR.wit, margin: "12px 0 0 0", lineHeight: 1.3 }}
-                >
-                  {stap.titel}
-                </h3>
-                <p
-                  className="text-[15px] leading-relaxed"
-                  style={{ color: KLEUR.wit, opacity: 0.78, margin: "10px 0 0 0" }}
-                >
-                  {stap.korte}
+                  <Accent tekst="Verduurzamen, in de volgorde die [[werkt]]" />
+                </h1>
+                <p className="vd-lead mt-4 max-w-[560px] md:mt-5">
+                  De volgorde bepaalt wat je overhoudt. Zonnepanelen op een tochtig huis leveren minder
+                  op dan dezelfde panelen op een geïsoleerd huis, en een warmtepomp in een slecht
+                  geïsoleerde woning verbruikt meer dan hij bespaart. Daarom eerst beperken, dan
+                  opwekken, dan slim gebruiken.
                 </p>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {hier.map((slug) => (
-                    <a
-                      key={slug}
-                      href={MAATREGELEN[slug].href}
-                      className="inline-flex items-center rounded-full px-3 py-1 text-[13px] font-medium transition-colors"
-                      style={{
-                        backgroundColor: "hsl(var(--card) / 0.1)",
-                        border: "1px solid hsl(var(--card) / 0.2)",
-                        color: KLEUR.wit,
-                      }}
-                    >
-                      {MAATREGELEN[slug].label}
-                    </a>
-                  ))}
+                <div id="verduurzamen-hero-knop" className="mt-6 grid gap-3 sm:flex sm:items-center sm:gap-6 md:mt-8">
+                  <CtaButton href="/subsidiecheck" variant="accent" className="w-full sm:w-auto">
+                    <Search size={17} strokeWidth={2.2} aria-hidden="true" />
+                    Check jouw subsidies
+                  </CtaButton>
+                  <a href="/contact" className="hs-pijl-link justify-center min-h-[44px] sm:justify-start">
+                    Of plan een gratis gesprek
+                    <ArrowRight size={17} strokeWidth={2.2} className="hs-pijl" aria-hidden="true" />
+                  </a>
                 </div>
-              </li>
-            );
-          })}
-        </ol>
-      </Sectie>
-
-      {/* 3 — ALLE MAATREGELEN */}
-      <Sectie bg="wit" id="maatregelen">
-        <div className="text-center">
-          <SectieKop center>
-            <Accent tekst="Elke maatregel, met de vraag die hij [[beantwoordt]]" />
-          </SectieKop>
-        </div>
-        {/* Zes kaarten in drie kolommen vullen precies twee rijen. Onderhoud
-            staat daarbuiten als brede kaart: het is geen maatregel maar wat er
-            daarna komt, en als zevende kaart liet het een gat vallen. */}
-        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {MAATREGEL_VOLGORDE.map((slug) => (
-            <MaatregelKaart key={slug} slug={slug} />
-          ))}
-        </div>
-        <div className="mt-5">
-          <span className="label-eyebrow">En daarna</span>
-          <div className="mt-3">
-            <MaatregelKaart slug="onderhoud" groot />
-          </div>
-        </div>
-      </Sectie>
-
-      {/* 4 — SUBSIDIECHECK
-          De sectie "Waar begin ik" stond hier tussen. Die is er op verzoek uit:
-          de route bovenaan beantwoordt die vraag al, en de subsidiecheck geeft
-          het antwoord voor het eigen adres beter dan een alinea erover. */}
-      <SubsidiecheckCta />
-    </main>
-    <Footer
-      cta={
-        <section className="w-full py-12 md:py-[72px]">
-          <div className="mx-auto max-w-[760px] px-6 text-center">
-            <h2
-              className="font-display"
-              style={{
-                color: KLEUR.wit,
-                fontWeight: 700,
-                fontSize: "clamp(26px, 3.2vw, 36px)",
-                lineHeight: 1.2,
-                letterSpacing: "-0.02em",
-                margin: 0,
-              }}
-            >
-              <Accent tekst="Welke stap is bij jou de [[eerste]]?" />
-            </h2>
-            <p
-              className="mt-4 text-base md:text-lg leading-relaxed"
-              style={{ color: KLEUR.wit, opacity: 0.85 }}
-            >
-              In een gratis gesprek kijken we naar je woning, je plannen en je budget, en zetten we
-              op een rij welke maatregelen in welke volgorde het meeste opleveren. Zonder
-              verkooppraatje, want wij leveren zelf niets.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
-              <a
-                href="/contact"
-                className="inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
-                style={{
-                  backgroundColor: KLEUR.goud,
-                  color: KLEUR.navy,
-                  padding: "14px 28px",
-                  fontSize: 15,
-                }}
-              >
-                Plan een gratis gesprek
-              </a>
-              <OfBelOnsCta color="#FFFFFF" align="center" />
+              </div>
+              <div className="md:flex-1">
+                <img
+                  src={heroImage}
+                  alt="Adviseur van Voortraject bespreekt de mogelijkheden met een bewoner aan tafel"
+                  className="hs-foto block aspect-[3/2] w-full object-cover md:aspect-[4/3]"
+                  style={{ objectPosition: "center 58%" }}
+                  width={1200}
+                  height={900}
+                />
+              </div>
             </div>
           </div>
         </section>
-      }
-    />
-  </div>
-);
+
+        {/* 2 — DE ROUTE IN DRIE STAPPEN */}
+        <Sectie bg="navy" id="route">
+          <div className="text-center">
+            <SectieKop center opDonker>
+              <Accent tekst="De route in [[drie]] stappen" />
+            </SectieKop>
+            <p className="mx-auto mt-3 max-w-[660px] text-base leading-relaxed text-primary-foreground/85">
+              Elke stap maakt de volgende goedkoper. Sla je hem over, dan betaal je de rekening
+              verderop.
+            </p>
+          </div>
+
+          <ol className="mt-7 grid list-none grid-cols-1 gap-3 p-0 md:mt-10 md:grid-cols-3 md:gap-5">
+            {ROUTE.map((stap, i) => {
+              const hier = MAATREGEL_VOLGORDE.filter((slug) => MAATREGELEN[slug].stap === stap.stap);
+              return (
+                <li key={stap.stap} className="vd-glas flex flex-col rounded-[22px] p-5 md:p-6" data-veer>
+                  <div className="flex items-center gap-3">
+                    <NummerRondje n={i + 1} size={36} kleur="oker" />
+                    <h3 className="hs-h3 m-0 text-primary-foreground">{stap.titel}</h3>
+                  </div>
+                  <p className="mb-0 mt-2.5 text-[15px] leading-relaxed text-primary-foreground/80">
+                    {stap.korte}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-1.5 md:gap-2">
+                    {hier.map((slug) => (
+                      <a
+                        key={slug}
+                        href={MAATREGELEN[slug].href}
+                        className="hs-chip min-h-[32px] bg-[hsl(var(--primary-foreground)/0.12)] px-3 text-[13.5px] text-primary-foreground hover:bg-[hsl(var(--primary-foreground)/0.2)]"
+                      >
+                        {MAATREGELEN[slug].label}
+                      </a>
+                    ))}
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </Sectie>
+
+        {/* 3 — ALLE MAATREGELEN
+            Op de warme band, zodat de witte tegels en de subsidiecheck eronder
+            allebei contrast hebben. */}
+        <Sectie bg="warm" id="maatregelen">
+          <div className="text-center">
+            <SectieKop center>
+              <Accent tekst="Elke maatregel, met de vraag die hij [[beantwoordt]]" />
+            </SectieKop>
+          </div>
+          {/* Zes kaarten in drie kolommen vullen precies twee rijen. Onderhoud
+              staat daarbuiten als brede kaart: het is geen maatregel maar wat er
+              daarna komt, en als zevende kaart liet het een gat vallen. */}
+          <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 md:mt-10 lg:grid-cols-3">
+            {MAATREGEL_VOLGORDE.map((slug) => (
+              <MaatregelKaart key={slug} slug={slug} />
+            ))}
+          </div>
+          <div className="mt-7 md:mt-8">
+            <span className="vd-label">En daarna</span>
+            <div className="mt-3">
+              <MaatregelKaart slug="onderhoud" groot />
+            </div>
+          </div>
+        </Sectie>
+
+        {/* 4 — SUBSIDIECHECK
+            De sectie "Waar begin ik" stond hier tussen. Die is er op verzoek uit:
+            de route bovenaan beantwoordt die vraag al, en de subsidiecheck geeft
+            het antwoord voor het eigen adres beter dan een alinea erover. */}
+        <SubsidiecheckCta />
+      </main>
+      {/* De subsidiecheck vlak erboven heeft de oker knop van dit scherm; de
+          slotknop is hier daarom licht. */}
+      <Footer
+        cta={
+          <SlotCta
+            kop="Welke stap is bij jou de [[eerste]]?"
+            tekst="In een gratis gesprek kijken we naar je woning, je plannen en je budget, en zetten we op een rij welke maatregelen in welke volgorde het meeste opleveren. Zonder verkooppraatje, want wij leveren zelf niets."
+            label="Plan een gratis gesprek"
+            href="/contact"
+            knop="licht"
+          />
+        }
+      />
+    </div>
+  );
+};
 
 export default Verduurzamen;

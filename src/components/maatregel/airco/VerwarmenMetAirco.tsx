@@ -1,8 +1,7 @@
-import { ArrowRight, Check, Minus } from "lucide-react";
+import { AirVent, ArrowRight, Check, House, Minus } from "lucide-react";
 
 import { VERWARMEN } from "@/data/airco";
-import { Accent, SectieKop } from "@/components/maatregel/primitieven";
-import { KLEUR } from "@/components/maatregel/stijl";
+import { Accent, IconCirkel, SectieKop } from "@/components/maatregel/primitieven";
 
 /**
  * Waar de airco ophoudt en de warmtepomp begint.
@@ -19,65 +18,46 @@ export const VerwarmenMetAirco = () => (
       <SectieKop center>
         <Accent tekst="Een airco is ook een [[warmtepomp]]" />
       </SectieKop>
-      <p
-        className="mt-4 mx-auto text-base leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 660 }}
-      >
-        {VERWARMEN.kern}
-      </p>
+      <p className="vd-lead mx-auto mt-3 max-w-[660px]">{VERWARMEN.kern}</p>
     </div>
 
-    <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 items-stretch">
-      <div
-        className="rounded-2xl p-6 md:p-7"
-        style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-      >
-        <span
-          className="text-sm font-bold uppercase tracking-wider"
-          style={{ color: KLEUR.goud }}
-        >
-          Daar is hij goed in
-        </span>
-        <ul className="mt-5 flex flex-col gap-4" style={{ listStyle: "none", padding: 0, margin: "20px 0 0 0" }}>
+    <div className="mt-7 grid grid-cols-1 items-stretch gap-4 md:mt-10 md:grid-cols-2 md:gap-5">
+      <div className="hs-tegel hs-groen p-5 md:p-7" data-veer>
+        <div className="flex items-center justify-between gap-3">
+          <span className="vd-label">Daar is hij goed in</span>
+          {/* De lijst gaat over verwarmen: geen sneeuwvlok, maar de airco zelf. */}
+          <IconCirkel Icon={AirVent} kleur="groen" size={36} />
+        </div>
+        <ul className="m-0 mt-4 flex list-none flex-col gap-3 p-0">
           {VERWARMEN.past.map((punt) => (
             <li key={punt} className="flex items-start gap-3">
               <Check
                 size={18}
-                className="mt-1 shrink-0"
-                style={{ color: KLEUR.goud }}
-                strokeWidth={2.5}
+                className="mt-[3px] shrink-0 text-[hsl(var(--subsidie))]"
+                strokeWidth={2.6}
                 aria-hidden="true"
               />
-              <span style={{ fontSize: 15.5, lineHeight: 1.55, color: KLEUR.navy, opacity: 0.85 }}>
-                {punt}
-              </span>
+              <span className="text-[15.5px] leading-[1.55] text-foreground">{punt}</span>
             </li>
           ))}
         </ul>
       </div>
 
-      <div
-        className="rounded-2xl p-6 md:p-7"
-        style={{ backgroundColor: KLEUR.warm, border: `1px solid ${KLEUR.rand}` }}
-      >
-        <span
-          className="text-sm font-bold uppercase tracking-wider"
-          style={{ color: KLEUR.navy, opacity: 0.7 }}
-        >
-          Daar hoort een warmtepomp
-        </span>
-        <ul className="mt-5 flex flex-col gap-4" style={{ listStyle: "none", padding: 0, margin: "20px 0 0 0" }}>
+      <div className="hs-tegel hs-zand p-5 md:p-7" data-veer>
+        <div className="flex items-center justify-between gap-3">
+          <span className="vd-label">Daar hoort een warmtepomp</span>
+          {/* De hele woning, gasloos: een vlam zou precies het verkeerde zeggen. */}
+          <IconCirkel Icon={House} kleur="wit" size={36} />
+        </div>
+        <ul className="m-0 mt-4 flex list-none flex-col gap-3 p-0">
           {VERWARMEN.pastNiet.map((punt) => (
             <li key={punt} className="flex items-start gap-3">
               <Minus
                 size={18}
-                className="mt-1 shrink-0"
-                style={{ color: KLEUR.navy, opacity: 0.5 }}
+                className="mt-[3px] shrink-0 text-[hsl(var(--rs-tekst-zacht))]"
                 aria-hidden="true"
               />
-              <span style={{ fontSize: 15.5, lineHeight: 1.55, color: KLEUR.navy, opacity: 0.85 }}>
-                {punt}
-              </span>
+              <span className="text-[15.5px] leading-[1.55] text-foreground">{punt}</span>
             </li>
           ))}
         </ul>
@@ -85,25 +65,13 @@ export const VerwarmenMetAirco = () => (
     </div>
 
     <div
-      className="mt-6 rounded-2xl p-6 md:p-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-      style={{
-        backgroundColor: "hsl(var(--accent) / 0.12)",
-        border: "1px solid hsl(var(--accent) / 0.4)",
-      }}
+      className="hs-tegel vd-oker mt-4 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between md:mt-6 md:p-7"
+      data-veer
     >
-      <p
-        className="text-[15.5px] leading-relaxed"
-        style={{ color: KLEUR.navy, margin: 0, maxWidth: 720 }}
-      >
-        {VERWARMEN.grens}
-      </p>
-      <a
-        href="/verduurzamen/warmtepomp"
-        className="inline-flex items-center gap-2 shrink-0 text-[15px] font-semibold underline-offset-4 transition-colors hover:underline"
-        style={{ color: KLEUR.navy }}
-      >
+      <p className="m-0 max-w-[720px] text-[15.5px] leading-relaxed text-foreground">{VERWARMEN.grens}</p>
+      <a href="/verduurzamen/warmtepomp" className="hs-pijl-link shrink-0">
         Naar de warmtepomp
-        <ArrowRight size={16} aria-hidden="true" />
+        <ArrowRight size={17} strokeWidth={2.2} className="hs-pijl" aria-hidden="true" />
       </a>
     </div>
   </>

@@ -1,6 +1,5 @@
 import { BRONNEN, euro, getal, EERST_DIT, KOELSYSTEMEN, REKENBASIS, VERHOUDING } from "@/data/airco";
 import { Accent, SectieKop } from "@/components/maatregel/primitieven";
-import { KLEUR } from "@/components/maatregel/stijl";
 
 /**
  * Wat koelen kost, met de ventilator er bewust bij.
@@ -20,122 +19,74 @@ export const WatKoelenKost = () => (
       <SectieKop center>
         <Accent tekst="Wat koelen echt [[kost]]" />
       </SectieKop>
-      <p
-        className="mt-4 mx-auto text-base leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 660 }}
-      >
+      <p className="vd-lead mx-auto mt-3 max-w-[660px]">
         Vier manieren om het koeler te krijgen, over {REKENBASIS.uren} uur gebruik. Het verschil is
         groter dan de meeste mensen denken.
       </p>
     </div>
 
-    <div
-      className="mt-10 rounded-2xl overflow-hidden"
-      style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-    >
-      <div
-        className="px-6 py-4 md:px-8 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
-        style={{ backgroundColor: KLEUR.zand, borderBottom: `1px solid ${KLEUR.rand}` }}
-      >
-        <span className="label-eyebrow">Stroomverbruik over {REKENBASIS.uren} uur</span>
-        <span className="text-[14px]" style={{ color: KLEUR.navy, opacity: 0.6 }}>
-          Gerekend met {REKENBASIS.stroomprijs}
-        </span>
+    {/* Eén tegel, rijen als zachte zebra in plaats van lijnen ertussen. */}
+    <div className="hs-tegel hs-blauw-zacht mt-7 p-3 md:mt-10 md:p-4" data-veer>
+      <div className="flex flex-col gap-1 px-3 pb-3 pt-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6 md:px-5">
+        <span className="vd-label">Stroomverbruik over {REKENBASIS.uren} uur</span>
+        <span className="vd-tekst text-[14px]">Gerekend met {REKENBASIS.stroomprijs}</span>
       </div>
 
-      {KOELSYSTEMEN.map((systeem, i) => (
-        <div
-          key={systeem.naam}
-          className="px-6 py-5 md:px-8 grid grid-cols-1 md:grid-cols-[190px_1fr_auto] gap-3 md:gap-8 items-center"
-          style={{ borderTop: i === 0 ? "none" : `1px solid ${KLEUR.rand}` }}
-        >
-          <div>
-            <span className="block text-[16px] font-semibold" style={{ color: KLEUR.navy }}>
-              {systeem.naam}
-            </span>
-            <span
-              className="mt-1 block text-[13.5px] leading-snug md:hidden lg:block"
-              style={{ color: KLEUR.navy, opacity: 0.6 }}
-            >
-              {systeem.toelichting}
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="relative block flex-1" style={{ height: 20 }}>
-              <span
-                className="absolute rounded-full"
-                style={{ inset: "5px 0", backgroundColor: "hsl(var(--primary) / 0.07)" }}
-                aria-hidden="true"
-              />
-              <span
-                className="absolute rounded-full"
-                style={{
-                  left: 0,
-                  width: `${(systeem.kwh / MAX) * 100}%`,
-                  top: 0,
-                  bottom: 0,
-                  backgroundColor: KLEUR.goud,
-                }}
-                aria-hidden="true"
-              />
-            </span>
-            <span
-              className="shrink-0 text-[13.5px] tabular-nums whitespace-nowrap"
-              style={{ color: KLEUR.navy, opacity: 0.7 }}
-            >
-              {getal(systeem.kwh)} kWh
-            </span>
-          </div>
-          <div className="flex items-baseline gap-4 md:justify-end">
-            <span
-              className="font-display tabular-nums"
-              style={{ color: KLEUR.navy, fontWeight: 700, fontSize: 22, lineHeight: 1.1 }}
-            >
-              {euro(systeem.euro)}
-            </span>
-            <span
-              className="text-[13px] tabular-nums whitespace-nowrap"
-              style={{ color: KLEUR.navy, opacity: 0.55 }}
-            >
-              {getal(systeem.co2)} kg CO2
-            </span>
-          </div>
-        </div>
-      ))}
-    </div>
-
-    <div
-      className="mt-6 rounded-2xl p-6 md:p-8"
-      style={{
-        backgroundColor: "hsl(var(--accent) / 0.12)",
-        border: "1px solid hsl(var(--accent) / 0.4)",
-      }}
-    >
-      <p className="text-[15.5px] leading-relaxed" style={{ color: KLEUR.navy, margin: 0 }}>
-        <strong>{VERHOUDING}</strong> Hij mag er zeker staan, alleen levert dit rijtje meestal
-        meer koelte op voordat je iets koopt:
-      </p>
-      <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-4">
-        {EERST_DIT.map((punt) => (
-          <div key={punt.kop}>
-            <span
-              className="block text-[15px] font-semibold"
-              style={{ color: KLEUR.navy, lineHeight: 1.4 }}
-            >
-              {punt.kop}
-            </span>
-            <span
-              className="mt-1 block text-[14px] leading-relaxed"
-              style={{ color: KLEUR.navy, opacity: 0.7 }}
-            >
-              {punt.tekst}
-            </span>
+      <div className="vd-zebra flex flex-col gap-1">
+        {KOELSYSTEMEN.map((systeem) => (
+          <div
+            key={systeem.naam}
+            className="grid grid-cols-1 items-center gap-2.5 px-3 py-4 md:grid-cols-[190px_1fr_auto] md:gap-8 md:px-5"
+          >
+            <div>
+              <span className="block text-[16px] font-bold text-primary">{systeem.naam}</span>
+              <span className="vd-tekst mt-1 block text-[13.5px] leading-snug md:hidden lg:block">
+                {systeem.toelichting}
+              </span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="relative block h-5 flex-1">
+                <span
+                  className="absolute inset-x-0 inset-y-[5px] rounded-full bg-[hsl(var(--primary)/0.07)]"
+                  aria-hidden="true"
+                />
+                <span
+                  className="absolute inset-y-0 left-0 rounded-full bg-[linear-gradient(90deg,hsl(var(--rs-oker-licht)),hsl(var(--accent)))]"
+                  style={{ width: `${(systeem.kwh / MAX) * 100}%` }}
+                  aria-hidden="true"
+                />
+              </span>
+              <span className="vd-tekst shrink-0 whitespace-nowrap text-[13.5px] tabular-nums">
+                {getal(systeem.kwh)} kWh
+              </span>
+            </div>
+            <div className="flex items-baseline gap-4 md:justify-end">
+              <span className="vd-getal text-[24px]">{euro(systeem.euro)}</span>
+              <span className="vd-tekst whitespace-nowrap text-[13.5px] tabular-nums">
+                {getal(systeem.co2)} kg CO2
+              </span>
+            </div>
           </div>
         ))}
       </div>
     </div>
 
-    <p className="mt-5 text-[13px] leading-relaxed" style={{ color: KLEUR.navy, opacity: 0.55 }}>
+    <div className="hs-tegel vd-oker mt-4 p-5 md:mt-6 md:p-8" data-veer>
+      <p className="m-0 text-[15.5px] leading-relaxed text-foreground">
+        <strong className="text-primary">{VERHOUDING}</strong> Hij mag er zeker staan, alleen levert dit rijtje meestal
+        meer koelte op voordat je iets koopt:
+      </p>
+      <div className="mt-4 grid grid-cols-1 gap-x-8 gap-y-3.5 sm:grid-cols-2 md:mt-5 lg:grid-cols-4">
+        {EERST_DIT.map((punt) => (
+          <div key={punt.kop}>
+            <span className="block text-[15px] font-bold leading-[1.4] text-primary">{punt.kop}</span>
+            <span className="vd-tekst mt-1 block text-[14px]">{punt.tekst}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <p className="vd-tekst mt-5 text-[13.5px]">
       Verbruik, kosten en CO2 van{" "}
       <a
         href={BRONNEN.koelen.url}

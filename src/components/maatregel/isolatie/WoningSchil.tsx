@@ -15,7 +15,6 @@ import {
   type Woningtype,
 } from "@/data/isolatie";
 import { Accent, SectieKop } from "@/components/maatregel/primitieven";
-import { KLEUR } from "@/components/maatregel/stijl";
 import { WoningTekening } from "./WoningTekening";
 
 /**
@@ -146,10 +145,7 @@ export const WoningSchil = () => {
         <SectieKop center>
           <Accent tekst="Maak de schil van je woning [[dicht]]" />
         </SectieKop>
-        <p
-          className="mt-4 mx-auto text-base leading-relaxed"
-          style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 700 }}
-        >
+        <p className="vd-lead mx-auto mt-3 max-w-[700px]">
           Isoleren gaat over de schil: alles wat je verwarmde ruimte scheidt van de kou. Kies
           hieronder je woningtype en zet maatregelen aan om te zien wat er met de warmte, en
           met je energierekening, gebeurt.
@@ -157,11 +153,8 @@ export const WoningSchil = () => {
       </div>
 
       {/* Woningtype */}
-      <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
-        <span
-          className="mr-1 text-[13px] font-semibold"
-          style={{ color: KLEUR.navy, opacity: 0.6 }}
-        >
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-2 md:mt-8">
+        <span className="mr-1 w-full text-center text-[13.5px] font-bold text-[hsl(var(--rs-tekst-zacht))] sm:w-auto">
           Mijn woning is een
         </span>
         {WONINGTYPES.map((t) => {
@@ -172,12 +165,7 @@ export const WoningSchil = () => {
               type="button"
               onClick={() => setWoningtype(t.id)}
               aria-pressed={aan}
-              className="rounded-full px-4 py-2 text-[14px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              style={{
-                backgroundColor: aan ? KLEUR.navy : KLEUR.wit,
-                color: aan ? KLEUR.wit : KLEUR.navy,
-                border: `1px solid ${aan ? KLEUR.navy : KLEUR.rand}`,
-              }}
+              className="vd-keuze min-h-[38px] px-3.5 text-[13.5px] sm:min-h-[40px] sm:px-4 sm:text-[14px]"
             >
               {t.label}
             </button>
@@ -185,12 +173,9 @@ export const WoningSchil = () => {
         })}
       </div>
 
-      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
+      <div className="mt-6 grid grid-cols-1 items-start gap-5 md:mt-8 lg:grid-cols-2 lg:gap-8">
         {/* Tekening plus teller */}
-        <div
-          className="rounded-2xl p-5 md:p-6 lg:sticky lg:top-20"
-          style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-        >
+        <div className="hs-tegel hs-blauw-zacht p-4 md:p-6 lg:sticky lg:top-20">
           {/* De tekening krijgt een maximum: met de voortgangsbalk en de drie
               cijfers erbij werd het kaartje anders hoger dan het scherm, en dan
               schuift juist de teller onder de vouw terwijl je de lijst langs
@@ -202,36 +187,20 @@ export const WoningSchil = () => {
           <SchilBalk delen={schil.delen} haalbaar={schil.haalbaar} aandeel={schil.aandeelDicht} />
 
           <div
-            className="mt-4 rounded-xl px-5 pt-5 pb-4 text-center"
-            style={{
-              backgroundColor: gekozen.size > 0 ? "hsl(var(--accent) / 0.14)" : KLEUR.zand,
-              border: `1px solid ${gekozen.size > 0 ? "hsl(var(--accent) / 0.45)" : KLEUR.rand}`,
-              transition: "background-color 250ms ease, border-color 250ms ease",
-            }}
+            className={`mt-4 rounded-2xl px-4 pb-4 pt-4 text-center transition-colors duration-300 md:px-5 md:pt-5 ${
+              gekozen.size > 0 ? "vd-wit vd-oker" : "vd-wit"
+            }`}
           >
-            <span
-              className="text-[12px] font-bold uppercase tracking-wider"
-              style={{ color: KLEUR.navy, opacity: 0.6 }}
-            >
-              Besparing per jaar
-            </span>
-            <div
-              className="font-display mt-1 tabular-nums"
-              style={{ color: KLEUR.navy, fontWeight: 700, fontSize: 44, lineHeight: 1.05 }}
-            >
+            <span className="vd-label text-[12px]">Besparing per jaar</span>
+            <div className="vd-getal mt-1 text-[40px] text-primary md:text-[44px]">
               {euro(totaal.euroPerJaar)}
             </div>
 
             {gekozen.size === 0 ? (
-              <p className="mt-1 text-[14px]" style={{ color: KLEUR.navy, opacity: 0.7 }}>
-                Zet hiernaast een maatregel aan
-              </p>
+              <p className="vd-tekst mt-1 mb-0 text-[14px]">Zet hiernaast een maatregel aan</p>
             ) : (
               <>
-                <div
-                  className="mt-4 grid grid-cols-3 gap-2 pt-4"
-                  style={{ borderTop: "1px solid hsl(var(--primary) / 0.12)" }}
-                >
+                <div className="vd-inzet mt-4 grid grid-cols-3 gap-2 px-2 py-3">
                   <Cijfer
                     waarde={`${totaal.m3PerJaar.toLocaleString("nl-NL")} m³`}
                     label="gas minder"
@@ -242,7 +211,7 @@ export const WoningSchil = () => {
                     label="terugverdiend"
                   />
                 </div>
-                <p className="mt-3 text-[12px]" style={{ color: KLEUR.navy, opacity: 0.6 }}>
+                <p className="mt-3 mb-0 text-[13px] text-[hsl(var(--rs-tekst-zacht))]">
                   Investering en terugverdientijd zijn vóór subsidie.
                 </p>
               </>
@@ -250,11 +219,8 @@ export const WoningSchil = () => {
           </div>
 
           {gevelDubbel && (
-            <p
-              className="mt-3 text-[13px] leading-relaxed"
-              style={{ color: KLEUR.navy, opacity: 0.7 }}
-            >
-              <strong>De gevel telt één keer mee.</strong> Spouwmuurisolatie en
+            <p className="vd-tekst mt-3 mb-0 text-[14px]">
+              <strong className="text-primary">De gevel telt één keer mee.</strong> Spouwmuurisolatie en
               gevelisolatie gaan over dezelfde muur. Je kunt ze prima combineren, maar je
               komt dan op dezelfde geïsoleerde gevel uit, dus de besparing verdubbelt niet:
               de teller rekent met het hoogste van de twee. Wat de spouw vullen wél doet, is
@@ -275,76 +241,48 @@ export const WoningSchil = () => {
               // en een knop in een knop is ongeldige HTML.
               <div
                 key={m.id}
-                className="maatregel-kaart rounded-2xl"
-                style={{
-                  backgroundColor: aan ? "hsl(var(--accent) / 0.12)" : KLEUR.wit,
-                  border: `1px solid ${aan ? "hsl(var(--accent) / 0.5)" : KLEUR.rand}`,
-                }}
+                className={`hs-tegel hs-klik rounded-[20px] md:rounded-[22px] ${aan ? "vd-oker" : ""}`}
               >
                 <button
                   type="button"
                   onClick={() => wissel(m.id)}
                   aria-pressed={aan}
-                  className="w-full rounded-2xl p-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="w-full rounded-[20px] p-4 text-left focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[hsl(var(--accent))] md:p-5"
                 >
-                  <span className="flex items-start gap-4">
+                  <span className="flex items-start gap-3.5 md:gap-4">
                     <span
-                      className="mt-0.5 flex items-center justify-center rounded-full shrink-0 transition-colors"
-                      style={{
-                        width: 26,
-                        height: 26,
-                        backgroundColor: aan ? KLEUR.goud : "transparent",
-                        border: `2px solid ${aan ? KLEUR.goud : "hsl(var(--primary) / 0.25)"}`,
-                      }}
+                      className={`mt-0.5 flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full transition-colors ${
+                        aan
+                          ? "hs-rondje-oker"
+                          : "bg-[hsl(var(--primary)/0.06)] shadow-[inset_0_1px_3px_hsl(var(--primary)/0.14)]"
+                      }`}
                     >
-                      {aan && <Check size={15} color={KLEUR.navy} strokeWidth={3} aria-hidden="true" />}
+                      {aan && <Check size={15} className="text-primary" strokeWidth={3} aria-hidden="true" />}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                         <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                          <span className="text-[17px] font-semibold" style={{ color: KLEUR.navy }}>
-                            {m.naam}
-                          </span>
-                          {m.id === snelste && (
-                            <span
-                              className="rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide whitespace-nowrap"
-                              style={{
-                                backgroundColor: "hsl(var(--accent) / 0.3)",
-                                color: KLEUR.navy,
-                              }}
-                            >
-                              Snelst terugverdiend
-                            </span>
-                          )}
+                          <span className="hs-h3">{m.naam}</span>
+                          {m.id === snelste && <span className="vd-pil">Snelst terugverdiend</span>}
                         </span>
                         <span
-                          className="text-[15px] font-bold tabular-nums whitespace-nowrap"
-                          style={{ color: aan ? KLEUR.navy : "hsl(var(--primary) / 0.6)" }}
+                          className={`whitespace-nowrap text-[15px] font-extrabold tabular-nums ${
+                            aan ? "text-primary" : "text-[hsl(var(--rs-getal))]"
+                          }`}
                         >
                           {euro(t.euro)} per jaar
                         </span>
                       </span>
-                      <span
-                        className="mt-1.5 block text-[14px] leading-relaxed"
-                        style={{ color: KLEUR.navy, opacity: 0.75 }}
-                      >
-                        {m.kort}
-                      </span>
+                      <span className="vd-tekst mt-1 block text-[14.5px]">{m.kort}</span>
                       {aan && (
                         <span className="mt-3 block">
-                          <span
-                            className="block text-[14px] leading-relaxed"
-                            style={{ color: KLEUR.navy, opacity: 0.85 }}
-                          >
-                            <strong>Wat je merkt:</strong> {m.merkbaar}
+                          <span className="block text-[14.5px] leading-relaxed text-foreground">
+                            <strong className="text-primary">Wat je merkt:</strong> {m.merkbaar}
                           </span>
                           {/* De drie cijfers stonden als doorlopende zin in de
                               grijze regel eronder. Als strook zijn ze te
                               vergelijken tussen maatregelen zonder te lezen. */}
-                          <span
-                            className="mt-3 grid grid-cols-3 gap-2 rounded-lg px-3 py-2.5"
-                            style={{ backgroundColor: "hsl(var(--primary) / 0.05)" }}
-                          >
+                          <span className="vd-inzet mt-3 grid grid-cols-3 gap-2 px-2 py-2.5">
                             <Cijfer waarde={`${t.m3} m³`} label="gas per jaar" klein />
                             <Cijfer waarde={euro(t.kosten)} label="investering" klein />
                             <Cijfer
@@ -353,10 +291,7 @@ export const WoningSchil = () => {
                               klein
                             />
                           </span>
-                          <span
-                            className="mt-2 block text-[13px] leading-relaxed"
-                            style={{ color: KLEUR.navy, opacity: 0.6 }}
-                          >
+                          <span className="mt-2 block text-[13.5px] leading-relaxed text-[hsl(var(--rs-tekst-zacht))]">
                             {m.uitgangspunt}
                             {m.noot ? ` ${m.noot}` : ""}
                           </span>
@@ -371,7 +306,7 @@ export const WoningSchil = () => {
                   // triple staat in de FAQ verderop: Milieu Centraal komt voor
                   // allebei op dezelfde besparing uit, dus als knop hier vroeg
                   // hij vooral om uitleg waarom er niets gebeurt.
-                  <div className="px-5 pb-5 pl-[60px]">
+                  <div className="px-4 pb-4 pl-[56px] md:px-5 md:pb-5 md:pl-[62px]">
                     <Keuzerij
                       label="Wat zit er nu in?"
                       opties={m.keuzes.startpunt}
@@ -387,8 +322,7 @@ export const WoningSchil = () => {
           <button
             type="button"
             onClick={alles}
-            className="self-start text-[14px] font-semibold underline underline-offset-4 transition-colors"
-            style={{ color: KLEUR.navy, opacity: 0.7 }}
+            className="inline-flex min-h-[32px] items-center self-start text-[14.5px] font-bold text-primary underline underline-offset-4"
           >
             {allesAan ? "Alles uitzetten" : "Alles aanzetten"}
           </button>
@@ -398,54 +332,40 @@ export const WoningSchil = () => {
       {/* De regelingen horen hier, bij de bedragen waar ze nog niet in zitten.
           Ze stonden ook als losse sectie een paar schermen verderop, en dat was
           hetzelfde verhaal een tweede keer. */}
-      <div
-        className="mt-8 rounded-2xl p-5 md:p-6"
-        style={{
-          backgroundColor: "hsl(var(--accent) / 0.12)",
-          border: `1px solid hsl(var(--accent) / 0.4)`,
-        }}
-      >
-        <p className="text-[15px] leading-relaxed" style={{ color: KLEUR.navy, margin: 0 }}>
-          <strong>Hier staat nog geen subsidie in.</strong> Isolatie is wel een van de best
+      <div className="hs-tegel hs-groen mt-6 p-5 md:mt-8 md:p-6">
+        <p className="m-0 text-[15px] leading-relaxed text-foreground">
+          <strong className="text-primary">Hier staat nog geen subsidie in.</strong> Isolatie is wel een van de best
           gesubsidieerde maatregelen die er zijn. Welke regeling voor jou geldt hangt af van je
           adres: in Groningen en Noord-Drenthe loopt dat anders dan in de rest van het land, en
           gemeenten hebben er vaak nog een eigen regeling naast.
         </p>
-        <ul
-          className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-2.5"
-          style={{ listStyle: "none", padding: 0, margin: "16px 0 0 0" }}
-        >
+        <ul className="mx-0 mb-0 mt-4 grid list-none grid-cols-1 gap-x-8 gap-y-2.5 p-0 md:grid-cols-3">
           {REGELINGEN.map((regeling) => (
             <li key={regeling} className="flex items-start gap-2.5">
               <Check
                 size={16}
-                className="mt-[3px] shrink-0"
-                style={{ color: KLEUR.navy }}
-                strokeWidth={2.5}
+                className="mt-[3px] shrink-0 text-[hsl(var(--subsidie))]"
+                strokeWidth={2.6}
                 aria-hidden="true"
               />
-              <span style={{ fontSize: 14.5, lineHeight: 1.5, color: KLEUR.navy, opacity: 0.85 }}>
+              <span className="text-[14.5px] leading-[1.5] text-foreground">
                 {regeling}
               </span>
             </li>
           ))}
         </ul>
-        <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
-          <a
-            href="/subsidies/stapelen"
-            className="inline-flex items-center gap-2 text-[15px] font-semibold underline-offset-4 transition-colors hover:underline"
-            style={{ color: KLEUR.navy }}
-          >
+        <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-1">
+          <a href="/subsidies/stapelen" className="hs-pijl-link">
             Bekijk hoe je subsidies stapelt
-            <ArrowRight size={16} aria-hidden="true" />
+            <ArrowRight size={17} strokeWidth={2.2} className="hs-pijl" aria-hidden="true" />
           </a>
-          <span className="text-[14px]" style={{ color: KLEUR.navy, opacity: 0.7 }}>
+          <span className="vd-tekst text-[14px]">
             Of doe de subsidiecheck hieronder, dan zie je wat er voor jouw adres is.
           </span>
         </div>
       </div>
 
-      <p className="mt-4 text-[13px]" style={{ color: KLEUR.navy, opacity: 0.55 }}>
+      <p className="mt-4 mb-0 text-[13.5px] leading-relaxed text-[hsl(var(--rs-tekst-zacht))]">
         Besparingen en kosten zijn gemiddelden van{" "}
         <a
           href={BRON.url}
@@ -475,17 +395,11 @@ const Cijfer = ({
 }) => (
   <span className="block text-center">
     <span
-      className="block font-semibold tabular-nums leading-tight"
-      style={{ color: KLEUR.navy, fontSize: klein ? 14 : 16 }}
+      className={`block font-extrabold tabular-nums leading-tight text-primary ${klein ? "text-[14px]" : "text-[16px]"}`}
     >
       {waarde}
     </span>
-    <span
-      className="mt-0.5 block leading-tight"
-      style={{ color: KLEUR.navy, opacity: 0.6, fontSize: klein ? 11 : 12 }}
-    >
-      {label}
-    </span>
+    <span className="mt-0.5 block text-[12px] leading-tight text-[hsl(var(--rs-tekst-zacht))]">{label}</span>
   </span>
 );
 
@@ -509,13 +423,8 @@ const SchilBalk = ({
 }) => (
   <div className="mt-5">
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-      <span
-        className="text-[12px] font-bold uppercase tracking-wider"
-        style={{ color: KLEUR.navy, opacity: 0.6 }}
-      >
-        Schil dicht
-      </span>
-      <span className="text-[13px] font-bold tabular-nums" style={{ color: KLEUR.navy }}>
+      <span className="vd-label text-[12px]">Schil dicht</span>
+      <span className="text-[13.5px] font-extrabold tabular-nums text-primary">
         {Math.round(aandeel * 100)}% van {euro(haalbaar)} per jaar
       </span>
     </div>
@@ -524,33 +433,25 @@ const SchilBalk = ({
       {delen.map((deel) => (
         <div
           key={deel.id}
-          className="h-2.5 rounded-full transition-colors duration-300"
-          style={{
-            flex: `${deel.euroMax} 1 0%`,
-            backgroundColor: deel.dicht ? KLEUR.goud : "hsl(var(--primary) / 0.1)",
-          }}
+          className={`h-2.5 rounded-full transition-colors duration-300 ${
+            deel.dicht ? "bg-accent" : "bg-[hsl(var(--primary)/0.1)]"
+          }`}
+          style={{ flex: `${deel.euroMax} 1 0%` }}
         />
       ))}
     </div>
 
-    <ul
-      className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1"
-      style={{ listStyle: "none", padding: 0, margin: "10px 0 0 0" }}
-    >
+    <ul className="mx-0 mb-0 mt-2.5 flex list-none flex-wrap gap-x-4 gap-y-1 p-0">
       {delen.map((deel) => (
         <li key={deel.id} className="flex items-center gap-1.5">
           <span
-            className="rounded-full transition-colors duration-300"
-            style={{
-              width: 8,
-              height: 8,
-              backgroundColor: deel.dicht ? KLEUR.goud : "hsl(var(--primary) / 0.18)",
-            }}
+            className={`h-2 w-2 rounded-full transition-colors duration-300 ${
+              deel.dicht ? "bg-accent" : "bg-[hsl(var(--primary)/0.18)]"
+            }`}
             aria-hidden="true"
           />
           <span
-            className="text-[13px]"
-            style={{ color: KLEUR.navy, opacity: deel.dicht ? 0.85 : 0.5 }}
+            className={`text-[13.5px] ${deel.dicht ? "font-bold text-primary" : "text-[hsl(var(--rs-tekst-zacht))]"}`}
           >
             {deel.label}
             <span className="sr-only">{deel.dicht ? " geïsoleerd" : " nog niet geïsoleerd"}</span>
@@ -562,7 +463,7 @@ const SchilBalk = ({
     {/* De bedragen per bouwdeel staan bewust niet in de legenda: die staan al in
         de teller en op de kaarten, en drie keer hetzelfde getal is ruis. Deze
         regel maakt in plaats daarvan de breedtes leesbaar. */}
-    <p className="mt-2 text-[12px]" style={{ color: KLEUR.navy, opacity: 0.55 }}>
+    <p className="mt-2 mb-0 text-[13px] text-[hsl(var(--rs-tekst-zacht))]">
       Elk deel is zo breed als zijn aandeel in wat je kunt besparen.
     </p>
   </div>
@@ -581,12 +482,7 @@ const Keuzerij = ({
   kies: (id: string) => void;
 }) => (
   <div className="flex flex-wrap items-center gap-2">
-    <span
-      className="mr-1 text-[13px] font-semibold"
-      style={{ color: KLEUR.navy, opacity: 0.65 }}
-    >
-      {label}
-    </span>
+    <span className="mr-1 text-[13.5px] font-bold text-[hsl(var(--rs-tekst-zacht))]">{label}</span>
     {opties.map((o) => {
       const aan = o.id === actief;
       return (
@@ -595,12 +491,7 @@ const Keuzerij = ({
           type="button"
           onClick={() => kies(o.id)}
           aria-pressed={aan}
-          className="rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          style={{
-            backgroundColor: aan ? KLEUR.navy : KLEUR.wit,
-            color: aan ? KLEUR.wit : KLEUR.navy,
-            border: `1px solid ${aan ? KLEUR.navy : KLEUR.rand}`,
-          }}
+          className="vd-keuze min-h-[36px] px-3 text-[13px]"
         >
           {o.label}
         </button>

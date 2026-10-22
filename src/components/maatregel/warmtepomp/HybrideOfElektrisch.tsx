@@ -1,6 +1,5 @@
 import { BRONNEN, CV_KETEL_AANVOER, euro, SYSTEMEN } from "@/data/warmtepomp";
 import { Accent, SectieKop } from "@/components/maatregel/primitieven";
-import { KLEUR } from "@/components/maatregel/stijl";
 
 /**
  * De vraag waarmee bezoekers binnenkomen: hybride of volledig elektrisch.
@@ -40,62 +39,31 @@ export const HybrideOfElektrisch = () => (
       <SectieKop center>
         <Accent tekst="Hybride of volledig [[elektrisch]]?" />
       </SectieKop>
-      <p
-        className="mt-4 mx-auto text-base leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 640 }}
-      >
+      <p className="vd-lead mx-auto mt-3 max-w-[640px]">
         Deze keuze hangt minder aan je budget dan aan je woning. Een hybride werkt vrijwel overal,
         volledig elektrisch vraagt een geïsoleerd huis.
       </p>
     </div>
 
-    <div
-      className="mt-10 rounded-2xl overflow-hidden"
-      style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-    >
+    {/* Eén tegel zonder lijnen: de koppen als getinte vakken, de rijen als
+        zebra. */}
+    <div className="hs-tegel mt-7 p-2 md:mt-10 md:p-3" data-veer>
       {/* Kop: de twee systemen met hun aanschafprijs */}
-      <div className={`grid grid-cols-1 ${KOLOMMEN}`}>
-        <div className="hidden md:block" style={{ backgroundColor: KLEUR.zand }} />
-        {SYSTEMEN.map((s, i) => (
+      <div className={`grid grid-cols-1 gap-2 md:gap-3 ${KOLOMMEN}`}>
+        <div className="hidden md:block" />
+        {SYSTEMEN.map((s) => (
           <div
             key={s.id}
-            // Op mobiel staan de twee koppen onder elkaar op dezelfde
-            // achtergrond; zonder streepje lopen ze in elkaar over.
             // Kolom met het prijsvak onderaan: de ene omschrijving loopt over
             // twee regels en de andere niet, en dan staan de bedragen scheef.
-            className={`p-6 md:p-7 flex flex-col ${i > 0 ? "border-t md:border-t-0" : ""}`}
-            style={{ backgroundColor: KLEUR.zand, borderTopColor: KLEUR.rand }}
+            className="hs-blauw-zacht flex flex-col rounded-[18px] p-5 md:rounded-[22px] md:p-6"
           >
-            <h3
-              className="text-[19px] font-semibold"
-              style={{ color: KLEUR.navy, margin: 0, lineHeight: 1.3 }}
-            >
-              {s.naam}
-            </h3>
-            <p
-              className="text-[15px] leading-relaxed"
-              style={{ color: KLEUR.navy, opacity: 0.78, margin: "10px 0 0 0" }}
-            >
-              {s.kort}
-            </p>
-            <div
-              className="mt-5 md:mt-auto rounded-xl px-4 py-3"
-              style={{
-                backgroundColor: "hsl(var(--accent) / 0.14)",
-                border: "1px solid hsl(var(--accent) / 0.4)",
-              }}
-            >
-              <span className="label-eyebrow">Aanschaf vóór subsidie</span>
-              <div
-                className="font-display mt-1 tabular-nums"
-                style={{ color: KLEUR.navy, fontWeight: 700, fontSize: 28, lineHeight: 1.1 }}
-              >
-                {euro(s.aanschaf)}
-              </div>
-              <p
-                className="text-[13px] leading-relaxed"
-                style={{ color: KLEUR.navy, opacity: 0.7, margin: "8px 0 0 0" }}
-              >
+            <h3 className="hs-h3 m-0">{s.naam}</h3>
+            <p className="vd-tekst mb-0 mt-2">{s.kort}</p>
+            <div className="vd-wit vd-oker mt-4 px-4 py-3 md:mt-auto">
+              <span className="vd-label text-[12px]">Aanschaf vóór subsidie</span>
+              <div className="vd-getal mt-1 text-[28px] text-primary">{euro(s.aanschaf)}</div>
+              <p className="mb-0 mt-2 text-[13.5px] leading-relaxed text-[hsl(var(--rs-tekst-zacht))]">
                 {s.aanschafNoot}
               </p>
             </div>
@@ -104,50 +72,34 @@ export const HybrideOfElektrisch = () => (
       </div>
 
       {/* De vergelijking zelf */}
-      {RIJEN.map((rij) => (
-        <div key={rij.label} className={`grid grid-cols-1 ${KOLOMMEN}`}>
-          <div
-            className="px-6 pt-6 pb-2 md:py-6 md:px-7"
-            style={{ borderTop: `1px solid ${KLEUR.rand}`, backgroundColor: KLEUR.zand }}
-          >
-            <span className="label-eyebrow">{rij.label}</span>
-          </div>
-          {SYSTEMEN.map((s) => (
-            <div
-              key={s.id}
-              className="px-6 pb-5 md:py-5 md:px-7 md:border-t"
-              style={{ borderTopColor: KLEUR.rand }}
-            >
-              {/* Op mobiel staan de twee waarden onder elkaar, dus dan is een
-                  kort label nodig om ze uit elkaar te houden. Op desktop doet
-                  de kolomkop dat werk al. */}
-              <span
-                className="md:hidden mb-1 block text-[11px] font-bold uppercase tracking-wider"
-                style={{ color: KLEUR.navy, opacity: 0.45 }}
-              >
-                {s.id === "hybride" ? "Hybride" : "Volledig elektrisch"}
-              </span>
-              <span
-                className="block text-[16px] font-semibold"
-                style={{ color: KLEUR.navy, lineHeight: 1.4 }}
-              >
-                {s[rij.veld].kern}
-              </span>
-              {s[rij.veld].toelichting && (
-                <span
-                  className="mt-1 block text-[14px] leading-relaxed"
-                  style={{ color: KLEUR.navy, opacity: 0.65 }}
-                >
-                  {s[rij.veld].toelichting}
-                </span>
-              )}
+      <div className="vd-zebra mt-2 md:mt-3">
+        {RIJEN.map((rij) => (
+          <div key={rij.label} className={`grid grid-cols-1 ${KOLOMMEN}`}>
+            <div className="px-4 pb-1 pt-4 md:px-6 md:py-5">
+              <span className="vd-label text-[12.5px]">{rij.label}</span>
             </div>
-          ))}
-        </div>
-      ))}
+            {SYSTEMEN.map((s) => (
+              <div key={s.id} className="px-4 pb-4 md:px-6 md:py-5">
+                {/* Op mobiel staan de twee waarden onder elkaar, dus dan is een
+                    kort label nodig om ze uit elkaar te houden. Op desktop doet
+                    de kolomkop dat werk al. */}
+                <span className="mb-0.5 block text-[12px] font-bold text-[hsl(var(--rs-getal))] md:hidden">
+                  {s.id === "hybride" ? "Hybride" : "Volledig elektrisch"}
+                </span>
+                <span className="block text-[16px] font-bold leading-[1.4] text-primary">
+                  {s[rij.veld].kern}
+                </span>
+                {s[rij.veld].toelichting && (
+                  <span className="vd-tekst mt-1 block text-[14px]">{s[rij.veld].toelichting}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
 
-    <p className="mt-5 text-[13px] leading-relaxed" style={{ color: KLEUR.navy, opacity: 0.55 }}>
+    <p className="mb-0 mt-5 text-[13.5px] leading-relaxed text-[hsl(var(--rs-tekst-zacht))]">
       Een cv-ketel staat ter vergelijking meestal op {CV_KETEL_AANVOER}. Bedragen en eisen van{" "}
       <a
         href={BRONNEN.elektrisch.url}

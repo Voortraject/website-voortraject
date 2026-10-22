@@ -1,8 +1,7 @@
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { BRONNEN, PANEEL, SALDERING } from "@/data/zonnepanelen";
-import { Accent, SectieKop } from "@/components/maatregel/primitieven";
-import { KLEUR } from "@/components/maatregel/stijl";
+import { Accent, NummerRondje, SectieKop } from "@/components/maatregel/primitieven";
 
 /**
  * Onafhankelijk advies bij het aanvragen van offertes, plus de doorverwijzing
@@ -57,82 +56,48 @@ export const OfferteEnCombineren = () => (
       <SectieKop center>
         <Accent tekst="Waar je op let bij een [[offerte]]" />
       </SectieKop>
-      <p
-        className="mt-4 mx-auto text-base leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 640 }}
-      >
+      <p className="vd-lead mx-auto mt-3 max-w-[640px]">
         Offertes voor zonnepanelen lijken sterk op elkaar. Deze vier punten zijn waar ze echt van
         elkaar verschillen.
       </p>
     </div>
 
-    <div
-      className="mt-10 rounded-2xl p-6 md:p-8"
-      style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-    >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
-        {LETTEN.map((punt) => (
-          <div key={punt.kop} className="flex items-start gap-3">
-            <Check
-              size={17}
-              className="mt-[4px] shrink-0"
-              style={{ color: KLEUR.goud }}
-              strokeWidth={2.5}
-              aria-hidden="true"
-            />
-            <div>
-              <span className="block text-[16px] font-semibold" style={{ color: KLEUR.navy }}>
-                {punt.kop}
-              </span>
-              <span
-                className="mt-1 block text-[14.5px] leading-relaxed"
-                style={{ color: KLEUR.navy, opacity: 0.7 }}
-              >
-                {punt.tekst}
-              </span>
+    <div className="hs-tegel hs-blauw-zacht mt-7 p-5 md:mt-10 md:p-8" data-veer>
+      <div className="grid grid-cols-1 gap-x-10 gap-y-5 md:grid-cols-2 md:gap-y-6">
+        {LETTEN.map((punt, i) => (
+          <div key={punt.kop} className="flex items-start gap-3.5">
+            <NummerRondje n={i + 1} size={32} />
+            <div className="min-w-0">
+              <span className="hs-h3 block pt-1">{punt.kop}</span>
+              <span className="vd-tekst mt-1 block">{punt.tekst}</span>
             </div>
           </div>
         ))}
       </div>
     </div>
 
-    <div
-      className="mt-6 rounded-2xl p-6 md:p-8"
-      style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-    >
+    <div className="hs-tegel hs-zand mt-4 p-5 md:mt-6 md:p-8" data-veer>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-8">
-        <span className="label-eyebrow">Meer zelf gebruiken</span>
-        <span
-          className="text-[14px] leading-relaxed"
-          style={{ color: KLEUR.navy, opacity: 0.65, maxWidth: 560 }}
-        >
+        <span className="vd-label">Meer zelf gebruiken</span>
+        <span className="vd-tekst max-w-[560px] text-[14px]">
           Zodra salderen op {SALDERING.stopt} stopt, verdien je je panelen vooral terug met de
           stroom die je zelf gebruikt. Deze drie helpen daarbij.
         </span>
       </div>
-      <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:mt-6 sm:grid-cols-3 sm:gap-6">
         {COMBINEERT.map((item) => (
           <div key={item.href}>
-            <a
-              href={item.href}
-              className="inline-flex items-center gap-2 text-[16px] font-semibold underline-offset-4 transition-colors hover:underline"
-              style={{ color: KLEUR.navy }}
-            >
+            <a href={item.href} className="hs-pijl-link text-[16px]">
               {item.label}
-              <ArrowRight size={15} aria-hidden="true" />
+              <ArrowRight size={17} strokeWidth={2.2} className="hs-pijl" aria-hidden="true" />
             </a>
-            <span
-              className="mt-1 block text-[14px] leading-relaxed"
-              style={{ color: KLEUR.navy, opacity: 0.65 }}
-            >
-              {item.tekst}
-            </span>
+            <span className="vd-tekst block text-[14px]">{item.tekst}</span>
           </div>
         ))}
       </div>
     </div>
 
-    <p className="mt-5 text-[13px] leading-relaxed" style={{ color: KLEUR.navy, opacity: 0.55 }}>
+    <p className="vd-tekst mb-0 mt-4 text-[13.5px] md:mt-5">
       Dat leveranciers alleen de kosten mogen doorrekenen die zij zelf maken om teruggeleverde
       stroom te verwerken, staat bij de{" "}
       <a

@@ -1,6 +1,5 @@
 import { BRONNEN, KALENDER, type Uitvoerder } from "@/data/onderhoud";
 import { Accent, SectieKop } from "@/components/maatregel/primitieven";
-import { KLEUR } from "@/components/maatregel/stijl";
 
 /**
  * Het hart van de pagina: per installatie wat er moet gebeuren, wanneer, wie
@@ -15,18 +14,15 @@ import { KLEUR } from "@/components/maatregel/stijl";
  * van een beurt, geen apart onderwerp.
  */
 
-const WIE: Record<Uitvoerder, { label: string; bg: string; fg: string; rand: string }> = {
+// Zelf in oker, specialist in inktblauw: tinten, geen rand.
+const WIE: Record<Uitvoerder, { label: string; klasse: string }> = {
   zelf: {
     label: "Zelf",
-    bg: "hsl(var(--accent) / 0.18)",
-    fg: KLEUR.navy,
-    rand: "hsl(var(--accent) / 0.45)",
+    klasse: "bg-[hsl(var(--accent)/0.3)]",
   },
   specialist: {
     label: "Specialist",
-    bg: "hsl(var(--primary) / 0.07)",
-    fg: KLEUR.navy,
-    rand: "hsl(var(--primary) / 0.18)",
+    klasse: "bg-[hsl(var(--rs-hoofd-van))]",
   },
 };
 
@@ -34,8 +30,7 @@ const WieMerk = ({ wie }: { wie: Uitvoerder }) => {
   const stijl = WIE[wie];
   return (
     <span
-      className="inline-flex items-center rounded-full px-3 py-1 text-[12.5px] font-bold uppercase tracking-wider whitespace-nowrap"
-      style={{ backgroundColor: stijl.bg, color: stijl.fg, border: `1px solid ${stijl.rand}` }}
+      className={`inline-flex min-h-[26px] items-center whitespace-nowrap rounded-full px-3 text-[12.5px] font-extrabold uppercase tracking-wider text-primary ${stijl.klasse}`}
     >
       {stijl.label}
     </span>
@@ -48,93 +43,53 @@ export const Onderhoudskalender = () => (
       <SectieKop center>
         <Accent tekst="De [[onderhoudskalender]]" />
       </SectieKop>
-      <p
-        className="mt-4 mx-auto text-base leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 680 }}
-      >
+      <p className="vd-lead mx-auto mt-3 max-w-[680px]">
         Per installatie wat er moet gebeuren, hoe vaak, wie het doet en waarom. Sla over wat je niet
         hebt; de meeste woningen hebben er twee of drie van deze vijf.
       </p>
     </div>
 
-    <div className="mt-10 flex flex-col gap-5">
+    <div className="mt-7 flex flex-col gap-4 md:mt-10 md:gap-5">
       {KALENDER.map((installatie) => (
-        <div
-          key={installatie.id}
-          className="rounded-2xl overflow-hidden"
-          style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-        >
-          <div
-            className="px-6 py-5 md:px-8 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
-            style={{ backgroundColor: KLEUR.zand, borderBottom: `1px solid ${KLEUR.rand}` }}
-          >
-            <h3
-              className="text-[18px] font-semibold"
-              style={{ color: KLEUR.navy, margin: 0, lineHeight: 1.3 }}
-            >
-              {installatie.naam}
-            </h3>
-            <span
-              className="text-[14px] sm:text-right"
-              style={{ color: KLEUR.navy, opacity: 0.6 }}
-            >
-              {installatie.herkenbaarAan}
-            </span>
+        <div key={installatie.id} className="hs-tegel hs-blauw-zacht p-2 md:p-3" data-veer>
+          <div className="flex flex-col gap-0.5 px-3 pb-2 pt-3 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6 md:px-5 md:pt-4">
+            <h3 className="hs-h3 m-0">{installatie.naam}</h3>
+            <span className="vd-tekst text-[14px] sm:text-right">{installatie.herkenbaarAan}</span>
           </div>
 
-          {installatie.beurten.map((beurt, i) => (
-            <div
-              key={beurt.wat}
-              className="px-6 py-5 md:px-8 grid grid-cols-1 md:grid-cols-[1fr_210px_110px] gap-2 md:gap-8 md:items-baseline"
-              style={{ borderTop: i === 0 ? "none" : `1px solid ${KLEUR.rand}` }}
-            >
-              <div className="min-w-0">
-                <span
-                  className="block text-[16px] font-semibold"
-                  style={{ color: KLEUR.navy, lineHeight: 1.4 }}
-                >
-                  {beurt.wat}
-                </span>
-                <span
-                  className="mt-1 block text-[14.5px] leading-relaxed"
-                  style={{ color: KLEUR.navy, opacity: 0.65 }}
-                >
-                  {beurt.waarom}
-                </span>
-              </div>
-              <span
-                className="text-[15px] font-medium md:tabular-nums"
-                style={{ color: KLEUR.navy, opacity: 0.85 }}
+          {/* Rijen in zebra in plaats van lijnen ertussen. */}
+          <div className="vd-zebra grid gap-1">
+            {installatie.beurten.map((beurt) => (
+              <div
+                key={beurt.wat}
+                className="grid grid-cols-1 gap-2 bg-card/60 px-3 py-3.5 md:grid-cols-[1fr_210px_110px] md:items-baseline md:gap-8 md:px-5 md:py-4"
               >
-                {beurt.wanneer}
-              </span>
-              {/* Op mobiel onder elkaar; het merkteken staat dan links, waar het
-                  oog na de termijn toch al is. */}
-              <span className="md:justify-self-end">
-                <WieMerk wie={beurt.wie} />
-              </span>
-            </div>
-          ))}
+                <div className="min-w-0">
+                  <span className="block text-[16px] font-bold leading-[1.4] text-primary">{beurt.wat}</span>
+                  <span className="vd-tekst mt-0.5 block text-[14.5px]">{beurt.waarom}</span>
+                </div>
+                {/* Op mobiel staan termijn en merkteken samen op één regel; op
+                    groot scherm zijn het twee eigen kolommen. */}
+                <div className="flex items-center justify-between gap-3 md:contents">
+                  <span className="text-[15px] font-semibold text-foreground md:tabular-nums">
+                    {beurt.wanneer}
+                  </span>
+                  <span className="shrink-0 md:justify-self-end">
+                    <WieMerk wie={beurt.wie} />
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
 
           {installatie.voorbehoud && (
-            <p
-              className="px-6 py-4 md:px-8 text-[14px] leading-relaxed"
-              style={{
-                backgroundColor: KLEUR.zand,
-                borderTop: `1px solid ${KLEUR.rand}`,
-                color: KLEUR.navy,
-                opacity: 0.7,
-                margin: 0,
-              }}
-            >
-              {installatie.voorbehoud}
-            </p>
+            <p className="vd-tekst m-0 px-3 pb-2 pt-3 text-[14px] md:px-5">{installatie.voorbehoud}</p>
           )}
         </div>
       ))}
     </div>
 
-    <p className="mt-6 text-[13px] leading-relaxed" style={{ color: KLEUR.navy, opacity: 0.55 }}>
+    <p className="vd-tekst mb-0 mt-5 text-[13.5px] md:mt-6">
       Termijnen van{" "}
       <a
         href={BRONNEN.balansventilatie.url}

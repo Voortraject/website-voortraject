@@ -1,8 +1,8 @@
 import { ArrowRight, Check, ShieldCheck, Wrench } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { Accent, IconCirkel, Kaart, KaartTekst, KaartTitel, SectieIntro, SectieKop } from "./primitieven";
-import { KLEUR } from "./stijl";
+import { Accent, IconCirkel, Kaart, KaartTekst, KaartTitel, NummerRondje, SectieIntro, SectieKop } from "./primitieven";
 
 /* ------------------------------------------------------------------ *
  * Wat valt hieronder
@@ -26,34 +26,21 @@ export const WatValtEronder = ({
   intro?: string;
   items: string[];
 }) => (
-  <div
-    className="rounded-2xl p-6 md:p-8"
-    style={{ backgroundColor: KLEUR.zand, border: `1px solid ${KLEUR.rand}` }}
-  >
+  <div className="hs-tegel hs-zand p-5 md:p-8" data-veer>
     <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
-      <span className="label-eyebrow">{kop.replace(/\[\[|\]\]/g, "")}</span>
-      {intro && (
-        <span className="text-[14px]" style={{ color: KLEUR.navy, opacity: 0.6 }}>
-          {intro}
-        </span>
-      )}
+      <span className="vd-label">{kop.replace(/\[\[|\]\]/g, "")}</span>
+      {intro && <span className="vd-tekst text-[14px]">{intro}</span>}
     </div>
-    <ul
-      className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-3.5"
-      style={{ listStyle: "none", padding: 0, margin: "20px 0 0 0" }}
-    >
+    <ul className="mt-5 grid list-none grid-cols-1 gap-x-10 gap-y-3.5 p-0 sm:grid-cols-2 lg:grid-cols-3">
       {items.map((item) => (
         <li key={item} className="flex items-start gap-3">
           <Check
             size={17}
-            className="mt-[3px] shrink-0"
-            style={{ color: KLEUR.goud }}
-            strokeWidth={2.5}
+            className="mt-[3px] shrink-0 text-[hsl(var(--subsidie))]"
+            strokeWidth={2.6}
             aria-hidden="true"
           />
-          <span style={{ fontSize: 15.5, lineHeight: 1.55, color: KLEUR.navy, opacity: 0.85 }}>
-            {item}
-          </span>
+          <span className="text-[15.5px] leading-[1.55] text-foreground">{item}</span>
         </li>
       ))}
     </ul>
@@ -66,8 +53,8 @@ export const WatValtEronder = ({
 
 /**
  * "Waar wij in de praktijk op letten". Ook dit stond al op elke pagina
- * (`aandachtspunten`) en werd niet getoond, terwijl het juist het onafhankelijke
- * advies is waar Voortraject op wordt beoordeeld.
+ * (`aandachtspunten`) en werd niet getoond, terwijl het juist het advies is
+ * waar Voortraject op wordt beoordeeld.
  */
 export const Aandachtspunten = ({
   kop = "Waar wij in de praktijk op [[letten]]",
@@ -78,46 +65,23 @@ export const Aandachtspunten = ({
 }) => (
   <>
     <div className="text-center">
-      <SectieKop center><Accent tekst={kop} /></SectieKop>
+      <SectieKop center>
+        <Accent tekst={kop} />
+      </SectieKop>
     </div>
-    {/* Eén paneel met genummerde regels in plaats van losse kaarten in een
+    {/* Eén tegel met genummerde regels in plaats van losse kaarten in een
         raster. Een raster laat bij drie of vijf punten een gat vallen en de
         korte teksten zwemmen dan in te brede kaarten. Als doorlopende lijst
-        oogt het compleet bij elk aantal en leest het als advies. */}
+        oogt het compleet bij elk aantal en leest het als advies. Inktblauwe
+        rondjes in plaats van lijnen tussen de regels. */}
     <ol
-      className="mt-10 mx-auto max-w-[880px] rounded-2xl overflow-hidden"
-      style={{
-        backgroundColor: KLEUR.wit,
-        border: `1px solid ${KLEUR.rand}`,
-        listStyle: "none",
-        padding: 0,
-        margin: "40px auto 0 auto",
-      }}
+      className="hs-tegel hs-blauw-zacht mx-auto mt-7 grid max-w-[880px] list-none gap-5 p-5 md:mt-10 md:gap-6 md:p-8"
+      data-veer
     >
       {items.map((item, i) => (
-        <li
-          key={item}
-          className="flex items-baseline gap-5 px-6 py-5 md:px-8"
-          style={{
-            borderTop: i === 0 ? "none" : `1px solid ${KLEUR.rand}`,
-          }}
-        >
-          <span
-            className="font-display shrink-0 tabular-nums"
-            style={{
-              color: KLEUR.goud,
-              fontWeight: 700,
-              fontSize: 26,
-              lineHeight: 1,
-              width: 30,
-            }}
-            aria-hidden="true"
-          >
-            {String(i + 1).padStart(2, "0")}
-          </span>
-          <span style={{ fontSize: 16, lineHeight: 1.6, color: KLEUR.navy, opacity: 0.85 }}>
-            {item}
-          </span>
+        <li key={item} className="flex items-start gap-4">
+          <NummerRondje n={i + 1} />
+          <span className="pt-1.5 text-[16px] leading-[1.6] text-foreground">{item}</span>
         </li>
       ))}
     </ol>
@@ -136,42 +100,27 @@ export interface KeurmerkenData {
 }
 
 /**
- * Certificeringen die bij deze maatregel horen. Nu zichtbaar als kaarten met
- * een schildicoon: het is een van de sterkste vertrouwenssignalen op deze
- * pagina's en het stond volledig verstopt.
+ * Certificeringen die bij deze maatregel horen, als tegels met een schildicoon:
+ * het is een van de sterkste vertrouwenssignalen op deze pagina's.
  */
 export const Keurmerken = ({ data }: { data: KeurmerkenData }) => (
   <>
     <div className="text-center">
-      <SectieKop center><Accent tekst={data.kop ?? "Let op [[keurmerken]] en certificeringen"} /></SectieKop>
+      <SectieKop center>
+        <Accent tekst={data.kop ?? "Let op [[keurmerken]] en certificeringen"} />
+      </SectieKop>
       <SectieIntro center>{data.intro}</SectieIntro>
     </div>
-    <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
+    <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2 md:mt-10 md:gap-5">
       {data.items.map((item) => (
-        <div
-          key={item}
-          className="rounded-2xl p-5 flex items-start gap-4"
-          style={{ backgroundColor: KLEUR.zand, border: `1px solid ${KLEUR.rand}` }}
-        >
-          <span
-            className="flex items-center justify-center rounded-full shrink-0"
-            style={{ width: 34, height: 34, backgroundColor: "hsl(var(--accent) / 0.2)" }}
-          >
-            <ShieldCheck size={18} color={KLEUR.navy} aria-hidden="true" />
-          </span>
-          <span style={{ fontSize: 15.5, lineHeight: 1.6, color: KLEUR.navy, opacity: 0.85 }}>
-            {item}
-          </span>
+        <div key={item} className="hs-tegel hs-blauw-zacht flex items-start gap-4 p-5" data-veer>
+          <IconCirkel Icon={ShieldCheck} size={36} />
+          <span className="pt-1 text-[15.5px] leading-[1.6] text-foreground">{item}</span>
         </div>
       ))}
     </div>
     {data.voetregel && (
-      <p
-        className="mt-7 text-center text-[15px] leading-relaxed mx-auto"
-        style={{ color: KLEUR.navy, opacity: 0.7, maxWidth: 640 }}
-      >
-        {data.voetregel}
-      </p>
+      <p className="vd-tekst mx-auto mt-6 max-w-[640px] text-center md:mt-7">{data.voetregel}</p>
     )}
   </>
 );
@@ -191,46 +140,24 @@ export const SubsidieBlok = ({
   linkHref?: string;
   linkLabel?: string;
 }) => (
-  <div className="grid grid-cols-1 md:grid-cols-5 gap-8 md:gap-12 items-start">
+  <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-5 md:gap-12">
     <div className="md:col-span-2">
-      <SectieKop><Accent tekst="Subsidies bij deze [[maatregel]]" /></SectieKop>
-      <p
-        className="mt-4 text-base leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.78 }}
-      >
-        {intro}
-      </p>
-      <a
-        href={linkHref}
-        className="mt-6 inline-flex items-center gap-2 text-[15px] font-semibold underline-offset-4 transition-colors hover:underline"
-        style={{ color: KLEUR.navy }}
-      >
+      <SectieKop>
+        <Accent tekst="Subsidies bij deze [[maatregel]]" />
+      </SectieKop>
+      <p className="vd-lead mt-3">{intro}</p>
+      <a href={linkHref} className="hs-pijl-link mt-4">
         {linkLabel}
-        <ArrowRight size={16} aria-hidden="true" />
+        <ArrowRight size={17} strokeWidth={2.2} className="hs-pijl" aria-hidden="true" />
       </a>
     </div>
     {items.length > 0 && (
       <div className="md:col-span-3">
-        <ul
-          className="flex flex-col gap-3"
-          style={{ listStyle: "none", padding: 0, margin: 0 }}
-        >
+        <ul className="m-0 flex list-none flex-col gap-3 p-0">
           {items.map((item) => (
-            <li
-              key={item}
-              className="flex items-start gap-3.5 rounded-2xl p-5"
-              style={{ backgroundColor: KLEUR.zand, border: `1px solid ${KLEUR.rand}` }}
-            >
-              <Check
-                size={18}
-                className="mt-[3px] shrink-0"
-                style={{ color: KLEUR.goud }}
-                strokeWidth={2.5}
-                aria-hidden="true"
-              />
-              <span style={{ fontSize: 15.5, lineHeight: 1.6, color: KLEUR.navy, opacity: 0.85 }}>
-                {item}
-              </span>
+            <li key={item} className="hs-tegel hs-groen flex items-start gap-3.5 p-5" data-veer>
+              <IconCirkel Icon={Check} kleur="groen" size={32} />
+              <span className="pt-0.5 text-[15.5px] leading-[1.6] text-foreground">{item}</span>
             </li>
           ))}
         </ul>
@@ -257,39 +184,20 @@ export const InfoBlok = ({
 }) => (
   <>
     <div className="text-center">
-      <SectieKop center><Accent tekst={kop} /></SectieKop>
+      <SectieKop center>
+        <Accent tekst={kop} />
+      </SectieKop>
       {intro && <SectieIntro center>{intro}</SectieIntro>}
     </div>
-    <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+    <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2 md:mt-10 md:gap-5 lg:grid-cols-4">
       {items.map((item, i) => (
-        <div
-          key={item}
-          className="rounded-2xl p-5"
-          style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-        >
-          <span
-            className="inline-flex items-center justify-center rounded-full text-[13px] font-bold"
-            style={{ width: 28, height: 28, backgroundColor: "hsl(var(--accent) / 0.2)", color: KLEUR.navy }}
-          >
-            {i + 1}
-          </span>
-          <p
-            className="mt-3 text-[15px] leading-relaxed"
-            style={{ color: KLEUR.navy, opacity: 0.85, margin: "12px 0 0 0" }}
-          >
-            {item}
-          </p>
+        <div key={item} className="hs-tegel hs-blauw-zacht flex items-start gap-4 p-5 sm:block" data-veer>
+          <NummerRondje n={i + 1} size={32} />
+          <p className="m-0 text-[15px] leading-relaxed text-foreground sm:mt-3">{item}</p>
         </div>
       ))}
     </div>
-    {voetregel && (
-      <p
-        className="mt-7 text-center text-[15px] leading-relaxed mx-auto"
-        style={{ color: KLEUR.navy, opacity: 0.7, maxWidth: 700 }}
-      >
-        {voetregel}
-      </p>
-    )}
+    {voetregel && <p className="vd-tekst mx-auto mt-6 max-w-[700px] text-center md:mt-7">{voetregel}</p>}
   </>
 );
 
@@ -300,7 +208,7 @@ export const LinkKaart = ({
   tekst,
   links,
 }: {
-  Icon?: React.ComponentType<{ size?: number; "aria-hidden"?: boolean }>;
+  Icon?: LucideIcon;
   kop: string;
   tekst: string;
   links: { label: string; href: string }[];
@@ -311,16 +219,11 @@ export const LinkKaart = ({
       <div className="min-w-0 flex-1">
         <KaartTitel>{kop}</KaartTitel>
         <KaartTekst>{tekst}</KaartTekst>
-        <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
+        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1">
           {links.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="inline-flex items-center gap-1.5 text-[15px] font-semibold underline-offset-4 transition-colors hover:underline"
-              style={{ color: KLEUR.navy }}
-            >
+            <a key={l.href} href={l.href} className="hs-pijl-link">
               {l.label}
-              <ArrowRight size={15} aria-hidden="true" />
+              <ArrowRight size={17} strokeWidth={2.2} className="hs-pijl" aria-hidden="true" />
             </a>
           ))}
         </div>
@@ -332,7 +235,9 @@ export const LinkKaart = ({
 /** Wrapper zodat een sectie één centrale kop met vrije inhoud kan hebben. */
 export const BlokMetKop = ({ kop, children }: { kop: string; children: ReactNode }) => (
   <>
-    <SectieKop><Accent tekst={kop} /></SectieKop>
-    <div className="mt-8">{children}</div>
+    <SectieKop>
+      <Accent tekst={kop} />
+    </SectieKop>
+    <div className="mt-7 md:mt-8">{children}</div>
   </>
 );
