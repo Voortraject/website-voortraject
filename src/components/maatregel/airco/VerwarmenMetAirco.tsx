@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Flame, Minus, Snowflake } from "lucide-react";
+import { AirVent, ArrowRight, Check, House, Minus } from "lucide-react";
 
 import { VERWARMEN } from "@/data/airco";
 import { Accent, IconCirkel, SectieKop } from "@/components/maatregel/primitieven";
@@ -25,7 +25,8 @@ export const VerwarmenMetAirco = () => (
       <div className="hs-tegel hs-groen p-5 md:p-7" data-veer>
         <div className="flex items-center justify-between gap-3">
           <span className="vd-label">Daar is hij goed in</span>
-          <IconCirkel Icon={Snowflake} kleur="groen" size={36} />
+          {/* De lijst gaat over verwarmen: geen sneeuwvlok, maar de airco zelf. */}
+          <IconCirkel Icon={AirVent} kleur="groen" size={36} />
         </div>
         <ul className="m-0 mt-4 flex list-none flex-col gap-3 p-0">
           {VERWARMEN.past.map((punt) => (
@@ -45,7 +46,8 @@ export const VerwarmenMetAirco = () => (
       <div className="hs-tegel hs-zand p-5 md:p-7" data-veer>
         <div className="flex items-center justify-between gap-3">
           <span className="vd-label">Daar hoort een warmtepomp</span>
-          <IconCirkel Icon={Flame} kleur="wit" size={36} />
+          {/* De hele woning, gasloos: een vlam zou precies het verkeerde zeggen. */}
+          <IconCirkel Icon={House} kleur="wit" size={36} />
         </div>
         <ul className="m-0 mt-4 flex list-none flex-col gap-3 p-0">
           {VERWARMEN.pastNiet.map((punt) => (
