@@ -25,8 +25,11 @@ const subsidieLinks = [
 type Link = { href: string; label: string };
 
 // Eén witte kaart per onderwerp: foto bovenin, dan titel, uitleg en de links als
-// chips. Op de telefoon zijn de chips kleiner, zodat ze per kaart in hooguit twee
-// regels passen, ook op 360 px.
+// chips. De chips staan per kaart in hooguit twee regels, op elke breedte. Op de
+// telefoon zijn ze kleiner (ook 360 px past). Tussen md en xl zijn drie kolommen
+// te smal voor twee regels (kaart 246 tot 270 px), dus daar liggen de kaarten
+// onder elkaar met de foto links. Pas vanaf xl drie kolommen, met chips van
+// 13 px: die passen in een kaart van 303 px precies in twee regels.
 const Kaart = ({
   src,
   alt,
@@ -42,26 +45,26 @@ const Kaart = ({
   links: Link[];
   children: ReactNode;
 }) => (
-  <article className="group hs-tegel hs-klik flex flex-col overflow-hidden" data-veer>
-    <div className="overflow-hidden">
+  <article className="group hs-tegel hs-klik flex flex-col overflow-hidden md:flex-row xl:flex-col" data-veer>
+    <div className="overflow-hidden md:w-[40%] md:shrink-0 xl:w-auto">
       <img
         src={src}
         alt={alt}
         loading="lazy"
         decoding="async"
-        className="h-[136px] w-full object-cover transition-transform duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none md:h-[220px] [@media(hover:hover)]:group-hover:scale-[1.03]"
+        className="h-[136px] w-full object-cover transition-transform duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none md:h-full md:min-h-[200px] xl:h-[220px] xl:min-h-0 [@media(hover:hover)]:group-hover:scale-[1.03]"
         style={objectPosition ? { objectPosition } : undefined}
       />
     </div>
-    <div className="px-5 pb-5 pt-[18px] max-[380px]:px-4">
+    <div className="px-5 pb-5 pt-[18px] max-[380px]:px-4 md:self-center md:px-7 md:py-6 xl:self-auto xl:px-5 xl:pb-5 xl:pt-[18px]">
       <h3 className="hs-h3">{titel}</h3>
       <p className="hs-tekst mt-1.5 text-[15px] leading-[1.6]">{children}</p>
-      <ul className="mt-3.5 flex flex-wrap gap-2 max-md:mt-3 max-md:gap-1.5 max-[380px]:gap-[5px]">
+      <ul className="mt-3.5 flex flex-wrap gap-2 max-md:mt-3 max-md:gap-1.5 max-[380px]:gap-[5px] md:gap-1.5">
         {links.map(({ href, label }) => (
           <li key={href}>
             <a
               href={href}
-              className="hs-chip focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary max-md:min-h-[30px] max-md:px-2.5 max-md:text-[12.5px] max-[380px]:px-2 max-[380px]:text-[11.5px]"
+              className="hs-chip focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary max-md:min-h-[30px] max-md:px-2.5 max-md:text-[12.5px] max-[380px]:px-2 max-[380px]:text-[11.5px] md:px-3 md:text-[13px]"
             >
               {label}
             </a>
@@ -83,7 +86,7 @@ export const WaarWeBijHelpen = () => {
           Waar we bij <span className="hs-accent">helpen</span>
         </h2>
 
-        <div className="mt-6 grid grid-cols-1 items-stretch gap-4 md:mt-10 md:grid-cols-3 md:gap-6">
+        <div className="mt-6 grid grid-cols-1 items-stretch gap-4 md:mt-10 md:gap-5 xl:grid-cols-3 xl:gap-6">
           {/* 1. Isolatie */}
           <Kaart
             src={fotoIsolatie}

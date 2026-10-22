@@ -73,11 +73,11 @@ export const GEMIDDELDE_REGELINGEN_ZIN = `Gemiddeld vinden we ${GEMIDDELD_AANTAL
  * ------------------------------------------------------------------ */
 
 /**
- * Vierkante meters isolatie in de offerteregels: 9.958 m² (dak 2.596,
- * gevel 3.698, vloer/zolder 2.499, glas 1.042). Geverifieerd 2026-09-08.
- * Getoond als "10.000+": de eerstvolgende ronde grens, waarbij de "+" de
- * groei sinds de meting dekt. Zakt het cijfer ooit, rond dan naar beneden
- * af.
+ * Vierkante meters isolatie die wij hebben geregeld. Op 2026-09-08 stond er
+ * 9.958 m² in de offerteregels (dak 2.596, gevel 3.698, vloer/zolder 2.499,
+ * glas 1.042), getoond als "10.000+". Op 2026-10-22 heeft de opdrachtgever
+ * het bijgesteld naar "20.000+": het oude cijfer was achterhaald. De "+" dekt
+ * de groei sinds die opgave. Zakt het cijfer ooit, rond dan naar beneden af.
  *
  * Het onderschrift zegt Noord-Nederland en niet Groningen en Drenthe.
  * Gemeten is er in Groningen en Drenthe, en dat ligt allebei in
@@ -85,7 +85,7 @@ export const GEMIDDELDE_REGELINGEN_ZIN = `Gemiddeld vinden we ${GEMIDDELD_AANTAL
  * bezoekers uit Friesland niet uit.
  */
 export const CIJFER_ISOLATIE = {
-  waarde: 10000,
+  waarde: 20000,
   achtervoegsel: "+",
   eenheid: "m²",
   onderschrift: "isolatie geregeld voor woningen in Noord-Nederland",
