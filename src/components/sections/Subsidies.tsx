@@ -1,5 +1,8 @@
-import { Fragment } from "react";
+import { Fragment, useRef } from "react";
 import { ArrowRight, Building2, Globe, Map, Plus } from "lucide-react";
+
+import { CtaButton } from "@/components/CtaButton";
+import { useStaffel } from "@/lib/beweging";
 
 const niveaus = [
   {
@@ -8,6 +11,8 @@ const niveaus = [
     body: "Zoals ISDE: een landelijke regeling die gewoon bovenop andere regelingen komt.",
     linkLabel: "Meer over landelijke subsidies",
     linkHref: "/subsidies/landelijk",
+    tint: "hs-blauw",
+    rondje: "hs-rondje-ink",
   },
   {
     icon: Map,
@@ -15,6 +20,8 @@ const niveaus = [
     body: "Zoals Nij Begun: vergoedt isolatie voor eigenaar-bewoners in Groningen en Noord-Drenthe.",
     linkLabel: "Meer over regionale subsidies",
     linkHref: "/subsidies/regionaal",
+    tint: "hs-tint-provincie",
+    rondje: "hs-rondje-provincie",
   },
   {
     icon: Building2,
@@ -22,74 +29,69 @@ const niveaus = [
     body: "Veel gemeenten hebben daarnaast een eigen bijdrageregeling.",
     linkLabel: "Meer over regionale subsidies",
     linkHref: "/subsidies/regionaal",
+    tint: "hs-zand",
+    rondje: "hs-rondje-gemeente",
   },
 ];
 
+// Een wit rondje met een plus, precies over de naad tussen twee kaarten:
+// op de telefoon tussen boven en onder, op desktop tussen links en rechts.
 const PlusTeken = () => (
-  <div className="flex items-center justify-center self-center" aria-hidden="true">
-    <span className="inline-flex w-9 h-9 items-center justify-center rounded-full bg-primary">
-      <Plus size={20} strokeWidth={2.75} className="text-accent" />
+  <div className="relative z-10 flex h-0 items-center justify-center md:h-auto" aria-hidden="true">
+    <span className="hs-rondje hs-rondje-wit h-9 w-9">
+      <Plus size={18} strokeWidth={2.6} />
     </span>
   </div>
 );
 
-export const Subsidies = () => (
-  <section className="section-pad-home" style={{ backgroundColor: "#FFFFFF" }} aria-labelledby="subsidies-title">
-    <div className="container-home">
-      {/* De knop staat naast de kop en niet onder de kaarten: daar kostte hij
-          een hele regel witruimte voor één link. Op desktop lijnt hij uit met
-          de onderkant van de intro, op mobiel valt hij eronder. */}
-      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-10">
-        <div className="max-w-3xl">
-          <h2 id="subsidies-title" className="h2-section">
-            Wist je dat je subsidies kunt <span className="text-accent">stapelen</span>?
-          </h2>
-          <p className="mt-4 text-[18px] md:text-[20px] leading-[1.6] text-muted-foreground">
-            Landelijk, provinciaal en gemeentelijk: er zijn meer regelingen dan de meeste mensen
-            weten, en vaak zijn ze te combineren.
-          </p>
-        </div>
-        <a
-          href="/subsidies/stapelen"
-          className="shrink-0 self-start md:self-auto inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-semibold border border-primary text-primary transition-colors duration-150 hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-        >
-          Meer over subsidies stapelen
-          <ArrowRight size={16} aria-hidden="true" />
-        </a>
-      </div>
+export const Subsidies = () => {
+  const sectie = useRef<HTMLElement>(null);
+  useStaffel(sectie);
 
-      {/* De stapel: drie niveaus met plustekens ertussen */}
-      <div className="mt-8 md:mt-10 grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] gap-4 md:gap-5 items-stretch">
-        {niveaus.map(({ icon: Icon, title, body, linkLabel, linkHref }, i) => (
-          <Fragment key={title}>
-            <article
-              className="bg-card rounded-2xl border p-6 flex flex-col"
-              style={{
-                boxShadow: "0 4px 24px hsl(var(--primary) / 0.06)",
-                borderColor: "hsl(var(--accent) / 0.8)",
-              }}
-            >
-              <div className="flex items-center gap-3.5">
-                <span className="inline-flex shrink-0 w-11 h-11 items-center justify-center rounded-full bg-accent">
-                  <Icon size={20} className="text-primary" aria-hidden="true" />
-                </span>
-                <h3 className="font-display font-semibold text-primary text-[18px] leading-[1.25]">
-                  {title}
-                </h3>
-              </div>
-              <p className="mt-3 text-[15px] leading-[1.6] text-muted-foreground">{body}</p>
-              <a
-                href={linkHref}
-                className="mt-auto pt-4 inline-flex items-center gap-1.5 text-[14px] font-semibold text-primary underline underline-offset-4 decoration-border hover:decoration-accent hover:text-accent-hover transition-colors"
-              >
-                {linkLabel}
-                <ArrowRight size={15} aria-hidden="true" />
-              </a>
-            </article>
-            {i < niveaus.length - 1 && <PlusTeken />}
-          </Fragment>
-        ))}
+  return (
+    <section ref={sectie} className="section-pad-home bg-background" aria-labelledby="subsidies-title">
+      <div className="container-home">
+        {/* De knop staat naast de kop en niet onder de kaarten: daar kostte hij
+            een hele regel witruimte voor één link. Op desktop lijnt hij uit met
+            de onderkant van de intro, op de telefoon valt hij eronder. */}
+        <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-end md:gap-10" data-veer>
+          <div className="min-w-0">
+            <h2 id="subsidies-title" className="hs-h2">
+              Wist je dat je subsidies kunt <span className="hs-accent">stapelen</span>?
+            </h2>
+            <p className="hs-tekst mt-3 max-w-[46rem] text-[16.5px] leading-[1.6] md:text-[19px]">
+              Landelijk, provinciaal en gemeentelijk: er zijn meer regelingen dan de meeste mensen
+              weten, en vaak zijn ze te combineren.
+            </p>
+          </div>
+          <CtaButton href="/subsidies/stapelen" variant="licht" className="justify-self-start">
+            Meer over subsidies stapelen
+            <ArrowRight size={17} strokeWidth={2.2} className="hs-pijl" aria-hidden="true" />
+          </CtaButton>
+        </div>
+
+        {/* De stapel: drie niveaus met plustekens ertussen */}
+        <div className="mt-6 grid grid-cols-1 items-stretch gap-3 md:mt-10 md:grid-cols-[1fr_44px_1fr_44px_1fr] md:gap-0">
+          {niveaus.map(({ icon: Icon, title, body, linkLabel, linkHref, tint, rondje }, i) => (
+            <Fragment key={title}>
+              <article className={`hs-tegel ${tint} hs-klik flex flex-col px-[18px] pb-4 pt-[18px] md:p-6`} data-veer>
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="hs-h3">{title}</h3>
+                  <span className={`hs-rondje ${rondje}`} aria-hidden="true">
+                    <Icon size={19} strokeWidth={2} />
+                  </span>
+                </div>
+                <p className="hs-tekst mt-2 text-[15px] leading-[1.6]">{body}</p>
+                <a href={linkHref} className="hs-pijl-link mt-auto pt-3 text-[14.5px]">
+                  {linkLabel}
+                  <ArrowRight size={16} strokeWidth={2.2} className="hs-pijl" aria-hidden="true" />
+                </a>
+              </article>
+              {i < niveaus.length - 1 && <PlusTeken />}
+            </Fragment>
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
