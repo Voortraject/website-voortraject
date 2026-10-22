@@ -180,7 +180,7 @@ export const Cijfers = () => {
   return (
     // Bewust compacter dan een gewone sectie: dit is een band tussen twee
     // secties, geen sectie op zichzelf.
-    <section ref={sectie} className="bg-background py-[44px] md:py-[72px]" aria-labelledby="cijfers-title">
+    <section ref={sectie} className="hs-band py-[44px] md:py-[72px]" aria-labelledby="cijfers-title">
       <div className="container-home">
         <h2 id="cijfers-title" className="sr-only">
           Voortraject in cijfers
