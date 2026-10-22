@@ -47,9 +47,9 @@ export const HybrideOfElektrisch = () => (
 
     {/* Eén tegel zonder lijnen: de koppen als getinte vakken, de rijen als
         zebra. */}
-    <div className="hs-tegel mt-7 p-2 md:mt-10 md:p-3" data-veer>
+    <div className="hs-tegel mt-7 p-2 md:mt-10 md:p-4" data-veer>
       {/* Kop: de twee systemen met hun aanschafprijs */}
-      <div className={`grid grid-cols-1 gap-2 md:gap-3 ${KOLOMMEN}`}>
+      <div className={`grid grid-cols-1 gap-2 md:gap-4 ${KOLOMMEN}`}>
         <div className="hidden md:block" />
         {SYSTEMEN.map((s) => (
           <div
@@ -59,8 +59,11 @@ export const HybrideOfElektrisch = () => (
             className="hs-blauw-zacht flex flex-col rounded-[18px] p-5 md:rounded-[22px] md:p-6"
           >
             <h3 className="hs-h3 m-0">{s.naam}</h3>
-            <p className="vd-tekst mb-0 mt-2">{s.kort}</p>
-            <div className="vd-wit vd-oker mt-4 px-4 py-3 md:mt-auto">
+            {/* De ondermarge zit op de tekst, niet op het prijsvak: dat heeft
+                mt-auto, en dan zou de langste omschrijving er direct tegenaan
+                staan. */}
+            <p className="vd-tekst mb-4 mt-2 md:mb-5">{s.kort}</p>
+            <div className="vd-wit vd-oker mt-auto px-4 py-3 md:px-5 md:py-4">
               <span className="vd-label text-[12px]">Aanschaf vóór subsidie</span>
               <div className="vd-getal mt-1 text-[28px] text-primary">{euro(s.aanschaf)}</div>
               <p className="mb-0 mt-2 text-[13.5px] leading-relaxed text-[hsl(var(--rs-tekst-zacht))]">
@@ -72,7 +75,7 @@ export const HybrideOfElektrisch = () => (
       </div>
 
       {/* De vergelijking zelf */}
-      <div className="vd-zebra mt-2 md:mt-3">
+      <div className="vd-zebra mt-2 md:mt-4">
         {RIJEN.map((rij) => (
           <div key={rij.label} className={`grid grid-cols-1 ${KOLOMMEN}`}>
             <div className="px-4 pb-1 pt-4 md:px-6 md:py-5">

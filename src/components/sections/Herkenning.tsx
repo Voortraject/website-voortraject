@@ -47,9 +47,10 @@ export const Herkenning = () => {
   useStaffel(sectie);
 
   return (
-    // Bovenaan bijna geen ruimte: de subsidiecheck erboven staat op hetzelfde
-    // off-white en heeft zijn eigen ondermarge.
-    <section ref={sectie} className="bg-background pt-2 pb-[56px] md:pb-[88px]" aria-labelledby="herkenning-title">
+    // Een eigen blauwgrijze band (oktober 2026, "heel veel wit zo"): breekt het
+    // lange witte stuk van hero tot "Waar we bij helpen", en de zandkleurige
+    // tegels springen er beter op af dan op off-white.
+    <section ref={sectie} className="section-pad-home hs-band-blauw" aria-labelledby="herkenning-title">
       <div className="container-home">
         {/* Herken je dit? Telefoon: swipen, desktop: drie tegels naast elkaar */}
         <h2 id="herkenning-title" className="hs-h2" data-veer>

@@ -80,28 +80,28 @@ describe("cijferband telt één keer", () => {
     const { container } = render(<Cijfers />);
     const zichtbaar = () => [...container.querySelectorAll("[aria-hidden='true']")].map((e) => e.textContent).join(" ");
 
-    expect(zichtbaar()).not.toContain("10.000");
+    expect(zichtbaar()).not.toContain("20.000");
 
     act(() => melden({ intersectionRatio: 0.6, isIntersecting: true }));
     act(() => {
       vi.advanceTimersByTime(2500);
     });
-    expect(zichtbaar()).toContain("10.000");
+    expect(zichtbaar()).toContain("20.000");
 
     // Uit beeld en terug: geen tweede telling vanaf nul.
     act(() => melden({ intersectionRatio: 0, isIntersecting: false }));
-    expect(zichtbaar()).toContain("10.000");
+    expect(zichtbaar()).toContain("20.000");
     act(() => melden({ intersectionRatio: 0.6, isIntersecting: true }));
     act(() => {
       vi.advanceTimersByTime(16);
     });
-    expect(zichtbaar()).toContain("10.000");
+    expect(zichtbaar()).toContain("20.000");
   });
 
   it("geeft schermlezers de eindwaarde in één keer", () => {
     const { container } = render(<Cijfers />);
     const sr = [...container.querySelectorAll(".sr-only")].map((e) => e.textContent).join(" | ");
-    expect(sr).toContain("10.000+ m²");
+    expect(sr).toContain("20.000+ m²");
     expect(sr).toContain("4,9");
   });
 });

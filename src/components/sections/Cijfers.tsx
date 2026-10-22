@@ -187,7 +187,7 @@ export const Cijfers = () => {
         </h2>
 
         {/* Op de telefoon en tablet onder elkaar, lage tegels met het icoon naast
-            het getal. Pas vanaf lg naast elkaar: smaller past "10.000+ m²" er
+            het getal. Pas vanaf lg naast elkaar: smaller past "20.000+ m²" er
             naast het icoon niet groot genoeg in. */}
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-3 lg:gap-5">
           <Cijfer

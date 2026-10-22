@@ -92,6 +92,8 @@
   }
   /* De warme band om de andere sectie. */
   .hs-band { background-color: hsl(var(--muted)); }
+  /* Tweede bandkleur: het blauwgrijs van de instaptegel van de subsidietool. */
+  .hs-band-blauw { background-color: hsl(var(--instap-tegel-boven)); }
 
   /* Een tegel die je kunt aanklikken tilt iets op. */
   .hs-klik { transition: transform 0.5s var(--rs-veer), box-shadow 0.4s var(--rs-zacht-uit); }
