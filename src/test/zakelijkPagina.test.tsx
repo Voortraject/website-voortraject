@@ -14,7 +14,9 @@ vi.mock("@/integrations/supabase/external-client", () => ({
 vi.mock("@/lib/gtm", () => ({ pushGtmEvent: vi.fn() }));
 
 // Trekken anders de hele layout (router, helmet) mee de test in.
-vi.mock("@/components/Header", () => ({ Header: () => null }));
+vi.mock("@/components/Header", () => ({
+  Header: ({ ctaNaElement }: { ctaNaElement?: string }) => <div data-testid="header" data-cta-na={ctaNaElement ?? ""} />,
+}));
 vi.mock("@/components/Footer", () => ({ Footer: () => null }));
 vi.mock("@/components/Seo", () => ({ Seo: () => null }));
 
@@ -52,5 +54,27 @@ describe("pagina /zakelijk", () => {
     for (const cta of ctas) expect(cta.getAttribute("href")).toBe("#contact");
 
     expect(container.querySelector("#contact")).not.toBeNull();
+  });
+
+  // Huisstijl oktober 2026: rustige tegels zonder rand, en zonder het oude
+  // effect dat de andere kaarten vervaagde zodra je er één aanwees (te druk).
+  it("zet de doelgroepen in rustige tegels zonder blur-grid", () => {
+    const { container } = render(<Zakelijk />);
+
+    expect(container.querySelector(".card-grid")).toBeNull();
+    const kaart = screen.getByRole("heading", { name: /Installateurs/ }).closest("article");
+    expect(kaart).toHaveClass("hs-tegel");
+    expect(kaart?.className.split(" ")).not.toContain("border");
+  });
+});
+
+// Eén oker knop per scherm: de headerknop wacht tot de oker hero-knop uit beeld is.
+describe("de headerknop op /zakelijk", () => {
+  it("wacht op de hero-knop", async () => {
+    const { ZAKELIJK_HERO_KNOP } = await import("@/pages/Zakelijk");
+    const { container } = render(<Zakelijk />);
+    expect(screen.getByTestId("header")).toHaveAttribute("data-cta-na", ZAKELIJK_HERO_KNOP);
+    const wikkel = container.querySelector(`#${ZAKELIJK_HERO_KNOP}`);
+    expect(wikkel?.querySelector("a")).toHaveTextContent("Plan een kennismaking");
   });
 });

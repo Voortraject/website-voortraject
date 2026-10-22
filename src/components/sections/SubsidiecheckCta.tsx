@@ -11,8 +11,9 @@ const formatPostcode = (v: string) => v.toUpperCase().replace(/[^0-9A-Z ]/g, "")
 
 // Instappunt van de subsidiecheck op de homepage, direct onder de trustbar
 // ("We werken met alle officiële regelingen" — de check is het bewijs van die
-// claim). Eén samengesteld invoerveld: postcode + huisnummer + knop in één
-// pill. De flow start hier en gaat verder op /subsidiecheck.
+// claim). Dezelfde instaptegel als stap 1 van de tool: drie velden en de oker
+// knop in één lichte tegel. De flow start hier en gaat verder op /subsidiecheck.
+// Staat ook op /verduurzamen en op de maatregelpagina's (MaatregelPagina).
 export const SubsidiecheckCta = () => {
   const navigate = useNavigate();
   const [postcode, setPostcode] = useState("");
@@ -51,7 +52,7 @@ export const SubsidiecheckCta = () => {
   };
 
   // "Aanpassen": naar stap 1 met de keuzes al uitgeklapt. Op de homepage zelf
-  // uitklappen kan niet zonder de pill uit elkaar te trekken, en het hoort ook
+  // uitklappen kan niet zonder de tegel uit elkaar te trekken, en het hoort ook
   // niet hier thuis: de keuzes staan al op stap 1, inclusief de uitleg eromheen.
   //
   // `sit=1` is dezelfde route als "situatie aanpassen" op het resultaat en zet
@@ -74,22 +75,25 @@ export const SubsidiecheckCta = () => {
     navigate(`/subsidiecheck?${params.toString()}`);
   };
 
-  return (
-    <section className="section-pad-home bg-secondary" aria-labelledby="subsidiecheck-cta-titel">
-      <div className="container-home">
-        <div className="mx-auto text-center" style={{ maxWidth: 720 }}>
-          <h2 id="subsidiecheck-cta-titel" className="h2-section">
-            Ontdek welke subsidies er voor <span className="text-accent">jouw woning</span> zijn
-          </h2>
+  // Velden: wit en zacht verzonken, zoals op stap 1 van de tool (.instap-invoer
+  // in src/index.css). 16px voorkomt dat iOS inzoomt bij het tikken.
+  const veldClass =
+    "instap-invoer w-full min-w-0 min-h-[54px] px-3 text-center text-[16px] font-semibold";
 
-          <form onSubmit={handleSubmit} noValidate className="mx-auto mt-7" style={{ maxWidth: 640 }}>
-            {/* Elke input een wit vlak, zodat postcode, huisnummer en toevoeging
-                als heldere velden lezen binnen de navy pill. */}
-            <div className="flex flex-col gap-2 rounded-2xl bg-primary p-2 shadow-card sm:flex-row sm:items-center sm:rounded-full">
-              {/* Op mobiel één rij: postcode de helft, huisnummer en toevoeging elk
-                  een kwart. Op sm+ lost de wrapper op (contents) zodat de drie velden
-                  weer directe flex-items van de pill zijn, zoals op desktop. */}
-              <div className="flex w-full items-center gap-2 sm:contents">
+  return (
+    <section className="bg-background py-[52px] md:py-[88px]" aria-labelledby="subsidiecheck-cta-titel">
+      <div className="container-home">
+        <h2 id="subsidiecheck-cta-titel" className="hs-h2 mx-auto max-w-[720px] text-center">
+          Ontdek welke subsidies er voor <span className="hs-accent">jouw woning</span> zijn
+        </h2>
+
+        {/* Dezelfde instaptegel als stap 1 van de tool: zacht blauw verloop naar
+            wit, schaduw in plaats van rand, witte verzonken velden. */}
+        <form onSubmit={handleSubmit} noValidate className="mx-auto mt-6 max-w-[680px] sm:mt-8">
+          <div className="hs-tegel hs-blauw-zacht p-[18px] sm:p-[26px]">
+            {/* Op de telefoon de drie velden op één rij en de knop eronder, op
+                desktop velden en knop samen op één rij. */}
+            <div className="grid grid-cols-[1.15fr_0.95fr_0.95fr] gap-2 md:grid-cols-[1.2fr_0.85fr_0.85fr_auto] md:gap-2.5">
               <label className="sr-only" htmlFor="home-sc-postcode">
                 Postcode
               </label>
@@ -98,7 +102,7 @@ export const SubsidiecheckCta = () => {
                 type="text"
                 autoComplete="postal-code"
                 placeholder="Postcode"
-                className="min-h-[48px] min-w-0 flex-[2] rounded-xl bg-white px-3 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-40 sm:flex-none sm:px-5 sm:rounded-full lg:text-[15px]"
+                className={veldClass}
                 value={postcode}
                 onChange={(e) => {
                   const v = formatPostcode(e.target.value);
@@ -120,7 +124,7 @@ export const SubsidiecheckCta = () => {
                 type="text"
                 inputMode="numeric"
                 placeholder="Huisnr."
-                className="min-h-[48px] min-w-0 flex-1 rounded-xl bg-white px-2 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-28 sm:flex-none sm:px-4 sm:rounded-full lg:text-[15px]"
+                className={veldClass}
                 value={huisnummer}
                 onChange={(e) => {
                   setHuisnummer(e.target.value);
@@ -135,7 +139,7 @@ export const SubsidiecheckCta = () => {
                 id="home-sc-toevoeging"
                 type="text"
                 placeholder="Toev."
-                className="min-h-[48px] min-w-0 flex-1 rounded-xl bg-white px-2 text-center text-[16px] text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:shadow-[inset_0_0_0_2px_hsl(var(--accent)/0.55)] sm:w-24 sm:flex-none sm:px-4 sm:rounded-full lg:text-[15px]"
+                className={veldClass}
                 value={toevoeging}
                 onChange={(e) => {
                   setToevoeging(e.target.value);
@@ -143,17 +147,16 @@ export const SubsidiecheckCta = () => {
                 }}
                 maxLength={10}
               />
-              </div>
               <button
                 type="submit"
-                className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-accent px-6 py-3 text-[15px] font-semibold text-primary transition-colors hover:bg-accent-hover sm:rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="hs-knop hs-knop-oker col-span-full min-h-[56px] text-[16.5px] md:col-span-1 md:min-h-[54px]"
               >
                 Bekijk mijn subsidies
-                <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+                <ArrowRight size={17} strokeWidth={2.2} className="hs-pijl" aria-hidden="true" />
               </button>
             </div>
             {fout && (
-              <p id="home-sc-fout" role="alert" className="mt-2 text-[14px] text-destructive">
+              <p id="home-sc-fout" role="alert" className="mt-3 text-[14px] text-destructive">
                 {fout}
               </p>
             )}
@@ -163,45 +166,40 @@ export const SubsidiecheckCta = () => {
                 hoort de bezoeker te weten vóórdat hij zijn overzicht krijgt, niet
                 pas als het er staat. Nu de knop rechtstreeks naar de gegevensstap
                 gaat is dit de enige plek waar dat nog voorbijkomt.
-                Tekst en toon bewust letterlijk gelijk aan StapAdres.
-
-                foreground/80 in plaats van muted-foreground: dit blok staat op de
-                zandkleurige sectie, en daar haalt muted (#6B6B6B op #F0E4D0) net
-                geen 4.5:1. Op stap 1, met de off-white achtergrond, doet dezelfde
-                token dat wel. */}
-            <p className="mt-4 text-[13px] leading-relaxed text-foreground/80 sm:text-[13.5px]">
+                Tekst en toon bewust letterlijk gelijk aan StapAdres. */}
+            <p className="hs-tekst mt-4 text-center text-[14.5px] leading-normal">
               We zoeken voor {BEWONERTYPE_MEERVOUD.woningeigenaar} op alle maatregelen.{" "}
               <button
                 type="button"
                 onClick={naarKeuzes}
-                className="inline-flex items-center gap-1 rounded-sm font-medium text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-1 rounded-sm font-extrabold text-primary underline underline-offset-4 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
                 Aanpassen
                 <ChevronDown size={13} aria-hidden="true" />
               </button>
             </p>
-          </form>
+          </div>
 
-          {/* Drie beloftes met vinkjes — zelfde patroon als de hero. De teksten
+          {/* Drie beloftes met groene vinkjes, zoals op stap 1. De teksten
               staan in src/config/beloftes.ts, gedeeld met stap 1 van de check,
               met daar de toelichting waarom ze zijn zoals ze zijn. */}
-          <ul className="mt-5 flex flex-nowrap items-center justify-center gap-x-2.5 sm:gap-x-5">
+          <ul className="mt-[18px] flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
             {SUBSIDIECHECK_BELOFTES.map((belofte) => (
               <li
                 key={belofte}
-                className="inline-flex items-center gap-1 whitespace-nowrap text-[12px] text-muted-foreground sm:gap-2 sm:text-[15px]"
+                className="hs-tekst inline-flex items-center gap-1.5 whitespace-nowrap text-[14px] font-bold"
               >
                 <Check
-                  size={16}
-                  strokeWidth={2.5}
-                  className="h-3.5 w-3.5 shrink-0 text-accent sm:h-4 sm:w-4"
+                  size={15}
+                  strokeWidth={2.6}
+                  className="shrink-0 text-instap-subsidie"
                   aria-hidden="true"
                 />
                 {belofte}
               </li>
             ))}
           </ul>
-        </div>
+        </form>
       </div>
     </section>
   );

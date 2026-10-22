@@ -1,0 +1,85 @@
+/* Contactpagina in de huisstijl van oktober 2026 (zie huisstijl.css).
+ *
+ * Wat Tailwind niet netjes kan: het eigen pijltje van de selects, de foutstaat
+ * van een veld zonder rand, en de labels. Alleen tokens uit src/index.css. Geen @layer,
+ * net als resultaat.css: dit bestand wordt vanuit Contact.tsx geïmporteerd.
+ */
+
+/* Kop: Inter Tight zoals de andere grote koppen; op de telefoon schaalt hij
+   mee met de breedte zodat de vraag op één regel blijft. */
+.ct-h1 {
+  margin: 0;
+  font-family: 'Inter Tight', 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: hsl(var(--primary));
+  font-size: 6vw;
+  white-space: nowrap;
+}
+@media (min-width: 768px) {
+  .ct-h1 { font-size: 44px; white-space: normal; }
+}
+
+/* Groepskop in het formulier, met een rond icoon rechts. */
+.ct-groep-kop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: 'Inter Tight', 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.25;
+  color: hsl(var(--primary));
+}
+
+.ct-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: hsl(var(--rs-tekst-zacht));
+}
+.ct-label-licht { font-weight: 500; }
+
+/* Veld: wit, radius 14, zachte inset-ring (instap-invoer levert de basis). */
+.ct-invoer {
+  width: 100%;
+  min-width: 0;
+  min-height: 50px;
+  padding: 0 14px;
+  font-size: 16px;
+  font-weight: 500;
+}
+@media (min-width: 1024px) {
+  .ct-invoer { font-size: 15px; }
+}
+select.ct-invoer {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 34px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, hsl(var(--primary)) 50%),
+    linear-gradient(135deg, hsl(var(--primary)) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+textarea.ct-invoer {
+  min-height: 112px;
+  padding: 12px 14px;
+  resize: vertical;
+}
+.ct-invoer.ct-fout,
+.ct-invoer.ct-fout:focus {
+  box-shadow: inset 0 0 0 2px hsl(var(--destructive)), 0 0 0 5px hsl(var(--destructive) / 0.1);
+}
+.ct-invoer.ct-fout:not(:focus) {
+  box-shadow: inset 0 0 0 2px hsl(var(--destructive) / 0.85);
+}
+
+/* De drie contactgegevens: rijen in één zandtegel, gescheiden door een heel
+   zachte lijn van schaduw in plaats van een rand. */
+.ct-bereik-rij + .ct-bereik-rij { box-shadow: inset 0 1px 0 hsl(var(--primary) / 0.06); }
