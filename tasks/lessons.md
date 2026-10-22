@@ -635,3 +635,15 @@ de controle bereikte Cloudflare nooit en liet alles door. Een request met een ne
   Zonder dat is "storing" niet te onderscheiden van "de code werkt nooit".
 - **Log ook de uitkomst "ok" niet weg in stilte bij een nieuwe controle**: kijk na de eerste
   echte inzending in de log welke tak hij nam, in plaats van uit te gaan van het resultaat.
+
+## 2026-10-22 — Onze reviewtabel is niet "de reviews op Google"
+**Context:** Gevraagd welke reviews de site zou tonen bij een woordengrens van 8 of 6. Ik
+antwoordde op basis van `google_reviews` (10 rijen) alsof dat alle reviews waren. Op Google
+staan er 33; de opdrachtgever noemde meteen vijf namen die ontbraken. Google geeft per aanroep
+hooguit 5 reviews (ook met `reviews_sort=newest`), dus de tabel bevat alleen wat de sync ooit
+toevallig kreeg.
+**Lesson:**
+- **Benoem bij elke uitspraak over "welke reviews" waar ze vandaan komen**: de tabel, niet Google.
+  Noem het totaal van Google (`google_place_stats.user_rating_count`) erbij als dat afwijkt.
+- **Een simulatie op een onvolledige bron is geen antwoord.** Zeg dat de bron onvolledig is
+  voordat je een lijst geeft.
