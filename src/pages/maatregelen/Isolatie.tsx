@@ -127,7 +127,7 @@ const Isolatie = () => (
       },
     ]}
     finalCtaKop="Niet zeker waar je moet [[beginnen]]?"
-    finalCtaTekst="In een gratis gesprek kijken we naar jouw woning en vertellen we eerlijk welke isolatiestap nu het meeste oplevert. Wij verkopen geen materiaal en hebben geen installateur te slijten. Ons advies is onafhankelijk."
+    finalCtaTekst="In een gratis gesprek kijken we naar jouw woning en vertellen we eerlijk welke isolatiestap nu het meeste oplevert. Wij verkopen geen materiaal en hebben geen installateur te slijten."
   />
 );
 

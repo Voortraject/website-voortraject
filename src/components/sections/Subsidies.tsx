@@ -49,7 +49,7 @@ export const Subsidies = () => {
   useStaffel(sectie);
 
   return (
-    <section ref={sectie} className="section-pad-home bg-background" aria-labelledby="subsidies-title">
+    <section ref={sectie} className="section-pad-home hs-band-licht-naar-zand" aria-labelledby="subsidies-title">
       <div className="container-home">
         {/* De knop staat naast de kop en niet onder de kaarten: daar kostte hij
             een hele regel witruimte voor één link. Op desktop lijnt hij uit met

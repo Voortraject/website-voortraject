@@ -38,7 +38,7 @@ const doelgroepen = [
   {
     icon: KeyRound,
     title: "Makelaars",
-    body: "Kopers en verkopers met verduurzamingsvragen kunnen bij ons terecht voor onafhankelijk advies.",
+    body: "Kopers en verkopers met verduurzamingsvragen kunnen bij ons terecht voor advies.",
   },
   {
     icon: ClipboardCheck,

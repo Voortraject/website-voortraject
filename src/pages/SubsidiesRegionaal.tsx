@@ -36,7 +36,7 @@ const regelingen = [
   {
     titel: "Gratis energiecoach",
     tekst:
-      "Veel gemeenten bieden bewoners een gratis huisbezoek door een onafhankelijke energiecoach. Geen subsidie in geld, maar wel een spaarpot aan praktisch advies en bespaartips.",
+      "Veel gemeenten bieden bewoners een gratis huisbezoek door een energiecoach. Geen subsidie in geld, maar wel een spaarpot aan praktisch advies en bespaartips.",
   },
   {
     titel: "Voucher voor kleine maatregelen",
@@ -66,7 +66,7 @@ const stappen = [
     num: "02",
     titel: "Huisbezoek",
     tekst:
-      "Een lokale adviseur uit jouw regio komt bij je langs en bekijkt samen met jou welke regelingen van toepassing zijn en hoe je ze slim combineert. Vrijblijvend en onafhankelijk.",
+      "Een lokale adviseur uit jouw regio komt bij je langs en bekijkt samen met jou welke regelingen van toepassing zijn en hoe je ze slim combineert. Vrijblijvend en gratis.",
   },
   {
     num: "03",
@@ -277,7 +277,7 @@ const SubsidiesRegionaal = () => {
             },
             {
               Icon: Scale,
-              t: "Onafhankelijk advies",
+              t: "Eerlijk advies",
               d: "Wij hebben geen voorkeur voor bepaalde uitvoerders. We brengen je in contact met erkende installateurs die bij jouw woning passen.",
             },
             {

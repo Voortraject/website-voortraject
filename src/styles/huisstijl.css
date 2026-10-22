@@ -92,8 +92,12 @@
   }
   /* De warme band om de andere sectie. */
   .hs-band { background-color: hsl(var(--muted)); }
-  /* Tweede bandkleur: het blauwgrijs van de instaptegel van de subsidietool. */
-  .hs-band-blauw { background-color: hsl(var(--instap-tegel-boven)); }
+  /* Verlopen tussen secties (homepagina, oktober 2026): elke sectie begint in de
+     kleur waarin de vorige eindigt, zodat er geen harde randen zijn. Diep zand is
+     het zand van --secondary op 60%, net warmer dan hs-band. */
+  .hs-band-verloop { background-image: linear-gradient(180deg, hsl(var(--background)), var(--card-soft) 30%, hsl(var(--secondary) / 0.6)); }
+  .hs-band-diep-naar-licht { background-image: linear-gradient(180deg, hsl(var(--secondary) / 0.6), hsl(var(--background))); }
+  .hs-band-licht-naar-zand { background-image: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted))); }
 
   /* Een tegel die je kunt aanklikken tilt iets op. */
   .hs-klik { transition: transform 0.5s var(--rs-veer), box-shadow 0.4s var(--rs-zacht-uit); }

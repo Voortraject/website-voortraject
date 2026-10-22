@@ -9,7 +9,7 @@ export const Team = () => {
   useStaffel(sectie);
 
   return (
-    <section ref={sectie} className="bg-background py-[52px] md:py-[88px]" aria-labelledby="team-title">
+    <section ref={sectie} className="hs-band-licht-naar-zand py-[52px] md:py-[88px]" aria-labelledby="team-title">
       <div className="container-home">
         <div className="grid grid-cols-1 items-center gap-7 lg:grid-cols-2 lg:gap-14">
           <img

@@ -68,8 +68,9 @@
   box-shadow: 0 1px 2px hsl(var(--primary) / 0.06), 0 6px 16px hsl(var(--primary) / 0.07);
   transition: box-shadow 0.3s ease;
 }
+/* Warm, niet blauwgrijs (oktober 2026: het blauw oogde koud op de zandband). */
 .ho-faq-item[data-open="true"] {
-  background-image: linear-gradient(180deg, hsl(var(--rs-hoofd-midden)), hsl(var(--card)) 70%);
+  background-image: linear-gradient(180deg, hsl(var(--rs-zand-van)), hsl(var(--card)) 70%);
   box-shadow: var(--rs-schaduw);
 }
 .ho-faq-chev {
@@ -80,12 +81,12 @@
   height: 32px;
   border-radius: 9999px;
   color: hsl(var(--primary));
-  background-color: hsl(var(--rs-hoofd-midden));
+  background-color: hsl(var(--accent) / 0.22);
   transition: transform 0.5s var(--rs-veer), background-color 0.3s ease;
 }
 .ho-faq-item[data-open="true"] .ho-faq-chev {
   transform: rotate(180deg);
-  background-color: hsl(var(--card));
+  background-color: hsl(var(--accent));
 }
 /* Vloeiend uitklappen zonder vaste maximale hoogte. */
 .ho-faq-klap {

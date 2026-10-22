@@ -15,7 +15,7 @@ const faqs = [
   },
   {
     q: "Wat doet Voortraject precies?",
-    a: "Wij geven gratis en onafhankelijk advies over verduurzamen en subsidies. We kijken eerst naar jouw woning en situatie, vertellen wat slim is en in welke volgorde, zoeken uit welke subsidies je kunt krijgen en begeleiden je naar een betrouwbare uitvoerder als je verder wilt.",
+    a: "Wij geven gratis advies over verduurzamen en subsidies. We kijken eerst naar jouw woning en situatie, vertellen wat slim is en in welke volgorde, zoeken uit welke subsidies je kunt krijgen en begeleiden je naar een betrouwbare uitvoerder als je verder wilt.",
   },
   {
     q: "In welk gebied werken jullie?",

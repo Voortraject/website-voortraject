@@ -207,7 +207,7 @@ const SubsidiesLandelijk = () => {
   const why = [
     { Icon: Home, t: "Persoonlijk huisbezoek", d: "Geen wachtrij, geen formulier-eerst. Een lokale adviseur komt persoonlijk bij je langs binnen een week." },
     { Icon: FileCheck, t: "Wij regelen de aanvraag", d: "Geen DigiD-gedoe, geen termijnen die je zelf moet bewaken. Wij dienen de ISDE-aanvraag in bij RVO en bewaken het proces." },
-    { Icon: Scale, t: "Onafhankelijk advies", d: "Wij hebben geen voorkeur voor bepaalde uitvoerders. We brengen je in contact met erkende installateurs die bij jouw woning passen." },
+    { Icon: Scale, t: "Eerlijk advies", d: "Wij hebben geen voorkeur voor bepaalde uitvoerders. We brengen je in contact met erkende installateurs die bij jouw woning passen." },
     { Icon: LifeBuoy, t: "Nazorg en natraject", d: "Na de uitvoering blijven we beschikbaar. Voor vervolgmaatregelen, garantie, of advies over warmtepomp of warmtenet." },
   ];
 

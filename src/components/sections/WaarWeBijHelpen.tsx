@@ -80,7 +80,7 @@ export const WaarWeBijHelpen = () => {
   useStaffel(sectie);
 
   return (
-    <section ref={sectie} className="section-pad-home hs-band" aria-labelledby="helpen-title">
+    <section ref={sectie} className="section-pad-home hs-band-diep-naar-licht" aria-labelledby="helpen-title">
       <div className="container-home">
         <h2 id="helpen-title" className="hs-h2" data-veer>
           Waar we bij <span className="hs-accent">helpen</span>
