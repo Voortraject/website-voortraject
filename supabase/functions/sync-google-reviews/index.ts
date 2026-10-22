@@ -1,13 +1,16 @@
 // Supabase Edge Function: sync-google-reviews
 //
-// Haalt de reviews van ons Google-profiel op via de Places API (New),
-// filtert op >= 4 sterren, en schrijft ze naar de tabellen `google_reviews`
-// en `google_place_stats`. Bedoeld om dagelijks via een cron te draaien.
+// Haalt de nieuwste reviews van ons Google-profiel op (Place Details met
+// `reviews_sort=newest`, terugval: Places API (New)), filtert op >= 4 sterren,
+// en schrijft ze naar de tabellen `google_reviews` en `google_place_stats`.
+// Bedoeld om dagelijks via een cron te draaien. De site kiest daaruit zelf wat
+// hij toont (src/lib/reviews.ts: nieuwste eerst, minstens 10 woorden).
 //
 // De API-key blijft server-side (secret) — hij komt nooit in de browserbundle.
 //
 // Benodigde secrets (Supabase → Project Settings → Edge Functions → Secrets):
-//   GOOGLE_MAPS_API_KEY  — key met Places API (New) ingeschakeld
+//   GOOGLE_MAPS_API_KEY  — key met Places API (New) ingeschakeld, en liefst ook
+//                          Places API (de oudere), want alleen die sorteert op nieuwste
 //   GOOGLE_PLACE_ID      — Place ID van Voortraject
 //   REVIEWS_SYNC_SECRET  — gedeeld geheim; de cron stuurt het mee in `x-poller-secret`
 // SUPABASE_URL en SUPABASE_SERVICE_ROLE_KEY worden automatisch geïnjecteerd.
@@ -20,14 +23,76 @@
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+import {
+  type LegacyReview,
+  type NieuweReview,
+  type ReviewRij,
+  rijUitLegacy,
+  rijUitNieuw,
+} from "./reviewrij.ts";
+
 const PLACES_ENDPOINT = "https://places.googleapis.com/v1/places";
+const DETAILS_ENDPOINT = "https://maps.googleapis.com/maps/api/place/details/json";
 const MIN_RATING = 4;
+
+type Opgehaald =
+  | { reviews: ReviewRij[]; rating: number | null; totaal: number | null }
+  | { fout: Record<string, unknown> };
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { "Content-Type": "application/json" },
   });
+}
+
+// De 5 nieuwste reviews. null = deze API is (nu) niet bruikbaar, val terug; de reden
+// komt in de log, zodat zichtbaar is dát de sync op relevantie draait.
+async function haalNieuwste(apiKey: string, placeId: string): Promise<Opgehaald | null> {
+  const url = new URL(DETAILS_ENDPOINT);
+  url.searchParams.set("place_id", placeId);
+  url.searchParams.set("fields", "rating,user_ratings_total,reviews");
+  url.searchParams.set("reviews_sort", "newest");
+  url.searchParams.set("language", "nl");
+  url.searchParams.set("key", apiKey);
+  try {
+    const res = await fetch(url);
+    const body = await res.json();
+    if (!res.ok || body.status !== "OK") {
+      console.warn("Place Details (nieuwste) niet bruikbaar:", res.status, body.status, body.error_message);
+      return null;
+    }
+    const result = body.result ?? {};
+    return {
+      reviews: ((result.reviews ?? []) as LegacyReview[]).map((r) => rijUitLegacy(placeId, r)),
+      rating: result.rating ?? null,
+      totaal: result.user_ratings_total ?? null,
+    };
+  } catch (err) {
+    console.warn("Place Details (nieuwste) faalde:", err);
+    return null;
+  }
+}
+
+// Terugval: Places API (New), 5 reviews op relevantie. De FieldMask beperkt payload
+// én kosten: we vragen alleen wat we tonen. languageCode=nl → Nederlandse reviewtekst
+// waar beschikbaar.
+async function haalRelevantste(apiKey: string, placeId: string): Promise<Opgehaald> {
+  const res = await fetch(`${PLACES_ENDPOINT}/${placeId}?languageCode=nl`, {
+    headers: {
+      "X-Goog-Api-Key": apiKey,
+      "X-Goog-FieldMask": "rating,userRatingCount,reviews",
+    },
+  });
+  if (!res.ok) {
+    return { fout: { error: "Places API-fout", status: res.status, body: await res.text() } };
+  }
+  const place = await res.json();
+  return {
+    reviews: ((place.reviews ?? []) as NieuweReview[]).map((r) => rijUitNieuw(placeId, r)),
+    rating: place.rating ?? null,
+    totaal: place.userRatingCount ?? null,
+  };
 }
 
 Deno.serve(async (req: Request) => {
@@ -53,50 +118,22 @@ Deno.serve(async (req: Request) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    // Places API (New) — Place Details. De FieldMask beperkt payload én kosten:
-    // we vragen alleen wat we tonen. languageCode=nl → Nederlandse reviewtekst
-    // waar beschikbaar.
-    const res = await fetch(`${PLACES_ENDPOINT}/${placeId}?languageCode=nl`, {
-      headers: {
-        "X-Goog-Api-Key": apiKey,
-        "X-Goog-FieldMask": "rating,userRatingCount,reviews",
-      },
-    });
+    // Google geeft per aanroep hooguit 5 reviews. De Places API (New) kiest die op
+    // "relevantie" en kent geen sortering, waardoor een verse review dagen of
+    // nooit binnenkwam. De oudere Place Details-API kan wél `reviews_sort=newest`,
+    // dus die proberen we eerst. Weigert hij (staat niet aan op de key, of Google
+    // zet hem uit), dan valt de sync terug op de Places API (New), zoals voorheen.
+    let opgehaald = await haalNieuwste(apiKey, placeId);
+    const nieuwsteEerst = opgehaald !== null;
+    opgehaald ??= await haalRelevantste(apiKey, placeId);
+    if ("fout" in opgehaald) return json(opgehaald.fout, 502);
 
-    if (!res.ok) {
-      return json(
-        { error: "Places API-fout", status: res.status, body: await res.text() },
-        502,
-      );
-    }
-
-    const place = await res.json();
     const runAt = new Date().toISOString();
 
     // Filter op >= 4 sterren: lage reviews bereiken de site nooit.
-    type PlaceReview = {
-      name?: string;
-      rating?: number;
-      text?: { text?: string; languageCode?: string };
-      originalText?: { text?: string };
-      authorAttribution?: { displayName?: string; photoUri?: string };
-      relativePublishTimeDescription?: string;
-      publishTime?: string;
-    };
-
-    const rows = ((place.reviews ?? []) as PlaceReview[])
-      .filter((r) => (r.rating ?? 0) >= MIN_RATING)
-      .map((r) => ({
-        google_review_id: r.name ?? `${placeId}:${r.authorAttribution?.displayName}`,
-        author_name: r.authorAttribution?.displayName ?? "Google-gebruiker",
-        profile_photo_url: r.authorAttribution?.photoUri ?? null,
-        rating: r.rating ?? MIN_RATING,
-        text: r.text?.text ?? r.originalText?.text ?? null,
-        relative_time: r.relativePublishTimeDescription ?? null,
-        publish_time: r.publishTime ?? null,
-        language: r.text?.languageCode ?? null,
-        synced_at: runAt,
-      }));
+    const rows = opgehaald.reviews
+      .filter((r) => r.rating >= MIN_RATING)
+      .map((r) => ({ ...r, synced_at: runAt }));
 
     if (rows.length > 0) {
       const { error: upsertError } = await supabase
@@ -105,29 +142,42 @@ Deno.serve(async (req: Request) => {
       if (upsertError) throw upsertError;
     }
 
-    // Prune: reviews die deze run niet ververst zijn (oude synced_at) zijn niet
-    // meer relevant/verdwenen bij Google, of zakten onder 4 sterren → verwijderen.
-    const { error: pruneError } = await supabase
-      .from("google_reviews")
-      .delete()
-      .lt("synced_at", runAt);
-    if (pruneError) throw pruneError;
+    // Opruimen. Reviews stapelen zich op: de 5 van vandaag duwen die van gisteren
+    // niet meer van de site. Alleen binnen het venster dat Google ons net liet zien
+    // (alles vanaf de oudste van deze 5) betekent "ontbreekt" ook echt "verdwenen bij
+    // Google, of onder de 4 sterren gezakt". Daarbuiten weten we het niet, dus laten
+    // we het staan. Bij de terugval (relevantie) is er geen venster: dan niets weg.
+    if (nieuwsteEerst && opgehaald.reviews.length > 0) {
+      const oudste = opgehaald.reviews
+        .map((r) => r.publish_time)
+        .filter((t): t is string => t !== null)
+        .sort()[0];
+      if (oudste) {
+        const { error: pruneError } = await supabase
+          .from("google_reviews")
+          .delete()
+          .lt("synced_at", runAt)
+          .gte("publish_time", oudste);
+        if (pruneError) throw pruneError;
+      }
+    }
 
     // Aggregatie voor de kop.
     const { error: statsError } = await supabase
       .from("google_place_stats")
       .upsert({
         id: 1,
-        rating: place.rating ?? null,
-        user_rating_count: place.userRatingCount ?? null,
+        rating: opgehaald.rating,
+        user_rating_count: opgehaald.totaal,
         synced_at: runAt,
       });
     if (statsError) throw statsError;
 
     return json({
       synced: rows.length,
-      rating: place.rating ?? null,
-      total: place.userRatingCount ?? null,
+      bron: nieuwsteEerst ? "nieuwste" : "relevantie",
+      rating: opgehaald.rating,
+      total: opgehaald.totaal,
     });
   } catch (err) {
     return json({ error: err instanceof Error ? err.message : String(err) }, 500);
