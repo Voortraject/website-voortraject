@@ -1,20 +1,8 @@
+/* Knoppen, tegels en beweging van de hele site (huisstijl oktober 2026).
+   Moet bovenaan staan: een @import na andere regels wordt genegeerd. */
+@import './styles/huisstijl.css';
+
 * { font-family: 'Manrope', sans-serif; }
-
-@keyframes sheen {
-  0% { transform: translateX(-100%) skewX(-15deg); opacity: 0; }
-  12% { opacity: 1; }
-  24% { transform: translateX(200%) skewX(-15deg); opacity: 0; }
-  25% { opacity: 0; }
-  100% { opacity: 0; }
-}
-
-/* Zwevende glans over de CTA-knoppen (zie CtaButton). */
-.btn-sheen {
-  animation: sheen 5s ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .btn-sheen { animation: none; }
-}
 
 /* Isolatieconfigurator: de bouwdelen en warmtepijlen faden in en uit
    (zie WoningTekening). Zonder overgang schiet de tekening in beeld. */

@@ -175,6 +175,26 @@ const MobileMenu = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
+/**
+ * Waar zolang het element met dit id in beeld is. Zonder id altijd onwaar.
+ * Zonder IntersectionObserver ook onwaar: dan staat de knop er gewoon.
+ */
+const useVerborgenZolangInBeeld = (id?: string) => {
+  const [inBeeld, setInBeeld] = useState(!!id);
+  useEffect(() => {
+    if (!id) return;
+    const el = document.getElementById(id);
+    if (!el || typeof IntersectionObserver !== "function") {
+      setInBeeld(false);
+      return;
+    }
+    const io = new IntersectionObserver(([e]) => setInBeeld(e.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, [id]);
+  return !!id && inBeeld;
+};
+
 interface HeaderProps {
   /**
    * Alleen het logo, geen navigatie en geen CTA.
@@ -186,10 +206,18 @@ interface HeaderProps {
    * navigatie staat gewoon in de footer.
    */
   compact?: boolean;
+  /**
+   * Id van de hoofdknop in de hero. Zolang die in beeld is, staat de oker
+   * "Check jouw subsidies" hier niet: anders staan er bovenin twee identieke
+   * oker knoppen naast elkaar. Hij verschijnt zodra de hero-knop uit beeld is.
+   * Alleen pagina's met een eigen oker knop in de hero geven dit mee.
+   */
+  ctaNaElement?: string;
 }
 
-export const Header = ({ compact = false }: HeaderProps) => {
+export const Header = ({ compact = false, ctaNaElement }: HeaderProps) => {
   const [open, setOpen] = useState(false);
+  const ctaVerborgen = useVerborgenZolangInBeeld(ctaNaElement);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -315,19 +343,13 @@ export const Header = ({ compact = false }: HeaderProps) => {
           <a
             href="/subsidiecheck"
             aria-label="Check jouw subsidies"
-            className="relative overflow-hidden inline-flex items-center justify-center rounded-full py-3 px-6 text-[15px] font-semibold bg-accent text-primary"
-            style={pillShadow}
+            aria-hidden={ctaVerborgen || undefined}
+            tabIndex={ctaVerborgen ? -1 : undefined}
+            data-verborgen={ctaVerborgen}
+            className="hs-knop hs-knop-oker hs-kop-cta min-h-[48px] px-6 text-[15px]"
           >
-            <span className="relative z-10 inline-flex items-center gap-2">
-              <Search size={16} strokeWidth={2} aria-hidden="true" />
-              Check jouw subsidies
-            </span>
-            <span className="absolute inset-0 overflow-hidden rounded-full pointer-events-none">
-              <span
-                className="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent"
-                style={{ animation: "sheen 5s ease-in-out infinite" }}
-              />
-            </span>
+            <Search size={16} strokeWidth={2.2} aria-hidden="true" />
+            Check jouw subsidies
           </a>
         </div>
 

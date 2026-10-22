@@ -1,25 +1,34 @@
 import { cn } from "@/lib/utils";
 
-type Variant = "accent" | "primary";
+type Variant = "accent" | "primary" | "licht" | "glas";
 
 interface CtaButtonProps {
   href: string;
   children: React.ReactNode;
-  /** accent = gouden knop met navy tekst (standaard), primary = navy knop met witte tekst */
+  /**
+   * accent = de oker hoofdknop (standaard, één per scherm), primary = inktblauw,
+   * licht = wit met schaduw (secundair op licht), glas = matglas (secundair op
+   * donker of op een foto).
+   */
   variant?: Variant;
   className?: string;
   style?: React.CSSProperties;
   "aria-label"?: string;
 }
 
+// De klassen staan in src/styles/huisstijl.css.
 const variantClasses: Record<Variant, string> = {
-  accent: "bg-accent text-primary hover:bg-accent-hover",
-  primary: "bg-primary text-primary-foreground hover:brightness-[1.15]",
+  accent: "hs-knop-oker",
+  primary: "hs-knop-ink",
+  licht: "hs-knop-licht",
+  glas: "hs-knop-glas",
 };
 
 /**
- * Eén CTA-knop voor de hele site, met de zwevende "sheen"-glans die ook op de
- * headerknop zit (elke ~5s een lichtstreep). Respecteert prefers-reduced-motion.
+ * Eén CTA-knop voor de hele site, in de huisstijl van de subsidietool: een pil
+ * met een zacht verloop en schaduw, die bij aanwijzen 2px optilt en bij
+ * indrukken inveert. Geen zwevende glans meer: rustig boven druk, en de knop
+ * valt al op door kleur en gloed.
  */
 export const CtaButton = ({
   href,
@@ -33,16 +42,9 @@ export const CtaButton = ({
     href={href}
     aria-label={ariaLabel}
     style={style}
-    className={cn(
-      "relative overflow-hidden inline-flex items-center justify-center rounded-full px-7 py-3.5 text-[15px] font-semibold transition-all duration-150 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-      variantClasses[variant],
-      className
-    )}
+    className={cn("hs-knop", variantClasses[variant], className)}
   >
-    <span className="relative z-10 inline-flex items-center gap-2">{children}</span>
-    <span className="absolute inset-0 overflow-hidden rounded-full pointer-events-none" aria-hidden="true">
-      <span className="btn-sheen absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-    </span>
+    {children}
   </a>
 );
 

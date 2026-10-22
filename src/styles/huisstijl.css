@@ -1,0 +1,278 @@
+/* Huisstijl van de site, oktober 2026.
+ *
+ * Dezelfde taal als de subsidietool (src/components/subsidiecheck/resultaat.css
+ * en het instap-blok in src/index.css), nu voor de hele site: zachte verlopen
+ * van boven naar bijna wit, diepte met schaduw in plaats van randen, één oker
+ * knop per scherm, en beweging die veert maar nooit aandacht vraagt.
+ *
+ * Alleen tokens uit src/index.css (--rs-*, --instap-*, --subsidie, --niveau-*):
+ * hier komen geen losse kleuren bij. Prototype en afwegingen:
+ * claude.ai/artifact/BQ29AcXu8mLHWkYoZmbpRe.
+ *
+ * Staat in @layer components, zodat Tailwind-utilities in een className er
+ * gewoon overheen gaan (`hs-knop px-8` doet wat je verwacht).
+ */
+
+@layer components {
+  /* ---- Koppen ---- */
+  .hs-h2 {
+    font-family: 'Inter Tight', 'Inter', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.14;
+    font-size: 27px;
+    color: hsl(var(--primary));
+    text-wrap: balance;
+  }
+  @media (min-width: 768px) {
+    .hs-h2 { font-size: 44px; }
+  }
+  .hs-h3 {
+    font-family: 'Inter Tight', 'Inter', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    font-size: 17.5px;
+    color: hsl(var(--primary));
+  }
+  @media (min-width: 768px) {
+    .hs-h3 { font-size: 20px; }
+  }
+  /* Uitleg onder een kop: leesbaar grijsblauw, nooit lichtgrijs. */
+  .hs-tekst { color: hsl(var(--rs-tekst-zacht)); }
+
+  /* Het accentwoord in een kop: een oker markeerstreep onder inktblauwe tekst.
+     Oker als tekstkleur haalt op wit maar contrast 1,9; zo blijft het oker het
+     accent en is het woord gewoon leesbaar. Op donker staat het woord wit op
+     een smallere, volle streep (halfdoorzichtig oker wordt daar olijfgroen). */
+  .hs-accent {
+    color: inherit;
+    background-image: linear-gradient(
+      transparent 64%,
+      hsl(var(--accent) / 0.55) 64%,
+      hsl(var(--accent) / 0.55) 92%,
+      transparent 92%
+    );
+    padding-inline: 0.04em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  .hs-op-donker .hs-accent {
+    background-image: linear-gradient(transparent 76%, hsl(var(--accent)) 76%, hsl(var(--accent)) 88%, transparent 88%);
+  }
+
+  /* ---- Vlakken ---- */
+  .hs-tegel {
+    border-radius: 24px;
+    background-color: hsl(var(--card));
+    box-shadow: var(--rs-schaduw);
+  }
+  @media (min-width: 768px) {
+    .hs-tegel { border-radius: 28px; }
+  }
+  .hs-blauw {
+    background-image: linear-gradient(180deg, hsl(var(--rs-hoofd-van)) 0%, hsl(var(--rs-hoofd-midden)) 40%, hsl(var(--rs-hoofd-naar)) 78%, hsl(var(--card)) 100%);
+  }
+  .hs-blauw-zacht {
+    background-image: linear-gradient(180deg, hsl(var(--instap-tegel-boven)) 0%, hsl(var(--instap-tegel-midden)) 46%, hsl(var(--card)) 100%);
+  }
+  .hs-zand { background-image: linear-gradient(180deg, hsl(var(--rs-zand-van)), var(--card-soft)); }
+  .hs-groen { background-image: linear-gradient(180deg, hsl(var(--subsidie-van)), hsl(var(--subsidie-naar))); }
+  .hs-tint-provincie {
+    background-image: linear-gradient(180deg, hsl(var(--niveau-provincie) / 0.13), hsl(var(--niveau-provincie) / 0.03) 70%, hsl(var(--card)));
+  }
+  /* Het donkere vlak: inktblauw met licht van rechtsboven, zoals het vraagblok
+     op het resultaat. */
+  .hs-donker {
+    color: hsl(var(--primary-foreground));
+    background-color: hsl(var(--primary));
+    background-image:
+      radial-gradient(120% 90% at 85% 0%, hsl(var(--rs-ink-licht) / 0.55), transparent 60%),
+      linear-gradient(160deg, hsl(var(--rs-ink-licht)), hsl(var(--primary)));
+  }
+  /* De warme band om de andere sectie. */
+  .hs-band { background-color: hsl(var(--muted)); }
+
+  /* Een tegel die je kunt aanklikken tilt iets op. */
+  .hs-klik { transition: transform 0.5s var(--rs-veer), box-shadow 0.4s var(--rs-zacht-uit); }
+  @media (hover: hover) {
+    .hs-klik:hover { transform: translateY(-2px); box-shadow: var(--rs-schaduw-hoog); }
+  }
+  .hs-klik:active { transform: scale(0.985); transition-duration: 0.12s; }
+
+  .hs-foto {
+    border-radius: 24px;
+    box-shadow: var(--rs-schaduw);
+  }
+  @media (min-width: 768px) {
+    .hs-foto { border-radius: 28px; }
+  }
+
+  /* ---- Het ronde icoon, zoals de CRM-kaarten ---- */
+  .hs-rondje {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    color: hsl(var(--primary-foreground));
+  }
+  .hs-rondje-ink {
+    background-image: linear-gradient(145deg, hsl(var(--instap-ink-zacht)), hsl(var(--primary)));
+    box-shadow: 0 8px 18px hsl(var(--primary) / 0.25);
+  }
+  .hs-rondje-groen {
+    background-image: linear-gradient(145deg, hsl(var(--subsidie-licht)), hsl(var(--subsidie)));
+    box-shadow: 0 6px 14px hsl(var(--subsidie) / 0.32);
+  }
+  .hs-rondje-provincie {
+    background-image: linear-gradient(145deg, hsl(var(--niveau-provincie) / 0.8), hsl(var(--niveau-provincie)));
+    box-shadow: 0 6px 14px hsl(var(--niveau-provincie) / 0.32);
+  }
+  .hs-rondje-gemeente {
+    background-image: linear-gradient(145deg, hsl(var(--niveau-gemeente) / 0.8), hsl(var(--niveau-gemeente)));
+    box-shadow: 0 6px 14px hsl(var(--niveau-gemeente) / 0.32);
+  }
+  .hs-rondje-oker {
+    color: hsl(var(--primary));
+    background-image: linear-gradient(145deg, hsl(var(--rs-oker-licht)), hsl(var(--accent)));
+    box-shadow: 0 6px 14px hsl(var(--accent) / 0.38);
+  }
+  .hs-rondje-wit {
+    color: hsl(var(--primary));
+    background-color: hsl(var(--card));
+    box-shadow: var(--rs-schaduw);
+  }
+  .hs-rondje-glas {
+    color: hsl(var(--accent));
+    background-color: hsl(var(--primary-foreground) / 0.12);
+  }
+
+  /* ---- Knoppen ----
+     Primair: oker, één per scherm. Secundair: licht (op licht) of glas (op
+     donker of een foto). Verder tekstlinks met een pijl. */
+  .hs-knop {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 52px;
+    padding: 0 26px;
+    border-radius: 9999px;
+    font-size: 15.5px;
+    font-weight: 800;
+    white-space: nowrap;
+    transition: transform 0.45s var(--rs-veer), box-shadow 0.35s var(--rs-zacht-uit), background-color 0.25s ease;
+  }
+  .hs-knop:active { transform: translateY(0) scale(0.96); transition-duration: 0.12s; }
+  .hs-knop:focus-visible { outline: 3px solid hsl(var(--accent)); outline-offset: 3px; }
+  @media (hover: hover) {
+    .hs-knop:hover { transform: translateY(-2px); }
+  }
+  .hs-knop:disabled { cursor: progress; transform: none; }
+  .hs-knop-oker {
+    color: hsl(var(--primary));
+    background-color: hsl(var(--accent));
+    background-image: linear-gradient(180deg, hsl(var(--rs-oker-licht)), hsl(var(--accent)));
+    box-shadow: 0 8px 22px hsl(var(--accent) / 0.38), inset 0 1px 0 hsl(var(--card) / 0.5);
+  }
+  .hs-knop-oker:hover { box-shadow: 0 14px 30px hsl(var(--accent) / 0.48), inset 0 1px 0 hsl(var(--card) / 0.5); }
+  .hs-knop-ink {
+    color: hsl(var(--primary-foreground));
+    background-color: hsl(var(--primary));
+    background-image: linear-gradient(180deg, hsl(var(--rs-ink-licht)), hsl(var(--primary)));
+    box-shadow: 0 8px 22px hsl(var(--primary) / 0.28);
+  }
+  .hs-knop-ink:hover { box-shadow: 0 14px 30px hsl(var(--primary) / 0.34); }
+  .hs-knop-licht {
+    color: hsl(var(--primary));
+    background-color: hsl(var(--card));
+    box-shadow: var(--rs-schaduw);
+  }
+  .hs-knop-licht:hover { box-shadow: var(--rs-schaduw-hoog); }
+  /* Matglas, met een effen terugval voor telefoons zonder backdrop-filter. */
+  .hs-knop-glas {
+    color: hsl(var(--primary-foreground));
+    background-color: hsl(var(--primary) / 0.55);
+  }
+  @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    .hs-knop-glas {
+      background-color: hsl(var(--primary-foreground) / 0.12);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+    }
+  }
+  .hs-knop-glas:hover { background-color: hsl(var(--primary-foreground) / 0.18); }
+
+  /* Een glazen pil voor kleine dingen op donker (de Google-score). */
+  .hs-glas-pil {
+    background-color: hsl(var(--primary) / 0.5);
+  }
+  @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    .hs-glas-pil {
+      background-color: hsl(var(--primary-foreground) / 0.12);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+    }
+  }
+
+  /* De headerknop die op de homepagina pas na de hero verschijnt (Header,
+     ctaNaElement). Weg met opacity en transform, zodat de header niet
+     verspringt. */
+  .hs-kop-cta { transition: opacity 0.35s ease, transform 0.5s var(--rs-veer), box-shadow 0.35s var(--rs-zacht-uit); }
+  .hs-kop-cta[data-verborgen="true"] { opacity: 0; transform: translateY(-8px) scale(0.96); pointer-events: none; }
+
+  /* Tekstlink met pijl; de pijl veert mee. */
+  .hs-pijl-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+    font-size: 15px;
+    font-weight: 800;
+    color: hsl(var(--primary));
+  }
+  .hs-pijl { transition: transform 0.4s var(--rs-veer); }
+  @media (hover: hover) {
+    .hs-pijl-link:hover .hs-pijl,
+    .hs-knop:hover .hs-pijl,
+    .hs-klik:hover .hs-pijl { transform: translateX(4px); }
+  }
+  .hs-op-donker .hs-pijl-link { color: hsl(var(--primary-foreground)); }
+
+  /* Chip: doorlinken naar een onderwerp. */
+  .hs-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 700;
+    color: hsl(var(--primary));
+    background-color: hsl(var(--rs-hoofd-midden));
+    transition: transform 0.3s var(--rs-veer), background-color 0.25s ease;
+  }
+  @media (hover: hover) {
+    .hs-chip:hover { transform: translateY(-2px); background-color: hsl(var(--rs-hoofd-van)); }
+  }
+  .hs-chip:active { transform: scale(0.95); }
+
+  /* ---- Beweging: gestaffeld inveren (zie useStaffel in src/lib/beweging.ts) ---- */
+  .hs-in { animation: hs-veer-in 0.9s var(--rs-veer) both; animation-delay: calc(var(--i, 0) * 70ms); }
+  .hs-wacht { transform: translateY(22px) scale(0.97); opacity: 0.001; }
+}
+
+@keyframes hs-veer-in {
+  0% { transform: translateY(22px) scale(0.97); opacity: 0.001; }
+  60% { opacity: 1; }
+  100% { transform: none; opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hs-in { animation: none; }
+  .hs-wacht { transform: none; opacity: 1; }
+  .hs-knop, .hs-klik, .hs-pijl, .hs-chip { transition: none; }
+}
