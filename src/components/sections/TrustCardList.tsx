@@ -63,12 +63,16 @@ export const TrustCardList = ({
     el.scrollTo({ left: tegel.offsetLeft - inspring, behavior: minderBeweging() ? "auto" : "smooth" });
   };
 
+  // De swiperij knipt alles af wat buiten hem valt, ook de schaduw van de tegels
+  // (--rs-schaduw: 0 12px 32px, dus 44 px eronder en 20 px erboven). pt-5/pb-11
+  // geven die schaduw de ruimte; mt-2 en de -mt-8 van de puntjes nemen dat weer
+  // terug, zodat de afstanden gelijk blijven.
   return (
     <>
       <ul
         ref={scrollerRef}
         onScroll={handleScroll}
-        className={`relative mt-4 -mx-6 flex snap-x snap-mandatory gap-3 overflow-x-auto px-6 pb-7 pt-3 scroll-px-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:-mx-12 md:px-12 md:scroll-px-12 lg:mx-0 lg:grid lg:overflow-visible lg:p-0 ${
+        className={`relative mt-2 -mx-6 flex snap-x snap-mandatory gap-3 overflow-x-auto px-6 pb-11 pt-5 scroll-px-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden md:-mx-12 md:px-12 md:scroll-px-12 lg:mx-0 lg:grid lg:overflow-visible lg:p-0 ${
           desktop === "cards" ? "lg:mt-9 lg:grid-cols-3 lg:gap-5" : "lg:mt-6 lg:grid-cols-1"
         }`}
       >
@@ -91,7 +95,7 @@ export const TrustCardList = ({
           de rij schuift over de onderruimte van de swiperij (die ruimte is er
           zodat de schaduw van de tegels niet hard wordt afgesneden),
           het raakvlak 24 px. */}
-      <div className="relative -mt-4 flex items-center justify-center lg:hidden">
+      <div className="relative -mt-8 flex items-center justify-center lg:hidden">
         {items.map((item, i) => (
           <button
             key={item.title}
