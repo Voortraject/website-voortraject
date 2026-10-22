@@ -60,11 +60,27 @@ export const kleurVoor = (naam: string) =>
   AVATAR_KLEUREN[[...naam].reduce((som, c) => som + c.charCodeAt(0), 0) % AVATAR_KLEUREN.length];
 export const initiaalVan = (naam: string) => naam.trim().charAt(0).toUpperCase() || "?";
 
-/** Live Google-reviews naar kaarten; lege teksten vallen af. */
+// Welke reviews de site toont: minstens 4 sterren en minstens 10 woorden, zodat
+// er nooit een kale "Top!" in de carrousel staat. Van wat overblijft de nieuwste.
+export const MIN_STERREN = 4;
+export const MIN_WOORDEN = 10;
+export const MAX_KAARTEN = 6;
+
+/** Telt woorden; losse leestekens en emoji tellen niet mee. */
+export const aantalWoorden = (tekst: string) =>
+  tekst.split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length;
+
+/**
+ * Live Google-reviews naar kaarten. Verwacht ze nieuwste eerst (zo levert de
+ * query ze aan) en houdt die volgorde vast. Valt af: onder de sterren- of
+ * woordengrens, en een tweede review van dezelfde naam (Google staat er één per
+ * account toe; een dubbele is een restant van de sync).
+ */
 export const naarKaarten = (
   reviews: { id: string; author_name: string; profile_photo_url: string | null; rating: number; text: string | null }[],
-): Kaart[] =>
-  reviews
+): Kaart[] => {
+  const gezien = new Set<string>();
+  return reviews
     .map<Kaart>((r) => ({
       id: r.id,
       naam: r.author_name,
@@ -72,4 +88,12 @@ export const naarKaarten = (
       rating: r.rating,
       tekst: (r.text ?? "").trim(),
     }))
-    .filter((k) => k.tekst.length > 0);
+    .filter((k) => {
+      if (k.rating < MIN_STERREN || aantalWoorden(k.tekst) < MIN_WOORDEN) return false;
+      const sleutel = k.naam.trim().toLowerCase();
+      if (gezien.has(sleutel)) return false;
+      gezien.add(sleutel);
+      return true;
+    })
+    .slice(0, MAX_KAARTEN);
+};

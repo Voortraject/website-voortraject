@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { supabaseExternal } from "@/integrations/supabase/external-client";
+import { MIN_STERREN } from "@/lib/reviews";
 
 export type GoogleReview = {
   id: string;
@@ -38,9 +39,12 @@ export function useGoogleReviews(): UseGoogleReviews {
         supabaseExternal
           .from("google_reviews")
           .select("id, author_name, profile_photo_url, rating, text, relative_time")
-          .gte("rating", 4)
-          .order("publish_time", { ascending: false })
-          .limit(6),
+          .gte("rating", MIN_STERREN)
+          .order("publish_time", { ascending: false, nullsFirst: false })
+          // Ruim ophalen: de woordengrens kan de database niet toepassen, dus
+          // `naarKaarten` filtert en houdt er daarna MAX_KAARTEN over. Met een
+          // krappe limit hier zouden korte reviews die plekken opeten.
+          .limit(50),
         supabaseExternal
           .from("google_place_stats")
           .select("rating, user_rating_count")
