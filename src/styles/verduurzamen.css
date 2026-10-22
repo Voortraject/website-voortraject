@@ -1,0 +1,153 @@
+/* Huisstijl oktober 2026 voor /verduurzamen en de zeven maatregelpagina's.
+ *
+ * Alleen wat src/styles/huisstijl.css nog niet heeft en wat met Tailwind-
+ * utilities onleesbaar wordt: keuzeknoppen, rustige vergelijkingen zonder
+ * lijnen, de FAQ-tegels en een paar tinten. Alleen tokens uit src/index.css;
+ * hier komen geen losse kleuren bij.
+ *
+ * Gewone CSS (geen @layer: dat kan alleen in index.css). De meeste klassen
+ * staan in :where(), zodat Tailwind-utilities in een className er altijd
+ * overheen gaan (`vd-tekst text-[14px]`). De keuzeknop niet: die moet de
+ * reset van <button> verslaan, dus maten geef je daar zelf mee.
+ *
+ * Geïmporteerd door src/components/maatregel/primitieven.tsx, dus elke pagina
+ * die de bouwstenen gebruikt heeft het vanzelf.
+ */
+
+/* ---- Sectie: ruimer op groot scherm, compact op de telefoon ---- */
+:where(.vd-sectie) { padding-block: 48px; }
+@media (min-width: 768px) {
+  :where(.vd-sectie) { padding-block: 80px; }
+}
+
+/* ---- Tekst ---- */
+:where(.vd-lead) { font-size: 16.5px; line-height: 1.6; color: hsl(var(--rs-tekst-zacht)); }
+@media (min-width: 768px) {
+  :where(.vd-lead) { font-size: 18px; }
+}
+:where(.vd-tekst) { font-size: 15px; line-height: 1.6; color: hsl(var(--rs-tekst-zacht)); }
+/* Klein bovenschrift of label: leesbaar, nooit lichtgrijs. */
+:where(.vd-label) {
+  font-size: 13.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: hsl(var(--rs-tekst-zacht));
+}
+/* Een groot getal in een kaart. */
+:where(.vd-getal) {
+  font-family: 'Inter Tight', 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--rs-getal));
+}
+
+/* ---- Vlakken binnen een kaart ----
+   Een zachte inzet in plaats van een lijn eromheen, en zebra in plaats van
+   lijnen tussen rijen. */
+:where(.vd-inzet) {
+  border-radius: 16px;
+  background-color: hsl(var(--primary) / 0.04);
+  box-shadow: inset 0 1px 3px hsl(var(--primary) / 0.07);
+}
+:where(.vd-wit) {
+  border-radius: 16px;
+  background-color: hsl(var(--card));
+  box-shadow: 0 1px 2px hsl(var(--primary) / 0.06), 0 6px 16px hsl(var(--primary) / 0.07);
+}
+:where(.vd-zebra > *) { border-radius: 12px; }
+:where(.vd-zebra > :nth-child(odd)) { background-color: hsl(var(--primary) / 0.04); }
+
+/* Tinten bovenop hs-tegel, naast hs-blauw-zacht, hs-zand en hs-groen. */
+:where(.vd-oker) {
+  background-image: linear-gradient(180deg, hsl(var(--accent) / 0.22), hsl(var(--accent) / 0.07) 70%, hsl(var(--card)));
+}
+:where(.vd-let-op) {
+  background-image: linear-gradient(180deg, hsl(var(--destructive) / 0.09), hsl(var(--destructive) / 0.025) 70%, hsl(var(--card)));
+}
+:where(.vd-rondje-let-op) {
+  background-image: linear-gradient(145deg, hsl(var(--destructive) / 0.8), hsl(var(--destructive)));
+  box-shadow: 0 6px 14px hsl(var(--destructive) / 0.28);
+}
+/* Glas op donker, met een effen terugval. */
+:where(.vd-glas) { background-color: hsl(var(--primary-foreground) / 0.08); }
+:where(.vd-glas-aan) { background-color: hsl(var(--accent) / 0.16); box-shadow: inset 0 0 0 2px hsl(var(--accent) / 0.75); }
+
+/* Een klein label in een kaart ("Deze maatregel", "Snelst terugverdiend"). */
+:where(.vd-pil) {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: hsl(var(--primary));
+  background-color: hsl(var(--accent) / 0.32);
+  white-space: nowrap;
+}
+
+/* ---- Keuzeknop (woningtype, fase, glas) ----
+   Wit met een zachte schaduw; gekozen is inktblauw. Geen rand. */
+.vd-keuze {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-weight: 700;
+  color: hsl(var(--primary));
+  background-color: hsl(var(--card));
+  box-shadow: 0 1px 2px hsl(var(--primary) / 0.08), 0 4px 12px hsl(var(--primary) / 0.08);
+  transition: transform 0.3s var(--rs-veer), box-shadow 0.3s var(--rs-zacht-uit), background-color 0.25s ease, color 0.25s ease;
+}
+.vd-keuze[aria-pressed="true"],
+.vd-keuze[aria-selected="true"] {
+  color: hsl(var(--primary-foreground));
+  background-color: hsl(var(--primary));
+  background-image: linear-gradient(180deg, hsl(var(--rs-ink-licht)), hsl(var(--primary)));
+  box-shadow: 0 6px 16px hsl(var(--primary) / 0.25);
+}
+@media (hover: hover) {
+  .vd-keuze:hover { transform: translateY(-2px); }
+}
+.vd-keuze:active { transform: scale(0.96); transition-duration: 0.12s; }
+.vd-keuze:focus-visible { outline: 3px solid hsl(var(--accent)); outline-offset: 3px; }
+
+/* ---- Veelgestelde vragen: losse tegels, de open vraag krijgt een tint ---- */
+.vd-faq {
+  border-radius: 18px;
+  background-color: hsl(var(--card));
+  box-shadow: 0 1px 2px hsl(var(--primary) / 0.06), 0 6px 16px hsl(var(--primary) / 0.07);
+}
+.vd-faq[open] {
+  background-image: linear-gradient(180deg, hsl(var(--rs-hoofd-midden)), hsl(var(--card)) 70%);
+  box-shadow: var(--rs-schaduw);
+}
+.vd-faq > summary { list-style: none; }
+.vd-faq > summary::-webkit-details-marker { display: none; }
+.vd-faq > summary:focus-visible { outline: 3px solid hsl(var(--accent)); outline-offset: 3px; border-radius: 18px; }
+.vd-faq-chev {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  color: hsl(var(--primary));
+  background-color: hsl(var(--rs-hoofd-midden));
+  transition: transform 0.5s var(--rs-veer), background-color 0.3s ease;
+}
+.vd-faq[open] .vd-faq-chev { transform: rotate(180deg); background-color: hsl(var(--card)); }
+
+/* De foto van een maatregelkaart zoomt een fractie in bij aanwijzen. */
+.vd-beeld img { transition: transform 0.6s var(--rs-zacht-uit); }
+@media (hover: hover) {
+  .vd-beeld:hover img { transform: scale(1.03); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vd-keuze, .vd-faq-chev, .vd-beeld img { transition: none; }
+}

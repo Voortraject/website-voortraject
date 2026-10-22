@@ -1,6 +1,8 @@
+import { Compass, SunMedium } from "lucide-react";
+
 import { BRONNEN, DAK_HOEKEN, DAK_NOTITIES, DAK_RICHTINGEN } from "@/data/zonnepanelen";
-import { Accent, SectieKop } from "@/components/maatregel/primitieven";
-import { KLEUR } from "@/components/maatregel/stijl";
+import { Accent, IconCirkel, SectieKop } from "@/components/maatregel/primitieven";
+import type { LucideIcon } from "lucide-react";
 
 /**
  * Wat je dak kan, in één beeld.
@@ -26,33 +28,24 @@ export const DakOpbrengst = () => (
       <SectieKop center>
         <Accent tekst="Wat jouw dak [[kan]]" />
       </SectieKop>
-      <p
-        className="mt-4 mx-auto text-base leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 660 }}
-      >
+      <p className="vd-lead mx-auto mt-3 max-w-[660px]">
         Richting en hellingshoek bepalen samen hoeveel je dak kan opwekken. Zoek je eigen dak op in
         het raster: 100 procent is een dak op het zuiden met 30 tot 45 graden helling.
       </p>
     </div>
 
-    <div
-      className="mt-10 rounded-2xl p-4 md:p-6"
-      style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-    >
+    <div className="hs-tegel mt-7 p-4 md:mt-10 md:p-6" data-veer>
       {/* Op een smal scherm past het raster niet; dan schuift het horizontaal
           in plaats van dat de cijfers onleesbaar klein worden. Zonder hint ziet
           niemand dat er nog kolommen achter de rand zitten. */}
-      <p
-        className="sm:hidden text-[12px]"
-        style={{ color: KLEUR.navy, opacity: 0.55, margin: "0 0 8px 0" }}
-      >
+      <p className="vd-tekst mb-2 mt-0 text-[13.5px] sm:hidden">
         Schuif het raster opzij voor de steilere daken.
       </p>
       <div className="overflow-x-auto">
         {/* Vaste kolombreedtes: zonder colgroup slokt de richtingkolom alle
             overgebleven ruimte op en staan de namen ver van hun cijfers. */}
         <table
-          className="w-full border-separate mx-auto"
+          className="mx-auto w-full border-separate"
           style={{ minWidth: 460, maxWidth: 860, borderSpacing: 3 }}
         >
           <colgroup>
@@ -69,8 +62,7 @@ export const DakOpbrengst = () => (
             <tr>
               <th
                 scope="col"
-                className="text-left text-[11px] font-bold uppercase tracking-wider"
-                style={{ color: KLEUR.navy, opacity: 0.5, paddingBottom: 4, minWidth: 96 }}
+                className="min-w-[96px] pb-1 text-left text-[12px] font-extrabold uppercase tracking-wider text-[hsl(var(--rs-tekst-zacht))]"
               >
                 Richting
               </th>
@@ -78,8 +70,7 @@ export const DakOpbrengst = () => (
                 <th
                   key={hoek}
                   scope="col"
-                  className="text-[12px] font-semibold tabular-nums"
-                  style={{ color: KLEUR.navy, opacity: 0.6, paddingBottom: 4 }}
+                  className="pb-1 text-[12.5px] font-bold tabular-nums text-[hsl(var(--rs-tekst-zacht))]"
                 >
                   {hoek}°
                 </th>
@@ -91,19 +82,16 @@ export const DakOpbrengst = () => (
               <tr key={richting.naam}>
                 <th
                   scope="row"
-                  className="text-left text-[14px] font-medium whitespace-nowrap"
-                  style={{ color: KLEUR.navy, paddingRight: 8 }}
+                  className="whitespace-nowrap pr-2 text-left text-[14px] font-semibold text-primary"
                 >
                   {richting.naam}
                 </th>
                 {richting.opbrengst.map((waarde, i) => (
                   <td
                     key={DAK_HOEKEN[i]}
-                    className="text-center text-[14px] font-semibold tabular-nums rounded-lg"
+                    className="rounded-[10px] px-1 py-[9px] text-center text-[14px] font-bold tabular-nums text-primary"
                     style={{
                       backgroundColor: vulling(waarde),
-                      color: KLEUR.navy,
-                      padding: "9px 4px",
                       // Het maximum krijgt een randje, zodat het ijkpunt van de
                       // tabel meteen te vinden is.
                       boxShadow: waarde === 100 ? "inset 0 0 0 2px hsl(var(--primary) / 0.45)" : "none",
@@ -118,7 +106,7 @@ export const DakOpbrengst = () => (
         </table>
       </div>
 
-      <p className="mt-4 text-[13px]" style={{ color: KLEUR.navy, opacity: 0.55 }}>
+      <p className="vd-tekst mb-0 mt-4 text-[13.5px]">
         Percentages van{" "}
         <a
           href={BRONNEN.dak.url}
@@ -133,26 +121,19 @@ export const DakOpbrengst = () => (
       </p>
     </div>
 
-    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-      <Notitie kop="Oost-west is vaak slimmer dan het lijkt" tekst={DAK_NOTITIES.oostWest} />
-      <Notitie kop="Schaduw is op te lossen" tekst={DAK_NOTITIES.schaduw} />
+    <div className="mt-4 grid grid-cols-1 gap-3 md:mt-6 md:grid-cols-2 md:gap-5">
+      <Notitie Icon={Compass} kop="Oost-west is vaak slimmer dan het lijkt" tekst={DAK_NOTITIES.oostWest} />
+      <Notitie Icon={SunMedium} kop="Schaduw is op te lossen" tekst={DAK_NOTITIES.schaduw} />
     </div>
   </>
 );
 
-const Notitie = ({ kop, tekst }: { kop: string; tekst: string }) => (
-  <div
-    className="rounded-2xl p-6"
-    style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-  >
-    <span className="block text-[16px] font-semibold" style={{ color: KLEUR.navy }}>
-      {kop}
-    </span>
-    <p
-      className="text-[15px] leading-relaxed"
-      style={{ color: KLEUR.navy, opacity: 0.75, margin: "8px 0 0 0" }}
-    >
-      {tekst}
-    </p>
+const Notitie = ({ Icon, kop, tekst }: { Icon: LucideIcon; kop: string; tekst: string }) => (
+  <div className="hs-tegel hs-zand p-5 md:p-6" data-veer>
+    <div className="flex items-center justify-between gap-3">
+      <span className="hs-h3 block">{kop}</span>
+      <IconCirkel Icon={Icon} size={36} />
+    </div>
+    <p className="vd-tekst mb-0 mt-2">{tekst}</p>
   </div>
 );

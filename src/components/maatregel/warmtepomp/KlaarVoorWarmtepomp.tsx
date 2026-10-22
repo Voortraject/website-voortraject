@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 
 import { BRONNEN, CV_KETEL_AANVOER, getal, RENDEMENT, VERWARMINGSTEST } from "@/data/warmtepomp";
-import { Accent, SectieKop } from "@/components/maatregel/primitieven";
+import { Accent, NummerRondje, SectieKop } from "@/components/maatregel/primitieven";
 import { KLEUR } from "@/components/maatregel/stijl";
 
 /**
@@ -30,10 +30,7 @@ export const KlaarVoorWarmtepomp = () => (
       <SectieKop center>
         <Accent tekst="Is jouw woning er [[klaar voor]]?" />
       </SectieKop>
-      <p
-        className="mt-4 mx-auto text-base leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 640 }}
-      >
+      <p className="vd-lead mx-auto mt-3 max-w-[640px]">
         Een warmtepomp maakt minder heet water dan je cv-ketel. Blijft jouw woning daarop warm? Dat
         hoef je niet te schatten, je kunt het deze winter zelf uitproberen.
       </p>
@@ -41,55 +38,27 @@ export const KlaarVoorWarmtepomp = () => (
 
     {/* Bewust items-stretch: de twee kaarten verschillen in lengte, en een
         rafelige onderrand oogt slordiger dan wat witruimte in de kortste. */}
-    <div className="mt-10 grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-6 lg:gap-8 items-stretch">
+    <div className="mt-7 grid grid-cols-1 items-stretch gap-4 md:mt-10 lg:grid-cols-[1.05fr_1fr] lg:gap-6">
       {/* De test */}
-      <div
-        className="rounded-2xl p-6 md:p-7"
-        style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-      >
-        <span className="label-eyebrow">De verwarmingstest</span>
-        <h3
-          className="mt-2 text-[20px] font-semibold"
-          style={{ color: KLEUR.navy, margin: "8px 0 0 0", lineHeight: 1.3 }}
-        >
+      <div className="hs-tegel hs-blauw-zacht p-5 md:p-7" data-veer>
+        <span className="vd-label">De verwarmingstest</span>
+        <h3 className="hs-h3 mb-0 mt-2">
           Zet je cv-ketel een winter lang op {VERWARMINGSTEST.temperatuur} graden
         </h3>
-        <ol
-          className="mt-6 flex flex-col gap-5"
-          style={{ listStyle: "none", padding: 0, margin: "24px 0 0 0" }}
-        >
+        <ol className="mx-0 mb-0 mt-5 flex list-none flex-col gap-4 p-0 md:mt-6 md:gap-5">
           {VERWARMINGSTEST.stappen.map((stap, i) => (
             <li key={stap.kop} className="flex items-start gap-4">
-              <span
-                className="flex items-center justify-center rounded-full shrink-0 text-[13px] font-bold"
-                style={{
-                  width: 28,
-                  height: 28,
-                  backgroundColor: "hsl(var(--accent) / 0.2)",
-                  color: KLEUR.navy,
-                }}
-                aria-hidden="true"
-              >
-                {i + 1}
-              </span>
-              <span className="min-w-0">
-                <span
-                  className="block text-[16px] font-semibold"
-                  style={{ color: KLEUR.navy, lineHeight: 1.4 }}
-                >
-                  {stap.kop}
-                </span>
-                <span
-                  className="mt-1 block text-[14.5px] leading-relaxed"
-                  style={{ color: KLEUR.navy, opacity: 0.75 }}
-                >
+              <NummerRondje n={i + 1} size={32} />
+              <span className="min-w-0 pt-1">
+                <span className="block text-[16px] font-bold leading-[1.4] text-primary">{stap.kop}</span>
+                <span className="vd-tekst mt-1 block text-[14.5px]">
                   {stap.tekst}
                 </span>
               </span>
             </li>
           ))}
         </ol>
-        <p className="mt-6 text-[13px] leading-relaxed" style={{ color: KLEUR.navy, opacity: 0.55 }}>
+        <p className="mb-0 mt-5 text-[13.5px] leading-relaxed text-[hsl(var(--rs-tekst-zacht))] md:mt-6">
           De test komt van{" "}
           <a
             href={BRONNEN.verwarmingstest.url}
@@ -105,21 +74,15 @@ export const KlaarVoorWarmtepomp = () => (
       </div>
 
       {/* Waarom juist vijftig graden */}
-      <div
-        className="rounded-2xl p-6 md:p-7"
-        style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-      >
-        <span className="label-eyebrow">Waarom juist dat getal</span>
-        <p
-          className="text-[15px] leading-relaxed"
-          style={{ color: KLEUR.navy, opacity: 0.8, margin: "12px 0 0 0" }}
-        >
+      <div className="hs-tegel hs-zand p-5 md:p-7" data-veer>
+        <span className="vd-label">Waarom juist dat getal</span>
+        <p className="vd-tekst mb-0 mt-3">
           Een cv-ketel staat meestal op {CV_KETEL_AANVOER}. Een warmtepomp komt daar niet bij in de
           buurt, en dat is geen gebrek: juist door het water minder heet te maken haalt hij zijn
           rendement. Vijftig graden ligt precies in dat gebied.
         </p>
 
-        <div className="mt-7 flex flex-col gap-4">
+        <div className="mt-6 flex flex-col gap-4 md:mt-7">
           <Balk
             label="Warmtepomp"
             van={30}
@@ -142,13 +105,12 @@ export const KlaarVoorWarmtepomp = () => (
         <div className="mt-2 flex gap-3" aria-hidden="true">
           <span className="shrink-0" style={{ width: 96 }} />
           <span
-            className="relative block flex-1 text-[12px] tabular-nums"
-            style={{ color: KLEUR.navy, opacity: 0.55, height: 18 }}
+            className="relative block h-[18px] flex-1 text-[12px] tabular-nums text-[hsl(var(--rs-tekst-zacht))]"
           >
             <span className="absolute left-0">{SCHAAL_MIN}°</span>
             <span
-              className="absolute -translate-x-1/2 font-semibold"
-              style={{ left: `${positie(VERWARMINGSTEST.temperatuur)}%`, opacity: 1 }}
+              className="absolute -translate-x-1/2 font-bold text-primary"
+              style={{ left: `${positie(VERWARMINGSTEST.temperatuur)}%` }}
             >
               {VERWARMINGSTEST.temperatuur}°
             </span>
@@ -156,55 +118,36 @@ export const KlaarVoorWarmtepomp = () => (
           </span>
         </div>
 
-        <p
-          className="mt-5 text-[14.5px] leading-relaxed"
-          style={{ color: KLEUR.navy, opacity: 0.8, margin: "20px 0 0 0" }}
-        >
+        <p className="vd-tekst mb-0 mt-5 text-[14.5px]">
           Lukt het niet op {VERWARMINGSTEST.temperatuur} graden, dan weet je meteen waar de winst
           zit: isoleren, of grotere radiatoren, of allebei.
         </p>
-        <a
-          href="/verduurzamen/isolatie"
-          className="mt-5 inline-flex items-center gap-2 text-[15px] font-semibold underline-offset-4 transition-colors hover:underline"
-          style={{ color: KLEUR.navy }}
-        >
+        <a href="/verduurzamen/isolatie" className="hs-pijl-link mt-3">
           Zie wat isoleren in jouw woning oplevert
-          <ArrowRight size={16} aria-hidden="true" />
+          <ArrowRight size={17} strokeWidth={2.2} className="hs-pijl" aria-hidden="true" />
         </a>
       </div>
     </div>
 
     {/* Wat de temperatuur met het rendement doet */}
-    <div
-      className="mt-6 rounded-2xl p-6 md:p-7"
-      style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-    >
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
-        <span className="label-eyebrow">Wat dat met het rendement doet</span>
-        <span className="text-[14px]" style={{ color: KLEUR.navy, opacity: 0.6 }}>
-          Kilowattuur warmte per kilowattuur stroom
-        </span>
+    <div className="hs-tegel hs-blauw-zacht mt-4 p-5 md:mt-6 md:p-7" data-veer>
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+        <span className="vd-label">Wat dat met het rendement doet</span>
+        <span className="vd-tekst text-[14px]">Kilowattuur warmte per kilowattuur stroom</span>
       </div>
 
-      <p
-        className="text-[15px] leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.8, margin: "14px 0 0 0", maxWidth: 760 }}
-      >
+      <p className="vd-tekst mb-0 mt-3 max-w-[760px]">
         Eén kilowattuur stroom levert {RENDEMENT.bereik} kilowattuur warmte op. Hoeveel precies
         hangt af van je afgiftesysteem en de buitentemperatuur, dus dezelfde warmtepomp presteert in
         twee huizen heel verschillend.
       </p>
 
-      <div className="mt-7 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+      <div className="mt-5 grid grid-cols-1 gap-3 md:mt-7 md:grid-cols-2 md:gap-5">
         {RENDEMENT.metingen.map((meting) => (
-          <div key={meting.buiten}>
-            <div className="flex items-baseline gap-2">
-              <span className="text-[15px] font-semibold" style={{ color: KLEUR.navy }}>
-                {meting.buiten}
-              </span>
-              <span className="text-[13px]" style={{ color: KLEUR.navy, opacity: 0.6 }}>
-                {meting.omschrijving}
-              </span>
+          <div key={meting.buiten} className="vd-wit p-4 md:p-5">
+            <div className="flex flex-wrap items-baseline gap-x-2">
+              <span className="text-[15px] font-bold text-primary">{meting.buiten}</span>
+              <span className="text-[13.5px] text-[hsl(var(--rs-tekst-zacht))]">{meting.omschrijving}</span>
             </div>
             <div className="mt-4 flex flex-col gap-3">
               <CopBalk label="Vloerverwarming" waarde={meting.vloer} kleur={KLEUR.goud} />
@@ -218,10 +161,7 @@ export const KlaarVoorWarmtepomp = () => (
         ))}
       </div>
 
-      <p
-        className="mt-7 text-[13px] leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.55, margin: "28px 0 0 0" }}
-      >
+      <p className="mb-0 mt-5 text-[13.5px] leading-relaxed text-[hsl(var(--rs-tekst-zacht))] md:mt-7">
         Over een heel jaar gemeten heet dit de SCOP: met alleen radiatoren ongeveer{" "}
         {getal(RENDEMENT.scopRadiatoren)}, met warmte uit de bodem {RENDEMENT.scopBodem}. Cijfers
         van{" "}
@@ -255,18 +195,8 @@ const Balk = ({
 }) => (
   <div className="flex items-center gap-3">
     <span className="shrink-0" style={{ width: 96 }}>
-      <span
-        className="block text-[13px] font-semibold"
-        style={{ color: KLEUR.navy, opacity: 0.8 }}
-      >
-        {label}
-      </span>
-      <span
-        className="block text-[12px] tabular-nums"
-        style={{ color: KLEUR.navy, opacity: 0.6 }}
-      >
-        {tekst}
-      </span>
+      <span className="block text-[13.5px] font-bold text-primary">{label}</span>
+      <span className="block text-[12px] tabular-nums text-[hsl(var(--rs-tekst-zacht))]">{tekst}</span>
     </span>
     <span className="relative block flex-1" style={{ height: 30 }}>
       {/* De hele schaal als rustige onderlaag */}
@@ -309,12 +239,7 @@ const Balk = ({
 /** Eén rendementswaarde als balk, geschaald op COP_SCHAAL. */
 const CopBalk = ({ label, waarde, kleur }: { label: string; waarde: number; kleur: string }) => (
   <div className="flex items-center gap-3">
-    <span
-      className="shrink-0 text-[14px]"
-      style={{ color: KLEUR.navy, opacity: 0.8, width: 116 }}
-    >
-      {label}
-    </span>
+    <span className="w-[116px] shrink-0 text-[14px] font-semibold text-foreground">{label}</span>
     <span className="relative block flex-1" style={{ height: 22 }}>
       <span
         className="absolute rounded-full"
@@ -333,10 +258,7 @@ const CopBalk = ({ label, waarde, kleur }: { label: string; waarde: number; kleu
         aria-hidden="true"
       />
     </span>
-    <span
-      className="shrink-0 text-[15px] font-bold tabular-nums"
-      style={{ color: KLEUR.navy, width: 34, textAlign: "right" }}
-    >
+    <span className="w-[34px] shrink-0 text-right text-[15px] font-extrabold tabular-nums text-primary">
       {getal(waarde)}
     </span>
   </div>

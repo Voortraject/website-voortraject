@@ -1,14 +1,13 @@
-import type { ReactNode } from "react";
+import { Fragment, useRef, type ReactNode } from "react";
 import { ArrowRight, ChevronDown, Check, Clock, Wrench } from "lucide-react";
-import { BorderRotate } from "@/components/ui/animated-gradient-border";
 import type { LucideIcon } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Seo } from "@/components/Seo";
 import { CtaButton } from "@/components/CtaButton";
-import { OfBelOnsCta } from "@/components/OfBelOnsCta";
 import { SubsidiecheckCta } from "@/components/sections/SubsidiecheckCta";
 import { MAATREGELEN, type MaatregelSlug, type RouteStap } from "@/data/maatregelen";
+import { useStaffel } from "@/lib/beweging";
 import {
   Aandachtspunten,
   InfoBlok,
@@ -20,9 +19,10 @@ import {
 } from "@/components/maatregel/Blokken";
 import { Kruimelpad } from "@/components/maatregel/Kruimelpad";
 import { RouteStrip } from "@/components/maatregel/RouteStrip";
+import { SlotCta } from "@/components/maatregel/SlotCta";
 import { maatregelJsonLd } from "@/components/maatregel/jsonLd";
-import { Accent, Kaart, KaartTekst, KaartTitel, Sectie, SectieKop } from "@/components/maatregel/primitieven";
-import { KLEUR, type SectieBg } from "@/components/maatregel/stijl";
+import { Accent, IconCirkel, Kaart, KaartTekst, KaartTitel, Sectie, SectieKop } from "@/components/maatregel/primitieven";
+import { toonReeks, type SectieBg, type SectieSoort } from "@/components/maatregel/stijl";
 
 export type RouteStep = RouteStap;
 
@@ -73,9 +73,11 @@ export interface ProcesStap {
  * levert het ritme en de chrome; de inhoud die een maatregel écht onderscheidt
  * komt van de pagina zelf.
  *
- * `na` bepaalt waar hij landt. `bg` hoort mee te bewegen met het ritme van de
- * pagina: src/test/maatregelPagina.test.tsx controleert dat er nooit twee
- * gelijke achtergronden naast elkaar komen.
+ * `na` bepaalt waar hij landt. Sinds de huisstijl van oktober 2026 kiest het
+ * template de lichte tint zelf (toonReeks in maatregel/stijl.ts), zodat er bij
+ * elke combinatie van secties nooit twee gelijke naast elkaar komen; van `bg`
+ * telt alleen nog "navy" (een donkere sectie). src/test/maatregelPagina.test.tsx
+ * bewaakt het ritme.
  */
 export interface EigenSectie {
   na: "hero" | "route" | "kosten" | "subsidies";
@@ -188,10 +190,18 @@ export interface MaatregelPaginaProps {
 const STANDAARD_KOSTEN_VOETNOOT =
   "Deze inschatting klopt in veel gevallen, maar verschilt per woning. Bouwjaar, woningtype, huidige isolatie en de combinatie van maatregelen die je kiest, bepalen wat het bij jou oplevert.";
 
+
+/** Eén sectie in de reeks van de pagina; de tint wordt daarna voor de hele reeks gekozen. */
+interface Blok {
+  key: string;
+  soort: SectieSoort;
+  id?: string;
+  inhoud: ReactNode;
+}
+
 export const MaatregelPagina = (props: MaatregelPaginaProps) => {
   const {
     slug,
-    icon: _Icon,
     badge,
     seoTitle,
     seoDescription,
@@ -217,7 +227,6 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
     kostenFooter,
     kostenMode = "opties",
     kostenSinglePills,
-    prijsPeil = "juni 2026",
     aandachtspunten,
     keurmerken,
     subsidiesIntro,
@@ -236,18 +245,154 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
   } = props;
 
   const label = MAATREGELEN[slug].label;
+  const mainRef = useRef<HTMLElement>(null);
+  useStaffel(mainRef);
 
+  // De reeks secties onder de hero, in volgorde. Bijna elke sectie is
+  // optioneel, dus de tinten worden pas gekozen als vaststaat welke er zijn
+  // (toonReeks): nooit twee gelijke naast elkaar, en de FAQ boven de footer
+  // altijd op off-white. src/test/maatregelPagina.test.tsx bewaakt dat.
+  const blokken: Blok[] = [];
   const eigen = (anker: EigenSectie["na"]) =>
     eigenSecties
       .filter((sectie) => sectie.na === anker)
-      .map((sectie, i) => (
-        <Sectie key={`${anker}-${i}`} bg={sectie.bg} id={sectie.id}>
-          {sectie.inhoud}
-        </Sectie>
-      ));
+      .forEach((sectie, i) =>
+        blokken.push({
+          key: `${anker}-${i}`,
+          soort: sectie.bg === "navy" ? "donker" : "licht",
+          id: sectie.id,
+          inhoud: sectie.inhoud,
+        }),
+      );
+
+  eigen("hero");
+
+  if (watValtEronder && watValtEronder.length > 0) {
+    blokken.push({
+      key: "wat-valt-eronder",
+      soort: "licht",
+      inhoud: <WatValtEronder kop={watValtEronderKop} items={watValtEronder} />,
+    });
+  }
+
+  blokken.push({
+    key: "voor-wie",
+    soort: "licht",
+    inhoud: <PastDitBij kop={voorWieKop} intro={voorWieIntro} pastBij={pastBij} minderUrgent={minderUrgent} />,
+  });
+
+  if (extraInfo && extraInfo.items.length > 0) {
+    blokken.push({
+      key: "extra-info",
+      soort: "licht",
+      inhoud: (
+        <InfoBlok kop={extraInfo.kop} intro={extraInfo.intro} items={extraInfo.items} voetregel={extraInfo.voetregel} />
+      ),
+    });
+  }
+
+  if (routeTekst) {
+    blokken.push({
+      key: "route",
+      soort: "donker",
+      inhoud: <RouteStrip actief={routeStep} tekst={routeTekst} kop={wanneerKop ? wanneerKop : undefined} />,
+    });
+  }
+
+  eigen("route");
+
+  blokken.push({
+    key: "kosten",
+    soort: "licht",
+    inhoud: (
+      <Kosten
+        kop={kostenKop}
+        mode={kostenMode}
+        items={kostenItems}
+        singlePills={kostenSinglePills}
+        voetnoot={kostenFooter ?? STANDAARD_KOSTEN_VOETNOOT}
+      />
+    ),
+  });
+
+  eigen("kosten");
+
+  // De subsidiecheck halverwege brengt zijn eigen kleur mee.
+  blokken.push({ key: "subsidiecheck", soort: "vast", inhoud: <SubsidiecheckCta /> });
+
+  if (subsidiesIntro) {
+    blokken.push({
+      key: "subsidies",
+      soort: "licht",
+      inhoud: (
+        <SubsidieBlok
+          intro={subsidiesIntro}
+          items={subsidiesItems ?? []}
+          linkHref={subsidiesLinkHref}
+          linkLabel={subsidiesLinkLabel}
+        />
+      ),
+    });
+  }
+
+  eigen("subsidies");
+
+  if (aandachtspunten && aandachtspunten.length > 0) {
+    blokken.push({
+      key: "aandachtspunten",
+      soort: "licht",
+      inhoud: (
+        <>
+          <Aandachtspunten items={aandachtspunten} />
+          {onderhoud && (
+            <div className="mx-auto mt-5 max-w-[880px]">
+              <LinkKaart
+                Icon={Wrench}
+                kop={onderhoud.kop}
+                tekst={onderhoud.tekst}
+                links={[{ label: onderhoud.linkLabel, href: onderhoud.linkHref }]}
+              />
+            </div>
+          )}
+        </>
+      ),
+    });
+  }
+
+  if (keurmerken) {
+    blokken.push({ key: "keurmerken", soort: "licht", inhoud: <Keurmerken data={keurmerken} /> });
+  }
+
+  if (combineren) {
+    blokken.push({
+      key: "combineren",
+      soort: "licht",
+      inhoud: <LinkKaart kop={combineren.kop} tekst={combineren.tekst} links={combineren.links} />,
+    });
+  }
+
+  blokken.push({
+    key: "faq",
+    soort: "licht",
+    inhoud: (
+      <>
+        <SectieKop center>
+          <Accent tekst="Veelgestelde [[vragen]]" />
+        </SectieKop>
+        <div className="mx-auto mt-7 grid max-w-[820px] gap-2.5 md:mt-10">
+          {faqs.map((f) => (
+            <FaqRij key={f.q} item={f} />
+          ))}
+        </div>
+      </>
+    ),
+  });
+
+  // De hero is de eerste lichte sectie van de reeks.
+  const [heroBg, ...tinten] = toonReeks(["licht", ...blokken.map((b) => b.soort)]);
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: KLEUR.zand }}>
+    <div className="min-h-screen flex flex-col bg-background">
       <Seo
         title={seoTitle}
         description={seoDescription}
@@ -255,64 +400,41 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
         jsonLd={maatregelJsonLd({ slug, label, faqs })}
       />
       <Header />
-      <main className="flex-1">
+      <main className="flex-1" ref={mainRef}>
         {/* 1 — HERO */}
-        <section
-          data-bg="zand"
-          className="w-full py-12 md:py-[72px]"
-          style={{ backgroundColor: KLEUR.zand }}
-        >
+        <section data-bg={heroBg ?? "zand"} className="w-full bg-background pt-5 pb-12 md:pt-8 md:pb-20">
           <div className="mx-auto max-w-[1180px] px-6">
             <Kruimelpad label={label} />
-            <div className="flex flex-col md:flex-row md:items-center gap-10 md:gap-12">
-              <div className="md:flex-1 min-w-0">
+            <div className="flex flex-col gap-8 md:flex-row md:items-center md:gap-12">
+              <div className="min-w-0 md:flex-1">
                 {badge && (
-                  <span
-                    className="mb-4 inline-flex items-center rounded-full px-3 py-1 text-[12px] font-bold uppercase tracking-wider"
-                    style={{ backgroundColor: "hsl(var(--accent) / 0.2)", color: KLEUR.navy }}
-                  >
+                  <span className="mb-4 inline-flex min-h-[30px] items-center rounded-full bg-[hsl(var(--rs-hoofd-midden))] px-3 text-[13.5px] font-bold text-primary">
                     {badge}
                   </span>
                 )}
                 <h1
-                  className="font-display"
-                  style={{
-                    color: KLEUR.navy,
-                    fontWeight: 700,
-                    fontSize: "clamp(32px, 4.4vw, 48px)",
-                    lineHeight: 1.1,
-                    letterSpacing: "-0.02em",
-                    margin: 0,
-                  }}
+                  className="m-0 text-[clamp(29px,8.2vw,34px)] font-bold leading-[1.08] tracking-[-0.03em] text-primary md:text-[clamp(38px,4.4vw,52px)] [text-wrap:balance]"
+                  style={{ fontFamily: "'Inter Tight', 'Inter', sans-serif" }}
                 >
                   <Accent tekst={heroTitle} />
                 </h1>
-                <p
-                  className="mt-5 text-base md:text-lg leading-relaxed"
-                  style={{ color: KLEUR.navy, opacity: 0.85, maxWidth: 560 }}
-                >
+                <p className="vd-lead mt-4 max-w-[560px] md:mt-5">
                   {heroSub}
                   {heroIntro ? ` ${heroIntro}` : ""}
                 </p>
-                <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
-                  <CtaButton href={heroCtaHref} variant="primary">
+                <div className="mt-6 md:mt-8">
+                  <CtaButton href={heroCtaHref} variant="accent" className="w-full sm:w-auto">
                     {heroCtaLabel}
-                    <ArrowRight size={16} />
+                    <ArrowRight size={17} strokeWidth={2.2} className="hs-pijl" aria-hidden="true" />
                   </CtaButton>
                 </div>
               </div>
               {heroImageSrc && (
-                <div
-                  className="md:flex-1 overflow-hidden rounded-2xl"
-                  style={{
-                    border: `1px solid ${KLEUR.rand}`,
-                    aspectRatio: "4 / 3",
-                  }}
-                >
+                <div className="md:flex-1">
                   <img
                     src={heroImageSrc}
                     alt={heroImageAlt ?? ""}
-                    className="w-full h-full object-cover"
+                    className="hs-foto block aspect-[3/2] w-full object-cover md:aspect-[4/3]"
                     style={{ objectPosition: heroImagePosition }}
                     width={1200}
                     height={900}
@@ -323,275 +445,133 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
           </div>
         </section>
 
-        {/* De achtergronden wisselen bewust per sectie. Omdat bijna elke sectie
-            optioneel is, is de reeks zo gekozen dat er in élke combinatie van
-            aanwezige blokken nooit twee dezelfde achtergronden naast elkaar
-            komen. src/test/maatregelPagina.test.tsx bewaakt dat. */}
-
-        {eigen("hero")}
-
-        {/* 2 — WAT VALT HIERONDER */}
-        {watValtEronder && watValtEronder.length > 0 && (
-          <Sectie bg="wit">
-            <WatValtEronder kop={watValtEronderKop} items={watValtEronder} />
-          </Sectie>
-        )}
-
-        {/* 3 — PAST DIT BIJ JOUW WONING? */}
-        <Sectie bg="warm">
-          <div className="text-center">
-            <SectieKop center><Accent tekst={voorWieKop} /></SectieKop>
-            <p
-              className="mt-3 text-base leading-relaxed mx-auto"
-              style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 560 }}
-            >
-              {voorWieIntro}
-            </p>
-          </div>
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
-            {/* WEL (links) */}
-            <BorderRotate
-              animationMode="auto-rotate"
-              animationSpeed={4}
-              gradientColors={{ primary: '#92701a', secondary: '#c9a227', accent: '#f5d176' }}
-              backgroundColor="#ffffff"
-              borderWidth={2}
-              borderRadius={12}
-            >
-              <div className="p-6 h-full" style={{ backgroundColor: KLEUR.wit, borderRadius: 10 }}>
-                <div
-                  className="mb-6 text-sm font-bold uppercase tracking-wider"
-                  style={{ color: KLEUR.goud }}
-                >
-                  Wel
-                </div>
-                <ul className="flex flex-col gap-4">
-                  {pastBij.map((t, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <Check
-                        size={18}
-                        className="mt-1 shrink-0"
-                        style={{ color: KLEUR.goud }}
-                        aria-hidden="true"
-                      />
-                      <span style={{ fontSize: 16, lineHeight: 1.5, color: "hsl(var(--foreground))", fontWeight: 500 }}>
-                        {t}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </BorderRotate>
-
-            {/* NIET (rechts) */}
-            <div
-              className="rounded-2xl p-6 shadow-sm h-full"
-              style={{ backgroundColor: KLEUR.warm, border: `1px solid ${KLEUR.rand}` }}
-            >
-              <div
-                className="mb-6 text-sm font-bold uppercase tracking-wider"
-                style={{ color: KLEUR.navy, opacity: 0.7 }}
-              >
-                Nu even niet
-              </div>
-              <ul className="flex flex-col gap-4">
-                {minderUrgent.map((t, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <Clock
-                      size={18}
-                      className="mt-1 shrink-0"
-                      style={{ color: KLEUR.navy, opacity: 0.5 }}
-                      aria-hidden="true"
-                    />
-                    <span style={{ fontSize: 16, lineHeight: 1.5, color: "hsl(var(--foreground))", fontWeight: 400 }}>
-                      {t}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </Sectie>
-
-        {/* 4 — CONTEXTBLOK (bv. waarom een thuisbatterij nu in opkomst is) */}
-        {extraInfo && extraInfo.items.length > 0 && (
-          <Sectie bg="zand">
-            <InfoBlok
-              kop={extraInfo.kop}
-              intro={extraInfo.intro}
-              items={extraInfo.items}
-              voetregel={extraInfo.voetregel}
-            />
-          </Sectie>
-        )}
-
-        {/* 5 — WAAR DIT STAAT IN DE ROUTE */}
-        {routeTekst && (
-          <Sectie bg="navy">
-            <RouteStrip
-              actief={routeStep}
-              tekst={routeTekst}
-              kop={wanneerKop ? wanneerKop : undefined}
-            />
-          </Sectie>
-        )}
-
-        {eigen("route")}
-
-        {/* 6 — WAT HET KOST EN OPLEVERT */}
-        <Sectie bg="zand">
-          <SectieKop center><Accent tekst={kostenKop} /></SectieKop>
-
-          {kostenMode === "single" ? (
-            <div className="mt-10">
-              <Kaart>
-                {kostenItems[0]?.body && (
-                  <p
-                    className="text-base leading-relaxed"
-                    style={{ color: KLEUR.navy, opacity: 0.78, margin: 0, marginBottom: 20 }}
-                  >
-                    {kostenItems[0].body}
-                  </p>
-                )}
-                <PillTiles pills={kostenSinglePills ?? kostenItems[0]?.pills ?? []} />
-              </Kaart>
-            </div>
+        {blokken.map((blok, i) =>
+          blok.soort === "vast" ? (
+            <Fragment key={blok.key}>{blok.inhoud}</Fragment>
           ) : (
-            <div className="mt-10 flex flex-wrap justify-center gap-5">
-              {kostenItems.map((item) => (
-                <div key={item.title} className="flex flex-1 basis-[280px] min-w-[280px]">
-                  <Kaart>
-                    <KaartTitel>{item.title}</KaartTitel>
-                    <KaartTekst>{item.body}</KaartTekst>
-                    {item.pills && item.pills.length > 0 && (
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {item.pills.map((p, i) => (
-                          <Pill key={i} pill={p} />
-                        ))}
-                      </div>
-                    )}
-                  </Kaart>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <p
-            className="mt-8 text-sm max-w-[760px] mx-auto text-center"
-            style={{ color: KLEUR.navy, opacity: 0.6 }}
-          >
-            {kostenFooter ?? STANDAARD_KOSTEN_VOETNOOT}
-          </p>
-        </Sectie>
-
-        {eigen("kosten")}
-
-        {/* 7 — SUBSIDIECHECK (conversie, halverwege de pagina) */}
-        <SubsidiecheckCta />
-
-        {/* 8 — SUBSIDIES BIJ DEZE MAATREGEL */}
-        {subsidiesIntro && (
-          <Sectie bg="wit">
-            <SubsidieBlok
-              intro={subsidiesIntro}
-              items={subsidiesItems ?? []}
-              linkHref={subsidiesLinkHref}
-              linkLabel={subsidiesLinkLabel}
-            />
-          </Sectie>
+            <Sectie key={blok.key} bg={(tinten[i] ?? "zand") as SectieBg} id={blok.id}>
+              {blok.inhoud}
+            </Sectie>
+          ),
         )}
-
-        {eigen("subsidies")}
-
-        {/* 9 — WAAR WIJ OP LETTEN */}
-        {aandachtspunten && aandachtspunten.length > 0 && (
-          <Sectie bg="warm">
-            <Aandachtspunten items={aandachtspunten} />
-            {onderhoud && (
-              <div className="mt-6">
-                <LinkKaart
-                  Icon={Wrench}
-                  kop={onderhoud.kop}
-                  tekst={onderhoud.tekst}
-                  links={[{ label: onderhoud.linkLabel, href: onderhoud.linkHref }]}
-                />
-              </div>
-            )}
-          </Sectie>
-        )}
-
-        {/* 10 — KEURMERKEN EN CERTIFICERINGEN */}
-        {keurmerken && (
-          <Sectie bg="wit">
-            <Keurmerken data={keurmerken} />
-          </Sectie>
-        )}
-
-        {/* 11 — COMBINEERT GOED MET */}
-        {combineren && (
-          <Sectie bg="warm">
-            <LinkKaart kop={combineren.kop} tekst={combineren.tekst} links={combineren.links} />
-          </Sectie>
-        )}
-
-        {/* 12 — VEELGESTELDE VRAGEN */}
-        <Sectie bg="zand">
-          <SectieKop center><Accent tekst="Veelgestelde [[vragen]]" /></SectieKop>
-          <div
-            className="mt-10 max-w-[820px] mx-auto rounded-2xl overflow-hidden"
-            style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-          >
-            {faqs.map((f, i, arr) => (
-              <FaqRow key={f.q} item={f} last={i === arr.length - 1} />
-            ))}
-          </div>
-        </Sectie>
       </main>
-      <Footer
-        cta={
-          <section className="w-full py-12 md:py-[72px]">
-            <div className="mx-auto max-w-[760px] px-6 text-center">
-              <h2
-                className="font-display"
-                style={{
-                  color: KLEUR.wit,
-                  fontWeight: 700,
-                  fontSize: "clamp(26px, 3.2vw, 36px)",
-                  lineHeight: 1.2,
-                  letterSpacing: "-0.02em",
-                  margin: 0,
-                }}
-              >
-                <Accent tekst={finalCtaKop} />
-              </h2>
-              <p
-                className="mt-4 text-base md:text-lg leading-relaxed"
-                style={{ color: KLEUR.wit, opacity: 0.85 }}
-              >
-                {finalCtaTekst}
-              </p>
-              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
-                <a
-                  href={finalCtaHref}
-                  className="inline-flex items-center justify-center rounded-full font-semibold transition-transform hover:scale-[1.02]"
-                  style={{
-                    backgroundColor: KLEUR.goud,
-                    color: KLEUR.navy,
-                    padding: "14px 28px",
-                    fontSize: 15,
-                  }}
-                >
-                  {finalCtaLabel}
-                </a>
-                <OfBelOnsCta color="#FFFFFF" align="center" />
-              </div>
-            </div>
-          </section>
-        }
-      />
+      <Footer cta={<SlotCta kop={finalCtaKop} tekst={finalCtaTekst} label={finalCtaLabel} href={finalCtaHref} />} />
     </div>
   );
 };
+
+/* ---------- secties ---------- */
+
+/** "Past dit bij jouw woning?": twee tegels naast elkaar, wel en nu even niet. */
+const PastDitBij = ({
+  kop,
+  intro,
+  pastBij,
+  minderUrgent,
+}: {
+  kop: string;
+  intro: string;
+  pastBij: string[];
+  minderUrgent: string[];
+}) => (
+  <>
+    <div className="text-center">
+      <SectieKop center>
+        <Accent tekst={kop} />
+      </SectieKop>
+      <p className="vd-lead mx-auto mt-3 max-w-[560px]">{intro}</p>
+    </div>
+    <div className="mt-7 grid grid-cols-1 items-stretch gap-4 md:mt-10 md:grid-cols-2 md:gap-5">
+      <div className="hs-tegel hs-groen p-5 md:p-6" data-veer>
+        <div className="flex items-center justify-between gap-3">
+          <div className="hs-h3">Wel</div>
+          <IconCirkel Icon={Check} kleur="groen" size={36} />
+        </div>
+        <ul className="mt-4 flex flex-col gap-3">
+          {pastBij.map((t, i) => (
+            <li key={i} className="flex items-start gap-3">
+              <Check
+                size={18}
+                strokeWidth={2.6}
+                className="mt-[3px] shrink-0 text-[hsl(var(--subsidie))]"
+                aria-hidden="true"
+              />
+              <span className="text-[15.5px] font-medium leading-[1.5] text-foreground">{t}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="hs-tegel hs-zand p-5 md:p-6" data-veer>
+        <div className="flex items-center justify-between gap-3">
+          <div className="hs-h3">Nu even niet</div>
+          <IconCirkel Icon={Clock} kleur="wit" size={36} />
+        </div>
+        <ul className="mt-4 flex flex-col gap-3">
+          {minderUrgent.map((t, i) => (
+            <li key={i} className="flex items-start gap-3">
+              <Clock
+                size={18}
+                className="mt-[3px] shrink-0 text-[hsl(var(--rs-tekst-zacht))]"
+                aria-hidden="true"
+              />
+              <span className="text-[15.5px] leading-[1.5] text-foreground">{t}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </>
+);
+
+const Kosten = ({
+  kop,
+  mode,
+  items,
+  singlePills,
+  voetnoot,
+}: {
+  kop: string;
+  mode: "opties" | "single";
+  items: CollapsibleItem[];
+  singlePills?: KostenPill[];
+  voetnoot: string;
+}) => (
+  <>
+    <SectieKop center>
+      <Accent tekst={kop} />
+    </SectieKop>
+
+    {mode === "single" ? (
+      <div className="mt-7 md:mt-10">
+        <Kaart>
+          {items[0]?.body && <p className="vd-tekst mb-5 mt-0 text-[16px]">{items[0].body}</p>}
+          <PillTiles pills={singlePills ?? items[0]?.pills ?? []} />
+        </Kaart>
+      </div>
+    ) : (
+      <div className="mt-7 flex flex-wrap justify-center gap-4 md:mt-10 md:gap-5">
+        {items.map((item) => (
+          <div key={item.title} className="flex min-w-[280px] flex-1 basis-[280px]">
+            <Kaart>
+              <KaartTitel>{item.title}</KaartTitel>
+              <KaartTekst>{item.body}</KaartTekst>
+              {item.pills && item.pills.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {item.pills.map((p, i) => (
+                    <Pill key={i} pill={p} />
+                  ))}
+                </div>
+              )}
+            </Kaart>
+          </div>
+        ))}
+      </div>
+    )}
+
+    <p className="vd-tekst mx-auto mt-6 max-w-[760px] text-center text-[14px] md:mt-8">{voetnoot}</p>
+  </>
+);
 
 /* ---------- helpers ---------- */
 
@@ -617,82 +597,45 @@ const pillTone = (dim: string, value: string): PillTone => {
 
 type PillTone = "good" | "neutral";
 
-const PILL_TONES: Record<PillTone, { bg: string; fg: string; border: string }> = {
-  good:    { bg: "#ECFDF5", fg: "#15803D", border: "#A7F3D0" },
-  neutral: { bg: "#FEF6E0", fg: "#92701A", border: "#F0D78A" },
+// Groen zoals de subsidiekaarten van de tool, neutraal in zand met de donkere
+// oker van de gemeentelijke regelingen. Tokens, geen randen.
+const PILL_TONES: Record<PillTone, string> = {
+  good: "bg-[hsl(var(--subsidie-van))] text-[hsl(var(--subsidie))]",
+  neutral: "bg-[hsl(var(--rs-zand-van))] text-[hsl(var(--niveau-gemeente))]",
 };
 
-const Pill = ({ pill }: { pill: KostenPill }) => {
-  const tone = pillTone(pill.dim, pill.value);
-  const c = PILL_TONES[tone];
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
-      style={{ backgroundColor: c.bg, color: c.fg, border: `1px solid ${c.border}` }}
-    >
-      <span style={{ opacity: 0.75, fontWeight: 500 }}>{pill.dim}</span>
-      <span style={{ fontWeight: 700 }}>{pill.value}</span>
-    </span>
-  );
-};
+const Pill = ({ pill }: { pill: KostenPill }) => (
+  <span
+    className={`inline-flex min-h-[28px] items-center gap-1.5 rounded-full px-3 text-[13px] ${PILL_TONES[pillTone(pill.dim, pill.value)]}`}
+  >
+    <span className="font-medium opacity-90">{pill.dim}</span>
+    <span className="font-extrabold">{pill.value}</span>
+  </span>
+);
 
 const PillTiles = ({ pills }: { pills: KostenPill[] }) => (
-  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-    {pills.map((p, i) => {
-      const tone = pillTone(p.dim, p.value);
-      const c = PILL_TONES[tone];
-      return (
-        <div
-          key={i}
-          className="rounded-xl px-4 py-4 flex flex-col items-center text-center"
-          style={{ backgroundColor: c.bg, border: `1px solid ${c.border}` }}
-        >
-          <span
-            className="text-xs font-semibold uppercase tracking-wider"
-            style={{ color: c.fg, opacity: 0.8 }}
-          >
-            {p.dim}
-          </span>
-          <span className="mt-1 text-lg font-bold" style={{ color: c.fg }}>
-            {p.value}
-          </span>
-        </div>
-      );
-    })}
+  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+    {pills.map((p, i) => (
+      <div
+        key={i}
+        className={`flex flex-col items-center rounded-2xl px-4 py-4 text-center ${PILL_TONES[pillTone(p.dim, p.value)]}`}
+      >
+        <span className="text-[13px] font-bold uppercase tracking-wider">{p.dim}</span>
+        <span className="mt-1 text-lg font-extrabold">{p.value}</span>
+      </div>
+    ))}
   </div>
 );
 
-const FaqRow = ({ item, last }: { item: MaatregelFaq; last: boolean }) => (
-  <details
-    className="group"
-    style={{ borderBottom: last ? "none" : `1px solid hsl(var(--primary) / 0.08)` }}
-  >
-    <summary
-      className="flex items-center gap-4 cursor-pointer list-none"
-      style={{ padding: "20px 24px" }}
-    >
-      <span
-        className="flex-1 text-base font-medium leading-snug"
-        style={{ color: KLEUR.navy }}
-      >
-        {item.q}
+/** Eén vraag als losse tegel; de open vraag krijgt een zachte blauwe tint. */
+const FaqRij = ({ item }: { item: MaatregelFaq }) => (
+  <details className="vd-faq" data-veer>
+    <summary className="flex min-h-[60px] cursor-pointer items-center gap-3.5 py-4 pl-5 pr-4">
+      <span className="flex-1 text-[16.5px] font-bold leading-[1.3] text-primary">{item.q}</span>
+      <span className="vd-faq-chev" aria-hidden="true">
+        <ChevronDown size={18} strokeWidth={2.2} />
       </span>
-      <ChevronDown
-        size={18}
-        color={KLEUR.goud}
-        className="transition-transform group-open:rotate-180 shrink-0"
-        aria-hidden="true"
-      />
     </summary>
-    <p
-      className="text-base leading-relaxed"
-      style={{
-        margin: 0,
-        padding: "0 24px 22px 24px",
-        color: "hsl(var(--primary) / 0.7)",
-      }}
-    >
-      {item.a}
-    </p>
+    <p className="vd-tekst m-0 px-5 pb-[18px] text-[15.5px]">{item.a}</p>
   </details>
 );

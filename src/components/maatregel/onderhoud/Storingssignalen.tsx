@@ -2,7 +2,6 @@ import { ArrowRight } from "lucide-react";
 
 import { BRONNEN, SIGNALEN } from "@/data/onderhoud";
 import { Accent, SectieKop } from "@/components/maatregel/primitieven";
-import { KLEUR } from "@/components/maatregel/stijl";
 
 /**
  * Waar je aan merkt dat er iets mis is, voordat het duur wordt.
@@ -18,58 +17,39 @@ export const Storingssignalen = () => (
       <SectieKop center>
         <Accent tekst="Waar je het aan [[merkt]]" />
       </SectieKop>
-      <p
-        className="mt-4 mx-auto text-base leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 660 }}
-      >
+      <p className="vd-lead mx-auto mt-3 max-w-[660px]">
         Installaties gaan zelden ineens stuk. Ze geven eerst een signaal af, en dat is bijna altijd
         iets wat je zelf kunt horen, ruiken of aflezen.
       </p>
     </div>
 
-    <div
-      className="mt-10 rounded-2xl overflow-hidden"
-      style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-    >
-      {SIGNALEN.map((rij, i) => (
-        <div
-          key={rij.signaal}
-          className="px-6 py-5 md:px-8 grid grid-cols-1 md:grid-cols-[1fr_1fr] gap-2 md:gap-8 md:items-baseline"
-          style={{ borderTop: i === 0 ? "none" : `1px solid ${KLEUR.rand}` }}
-        >
-          <span
-            className="text-[16px] font-semibold"
-            style={{ color: KLEUR.navy, lineHeight: 1.45 }}
+    {/* Eén tegel met de signalen als zebra-rijen, zonder lijnen ertussen. */}
+    <div className="hs-tegel mt-7 p-2 md:mt-10 md:p-3" data-veer>
+      <div className="vd-zebra grid gap-1">
+        {SIGNALEN.map((rij) => (
+          <div
+            key={rij.signaal}
+            className="grid grid-cols-1 gap-1.5 px-3 py-3.5 md:grid-cols-[1fr_1fr] md:items-baseline md:gap-8 md:px-5 md:py-4"
           >
-            {rij.signaal}
-          </span>
-          <span>
-            <span
-              className="block text-[15px] leading-relaxed"
-              style={{ color: KLEUR.navy, opacity: 0.75 }}
-            >
-              {rij.betekent}
-            </span>
-            <span className="mt-2 flex items-baseline gap-2">
-              <ArrowRight
-                size={14}
-                className="shrink-0 translate-y-[2px]"
-                style={{ color: KLEUR.goud }}
-                aria-hidden="true"
-              />
-              <span
-                className="text-[15px] font-medium leading-relaxed"
-                style={{ color: KLEUR.navy }}
-              >
-                {rij.doen}
+            <span className="text-[16px] font-bold leading-[1.45] text-primary">{rij.signaal}</span>
+            <span>
+              <span className="vd-tekst block">{rij.betekent}</span>
+              <span className="mt-1.5 flex items-baseline gap-2">
+                <ArrowRight
+                  size={14}
+                  strokeWidth={2.4}
+                  className="shrink-0 translate-y-[2px] text-[hsl(var(--niveau-gemeente))]"
+                  aria-hidden="true"
+                />
+                <span className="text-[15px] font-semibold leading-relaxed text-primary">{rij.doen}</span>
               </span>
             </span>
-          </span>
-        </div>
-      ))}
+          </div>
+        ))}
+      </div>
     </div>
 
-    <p className="mt-5 text-[13px] leading-relaxed" style={{ color: KLEUR.navy, opacity: 0.55 }}>
+    <p className="vd-tekst mb-0 mt-4 text-[13.5px] md:mt-5">
       Signalen van{" "}
       <a
         href={BRONNEN.mechanisch.url}

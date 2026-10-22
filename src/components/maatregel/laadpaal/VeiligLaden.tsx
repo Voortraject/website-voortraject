@@ -1,8 +1,7 @@
 import { AlertTriangle, ShieldCheck } from "lucide-react";
 
 import { BALANCERING, BRONNEN, INSTALLATIE, VOORRANGSSCHAKELAAR } from "@/data/laadpaal";
-import { Accent, SectieKop } from "@/components/maatregel/primitieven";
-import { KLEUR } from "@/components/maatregel/stijl";
+import { Accent, IconCirkel, SectieKop } from "@/components/maatregel/primitieven";
 
 /**
  * Load balancing is onzichtbaar, technisch, en precies waar mensen mee de mist
@@ -24,8 +23,9 @@ const PLAFOND = (100 / SCHAAL) * 100;
 
 const breedte = (waarde: number) => `${(waarde / SCHAAL) * 100}%`;
 
-/** Zelfde rood als de "Niet"-kolom in het template; er is geen rode token. */
-const ROOD = "#C0392B";
+/** Het rood van de waarschuwingen: de destructive-token, geen losse hexcode. */
+const ROOD = "hsl(var(--destructive))";
+const OKER = "hsl(var(--accent))";
 
 const Balk = ({
   huis,
@@ -38,14 +38,14 @@ const Balk = ({
 }) => (
   <div className="relative" aria-hidden="true">
     <div
-      className="flex h-9 w-full overflow-hidden rounded-md"
-      style={{ backgroundColor: "hsl(var(--primary) / 0.06)" }}
+      className="flex h-9 w-full overflow-hidden rounded-full"
+      style={{ backgroundColor: "hsl(var(--primary) / 0.07)" }}
     >
       <div style={{ width: breedte(huis), backgroundColor: "hsl(var(--primary) / 0.3)" }} />
       <div
         style={{
           width: breedte(laadpaal - overschrijding),
-          backgroundColor: KLEUR.goud,
+          backgroundColor: OKER,
         }}
       />
       {overschrijding > 0 && (
@@ -55,7 +55,7 @@ const Balk = ({
     {/* Het plafond: wat je aansluiting aankan. */}
     <div
       className="absolute top-[-6px] bottom-[-6px]"
-      style={{ left: `${PLAFOND}%`, width: 2, backgroundColor: KLEUR.navy }}
+      style={{ left: `${PLAFOND}%`, width: 2, backgroundColor: "hsl(var(--primary))" }}
     />
   </div>
 );
@@ -66,40 +66,26 @@ export const VeiligLaden = () => (
       <SectieKop center>
         <Accent tekst="Veilig laden, en wat load balancing [[doet]]" />
       </SectieKop>
-      <p
-        className="mt-4 mx-auto text-base leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.75, maxWidth: 660 }}
-      >
+      <p className="vd-lead mx-auto mt-3 max-w-[660px]">
         Een laadpaal is het zwaarste apparaat dat je aan je woning hangt. Alles daarachter moet
         kloppen, want dit is het deel dat je niet ziet en waar het in de praktijk misgaat.
       </p>
     </div>
 
-    <div
-      className="mt-10 rounded-2xl overflow-hidden"
-      style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-    >
-      <div
-        className="px-6 py-4 md:px-8 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
-        style={{ backgroundColor: KLEUR.zand, borderBottom: `1px solid ${KLEUR.rand}` }}
-      >
-        <span className="label-eyebrow">Wat er door je aansluiting past</span>
-        <span className="text-[14px]" style={{ color: KLEUR.navy, opacity: 0.6 }}>
-          De streep is wat je aansluiting aankan
-        </span>
+    <div className="hs-tegel hs-blauw-zacht mt-7 p-3 md:mt-10 md:p-4" data-veer>
+      <div className="flex flex-col gap-1 px-3 pb-3 pt-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6 md:px-5">
+        <span className="vd-label">Wat er door je aansluiting past</span>
+        <span className="vd-tekst text-[14px]">De streep is wat je aansluiting aankan</span>
       </div>
 
-      {BALANCERING.map((stand, i) => (
+      <div className="vd-zebra flex flex-col gap-1">
+      {BALANCERING.map((stand) => (
         <div
           key={stand.id}
-          className="px-6 py-6 md:px-8 grid grid-cols-1 md:grid-cols-[1fr_320px] gap-4 md:gap-10 md:items-center"
-          style={{ borderTop: i === 0 ? "none" : `1px solid ${KLEUR.rand}` }}
+          className="grid grid-cols-1 gap-3 px-3 py-5 md:grid-cols-[1fr_320px] md:items-center md:gap-10 md:px-5"
         >
           <div>
-            <span
-              className="block text-[15.5px] font-semibold"
-              style={{ color: KLEUR.navy, lineHeight: 1.4 }}
-            >
+            <span className="block text-[15.5px] font-bold leading-[1.4] text-primary">
               {stand.situatie}
             </span>
             <div className="mt-4">
@@ -111,95 +97,61 @@ export const VeiligLaden = () => (
             </div>
           </div>
           <p
-            className="text-[15px] leading-relaxed"
-            style={{
-              color: stand.toon === "fout" ? ROOD : KLEUR.navy,
-              opacity: stand.toon === "fout" ? 1 : 0.75,
-              margin: 0,
-              fontWeight: stand.toon === "fout" ? 600 : 400,
-            }}
+            className={
+              stand.toon === "fout"
+                ? "m-0 text-[15px] font-semibold leading-relaxed text-destructive"
+                : "vd-tekst m-0"
+            }
           >
             {stand.gevolg}
           </p>
         </div>
       ))}
+      </div>
 
       {/* Legenda onderaan, want boven de balken zou hij de vergelijking breken. */}
-      <div
-        className="px-6 py-4 md:px-8 flex flex-wrap gap-x-6 gap-y-2"
-        style={{ backgroundColor: KLEUR.zand, borderTop: `1px solid ${KLEUR.rand}` }}
-      >
+      <div className="flex flex-wrap gap-x-6 gap-y-2 px-3 pb-2 pt-3 md:px-5">
         {[
           { kleur: "hsl(var(--primary) / 0.3)", label: "De rest van je huis" },
-          { kleur: KLEUR.goud, label: "De laadpaal" },
+          { kleur: OKER, label: "De laadpaal" },
           { kleur: ROOD, label: "Meer dan je aansluiting aankan" },
         ].map((item) => (
           <span key={item.label} className="inline-flex items-center gap-2">
             <span
-              className="inline-block rounded-sm"
+              className="inline-block rounded-full"
               style={{ width: 14, height: 14, backgroundColor: item.kleur }}
               aria-hidden="true"
             />
-            <span className="text-[13.5px]" style={{ color: KLEUR.navy, opacity: 0.7 }}>
-              {item.label}
-            </span>
+            <span className="vd-tekst text-[13.5px]">{item.label}</span>
           </span>
         ))}
       </div>
     </div>
 
-    <p
-      className="mt-5 text-[15px] leading-relaxed mx-auto text-center"
-      style={{ color: KLEUR.navy, opacity: 0.7, maxWidth: 760 }}
-    >
+    <p className="vd-tekst mx-auto mt-5 max-w-[760px] text-center">
       {VOORRANGSSCHAKELAAR}
     </p>
 
-    <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
+    <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 md:mt-12 md:gap-5">
       {INSTALLATIE.eisen.map((eis) => (
-        <div
-          key={eis.kop}
-          className="rounded-2xl p-5 flex items-start gap-4"
-          style={{ backgroundColor: KLEUR.wit, border: `1px solid ${KLEUR.rand}` }}
-        >
-          <span
-            className="flex items-center justify-center rounded-full shrink-0"
-            style={{ width: 34, height: 34, backgroundColor: "hsl(var(--accent) / 0.2)" }}
-          >
-            <ShieldCheck size={18} color={KLEUR.navy} aria-hidden="true" />
-          </span>
+        <div key={eis.kop} className="hs-tegel hs-blauw-zacht flex items-start gap-4 p-5" data-veer>
+          <IconCirkel Icon={ShieldCheck} size={36} />
           <span className="min-w-0">
-            <span
-              className="block text-[16px] font-semibold"
-              style={{ color: KLEUR.navy, lineHeight: 1.4 }}
-            >
-              {eis.kop}
-            </span>
-            <span
-              className="mt-1 block text-[14.5px] leading-relaxed"
-              style={{ color: KLEUR.navy, opacity: 0.7 }}
-            >
-              {eis.tekst}
-            </span>
+            <span className="block text-[16px] font-bold leading-[1.4] text-primary">{eis.kop}</span>
+            <span className="vd-tekst mt-1 block text-[14.5px]">{eis.tekst}</span>
           </span>
         </div>
       ))}
     </div>
 
-    <div
-      className="mt-5 rounded-2xl p-5 md:p-6 flex items-start gap-4"
-      style={{ backgroundColor: "#FEF7F7", border: "1px solid #F3D6D2" }}
-    >
-      <AlertTriangle size={20} className="mt-[2px] shrink-0" color={ROOD} aria-hidden="true" />
-      <p
-        className="text-[15.5px] leading-relaxed"
-        style={{ color: KLEUR.navy, opacity: 0.9, margin: 0 }}
-      >
+    <div className="hs-tegel vd-let-op mt-4 flex items-start gap-4 p-5 md:mt-5 md:p-6" data-veer>
+      <IconCirkel Icon={AlertTriangle} kleur="let-op" size={36} />
+      <p className="m-0 pt-1 text-[15.5px] leading-relaxed text-foreground">
         {INSTALLATIE.stopcontact}
       </p>
     </div>
 
-    <p className="mt-5 text-[13px] leading-relaxed" style={{ color: KLEUR.navy, opacity: 0.55 }}>
+    <p className="vd-tekst mt-5 text-[13.5px]">
       Eisen aan de installatie en het advies over het stopcontact van{" "}
       <a
         href={BRONNEN.laadpunt.url}
