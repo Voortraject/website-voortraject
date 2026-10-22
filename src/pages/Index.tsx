@@ -1,18 +1,15 @@
+import { lazy, Suspense } from "react";
+
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 import { Hero, HERO_KNOP_ID } from "@/components/sections/Hero";
 import { LogoCarousel } from "@/components/sections/LogoCarousel";
 import { SubsidiecheckCta } from "@/components/sections/SubsidiecheckCta";
-import { Herkenning } from "@/components/sections/Herkenning";
-import { WaarWeBijHelpen } from "@/components/sections/WaarWeBijHelpen";
-import { WaaromKiezen } from "@/components/sections/WaaromKiezen";
-import { Cijfers } from "@/components/sections/Cijfers";
-import { Reviews } from "@/components/sections/Reviews";
-import { Subsidies } from "@/components/sections/Subsidies";
-import { Team } from "@/components/sections/Team";
-import { Faq } from "@/components/sections/Faq";
 import { ClosingCta } from "@/components/sections/ClosingCta";
+
+// Alles onder de subsidiecheck laadt na de eerste weergave; zie HomeVervolg.
+const HomeVervolg = lazy(() => import("@/components/sections/HomeVervolg"));
 
 const Index = () => {
   return (
@@ -28,14 +25,11 @@ const Index = () => {
         <Hero />
         <LogoCarousel />
         <SubsidiecheckCta />
-        <Herkenning />
-        <WaarWeBijHelpen />
-        <Subsidies />
-        <WaaromKiezen />
-        <Cijfers />
-        <Reviews />
-        <Team />
-        <Faq />
+        {/* Tot het vervolg er is: een vlak van een schermhoogte, zodat de footer
+            niet even direct onder de subsidiecheck verschijnt. */}
+        <Suspense fallback={<div className="min-h-screen" aria-busy="true" />}>
+          <HomeVervolg />
+        </Suspense>
       </main>
       <Footer cta={<ClosingCta />} />
     </div>

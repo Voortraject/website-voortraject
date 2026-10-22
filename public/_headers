@@ -15,3 +15,9 @@
 # beeld krijgt een nieuwe bestandsnaam of versie. Vraag een nieuwe URL pas op ná de deploy.
 /whatsapp/*
   Cache-Control: public, max-age=2592000
+
+# Heroafbeelding van de homepagina (zie HERO_BEELD in src/components/sections/heroBeeld.ts).
+# Staat buiten /assets/ omdat index.html hem vooruit laadt en daarvoor een vaste naam
+# nodig heeft. Zelfde afspraak als /mail/: een nieuwe foto krijgt een nieuwe bestandsnaam.
+/hero/*
+  Cache-Control: public, max-age=2592000
