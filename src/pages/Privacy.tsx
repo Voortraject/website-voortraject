@@ -186,53 +186,19 @@ const Privacy = () => {
       <main className="flex-1">
         <section className="py-12 md:py-20">
           <div className="container-content max-w-3xl mx-auto">
-            <h1
-              style={{
-                fontFamily: "'Inter Tight', sans-serif",
-                fontWeight: 700,
-                color: "#152C4E",
-                fontSize: "clamp(28px, 4vw, 40px)",
-                letterSpacing: "-0.02em",
-                lineHeight: 1.2,
-                marginBottom: 8,
-              }}
-            >
+            <h1 className="hs-h2 text-[24px] md:text-[40px]">
               Privacyverklaring Voortraject
             </h1>
-            <p
-              style={{
-                color: "#6B6B6B",
-                fontSize: 15,
-                lineHeight: 1.6,
-                marginBottom: 40,
-                fontStyle: "italic",
-              }}
-            >
+            <p className="hs-tekst mt-2 mb-8 text-[15px] italic md:mb-10">
               Versie oktober 2026
             </p>
 
             {sections.map((section) => (
-              <div key={section.title} style={{ marginBottom: 32 }}>
-                <h2
-                  style={{
-                    fontFamily: "'Inter Tight', sans-serif",
-                    fontWeight: 600,
-                    color: "#152C4E",
-                    fontSize: 18,
-                    lineHeight: 1.3,
-                    marginBottom: 12,
-                  }}
-                >
+              <div key={section.title} className="mb-8 md:mb-10">
+                <h2 className="hs-h3 mb-3">
                   {section.title}
                 </h2>
-                <div
-                  style={{
-                    color: "#4B4B4B",
-                    fontSize: 15,
-                    lineHeight: 1.7,
-                    whiteSpace: "pre-line",
-                  }}
-                >
+                <div className="hs-tekst text-[15px] leading-[1.7] md:text-[16px] whitespace-pre-line">
                   {metLinks(section.content)}
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, FormEvent, ChangeEvent } from "react";
-import { Loader2 } from "lucide-react";
+import { Building2, Check, Loader2, MessageSquare } from "lucide-react";
 import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
 import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
 import { formulierFoutMelding } from "@/lib/formulierFout";
@@ -14,22 +14,23 @@ import { pushGtmEvent } from "@/lib/gtm";
 // telefoonnummer / vragen). De live CRM-tabel gebruikt de kolommen hieronder;
 // vandaar de `as any` op de insert. Types opnieuw genereren lost dat op.
 
-const baseInputClass =
-  "w-full rounded-lg border bg-[hsl(var(--background))] px-4 py-3 text-[16px] lg:text-[15px] text-foreground outline-none transition min-h-[44px]";
-const inputOk =
-  "border-[hsl(var(--border))] focus:border-[hsl(var(--accent))] focus:shadow-[0_0_0_3px_hsl(var(--accent)/0.15)]";
+// Velden zoals in de subsidietool (.instap-invoer in src/index.css): wit en
+// zacht verzonken, geen harde rand. Een fout krijgt een rode ring in plaats van
+// een rode rand.
+const baseInputClass = "instap-invoer w-full min-h-[50px] px-[14px] text-[16px] font-medium";
 const inputErr =
-  "border-destructive focus:border-destructive focus:shadow-[0_0_0_3px_hsl(var(--destructive)/0.15)]";
+  "shadow-[inset_0_0_0_2px_hsl(var(--destructive))] focus:shadow-[inset_0_0_0_2px_hsl(var(--destructive)),0_0_0_5px_hsl(var(--destructive)/0.12)]";
 
 const cx = (...c: (string | false | undefined)[]) => c.filter(Boolean).join(" ");
-// Zelfde opbouw als het bewonersformulier op /contact: labels zijn bewust
-// lichter dan de invoer, zodat de enige vette tekst in de kaart de twee
-// groepskoppen zijn en niet zeven labels op een rij.
-const labelClass = "block mb-2 text-[13px] font-medium text-muted-foreground";
-const groepKopClass = "font-display text-[15px] font-semibold text-primary";
+// Zelfde opbouw als het bewonersformulier op /contact: labels in leesbaar
+// grijsblauw, de twee groepskoppen met een inktblauw rondje ernaast.
+const labelClass = "block mb-1.5 text-[13.5px] font-bold text-[hsl(var(--rs-tekst-zacht))]";
+const groepKopClass =
+  "flex items-center justify-between gap-3 font-['Inter_Tight',_'Inter',_sans-serif] text-[18px] font-bold text-primary";
+const groepRondje = "hs-rondje hs-rondje-ink h-[34px] w-[34px]";
 // Verplicht is de regel, niet de uitzondering: we markeren alleen wat optioneel
 // is. Dat scheelt vier accentkleurige sterretjes die met de CTA concurreerden.
-const optional = <span className="text-muted-foreground font-normal ml-1">(optioneel)</span>;
+const optional = <span className="inline-block font-medium text-[13px] ml-1">(optioneel)</span>;
 
 const initieel = {
   bedrijfsnaam: "",
@@ -223,7 +224,7 @@ export const ZakelijkContactFormulier = () => {
       </p>
     ) : null;
 
-  const inputCls = (name: string) => cx(baseInputClass, errors[name] ? inputErr : inputOk);
+  const inputCls = (name: string) => cx(baseInputClass, !!errors[name] && inputErr);
 
   const onChange =
     (k: keyof typeof velden) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -236,10 +237,13 @@ export const ZakelijkContactFormulier = () => {
       <div
         role="status"
         aria-live="polite"
-        className="text-center rounded-xl border border-[#b7e4c7] bg-[#f0faf4] p-6"
+        className="hs-groen flex flex-col items-center text-center rounded-[20px] p-6 shadow-[var(--rs-schaduw)]"
       >
-        <h3 className="font-display text-[22px] font-semibold text-[#15803d] mb-3">Bedankt!</h3>
-        <p className="font-sans text-[15px] leading-relaxed text-[#166534]">
+        <span className="hs-rondje hs-rondje-groen mb-3" aria-hidden="true">
+          <Check size={20} strokeWidth={3} />
+        </span>
+        <h3 className="hs-h3 text-[22px] text-[hsl(var(--subsidie))] mb-2">Bedankt!</h3>
+        <p className="font-sans text-[15px] leading-relaxed text-foreground">
           We hebben je bericht ontvangen en nemen binnen 1 werkdag contact met je op.
         </p>
       </div>
@@ -251,7 +255,7 @@ export const ZakelijkContactFormulier = () => {
       {errorMsg && (
         <div
           role="alert"
-          className="font-sans mb-4 rounded-lg border border-[hsl(var(--destructive)/0.3)] bg-[hsl(var(--destructive)/0.07)] px-4 py-3 text-[14px] text-destructive"
+          className="font-sans mb-4 rounded-[14px] bg-[hsl(var(--destructive)/0.08)] px-4 py-3 text-[14px] font-semibold text-destructive"
         >
           {errorMsg}
         </div>
@@ -289,9 +293,14 @@ export const ZakelijkContactFormulier = () => {
           </label>
         </div>
 
-        <p className={groepKopClass}>Jullie gegevens</p>
+        <p className={groepKopClass}>
+          Jullie gegevens
+          <span className={groepRondje} aria-hidden="true">
+            <Building2 size={17} strokeWidth={2} />
+          </span>
+        </p>
 
-        <div className="mt-4">
+        <div className="mt-3.5">
           <label htmlFor="zak-bedrijfsnaam" className={labelClass}>Bedrijfsnaam</label>
           <input
             id="zak-bedrijfsnaam"
@@ -315,8 +324,8 @@ export const ZakelijkContactFormulier = () => {
             moest doorgaan; het aria-label houdt "contactpersoon" erbij, zodat een
             schermlezer weet over wiens naam het gaat. justify-end houdt de inputs
             op één lijn als een label over twee regels breekt. */}
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-12 gap-4">
-          <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
+        <div className="mt-3 grid grid-cols-2 sm:grid-cols-12 gap-3">
+          <div className="col-span-2 sm:col-span-4 min-w-0 flex flex-col justify-end">
             <label htmlFor="zak-cp-voornaam" className={labelClass}>Voornaam</label>
             <input
               id="zak-cp-voornaam"
@@ -333,7 +342,7 @@ export const ZakelijkContactFormulier = () => {
               maxLength={100}
             />
           </div>
-          <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
+          <div className="col-span-1 sm:col-span-4 min-w-0 flex flex-col justify-end">
             <label htmlFor="zak-cp-tussenvoegsel" className={labelClass}>Tussenvoegsel{optional}</label>
             <input
               id="zak-cp-tussenvoegsel"
@@ -348,7 +357,7 @@ export const ZakelijkContactFormulier = () => {
               maxLength={25}
             />
           </div>
-          <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
+          <div className="col-span-1 sm:col-span-4 min-w-0 flex flex-col justify-end">
             <label htmlFor="zak-cp-achternaam" className={labelClass}>Achternaam</label>
             <input
               id="zak-cp-achternaam"
@@ -366,7 +375,7 @@ export const ZakelijkContactFormulier = () => {
             />
           </div>
           {(errors.contactpersoon_voornaam || errors.contactpersoon_tussenvoegsel || errors.contactpersoon_achternaam) && (
-            <div className="col-span-full -mt-2">
+            <div className="col-span-full -mt-1">
               <FieldError name="contactpersoon_voornaam" />
               <FieldError name="contactpersoon_tussenvoegsel" />
               <FieldError name="contactpersoon_achternaam" />
@@ -374,8 +383,8 @@ export const ZakelijkContactFormulier = () => {
           )}
         </div>
 
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-12 gap-4">
-          <div className="sm:col-span-8 min-w-0">
+        <div className="mt-3 grid grid-cols-1 sm:grid-cols-12 gap-3">
+          <div className="sm:col-span-8 min-w-0 flex flex-col justify-end">
             <label htmlFor="zak-email" className={labelClass}>E-mailadres</label>
             <input
               id="zak-email"
@@ -392,12 +401,12 @@ export const ZakelijkContactFormulier = () => {
             />
             <FieldError name="email" />
             {!errors.email && emailWarning && (
-              <p id="zak-email-tip" className="font-sans mt-1.5 text-[13px] text-[#92400e]">
+              <p id="zak-email-tip" className="font-sans mt-1.5 text-[13.5px] font-semibold text-[hsl(var(--niveau-gemeente))]">
                 {emailWarning}
               </p>
             )}
           </div>
-          <div className="sm:col-span-4 min-w-0">
+          <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
             <label htmlFor="zak-tel" className={labelClass}>Telefoonnummer</label>
             <input
               id="zak-tel"
@@ -415,9 +424,14 @@ export const ZakelijkContactFormulier = () => {
           </div>
         </div>
 
-        <p className={cx(groepKopClass, "mt-8")}>Jullie vraag</p>
+        <p className={cx(groepKopClass, "mt-7")}>
+          Jullie vraag
+          <span className={groepRondje} aria-hidden="true">
+            <MessageSquare size={17} strokeWidth={2} />
+          </span>
+        </p>
 
-        <div className="mt-4">
+        <div className="mt-3.5">
           {/* Tekenlimiet staat alleen in de teller onder het veld. */}
           <label htmlFor="zak-vragen" className={labelClass}>Bericht</label>
           <textarea
@@ -428,14 +442,14 @@ export const ZakelijkContactFormulier = () => {
             aria-describedby={errors.vragen ? errId("vragen") : "zak-count-vragen"}
             className={inputCls("vragen")}
             placeholder="Vertel kort waar jullie tegenaan lopen of wat je wil weten."
-            style={{ minHeight: 100, resize: "vertical" }}
+            style={{ minHeight: 112, resize: "vertical", paddingTop: 12, paddingBottom: 12 }}
             value={velden.vragen}
             onChange={onChange("vragen")}
             maxLength={MAX_NOTES}
           />
           <div className="flex justify-between items-center mt-1">
             <FieldError name="vragen" />
-            <span id="zak-count-vragen" className="font-sans text-[12px] ml-auto text-muted-foreground">
+            <span id="zak-count-vragen" className="font-sans text-[12.5px] ml-auto text-[hsl(var(--rs-tekst-zacht))]">
               {velden.vragen.length} / {MAX_NOTES}
             </span>
           </div>
@@ -444,15 +458,15 @@ export const ZakelijkContactFormulier = () => {
         <button
           type="submit"
           disabled={submitting}
-          className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-full bg-accent hover:bg-accent-hover text-primary font-semibold text-[15px] px-8 py-3 min-h-[48px] transition-colors disabled:opacity-70"
+          className="hs-knop hs-knop-oker mt-[22px] w-full min-h-[56px] text-[16px] disabled:opacity-70"
         >
           {submitting && <Loader2 size={18} className="animate-spin" aria-hidden="true" />}
           {submitting ? "Versturen..." : "Verstuur bericht"}
         </button>
 
-        <p className="font-sans mt-4 text-[13px] leading-relaxed text-muted-foreground">
+        <p className="font-sans mt-4 text-[13.5px] leading-relaxed text-[hsl(var(--rs-tekst-zacht))]">
           We nemen binnen 1 werkdag contact op. Je gegevens gebruiken we alleen om je vraag te
-          beantwoorden, zie onze <a href="/privacy" className="underline underline-offset-2 hover:text-foreground">privacyverklaring</a>.
+          beantwoorden, zie onze <a href="/privacy" className="font-semibold text-primary underline underline-offset-2">privacyverklaring</a>.
         </p>
       </form>
     </>

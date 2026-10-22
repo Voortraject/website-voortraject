@@ -6,6 +6,13 @@ interface OfBelOnsCtaProps {
   /** Override the colour of label/number (default navy #152C4E). */
   color?: string;
   className?: string;
+  /**
+   * standaard = label en nummer met een scheidingslijn (op /verduurzamen, de
+   * maatregelpagina's en /zakelijk). glas = een matglazen knop met de telefoon
+   * in een glazen rondje, naast de oker hoofdknop op een donker vlak (de
+   * slot-CTA van de homepagina).
+   */
+  vorm?: "standaard" | "glas";
 }
 
 /**
@@ -18,7 +25,30 @@ interface OfBelOnsCtaProps {
  *     <OfBelOnsCta />
  *   </div>
  */
-export const OfBelOnsCta = ({ align = "start", color = "#152C4E", className = "" }: OfBelOnsCtaProps) => {
+export const OfBelOnsCta = ({
+  align = "start",
+  color = "#152C4E",
+  className = "",
+  vorm = "standaard",
+}: OfBelOnsCtaProps) => {
+  if (vorm === "glas") {
+    return (
+      <a
+        href="tel:+31502112689"
+        aria-label="Bel ons: 050 211 2689"
+        className={`hs-knop hs-knop-glas gap-3 pl-2 pr-[22px] ${className}`}
+      >
+        <span className="hs-rondje hs-rondje-glas h-[38px] w-[38px]" aria-hidden="true">
+          <Phone size={16} strokeWidth={2.25} />
+        </span>
+        <span className="grid text-left leading-[1.15]">
+          <span className="text-[12px] font-semibold text-primary-foreground/75">Of bel ons</span>
+          <span className="text-[17px] font-extrabold">050 211 2689</span>
+        </span>
+      </a>
+    );
+  }
+
   const alignClass = align === "center" ? "items-center text-center" : "items-start text-left";
   const dividerColor = color === "#FFFFFF" ? "rgba(255,255,255,0.25)" : "rgba(21,44,78,0.18)";
   return (
