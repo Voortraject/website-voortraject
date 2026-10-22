@@ -1,7 +1,7 @@
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
-import { Hero } from "@/components/sections/Hero";
+import { Hero, HERO_KNOP_ID } from "@/components/sections/Hero";
 import { LogoCarousel } from "@/components/sections/LogoCarousel";
 import { SubsidiecheckCta } from "@/components/sections/SubsidiecheckCta";
 import { Herkenning } from "@/components/sections/Herkenning";
@@ -22,7 +22,8 @@ const Index = () => {
         description="Wij zoeken gratis uit welke maatregelen slim zijn voor jouw woning en welke subsidies je kunt krijgen. Onafhankelijk advies voor bewoners in Noord-Nederland."
         path="/"
       />
-      <Header />
+      {/* De oker headerknop verschijnt pas als die in de hero uit beeld is. */}
+      <Header ctaNaElement={HERO_KNOP_ID} />
       <main className="flex-1">
         <Hero />
         <LogoCarousel />

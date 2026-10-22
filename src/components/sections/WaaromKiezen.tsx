@@ -1,5 +1,7 @@
+import { useRef } from "react";
 import { BadgeCheck, Compass, HandCoins } from "lucide-react";
 
+import { useStaffel } from "@/lib/beweging";
 import waaromVertrouwen from "@/assets/waarom-vertrouwen2.webp";
 import { TrustCardList } from "./TrustCardList";
 
@@ -24,29 +26,35 @@ const redenen = [
   },
 ];
 
-export const WaaromKiezen = () => (
-  <section className="section-pad-home" style={{ backgroundColor: "#F5F3ED" }} aria-labelledby="waarom-title">
-    <div className="container-home">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-        <div>
-          <h2 id="waarom-title" className="h2-section">
-            Waarom bewoners voor <span className="text-accent">ons</span> kiezen
-          </h2>
+export const WaaromKiezen = () => {
+  const sectie = useRef<HTMLElement>(null);
+  useStaffel(sectie);
 
-          <TrustCardList items={redenen} />
-        </div>
+  return (
+    <section ref={sectie} className="section-pad-home hs-band" aria-labelledby="waarom-title">
+      <div className="container-home">
+        <div className="grid grid-cols-1 items-center gap-7 lg:grid-cols-2 lg:gap-14">
+          {/* min-w-0: anders duwt de swiperij (3 × 88%) deze gridkolom open */}
+          <div className="min-w-0">
+            <h2 id="waarom-title" className="hs-h2" data-veer>
+              Waarom bewoners voor <span className="hs-accent">ons</span> kiezen
+            </h2>
 
-        <div>
-          <img
-            src={waaromVertrouwen}
-            alt="Adviseur van Voortraject schudt de hand van een tevreden bewoner bij de voordeur"
-            loading="lazy"
-            decoding="async"
-            className="w-full h-64 sm:h-80 lg:h-[400px] rounded-2xl object-cover"
-            style={{ objectPosition: "center 30%", boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
-          />
+            <TrustCardList items={redenen} tint="blauw" />
+          </div>
+
+          <div className="min-w-0" data-veer>
+            <img
+              src={waaromVertrouwen}
+              alt="Adviseur van Voortraject schudt de hand van een tevreden bewoner bij de voordeur"
+              loading="lazy"
+              decoding="async"
+              className="hs-foto h-56 w-full object-cover sm:h-80 lg:h-[460px]"
+              style={{ objectPosition: "center 30%" }}
+            />
+          </div>
         </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
