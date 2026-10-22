@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Globe,
   Coins,
@@ -13,15 +13,8 @@ import {
   Lightbulb,
   Calculator,
   Leaf,
-  Check,
   X as XIcon,
-  Phone,
-  FileText,
-  Users,
-  Hammer,
-  Send,
   LifeBuoy,
-  ChevronDown,
   FileCheck,
   Scale,
 } from "lucide-react";
@@ -29,18 +22,25 @@ import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 import { CtaButton } from "@/components/CtaButton";
-
-// Page-scoped palette (identical to Nij Begun page)
-const C = {
-  primary: "#152C4E",
-  accent: "#E8B547",
-  accentSoft: "#E5C967",
-  bg: "#F8F4ED",
-  card: "#FFFFFF",
-  cardSoft: "var(--card-soft)",
-  text: "#1F2937",
-  muted: "#6B7280",
-};
+import {
+  Accent,
+  HeroLijst,
+  KruisRegel,
+  Kop2,
+  LogoPaar,
+  LosseUitklap,
+  PijlLink,
+  Rondje,
+  Sectie,
+  SlotCta,
+  Stappen,
+  SubsidieFaq,
+  SubsidieHero,
+  TussenCta,
+  Vink,
+  VinkRegel,
+  WaaromTegels,
+} from "@/components/subsidies/SubsidiePagina";
 
 const LAATST_BIJGEWERKT = "mei 2026";
 
@@ -89,90 +89,25 @@ const faqs: { q: string; a: string }[] = [
   },
 ];
 
-// Heading with one gold word
-const H2 = ({ children }: { children: React.ReactNode }) => (
-  <h2
-    className="font-display"
-    style={{
-      color: C.primary,
-      fontWeight: 700,
-      fontSize: "clamp(28px, 4vw, 40px)",
-      letterSpacing: "-0.02em",
-      lineHeight: 1.15,
-    }}
-  >
-    {children}
-  </h2>
-);
-
-const Gold = ({ children }: { children: React.ReactNode }) => (
-  <span style={{ color: C.accent }}>{children}</span>
-);
-
-const PrimaryBtn = ({ href, children }: { href: string; children: React.ReactNode }) => (
-  <CtaButton href={href}>{children}</CtaButton>
-);
-
-const OutlineBtn = ({ href, children, onClick }: { href?: string; children: React.ReactNode; onClick?: () => void }) => {
-  const cls = "inline-flex items-center justify-center rounded-full font-semibold transition-colors";
-  const style = {
-    backgroundColor: "transparent",
-    color: C.primary,
-    border: `1.5px solid ${C.accent}`,
-    padding: "12px 22px",
-    fontSize: 15,
-  } as React.CSSProperties;
-  if (onClick) {
-    return (
-      <button type="button" onClick={onClick} className={cls} style={style}>
-        {children}
-      </button>
-    );
-  }
-  return (
-    <a href={href} className={cls} style={style}>
-      {children}
-    </a>
+// Een bedrag als "€10,50 / m²" mag op een smal scherm alleen vóór "/ m²" breken.
+const Bedrag = ({ tekst }: { tekst: string }) => {
+  const [getal, ...rest] = tekst.split(" / ");
+  return rest.length ? (
+    <>
+      <span className="sp-heel">{getal}</span> <span className="sp-heel">/ {rest.join(" / ")}</span>
+    </>
+  ) : (
+    <span className="sp-heel">{tekst}</span>
   );
 };
-
-// Card variant helper — strict color rule
-const cardStyle = (variant: "on-cream" | "on-white"): React.CSSProperties => ({
-  backgroundColor: variant === "on-cream" ? C.card : C.bg,
-  border: `1px solid ${C.accentSoft}66`,
-  borderRadius: 16,
-  padding: 28,
-});
-
-// Icon circle (used as left-prefix in card headers)
-const IconCircle = ({
-  Icon,
-  size = 44,
-}: {
-  Icon: React.ComponentType<any>;
-  size?: number;
-}) => (
-  <span
-    className="inline-flex items-center justify-center rounded-full"
-    style={{
-      backgroundColor: C.accent,
-      width: size,
-      height: size,
-      color: C.primary,
-      flexShrink: 0,
-    }}
-  >
-    <Icon size={Math.round(size * 0.5)} />
-  </span>
-);
 
 // Tooltip-toegankelijke maatregel
 const MeasureLi = ({ label, tip }: { label: string; tip: string }) => {
   const [open, setOpen] = useState(false);
   return (
-    <li className="flex items-start gap-3 py-2">
-      <Check size={20} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
-      <span style={{ color: C.text, fontSize: 16, lineHeight: 1.6, flex: 1 }}>{label}</span>
+    <li className="flex items-start gap-2.5 py-1.5">
+      <Vink />
+      <span className="flex-1 text-[15px] leading-[1.5] text-foreground">{label}</span>
       <span className="relative inline-flex">
         <button
           type="button"
@@ -182,28 +117,12 @@ const MeasureLi = ({ label, tip }: { label: string; tip: string }) => {
           onBlur={() => setOpen(false)}
           onMouseEnter={() => setOpen(true)}
           onMouseLeave={() => setOpen(false)}
-          className="inline-flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2"
-          style={{ width: 22, height: 22, color: C.accent }}
+          className="-my-0.5 inline-grid h-7 w-7 place-items-center rounded-full bg-[hsl(var(--rs-hoofd-midden))] text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
-          <Info size={16} />
+          <Info size={15} aria-hidden />
         </button>
         {open && (
-          <span
-            role="tooltip"
-            className="absolute right-0 top-full mt-2 z-20"
-            style={{
-              backgroundColor: "#fff",
-              border: `1px solid ${C.accent}`,
-              borderRadius: 12,
-              padding: "12px 14px",
-              fontSize: 13,
-              lineHeight: 1.5,
-              color: C.text,
-              width: 280,
-              maxWidth: "80vw",
-              boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
-            }}
-          >
+          <span role="tooltip" className="sp-ballon absolute right-0 top-full z-20 mt-2 w-[280px] max-w-[80vw]">
             {tip}
           </span>
         )}
@@ -212,78 +131,7 @@ const MeasureLi = ({ label, tip }: { label: string; tip: string }) => {
   );
 };
 
-// Disclosure (accordion) — gedeeld voor de drie uitklapbare blokken
-const Disclosure = ({
-  Icon,
-  title,
-  variant,
-  children,
-}: {
-  Icon: React.ComponentType<any>;
-  title: string;
-  variant: "on-cream" | "on-white";
-  children: React.ReactNode;
-}) => {
-  const [open, setOpen] = useState(false);
-  const id = title.replace(/\s+/g, "-").toLowerCase();
-  const reduce =
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  return (
-    <div
-      style={{
-        backgroundColor: variant === "on-cream" ? C.card : C.cardSoft,
-        border: `1px solid ${C.accentSoft}66`,
-        borderRadius: 12,
-      }}
-    >
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-controls={`disc-${id}`}
-        className="w-full flex items-center text-left"
-        style={{ padding: 16, gap: 12, background: "transparent", border: "none", cursor: "pointer" }}
-      >
-        <Icon size={20} style={{ color: C.accent, flexShrink: 0 }} aria-hidden />
-        <h4
-          className="font-display flex-1"
-          style={{ color: C.primary, fontWeight: 700, fontSize: 17, margin: 0 }}
-        >
-          {title}
-        </h4>
-        <ChevronDown
-          size={20}
-          style={{
-            color: C.primary,
-            flexShrink: 0,
-            transition: reduce ? "none" : "transform 280ms ease-in-out",
-            transform: open ? "rotate(180deg)" : "rotate(0deg)",
-          }}
-          aria-hidden
-        />
-      </button>
-      <div
-        id={`disc-${id}`}
-        style={{
-          maxHeight: open ? 800 : 0,
-          overflow: "hidden",
-          transition: reduce ? "none" : "max-height 280ms ease-in-out",
-        }}
-      >
-        <div style={{ padding: "0 20px 20px 52px", fontSize: 15.5, lineHeight: 1.6 }}>
-          {children}
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const SubsidiesLandelijk = () => {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [visibleSteps, setVisibleSteps] = useState<Set<number>>(new Set());
-
   useEffect(() => {
     document.title = "ISDE-subsidie aanvragen voor isolatie, warmtepomp en meer | Voortraject";
     const meta = document.querySelector('meta[name="description"]') || (() => {
@@ -315,43 +163,17 @@ const SubsidiesLandelijk = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
-      setVisibleSteps(new Set(stepRefs.current.map((_, i) => i)));
-      return;
-    }
-    const obs = new IntersectionObserver(
-      (entries) => {
-        setVisibleSteps((prev) => {
-          const next = new Set(prev);
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              const idx = Number((e.target as HTMLElement).dataset.stepIndex);
-              next.add(idx);
-              obs.unobserve(e.target);
-            }
-          });
-          return next;
-        });
-      },
-      { threshold: 0.3 }
-    );
-    stepRefs.current.forEach((el) => el && obs.observe(el));
-    return () => obs.disconnect();
-  }, []);
-
   const scrollToBedragen = () => {
     document.getElementById("bedragen")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const steps = [
-    { n: "01", t: "Vrijblijvend telefoongesprek", icon: Phone, d: "We bespreken kort jouw woning, situatie en wens. Aan het eind van het gesprek weet je grofweg welke ISDE-bedragen voor jou interessant zijn en of een huisbezoek de volgende stap is. Het gesprek duurt 15 minuten en is volledig vrijblijvend." },
-    { n: "02", t: "Huisbezoek", icon: Calendar, d: "Een lokale adviseur uit jouw regio komt bij je langs en bekijkt samen met jou welke maatregelen slim zijn en in welke volgorde. Geen verplichtingen, geen verkooppraatje." },
-    { n: "03", t: "Plan op maat met optimale combinatie", icon: FileText, d: "Wij kennen de regeling. Tijdens het bezoek rekenen we uit welke maatregelen voor jouw woning slim zijn én in welke volgorde. Vaak levert combineren duizenden euro's extra op. Jij hoeft niet zelf in regelingen te duiken." },
-    { n: "04", t: "Erkende uitvoerder kiezen", icon: Users, d: "Werkt een niet-erkend bedrijf voor je, dan vervalt je subsidie volledig. Wij brengen je in contact met installateurs die voldoen aan de ISDE-eisen en bij jouw woning passen. Geen vooringenomen keuze, gewoon wat werkt." },
-    { n: "05", t: "Uitvoering en aanvraag indienen", icon: Hammer, d: "Wij bewaken de uitvoering, de meldcodes en de fotodocumentatie. Tegelijkertijd dienen wij de aanvraag in bij RVO via mijnRVO.nl. RVO beslist doorgaans binnen 8 weken en stort het bedrag op jouw rekening." },
-    { n: "06", t: "Vervolgmaatregelen en natraject", icon: LifeBuoy, d: "Wil je daarna nog meer doen? Combineren binnen 24 maanden levert verdubbelde subsidie op. Wij blijven jouw aanspreekpunt voor vervolgmaatregelen, vragen over onderhoud, of advies over warmtepomp of warmtenet." },
+    { n: "01", t: "Vrijblijvend telefoongesprek", d: "We bespreken kort jouw woning, situatie en wens. Aan het eind van het gesprek weet je grofweg welke ISDE-bedragen voor jou interessant zijn en of een huisbezoek de volgende stap is. Het gesprek duurt 15 minuten en is volledig vrijblijvend." },
+    { n: "02", t: "Huisbezoek", d: "Een lokale adviseur uit jouw regio komt bij je langs en bekijkt samen met jou welke maatregelen slim zijn en in welke volgorde. Geen verplichtingen, geen verkooppraatje." },
+    { n: "03", t: "Plan op maat met optimale combinatie", d: "Wij kennen de regeling. Tijdens het bezoek rekenen we uit welke maatregelen voor jouw woning slim zijn én in welke volgorde. Vaak levert combineren duizenden euro's extra op. Jij hoeft niet zelf in regelingen te duiken." },
+    { n: "04", t: "Erkende uitvoerder kiezen", d: "Werkt een niet-erkend bedrijf voor je, dan vervalt je subsidie volledig. Wij brengen je in contact met installateurs die voldoen aan de ISDE-eisen en bij jouw woning passen. Geen vooringenomen keuze, gewoon wat werkt." },
+    { n: "05", t: "Uitvoering en aanvraag indienen", d: "Wij bewaken de uitvoering, de meldcodes en de fotodocumentatie. Tegelijkertijd dienen wij de aanvraag in bij RVO via mijnRVO.nl. RVO beslist doorgaans binnen 8 weken en stort het bedrag op jouw rekening." },
+    { n: "06", t: "Vervolgmaatregelen en natraject", d: "Wil je daarna nog meer doen? Combineren binnen 24 maanden levert verdubbelde subsidie op. Wij blijven jouw aanspreekpunt voor vervolgmaatregelen, vragen over onderhoud, of advies over warmtepomp of warmtenet." },
   ];
 
   const categories = [
@@ -383,10 +205,10 @@ const SubsidiesLandelijk = () => {
   ];
 
   const why = [
-    { icon: Home, t: "Persoonlijk huisbezoek", d: "Geen wachtrij, geen formulier-eerst. Een lokale adviseur komt persoonlijk bij je langs binnen een week." },
-    { icon: FileCheck, t: "Wij regelen de aanvraag", d: "Geen DigiD-gedoe, geen termijnen die je zelf moet bewaken. Wij dienen de ISDE-aanvraag in bij RVO en bewaken het proces." },
-    { icon: Scale, t: "Onafhankelijk advies", d: "Wij hebben geen voorkeur voor bepaalde uitvoerders. We brengen je in contact met erkende installateurs die bij jouw woning passen." },
-    { icon: LifeBuoy, t: "Nazorg en natraject", d: "Na de uitvoering blijven we beschikbaar. Voor vervolgmaatregelen, garantie, of advies over warmtepomp of warmtenet." },
+    { Icon: Home, t: "Persoonlijk huisbezoek", d: "Geen wachtrij, geen formulier-eerst. Een lokale adviseur komt persoonlijk bij je langs binnen een week." },
+    { Icon: FileCheck, t: "Wij regelen de aanvraag", d: "Geen DigiD-gedoe, geen termijnen die je zelf moet bewaken. Wij dienen de ISDE-aanvraag in bij RVO en bewaken het proces." },
+    { Icon: Scale, t: "Onafhankelijk advies", d: "Wij hebben geen voorkeur voor bepaalde uitvoerders. We brengen je in contact met erkende installateurs die bij jouw woning passen." },
+    { Icon: LifeBuoy, t: "Nazorg en natraject", d: "Na de uitvoering blijven we beschikbaar. Voor vervolgmaatregelen, garantie, of advies over warmtepomp of warmtenet." },
   ];
 
   // Half-and-half splitter for 2-column lists
@@ -398,330 +220,235 @@ const SubsidiesLandelijk = () => {
   const [nietLeft, nietRight] = half(niet);
 
   return (
-    <div style={{ backgroundColor: C.bg }}>
+    <div className="min-h-screen bg-background">
       <Seo
         title="Landelijke subsidies verduurzaming | Voortraject"
         description="Overzicht van landelijke subsidies en regelingen voor woningverduurzaming, waaronder ISDE en het Nationaal Warmtefonds."
         path="/subsidies/landelijk"
       />
-      <Header />
-      <main style={{ color: C.text }}>
-        {/* SECTIE 1: HERO — cream */}
-        <section className="container-content pt-16 md:pt-24 pb-16 md:pb-20">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-14 items-center">
-            <div className="md:col-span-3">
-              <h1
-                className="font-display"
-                style={{
-                  color: C.primary,
-                  fontWeight: 800,
-                  fontSize: "clamp(36px, 5.5vw, 64px)",
-                  letterSpacing: "-0.03em",
-                  lineHeight: 1.05,
-                }}
-              >
-                Subsidie voor jouw <Gold>verduurzaming</Gold>, in heel Nederland.
-              </h1>
-              <p style={{ marginTop: 24, fontSize: 18, lineHeight: 1.6, color: C.text }}>
-                Via ISDE krijg je honderden tot duizenden euro's terug op je verduurzaming. Maar je vraagt achteraf aan met meldcodes, foto's en de juiste timing. Eén foutje kost geld of vertraging. Wij regelen het van advies tot aanvraag bij RVO. Jij krijgt het bedrag op je rekening.
-              </p>
-              <div className="flex flex-wrap gap-3 mt-8">
-                <PrimaryBtn href="/contact">Ja ik wil gratis advies</PrimaryBtn>
-                <OutlineBtn onClick={scrollToBedragen}>Bekijk wat je kunt krijgen</OutlineBtn>
-              </div>
-            </div>
-            <div className="md:col-span-2">
-              {/* Logos — vergroot, in balans */}
-              <div
-                className="flex items-center justify-center"
-                style={{ padding: "16px 24px", marginBottom: 16, gap: 24 }}
-              >
+      <Header ctaNaElement="subsidie-hero-knop" />
+      <main className="text-foreground">
+        {/* SECTIE 1: HERO */}
+        <SubsidieHero
+          titel={
+            <>
+              Subsidie voor jouw <Accent>verduurzaming</Accent>, in heel Nederland.
+            </>
+          }
+          intro="Via ISDE krijg je honderden tot duizenden euro's terug op je verduurzaming. Maar je vraagt achteraf aan met meldcodes, foto's en de juiste timing. Eén foutje kost geld of vertraging. Wij regelen het van advies tot aanvraag bij RVO. Jij krijgt het bedrag op je rekening."
+          knop={<CtaButton href="/contact">Ja ik wil gratis advies</CtaButton>}
+          tweede={<PijlLink onClick={scrollToBedragen}>Bekijk wat je kunt krijgen</PijlLink>}
+          naast={
+            <>
+              {/* Logos, in balans */}
+              <LogoPaar>
                 <img
                   src="/images/landelijk/logo-voortraject-blauw.png"
                   alt="Voortraject"
-                  className="object-contain"
-                  style={{ maxHeight: 56, height: "auto", width: "auto" }}
+                  className="h-auto max-h-10 w-auto object-contain md:max-h-14"
                 />
-                <span
-                  aria-hidden
-                  className="hidden sm:inline-block"
-                  style={{
-                    width: 1,
-                    height: 56,
-                    backgroundColor: "#152C4E",
-                    opacity: 0.25,
-                  }}
-                />
+                <span aria-hidden className="hidden h-14 w-px bg-primary/25 sm:inline-block" />
                 <img
                   src="/images/landelijk/rijksoverheid_logo.svg"
                   alt="Rijksoverheid"
-                  className="object-contain"
-                  style={{ maxHeight: 56, height: "auto", width: "auto" }}
+                  className="h-auto max-h-12 w-auto object-contain md:max-h-14"
                 />
-              </div>
-              {/* Statkaart — wit op cream */}
-              <div style={{ ...cardStyle("on-cream"), padding: 24 }}>
-                <ul className="space-y-4">
-                  {[
-                    { icon: Globe, t: <>Heel Nederland komt in aanmerking</> },
-                    { icon: Coins, t: <><strong>{ISDE.budget2026}</strong> budget in 2026</> },
-                    { icon: TrendingUp, t: <>Verdubbel bij <strong>2 of meer</strong> maatregelen</> },
-                  ].map((s, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <span
-                        className="inline-flex items-center justify-center shrink-0"
-                        style={{
-                          width: 36,
-                          height: 36,
-                          borderRadius: 9999,
-                          backgroundColor: C.cardSoft,
-                          color: C.accent,
-                        }}
-                      >
-                        <s.icon size={18} aria-hidden />
-                      </span>
-                      <span style={{ fontSize: 15, color: C.text, lineHeight: 1.5, paddingTop: 6 }}>
-                        {s.t}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
+              </LogoPaar>
+              <HeroLijst
+                vlak="hs-blauw-zacht"
+                kleur="ink"
+                items={[
+                  { Icon: Globe, tekst: <>Heel Nederland komt in aanmerking</> },
+                  { Icon: Coins, tekst: <><strong>{ISDE.budget2026}</strong> budget in 2026</> },
+                  { Icon: TrendingUp, tekst: <>Verdubbel bij <strong>2 of meer</strong> maatregelen</> },
+                ]}
+              />
+            </>
+          }
+        />
 
-        {/* SECTIE 2: WAT IS ISDE — wit */}
-        <section style={{ backgroundColor: "#FFFFFF" }} className="py-12 md:py-16">
-          <div className="container-content">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-center">
-              <div>
-                <H2>
-                  Wat is <Gold>ISDE</Gold> precies?
-                </H2>
-                <p style={{ marginTop: 20, fontSize: 17, lineHeight: 1.7 }}>
+        {/* SECTIE 2: WAT IS ISDE */}
+        <Sectie>
+          <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-14">
+            <div className="min-w-0">
+              <Kop2>
+                Wat is <Accent>ISDE</Accent> precies?
+              </Kop2>
+              <div className="hs-tekst mt-4 space-y-4 text-[16px] leading-[1.65] md:mt-5 md:text-[17px]" data-veer>
+                <p>
                   ISDE staat voor Investeringssubsidie duurzame energie en energiebesparing. Het is de landelijke subsidie van de Rijksoverheid voor woningeigenaren die hun huis verduurzamen. De regeling wordt uitgevoerd door RVO en loopt door tot 2031.
                 </p>
-                <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.7 }}>
+                <p>
                   Anders dan Nij Begun werkt ISDE met vaste bedragen per maatregel. Voor isolatie krijg je een bedrag per vierkante meter. Voor een warmtepomp of zonneboiler een vast bedrag per apparaat. En als je twee of meer maatregelen combineert, verdubbelt de subsidie per vierkante meter voor isolatie.
                 </p>
               </div>
-              <div
-                style={{
-                  border: `1px solid rgba(229, 201, 103, 0.4)`,
-                  borderRadius: 16,
-                  padding: 16,
-                  backgroundColor: "transparent",
-                }}
-              >
-                <div style={{ aspectRatio: "5 / 3", width: "100%" }}>
-                  <img
-                    src="/images/landelijk/isde-subsidie.jpg"
-                    alt="Schematische illustratie van een woning met groen blad en energielabels A tot G, symbool voor verduurzaming via de ISDE-subsidie"
-                    loading="lazy"
-                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                  />
-                </div>
+            </div>
+            <div className="hs-tegel p-3 md:p-4" data-veer>
+              <div style={{ aspectRatio: "5 / 3", width: "100%" }}>
+                <img
+                  src="/images/landelijk/isde-subsidie.jpg"
+                  alt="Schematische illustratie van een woning met groen blad en energielabels A tot G, symbool voor verduurzaming via de ISDE-subsidie"
+                  loading="lazy"
+                  className="h-full w-full rounded-[16px] object-contain"
+                />
               </div>
             </div>
           </div>
-        </section>
+        </Sectie>
 
-        {/* SECTIE 3: HOEVEEL SUBSIDIE — cream */}
-        <section id="bedragen" className="container-content py-12 md:py-16">
-          <H2>
-            Hoeveel <Gold>subsidie</Gold> krijg je?
-          </H2>
-          <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.6, maxWidth: 820 }}>
-            De bedragen verschillen per maatregel, maar één regel maakt het écht interessant: combineer je twee of meer maatregelen binnen 24 maanden, dan <strong>verdubbelt</strong> het isolatiebedrag per vierkante meter. Wij rekenen voor jouw woning uit hoe je daar het maximale uit haalt.
-          </p>
+        {/* SECTIE 3: HOEVEEL SUBSIDIE */}
+        <Sectie id="bedragen" band>
+          <Kop2
+            lead={
+              <>
+                De bedragen verschillen per maatregel, maar één regel maakt het écht interessant: combineer je twee of meer maatregelen binnen 24 maanden, dan <strong className="text-primary">verdubbelt</strong> het isolatiebedrag per vierkante meter. Wij rekenen voor jouw woning uit hoe je daar het maximale uit haalt.
+              </>
+            }
+            className="max-w-[820px]"
+          >
+            Hoeveel <Accent>subsidie</Accent> krijg je?
+          </Kop2>
 
-          {/* 3.1 Categoriekaarten — wit op cream */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+          {/* 3.1 Categoriekaarten: landelijk, dus inktblauw */}
+          <div className="mt-7 grid grid-cols-1 gap-3 md:mt-10 md:grid-cols-2 md:gap-5">
             {categories.map((c) => (
-              <div
-                key={c.t}
-                className="transition-shadow hover:shadow-md"
-                style={cardStyle("on-cream")}
-              >
-                <div className="flex items-start gap-4">
-                  <IconCircle Icon={c.icon} size={48} />
-                  <div className="flex-1 min-w-0">
-                    <h3
-                      className="font-display"
-                      style={{ color: C.primary, fontWeight: 700, fontSize: 22, margin: 0 }}
-                    >
-                      {c.t}
-                    </h3>
-                    <p style={{ marginTop: 4, color: C.accent, fontWeight: 700, fontSize: 16 }}>{c.b}</p>
-                  </div>
+              <div key={c.t} className="hs-tegel hs-blauw grid grid-cols-[1fr_auto] items-start gap-x-3.5 p-[18px] md:p-6" data-veer>
+                <div className="min-w-0">
+                  <h3 className="hs-h3">{c.t}</h3>
+                  <p className="mt-1 font-display text-[19px] font-bold leading-[1.25] tracking-[-0.01em] text-[hsl(var(--rs-getal))] md:text-[22px]">
+                    {c.b}
+                  </p>
                 </div>
-                <p style={{ marginTop: 14, fontSize: 15, lineHeight: 1.55, color: C.text }}>{c.d}</p>
+                <Rondje Icon={c.icon} kleur="ink" />
+                <p className="hs-tekst col-span-2 mt-2.5 text-[15px] leading-[1.55]">{c.d}</p>
               </div>
             ))}
           </div>
 
-          {/* 3.2a Combineren — uitklapbaar */}
-          <div className="mt-8">
-            <Disclosure Icon={Lightbulb} title="Combineren is waar de winst zit" variant="on-cream">
+          {/* 3.2a Combineren: uitklapbaar */}
+          <div className="mt-5 md:mt-8" data-veer>
+            <LosseUitklap kop="h4" Icon={Lightbulb} icoonKleur="oker" vraag="Combineren is waar de winst zit">
               <p>
                 Eén isolatiemaatregel levert ongeveer 15% van je investering aan subsidie op. Twee maatregelen, of één maatregel plus een warmtepomp of zonneboiler, brengt dat naar ongeveer 30%. Dat is letterlijk verdubbelen.
               </p>
-            </Disclosure>
+            </LosseUitklap>
           </div>
 
-          {/* 3.2 Tabel — wit op cream */}
-          <div
-            className="mt-8"
-            style={{
-              backgroundColor: C.card,
-              border: `1px solid ${C.accentSoft}66`,
-              borderRadius: 16,
-              padding: 28,
-            }}
-          >
-            <h3 className="font-display" style={{ color: C.primary, fontWeight: 700, fontSize: 20 }}>
-              Isolatie per vierkante meter
-            </h3>
-            <div className="mt-6 overflow-x-auto">
-              <table className="w-full text-left" style={{ borderCollapse: "collapse" }}>
+          {/* 3.2 Tabel */}
+          <div className="hs-tegel mt-5 p-[18px] md:mt-8 md:p-7" data-veer>
+            <h3 className="hs-h3">Isolatie per vierkante meter</h3>
+            <div className="-mx-3 mt-3 overflow-x-auto min-[381px]:-mx-2 md:mx-0 md:mt-4">
+              <table className="sp-tabel">
                 <thead>
-                  <tr style={{ borderBottom: `1px solid ${C.accentSoft}66` }}>
-                    <th style={{ padding: "12px 12px", color: C.primary, fontWeight: 700, fontSize: 14 }}>Maatregel</th>
-                    <th style={{ padding: "12px 12px", color: C.primary, fontWeight: 700, fontSize: 14 }}>1 maatregel</th>
-                    <th
-                      style={{
-                        padding: "12px 12px",
-                        color: C.primary,
-                        fontWeight: 800,
-                        fontSize: 14,
-                        backgroundColor: C.accent,
-                      }}
-                    >
-                      2+ maatregelen
-                    </th>
+                  <tr>
+                    <th>Maatregel</th>
+                    <th>1 maatregel</th>
+                    <th className="text-[hsl(var(--subsidie))]">2+ maatregelen</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {ISDE.isolatie.map((row, i) => (
-                    <tr key={row.naam} style={{ borderBottom: i === ISDE.isolatie.length - 1 ? "none" : `1px solid ${C.accentSoft}33` }}>
-                      <td style={{ padding: "12px 12px", fontSize: 15 }}>{row.naam}</td>
-                      <td style={{ padding: "12px 12px", fontSize: 15 }}>{row.een}</td>
-                      <td style={{ padding: "12px 12px", fontSize: 15, fontWeight: 700, color: C.accent, backgroundColor: "rgba(229, 201, 103, 0.08)" }}>
-                        {row.twee}
-                      </td>
+                  {ISDE.isolatie.map((row) => (
+                    <tr key={row.naam}>
+                      <td>{row.naam}</td>
+                      <td className="sp-enkel"><Bedrag tekst={row.een} /></td>
+                      <td className="sp-dubbel"><Bedrag tekst={row.twee} /></td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <div className="mt-5 flex items-start gap-2" style={{ color: C.muted, fontSize: 13 }}>
-              <Info size={16} style={{ flexShrink: 0, marginTop: 2 }} aria-hidden />
+            <div className="hs-tekst mt-3 flex items-start gap-2 text-[13.5px] leading-[1.5]">
+              <Info size={16} className="mt-0.5 flex-none" aria-hidden />
               <span>Voor glas (HR++ of triple) gelden aparte bedragen. Bedragen kunnen jaarlijks wijzigen, check rvo.nl voor de actuele tarieven.</span>
             </div>
           </div>
 
-          {/* 3.3 Voorbeeld — uitklapbaar */}
-          <div className="mt-8">
-            <Disclosure Icon={Calculator} title="Voorbeeld: dak en vloer combineren" variant="on-cream">
+          {/* 3.3 Voorbeeld: uitklapbaar */}
+          <div className="mt-5 md:mt-8" data-veer>
+            <LosseUitklap kop="h4" Icon={Calculator} icoonKleur="groen" vraag="Voorbeeld: dak en vloer combineren">
               <p>
                 Stel: je laat 80 m² dakisolatie en 60 m² vloerisolatie tegelijk uitvoeren. Door de combinatie verdubbelen beide bedragen.
               </p>
               <ul className="mt-3 space-y-1">
-                <li>Dakisolatie: 80 × €32,50 = <strong>€2.600</strong></li>
-                <li>Vloerisolatie: 60 × €11,00 = <strong>€660</strong></li>
+                <li>Dakisolatie: 80 × €32,50 = <strong className="text-primary">€2.600</strong></li>
+                <li>Vloerisolatie: 60 × €11,00 = <strong className="text-primary">€660</strong></li>
               </ul>
-              <p style={{ marginTop: 10 }}>
-                Totaal: <strong style={{ color: C.primary }}>€3.260</strong> subsidie. Zonder combineren: €1.630. Verschil: <strong style={{ color: C.accent }}>€1.630 extra</strong> door slim te combineren.
+              <p className="mt-2.5">
+                Totaal: <strong className="text-primary">€3.260</strong> subsidie. Zonder combineren: €1.630. Verschil: <strong className="text-[hsl(var(--subsidie))]">€1.630 extra</strong> door slim te combineren.
               </p>
-            </Disclosure>
+            </LosseUitklap>
           </div>
 
           {/* 3.4 Mini-CTA */}
-          <div className="mt-10 text-center">
-            <p style={{ color: C.primary, fontWeight: 700, fontSize: 18 }}>
-              Bang dat je geld laat liggen?
-            </p>
-            <p style={{ color: C.muted, fontSize: 14, marginTop: 6 }}>
+          <div className="mt-9 text-center md:mt-12" data-veer>
+            <p className="font-display text-[18px] font-bold text-primary">Bang dat je geld laat liggen?</p>
+            <p className="hs-tekst mx-auto mt-1.5 max-w-[560px] text-[15px] leading-[1.55]">
               Tijdens het huisbezoek rekenen we voor jouw woning uit welke combinatie het slimst is. Vrijblijvend en gratis.
             </p>
-            <div className="mt-5">
-              <OutlineBtn href="/contact">Neem contact op</OutlineBtn>
+            <div className="mt-2">
+              <PijlLink href="/contact">Neem contact op</PijlLink>
             </div>
           </div>
-        </section>
+        </Sectie>
 
-        {/* SECTIE 4: VOOR WIE — wit */}
-        <section style={{ backgroundColor: "#FFFFFF" }} className="py-12 md:py-16">
-          <div className="container-content">
-            <H2>
-              Voor wie is ISDE <Gold>bedoeld</Gold>?
-            </H2>
-            <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.6, maxWidth: 760 }}>
-              De ISDE-subsidie is er voor woningeigenaren die hun bestaande woning verduurzamen. Heel Nederland, geen inkomenstoets, geen postcode-check.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-              {[
-                {
-                  icon: User,
-                  t: "Wie kan aanvragen?",
-                  items: [
-                    "Eigenaar én bewoner van de woning",
-                    "Woning staat in Nederland",
-                    "Bestaande woning (geen nieuwbouw in de bouwfase)",
-                    "Geen inkomenstoets, geen postcodebeperking",
-                  ],
-                },
-                {
-                  icon: Calendar,
-                  t: "Wanneer aanvragen?",
-                  items: [
-                    "Eerst de maatregel laten uitvoeren door een erkend bedrijf",
-                    "Aanvraag indienen binnen 24 maanden na uitvoering",
-                    "Doe-het-zelf telt niet mee voor subsidie",
-                    "Foto's en factuur zijn verplicht bij de aanvraag",
-                  ],
-                },
-              ].map((card) => (
-                <div key={card.t} style={cardStyle("on-white")}>
-                  <div className="flex items-center gap-4">
-                    <IconCircle Icon={card.icon} size={48} />
-                    <h3
-                      className="font-display"
-                      style={{ color: C.primary, fontWeight: 700, fontSize: 22, margin: 0 }}
-                    >
-                      {card.t}
-                    </h3>
-                  </div>
-                  <ul className="mt-5 space-y-2">
-                    {card.items.map((it) => (
-                      <li key={it} className="flex items-start gap-3">
-                        <Check size={20} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
-                        <span style={{ fontSize: 15.5, lineHeight: 1.55 }}>{it}</span>
-                      </li>
-                    ))}
-                  </ul>
+        {/* SECTIE 4: VOOR WIE */}
+        <Sectie>
+          <Kop2 lead="De ISDE-subsidie is er voor woningeigenaren die hun bestaande woning verduurzamen. Heel Nederland, geen inkomenstoets, geen postcode-check.">
+            Voor wie is ISDE <Accent>bedoeld</Accent>?
+          </Kop2>
+          <div className="mt-7 grid grid-cols-1 gap-3 md:mt-10 md:grid-cols-2 md:gap-5">
+            {[
+              {
+                icon: User,
+                t: "Wie kan aanvragen?",
+                items: [
+                  "Eigenaar én bewoner van de woning",
+                  "Woning staat in Nederland",
+                  "Bestaande woning (geen nieuwbouw in de bouwfase)",
+                  "Geen inkomenstoets, geen postcodebeperking",
+                ],
+              },
+              {
+                icon: Calendar,
+                t: "Wanneer aanvragen?",
+                items: [
+                  "Eerst de maatregel laten uitvoeren door een erkend bedrijf",
+                  "Aanvraag indienen binnen 24 maanden na uitvoering",
+                  "Doe-het-zelf telt niet mee voor subsidie",
+                  "Foto's en factuur zijn verplicht bij de aanvraag",
+                ],
+              },
+            ].map((card) => (
+              <div key={card.t} className="hs-tegel hs-blauw-zacht p-[18px] md:p-6" data-veer>
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="hs-h3">{card.t}</h3>
+                  <Rondje Icon={card.icon} kleur="ink" />
                 </div>
-              ))}
-            </div>
-            <p style={{ marginTop: 20, fontSize: 13, color: C.muted }}>
-              Verhuurders en VvE's hebben een aparte regeling (SVOH). Voor hen geldt ISDE niet.
-            </p>
+                <ul className="mt-3">
+                  {card.items.map((it) => (
+                    <VinkRegel key={it}>{it}</VinkRegel>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
-        </section>
-
-        {/* SECTIE 5: WELKE MAATREGELEN — cream, twee koloms */}
-        <section className="container-content py-12 md:py-16">
-          <H2>
-            Welke maatregelen worden <Gold>vergoed</Gold>?
-          </H2>
-          <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.6, maxWidth: 820 }}>
-            ISDE vergoedt isolatie, warmtepomp, zonneboiler, warmtenet en (sinds 2026) ventilatie. Per maatregel gelden eisen aan de installatie, het materiaal en het oppervlak.
+          <p className="hs-tekst mt-4 text-[13.5px] leading-[1.5] md:mt-5">
+            Verhuurders en VvE's hebben een aparte regeling (SVOH). Voor hen geldt ISDE niet.
           </p>
+        </Sectie>
 
-          {/* 5.1 Hoofdlijst maatregelen — twee koloms op desktop, in witte card op cream */}
-          <div className="mt-8" style={cardStyle("on-cream")}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10">
+        {/* SECTIE 5: WELKE MAATREGELEN */}
+        <Sectie band>
+          <Kop2
+            className="max-w-[820px]"
+            lead="ISDE vergoedt isolatie, warmtepomp, zonneboiler, warmtenet en (sinds 2026) ventilatie. Per maatregel gelden eisen aan de installatie, het materiaal en het oppervlak."
+          >
+            Welke maatregelen worden <Accent>vergoed</Accent>?
+          </Kop2>
+
+          {/* 5.1 Hoofdlijst maatregelen */}
+          <div className="hs-tegel mt-7 p-[18px] md:mt-10 md:p-7" data-veer>
+            <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-10">
               <ul>
                 {measuresLeft.map((m) => (
                   <MeasureLi key={m.l} label={m.l} tip={m.tip} />
@@ -735,243 +462,54 @@ const SubsidiesLandelijk = () => {
             </div>
           </div>
 
-          {/* 5.2 Biobased — uitklapbaar */}
-          <div className="mt-6">
-            <Disclosure Icon={Leaf} title="Bonus voor biobased isolatie" variant="on-cream">
+          {/* 5.2 Biobased: uitklapbaar */}
+          <div className="mt-5 md:mt-6" data-veer>
+            <LosseUitklap kop="h4" Icon={Leaf} icoonKleur="groen" vraag="Bonus voor biobased isolatie">
               <p>
                 Kies je voor isolatiemateriaal uit hernieuwbare bronnen (zoals hennep, vlas, houtvezel of cellulose), dan krijg je een extra bedrag per vierkante meter. Deze bonus wordt niet verdubbeld bij combineren, maar telt wel op bij het standaardbedrag. Wij weten welke materialen kwalificeren en bespreken het tijdens het huisbezoek.
               </p>
-            </Disclosure>
+            </LosseUitklap>
           </div>
 
-          {/* 5.3 Niet vergoed — twee koloms */}
-          <div className="mt-10">
-            <h3 className="font-display" style={{ color: C.primary, fontWeight: 700, fontSize: 20 }}>
-              Niet vergoed via ISDE
-            </h3>
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2">
-              <ul className="space-y-2">
+          {/* 5.3 Niet vergoed */}
+          <div className="mt-8 md:mt-10" data-veer>
+            <h3 className="hs-h3">Niet vergoed via ISDE</h3>
+            <div className="mt-3 grid grid-cols-1 md:grid-cols-2 md:gap-x-10">
+              <ul>
                 {nietLeft.map((n) => (
-                  <li key={n} className="flex items-start gap-3">
-                    <XIcon size={18} style={{ color: C.muted, flexShrink: 0, marginTop: 3 }} aria-hidden />
-                    <span style={{ fontSize: 15.5, lineHeight: 1.55 }}>{n}</span>
-                  </li>
+                  <KruisRegel key={n} Icon={XIcon}>{n}</KruisRegel>
                 ))}
               </ul>
-              <ul className="space-y-2">
+              <ul>
                 {nietRight.map((n) => (
-                  <li key={n} className="flex items-start gap-3">
-                    <XIcon size={18} style={{ color: C.muted, flexShrink: 0, marginTop: 3 }} aria-hidden />
-                    <span style={{ fontSize: 15.5, lineHeight: 1.55 }}>{n}</span>
-                  </li>
+                  <KruisRegel key={n} Icon={XIcon}>{n}</KruisRegel>
                 ))}
               </ul>
             </div>
           </div>
-        </section>
+        </Sectie>
 
-
-        {/* SECTIE 6: STAPPENPLAN — wit */}
-        <section style={{ backgroundColor: "#FFFFFF" }} className="py-12 md:py-16">
-          <div className="container-content">
-            <div className="max-w-3xl">
-              <H2>
-                Zo verloopt jouw <Gold>traject</Gold>
-              </H2>
-              <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.6 }}>
-                Geen formulieren, geen DigiD-gedoe, geen termijnen die je zelf moet bewaken. Wij doen het zware werk, jij houdt de regie.
-              </p>
-            </div>
-
-            <div className="mt-10 flex flex-col gap-5 md:gap-6">
-              {steps.map((s, i) => {
-                const visible = visibleSteps.has(i);
-                return (
-                  <div
-                    key={s.n}
-                    ref={(el) => (stepRefs.current[i] = el)}
-                    data-step-index={i}
-                    style={{
-                      ...cardStyle("on-white"),
-                      boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
-                      opacity: visible ? 1 : 0,
-                      transform: visible ? "translateY(0)" : "translateY(20px)",
-                      transition: "opacity 400ms ease-out, transform 400ms ease-out",
-                    }}
-                  >
-                    <div className="flex items-center gap-4">
-                      <span
-                        className="font-display"
-                        style={{
-                          color: C.accent,
-                          fontWeight: 800,
-                          fontSize: "clamp(40px, 5vw, 56px)",
-                          lineHeight: 1,
-                          letterSpacing: "-0.04em",
-                          flexShrink: 0,
-                        }}
-                      >
-                        {s.n}
-                      </span>
-                      <span
-                        className="inline-flex items-center justify-center rounded-full"
-                        style={{ backgroundColor: C.accent, width: 40, height: 40, color: C.primary, flexShrink: 0 }}
-                      >
-                        <s.icon size={20} />
-                      </span>
-                      <h3
-                        className="font-display flex-1 min-w-0"
-                        style={{ color: C.primary, fontWeight: 700, fontSize: 22, margin: 0, lineHeight: 1.2 }}
-                      >
-                        {s.t}
-                      </h3>
-                    </div>
-                    <p style={{ marginTop: 12, fontSize: 16, lineHeight: 1.65 }}>{s.d}</p>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div
-              className="mt-12 text-center mx-auto"
-              style={{
-                backgroundColor: C.cardSoft,
-                borderRadius: 16,
-                padding: "32px 24px",
-                maxWidth: 720,
-              }}
-            >
-              <p className="font-display" style={{ color: C.primary, fontWeight: 700, fontSize: 22 }}>
-                Wil je sneller verder zonder gedoe?
-              </p>
-              <div className="mt-6">
-                <PrimaryBtn href="/contact">Neem contact op</PrimaryBtn>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* SECTIE 6: STAPPENPLAN */}
+        <Sectie>
+          <Kop2 lead="Geen formulieren, geen DigiD-gedoe, geen termijnen die je zelf moet bewaken. Wij doen het zware werk, jij houdt de regie.">
+            Zo verloopt jouw <Accent>traject</Accent>
+          </Kop2>
+          <Stappen stappen={steps} />
+          <TussenCta kop="Wil je sneller verder zonder gedoe?" knop={<CtaButton href="/contact">Neem contact op</CtaButton>} />
+        </Sectie>
 
         {/* SECTIE 7: FAQ */}
-        <section className="py-[48px] md:py-[72px]" style={{ backgroundColor: "#F5F2EC" }}>
-          <div className="max-w-4xl mx-auto px-6">
-            <h2 className="h2-section text-center" style={{ color: "#152C4E", fontWeight: 600 }}>
-              Veelgestelde <span style={{ color: "hsl(var(--accent))" }}>vragen</span>
-            </h2>
-            <p
-              className="text-center mx-auto"
-              style={{ color: "#152C4E", opacity: 0.75, fontSize: 16, marginTop: 16, marginBottom: 40 }}
-            >
-              Wat we het vaakst gevraagd krijgen, kort beantwoord.
-            </p>
-            <div
-              className="mx-auto"
-              style={{
-                maxWidth: 820,
-                backgroundColor: "#FFFFFF",
-                border: "1px solid #E5E2DB",
-                borderRadius: 16,
-                overflow: "hidden",
-              }}
-            >
-              {faqs.map((f, i) => {
-                const isOpen = openFaq === i;
-                return (
-                  <div
-                    key={f.q}
-                    style={{ borderBottom: i === faqs.length - 1 ? "none" : "1px solid #E5E2DB" }}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setOpenFaq(isOpen ? null : i)}
-                      aria-expanded={isOpen}
-                      className="w-full flex items-center text-left"
-                      style={{ padding: "20px 24px", background: "transparent", border: "none", cursor: "pointer", gap: 20 }}
-                    >
-                      <h3
-                        className="font-display flex-1"
-                        style={{ fontSize: 18, fontWeight: 500, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
-                      >
-                        {f.q}
-                      </h3>
-                      <ChevronDown
-                        size={20}
-                        color="#E8B547"
-                        style={{
-                          opacity: 0.5,
-                          transition: "transform 200ms ease",
-                          transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                          flexShrink: 0,
-                        }}
-                        aria-hidden="true"
-                      />
-                    </button>
-                    <div style={{ maxHeight: isOpen ? 400 : 0, overflow: "hidden", transition: "max-height 300ms ease" }}>
-                      <p style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6, margin: 0, padding: "0 24px 20px 24px" }}>
-                        {f.a}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
+        <SubsidieFaq faqs={faqs} band />
 
-        {/* SECTIE 8: WAAROM VOORTRAJECT — wit */}
-        <section style={{ backgroundColor: "#FFFFFF" }} className="py-12 md:py-16">
-          <div className="container-content">
-            <div className="max-w-3xl">
-              <H2>
-                Waarom bewoners voor Voortraject <Gold>kiezen</Gold>
-              </H2>
-              <p style={{ marginTop: 16, fontSize: 17, lineHeight: 1.6 }}>
-                Wat ons anders maakt dan een algemene subsidie-website of een ingehuurde callcenter-helpdesk.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-8">
-              {why.map((w) => (
-                <div key={w.t} style={cardStyle("on-white")}>
-                  <div className="flex items-center gap-4">
-                    <IconCircle Icon={w.icon} size={48} />
-                    <h3
-                      className="font-display"
-                      style={{ color: C.primary, fontWeight: 700, fontSize: 20, margin: 0 }}
-                    >
-                      {w.t}
-                    </h3>
-                  </div>
-                  <p style={{ marginTop: 12, fontSize: 15.5, lineHeight: 1.6 }}>{w.d}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
+        {/* SECTIE 8: WAAROM VOORTRAJECT */}
+        <Sectie>
+          <Kop2 lead="Wat ons anders maakt dan een algemene subsidie-website of een ingehuurde callcenter-helpdesk.">
+            Waarom bewoners voor Voortraject <Accent>kiezen</Accent>
+          </Kop2>
+          <WaaromTegels redenen={why} />
+        </Sectie>
       </main>
-      <Footer
-        cta={
-          /* SECTIE 9: FOOTER CTA — donkerblauw, compact */
-          <section className="py-16 md:py-20">
-            <div className="mx-auto px-6 text-center" style={{ maxWidth: 600 }}>
-              <h2
-                className="font-display"
-                style={{ color: "#fff", fontWeight: 700, fontSize: "clamp(26px, 3.5vw, 36px)", lineHeight: 1.2 }}
-              >
-                Ontdek welke subsidies voor jouw woning gelden
-              </h2>
-              <p style={{ marginTop: 16, color: "rgba(255,255,255,0.8)", fontSize: 16, lineHeight: 1.6 }}>
-                Wij zoeken het voor jouw adres uit en stapelen alles wat kan. Eén gesprek, geen loketten. Vrijblijvend en gratis.
-              </p>
-              <div className="mt-8">
-                <PrimaryBtn href="/contact">Plan een gratis gesprek</PrimaryBtn>
-              </div>
-              <p style={{ marginTop: 24, color: "rgba(255,255,255,0.5)", fontSize: 12 }}>
-                Laatst bijgewerkt: {LAATST_BIJGEWERKT}
-              </p>
-            </div>
-          </section>
-        }
-      />
+      <Footer cta={<SlotCta laatstBijgewerkt={LAATST_BIJGEWERKT} />} />
     </div>
   );
 };
