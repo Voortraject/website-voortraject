@@ -1,0 +1,48 @@
+/* Bovenkant van de homepagina (Hero en LogoCarousel), huisstijl oktober 2026.
+ *
+ * Alleen wat Tailwind niet netjes kan: het inktblauwe verloop over de foto (op
+ * de telefoon van onder naar boven donker, op desktop van links) en het masker
+ * van de logostrook. Alleen tokens, geen losse kleuren.
+ */
+
+.home-hero-waas {
+  background: linear-gradient(
+    180deg,
+    hsl(var(--primary) / 0.55) 0%,
+    hsl(var(--primary) / 0.12) 30%,
+    hsl(var(--primary) / 0.28) 58%,
+    hsl(var(--primary) / 0.82) 100%
+  );
+}
+@media (min-width: 768px) {
+  .home-hero-waas {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--primary) / 0.78) 0%,
+      hsl(var(--primary) / 0.42) 52%,
+      hsl(var(--primary) / 0.12) 100%
+    );
+  }
+}
+
+/* De kop: op de telefoon twee regels van elk één zin, die met de breedte
+   meeschalen in plaats van af te breken. */
+.home-hero-kop {
+  font-family: 'Inter Tight', 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 6.4vw;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+}
+.home-hero-kop > span {
+  display: block;
+  white-space: nowrap;
+}
+@media (min-width: 768px) {
+  .home-hero-kop { font-size: clamp(2.25rem, 5vw, 4.5rem); }
+}
+
+.home-logo-masker {
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 48px, black calc(100% - 48px), transparent);
+          mask-image: linear-gradient(90deg, transparent, black 48px, black calc(100% - 48px), transparent);
+}
