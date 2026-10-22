@@ -9,6 +9,20 @@ the user corrects course or a non-obvious gotcha surfaces. Review at session sta
 **Lesson:** the rule to follow next time
 -->
 
+## 2026-10-22 — Eigen klassen in `@layer components` verdwijnen als hun naam samengesteld wordt
+**Context:** De huisstijlklassen (`src/styles/huisstijl.css`) staan in `@layer components`,
+zodat Tailwind-utilities er in een className overheen gaan. Op de subsidiepagina's werd het
+rondje gebouwd als `hs-rondje-${kleur}`. De rondjes voor provincie en gemeente waren daarna
+onzichtbaar, zonder fout of waarschuwing: Tailwind neemt uit een layer alleen klassen op die
+het letterlijk in de broncode ziet, en `hs-rondje-provincie` stond nergens voluit.
+**Lesson:**
+- **Een klasse uit `@layer` is net zo "purgeable" als een utility.** Schrijf klassennamen
+  voluit (een opzoektabel met de hele naam als string is prima), nooit samengesteld uit stukjes.
+- Voor de huisstijl staat er nu een `safelist: [{ pattern: /^hs-/ }]` in `tailwind.config.ts`;
+  het bestand is klein genoeg om altijd mee te nemen. Komen er ooit andere eigen klassen in
+  een layer, denk dan aan hetzelfde.
+- **Controleer het in de build, niet in de dev-server**: `grep -c "\.hs-naam\b" dist/assets/*.css`.
+
 ## 2026-08-10 — Een rem in het geheugen van een edge-isolate is geen rem
 **Context:** Bij de securityronde vanuit het CRM bleek de subsidiecheck, de belangrijkste
 leadroute, buiten de volumerem te vallen. Twee oorzaken die elkaar versterkten: de
@@ -635,3 +649,15 @@ de controle bereikte Cloudflare nooit en liet alles door. Een request met een ne
   Zonder dat is "storing" niet te onderscheiden van "de code werkt nooit".
 - **Log ook de uitkomst "ok" niet weg in stilte bij een nieuwe controle**: kijk na de eerste
   echte inzending in de log welke tak hij nam, in plaats van uit te gaan van het resultaat.
+
+## 2026-10-22 — Onze reviewtabel is niet "de reviews op Google"
+**Context:** Gevraagd welke reviews de site zou tonen bij een woordengrens van 8 of 6. Ik
+antwoordde op basis van `google_reviews` (10 rijen) alsof dat alle reviews waren. Op Google
+staan er 33; de opdrachtgever noemde meteen vijf namen die ontbraken. Google geeft per aanroep
+hooguit 5 reviews (ook met `reviews_sort=newest`), dus de tabel bevat alleen wat de sync ooit
+toevallig kreeg.
+**Lesson:**
+- **Benoem bij elke uitspraak over "welke reviews" waar ze vandaan komen**: de tabel, niet Google.
+  Noem het totaal van Google (`google_place_stats.user_rating_count`) erbij als dat afwijkt.
+- **Een simulatie op een onvolledige bron is geen antwoord.** Zeg dat de bron onvolledig is
+  voordat je een lijst geeft.

@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 
+import "@/styles/home-boven.css";
+
 type Logo = { src: string; alt: string };
 
 interface LogoCarouselProps {
@@ -19,8 +21,9 @@ const COPIES = 4; // aantal kopieën van de logo-set voor een naadloze lus
 const SPEED = 30; // autoscroll-snelheid in px per seconde
 
 /**
- * Trustbar: compacte witte balk met korte titel en de instantie-logo's
- * als rustige marquee in kleur.
+ * Trustbar: één witte tegel met korte titel en de instantie-logo's als rustige
+ * marquee in kleur, die over de onderrand van de hero schuift. Huisstijl
+ * oktober 2026: geen witte band meer over de hele breedte.
  */
 export const LogoCarousel = ({ logos = defaultLogos }: LogoCarouselProps) => {
   const loop = Array.from({ length: COPIES }, () => logos).flat();
@@ -108,59 +111,50 @@ export const LogoCarousel = ({ logos = defaultLogos }: LogoCarouselProps) => {
   };
 
   return (
-    <section
-      aria-label="Regelingen en instanties waarmee wij werken"
-      className="py-[48px]"
-      style={{ backgroundColor: "#FFFFFF" }}
-    >
-      <style>{`
-        .logo-marquee-mask {
-          -webkit-mask-image: linear-gradient(to right, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
-                  mask-image: linear-gradient(to right, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
-        }
-      `}</style>
-
-      <div className="container-home">
-        <h2 className="text-center font-display font-semibold text-primary text-[22px] md:text-[28px] leading-[1.2] tracking-[-0.02em]">
-          We werken met alle officiële <span className="text-accent">regelingen</span>
-        </h2>
-      </div>
-
-      <div
-        className="logo-marquee logo-marquee-mask relative overflow-hidden select-none mt-8"
-        style={{ touchAction: "pan-y", cursor: "grab" }}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={endDrag}
-        onPointerCancel={endDrag}
-        onPointerLeave={endDrag}
+    // Eén witte tegel die over de onderrand van de hero schuift (negatieve
+    // marge, boven de hero gestapeld), binnen dezelfde breedte als de inhoud.
+    <div className="container-home relative z-10 -mt-10 md:-mt-14">
+      <section
+        aria-label="Regelingen en instanties waarmee wij werken"
+        className="hs-tegel overflow-hidden pt-[22px] pb-6 md:pt-[30px] md:pb-[34px]"
       >
+        {/* Op één regel, ook op 360 px: daar schaalt de kop iets mee. */}
+        <h2 className="hs-h3 whitespace-nowrap px-3 text-center text-[min(17.5px,4.6vw)] sm:px-[18px] md:text-[24px]">
+          We werken met alle officiële <span className="hs-accent">regelingen</span>
+        </h2>
+
         <div
-          ref={trackRef}
-          className="flex items-center gap-10 md:gap-16 w-max"
-          style={{ willChange: "transform" }}
+          className="logo-marquee home-logo-masker relative mt-[18px] select-none overflow-hidden"
+          style={{ touchAction: "pan-y", cursor: "grab" }}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          onPointerLeave={endDrag}
         >
-          {loop.map((logo, i) => (
-            <div
-              key={i}
-              className="shrink-0 flex items-center justify-center"
-              aria-hidden={i >= logos.length ? true : undefined}
-            >
-              <img
-                src={logo.src}
-                alt={i >= logos.length ? "" : logo.alt}
-                loading="lazy"
-                draggable={false}
-                className="object-contain pointer-events-none"
-                style={{
-                  height: "clamp(40px, 5vw, 56px)",
-                  width: "auto",
-                }}
-              />
-            </div>
-          ))}
+          <div
+            ref={trackRef}
+            className="flex w-max items-center gap-10 md:gap-16"
+            style={{ willChange: "transform" }}
+          >
+            {loop.map((logo, i) => (
+              <div
+                key={i}
+                className="flex shrink-0 items-center justify-center"
+                aria-hidden={i >= logos.length ? true : undefined}
+              >
+                <img
+                  src={logo.src}
+                  alt={i >= logos.length ? "" : logo.alt}
+                  loading="lazy"
+                  draggable={false}
+                  className="pointer-events-none h-[38px] w-auto object-contain md:h-[50px]"
+                />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 };

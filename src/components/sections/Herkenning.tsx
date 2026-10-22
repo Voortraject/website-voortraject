@@ -1,6 +1,8 @@
+import { useRef } from "react";
 import { Coins, MessagesSquare, Scale } from "lucide-react";
 
 import { CtaButton } from "@/components/CtaButton";
+import { useStaffel } from "@/lib/beweging";
 import heroKeukentafel from "@/assets/hero-keukentafel.webp";
 import { TrustCardList } from "./TrustCardList";
 
@@ -40,70 +42,67 @@ const stappen = [
   },
 ];
 
-export const Herkenning = () => (
-  <section className="section-pad-home" style={{ backgroundColor: "#FFFFFF" }} aria-labelledby="herkenning-title">
-    <div className="container-home">
-      {/* Herken je dit? — drie kaarten naast elkaar */}
-      <h2 id="herkenning-title" className="h2-section">
-        <span className="text-accent">Herken</span> je dit?
-      </h2>
+export const Herkenning = () => {
+  const sectie = useRef<HTMLElement>(null);
+  useStaffel(sectie);
 
-      <TrustCardList items={twijfels} desktop="cards" />
-
-      {/* Van twijfel naar een compleet plan */}
-      <div className="mt-12 lg:mt-16">
-        {/* Titel op volle breedte, zodat de zin op één regel past */}
-        <h2 id="helder-plan-title" className="h2-section">
-          Van twijfel naar een <span className="text-accent">compleet</span> plan
+  return (
+    // Bovenaan bijna geen ruimte: de subsidiecheck erboven staat op hetzelfde
+    // off-white en heeft zijn eigen ondermarge.
+    <section ref={sectie} className="bg-background pt-2 pb-[56px] md:pb-[88px]" aria-labelledby="herkenning-title">
+      <div className="container-home">
+        {/* Herken je dit? Telefoon: swipen, desktop: drie tegels naast elkaar */}
+        <h2 id="herkenning-title" className="hs-h2" data-veer>
+          <span className="hs-accent">Herken</span> je dit?
         </h2>
 
-        <div className="mt-8 lg:mt-10 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-          {/* DOM-volgorde foto→stappen (mobiel: foto tussen kaarten en stappen);
-              op desktop wisselt `order` ze om naar stappen links, foto rechts. */}
-          <div className="lg:order-2">
-            <img
-              src={heroKeukentafel}
-              alt="Adviseur van Voortraject in gesprek met een bewoner aan tafel"
-              loading="lazy"
-              decoding="async"
-              className="w-full h-64 sm:h-80 lg:h-[400px] rounded-2xl object-cover"
-              style={{ boxShadow: "0 4px 20px hsl(var(--primary) / 0.08)" }}
-            />
-          </div>
+        <TrustCardList items={twijfels} desktop="cards" tint="zand" />
 
-          <ol className="space-y-0 lg:order-1">
-            {stappen.map(({ nummer, title, body }, i) => {
-              const isLaatste = i === stappen.length - 1;
-              return (
-                <li key={nummer} className="relative flex gap-5 md:gap-6">
-                  {/* Tijdlijn: nummer + verticale lijn naar de volgende stap */}
-                  <div className="flex flex-col items-center w-12 md:w-16 shrink-0">
+        {/* Van twijfel naar een compleet plan */}
+        <div className="mt-12 lg:mt-20">
+          {/* Titel op volle breedte, zodat de zin op één regel past */}
+          <h2 id="helder-plan-title" className="hs-h2" data-veer>
+            Van twijfel naar een <span className="hs-accent">compleet</span> plan
+          </h2>
+
+          <div className="mt-6 grid grid-cols-1 items-center gap-7 lg:mt-10 lg:grid-cols-2 lg:gap-14">
+            {/* DOM-volgorde foto→stappen (telefoon: foto boven de stappen);
+                op desktop wisselt `order` ze om naar stappen links, foto rechts. */}
+            <div className="min-w-0 lg:order-2" data-veer>
+              <img
+                src={heroKeukentafel}
+                alt="Adviseur van Voortraject in gesprek met een bewoner aan tafel"
+                loading="lazy"
+                decoding="async"
+                className="hs-foto h-56 w-full object-cover sm:h-80 lg:h-[420px]"
+              />
+            </div>
+
+            <div className="min-w-0 lg:order-1">
+              <ol className="grid gap-[22px]">
+                {stappen.map(({ nummer, title, body }) => (
+                  <li key={nummer} className="grid grid-cols-[44px_1fr] items-start gap-4" data-veer>
                     <span
-                      className="font-display font-bold text-accent text-[32px] md:text-[42px] leading-none tracking-[-0.03em]"
+                      className="hs-rondje hs-rondje-ink h-11 w-11 font-['Inter_Tight','Inter',sans-serif] text-[15px] font-bold tracking-[-0.01em]"
                       aria-hidden="true"
                     >
                       {nummer}
                     </span>
-                    {!isLaatste && <span className="w-px flex-1 my-3 bg-border" aria-hidden="true" />}
-                  </div>
-                  <div className={isLaatste ? "pt-1 md:pt-1.5" : "pb-6 pt-1 md:pt-1.5"}>
-                    <h3 className="font-display font-semibold text-primary text-[19px] md:text-[22px] leading-[1.2] tracking-[-0.01em]">
-                      {title}
-                    </h3>
-                    <p className="mt-2 text-[15px] md:text-[16px] leading-[1.6] text-muted-foreground">{body}</p>
-                    {isLaatste && (
-                      // Zelfde tussenruimte als tussen de stappen: pb-6 + pt van de volgende stap
-                      <div className="mt-7 md:mt-[1.875rem]">
-                        <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
-                      </div>
-                    )}
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
+                    <div>
+                      <h3 className="hs-h3 pt-[9px]">{title}</h3>
+                      <p className="hs-tekst mt-1 text-[15px] leading-[1.6]">{body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              {/* Uitgelijnd met de tekst van de stappen: rondje 44 + tussenruimte 16 */}
+              <div className="mt-[26px] pl-[60px]" data-veer>
+                <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};

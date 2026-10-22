@@ -4,6 +4,11 @@ export default {
   darkMode: ["class"],
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
+  // De huisstijlklassen (src/styles/huisstijl.css) staan in @layer components,
+  // en Tailwind laat daaruit alles weg wat niet letterlijk in de code staat.
+  // Een naam die in de code wordt samengesteld (`hs-rondje-${kleur}`) viel zo
+  // stil weg. Het bestand is klein, dus houden we ze altijd.
+  safelist: [{ pattern: /^hs-/ }],
   theme: {
     container: {
       center: true,
