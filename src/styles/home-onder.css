@@ -1,0 +1,110 @@
+/* Onderkant van de homepagina in de huisstijl van oktober 2026: cijferband,
+ * reviews, veelgestelde vragen en het donkere paneel van de footer.
+ *
+ * Alleen wat Tailwind niet netjes kan (verlopen, grid-template-rows als
+ * animatie, een mask). Alleen tokens uit src/index.css; de gedeelde klassen
+ * (hs-*) staan in src/styles/huisstijl.css.
+ *
+ * Bewust zonder @layer: dit bestand wordt vanuit de componenten geïmporteerd,
+ * buiten de @tailwind-directives om, en daar kent Tailwind geen lagen. Zet dus
+ * geen Tailwind-utility op een ho-*-element voor een eigenschap die hier al
+ * staat: wie er wint hangt dan af van de volgorde in de bundel.
+ */
+
+/* ---- Cijferband: drie tegels zoals het CRM-dashboard ---- */
+.ho-kpi {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: 12px;
+  padding: 15px 16px 15px 18px;
+}
+@media (min-width: 768px) {
+  .ho-kpi { padding: 24px 24px 26px; }
+}
+.ho-kpi-getal {
+  margin-top: 4px;
+  font-family: 'Inter Tight', 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-size: 33px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+@media (min-width: 1024px) {
+  .ho-kpi-getal { font-size: clamp(2rem, 3.6vw, 3.1rem); }
+}
+.ho-kpi-tekst {
+  grid-column: 1 / -1;
+  margin-top: 6px;
+  font-size: 14.5px;
+  line-height: 1.45;
+}
+
+/* ---- Reviews ---- */
+/* Witte kaart zonder rand, diep op het donkere vlak. De grote schaduw valt
+   vooral naar onderen (negatieve spread): een brede zijwaartse schaduw zou over
+   de buurkaart heen schilderen, want de kaarten liggen maar 16px uit elkaar. */
+.ho-review {
+  border-radius: 22px;
+  background-color: hsl(var(--card));
+  color: hsl(var(--foreground));
+  box-shadow: 0 2px 4px hsl(var(--primary) / 0.2), 0 24px 40px -22px hsl(var(--foreground) / 0.55);
+}
+/* Op desktop vervagen de randen van de carrousel zacht, in plaats van een
+   navy waas eroverheen. */
+@media (min-width: 768px) {
+  .ho-reviews-rand {
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 48px, black calc(100% - 48px), transparent);
+    mask-image: linear-gradient(90deg, transparent, black 48px, black calc(100% - 48px), transparent);
+  }
+}
+
+/* ---- Veelgestelde vragen: elke vraag een eigen tegel ---- */
+.ho-faq-item {
+  border-radius: 18px;
+  background-color: hsl(var(--card));
+  box-shadow: 0 1px 2px hsl(var(--primary) / 0.06), 0 6px 16px hsl(var(--primary) / 0.07);
+  transition: box-shadow 0.3s ease;
+}
+.ho-faq-item[data-open="true"] {
+  background-image: linear-gradient(180deg, hsl(var(--rs-hoofd-midden)), hsl(var(--card)) 70%);
+  box-shadow: var(--rs-schaduw);
+}
+.ho-faq-chev {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  color: hsl(var(--primary));
+  background-color: hsl(var(--rs-hoofd-midden));
+  transition: transform 0.5s var(--rs-veer), background-color 0.3s ease;
+}
+.ho-faq-item[data-open="true"] .ho-faq-chev {
+  transform: rotate(180deg);
+  background-color: hsl(var(--card));
+}
+/* Vloeiend uitklappen zonder vaste maximale hoogte. */
+.ho-faq-klap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.55s var(--rs-zacht-uit);
+}
+.ho-faq-item[data-open="true"] .ho-faq-klap { grid-template-rows: 1fr; }
+.ho-faq-klap > div { overflow: hidden; min-height: 0; }
+
+/* ---- Footer: het donkere paneel met stil licht ---- */
+.ho-voet-paneel {
+  color: hsl(var(--primary-foreground));
+  background-color: hsl(var(--primary));
+  background-image:
+    radial-gradient(70% 55% at 88% 0%, hsl(var(--rs-ink-licht) / 0.9), transparent 70%),
+    radial-gradient(60% 50% at 0% 40%, hsl(var(--accent) / 0.1), transparent 70%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ho-faq-item, .ho-faq-chev, .ho-faq-klap { transition: none; }
+}
