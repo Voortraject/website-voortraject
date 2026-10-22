@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useId, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
+
+import { useStaffel } from "@/lib/beweging";
+import "@/styles/home-onder.css";
 
 const faqs = [
   {
@@ -28,108 +31,66 @@ const faqs = [
   },
 ];
 
+/**
+ * Veelgestelde vragen: elke vraag een eigen tegel, één tegelijk open. Het
+ * antwoord klapt vloeiend uit via grid-template-rows (zie home-onder.css), dus
+ * zonder vaste maximale hoogte die een lang antwoord zou afkappen.
+ */
 export const Faq = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const basis = useId();
+  const sectie = useRef<HTMLElement>(null);
+  useStaffel(sectie);
 
   return (
-    <section className="py-[48px] md:py-[72px]" style={{ backgroundColor: "#F5F3ED" }}>
-      <div className="max-w-4xl mx-auto px-6">
-        <h2 className="h2-section text-center" style={{ color: "#152C4E", fontWeight: 600 }}>
-          Veelgestelde <span style={{ color: "hsl(var(--accent))" }}>vragen</span>
+    <section ref={sectie} className="hs-band py-[52px] md:py-[88px]" aria-labelledby="faq-title">
+      <div className="mx-auto max-w-[868px] px-6">
+        <h2 id="faq-title" className="hs-h2 text-center" data-veer>
+          Veelgestelde <span className="hs-accent">vragen</span>
         </h2>
-        <p
-          className="text-center mx-auto"
-          style={{
-            color: "#152C4E",
-            opacity: 0.75,
-            fontSize: 18,
-            marginTop: 16,
-            marginBottom: 40,
-          }}
-        >
+        <p className="hs-tekst mx-auto mt-3 text-center text-[16.5px] leading-[1.5] md:text-[18px]" data-veer>
           Wat we het vaakst gevraagd krijgen, kort beantwoord.
         </p>
 
-        <div
-          className="mx-auto"
-          style={{
-            maxWidth: 820,
-            backgroundColor: "#FFFFFF",
-            border: "1px solid #E5E2DB",
-            borderRadius: 16,
-            overflow: "hidden",
-          }}
-        >
+        <ul className="mt-[26px] grid gap-2.5 md:mt-10">
           {faqs.map((item, i) => {
             const isOpen = openIndex === i;
+            const knopId = `${basis}-vraag-${i}`;
+            const antwoordId = `${basis}-antwoord-${i}`;
             return (
-              <div
-                key={i}
-                style={{
-                  borderBottom: i === faqs.length - 1 ? "none" : "1px solid #E5E2DB",
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => setOpenIndex(isOpen ? null : i)}
-                  aria-expanded={isOpen}
-                  className="w-full flex items-center text-left"
-                  style={{
-                    padding: "20px 24px",
-                    background: "transparent",
-                    border: "none",
-                    cursor: "pointer",
-                    gap: 20,
-                  }}
-                >
-                  <h3
-                    className="font-display flex-1"
-                    style={{
-                      fontSize: 18,
-                      fontWeight: 500,
-                      color: "#152C4E",
-                      letterSpacing: "-0.01em",
-                      lineHeight: 1.3,
-                      margin: 0,
-                    }}
+              <li key={item.q} className="ho-faq-item" data-open={isOpen} data-veer>
+                <h3>
+                  <button
+                    id={knopId}
+                    type="button"
+                    onClick={() => setOpenIndex(isOpen ? null : i)}
+                    aria-expanded={isOpen}
+                    aria-controls={antwoordId}
+                    className="flex min-h-[60px] w-full cursor-pointer items-center gap-3.5 rounded-[18px] py-3.5 pl-5 pr-4 text-left focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-accent"
                   >
-                    {item.q}
-                  </h3>
-                  <ChevronDown
-                    size={20}
-                    color="#E8B547"
-                    style={{
-                      opacity: 0.5,
-                      transition: "transform 200ms ease",
-                      transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                      flexShrink: 0,
-                    }}
-                    aria-hidden="true"
-                  />
-                </button>
+                    <span className="flex-1 text-[16.5px] font-bold leading-[1.3] text-primary md:text-[18px]">
+                      {item.q}
+                    </span>
+                    <span className="ho-faq-chev" aria-hidden="true">
+                      <ChevronDown size={18} strokeWidth={2.4} />
+                    </span>
+                  </button>
+                </h3>
                 <div
-                  style={{
-                    maxHeight: isOpen ? 400 : 0,
-                    overflow: "hidden",
-                    transition: "max-height 300ms ease",
-                  }}
+                  id={antwoordId}
+                  role="region"
+                  aria-labelledby={knopId}
+                  aria-hidden={!isOpen}
+                  className="ho-faq-klap"
                 >
-                  <p
-                    style={{
-                      fontSize: 15,
-                      color: "#6B6B6B",
-                      lineHeight: 1.6,
-                      margin: 0,
-                      padding: "0 24px 20px 24px",
-                    }}
-                  >
-                    {item.a}
-                  </p>
+                  <div>
+                    <p className="hs-tekst px-5 pb-[18px] text-[15.5px] leading-[1.6]">{item.a}</p>
+                  </div>
                 </div>
-              </div>
+              </li>
             );
           })}
-        </div>
+        </ul>
       </div>
     </section>
   );
