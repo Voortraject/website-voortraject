@@ -1,5 +1,5 @@
 import { useState, useRef, FormEvent, ChangeEvent } from "react";
-import { CheckCircle, Loader2, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowRight, Check, Loader2, Mail, MapPin, MessageSquare, Phone, User } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { formulierFoutMelding } from "@/lib/formulierFout";
@@ -17,27 +17,45 @@ import {
 } from "@/lib/adresVelden";
 import { normalizePostcode, POSTCODE_RE, zoekAdres } from "@/lib/pdok";
 import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
+import "@/styles/contact.css";
 
-const baseInputClass =
-  "w-full rounded-lg border bg-[#FBFAF7] px-4 py-3 text-[16px] lg:text-[15px] text-[#2B2B2B] outline-none transition min-h-[44px]";
-const inputOk =
-  "border-[#E5E2DB] focus:border-[#E8B547] focus:shadow-[0_0_0_3px_rgba(232,181,71,0.15)]";
-const inputErr =
-  "border-[#dc2626] focus:border-[#dc2626] focus:shadow-[0_0_0_3px_rgba(220,38,38,0.15)]";
+// Velden zoals de instap van de subsidietool: wit, radius 14, zachte inset-ring
+// en een inktblauwe focusring (instap-invoer in src/index.css). De foutstaat is
+// een ring in --destructive in plaats van een rode rand (src/styles/contact.css).
+const baseInputClass = "instap-invoer ct-invoer";
 
 const cx = (...c: (string | false | undefined)[]) => c.filter(Boolean).join(" ");
-// Labels zijn bewust lichter dan de invoer: elf vetgedrukte regels boven elkaar
-// lezen als elf kopjes en maken het formulier onrustiger dan het is. De enige
-// vette tekst in de kaart zijn nu de drie groepskoppen.
-const labelClass = "block mb-2 text-[13px] font-medium text-[#6B6B6B]";
-const groepKopClass = "font-display text-[15px] font-semibold text-[#152C4E]";
+// Labels in leesbaar grijsblauw (--rs-tekst-zacht), kleiner dan de invoer, zodat
+// elf labels niet lezen als elf kopjes. Een te lang label breekt af in plaats
+// van over zijn buurman te lopen; justify-end houdt de velden dan op één lijn.
+const labelClass = "ct-label";
 // Verplicht is de regel, niet de uitzondering: we markeren alleen wat optioneel
 // is. Dat scheelt zes accentkleurige sterretjes die met de CTA concurreerden.
-const optional = <span className="text-[#8B8680] font-normal ml-1">(optioneel)</span>;
+// De spatie ervoor is een breekpunt: zonder liep "Tussenvoegsel (optioneel)" op
+// de telefoon over het label ernaast.
+const optional = (
+  <>
+    {" "}
+    <span className="ct-label-licht">(optioneel)</span>
+  </>
+);
 // Zelfde markering, maar pas vanaf sm: in de adresrij staan drie velden naast
 // elkaar en op mobiel duwt "(optioneel)" die labels over twee regels.
 const optionalSm = (
-  <span className="hidden text-[#8B8680] font-normal ml-1 sm:inline">(optioneel)</span>
+  <>
+    {" "}
+    <span className="ct-label-licht hidden sm:inline">(optioneel)</span>
+  </>
+);
+
+// Groepskop in het formulier met een rond inktblauw icoon rechts.
+const GroepKop = ({ icon: Icon, children, className }: { icon: typeof User; children: string; className?: string }) => (
+  <h2 className={cx("ct-groep-kop", className)}>
+    {children}
+    <span className="hs-rondje hs-rondje-ink h-[34px] w-[34px]" aria-hidden="true">
+      <Icon size={17} strokeWidth={2} />
+    </span>
+  </h2>
 );
 
 const expectations = [
@@ -338,14 +356,13 @@ const Contact = () => {
       <p
         id={errId(name)}
         role="alert"
-        className="font-sans mt-1.5 text-[13px]"
-        style={{ color: "#dc2626" }}
+        className="font-sans mt-1.5 text-[13.5px] font-semibold text-destructive"
       >
         {errors[name]}
       </p>
     ) : null;
 
-  const inputCls = (name: string) => cx(baseInputClass, errors[name] ? inputErr : inputOk);
+  const inputCls = (name: string) => cx(baseInputClass, !!errors[name] && "ct-fout");
 
   const onChangeBew = (k: keyof typeof bewoner) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setBewoner({ ...bewoner, [k]: e.target.value });
@@ -373,53 +390,33 @@ const Contact = () => {
       <Header />
 
       {/* Hero + Form (samengevoegd) */}
-      <section style={{ backgroundColor: "#F5F2EC" }} className="pt-6 md:pt-10 pb-12 md:pb-16">
+      <section className="bg-background pt-6 md:pt-10 pb-14 md:pb-[88px]">
         <div className="mx-auto px-6 md:px-12" style={{ maxWidth: 1200 }}>
           <div className="mx-auto text-center" style={{ maxWidth: 900 }}>
-            <h1
-              className="font-display"
-              style={{
-                fontWeight: 700,
-                fontSize: "clamp(28px, 4vw, 44px)",
-                letterSpacing: "-0.03em",
-                lineHeight: 1.1,
-                color: "#2B2B2B",
-              }}
-            >
-              Waar kunnen we je mee <span style={{ color: "#E8B547" }}>helpen</span>?
+            <h1 className="ct-h1">
+              Waar kunnen we je mee <span className="hs-accent">helpen</span>?
             </h1>
           </div>
         </div>
 
-        <div className="mx-auto px-6 md:px-12 mt-8 md:mt-10" style={{ maxWidth: 1200 }}>
-          {/* items-stretch: beide kolommen even hoog, zodat het reviewblok
+        <div className="mx-auto px-6 md:px-12 mt-6 md:mt-9" style={{ maxWidth: 1200 }}>
+          {/* Twee kolommen pas vanaf lg: op een tablet (768) werd het formulier
+              zo smal dat "Telefoonnummer" niet meer in zijn vak paste.
+              items-stretch: beide kolommen even hoog, zodat het reviewblok
               onderaan gelijk eindigt met de formulierkaart. */}
-          <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 md:gap-10 lg:gap-12 items-stretch">
-            <div
-              style={{
-                backgroundColor: "#FFFFFF",
-                borderRadius: 16,
-                border: "1px solid #E5E2DB",
-                boxShadow: "0 4px 24px rgba(21,44,78,0.06)",
-              }}
-              className="min-w-0 p-7 md:p-10"
-            >
+          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-7 lg:gap-10 items-stretch">
+            <div className="hs-tegel hs-blauw-zacht min-w-0 p-5 md:p-9">
               {submitted ? (
                 <div
                   role="status"
                   aria-live="polite"
-                  className="text-center"
-                  style={{
-                    border: "1px solid #b7e4c7",
-                    backgroundColor: "#f0faf4",
-                    borderRadius: 12,
-                    padding: 24,
-                  }}
+                  className="hs-groen flex flex-col items-center rounded-[20px] px-5 py-7 text-center"
                 >
-                  <h3 className="font-display" style={{ fontSize: 22, fontWeight: 600, color: "#15803d", marginBottom: 12 }}>
-                    Bedankt!
-                  </h3>
-                  <p className="font-sans" style={{ fontSize: 15, color: "#166534", lineHeight: 1.6 }}>
+                  <span className="hs-rondje hs-rondje-groen h-12 w-12" aria-hidden="true">
+                    <Check size={22} strokeWidth={3} />
+                  </span>
+                  <h2 className="hs-h3 mt-4">Bedankt!</h2>
+                  <p className="hs-tekst font-sans mt-2 text-[15px] leading-relaxed">
                     We hebben je bericht ontvangen en nemen binnen 1 werkdag contact met je op.
                   </p>
                 </div>
@@ -428,16 +425,7 @@ const Contact = () => {
                   {errorMsg && (
                     <div
                       role="alert"
-                      className="font-sans"
-                      style={{
-                        marginBottom: 16,
-                        padding: "12px 16px",
-                        borderRadius: 8,
-                        border: "1px solid #fecaca",
-                        backgroundColor: "#fef2f2",
-                        color: "#991b1b",
-                        fontSize: 14,
-                      }}
+                      className="font-sans mb-4 rounded-2xl bg-destructive/[0.08] px-4 py-3 text-[14px] font-semibold text-destructive"
                     >
                       {errorMsg}
                     </div>
@@ -470,14 +458,14 @@ const Contact = () => {
                         "Tussenvoegsel" niet en liep het label buiten zijn vak.
                         justify-end houdt de inputs op één lijn als een label over twee
                         regels breekt. */}
-                    <p className={groepKopClass}>Jouw gegevens</p>
-                    <div className="mt-4 grid grid-cols-2 sm:grid-cols-12 gap-4">
+                    <GroepKop icon={User}>Jouw gegevens</GroepKop>
+                    <div className="mt-3.5 grid grid-cols-2 sm:grid-cols-12 gap-3">
                       <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
                         <label htmlFor="f-aanhef" className={labelClass}>Aanhef</label>
                         <select
                           id="f-aanhef"
                           name="aanhef"
-                          className={cx(baseInputClass, inputOk)}
+                          className={baseInputClass}
                           value={bewoner.aanhef}
                           onChange={onChangeBew("aanhef")}
                         >
@@ -543,7 +531,7 @@ const Contact = () => {
                         </div>
                       )}
                     </div>
-                    <div className="mt-4 grid grid-cols-1 sm:grid-cols-12 gap-4">
+                    <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-12 gap-3">
                       <div className="sm:col-span-8 min-w-0">
                         <label htmlFor="f-email-b" className={labelClass}>E-mailadres</label>
                         <input
@@ -579,13 +567,14 @@ const Contact = () => {
 
                     {/* Adres hoort bij dezelfde groep als naam en contactgegevens, maar
                         is als enige niet verplicht: de drie velden dragen dat zelf.
-                        Op mobiel de verhouding van de subsidiecheck (2 / 1.2 / 1) zodat
-                        het één rij blijft; vanaf sm drie gelijke blokken van 4 kolommen,
+                        Op mobiel één rij: huisnummer en toevoeging minstens zo breed als
+                        hun label (de vette labels pasten niet meer in 1.2fr en 1fr),
+                        de postcode krijgt de rest. Vanaf sm drie gelijke blokken van 4 kolommen,
                         waardoor de naden samenvallen met de rijen erboven. */}
-                    <div className="mt-4">
-                      <div className="grid grid-cols-[2fr_1.2fr_1fr] sm:grid-cols-12 gap-4">
-                        <div className="sm:col-span-4 min-w-0">
-                          <label htmlFor="f-postcode" className={cx(labelClass, "whitespace-nowrap")}>
+                    <div className="mt-3.5">
+                      <div className="grid grid-cols-[minmax(0,1.3fr)_minmax(min-content,1fr)_minmax(min-content,0.9fr)] sm:grid-cols-12 gap-3">
+                        <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
+                          <label htmlFor="f-postcode" className={labelClass}>
                             Postcode{optionalSm}
                           </label>
                           <input
@@ -602,8 +591,8 @@ const Contact = () => {
                             onBlur={lookupAdres}
                           />
                         </div>
-                        <div className="sm:col-span-4 min-w-0">
-                          <label htmlFor="f-huisnummer" className={cx(labelClass, "whitespace-nowrap")}>
+                        <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
+                          <label htmlFor="f-huisnummer" className={labelClass}>
                             Huisnummer{optionalSm}
                           </label>
                           <input
@@ -621,8 +610,8 @@ const Contact = () => {
                             maxLength={5}
                           />
                         </div>
-                        <div className="sm:col-span-4 min-w-0">
-                          <label htmlFor="f-toevoeging" className={cx(labelClass, "whitespace-nowrap")}>
+                        <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
+                          <label htmlFor="f-toevoeging" className={labelClass}>
                             Toevoeging{optionalSm}
                           </label>
                           <input
@@ -635,20 +624,22 @@ const Contact = () => {
                             onChange={onChangeBew("toevoeging")}
                             maxLength={ADRES_MAX.toevoeging}
                           />
-                          <FieldError name="toevoeging" />
                         </div>
                       </div>
+                      {/* Alle drie de foutmeldingen onder de rij, zodat een melding
+                          het veld erboven niet uit de lijn duwt. */}
                       <div className="mt-1">
                         <FieldError name="postcode" />
                         <FieldError name="huisnummer" />
+                        <FieldError name="toevoeging" />
                       </div>
                       {adresLoading && (
-                        <p className="font-sans flex items-center gap-2 mt-2 text-[13px]" style={{ color: "#6B6B6B" }}>
+                        <p className="hs-tekst font-sans flex items-center gap-2 mt-2 text-[13.5px]">
                           <Loader2 size={14} className="animate-spin" /> Adres zoeken...
                         </p>
                       )}
                       {adresChecked && !adresLocked && !adresLoading && bewoner.postcode && bewoner.huisnummer && (
-                        <p className="font-sans mt-2 text-[13px]" style={{ color: "#92400e" }}>
+                        <p className="font-sans mt-2 text-[13.5px] font-semibold text-primary">
                           Geen adres gevonden bij deze combinatie van postcode en huisnummer. Controleer je invoer of vul Straatnaam en Plaatsnaam zelf in.
                         </p>
                       )}
@@ -660,15 +651,17 @@ const Contact = () => {
                       <div
                         className={cx(
                           "grid transition-all duration-300 ease-in-out",
-                          toonAdresBlok ? "mt-4 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                          toonAdresBlok ? "mt-3.5 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                         )}
                         aria-hidden={!toonAdresBlok}
                       >
                         <div className="overflow-hidden">
                           {adresBevestigd ? (
-                            <div className="flex items-start gap-3 rounded-lg border border-[#E5E2DB] bg-[#FAF5EC] px-4 py-3">
-                              <MapPin size={16} className="mt-[3px] shrink-0" style={{ color: "#152C4E" }} aria-hidden="true" />
-                              <p className="font-sans min-w-0 flex-1 text-[14px] leading-snug" style={{ color: "#2B2B2B" }}>
+                            <div className="hs-groen flex items-center gap-3 rounded-2xl px-3.5 py-3">
+                              <span className="hs-rondje hs-rondje-groen h-7 w-7" aria-hidden="true">
+                                <MapPin size={14} strokeWidth={2.4} />
+                              </span>
+                              <p className="font-sans min-w-0 flex-1 text-[14.5px] font-semibold leading-snug text-primary">
                                 {bewoner.straatnaam} {bewoner.huisnummer}
                                 {bewoner.toevoeging.trim() ? ` ${bewoner.toevoeging.trim()}` : ""}, {bewoner.plaatsnaam}
                               </p>
@@ -676,14 +669,13 @@ const Contact = () => {
                                 type="button"
                                 tabIndex={toonAdresBlok ? 0 : -1}
                                 onClick={() => { setAdresEditOverride(true); setAdresLocked(false); }}
-                                className="shrink-0 text-[13px] underline"
-                                style={{ color: "#152C4E" }}
+                                className="shrink-0 min-h-[32px] rounded-md px-1 text-[14px] font-bold text-primary underline decoration-primary/40 underline-offset-[3px] hover:decoration-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
                               >
                                 bewerken
                               </button>
                             </div>
                           ) : (
-                            <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
                               <input
                                 name="straatnaam"
                                 type="text"
@@ -716,14 +708,14 @@ const Contact = () => {
                       </div>
                     </div>
 
-                    <p className={cx(groepKopClass, "mt-8")}>Jouw vraag</p>
+                    <GroepKop icon={MessageSquare} className="mt-7">Jouw vraag</GroepKop>
 
-                    <div className="mt-4">
+                    <div className="mt-3.5">
                       <label htmlFor="f-bel" className={labelClass}>Voorkeur voor contact{optional}</label>
                       <select
                         id="f-bel"
                         name="bel_voorkeur"
-                        className={cx(baseInputClass, inputOk)}
+                        className={baseInputClass}
                         value={bewoner.bel_voorkeur}
                         onChange={onChangeBew("bel_voorkeur")}
                       >
@@ -736,7 +728,7 @@ const Contact = () => {
                       </select>
                     </div>
 
-                    <div className="mt-4">
+                    <div className="mt-3">
                       {/* Zelfde opbouw als het berichtblok op /zakelijk. De
                           tekenlimiet staat alleen in de teller eronder; twee
                           keer hetzelfde getal is ruis. */}
@@ -749,41 +741,24 @@ const Contact = () => {
                         aria-describedby={errors.vragen ? errId("vragen") : "count-vragen-b"}
                         className={inputCls("vragen")}
                         placeholder="Vertel kort waar je tegenaan loopt of wat je wil weten."
-                        style={{ minHeight: 100, resize: "vertical" }}
                         value={bewoner.vragen}
                         onChange={onChangeBew("vragen")}
                         maxLength={MAX_NOTES}
                       />
                       <div className="flex justify-between items-center mt-1">
                         <FieldError name="vragen" />
-                        <span id="count-vragen-b" className="font-sans text-[12px] ml-auto" style={{ color: "#8B8680" }}>
+                        <span id="count-vragen-b" className="hs-tekst font-sans text-[13.5px] ml-auto">
                           {bewoner.vragen.length} / {MAX_NOTES}
                         </span>
                       </div>
                     </div>
 
+                    {/* De ene oker knop op dit scherm: een pil van 56px over de volle
+                        breedte. Hover en indrukken komen uit hs-knop. */}
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="w-full font-sans transition-colors inline-flex items-center justify-center gap-2"
-                      style={{
-                        marginTop: 24,
-                        backgroundColor: "#E8B547",
-                        color: "#2B2B2B",
-                        padding: "14px 32px",
-                        borderRadius: 8,
-                        fontSize: 15,
-                        fontWeight: 600,
-                        cursor: submitting ? "not-allowed" : "pointer",
-                        opacity: submitting ? 0.7 : 1,
-                        minHeight: 48,
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!submitting) e.currentTarget.style.backgroundColor = "#D9A538";
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!submitting) e.currentTarget.style.backgroundColor = "#E8B547";
-                      }}
+                      className="hs-knop hs-knop-oker mt-[22px] w-full min-h-[56px] text-[16px] disabled:opacity-70"
                     >
                       {submitting ? (
                         <>
@@ -803,59 +778,55 @@ const Contact = () => {
                 flexrij van de reviewcarrousel deze kolom breder duwde dan haar
                 2fr en het formulier samendrukte. */}
             <div className="min-w-0 flex flex-col">
-              <h3
-                className="font-display"
-                style={{ fontSize: 22, fontWeight: 600, color: "#152C4E", marginBottom: 24 }}
-              >
-                Wat kun je verwachten?
-              </h3>
-              <ul>
-                {expectations.map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-start"
-                    style={{ gap: 12, paddingTop: 14, paddingBottom: 14 }}
-                  >
-                    <CheckCircle size={20} color="#E8B547" className="shrink-0 mt-0.5" />
-                    <span className="font-sans" style={{ fontSize: 15, color: "#2B2B2B", lineHeight: 1.5 }}>
-                      {item}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <div className="hs-tegel p-5 md:p-6">
+                <h2 className="hs-h3">Wat kun je verwachten?</h2>
+                <ul className="mt-3.5 grid gap-3">
+                  {expectations.map((item) => (
+                    <li key={item} className="flex items-center gap-3">
+                      <span className="hs-rondje hs-rondje-groen h-7 w-7" aria-hidden="true">
+                        <Check size={14} strokeWidth={3} />
+                      </span>
+                      <span className="font-sans text-[15px] leading-[1.45] text-foreground">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-              <div className="mt-8 flex flex-col gap-3">
-                {contactBlokken.map(({ icon: Icon, label, waarde, href }) => (
-                  <div
-                    key={label}
-                    className="flex items-start gap-4 rounded-xl border border-border bg-card p-4"
-                  >
-                    <span
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/15"
-                      aria-hidden="true"
+              {/* De drie manieren om ons te bereiken als rijen in één zandtegel;
+                  e-mail en telefoon zijn als hele rij aanklikbaar. */}
+              <div className="hs-tegel hs-zand mt-[18px] px-5 py-2">
+                {contactBlokken.map(({ icon: Icon, label, waarde, href }) => {
+                  const inhoud = (
+                    <>
+                      <span className="hs-rondje hs-rondje-ink" aria-hidden="true">
+                        <Icon size={18} strokeWidth={2} />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="hs-tekst block text-[13.5px] font-bold">{label}</span>
+                        <span className="block break-words text-[15.5px] font-bold text-primary">{waarde}</span>
+                      </span>
+                    </>
+                  );
+                  return href ? (
+                    <a
+                      key={label}
+                      href={href}
+                      className="ct-bereik-rij group flex items-center gap-3.5 py-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
-                      <Icon size={18} strokeWidth={2} className="text-primary" />
-                    </span>
-                    <div className="min-w-0">
-                      <p className="font-display text-[15px] font-semibold text-primary">{label}</p>
-                      {href ? (
-                        <a
-                          href={href}
-                          className="font-sans text-[15px] text-muted-foreground underline-offset-2 hover:text-primary hover:underline break-words"
-                        >
-                          {waarde}
-                        </a>
-                      ) : (
-                        <p className="font-sans text-[15px] text-muted-foreground break-words">{waarde}</p>
-                      )}
+                      {inhoud}
+                      <ArrowRight size={17} strokeWidth={2.2} className="hs-pijl ml-auto shrink-0 text-primary/60 group-hover:translate-x-1" aria-hidden="true" />
+                    </a>
+                  ) : (
+                    <div key={label} className="ct-bereik-rij flex items-center gap-3.5 py-3">
+                      {inhoud}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Vult de ruimte onder de contactgegevens, zodat de reviews op
                   desktop naast het formulier staan in plaats van eronder. */}
-              <div className="mt-6 flex-1">
+              <div className="mt-[18px] flex-1">
                 <ReviewsCompact />
               </div>
             </div>
