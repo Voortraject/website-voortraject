@@ -34,6 +34,33 @@
     <!-- End Google Tag Manager -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!-- Heroafbeelding vooruit laden, alleen op de homepagina: anders ontdekt de
+         browser hem pas als het JavaScript gedraaid heeft, en dat maakte de LCP
+         op de telefoon ruim 10 s. Zelfde bestanden en sizes als HERO_BEELD in
+         src/components/sections/heroBeeld.ts (test: heroPreload.test.ts). Geen
+         tracker en geen cookie, dus dit staat los van de consent. Moet ná de
+         viewport-meta staan: daarvoor rekent een telefoon nog met 980 px breed
+         en laadt hij de desktopversie op de grootste maat. -->
+    <script>
+      (function () {
+        if (location.pathname !== "/") return;
+        var beelden = [
+          ["(max-width: 767px)", "/hero/adviesgesprek-mobiel-645.webp 645w, /hero/adviesgesprek-mobiel-860.webp 860w, /hero/adviesgesprek-mobiel-1290.webp 1290w", "430px"],
+          ["(min-width: 768px)", "/hero/adviesgesprek-breed-1280.webp 1280w, /hero/adviesgesprek-breed-1920.webp 1920w, /hero/adviesgesprek-breed-2560.webp 2560w", "100vw"]
+        ];
+        for (var i = 0; i < beelden.length; i++) {
+          var l = document.createElement("link");
+          l.rel = "preload";
+          l.as = "image";
+          l.media = beelden[i][0];
+          l.setAttribute("imagesrcset", beelden[i][1]);
+          l.setAttribute("imagesizes", beelden[i][2]);
+          l.setAttribute("fetchpriority", "high");
+          document.head.appendChild(l);
+        }
+      })();
+    </script>
     <meta name="theme-color" content="#152C4E" />
     <title>Gratis advies over verduurzamen en subsidies | Voortraject</title>
     <meta name="description" content="Wij zoeken gratis uit welke maatregelen slim zijn voor jouw woning en welke subsidies je kunt krijgen. Persoonlijk advies voor bewoners in Noord-Nederland.">

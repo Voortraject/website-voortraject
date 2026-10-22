@@ -5,7 +5,7 @@ import { GoogleG } from "@/components/GoogleG";
 import { Sterren } from "@/components/Sterren";
 import { useGoogleReviews } from "@/hooks/useGoogleReviews";
 import { GOOGLE_REVIEWS_URL } from "@/lib/reviews";
-import heroAdviesgesprek from "@/assets/hero-adviesgesprek.webp";
+import { HERO_BEELD } from "./heroBeeld";
 import "@/styles/home-boven.css";
 
 const claims = [
@@ -31,14 +31,18 @@ export const Hero = () => {
       className="relative -mt-20 overflow-hidden rounded-b-[2rem] bg-primary md:rounded-b-[3rem]"
       aria-labelledby="hero-title"
     >
-      <img
-        src={heroAdviesgesprek}
-        alt="Adviseur van Voortraject bekijkt samen met een bewoner de mogelijkheden voor zijn woning aan de eettafel"
-        fetchPriority="high"
-        decoding="async"
-        className="absolute inset-0 h-full w-full object-cover"
-        style={{ objectPosition: "center 28%" }}
-      />
+      <picture>
+        <source media="(max-width: 767px)" srcSet={HERO_BEELD.mobielSrcSet} sizes={HERO_BEELD.mobielSizes} />
+        <img
+          src={HERO_BEELD.terugval}
+          srcSet={HERO_BEELD.breedSrcSet}
+          sizes={HERO_BEELD.breedSizes}
+          alt="Adviseur van Voortraject bekijkt samen met een bewoner de mogelijkheden voor zijn woning aan de eettafel"
+          fetchPriority="high"
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ objectPosition: "center 28%" }}
+        />
+      </picture>
       {/* Inktblauw verloop over de foto: op de telefoon donker onderaan (daar
           staat de tekst), op desktop donker aan de linkerkant. */}
       <div className="home-hero-waas absolute inset-0" aria-hidden="true" />
@@ -53,7 +57,7 @@ export const Hero = () => {
             <span className="text-accent">verduurzamen en subsidies</span>
           </h1>
 
-          <ul className="mt-[22px] grid gap-2.5 md:mt-[30px] md:flex md:flex-wrap md:gap-x-[26px] md:gap-y-2.5">
+          <ul className="home-hero-claims mt-[22px] grid gap-2.5 md:mt-[30px] md:flex md:flex-wrap md:gap-x-[26px] md:gap-y-2.5">
             {claims.map((claim) => (
               <li
                 key={claim}

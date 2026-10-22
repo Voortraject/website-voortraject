@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { supabaseExternal } from "@/integrations/supabase/external-client";
 import { MIN_STERREN } from "@/lib/reviews";
 
 export type GoogleReview = {
@@ -27,6 +26,12 @@ type UseGoogleReviews = {
 // schrijft. Faalt de query (tabel bestaat nog niet, netwerkfout, geen rijen),
 // dan blijft `reviews` null en toont het component zijn hardcoded fallback. Zo
 // kan de sectie nooit breken.
+//
+// De Supabase-client wordt pas hier geladen (dynamische import), niet bovenin:
+// de homepagina gebruikt Supabase alleen voor deze reviews, en de client is
+// ruim 200 KB. Zo zit hij niet in de hoofdbundel en wacht de eerste weergave
+// er niet op (snelheidsronde oktober 2026). Mislukt het laden, dan valt de
+// catch hieronder terug, net als bij een mislukte query.
 export function useGoogleReviews(): UseGoogleReviews {
   const [reviews, setReviews] = useState<GoogleReview[] | null>(null);
   const [stats, setStats] = useState<GooglePlaceStats | null>(null);
@@ -35,6 +40,7 @@ export function useGoogleReviews(): UseGoogleReviews {
     let active = true;
 
     (async () => {
+      const { supabaseExternal } = await import("@/integrations/supabase/external-client");
       const [reviewsRes, statsRes] = await Promise.all([
         supabaseExternal
           .from("google_reviews")

@@ -4,7 +4,9 @@ import { ArrowRight, Check, ChevronDown } from "lucide-react";
 
 import { SUBSIDIECHECK_BELOFTES } from "@/config/beloftes";
 import { normalizePostcode, POSTCODE_RE } from "@/lib/pdok";
-import { BEWONERTYPE_MEERVOUD } from "@/lib/subsidies";
+// Rechtstreeks uit types, niet uit "@/lib/subsidies": die index trekt de
+// subsidie-provider en daarmee de hele Supabase-client mee in de hoofdbundel.
+import { BEWONERTYPE_MEERVOUD } from "@/lib/subsidies/types";
 
 // Typt mee met de gebruiker: hoofdletters, alleen geldige tekens.
 const formatPostcode = (v: string) => v.toUpperCase().replace(/[^0-9A-Z ]/g, "").slice(0, 7);
