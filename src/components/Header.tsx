@@ -210,7 +210,7 @@ interface HeaderProps {
    * Id van de hoofdknop in de hero. Zolang die in beeld is, staat de oker
    * "Check jouw subsidies" hier niet: anders staan er bovenin twee identieke
    * oker knoppen naast elkaar. Hij verschijnt zodra de hero-knop uit beeld is.
-   * Alleen de homepagina geeft dit mee.
+   * Alleen pagina's met een eigen oker knop in de hero geven dit mee.
    */
   ctaNaElement?: string;
 }
