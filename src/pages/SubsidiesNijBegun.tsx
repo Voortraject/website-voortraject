@@ -5,17 +5,8 @@ import {
   Euro,
   Building2,
   Trees,
-  Check,
   X as XIcon,
   Info,
-  Phone,
-  Calendar,
-  MapPinned,
-  FileText,
-  Send,
-  CheckCircle2,
-  ChevronDown,
-  Hammer,
   LifeBuoy,
   FileCheck,
   Scale,
@@ -25,6 +16,25 @@ import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Footer } from "@/components/Footer";
 import { CtaButton } from "@/components/CtaButton";
+import {
+  Accent,
+  HeroLijst,
+  KruisRegel,
+  Kop2,
+  LogoPaar,
+  LosseUitklap,
+  PijlLink,
+  Rondje,
+  Sectie,
+  SlotCta,
+  Stappen,
+  SubsidieFaq,
+  SubsidieHero,
+  TussenCta,
+  Vink,
+  VinkRegel,
+  WaaromTegels,
+} from "@/components/subsidies/SubsidiePagina";
 import logoVoortrajectBlauw from "@/assets/logo-voortraject-blauw.png";
 import logoNijBegun from "@/assets/logo-nij-begun.png";
 
@@ -33,22 +43,9 @@ const LAATST_BIJGEWERKT = "mei 2026";
 const INKOMEN_ALLEEN = "€28.063";
 const INKOMEN_SAMEN = "€40.088";
 
-// Palette (page-scoped)
-const C = {
-  primary: "#152C4E",
-  accent: "#E8B547",
-  accentSoft: "#E5C967",
-  bg: "#F8F4ED",
-  card: "#FFFFFF",
-  cardSoft: "var(--card-soft)",
-  text: "#1F2937",
-  muted: "#6B7280",
-};
-
 const IMG = "/images/nij-begun";
 const imgKaart = `${IMG}/Afbeelding_50-100_Groningen.webp`;
 const imgHuis = `${IMG}/Isolatie_huis_afbeelding.webp`;
-const imgAanvraag = `${IMG}/Aanvraag_akkoord_afbeelding.webp`;
 
 const faqs: { q: string; a: string }[] = [
   {
@@ -77,63 +74,10 @@ const faqs: { q: string; a: string }[] = [
   },
 ];
 
-// Reusable: heading with one gold word
-const H2 = ({ children }: { children: React.ReactNode }) => (
-  <h2
-    className="font-display"
-    style={{
-      fontWeight: 700,
-      fontSize: "clamp(28px, 4vw, 40px)",
-      letterSpacing: "-0.02em",
-      lineHeight: 1.15,
-      color: C.primary,
-    }}
-  >
-    {children}
-  </h2>
-);
-
-const Gold = ({ children }: { children: React.ReactNode }) => (
-  <span style={{ color: C.accent }}>{children}</span>
-);
-
 const Illustration = ({ src, alt }: { src: string; alt: string }) => (
-  <div
-    style={{
-      aspectRatio: "5 / 3",
-      width: "100%",
-      borderRadius: "1rem",
-      overflow: "hidden",
-      backgroundColor: "#FFC72C",
-    }}
-  >
-    <img
-      src={src}
-      alt={alt}
-      loading="lazy"
-      decoding="async"
-      style={{
-        width: "100%",
-        height: "100%",
-        objectFit: "cover",
-        objectPosition: "center",
-      }}
-    />
+  <div className="hs-foto overflow-hidden" style={{ aspectRatio: "5 / 3", width: "100%" }}>
+    <img src={src} alt={alt} loading="lazy" decoding="async" className="h-full w-full object-cover object-center" />
   </div>
-);
-
-const CheckLi = ({ children }: { children: React.ReactNode }) => (
-  <li className="flex items-start gap-2 py-1">
-    <Check size={18} style={{ color: C.accent, marginTop: 3, flexShrink: 0 }} aria-hidden />
-    <span style={{ fontSize: 15, color: C.text, lineHeight: 1.5 }}>{children}</span>
-  </li>
-);
-
-const XLi = ({ children }: { children: React.ReactNode }) => (
-  <li className="flex items-start gap-2 py-1">
-    <XIcon size={18} style={{ color: C.muted, marginTop: 3, flexShrink: 0 }} aria-hidden />
-    <span style={{ fontSize: 15, color: C.text, lineHeight: 1.5 }}>{children}</span>
-  </li>
 );
 
 const MeasureLi = ({ label, info }: { label: string; info: string }) => {
@@ -155,11 +99,11 @@ const MeasureLi = ({ label, info }: { label: string; info: string }) => {
     };
   }, [open]);
   return (
-    <li className="flex items-start gap-2 py-1">
-      <Check size={18} style={{ color: C.accent, marginTop: 3, flexShrink: 0 }} aria-hidden />
-      <span style={{ fontSize: 15, color: C.text, lineHeight: 1.5 }} className="flex-1">
+    <li className="flex items-start gap-2.5 py-1">
+      <Vink />
+      <span className="flex-1 text-[15px] leading-[1.5] text-foreground">
         {label}{" "}
-        <span ref={wrapRef} style={{ position: "relative", display: "inline-block" }}>
+        <span ref={wrapRef} className="relative inline-block align-middle">
           <button
             type="button"
             aria-label={`Meer informatie over ${label}`}
@@ -169,42 +113,14 @@ const MeasureLi = ({ label, info }: { label: string; info: string }) => {
             onMouseLeave={() => setOpen(false)}
             onFocus={() => setOpen(true)}
             onBlur={() => setOpen(false)}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              color: C.accent,
-              padding: 0,
-              verticalAlign: "middle",
-            }}
+            className="-my-1 inline-grid h-6 w-6 place-items-center rounded-full bg-[hsl(var(--rs-hoofd-midden))] align-middle text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
-            <Info size={16} aria-hidden />
+            <Info size={14} aria-hidden />
           </button>
           {open && (
             <span
               role="tooltip"
-              style={{
-                position: "absolute",
-                bottom: "calc(100% + 8px)",
-                left: "50%",
-                transform: "translateX(-50%)",
-                backgroundColor: "#FFFFFF",
-                border: `1px solid ${C.accent}`,
-                borderRadius: "0.5rem",
-                padding: "12px 14px",
-                width: "max-content",
-                maxWidth: 320,
-                fontSize: 13,
-                color: C.text,
-                lineHeight: 1.5,
-                boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
-                zIndex: 30,
-                textAlign: "left",
-                whiteSpace: "normal",
-              }}
+              className="sp-ballon absolute bottom-[calc(100%+8px)] left-1/2 z-30 w-max max-w-[min(320px,80vw)] -translate-x-1/2 whitespace-normal text-left"
             >
               {info}
             </span>
@@ -215,30 +131,17 @@ const MeasureLi = ({ label, info }: { label: string; info: string }) => {
   );
 };
 
-const cardBase: React.CSSProperties = {
-  backgroundColor: C.card,
-  border: `1px solid ${C.accentSoft}66`,
-  borderRadius: "1rem",
-  boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-};
+/** Een bedragkaart: groot groen percentage, het plafond ernaast. */
+const Bedrag = ({ pct, children }: { pct: string; children: React.ReactNode }) => (
+  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+    <span className="font-display text-[44px] font-bold leading-none tracking-[-0.03em] text-[hsl(var(--subsidie))] md:text-[52px]">{pct}</span>
+    <span className="hs-tekst text-[15px] leading-[1.45] [&_strong]:text-primary">{children}</span>
+  </div>
+);
 
-const cardSoftBase: React.CSSProperties = {
-  ...cardBase,
-  backgroundColor: C.cardSoft,
-};
-
-const outlineBtn: React.CSSProperties = {
-  backgroundColor: "transparent",
-  color: C.primary,
-  fontWeight: 600,
-  borderRadius: 9999,
-  padding: "12px 26px",
-  fontSize: 15,
-  border: `2px solid ${C.primary}`,
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-};
+const VoorWie = () => (
+  <h4 className="mb-1.5 mt-4 text-[13.5px] font-extrabold uppercase tracking-[0.06em] text-primary">Voor wie?</h4>
+);
 
 const SubsidiesNijBegun = () => {
   useEffect(() => {
@@ -289,735 +192,309 @@ const SubsidiesNijBegun = () => {
     };
   }, []);
 
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-
-  // Section 6: per-step fade/slide-in via IntersectionObserver
-  const stepRefs = useRef<(HTMLLIElement | null)[]>([]);
-  const [visibleSteps, setVisibleSteps] = useState<Set<number>>(new Set());
-  useEffect(() => {
-    const reduceMotion =
-      typeof window !== "undefined" &&
-      window.matchMedia &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion) {
-      setVisibleSteps(new Set([0, 1, 2, 3, 4, 5]));
-      return;
-    }
-    const obs = new IntersectionObserver(
-      (entries) => {
-        setVisibleSteps((prev) => {
-          let changed = false;
-          const next = new Set(prev);
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              const idx = Number((e.target as HTMLElement).dataset.stepIndex);
-              if (!next.has(idx)) {
-                next.add(idx);
-                changed = true;
-                obs.unobserve(e.target);
-              }
-            }
-          });
-          return changed ? next : prev;
-        });
-      },
-      { threshold: 0.3 }
-    );
-    stepRefs.current.forEach((el) => {
-      if (el) obs.observe(el);
-    });
-    return () => obs.disconnect();
-  }, []);
+  const stappen = [
+    {
+      n: "01",
+      t: "Vrijblijvend telefoongesprek",
+      d: "We bespreken kort jouw situatie en woning. Is er een match? Dan plannen we een huisbezoek in. Het gesprek duurt 15 minuten en is volledig vrijblijvend.",
+    },
+    {
+      n: "02",
+      t: "Huisbezoek",
+      d: "Een lokale adviseur uit Groningen of Drenthe komt bij je langs en bekijkt samen met jou welke mogelijkheden er zijn voor jouw woning. Vrijblijvend en onafhankelijk.",
+    },
+    {
+      n: "03",
+      t: "Samen bepalen wat haalbaar is",
+      d: "Tijdens het bezoek bekijken we wat er mogelijk is voor jouw woning. Heb je al een isolatieplan? Dan kijken we welke maatregelen we als eerste oppakken. Heb je nog geen plan? Dan kijkt de adviseur waar je alvast mee kunt beginnen.",
+    },
+    {
+      n: "04",
+      t: "Wij dienen de aanvraag in",
+      d: "Geen DigiD-gedoe, geen formulieren in pdf. Wij dienen de aanvraag in bij SNN en bewaken de 13 wekentermijn voor je.",
+    },
+    {
+      n: "05",
+      t: "Uitvoering door een getoetste uitvoerder",
+      d: "Wij zoeken een passende uitvoerder die is aangesloten bij Nij Begun. Deze uitvoerders zijn door ons getoetst op diverse kwaliteitscriteria. Wij begeleiden tijdens de uitvoering en bewaken kwaliteit en planning.",
+    },
+    {
+      n: "06",
+      t: "Vervolgmaatregelen en natraject",
+      d: "Wil je daarna meer doen? Samen met het isolatieplan kijken we welke aanvullende stappen logisch zijn. Wij blijven jouw aanspreekpunt voor vragen over onderhoud, garantie of vervolgmaatregelen zoals warmtepomp of zonnepanelen.",
+    },
+  ];
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: C.bg, color: C.text }}>
+    <div className="min-h-screen bg-background text-foreground">
       <Seo
         title="Subsidie Nij Begun | Voortraject"
         description="Alles over de Nij Begun-regeling voor woningverduurzaming in het Groningse aardbevingsgebied: voorwaarden, bedragen en aanvraag."
         path="/subsidies/nij-begun"
       />
-      <Header />
+      <Header ctaNaElement="subsidie-hero-knop" />
 
-      {/* 1. HERO */}
-      <section style={{ backgroundColor: C.bg }} className="py-12 md:py-20">
-        <div className="container-content">
-          <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-10 lg:gap-14 items-center">
-            <div>
-              <h1
-                className="font-display"
-                style={{
-                  fontWeight: 700,
-                  fontSize: "clamp(36px, 5.5vw, 60px)",
-                  letterSpacing: "-0.03em",
-                  lineHeight: 1.05,
-                  color: C.primary,
-                  marginBottom: 20,
-                }}
-              >
-                Laat je woning isoleren met <Gold>subsidie</Gold> via Nij Begun
-              </h1>
-              <p style={{ fontSize: 18, lineHeight: 1.6, color: C.muted, marginBottom: 28, maxWidth: 620 }}>
-                Woon je in Groningen of Noord-Drenthe? Dan kun je je woning laten isoleren tot de isolatiestandaard met subsidie via Nij Begun. Hoeveel je krijgt hangt af van je woning en je gemeente, en dat zoeken wij voor je uit.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <CtaButton href="/contact">Ja ik wil gratis advies</CtaButton>
-                <a href="#bedragen" style={outlineBtn}>
-                  Bekijk wat jij krijgt
-                </a>
-              </div>
-            </div>
-
-            <div>
-              {/* Partnership-marker: twee logo's */}
-              <div
-                className="flex items-center justify-center"
-                style={{ padding: "16px 24px", marginBottom: 16 }}
-              >
-                <img
-                  src={logoVoortrajectBlauw}
-                  alt="Voortraject"
-                  style={{ maxHeight: 40, width: "auto", objectFit: "contain" }}
-                  className="max-h-8 md:max-h-10"
-                />
-                <span
-                  aria-hidden
-                  style={{
-                    display: "inline-block",
-                    width: 1,
-                    height: 40,
-                    backgroundColor: C.primary,
-                    opacity: 0.25,
-                    margin: "0 20px",
-                  }}
-                  className="h-8 md:h-10"
-                />
-                <img
-                  src={logoNijBegun}
-                  alt="Nij Begun Groningen Noord-Drenthe"
-                  style={{ maxHeight: 40, width: "auto", objectFit: "contain" }}
-                  className="max-h-8 md:max-h-10"
-                />
-              </div>
-
-              <div style={{ ...cardBase, padding: 24 }}>
-                <ul className="space-y-4">
-                  {[
-                    { icon: Home, text: <><strong>300.000+</strong> woningen komen in aanmerking</> },
-                    { icon: Coins, text: <><strong>€1,65 miljard</strong> beschikbaar tot 2035</> },
-                    { icon: Euro, text: <><strong>20.000+</strong> woningen gingen je voor</> },
-                  ].map((s, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <span
-                        className="inline-flex items-center justify-center shrink-0"
-                        style={{
-                          width: 36,
-                          height: 36,
-                          borderRadius: 9999,
-                          backgroundColor: C.cardSoft,
-                          color: C.accent,
-                        }}
-                      >
-                        <s.icon size={18} aria-hidden />
-                      </span>
-                      <span style={{ fontSize: 15, color: C.text, lineHeight: 1.5, paddingTop: 6 }}>
-                        {s.text}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. WAT IS NIJ BEGUN */}
-      <section style={{ backgroundColor: C.card }} className="py-16 md:py-20">
-        <div className="container-content max-w-3xl mx-auto">
-          <H2>
-            Wat is de <Gold>Isolatieaanpak</Gold> Nij Begun?
-          </H2>
-          <p style={{ fontSize: 17, lineHeight: 1.7, color: C.text, marginTop: 16 }}>
-            Nij Begun is Gronings voor "nieuw begin". Het is de manier waarop de overheid bewoners in Groningen en Noord-Drenthe compenseert voor de schade van de gaswinning. Een groot deel van het pakket gaat naar Maatregel 29: subsidie om je woning te isoleren en ventileren.
-          </p>
-          <p style={{ fontSize: 17, lineHeight: 1.7, color: C.text, marginTop: 12 }}>
-            Voor deze aanpak staat <strong>€1,65 miljard</strong> klaar. De regeling loopt tot <strong>3 juni 2035</strong>.
-          </p>
-        </div>
-      </section>
-
-      {/* 4. HOEVEEL */}
-      <section id="bedragen" style={{ backgroundColor: C.bg }} className="py-16 md:py-20">
-        <div className="container-content">
-          <div className="max-w-3xl mx-auto text-center">
-            <H2>
-              Hoeveel <Gold>subsidie</Gold> krijg je precies?
-            </H2>
-            <p style={{ fontSize: 17, lineHeight: 1.7, color: C.text, marginTop: 16 }}>
-              Het bedrag hangt af van <strong>waar precies in het gebied</strong> je woont en van <strong>je inkomen</strong>. Er zijn twee categorieën.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mt-10 items-center max-w-6xl mx-auto">
-            <div>
-              <Illustration src={imgKaart} alt="Kaart van Groningen met 50% en 100% subsidiegebieden" />
-              <div
-                className="flex items-start gap-2 mt-4"
-                style={{ fontSize: 14, color: C.muted }}
-              >
-                <Info size={16} style={{ color: C.accent, flexShrink: 0, marginTop: 2 }} aria-hidden />
-                <span>Ook buiten het versterkingsgebied kun je 100% subsidie krijgen als je inkomen onder de grens valt. Niet zeker in welke categorie je valt? Wij checken het vrijblijvend voor je.</span>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              {/* Card 50% */}
-              <div style={{ ...cardBase, padding: 28 }}>
-                <div className="flex items-baseline gap-3">
-                  <span style={{ fontSize: 44, fontWeight: 800, color: C.primary, letterSpacing: "-0.02em" }}>50%</span>
-                  <span style={{ fontSize: 15, color: C.muted }}>tot <strong style={{ color: C.text }}>€20.000</strong> per woning</span>
-                </div>
-                <h4 style={{ fontSize: 14, fontWeight: 700, color: C.primary, marginTop: 14, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                  Voor wie?
-                </h4>
-                <ul>
-                  <CheckLi>Woningeigenaar in het Nij Begun-gebied</CheckLi>
-                  <CheckLi>Niet in het versterkingsgebied én inkomen boven 140% sociaal minimum</CheckLi>
-                </ul>
-              </div>
-
-              {/* Card 100% */}
-              <div style={{ ...cardBase, padding: 28 }}>
-                <div className="flex items-baseline gap-3">
-                  <span style={{ fontSize: 44, fontWeight: 800, color: C.primary, letterSpacing: "-0.02em" }}>100%</span>
-                  <span style={{ fontSize: 15, color: C.muted }}>tot <strong style={{ color: C.text }}>€40.000</strong> per woning, plus €1.000 advies- en afwerkbijdrage</span>
-                </div>
-                <h4 style={{ fontSize: 14, fontWeight: 700, color: C.primary, marginTop: 14, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                  Voor wie?
-                </h4>
-                <p style={{ fontSize: 14, color: C.muted, marginBottom: 8 }}>
-                  Eén van deze voorwaarden volstaat:
-                </p>
-                <ul>
-                  <CheckLi>Je woont in het versterkingsgebied (NCG)</CheckLi>
-                  <CheckLi>Of je inkomen valt onder 140% sociaal minimum</CheckLi>
-                  <CheckLi>Of je bent VvE of kleine verhuurder in het versterkingsgebied</CheckLi>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. WAT WORDT VERGOED */}
-      <section style={{ backgroundColor: C.card }} className="py-16 md:py-20">
-        <div className="container-content">
-          <div className="max-w-3xl mx-auto text-center">
-            <H2>
-              Welke isolatie wordt <Gold>vergoed</Gold>?
-            </H2>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mt-10 items-start max-w-6xl mx-auto">
-            <div className="space-y-6">
-              <Illustration src={imgHuis} alt="Doorsnede van een huis met de vergoede isolatiemaatregelen" />
-
-              {/* Standaard voor woningisolatie callout (uitklapbaar) */}
-              <details
-                style={{
-                  backgroundColor: C.cardSoft,
-                  borderLeft: `4px solid ${C.accent}`,
-                  borderRadius: "0.75rem",
-                  padding: "16px 22px",
-                }}
-              >
-                <summary
-                  style={{
-                    display: "flex",
-                    gap: 14,
-                    alignItems: "center",
-                    cursor: "pointer",
-                    listStyle: "none",
-                    fontSize: 15,
-                    fontWeight: 600,
-                    color: C.primary,
-                  }}
-                >
-                  <Lightbulb size={22} style={{ color: C.accent, flexShrink: 0 }} aria-hidden />
-                  <span style={{ flex: 1 }}>Niet alle maatregelen passen bij elke woning</span>
-                  <ChevronDown size={18} style={{ color: C.accent, flexShrink: 0 }} aria-hidden />
-                </summary>
-                <p style={{ fontSize: 15, color: C.text, lineHeight: 1.6, margin: "12px 0 0 36px" }}>
-                  Het doel van Nij Begun is jouw woning naar de Standaard voor woningisolatie te brengen. Een adviseur kijkt naar wat jouw huis écht nodig heeft. Soms wijkt dat advies af van wat je had verwacht. Vloerisolatie of nieuwe deuren zijn niet altijd de eerste stap. De adviseur is daarin eerlijk, want het doel is een warm en zuinig huis, niet zoveel mogelijk maatregelen.
-                </p>
-              </details>
-            </div>
-
-            <div className="space-y-8">
-              <div>
-                <h3 className="font-display" style={{ fontSize: 18, fontWeight: 700, color: C.primary, marginBottom: 10 }}>
-                  Vergoede maatregelen
-                </h3>
-                <ul>
-                  <MeasureLi
-                    label="Spouwmuurisolatie"
-                    info="Voor woningen met spouwmuren (bouwjaar na 1920) is dit vaak de eerste en meest gebruikelijke stap. Goed rendement voor relatief lage kosten."
-                  />
-                  <MeasureLi
-                    label="Dak- en vloerisolatie"
-                    info="Dakisolatie levert vaak het hoogste rendement op, omdat warmte vooral via het dak ontsnapt. Vloerisolatie is een logische volgende stap."
-                  />
-                  <MeasureLi
-                    label="Gevelisolatie (binnen of buiten)"
-                    info="Voor woningen zonder spouwmuren. Buitenisolatie is duurder maar effectiever, binnenisolatie verkleint de leefruimte iets."
-                  />
-                  <MeasureLi
-                    label="HR++ glas of vacuümglas"
-                    info="Vervangt enkel of dubbel glas. Vacuümglas is dunner en past vaak in bestaande kozijnen."
-                  />
-                  <MeasureLi
-                    label="Triple glas met nieuwe kozijnen (30% subsidie)"
-                    info="De hoogste isolatiewaarde voor ramen. Hier geldt een aparte 30%-regeling, los van het €20.000 of €40.000-plafond."
-                  />
-                  <MeasureLi
-                    label="Mechanische ventilatie of balansventilatie"
-                    info="Na goede isolatie verplicht. Voorkomt vocht en schimmel, houdt de lucht gezond."
-                  />
-                  <MeasureLi
-                    label="Diervriendelijk isoleren"
-                    info="Wettelijk verplicht als er vleermuizen, mussen of gierzwaluwen in of aan je woning leven."
-                  />
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-display" style={{ fontSize: 18, fontWeight: 700, color: C.primary, marginBottom: 10 }}>
-                  Niet vergoed
-                </h3>
-                <ul>
-                  <XLi>Zonnepanelen, warmtepomp, zonneboiler (wel via ISDE)</XLi>
-                  <XLi>Schilderwerk, behang, esthetische afwerking</XLi>
-                  <XLi>Aanbouwen of nieuwbouw na 1 juli 2012</XLi>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* AANMERKING */}
-      <section style={{ backgroundColor: C.bg }} className="py-16 md:py-20">
-        <div className="container-content">
-          <div className="max-w-3xl mx-auto text-center">
-            <H2>
-              Komt jouw woning in <Gold>aanmerking</Gold>?
-            </H2>
-            <p style={{ fontSize: 17, lineHeight: 1.7, color: C.text, marginTop: 16 }}>
-              De subsidie geldt voor woningeigenaren in <strong>de hele provincie Groningen</strong> en in <strong>drie Drentse gemeenten</strong>.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 max-w-5xl mx-auto">
-            <div style={{ ...cardSoftBase, backgroundColor: C.card, padding: 28 }}>
-              <span
-                className="inline-flex items-center justify-center"
-                style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: C.bg, color: C.accent }}
-              >
-                <Building2 size={18} aria-hidden />
-              </span>
-              <h3
-                className="font-display"
-                style={{ fontSize: 18, fontWeight: 700, color: C.primary, marginTop: 12, marginBottom: 14 }}
-              >
-                Provincie Groningen, alle 10 gemeenten
-              </h3>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
-                {[
-                  "Eemsdelta", "Groningen",
-                  "Het Hogeland", "Midden-Groningen",
-                  "Oldambt", "Pekela",
-                  "Stadskanaal", "Veendam",
-                  "Westerkwartier", "Westerwolde",
-                ].map((g) => (
-                  <CheckLi key={g}>{g}</CheckLi>
-                ))}
-              </ul>
-            </div>
-
-            <div style={{ ...cardSoftBase, backgroundColor: C.card, padding: 28 }}>
-              <span
-                className="inline-flex items-center justify-center"
-                style={{ width: 36, height: 36, borderRadius: 9999, backgroundColor: C.bg, color: C.accent }}
-              >
-                <Trees size={18} aria-hidden />
-              </span>
-              <h3
-                className="font-display"
-                style={{ fontSize: 18, fontWeight: 700, color: C.primary, marginTop: 12, marginBottom: 14 }}
-              >
-                Noord-Drenthe, drie gemeenten
-              </h3>
-              <ul>
-                <CheckLi>Aa en Hunze</CheckLi>
-                <CheckLi>Noordenveld</CheckLi>
-                <CheckLi>Tynaarlo</CheckLi>
-              </ul>
-            </div>
-          </div>
-
-          <p
-            className="text-center mt-6 max-w-3xl mx-auto"
-            style={{ fontSize: 13, color: C.muted }}
-          >
-            Andere Drentse gemeenten zoals Assen, Emmen en Coevorden vallen niet onder Nij Begun. Voor hen gelden andere subsidies.
-          </p>
-        </div>
-      </section>
-
-      {/* 6. ZO VERLOOPT JOUW TRAJECT */}
-      <section style={{ backgroundColor: "#FFFFFF" }} className="py-16 md:py-20">
-        <div className="container-content">
-          <div className="max-w-3xl mx-auto text-center">
-            <H2>
-              Zo verloopt jouw <Gold>traject</Gold>
-            </H2>
-            <p style={{ fontSize: 17, lineHeight: 1.6, color: C.muted, marginTop: 14 }}>
-              Zo werkt het bij ons. Geen telefooncentrale, geen wachtrij, geen formulieren in pdf. Wij doen het zware werk, jij houdt de regie.
-            </p>
-          </div>
-
-          <div className="relative max-w-4xl mx-auto mt-10">
-            <ol className="flex flex-col gap-5 md:gap-6 relative">
-            {[
-                {
-                  n: "01",
-                  icon: Phone,
-                  t: "Vrijblijvend telefoongesprek",
-                  d: "We bespreken kort jouw situatie en woning. Is er een match? Dan plannen we een huisbezoek in. Het gesprek duurt 15 minuten en is volledig vrijblijvend.",
-                },
-                {
-                  n: "02",
-                  icon: Calendar,
-                  t: "Huisbezoek",
-                  d: "Een lokale adviseur uit Groningen of Drenthe komt bij je langs en bekijkt samen met jou welke mogelijkheden er zijn voor jouw woning. Vrijblijvend en onafhankelijk.",
-                },
-                {
-                  n: "03",
-                  icon: FileText,
-                  t: "Samen bepalen wat haalbaar is",
-                  d: "Tijdens het bezoek bekijken we wat er mogelijk is voor jouw woning. Heb je al een isolatieplan? Dan kijken we welke maatregelen we als eerste oppakken. Heb je nog geen plan? Dan kijkt de adviseur waar je alvast mee kunt beginnen.",
-                },
-                {
-                  n: "04",
-                  icon: Send,
-                  t: "Wij dienen de aanvraag in",
-                  d: "Geen DigiD-gedoe, geen formulieren in pdf. Wij dienen de aanvraag in bij SNN en bewaken de 13 wekentermijn voor je.",
-                },
-                {
-                  n: "05",
-                  icon: Hammer,
-                  t: "Uitvoering door een getoetste uitvoerder",
-                  d: "Wij zoeken een passende uitvoerder die is aangesloten bij Nij Begun. Deze uitvoerders zijn door ons getoetst op diverse kwaliteitscriteria. Wij begeleiden tijdens de uitvoering en bewaken kwaliteit en planning.",
-                },
-                {
-                  n: "06",
-                  icon: LifeBuoy,
-                  t: "Vervolgmaatregelen en natraject",
-                  d: "Wil je daarna meer doen? Samen met het isolatieplan kijken we welke aanvullende stappen logisch zijn. Wij blijven jouw aanspreekpunt voor vragen over onderhoud, garantie of vervolgmaatregelen zoals warmtepomp of zonnepanelen.",
-                },
-              ].map((s, i) => {
-                const isVisible = visibleSteps.has(i);
-                const hasImage = !!(s as { image?: string }).image;
-                return (
-                  <li
-                    key={s.n}
-                    ref={(el) => (stepRefs.current[i] = el)}
-                    data-step-index={i}
-                    style={{
-                      backgroundColor: C.card,
-                      border: `1px solid ${C.accentSoft}66`,
-                      borderRadius: "1rem",
-                      boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-                      opacity: isVisible ? 1 : 0,
-                      transform: isVisible ? "translateY(0)" : "translateY(20px)",
-                      transition: "opacity 400ms ease-out, transform 400ms ease-out",
-                      willChange: "opacity, transform",
-                    }}
-                  >
-                    {hasImage ? (
-                      <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-6 md:gap-8 items-center p-6 md:p-8">
-                        <div>
-                          <div className="flex items-center gap-3 mb-3">
-                            <span
-                              className="font-display"
-                              style={{
-                                fontSize: 56,
-                                fontWeight: 800,
-                                color: C.accent,
-                                lineHeight: 1,
-                                letterSpacing: "-0.02em",
-                              }}
-                            >
-                              {s.n}
-                            </span>
-                            <span
-                              className="inline-flex items-center justify-center"
-                              style={{
-                                width: 40,
-                                height: 40,
-                                borderRadius: 9999,
-                                backgroundColor: C.accent,
-                                color: C.primary,
-                              }}
-                            >
-                              <s.icon size={18} aria-hidden />
-                            </span>
-                          </div>
-                          <h3
-                            className="font-display"
-                            style={{
-                              fontSize: 22,
-                              fontWeight: 700,
-                              color: C.primary,
-                              letterSpacing: "-0.01em",
-                              marginBottom: 8,
-                            }}
-                          >
-                            {s.t}
-                          </h3>
-                          <p style={{ fontSize: 16, color: C.text, lineHeight: 1.6, margin: 0 }}>{s.d}</p>
-                        </div>
-                        <Illustration src={(s as unknown as { image: string }).image} alt="Aanvraag akkoord op laptop" />
-                      </div>
-                    ) : (
-                      <div className="p-6 md:p-8">
-                        <div className="flex items-center gap-4 mb-2">
-                          <span
-                            className="font-display"
-                            style={{
-                              fontSize: 44,
-                              fontWeight: 800,
-                              color: C.accent,
-                              lineHeight: 1,
-                              letterSpacing: "-0.03em",
-                              flexShrink: 0,
-                            }}
-                          >
-                            {s.n}
-                          </span>
-                          <span
-                            className="inline-flex items-center justify-center"
-                            style={{
-                              width: 40,
-                              height: 40,
-                              borderRadius: 9999,
-                              backgroundColor: C.accent,
-                              color: C.primary,
-                              flexShrink: 0,
-                            }}
-                          >
-                            <s.icon size={18} aria-hidden />
-                          </span>
-                          <h3
-                            className="font-display flex-1 min-w-0"
-                            style={{
-                              fontSize: 22,
-                              fontWeight: 700,
-                              color: C.primary,
-                              letterSpacing: "-0.01em",
-                              margin: 0,
-                              lineHeight: 1.2,
-                            }}
-                          >
-                            {s.t}
-                          </h3>
-                        </div>
-                        <p style={{ fontSize: 16, color: C.text, lineHeight: 1.6, margin: "12px 0 0" }}>{s.d}</p>
-                      </div>
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
-          </div>
-
-          {/* Mini-CTA */}
-          <div
-            className="max-w-4xl mx-auto mt-14 text-center"
-            style={{
-              backgroundColor: C.card,
-              border: `1px solid ${C.accentSoft}66`,
-              borderRadius: "1rem",
-              padding: "40px 24px",
-            }}
-          >
-            <h3
-              className="font-display"
-              style={{ fontSize: "clamp(22px, 3vw, 28px)", fontWeight: 700, color: C.primary, letterSpacing: "-0.01em" }}
-            >
-              Wil je sneller door zonder gedoe?
-            </h3>
-            <p style={{ fontSize: 15, color: C.muted, marginTop: 10, maxWidth: 520, marginLeft: "auto", marginRight: "auto", lineHeight: 1.6 }}>
-              Neem contact op. Een lokale adviseur uit jouw regio belt of komt langs binnen een week.
-            </p>
-            <CtaButton href="/contact" className="mt-5">Ik wil gebeld worden</CtaButton>
-          </div>
-        </div>
-      </section>
-
-      {/* 7. FAQ */}
-      <section className="py-[48px] md:py-[72px]" style={{ backgroundColor: "#F5F2EC" }}>
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="h2-section text-center" style={{ color: "#152C4E", fontWeight: 600 }}>
-            Veelgestelde <span style={{ color: "hsl(var(--accent))" }}>vragen</span>
-          </h2>
-          <p
-            className="text-center mx-auto"
-            style={{ color: "#152C4E", opacity: 0.75, fontSize: 16, marginTop: 16, marginBottom: 40 }}
-          >
-            Wat we het vaakst gevraagd krijgen, kort beantwoord.
-          </p>
-          <div
-            className="mx-auto"
-            style={{
-              maxWidth: 820,
-              backgroundColor: "#FFFFFF",
-              border: "1px solid #E5E2DB",
-              borderRadius: 16,
-              overflow: "hidden",
-            }}
-          >
-            {faqs.map((f, i) => {
-              const isOpen = openFaq === i;
-              return (
-                <div
-                  key={i}
-                  style={{ borderBottom: i === faqs.length - 1 ? "none" : "1px solid #E5E2DB" }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setOpenFaq(isOpen ? null : i)}
-                    aria-expanded={isOpen}
-                    className="w-full flex items-center text-left"
-                    style={{ padding: "20px 24px", background: "transparent", border: "none", cursor: "pointer", gap: 20 }}
-                  >
-                    <h3
-                      className="font-display flex-1"
-                      style={{ fontSize: 18, fontWeight: 500, color: "#152C4E", letterSpacing: "-0.01em", lineHeight: 1.3, margin: 0 }}
-                    >
-                      {f.q}
-                    </h3>
-                    <ChevronDown
-                      size={20}
-                      color="#E8B547"
-                      style={{
-                        opacity: 0.5,
-                        transition: "transform 200ms ease",
-                        transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                        flexShrink: 0,
-                      }}
-                      aria-hidden="true"
-                    />
-                  </button>
-                  <div style={{ maxHeight: isOpen ? 400 : 0, overflow: "hidden", transition: "max-height 300ms ease" }}>
-                    <p style={{ fontSize: 15, color: "#6B6B6B", lineHeight: 1.6, margin: 0, padding: "0 24px 20px 24px" }}>
-                      {f.a}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* 8. WAAROM VOORTRAJECT */}
-      <section style={{ backgroundColor: C.card }} className="py-16 md:py-20">
-        <div className="container-content">
-          <div className="max-w-3xl mx-auto text-center">
-            <H2>
-              Waarom bewoners voor Voortraject <Gold>kiezen</Gold>
-            </H2>
-            <p style={{ fontSize: 17, lineHeight: 1.6, color: C.muted, marginTop: 14 }}>
-              Wat ons anders maakt dan een gemeenteloket of een ingehuurde callcenter-helpdesk.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 max-w-5xl mx-auto">
-            {[
-              {
-                icon: Home,
-                t: "Persoonlijk huisbezoek",
-                d: "Geen wachtrij, geen formulier-eerst. Een lokale adviseur uit jouw regio belt of komt langs binnen een week.",
-              },
-              {
-                icon: FileCheck,
-                t: "Wij regelen de papierwinkel",
-                d: "Geen DigiD-gedoe, geen termijnen die je zelf moet bewaken. Wij dienen in, bewaken de procedure en houden je op de hoogte.",
-              },
-              {
-                icon: Scale,
-                t: "Onafhankelijk advies",
-                d: "Wij hebben geen voorkeur voor bepaalde uitvoerders. We brengen je in contact met aangesloten Nij Begun-bedrijven die bij jouw woning passen.",
-              },
-              {
-                icon: LifeBuoy,
-                t: "Nazorg en natraject",
-                d: "Na de oplevering blijven we beschikbaar. Voor garantie, onderhoud of een vervolgvraag over warmtepomp of zonnepanelen.",
-              },
-            ].map((s) => (
-              <div key={s.t} style={{ ...cardSoftBase, padding: 28 }}>
-                <div className="flex items-center gap-3">
-                  <span
-                    className="inline-flex items-center justify-center shrink-0"
-                    style={{ width: 40, height: 40, borderRadius: 9999, backgroundColor: C.accent, color: C.primary }}
-                  >
-                    <s.icon size={18} aria-hidden />
-                  </span>
-                  <h3
-                    className="font-display"
-                    style={{ fontSize: 18, fontWeight: 700, color: C.primary, margin: 0 }}
-                  >
-                    {s.t}
-                  </h3>
-                </div>
-                <p style={{ fontSize: 15, color: C.text, lineHeight: 1.6, margin: "12px 0 0" }}>{s.d}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <Footer
-        cta={
-          /* 9. FOOTER-CTA */
-          <section className="py-20">
-            <div className="container-content">
-              <div className="text-center mx-auto" style={{ maxWidth: 600 }}>
-                <h2
-                  className="font-display"
-                  style={{
-                    fontWeight: 700,
-                    fontSize: "clamp(28px, 4vw, 40px)",
-                    letterSpacing: "-0.02em",
-                    lineHeight: 1.15,
-                    color: "#fff",
-                  }}
-                >
-                  Ontdek welke subsidies voor jouw woning gelden
-                </h2>
-                <p style={{ fontSize: 17, lineHeight: 1.6, marginTop: 16, color: "rgba(255,255,255,0.8)" }}>
-                  Wij zoeken het voor jouw adres uit en stapelen alles wat kan. Eén gesprek, geen loketten. Vrijblijvend en gratis.
-                </p>
-                <CtaButton href="/contact" className="mt-6">Plan een gratis gesprek</CtaButton>
-              </div>
-              <p className="text-center mt-12" style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
-                Laatst bijgewerkt: {LAATST_BIJGEWERKT}
-              </p>
-            </div>
-          </section>
+      {/* 1. HERO: regionaal, dus de provinciekleur */}
+      <SubsidieHero
+        titel={
+          <>
+            Laat je woning isoleren met <Accent>subsidie</Accent> via Nij Begun
+          </>
+        }
+        intro="Woon je in Groningen of Noord-Drenthe? Dan kun je je woning laten isoleren tot de isolatiestandaard met subsidie via Nij Begun. Hoeveel je krijgt hangt af van je woning en je gemeente, en dat zoeken wij voor je uit."
+        knop={<CtaButton href="/contact">Ja ik wil gratis advies</CtaButton>}
+        tweede={<PijlLink href="#bedragen">Bekijk wat jij krijgt</PijlLink>}
+        naast={
+          <>
+            {/* Partnership-marker: twee logo's */}
+            <LogoPaar>
+              <img src={logoVoortrajectBlauw} alt="Voortraject" className="max-h-8 w-auto object-contain md:max-h-10" />
+              <span aria-hidden className="inline-block h-8 w-px bg-primary/25 md:h-10" />
+              <img src={logoNijBegun} alt="Nij Begun Groningen Noord-Drenthe" className="max-h-8 w-auto object-contain md:max-h-10" />
+            </LogoPaar>
+            <HeroLijst
+              vlak="hs-tint-provincie"
+              kleur="provincie"
+              items={[
+                { Icon: Home, tekst: <><strong>300.000+</strong> woningen komen in aanmerking</> },
+                { Icon: Coins, tekst: <><strong>€1,65 miljard</strong> beschikbaar tot 2035</> },
+                { Icon: Euro, tekst: <><strong>20.000+</strong> woningen gingen je voor</> },
+              ]}
+            />
+          </>
         }
       />
+
+      {/* 2. WAT IS NIJ BEGUN */}
+      <Sectie>
+        <Kop2 midden>
+          Wat is de <Accent>Isolatieaanpak</Accent> Nij Begun?
+        </Kop2>
+        <div className="hs-tekst mx-auto mt-4 max-w-3xl space-y-3 text-center text-[16px] leading-[1.65] md:mt-5 md:text-[17px]" data-veer>
+          <p>
+            Nij Begun is Gronings voor "nieuw begin". Het is de manier waarop de overheid bewoners in Groningen en Noord-Drenthe compenseert voor de schade van de gaswinning. Een groot deel van het pakket gaat naar Maatregel 29: subsidie om je woning te isoleren en ventileren.
+          </p>
+          <p>
+            Voor deze aanpak staat <strong className="text-primary">€1,65 miljard</strong> klaar. De regeling loopt tot <strong className="text-primary">3 juni 2035</strong>.
+          </p>
+        </div>
+      </Sectie>
+
+      {/* 3. HOEVEEL */}
+      <Sectie id="bedragen" band>
+        <Kop2
+          midden
+          lead={
+            <>
+              Het bedrag hangt af van <strong className="text-primary">waar precies in het gebied</strong> je woont en van <strong className="text-primary">je inkomen</strong>. Er zijn twee categorieën.
+            </>
+          }
+        >
+          Hoeveel <Accent>subsidie</Accent> krijg je precies?
+        </Kop2>
+
+        <div className="mx-auto mt-7 grid max-w-6xl grid-cols-1 items-center gap-6 md:mt-10 lg:grid-cols-2 lg:gap-12">
+          <div data-veer>
+            <Illustration src={imgKaart} alt="Kaart van Groningen met 50% en 100% subsidiegebieden" />
+            <div className="hs-tekst mt-3 flex items-start gap-2 text-[14px] leading-[1.5]">
+              <Info size={16} className="mt-0.5 flex-none text-[hsl(var(--niveau-provincie))]" aria-hidden />
+              <span>Ook buiten het versterkingsgebied kun je 100% subsidie krijgen als je inkomen onder de grens valt. Niet zeker in welke categorie je valt? Wij checken het vrijblijvend voor je.</span>
+            </div>
+          </div>
+
+          <div className="grid gap-3 md:gap-5">
+            {/* Kaart 50% */}
+            <div className="hs-tegel hs-groen p-[18px] md:p-7" data-veer>
+              <Bedrag pct="50%">
+                tot <strong>€20.000</strong> per woning
+              </Bedrag>
+              <VoorWie />
+              <ul>
+                <VinkRegel>Woningeigenaar in het Nij Begun-gebied</VinkRegel>
+                <VinkRegel>Niet in het versterkingsgebied én inkomen boven 140% sociaal minimum</VinkRegel>
+              </ul>
+            </div>
+
+            {/* Kaart 100% */}
+            <div className="hs-tegel hs-groen p-[18px] md:p-7" data-veer>
+              <Bedrag pct="100%">
+                tot <strong>€40.000</strong> per woning, plus €1.000 advies- en afwerkbijdrage
+              </Bedrag>
+              <VoorWie />
+              <p className="hs-tekst mb-1 text-[14px]">Eén van deze voorwaarden volstaat:</p>
+              <ul>
+                <VinkRegel>Je woont in het versterkingsgebied (NCG)</VinkRegel>
+                <VinkRegel>Of je inkomen valt onder 140% sociaal minimum</VinkRegel>
+                <VinkRegel>Of je bent VvE of kleine verhuurder in het versterkingsgebied</VinkRegel>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </Sectie>
+
+      {/* 4. WAT WORDT VERGOED */}
+      <Sectie>
+        <Kop2 midden>
+          Welke isolatie wordt <Accent>vergoed</Accent>?
+        </Kop2>
+
+        <div className="mx-auto mt-7 grid max-w-6xl grid-cols-1 items-start gap-6 md:mt-10 lg:grid-cols-2 lg:gap-12">
+          <div className="space-y-4 md:space-y-6" data-veer>
+            <Illustration src={imgHuis} alt="Doorsnede van een huis met de vergoede isolatiemaatregelen" />
+
+            {/* Standaard voor woningisolatie (uitklapbaar) */}
+            <LosseUitklap kop="span" Icon={Lightbulb} icoonKleur="oker" vraag="Niet alle maatregelen passen bij elke woning">
+              <p>
+                Het doel van Nij Begun is jouw woning naar de Standaard voor woningisolatie te brengen. Een adviseur kijkt naar wat jouw huis écht nodig heeft. Soms wijkt dat advies af van wat je had verwacht. Vloerisolatie of nieuwe deuren zijn niet altijd de eerste stap. De adviseur is daarin eerlijk, want het doel is een warm en zuinig huis, niet zoveel mogelijk maatregelen.
+              </p>
+            </LosseUitklap>
+          </div>
+
+          <div className="space-y-6 md:space-y-8">
+            <div className="hs-tegel p-[18px] md:p-7" data-veer>
+              <h3 className="hs-h3 mb-2">Vergoede maatregelen</h3>
+              <ul>
+                <MeasureLi
+                  label="Spouwmuurisolatie"
+                  info="Voor woningen met spouwmuren (bouwjaar na 1920) is dit vaak de eerste en meest gebruikelijke stap. Goed rendement voor relatief lage kosten."
+                />
+                <MeasureLi
+                  label="Dak- en vloerisolatie"
+                  info="Dakisolatie levert vaak het hoogste rendement op, omdat warmte vooral via het dak ontsnapt. Vloerisolatie is een logische volgende stap."
+                />
+                <MeasureLi
+                  label="Gevelisolatie (binnen of buiten)"
+                  info="Voor woningen zonder spouwmuren. Buitenisolatie is duurder maar effectiever, binnenisolatie verkleint de leefruimte iets."
+                />
+                <MeasureLi
+                  label="HR++ glas of vacuümglas"
+                  info="Vervangt enkel of dubbel glas. Vacuümglas is dunner en past vaak in bestaande kozijnen."
+                />
+                <MeasureLi
+                  label="Triple glas met nieuwe kozijnen (30% subsidie)"
+                  info="De hoogste isolatiewaarde voor ramen. Hier geldt een aparte 30%-regeling, los van het €20.000 of €40.000-plafond."
+                />
+                <MeasureLi
+                  label="Mechanische ventilatie of balansventilatie"
+                  info="Na goede isolatie verplicht. Voorkomt vocht en schimmel, houdt de lucht gezond."
+                />
+                <MeasureLi
+                  label="Diervriendelijk isoleren"
+                  info="Wettelijk verplicht als er vleermuizen, mussen of gierzwaluwen in of aan je woning leven."
+                />
+              </ul>
+            </div>
+
+            <div data-veer>
+              <h3 className="hs-h3 mb-2">Niet vergoed</h3>
+              <ul>
+                <KruisRegel Icon={XIcon}>Zonnepanelen, warmtepomp, zonneboiler (wel via ISDE)</KruisRegel>
+                <KruisRegel Icon={XIcon}>Schilderwerk, behang, esthetische afwerking</KruisRegel>
+                <KruisRegel Icon={XIcon}>Aanbouwen of nieuwbouw na 1 juli 2012</KruisRegel>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </Sectie>
+
+      {/* 5. AANMERKING: het Nij Begun-gebied, in de provinciekleur */}
+      <Sectie band>
+        <Kop2
+          midden
+          lead={
+            <>
+              De subsidie geldt voor woningeigenaren in <strong className="text-primary">de hele provincie Groningen</strong> en in <strong className="text-primary">drie Drentse gemeenten</strong>.
+            </>
+          }
+        >
+          Komt jouw woning in <Accent>aanmerking</Accent>?
+        </Kop2>
+
+        <div className="mx-auto mt-7 grid max-w-5xl grid-cols-1 gap-3 md:mt-10 md:grid-cols-2 md:gap-5">
+          <div className="hs-tegel hs-tint-provincie p-[18px] md:p-7" data-veer>
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="hs-h3">Provincie Groningen, alle 10 gemeenten</h3>
+              <Rondje Icon={Building2} kleur="provincie" />
+            </div>
+            <ul className="mt-3 grid grid-cols-2 gap-x-2">
+              {[
+                "Eemsdelta", "Groningen",
+                "Het Hogeland", "Midden-Groningen",
+                "Oldambt", "Pekela",
+                "Stadskanaal", "Veendam",
+                "Westerkwartier", "Westerwolde",
+              ].map((g) => (
+                <VinkRegel key={g} klein>{g}</VinkRegel>
+              ))}
+            </ul>
+          </div>
+
+          <div className="hs-tegel hs-tint-provincie p-[18px] md:p-7" data-veer>
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="hs-h3">Noord-Drenthe, drie gemeenten</h3>
+              <Rondje Icon={Trees} kleur="provincie" />
+            </div>
+            <ul className="mt-3">
+              <VinkRegel>Aa en Hunze</VinkRegel>
+              <VinkRegel>Noordenveld</VinkRegel>
+              <VinkRegel>Tynaarlo</VinkRegel>
+            </ul>
+          </div>
+        </div>
+
+        <p className="hs-tekst mx-auto mt-4 max-w-3xl text-center text-[13.5px] leading-[1.5] md:mt-6">
+          Andere Drentse gemeenten zoals Assen, Emmen en Coevorden vallen niet onder Nij Begun. Voor hen gelden andere subsidies.
+        </p>
+      </Sectie>
+
+      {/* 6. ZO VERLOOPT JOUW TRAJECT */}
+      <Sectie>
+        <Kop2 lead="Zo werkt het bij ons. Geen telefooncentrale, geen wachtrij, geen formulieren in pdf. Wij doen het zware werk, jij houdt de regie.">
+          Zo verloopt jouw <Accent>traject</Accent>
+        </Kop2>
+        <Stappen stappen={stappen} />
+        <TussenCta
+          kop="Wil je sneller door zonder gedoe?"
+          tekst="Neem contact op. Een lokale adviseur uit jouw regio belt of komt langs binnen een week."
+          knop={<CtaButton href="/contact">Ik wil gebeld worden</CtaButton>}
+        />
+      </Sectie>
+
+      {/* 7. FAQ */}
+      <SubsidieFaq faqs={faqs} band />
+
+      {/* 8. WAAROM VOORTRAJECT */}
+      <Sectie>
+        <Kop2 lead="Wat ons anders maakt dan een gemeenteloket of een ingehuurde callcenter-helpdesk.">
+          Waarom bewoners voor Voortraject <Accent>kiezen</Accent>
+        </Kop2>
+        <WaaromTegels
+          redenen={[
+            {
+              Icon: Home,
+              t: "Persoonlijk huisbezoek",
+              d: "Geen wachtrij, geen formulier-eerst. Een lokale adviseur uit jouw regio belt of komt langs binnen een week.",
+            },
+            {
+              Icon: FileCheck,
+              t: "Wij regelen de papierwinkel",
+              d: "Geen DigiD-gedoe, geen termijnen die je zelf moet bewaken. Wij dienen in, bewaken de procedure en houden je op de hoogte.",
+            },
+            {
+              Icon: Scale,
+              t: "Onafhankelijk advies",
+              d: "Wij hebben geen voorkeur voor bepaalde uitvoerders. We brengen je in contact met aangesloten Nij Begun-bedrijven die bij jouw woning passen.",
+            },
+            {
+              Icon: LifeBuoy,
+              t: "Nazorg en natraject",
+              d: "Na de oplevering blijven we beschikbaar. Voor garantie, onderhoud of een vervolgvraag over warmtepomp of zonnepanelen.",
+            },
+          ]}
+        />
+      </Sectie>
+
+      <Footer cta={<SlotCta laatstBijgewerkt={LAATST_BIJGEWERKT} />} />
     </div>
   );
 };
