@@ -9,11 +9,14 @@ import { describe, expect, it, vi } from "vitest";
  * 1. De lichte tint per sectie wordt voor de hele reeks gekozen (toonReeks),
  *    zodat optionele secties het ritme niet kunnen breken en de laatste sectie
  *    boven de footer altijd op off-white staat.
- * 2. Eén oker knop per scherm: op /verduurzamen staat de subsidiecheck vlak
+ * 2. Eén oker knop per scherm: de headerknop verschijnt pas als de oker knop in
+ *    de hero uit beeld is (Header ctaNaElement), net als op de homepagina. En op /verduurzamen staat de subsidiecheck vlak
  *    boven het slotblok, dus daar is de slotknop niet oker.
  */
 
-vi.mock("@/components/Header", () => ({ Header: () => null }));
+vi.mock("@/components/Header", () => ({
+  Header: ({ ctaNaElement }: { ctaNaElement?: string }) => <div data-testid="header" data-cta-na={ctaNaElement} />,
+}));
 vi.mock("@/components/Footer", () => ({
   Footer: ({ cta }: { cta?: ReactElement }) => <footer>{cta}</footer>,
 }));
@@ -70,6 +73,13 @@ describe("maatregelpagina's in de huisstijl", () => {
     expect(bgs.at(-1)).toBe("zand");
   });
 
+  it.each(paginas)("%s verbergt de headerknop zolang de oker heroknop in beeld is", (_naam, pagina) => {
+    const { container, getByTestId } = toon(pagina);
+    const knop = container.querySelector("#maatregel-hero-knop");
+    expect(knop?.querySelector(".hs-knop-oker")).not.toBeNull();
+    expect(getByTestId("header")).toHaveAttribute("data-cta-na", "maatregel-hero-knop");
+  });
+
   it.each(paginas)("%s heeft één oker knop in de slot-CTA", (_naam, pagina) => {
     const { container } = toon(pagina);
     const footer = container.querySelector("footer") as HTMLElement;
@@ -79,6 +89,13 @@ describe("maatregelpagina's in de huisstijl", () => {
 });
 
 describe("/verduurzamen in de huisstijl", () => {
+  it("verbergt de headerknop zolang de oker heroknop in beeld is", () => {
+    const { container, getByTestId } = toon(<Verduurzamen />);
+    const knop = container.querySelector("#verduurzamen-hero-knop");
+    expect(knop?.querySelector(".hs-knop-oker")).not.toBeNull();
+    expect(getByTestId("header")).toHaveAttribute("data-cta-na", "verduurzamen-hero-knop");
+  });
+
   it("heeft geen oker slotknop vlak onder de oker knop van de subsidiecheck", () => {
     const { container } = toon(<Verduurzamen />);
     const footer = container.querySelector("footer") as HTMLElement;

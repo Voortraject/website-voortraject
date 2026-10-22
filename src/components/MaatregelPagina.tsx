@@ -399,7 +399,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
         path={`/verduurzamen/${slug}`}
         jsonLd={maatregelJsonLd({ slug, label, faqs })}
       />
-      <Header />
+      <Header ctaNaElement="maatregel-hero-knop" />
       <main className="flex-1" ref={mainRef}>
         {/* 1 — HERO */}
         <section data-bg={heroBg ?? "zand"} className="w-full bg-background pt-5 pb-12 md:pt-8 md:pb-20">
@@ -422,7 +422,7 @@ export const MaatregelPagina = (props: MaatregelPaginaProps) => {
                   {heroSub}
                   {heroIntro ? ` ${heroIntro}` : ""}
                 </p>
-                <div className="mt-6 md:mt-8">
+                <div id="maatregel-hero-knop" className="mt-6 md:mt-8">
                   <CtaButton href={heroCtaHref} variant="accent" className="w-full sm:w-auto">
                     {heroCtaLabel}
                     <ArrowRight size={17} strokeWidth={2.2} className="hs-pijl" aria-hidden="true" />

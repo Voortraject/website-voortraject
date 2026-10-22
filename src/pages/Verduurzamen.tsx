@@ -131,7 +131,7 @@ const Verduurzamen = () => {
         path="/verduurzamen"
         jsonLd={jsonLd}
       />
-      <Header />
+      <Header ctaNaElement="verduurzamen-hero-knop" />
       <main className="flex-1" ref={mainRef}>
         {/* 1 — HERO */}
         <section data-bg="zand" className="w-full bg-background pt-5 pb-12 md:pt-8 md:pb-20">
@@ -154,7 +154,7 @@ const Verduurzamen = () => {
                   geïsoleerde woning verbruikt meer dan hij bespaart. Daarom eerst beperken, dan
                   opwekken, dan slim gebruiken.
                 </p>
-                <div className="mt-6 grid gap-3 sm:flex sm:items-center sm:gap-6 md:mt-8">
+                <div id="verduurzamen-hero-knop" className="mt-6 grid gap-3 sm:flex sm:items-center sm:gap-6 md:mt-8">
                   <CtaButton href="/subsidiecheck" variant="accent" className="w-full sm:w-auto">
                     <Search size={17} strokeWidth={2.2} aria-hidden="true" />
                     Check jouw subsidies
