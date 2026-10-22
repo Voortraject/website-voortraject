@@ -5,7 +5,7 @@
  * van de logostrook. Alleen tokens, geen losse kleuren.
  */
 
-/* Zwart in plaats van inktblauw (proef oktober 2026); de standen zijn gelijk
+/* Zwart in plaats van inktblauw (gekozen oktober 2026); de standen zijn gelijk
    gebleven, alleen de kleur is anders. Terug naar blauw: var(--primary). */
 :root {
   --hero-waas: 0 0% 0%;
