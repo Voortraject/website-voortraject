@@ -16,7 +16,7 @@ const howWeWork = [
   },
   {
     icon: ShieldCheck,
-    title: "Onafhankelijk advies",
+    title: "Eerlijk advies",
     desc: "Wij verkopen niets. Geen installaties, geen materiaal. Alleen advies dat in jouw belang is.",
   },
   {

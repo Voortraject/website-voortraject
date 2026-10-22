@@ -19,7 +19,7 @@ const Index = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <Seo
         title="Voortraject | Gratis advies over verduurzamen en subsidies"
-        description="Wij zoeken gratis uit welke maatregelen slim zijn voor jouw woning en welke subsidies je kunt krijgen. Onafhankelijk advies voor bewoners in Noord-Nederland."
+        description="Wij zoeken gratis uit welke maatregelen slim zijn voor jouw woning en welke subsidies je kunt krijgen. Persoonlijk advies voor bewoners in Noord-Nederland."
         path="/"
       />
       {/* De oker headerknop verschijnt pas als die in de hero uit beeld is. */}

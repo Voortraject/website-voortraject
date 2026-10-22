@@ -107,7 +107,7 @@ const Warmtepomp = () => (
       },
       {
         q: "Zit ik vast aan een bepaald merk?",
-        a: "Nee. Wij zijn onafhankelijk en niet gebonden aan één merk of leverancier. We kijken puur naar wat het beste bij jouw woning en budget past.",
+        a: "Nee. Wij zijn niet gebonden aan één merk of leverancier. We kijken puur naar wat het beste bij jouw woning en budget past.",
       },
     ]}
     finalCtaKop="Is jouw woning klaar voor een [[warmtepomp]]?"

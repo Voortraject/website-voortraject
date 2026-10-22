@@ -201,7 +201,7 @@ const SubsidiesNijBegun = () => {
     {
       n: "02",
       t: "Huisbezoek",
-      d: "Een lokale adviseur uit Groningen of Drenthe komt bij je langs en bekijkt samen met jou welke mogelijkheden er zijn voor jouw woning. Vrijblijvend en onafhankelijk.",
+      d: "Een lokale adviseur uit Groningen of Drenthe komt bij je langs en bekijkt samen met jou welke mogelijkheden er zijn voor jouw woning. Vrijblijvend en gratis.",
     },
     {
       n: "03",
@@ -482,7 +482,7 @@ const SubsidiesNijBegun = () => {
             },
             {
               Icon: Scale,
-              t: "Onafhankelijk advies",
+              t: "Eerlijk advies",
               d: "Wij hebben geen voorkeur voor bepaalde uitvoerders. We brengen je in contact met aangesloten Nij Begun-bedrijven die bij jouw woning passen.",
             },
             {
