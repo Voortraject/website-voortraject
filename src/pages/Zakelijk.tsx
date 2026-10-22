@@ -11,6 +11,9 @@ import { useStaffel } from "@/lib/beweging";
 
 // De typen bedrijven waarmee we samenwerken. Uitvoerders blijven de kern van de
 // pagina; dit blok laat zien dat het daar niet bij ophoudt.
+// De oker knop in de hero; de headerknop met dezelfde kleur wacht tot die uit beeld is.
+export const ZAKELIJK_HERO_KNOP = "zakelijk-hero-knop";
+
 const doelgroepen = [
   {
     icon: HardHat,
@@ -57,7 +60,7 @@ const Zakelijk = () => {
         description="Voortraject ontzorgt uitvoerders, installateurs en andere bedrijven in het voortraject: wij vangen bewonersvragen op, bereiden dossiers voor en bewaken opvolging."
         path="/zakelijk"
       />
-      <Header />
+      <Header ctaNaElement={ZAKELIJK_HERO_KNOP} />
       <main ref={main} className="flex-1">
         {/* HERO */}
         <section className="pt-6 md:pt-12 pb-12 md:pb-[88px]" aria-labelledby="zak-hero-title">
@@ -74,9 +77,12 @@ const Zakelijk = () => {
                   Uitvoerders, installateurs en andere bedrijven in verduurzaming werken met ons samen. Wij nemen bewonerscontact, offerte-opvolging, akkoordtrajecten en nazorg uit handen, zodat jullie team zich richt op planning en uitvoering.
                 </p>
                 <div className="mt-7 md:mt-9 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-5">
-                  <CtaButton href="#contact" className="w-full sm:w-auto">
-                    Plan een kennismaking
-                  </CtaButton>
+                  {/* De id laat de oker headerknop wachten tot deze knop uit beeld is. */}
+                  <div id={ZAKELIJK_HERO_KNOP} className="w-full sm:w-auto">
+                    <CtaButton href="#contact" className="w-full sm:w-auto">
+                      Plan een kennismaking
+                    </CtaButton>
+                  </div>
                   <OfBelOnsCta />
                 </div>
               </div>
