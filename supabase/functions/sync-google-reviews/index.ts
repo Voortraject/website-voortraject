@@ -13,6 +13,8 @@
 //                          Places API (de oudere), want alleen die sorteert op nieuwste
 //   GOOGLE_PLACE_ID      — Place ID van Voortraject
 //   REVIEWS_SYNC_SECRET  — gedeeld geheim; de cron stuurt het mee in `x-poller-secret`
+// Voor de waarschuwingsmail gebruikt hij dezelfde secrets als subsidiecheck-mail:
+//   RESEND_API_KEY, MAIL_FROM en MAIL_TEAM (valt terug op MAIL_BCC, dan info@).
 // SUPABASE_URL en SUPABASE_SERVICE_ROLE_KEY worden automatisch geïnjecteerd.
 //
 // Waarom het geheim: deze function staat open (verify_jwt = false, want pg_cron heeft geen
@@ -34,6 +36,7 @@ import {
 const PLACES_ENDPOINT = "https://places.googleapis.com/v1/places";
 const DETAILS_ENDPOINT = "https://maps.googleapis.com/maps/api/place/details/json";
 const MIN_RATING = 4;
+const RESEND_ENDPOINT = "https://api.resend.com/emails";
 
 type Opgehaald =
   | { reviews: ReviewRij[]; rating: number | null; totaal: number | null }
@@ -46,9 +49,38 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
-// De 5 nieuwste reviews. null = deze API is (nu) niet bruikbaar, val terug; de reden
-// komt in de log, zodat zichtbaar is dát de sync op relevantie draait.
-async function haalNieuwste(apiKey: string, placeId: string): Promise<Opgehaald | null> {
+// Mailt het team als de sync niet doet wat hij moet. Zonder deze mail merkt niemand
+// het: de cron kijkt niet naar het antwoord en de site toont gewoon wat er staat. Een
+// mislukte mail mag de sync zelf nooit breken.
+async function waarschuw(onderwerp: string, tekst: string): Promise<void> {
+  const apiKey = Deno.env.get("RESEND_API_KEY");
+  if (!apiKey) {
+    console.warn("RESEND_API_KEY ontbreekt, geen waarschuwing gemaild:", onderwerp);
+    return;
+  }
+  try {
+    const res = await fetch(RESEND_ENDPOINT, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: Deno.env.get("MAIL_FROM") ?? "Voortraject <noreply@voortraject.nl>",
+        to: [Deno.env.get("MAIL_TEAM") || Deno.env.get("MAIL_BCC") || "info@voortraject.nl"],
+        subject: `Reviews-sync: ${onderwerp}`,
+        text: `${tekst}\n\nDeze mail komt van de edge function sync-google-reviews (CRM-project). ` +
+          `Je krijgt hem elke ochtend opnieuw zolang het probleem er is.`,
+      }),
+    });
+    if (!res.ok) console.error("Resend-fout", res.status, await res.text());
+  } catch (err) {
+    console.error("Waarschuwing mailen faalde:", err);
+  }
+}
+
+// De 5 nieuwste reviews, of de reden waarom deze API (nu) niet bruikbaar is.
+async function haalNieuwste(
+  apiKey: string,
+  placeId: string,
+): Promise<Opgehaald | { onbruikbaar: string }> {
   const url = new URL(DETAILS_ENDPOINT);
   url.searchParams.set("place_id", placeId);
   url.searchParams.set("fields", "rating,user_ratings_total,reviews");
@@ -59,8 +91,7 @@ async function haalNieuwste(apiKey: string, placeId: string): Promise<Opgehaald 
     const res = await fetch(url);
     const body = await res.json();
     if (!res.ok || body.status !== "OK") {
-      console.warn("Place Details (nieuwste) niet bruikbaar:", res.status, body.status, body.error_message);
-      return null;
+      return { onbruikbaar: `HTTP ${res.status}, ${body.status}: ${body.error_message ?? "geen toelichting"}` };
     }
     const result = body.result ?? {};
     return {
@@ -69,8 +100,7 @@ async function haalNieuwste(apiKey: string, placeId: string): Promise<Opgehaald 
       totaal: result.user_ratings_total ?? null,
     };
   } catch (err) {
-    console.warn("Place Details (nieuwste) faalde:", err);
-    return null;
+    return { onbruikbaar: err instanceof Error ? err.message : String(err) };
   }
 }
 
@@ -124,9 +154,26 @@ Deno.serve(async (req: Request) => {
     // dus die proberen we eerst. Weigert hij (staat niet aan op de key, of Google
     // zet hem uit), dan valt de sync terug op de Places API (New), zoals voorheen.
     let opgehaald = await haalNieuwste(apiKey, placeId);
-    const nieuwsteEerst = opgehaald !== null;
-    opgehaald ??= await haalRelevantste(apiKey, placeId);
-    if ("fout" in opgehaald) return json(opgehaald.fout, 502);
+    const nieuwsteEerst = !("onbruikbaar" in opgehaald);
+    if ("onbruikbaar" in opgehaald) {
+      console.warn("Place Details (nieuwste) niet bruikbaar:", opgehaald.onbruikbaar);
+      await waarschuw(
+        "nieuwe reviews kunnen gemist worden",
+        "De sync kon de nieuwste Google-reviews niet ophalen en viel terug op de 5 die " +
+          "Google 'relevant' vindt. Zolang dat zo is, kan een nieuwe review de site missen.\n\n" +
+          `Reden van Google: ${opgehaald.onbruikbaar}\n\n` +
+          "Meestal staat de oudere 'Places API' niet (meer) aan voor de key in Google Cloud " +
+          "(project My First Project), of heeft Google hem uitgezet.",
+      );
+      opgehaald = await haalRelevantste(apiKey, placeId);
+    }
+    if ("fout" in opgehaald) {
+      await waarschuw(
+        "mislukt",
+        `De sync kon helemaal geen reviews ophalen bij Google.\n\n${JSON.stringify(opgehaald.fout)}`,
+      );
+      return json(opgehaald.fout, 502);
+    }
 
     const runAt = new Date().toISOString();
 
@@ -180,6 +227,8 @@ Deno.serve(async (req: Request) => {
       total: opgehaald.totaal,
     });
   } catch (err) {
-    return json({ error: err instanceof Error ? err.message : String(err) }, 500);
+    const melding = err instanceof Error ? err.message : String(err);
+    await waarschuw("mislukt", `De sync liep vast bij het opslaan in de database.\n\n${melding}`);
+    return json({ error: melding }, 500);
   }
 });
