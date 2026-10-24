@@ -13,7 +13,10 @@ import { describe, expect, it } from "vitest";
 // Deze test faalt zodra iemand een pushGtmEvent toevoegt zonder de container bij
 // te werken, of andersom. Werk bij een wijziging ook docs/tracking.md bij.
 
-const CONTAINER = "docs/gtm/GTM-P6W5MNN4_v8.json";
+const CONTAINER = "docs/gtm/GTM-P6W5MNN4_v9.json";
+// De vorige export, zoals hij uit GTM kwam. v9 voegt alleen Meta-items toe; de
+// tests onderaan bewaken dat er aan de bestaande items niets veranderd is.
+const VORIGE = "docs/gtm/GTM-P6W5MNN4_v8.json";
 
 interface Parameter {
   key: string;
@@ -25,17 +28,24 @@ interface Entity {
   name: string;
   type: string;
   parameter?: Parameter[];
+  tagId?: string;
   triggerId?: string;
+  variableId?: string;
   firingTriggerId?: string[];
-  customEventFilter?: { parameter: Parameter[] }[];
+  setupTag?: { tagName: string; stopOnSetupFailure?: boolean }[];
+  customEventFilter?: { type: string; parameter: Parameter[] }[];
+  filter?: { type: string; parameter: Parameter[] }[];
 }
-
-const container = JSON.parse(readFileSync(CONTAINER, "utf8")).containerVersion as {
+interface Container {
   tag: Entity[];
   trigger: Entity[];
   variable: Entity[];
   builtInVariable: { name: string }[];
-};
+}
+
+const lees = (pad: string) => JSON.parse(readFileSync(pad, "utf8")).containerVersion as Container;
+const container = lees(CONTAINER);
+const vorige = lees(VORIGE);
 
 const bronbestanden = (map: string): string[] =>
   readdirSync(map, { withFileTypes: true }).flatMap((item) => {
@@ -50,22 +60,30 @@ const codeEvents = new Set(
     .map((m) => m[1]),
 );
 
-const customEventTriggers = new Map(
-  container.trigger
-    .filter((t) => t.type === "CUSTOM_EVENT")
-    .map((t) => [t.customEventFilter![0].parameter[1].value!, t.triggerId!]),
-);
+// Axeptio pusht zijn eigen events (axeptio_activate_<service>, axeptio_update);
+// die komen niet uit onze code en vallen dus buiten de vergelijking hieronder.
+const eventVanTrigger = (t: Entity) => t.customEventFilter![0].parameter[1].value!;
+const isAxeptioTrigger = (t: Entity) => eventVanTrigger(t).startsWith("^axeptio_");
+
+// Eén event kan meerdere triggers hebben (GA4 en Meta), dus per event een lijst.
+const customEventTriggers = new Map<string, string[]>();
+for (const t of container.trigger.filter((t) => t.type === "CUSTOM_EVENT" && !isAxeptioTrigger(t))) {
+  const event = eventVanTrigger(t);
+  customEventTriggers.set(event, [...(customEventTriggers.get(event) ?? []), t.triggerId!]);
+}
 
 describe("GTM-container", () => {
   it("heeft voor elk event dat de code pusht een trigger én een tag", () => {
     const getriggerd = new Set(container.tag.flatMap((t) => t.firingTriggerId ?? []));
 
     for (const event of [...codeEvents].sort()) {
-      const triggerId = customEventTriggers.get(event);
-      expect(triggerId, `de code pusht "${event}" maar de container heeft er geen trigger voor`).toBeDefined();
-      expect(getriggerd.has(triggerId!), `trigger voor "${event}" bestaat maar geen enkele tag gebruikt hem`).toBe(
-        true,
-      );
+      const triggerIds = customEventTriggers.get(event);
+      expect(triggerIds, `de code pusht "${event}" maar de container heeft er geen trigger voor`).toBeDefined();
+      for (const triggerId of triggerIds!) {
+        expect(getriggerd.has(triggerId), `trigger ${triggerId} voor "${event}" wordt door geen enkele tag gebruikt`).toBe(
+          true,
+        );
+      }
     }
   });
 
@@ -121,5 +139,137 @@ describe("GTM-container", () => {
         `tag "${tag.name}" stuurt page_location zonder de opschoon-variabele`,
       ).toBe(true);
     }
+  });
+});
+
+describe("GTM-container: v9 laat v8 ongemoeid", () => {
+  const soorten = [
+    ["tag", "tagId"],
+    ["trigger", "triggerId"],
+    ["variable", "variableId"],
+  ] as const;
+
+  for (const [soort, idVeld] of soorten) {
+    it(`bevat elke ${soort} uit v8 ongewijzigd`, () => {
+      for (const oud of vorige[soort]) {
+        const nieuw = container[soort].find((x) => x[idVeld] === oud[idVeld]);
+        expect(nieuw, `${soort} ${oud[idVeld]} "${oud.name}" ontbreekt in v9`).toBeDefined();
+        expect(nieuw, `${soort} "${oud.name}" is veranderd ten opzichte van v8`).toEqual(oud);
+      }
+    });
+
+    it(`voegt alleen ${soort}s toe die met "Meta - " beginnen, met unieke ids en namen`, () => {
+      const oudeIds = new Set(vorige[soort].map((x) => x[idVeld]));
+      for (const x of container[soort].filter((x) => !oudeIds.has(x[idVeld]))) {
+        expect(x.name.startsWith("Meta - "), `nieuw ${soort} "${x.name}" hoort met "Meta - " te beginnen`).toBe(true);
+      }
+      const ids = container[soort].map((x) => x[idVeld]);
+      expect(new Set(ids).size).toBe(ids.length);
+      const namen = container[soort].map((x) => x.name);
+      expect(new Set(namen).size).toBe(namen.length);
+    });
+  }
+
+  it("gebruikt geen id twee keer, ook niet tussen tags, triggers en variabelen", () => {
+    // GTM nummert alle drie uit één teller; de export volgt dat.
+    const ids = [
+      ...container.tag.map((x) => x.tagId),
+      ...container.trigger.map((x) => x.triggerId),
+      ...container.variable.map((x) => x.variableId),
+    ];
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
+describe("GTM-container: Meta-pixel", () => {
+  const metaTags = container.tag.filter((t) => t.name.startsWith("Meta - "));
+  const trigger = (id: string) => container.trigger.find((t) => t.triggerId === id)!;
+  const tagNaam = (naam: string) => container.tag.find((t) => t.name === naam)!;
+  const variabele = (naam: string) => container.variable.find((v) => v.name === naam)!;
+  const html = (t: Entity) => t.parameter!.find((p) => p.key === "html")!.value!;
+  const eventsVan = (t: Entity) => t.firingTriggerId!.map((id) => eventVanTrigger(trigger(id)));
+  const basis = tagNaam("Meta - Pixel basis");
+
+  it("heeft de basistag, ViewContent en Lead", () => {
+    expect(metaTags.map((t) => t.name).sort()).toEqual(["Meta - Lead", "Meta - Pixel basis", "Meta - ViewContent"]);
+  });
+
+  it("laat geen enkele Meta-tag vuren zonder toestemming in Axeptio", () => {
+    for (const tag of metaTags) {
+      expect(tag.firingTriggerId!.length).toBeGreaterThan(0);
+      for (const id of tag.firingTriggerId!) {
+        // Geen ingebouwde trigger (All Pages, Initialization): daar zit geen voorwaarde op.
+        expect(id.startsWith("21474795"), `tag "${tag.name}" hangt aan een ingebouwde trigger`).toBe(false);
+        const t = trigger(id);
+        expect(t.type).toBe("CUSTOM_EVENT");
+        const voorwaarden = (t.filter ?? []).map((f) => [f.type, f.parameter[0].value, f.parameter[1].value]);
+        expect(voorwaarden, `trigger "${t.name}" van "${tag.name}" vraagt geen toestemming`).toContainEqual([
+          "EQUALS",
+          "{{Meta - Toestemming}}",
+          "true",
+        ]);
+      }
+    }
+  });
+
+  it("leest de toestemming af aan de Axeptio-service, die op één plek staat", () => {
+    const service = variabele("Meta - Axeptio service");
+    expect(service.type).toBe("c");
+    const js = variabele("Meta - Toestemming").parameter![0].value!;
+    expect(js).toContain("{{Meta - Axeptio service}}");
+    expect(js).toContain("axeptio_authorized_vendors");
+    // Nergens anders de servicenaam hardgecodeerd.
+    const rest = JSON.stringify(container).replace(JSON.stringify(service), "");
+    expect(rest).not.toContain(service.parameter![0].value!);
+  });
+
+  it("haalt het pixel-ID uit één Constant-variabele", () => {
+    const pixel = container.variable.filter((v) => v.name === "Meta - Pixel ID");
+    expect(pixel).toHaveLength(1);
+    expect(pixel[0].type).toBe("c");
+    // De dataset "Voortraject website", niet de WhatsApp-dataset 4241724042749562.
+    expect(pixel[0].parameter![0].value).toBe("1138129071891178");
+    expect(html(basis)).toContain("String({{Meta - Pixel ID}})");
+    expect(html(basis)).toContain("fbq('init', pixelId)");
+    // Geen los pixel-ID (een lang getal) in de tags zelf.
+    for (const tag of metaTags) expect(html(tag)).not.toMatch(/\d{8,}/);
+  });
+
+  it("vuurt ViewContent en Lead pas nadat de basistag geladen is", () => {
+    for (const naam of ["Meta - ViewContent", "Meta - Lead"]) {
+      const tag = tagNaam(naam);
+      expect(tag.setupTag).toEqual([{ tagName: "Meta - Pixel basis", stopOnSetupFailure: true }]);
+      expect(html(tag)).toContain(`fbq('track', '${naam.slice("Meta - ".length)}'`);
+      expect(html(tag)).toContain("{{Meta - content_name}}");
+      expect(html(tag)).toContain("{ eventID: String(eventId) }");
+    }
+  });
+
+  it("koppelt ViewContent aan subsidiecheck_start en Lead aan subsidiecheck_lead, als content_name subsidiecheck", () => {
+    expect(eventsVan(tagNaam("Meta - ViewContent"))).toEqual(["subsidiecheck_start"]);
+    expect(eventsVan(tagNaam("Meta - Lead"))).toEqual(["subsidiecheck_lead"]);
+    for (const event of ["subsidiecheck_start", "subsidiecheck_lead"]) {
+      expect(codeEvents.has(event), `de code pusht "${event}" niet meer`).toBe(true);
+    }
+
+    const rijen = variabele("Meta - content_name")
+      .parameter!.find((p) => p.key === "map")!
+      .list!.map((r) => [r.map[0].value, r.map[1].value]);
+    expect(rijen).toEqual([
+      ["subsidiecheck_start", "subsidiecheck"],
+      ["subsidiecheck_lead", "subsidiecheck"],
+    ]);
+    // Een funnel-event in de opzoektabel zonder trigger (of andersom) meet niets.
+    const metaEvents = [...eventsVan(tagNaam("Meta - ViewContent")), ...eventsVan(tagNaam("Meta - Lead"))].sort();
+    expect(rijen.map(([event]) => event).sort()).toEqual(metaEvents);
+  });
+
+  it("stuurt PageView op dezelfde momenten als GA4: na de toestemming en bij virtual_page_view", () => {
+    const events = eventsVan(basis);
+    expect(events).toContain("virtual_page_view");
+    expect(events.some((e) => e.startsWith("^axeptio_"))).toBe(true);
+    expect(html(basis)).toContain("fbq('track', 'PageView')");
+    // De SPA-weergaves sturen we zelf, dus de automatische pushState-telling van de pixel moet uit.
+    expect(html(basis)).toContain("fbq.disablePushState = true");
   });
 });

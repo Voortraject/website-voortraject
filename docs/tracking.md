@@ -6,6 +6,7 @@ stilzwijgend een tag in de container. Werk dit bestand dus bij in dezelfde PR al
 
 - **Container:** `GTM-P6W5MNN4` (Voortraject.nl)
 - **GA4-property:** `G-VQL43876VN`
+- **Meta-pixel:** dataset *Voortraject website*, ID in de GTM-variabele `Meta - Pixel ID` (zie hieronder)
 - **Helper:** [`src/lib/gtm.ts`](../src/lib/gtm.ts), functie `pushGtmEvent(event, data)`
 
 ## Regels
@@ -156,3 +157,29 @@ De veilige startwaarde (`gtag('consent', 'default', …)` met alles op `denied`)
 bovenaan `<head>` in [`index.html`](../index.html), vóór het GTM-snippet. Dat moet daar staan:
 Axeptio laadt async, en een consent-signaal dat nog niet gezet is behandelt Google als `granted`.
 Axeptio stuurt daarna alleen nog de update na de keuze van de bezoeker.
+
+## Meta-pixel
+
+Sinds container v9 draait naast GA4 ook de Meta-pixel, volledig in GTM: de site pusht er niets
+extra's voor. Eén pixel voor de hele site, en per funnel dezelfde drie standaardevents met een eigen
+`content_name` (afspraak: `tasks/meta-advertenties-structuur.md` in het CRM-repo).
+
+| Meta-event | Op welk dataLayer-event | content_name |
+|---|---|---|
+| `PageView` | de Axeptio-toestemming (eerste weergave) en `virtual_page_view` | — |
+| `ViewContent` | `subsidiecheck_start` | `subsidiecheck` |
+| `Lead` | `subsidiecheck_lead` | `subsidiecheck` |
+
+- **Toestemming:** niets van Meta vuurt zonder Axeptio-toestemming voor de Meta-service
+  (`facebook_pixel`, GTM-variabele `Meta - Axeptio service`). Meta kent Google Consent Mode niet;
+  de voorwaarde zit daarom op elke Meta-trigger via `{{Meta - Toestemming}}`.
+- **`event_id`:** stuurt een push een `event_id` mee, dan gaat die als `eventID` naar Meta, voor
+  latere deduplicatie met de Conversions API. `subsidiecheck_start` en `subsidiecheck_lead` doen dat
+  (zie *Herkomst en `event_id` bij een lead* hierboven); een push zonder `event_id` gaat zonder.
+- **Adres in de URL:** de pixel stuurt de volledige URL mee. Postcode en huisnummer staan daarom
+  nooit in de URL van `/subsidiecheck`: het script bovenaan `index.html` en `AdresUitUrl` halen ze
+  eruit voordat GTM iets meet (#212). Zet nooit meer persoonsgegevens in een querystring.
+- **Nieuwe funnel:** laat de code een `<funnel>_start` en `<funnel>_lead` pushen (met `pushGtmEvent`,
+  zodat `gtmContainer.test.ts` ze ziet) en voeg in GTM twee triggers en twee rijen in de opzoektabel
+  `Meta - content_name` toe. Stappenplan, importeren (Samenvoegen, nooit Overschrijven) en het
+  invullen van het pixel-ID: [`gtm/README.md`](gtm/README.md#meta-pixel).
