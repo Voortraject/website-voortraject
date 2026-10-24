@@ -29,7 +29,7 @@ const Cookie = () => {
               Cookieverklaring Voortraject
             </h1>
             <p className="hs-tekst mt-2 mb-8 text-[15px] italic md:mb-10">
-              Versie juni 2026
+              Versie oktober 2026
             </p>
 
             <div className="mb-8 md:mb-10">
@@ -65,7 +65,7 @@ const Cookie = () => {
                   opgeslagen. Met cookies en vergelijkbare technieken kunnen wij
                   onze website laten functioneren en het gebruik van de website
                   meten. Sommige cookies worden door ons geplaatst, andere door
-                  derde partijen, zoals Google en Microsoft.
+                  derde partijen, zoals Google, Microsoft en Meta.
                 </p>
               </div>
             </div>
@@ -81,7 +81,8 @@ const Cookie = () => {
                   werken en om uw cookievoorkeuren te onthouden.
                 </p>
                 <p className="mb-3">
-                  Voor analytische cookies vragen wij vooraf uw toestemming. Deze
+                  Voor analytische en marketingcookies vragen wij vooraf uw
+                  toestemming. Deze
                   cookies worden pas geplaatst nadat u daarvoor toestemming heeft
                   gegeven via ons cookievenster. U kunt uw keuze op elk moment
                   wijzigen of intrekken door het cookievenster opnieuw te openen
@@ -371,6 +372,73 @@ const Cookie = () => {
                   </tbody>
                 </table>
               </div>
+
+              <h3 className="mt-6 mb-2.5 font-['Inter_Tight',_'Inter',_sans-serif] text-[16.5px] font-bold text-primary">
+                4.3 Marketingcookies
+              </h3>
+              <p className="hs-tekst text-[15px] leading-[1.7] md:text-[16px] mb-4">
+                Deze cookies gebruiken wij om te meten welke advertenties tot een
+                aanvraag leiden. Ze worden alleen geplaatst na toestemming.
+              </p>
+              <p className="mb-3 text-[15px] font-bold text-primary">
+                Meta-pixel (Meta)
+              </p>
+              <p className="hs-tekst text-[15px] leading-[1.7] md:text-[16px] mb-4">
+                Met de Meta-pixel zien wij welke advertenties op Facebook en
+                Instagram bezoekers naar onze website brengen. Naam, e-mailadres,
+                telefoonnummer en adres sturen wij niet naar Meta.
+              </p>
+              <div className="hs-tegel mb-6 overflow-x-auto">
+                <table className={TABEL}>
+                  <thead>
+                    <tr className="bg-[hsl(var(--rs-hoofd-midden))]">
+                      <th className={KOPCEL}>
+                        Cookie
+                      </th>
+                      <th className={KOPCEL}>
+                        Doel
+                      </th>
+                      <th className={KOPCEL}>
+                        Partij
+                      </th>
+                      <th className={KOPCEL}>
+                        Bewaartermijn
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className={RIJ}>
+                      <td className={`${CEL} max-sm:pt-0 max-sm:font-bold max-sm:text-primary`}>
+                        _fbp
+                      </td>
+                      <td data-label="Doel" className={`${CEL} ${CEL_LABEL}`}>
+                        Herkennen van een browser, om bezoeken en aanvragen aan
+                        advertenties te koppelen
+                      </td>
+                      <td data-label="Partij" className={`${CEL} ${CEL_LABEL}`}>
+                        Meta Platforms Ireland Ltd.
+                      </td>
+                      <td data-label="Bewaartermijn" className={`${CEL} ${CEL_LABEL}`}>
+                        90 dagen
+                      </td>
+                    </tr>
+                    <tr className={RIJ}>
+                      <td className={`${CEL} max-sm:pt-0 max-sm:font-bold max-sm:text-primary`}>
+                        _fbc
+                      </td>
+                      <td data-label="Doel" className={`${CEL} ${CEL_LABEL}`}>
+                        Onthouden via welke advertentie een bezoek begon
+                      </td>
+                      <td data-label="Partij" className={`${CEL} ${CEL_LABEL}`}>
+                        Meta Platforms Ireland Ltd.
+                      </td>
+                      <td data-label="Bewaartermijn" className={`${CEL} ${CEL_LABEL}`}>
+                        90 dagen
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             <div className="mb-8 md:mb-10">
@@ -381,7 +449,9 @@ const Cookie = () => {
                 <p>
                   Google en Microsoft zijn Amerikaanse partijen. Bij gebruik van hun
                   cookies kunnen persoonsgegevens naar de Verenigde Staten worden
-                  doorgegeven. Deze doorgifte vindt plaats op basis van het EU-VS
+                  doorgegeven. Dat geldt ook voor Meta: Meta Platforms Ireland Ltd.
+                  kan gegevens doorgeven aan Meta Platforms, Inc. in de Verenigde
+                  Staten. Deze doorgifte vindt plaats op basis van het EU-VS
                   Data Privacy Framework en/of de standaardcontractbepalingen van
                   de Europese Commissie, met passende waarborgen conform hoofdstuk
                   V AVG. Zie ook onze{" "}

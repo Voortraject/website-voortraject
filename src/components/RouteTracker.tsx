@@ -21,9 +21,11 @@
  *    pas ná deze effect-cyclus, dus direct uitlezen levert de titel van de
  *    vórige pagina op.
  *
- * De querystring gaat bewust NIET mee. Op /subsidiecheck staat de volledige
- * invoer in de URL (?pc=…&hn=…), en dat is het adres van de bezoeker. Dat hoort
- * niet in GA4 thuis. Zie ook de PII-waarschuwing in src/lib/gtm.ts.
+ * De querystring gaat bewust NIET mee. Op /subsidiecheck stond tot oktober 2026
+ * het adres van de bezoeker in de URL (?pc=…&hn=…); dat staat nu in de
+ * history-state, en AdresUitUrl (vóór deze component in App.tsx) haalt een adres
+ * dat toch in de URL belandt eruit voordat dit effect draait. Zie ook de
+ * PII-waarschuwing in src/lib/gtm.ts.
  */
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";

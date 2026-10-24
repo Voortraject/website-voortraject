@@ -66,11 +66,14 @@ import {
   heeftMailserver,
   isSysteemadres,
   naarMailRegeling,
+  schoonEventId,
+  schoonHerkomst,
   schoonOverzichtUrl,
   teSnelIngevuld,
   VENSTER_PER_ADRES_MS,
   type MailRegeling,
 } from "./beveiliging.ts";
+import { insertLead } from "./leadInsert.ts";
 import { escapeHtml, maakOverzichtMail, type BagAdres } from "./overzichtMail.ts";
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
@@ -240,6 +243,13 @@ type Payload = {
   // function). Bewust niet in dit type: die lijst wordt nergens meer gelezen.
   /** Deelbare URL van het volledige resultaat op de site (voor de online-link). */
   overzichtUrl?: string;
+  /**
+   * utm-tags en fbclid waarmee de bezoeker binnenkwam (zie src/lib/herkomst.ts).
+   * Alleen voor de database, nooit voor een mail; zie schoonHerkomst.
+   */
+  herkomst?: unknown;
+  /** Id van het `subsidiecheck_lead`-event in de dataLayer, voor latere deduplicatie bij Meta. */
+  eventId?: unknown;
 };
 
 const CORS = {
@@ -301,7 +311,7 @@ function bezoekerIp(req: Request): string {
   return delen.length > 0 ? delen[delen.length - 1] : "onbekend";
 }
 
-// Alleen het stukje client dat we hier gebruiken, net als LeadClient hieronder.
+// Alleen het stukje client dat we hier gebruiken, net als LeadClient in leadInsert.ts.
 // Let op `PromiseLike` en niet `Promise`: `rpc()` levert een thenable builder op,
 // geen kale Promise, en met `Promise` sluit dit type niet aan op de echte client.
 type RemClient = {
@@ -410,34 +420,6 @@ async function verstuurMail(opts: {
     return false;
   }
   return true;
-}
-
-// Schrijft de lead weg en geeft het nieuwe id terug. De verrijkingskolommen
-// (energielabel, bouwjaar) zijn een extraatje: weigert het CRM er een, bijvoorbeeld
-// door een CHECK die een labelvorm niet kent, dan proberen we het één keer opnieuw
-// zonder die velden. Een lead verliezen om een extraatje mag nooit.
-// Alleen het stukje client dat we hier gebruiken; het echte type komt uit een
-// Deno-import die de eslint-config van de site niet kent.
-type LeadClient = {
-  from: (tabel: string) => {
-    insert: (rij: Record<string, unknown>) => {
-      select: (kolommen: string) => {
-        maybeSingle: () => Promise<{ data: { id?: unknown } | null; error: unknown }>;
-      };
-    };
-  };
-};
-
-async function insertLead(supabase: LeadClient, basis: Record<string, unknown>, verrijking: Record<string, unknown>) {
-  const eerste = await supabase
-    .from("leads_bewoners")
-    .insert({ ...basis, ...verrijking })
-    .select("id")
-    .maybeSingle();
-  if (!eerste.error || Object.keys(verrijking).length === 0) return eerste;
-
-  console.error("Lead-insert faalde mét verrijking, opnieuw zonder", eerste.error);
-  return await supabase.from("leads_bewoners").insert(basis).select("id").maybeSingle();
 }
 
 // Onze echte Google-beoordeling uit de tabel die `sync-google-reviews` bijhoudt,
@@ -767,6 +749,14 @@ Deno.serve(async (req: Request) => {
     // valt daar dus buiten — reden te meer om ze hier niet te sturen.
   };
 
+  // Herkomst: utm-tags, fbclid en het event-id van de lead, elk streng gecontroleerd
+  // (schoonHerkomst, schoonEventId). Alleen voor de database: deze waarden komen uit
+  // de request en gaan dus nooit in een mail. insertLead valt terug op een insert
+  // zonder deze kolommen zolang de CRM-migratie nog niet gedraaid heeft.
+  const herkomst: Record<string, string> = { ...schoonHerkomst(payload.herkomst) };
+  const eventId = schoonEventId(payload.eventId);
+  if (eventId) herkomst.meta_event_id = eventId;
+
   const volledigeNaam = [voornaam, tussenvoegsel, achternaam].filter(Boolean).join(" ") || legacyNaam;
   const teamAdres = Deno.env.get("MAIL_TEAM") || Deno.env.get("MAIL_BCC") || DEFAULT_REPLY_TO;
   // Alleen een link naar onze eigen subsidiecheck; zie schoonOverzichtUrl.
@@ -843,7 +833,7 @@ Deno.serve(async (req: Request) => {
         // hier het kopje boven de vraag, zodat een lead er in het CRM hetzelfde
         // uitziet of hij nu via deze route of via de update hierboven is ontstaan.
         const notities = [notitie, vraagBlok].filter(Boolean).join("\n\n");
-        const { error } = await insertLead(supabase, { ...leadVelden, notities }, verrijking);
+        const { error } = await insertLead(supabase, { ...leadVelden, notities }, verrijking, herkomst);
         if (error) throw error;
       }
     } catch (err) {
@@ -918,7 +908,12 @@ Deno.serve(async (req: Request) => {
     // de bewoner aan de slag wil); een latere vraag komt er via route "bericht"
     // onder. Het id gaat terug naar de site, zodat die vraag bij déze lead landt
     // in plaats van een tweede aan te maken.
-    const { data: nieuweLead, error } = await insertLead(supabase, { ...leadVelden, notities: notitie }, verrijking);
+    const { data: nieuweLead, error } = await insertLead(
+      supabase,
+      { ...leadVelden, notities: notitie },
+      verrijking,
+      herkomst,
+    );
     if (error) throw error;
     leadId = typeof nieuweLead?.id === "string" ? nieuweLead.id : null;
   } catch (err) {

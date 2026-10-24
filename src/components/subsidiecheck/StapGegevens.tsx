@@ -9,6 +9,7 @@ import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
 import { useWoningInfo, woningInfoGeldig, woningInfoOpties } from "@/hooks/useWoningInfo";
 import { formulierFoutMelding } from "@/lib/formulierFout";
 import { pushGtmEvent } from "@/lib/gtm";
+import { maakEventId } from "@/lib/herkomst";
 import type { PdokAdres } from "@/lib/pdok";
 import { subsidieProvider, type SubsidieCheckInput, type SubsidieRegeling } from "@/lib/subsidies";
 import { useTurnstile } from "@/lib/turnstile";
@@ -115,6 +116,11 @@ interface StapGegevensProps {
   adres: PdokAdres;
   /** Gegevens opgeslagen → open het resultaat. */
   onOntgrendeld: () => void;
+  /**
+   * Link naar dit overzicht voor de mail (zie bouwOverzichtUrl in checkStaat.ts).
+   * Niet `window.location.href`: daar staat het adres bewust niet meer in.
+   */
+  overzichtUrl?: string;
 }
 
 // De gegevens-poort: de tussenstap tussen "Jouw woning" en het resultaat.
@@ -137,7 +143,7 @@ interface StapGegevensProps {
 // De lead gaat naar het CRM (`leads_bewoners`, bron "Voortraject", formulier
 // "subsidietool") én het overzicht gaat per mail. Faalt de bron, dan gaat de lead
 // er alsnog in (zonder mail) en toont het resultaat zelf de foutstaat.
-export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps) => {
+export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: StapGegevensProps) => {
   const [voornaam, setVoornaam] = useState("");
   const [achternaam, setAchternaam] = useState("");
   const [email, setEmail] = useState("");
@@ -271,6 +277,10 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
 
     setBezig(true);
     const verzondenOp = Date.now();
+    // Eén id voor dit lead-moment: in de dataLayer-push (Meta krijgt hem als
+    // eventID) én bij de lead in het CRM. Zo is een browser-event later te
+    // ontdubbelen tegen een server-event via de Conversions API.
+    const eventId = maakEventId();
     // Nu vast starten: dit loopt parallel aan het ophalen van de regelingen
     // hieronder, dus in het normale geval kost het geen extra wachttijd.
     const verrijkingBelofte = haalVerrijking();
@@ -310,6 +320,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
           hulpvraag: hulpvragen.join(","),
           // 1/0 en niet true/false: pushGtmEvent neemt alleen tekst en getallen.
           bron_fout: 1,
+          event_id: eventId,
         });
         await rondOverdrachtAf(verzondenOp);
         onOntgrendeld();
@@ -322,11 +333,12 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         notitie,
         verrijking: await verrijkingBelofte,
         toestemming,
-        // Deelbare URL van dit resultaat (voor de "bekijk online"-link in de mail).
-        overzichtUrl: typeof window !== "undefined" ? window.location.href : undefined,
+        // Link naar dit resultaat (voor de "bekijk online"-link in de mail).
+        overzichtUrl,
         honeypot,
         duurMs,
         turnstileToken: turnstile.token(),
+        eventId,
       });
       // Onthouden voor de rest van deze sessie: het resultaat vraagt deze gegevens
       // dan niet opnieuw, en een vraag daar landt bij dezelfde lead.
@@ -336,6 +348,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld }: StapGegevensProps)
         bewonertype: input.bewonertype,
         aantal_regelingen: opgehaald.length,
         hulpvraag: hulpvragen.join(","),
+        event_id: eventId,
       });
       await rondOverdrachtAf(verzondenOp);
       onOntgrendeld(); // component unmount hierna → bezig blijft bewust true

@@ -1,5 +1,6 @@
 import { SUPABASE_EXTERNAL_ANON_KEY, supabaseExternal } from "@/integrations/supabase/external-client";
 import { MailFunctieFout } from "@/lib/formulierFout";
+import { leesHerkomst } from "@/lib/herkomst";
 import { normalizePostcode, type PdokAdres } from "@/lib/pdok";
 import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
 import {
@@ -256,8 +257,11 @@ export async function verstuurSubsidiecheckLead(args: {
   duurMs?: number;
   /** Token van de onzichtbare Turnstile-controle, als die geladen is. */
   turnstileToken?: string;
+  /** Hetzelfde id als `event_id` in de `subsidiecheck_lead`-push (deduplicatie bij Meta). */
+  eventId?: string;
 }): Promise<{ leadId?: string }> {
-  const { waarden, input, adres, notitie, verrijking, toestemming, overzichtUrl, honeypot, duurMs, turnstileToken } = args;
+  const { waarden, input, adres, notitie, verrijking, toestemming, overzichtUrl, honeypot, duurMs, turnstileToken, eventId } =
+    args;
 
   if (isTestmodus()) {
     meldTestmodus("lead + overzichtmail overgeslagen", { waarden, input, notitie });
@@ -306,6 +310,11 @@ export async function verstuurSubsidiecheckLead(args: {
       },
       adres: { straatnaam: adres.straatnaam, woonplaatsnaam: adres.woonplaatsnaam },
       overzichtUrl,
+      // Waar de bezoeker vandaan kwam (utm-tags, fbclid; zie src/lib/herkomst.ts)
+      // en het id van het lead-event. De function schrijft ze naar eigen kolommen
+      // op de lead en zet ze nooit in een mail.
+      herkomst: leesHerkomst(),
+      eventId,
       // Geen `regelingen` meer: de function haalt de lijst voor de mail sinds
       // oktober 2026 zelf op bij onze eigen bron en zet nooit tekst uit deze
       // request in de mail (zie supabase/functions/subsidiecheck-mail/overzichtMail.ts).
@@ -395,6 +404,8 @@ export async function verstuurSubsidiecheckBericht(args: {
       },
       adres: { straatnaam: adres.straatnaam, woonplaatsnaam: adres.woonplaatsnaam },
       overzichtUrl,
+      // Alleen gebruikt als de function hier een nieuwe lead van maakt.
+      herkomst: leesHerkomst(),
     }),
   });
   if (!res.ok) throw new MailFunctieFout(res.status, "subsidiecheck-mail (bericht)", await leesMelding(res));

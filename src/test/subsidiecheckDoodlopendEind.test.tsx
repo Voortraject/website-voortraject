@@ -20,6 +20,7 @@ vi.mock("@/lib/subsidies", async (importOriginal) => ({
   subsidieProvider: { naam: "test", check: vi.fn() },
 }));
 
+import { adresUitState, metAdres } from "@/components/subsidiecheck/checkStaat";
 import { DirectContact } from "@/components/subsidiecheck/DirectContact";
 import { GeenRegelingen } from "@/components/subsidiecheck/GeenRegelingen";
 import type { PdokAdres } from "@/lib/pdok";
@@ -42,16 +43,22 @@ const gefilterdeInput: SubsidieCheckInput = {
 };
 
 // Toont het pad + de querystring, zodat we kunnen zien dat het verbreden de
-// m-parameter weghaalt zónder adres of situatie kwijt te raken.
+// m-parameter weghaalt zónder adres of situatie kwijt te raken. Het adres staat
+// in de history-state (zie checkStaat.ts), dus die tonen we apart.
 const HuidigeUrl = () => {
-  const { pathname, search } = useLocation();
-  return <span data-testid="url">{`${pathname}${search}`}</span>;
+  const { pathname, search, state } = useLocation();
+  return (
+    <>
+      <span data-testid="url">{`${pathname}${search}`}</span>
+      <span data-testid="adres">{adresUitState(state)?.pc ?? ""}</span>
+    </>
+  );
 };
 
-const toon = (ui: ReactElement, url: string) =>
+const toon = (ui: ReactElement, url: string, state: unknown = null) =>
   render(
     <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
-      <MemoryRouter initialEntries={[url]}>
+      <MemoryRouter initialEntries={[{ pathname: url.split("?")[0], search: url.slice(url.indexOf("?")), state }]}>
         <Routes>
           <Route
             path="/subsidiecheck"
@@ -80,7 +87,11 @@ describe("nul regelingen na eigen filtering", () => {
         : [],
     );
 
-    toon(<GeenRegelingen input={gefilterdeInput} />, "/subsidiecheck?pc=7811AB&hn=1&type=woningeigenaar&m=thuisbatterij");
+    toon(
+      <GeenRegelingen input={gefilterdeInput} />,
+      "/subsidiecheck?type=woningeigenaar&m=thuisbatterij",
+      metAdres({ pc: "7811AB", hn: "1", tv: "", str: "", pl: "" }),
+    );
 
     expect(await screen.findByText(/Thuisbatterij vonden we niets/i)).toBeInTheDocument();
     const knop = await screen.findByRole("button", { name: /Toon alle 12 regelingen/i });
@@ -90,8 +101,10 @@ describe("nul regelingen na eigen filtering", () => {
     await waitFor(() => {
       const url = screen.getByTestId("url").textContent ?? "";
       expect(url).not.toContain("m=");
-      expect(url).toContain("pc=7811AB");
       expect(url).toContain("type=woningeigenaar");
+      // Het adres gaat mee naar de nieuwe history-entry, en komt niet in de URL.
+      expect(url).not.toContain("pc=");
+      expect(screen.getByTestId("adres").textContent).toBe("7811AB");
     });
   });
 

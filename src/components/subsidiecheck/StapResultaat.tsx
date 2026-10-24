@@ -47,6 +47,12 @@ interface StapResultaatProps {
   /** De bezoeker komt hier net vandaan de poort (niet via een herlaad of een
       gedeelde link). Dan tonen we het aankomstmoment. */
   netBinnen?: boolean;
+  /**
+   * Link naar dit overzicht, voor het team (zie bouwOverzichtUrl in
+   * checkStaat.ts). Niet `window.location.href`: daar staat het adres bewust
+   * niet meer in.
+   */
+  overzichtUrl?: string;
 }
 
 // De vragen die een knop elders op het resultaat in het vraagblok zet.
@@ -61,6 +67,7 @@ export const StapResultaat = ({
   input,
   adres,
   netBinnen = false,
+  overzichtUrl,
 }: StapResultaatProps) => {
   const { data: regelingen, isPending, isError, refetch } = useSubsidieCheck(input);
   const { data: woning, isPending: woningBezig } = useWoningInfo(input.postcode, input.huisnummer, input.toevoeging);
@@ -128,9 +135,8 @@ export const StapResultaat = ({
   const samenvatting = useMemo(() => maakSamenvatting(regelingen ?? []), [regelingen]);
   const bedragen = useMemo(() => topBedragen(regelingen ?? []), [regelingen]);
   const adresRegel = `${adres.straatnaam} ${input.huisnummer}${input.toevoeging ? ` ${input.toevoeging}` : ""}, ${adres.woonplaatsnaam}`;
-  // Deelbare URL van dit overzicht: gaat mee naar het team, zodat een adviseur
-  // precies ziet waar de vraag over gaat.
-  const overzichtUrl = typeof window !== "undefined" ? window.location.href : undefined;
+  // `overzichtUrl` (prop) gaat mee naar het team, zodat een adviseur precies
+  // ziet waar de vraag over gaat.
   const whatsappBericht = `Hallo, ik heb de subsidiecheck gedaan voor ${adresRegel}. Ik heb daar een vraag over:`;
   const nijBegun = inNijBegunGebied(adres);
 

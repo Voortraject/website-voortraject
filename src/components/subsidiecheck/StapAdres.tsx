@@ -6,6 +6,7 @@ import { SUBSIDIECHECK_BELOFTES } from "@/config/beloftes";
 import { GEMIDDELDE_REGELINGEN_ZIN } from "@/config/cijfers";
 import { usePdokAdres } from "@/hooks/usePdokAdres";
 import { pushGtmEvent } from "@/lib/gtm";
+import { maakEventId } from "@/lib/herkomst";
 import { displayPostcode, normalizePostcode, POSTCODE_RE, zoekAdres, type PdokAdres } from "@/lib/pdok";
 import {
   ALLE_MAATREGELEN,
@@ -193,6 +194,7 @@ export const StapAdres = ({
       pushGtmEvent("subsidiecheck_start", {
         gemeente: bevestigdAdres.gemeentenaam,
         provincie: bevestigdAdres.provincienaam,
+        event_id: maakEventId(),
       });
       onStart(postcode.trim(), huisnummer.trim(), toevoeging.trim(), bewonertype, gekozenMaatregelen());
       return;
@@ -238,7 +240,12 @@ export const StapAdres = ({
     );
 
     // Adres bevestigd = echte intentie; geen postcode/adres in het event (privacy).
-    pushGtmEvent("subsidiecheck_start", { gemeente: adres.gemeentenaam, provincie: adres.provincienaam });
+    // event_id: voor deduplicatie bij Meta (ViewContent); alleen in de push.
+    pushGtmEvent("subsidiecheck_start", {
+      gemeente: adres.gemeentenaam,
+      provincie: adres.provincienaam,
+      event_id: maakEventId(),
+    });
     onStart(postcode.trim(), huisnummer.trim(), toevoeging.trim(), bewonertype, gekozenMaatregelen());
   };
 
