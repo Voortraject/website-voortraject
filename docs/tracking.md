@@ -174,9 +174,11 @@ extra's voor. Eén pixel voor de hele site, en per funnel dezelfde drie standaar
   (`facebook_pixel`, GTM-variabele `Meta - Axeptio service`). Meta kent Google Consent Mode niet;
   de voorwaarde zit daarom op elke Meta-trigger via `{{Meta - Toestemming}}`.
 - **`event_id`:** stuurt een push een `event_id` mee, dan gaat die als `eventID` naar Meta, voor
-  latere deduplicatie met de Conversions API. Nu doet geen enkele push dat; dan blijft hij weg.
-- **Let op het adres in de URL:** de pixel stuurt de volledige URL mee, en op `/subsidiecheck` staan
-  daar postcode en huisnummer in. Zie *Bekende beperkingen* in [`gtm/README.md`](gtm/README.md).
+  latere deduplicatie met de Conversions API. `subsidiecheck_start` en `subsidiecheck_lead` doen dat
+  (zie *Herkomst en `event_id` bij een lead* hierboven); een push zonder `event_id` gaat zonder.
+- **Adres in de URL:** de pixel stuurt de volledige URL mee. Postcode en huisnummer staan daarom
+  nooit in de URL van `/subsidiecheck`: het script bovenaan `index.html` en `AdresUitUrl` halen ze
+  eruit voordat GTM iets meet (#212). Zet nooit meer persoonsgegevens in een querystring.
 - **Nieuwe funnel:** laat de code een `<funnel>_start` en `<funnel>_lead` pushen (met `pushGtmEvent`,
   zodat `gtmContainer.test.ts` ze ziet) en voeg in GTM twee triggers en twee rijen in de opzoektabel
   `Meta - content_name` toe. Stappenplan, importeren (Samenvoegen, nooit Overschrijven) en het

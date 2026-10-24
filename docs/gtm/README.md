@@ -199,12 +199,11 @@ publiceren van de container.
 
 ## Bekende beperkingen
 
-**Meta krijgt de volledige URL, dus ook het adres in de subsidiecheck.** De pixel stuurt bij elk
-event `window.location.href` mee, en die is niet vanuit GTM te overschrijven zoals bij GA4 met
-`{{js - page_location zonder adres}}`. Op `/subsidiecheck` staan postcode en huisnummer in de
-querystring (`?pc=…&hn=…`), en daar vuren `Lead` en meestal ook `PageView` en `ViewContent`. Beslis
-dit vóór het publiceren van v9: óf de site haalt het adres uit de URL zodra het is ingevuld (aparte
-website-PR), óf het wordt bewust geaccepteerd en in de privacyverklaring genoemd.
+**Meta krijgt de volledige URL.** De pixel stuurt bij elk event `window.location.href` mee, en die
+is niet vanuit GTM te overschrijven zoals bij GA4 met `{{js - page_location zonder adres}}`. Opgelost
+aan de kant van de site (#212): postcode en huisnummer staan niet meer in de URL van
+`/subsidiecheck`; een deeplink met `?pc=…&hn=…` wordt bij binnenkomst geschoond voordat GTM laadt.
+Publiceer v9 dus nooit op een versie van de site van vóór #212.
 
 **Scrolldiepte na client-side navigatie.**
 
