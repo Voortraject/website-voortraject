@@ -227,6 +227,8 @@ describe("GTM-container: Meta-pixel", () => {
     const pixel = container.variable.filter((v) => v.name === "Meta - Pixel ID");
     expect(pixel).toHaveLength(1);
     expect(pixel[0].type).toBe("c");
+    // De dataset "Voortraject website", niet de WhatsApp-dataset 4241724042749562.
+    expect(pixel[0].parameter![0].value).toBe("1138129071891178");
     expect(html(basis)).toContain("String({{Meta - Pixel ID}})");
     expect(html(basis)).toContain("fbq('init', pixelId)");
     // Geen los pixel-ID (een lang getal) in de tags zelf.

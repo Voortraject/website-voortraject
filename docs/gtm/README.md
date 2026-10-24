@@ -32,7 +32,7 @@ Voor v9 is dat al zo: de Meta-tags luisteren naar events die de site nu al pusht
 
 | Item | Soort | Wat het doet |
 |---|---|---|
-| `Meta - Pixel ID` | Constante | Het pixel-ID. Staat op `PIXEL_ID_INVULLEN`; zolang dat er staat laadt de pixel niet |
+| `Meta - Pixel ID` | Constante | Het pixel-ID: `1138129071891178` (dataset *Voortraject website*). Met de placeholder `PIXEL_ID_INVULLEN` laadt de pixel niet |
 | `Meta - Axeptio service` | Constante | De technische naam van de Meta-service in Axeptio: `facebook_pixel` |
 | `Meta - Toestemming` | Aangepast JavaScript | `true` als Axeptio toestemming heeft voor die service, anders `false` |
 | `Meta - content_name` | Opzoektabel op `{{Event}}` | Welke funnel een event is: `subsidiecheck_start` en `subsidiecheck_lead` → `subsidiecheck` |
@@ -63,9 +63,10 @@ paginaweergave. Ook `autoConfig` staat uit: geen automatische knopklik-events.
 
 ### Pixel-ID invullen
 
-GTM → **Variabelen** → `Meta - Pixel ID` → waarde `PIXEL_ID_INVULLEN` vervangen door het ID van de
-dataset *Voortraject website* (Events Manager → de dataset → Instellingen; alleen cijfers). Werk
-daarna ook dit bestand bij, anders zet de volgende import de placeholder terug.
+Ingevuld op 24-10-2026: `1138129071891178`, de dataset *Voortraject website* (Events Manager → de
+dataset → Instellingen). Niet de WhatsApp-dataset `4241724042749562`. Verandert het ID ooit, pas dan
+GTM → **Variabelen** → `Meta - Pixel ID` aan én dit bestand, anders zet de volgende import het oude
+ID terug.
 
 De Axeptio-service staat op dezelfde manier in `Meta - Axeptio service`. Klopt `facebook_pixel` niet
 met de technische naam in de Axeptio-admin, dan alleen die waarde aanpassen.
