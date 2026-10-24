@@ -1,11 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
 import { Binnenkort } from "@/components/subsidiecheck/Binnenkort";
+import {
+  adresUitIndexHtml,
+  adresUitParams,
+  adresUitState,
+  bouwOverzichtUrl,
+  type CheckAdres,
+  checkParams,
+  metAdres,
+} from "@/components/subsidiecheck/checkStaat";
 import { leesContact } from "@/components/subsidiecheck/contactOpslag";
 import { StapAdres } from "@/components/subsidiecheck/StapAdres";
 import { StapGegevens } from "@/components/subsidiecheck/StapGegevens";
@@ -43,11 +52,25 @@ const RESULTAAT_STAP = STAPPEN.length;
 // schermwissel, hoe netjes de fade ook was.
 const UITLOOP_MS = 340;
 
-// De volledige stap-state leeft in de URL (?pc=…&hn=…&type=…&m=…): de
-// back-button werkt gewoon, een herlaad houdt je resultaat vast en het
-// overzicht is deelbaar. Geen m-parameter = alle maatregelen.
+// De stap-state leeft in de history: de keuzes in de URL (?type=…&m=…, plus
+// edit/sit), het adres in de state van de history-entry (zie checkStaat.ts). Zo
+// werkt de back-button gewoon en houdt een herlaad je resultaat vast, terwijl
+// postcode en huisnummer nooit in de URL staan die trackers meesturen. Geen
+// m-parameter = alle maatregelen.
 const SubsidiecheckLive = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+
+  // Het adres. Drie bronnen, in deze volgorde:
+  //  1. adresparameters die tóch in de URL staan (een navigatie binnen de app
+  //     naar /subsidiecheck?pc=…): het nieuwst, dus leidend;
+  //  2. de state van de huidige history-entry: de normale route;
+  //  3. wat index.html bij binnenkomst uit de URL haalde (de link in de mail).
+  // 1 en 3 zijn er alleen tot AdresUitUrl (in App.tsx) ze in de state heeft gezet,
+  // in hetzelfde commit als deze render. Zo is de eerste render al goed en
+  // springt de stap niet om (dat zou subsidiecheck_stap dubbel tellen).
+  const adresStaat: CheckAdres | null =
+    adresUitParams(searchParams) ?? adresUitState(location.state) ?? adresUitIndexHtml();
 
   // Testmodus (?test=1, nooit op het productiedomein): de hele flow werkt, maar
   // er gaat niets naar het CRM en er vertrekt geen mail. Eén keer uitlezen bij
@@ -58,9 +81,9 @@ const SubsidiecheckLive = () => {
     return isTestmodus();
   });
 
-  const pc = searchParams.get("pc") ?? "";
-  const hn = searchParams.get("hn") ?? "";
-  const tv = searchParams.get("tv") ?? "";
+  const pc = adresStaat?.pc ?? "";
+  const hn = adresStaat?.hn ?? "";
+  const tv = adresStaat?.tv ?? "";
   const typeParam = searchParams.get("type");
   const mParam = searchParams.get("m");
   // edit=1: gebruiker wil het adres aanpassen — toon stap 1 mét voorgevulde
@@ -70,7 +93,7 @@ const SubsidiecheckLive = () => {
   // met het adres als compacte bevestiging en de situatie-uitklap open.
   const sitParam = searchParams.get("sit") === "1";
 
-  // Alles wat hier uit de URL komt kan de bezoeker zelf verzinnen en belandt via
+  // Alles wat hier uit de URL of de history-state komt kan de bezoeker zelf verzinnen en belandt via
   // de lead-insert in het CRM. Vandaar dezelfde grenzen als op het
   // contactformulier: een onbruikbaar huisnummer of een absurde toevoeging maakt
   // de parameters ongeldig, en dan vraagt stap 1 het adres gewoon opnieuw.
@@ -87,7 +110,7 @@ const SubsidiecheckLive = () => {
   }, [mParam]);
 
   const adresQuery = usePdokAdres(paramsGeldig ? pc : "", paramsGeldig ? hn : "", tv);
-  // Handmatig adres (str/pl in de URL): gebruikt als PDOK het adres niet herkent
+  // Handmatig adres (str/pl, net als de rest van het adres in de history-state): gebruikt als PDOK het adres niet herkent
   // (bv. nieuwbouw). Geen coördinaten → geen luchtfoto/3D, maar het overzicht
   // werkt gewoon op basis van de postcode.
   //
@@ -97,8 +120,8 @@ const SubsidiecheckLive = () => {
   // ingevuld en valt de check terug op de PDOK-opzoeking (en anders op de nette
   // "adres niet gevonden"-route). Zo kan een geprepareerde deel-link er geen
   // willekeurige tekst meer doorheen duwen.
-  const handmatigStraat = searchParams.get("str") ?? "";
-  const handmatigPlaats = searchParams.get("pl") ?? "";
+  const handmatigStraat = adresStaat?.str ?? "";
+  const handmatigPlaats = adresStaat?.pl ?? "";
   const handmatig =
     paramsGeldig &&
     handmatigStraat.trim() !== "" &&
@@ -184,18 +207,37 @@ const SubsidiecheckLive = () => {
   const stap1Actief = editParam || sitParam || !paramsGeldig || adresNietGevonden || !bewonertype;
   const stap = stap1Actief ? 1 : !ontgrendeld ? 2 : RESULTAAT_STAP;
 
-  // Bouwt de queryparams opnieuw op met behoud van situatie/maatregelen.
-  const paramsMetKeuzes = (nieuwPc: string, nieuwHn: string, nieuwTv = tv): Record<string, string> => {
-    const params: Record<string, string> = { pc: nieuwPc, hn: nieuwHn };
-    if (nieuwTv.trim()) params.tv = nieuwTv.trim();
-    if (typeParam) params.type = typeParam;
-    if (mParam !== null) params.m = mParam;
-    return params;
+  // Eén navigatie binnen de check: de keuzes in de URL, het adres in de state van
+  // de nieuwe history-entry. utm-tags en fbclid in de URL blijven staan (zie
+  // checkParams); het adres komt er nooit in.
+  const naar = (adres: CheckAdres, keuzes: Record<string, string>) =>
+    setSearchParams(checkParams(searchParams, keuzes), { state: metAdres(adres) });
+
+  // Situatie en maatregelen zoals ze nu staan, voor "adres wijzigen".
+  const huidigeKeuzes = (): Record<string, string> => {
+    const keuzes: Record<string, string> = {};
+    if (typeParam) keuzes.type = typeParam;
+    if (mParam !== null) keuzes.m = mParam;
+    return keuzes;
   };
 
-  // Behoudt een handmatig adres (straat + plaats) bij navigatie binnen de flow.
-  const metHandmatig = (params: Record<string, string>): Record<string, string> =>
-    handmatig ? { ...params, str: handmatigStraat, pl: handmatigPlaats } : params;
+  // Terug naar stap 1 met het adres voorgevuld. Zonder handmatige straat en
+  // plaats, net als vroeger: wie zijn adres aanpast, laat PDOK opnieuw zoeken.
+  const adresWijzigen = () => naar({ pc, hn, tv: tv.trim(), str: "", pl: "" }, { ...huidigeKeuzes(), edit: "1" });
+
+  // Link naar dit overzicht voor de mail, mét adres; zie bouwOverzichtUrl.
+  const overzichtUrl = paramsGeldig
+    ? bouwOverzichtUrl(
+        {
+          pc: normalizePostcode(pc),
+          hn: hn.trim(),
+          tv: tv.trim(),
+          str: handmatig ? handmatigStraat.trim() : "",
+          pl: handmatig ? handmatigPlaats.trim() : "",
+        },
+        { type: bewonertype, m: mParam === null ? null : maatregelen.join(",") },
+      )
+    : undefined;
 
   const checkInput: SubsidieCheckInput | null = useMemo(() => {
     if (!adres || !bewonertype) return null;
@@ -283,7 +325,7 @@ const SubsidiecheckLive = () => {
   const kop = kopVoorStap();
 
   // Herkende PDOK-adres op stap 1, gemeld door StapAdres zelf (die typt live
-  // mee). Alleen voor de voortgangsbalk: het adres zelf loopt gewoon via de URL.
+  // mee). Alleen voor de voortgangsbalk: het adres zelf loopt via de history-state.
   const [adresHerkend, setAdresHerkend] = useState(false);
 
   // Hoe ver het lijntje naar de volgende stap alvast meeloopt. Nooit nul zolang
@@ -331,7 +373,7 @@ const SubsidiecheckLive = () => {
                 stappen={STAPPEN}
                 huidige={stap}
                 deel={deelVoortgang}
-                onStapKlik={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
+                onStapKlik={adresWijzigen}
               />
 
               {/* Op stap 2 staat de kop op een telefoon op één regel: dat scheelt
@@ -384,28 +426,29 @@ const SubsidiecheckLive = () => {
                     }
                     onStart={(nieuwPc, nieuwHn, nieuwTv, type, gekozen) => {
                       // Adres + situatie + interesses bevestigd → direct het overzicht.
-                      const params: Record<string, string> = { pc: normalizePostcode(nieuwPc), hn: nieuwHn, type };
-                      if (nieuwTv.trim()) params.tv = nieuwTv.trim();
+                      const keuzes: Record<string, string> = { type };
                       // Alles geselecteerd = geen m-parameter (schonere URL).
-                      if (gekozen.length !== ALLE_MAATREGELEN.length) params.m = gekozen.join(",");
-                      // Behoud een handmatig adres (no-op bij een echt PDOK-adres).
-                      setSearchParams(metHandmatig(params));
+                      if (gekozen.length !== ALLE_MAATREGELEN.length) keuzes.m = gekozen.join(",");
+                      naar(
+                        {
+                          pc: normalizePostcode(nieuwPc),
+                          hn: nieuwHn,
+                          tv: nieuwTv.trim(),
+                          // Behoud een handmatig adres (leeg bij een echt PDOK-adres).
+                          str: handmatig ? handmatigStraat : "",
+                          pl: handmatig ? handmatigPlaats : "",
+                        },
+                        keuzes,
+                      );
                     }}
                     onHandmatig={(nieuwPc, nieuwHn, nieuwTv, type, gekozen, straat, stad) => {
                       // PDOK herkent het adres niet: ga verder met wat de bewoner
                       // zelf invulde (str/pl); overzicht werkt op de postcode.
-                      const params: Record<string, string> = {
-                        pc: normalizePostcode(nieuwPc),
-                        hn: nieuwHn,
-                        type,
-                        str: straat,
-                        pl: stad,
-                      };
-                      if (nieuwTv.trim()) params.tv = nieuwTv.trim();
-                      if (gekozen.length !== ALLE_MAATREGELEN.length) params.m = gekozen.join(",");
-                      setSearchParams(params);
+                      const keuzes: Record<string, string> = { type };
+                      if (gekozen.length !== ALLE_MAATREGELEN.length) keuzes.m = gekozen.join(",");
+                      naar({ pc: normalizePostcode(nieuwPc), hn: nieuwHn, tv: nieuwTv.trim(), str: straat, pl: stad }, keuzes);
                     }}
-                    onAdresWijzigen={() => setSearchParams({ ...paramsMetKeuzes(pc, hn), edit: "1" })}
+                    onAdresWijzigen={adresWijzigen}
                     // sit=1 betekent: de bezoeker klikte op "situatie aanpassen",
                     // dus de situatiekeuze hoort meteen open te staan.
                     situatieOpen={sitParam}
@@ -426,14 +469,24 @@ const SubsidiecheckLive = () => {
                         afscheid ? "pointer-events-none translate-y-1 opacity-0" : "translate-y-0 opacity-100"
                       }`}
                     >
-                      <StapGegevens input={checkInput} adres={adres} onOntgrendeld={ontgrendel} />
+                      <StapGegevens
+                        input={checkInput}
+                        adres={adres}
+                        onOntgrendeld={ontgrendel}
+                        overzichtUrl={overzichtUrl}
+                      />
                     </div>
                   )
                 ) : (
                   checkInput && adres && (
                     // Adres of situatie aanpassen: via de stap "Jouw woning" in de
                     // voortgang hierboven (onStapKlik), die terugvoert naar stap 1.
-                    <StapResultaat input={checkInput} adres={adres} netBinnen={netBinnen} />
+                    <StapResultaat
+                      input={checkInput}
+                      adres={adres}
+                      netBinnen={netBinnen}
+                      overzichtUrl={overzichtUrl}
+                    />
                   )
                 )}
               </div>

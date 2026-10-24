@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AudienceProvider } from "@/contexts/AudienceContext";
 import { RouteTracker } from "@/components/RouteTracker";
+import { AdresUitUrl } from "@/components/subsidiecheck/AdresUitUrl";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import WhatsAppButton from "@/components/WhatsAppButton";
 // De homepagina zit direct in de hoofdbundel: zij is de eerste indruk en haar
@@ -48,6 +49,9 @@ const App = () => (
             vult bij het scrollen (i.p.v. een vaste balk). */}
         <BrowserRouter>
           <ScrollToTop />
+          {/* Vóór RouteTracker: het adres van de subsidiecheck gaat uit de URL
+              voordat er iets meet (zie AdresUitUrl). */}
+          <AdresUitUrl />
           <RouteTracker />
           {/* Leeg vlak in de achtergrondkleur zolang een pagina laadt: geen
               spinner, die zou bij een snelle verbinding alleen knipperen. */}

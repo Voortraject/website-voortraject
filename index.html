@@ -1,6 +1,42 @@
 <!doctype html>
 <html lang="nl">
   <head>
+    <!-- Adres uit de URL van de subsidiecheck, voor alles wat meet.
+
+         Een link naar een eigen overzicht (in de overzichtsmail, of een oude
+         bladwijzer) heeft postcode en huisnummer in de querystring. De Meta-pixel
+         stuurt bij elk event de volledige URL mee, en dat is vanuit GTM niet te
+         schonen. Daarom haalt dit script pc/hn/tv/str/pl uit de URL voordat GTM
+         en Axeptio laden, en zet ze klaar voor de pagina in window.__scAdresUitUrl.
+         AdresUitUrl.tsx zet ze daarna in de history-state (zie
+         src/components/subsidiecheck/checkStaat.ts). Andere parameters (utm-tags, fbclid, type, m) blijven
+         staan. Moet het eerste script in <head> zijn; test: src/test/adresUitUrl.test.tsx. -->
+    <script id="sc-adres-uit-url">
+      (function () {
+        try {
+          var pad = location.pathname;
+          if (pad !== "/subsidiecheck" && pad !== "/subsidiecheck/") return;
+          var params = new URLSearchParams(location.search);
+          var sleutels = ["pc", "hn", "tv", "str", "pl"];
+          var adres = {};
+          var gevonden = false;
+          for (var i = 0; i < sleutels.length; i++) {
+            if (params.has(sleutels[i])) {
+              adres[sleutels[i]] = params.get(sleutels[i]);
+              params.delete(sleutels[i]);
+              gevonden = true;
+            }
+          }
+          if (!gevonden) return;
+          window.__scAdresUitUrl = adres;
+          var rest = params.toString();
+          history.replaceState(history.state, "", pad + (rest ? "?" + rest : "") + location.hash);
+        } catch (e) {
+          /* geen URLSearchParams of history: dan blijft de URL staan zoals hij was */
+        }
+      })();
+    </script>
+
     <!-- Google Consent Mode v2: standaard weigeren.
 
          Dit blok MOET vóór het GTM-snippet staan en niet alleen in de

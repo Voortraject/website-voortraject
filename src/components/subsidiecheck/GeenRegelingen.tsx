@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { ArrowRight, Loader2 } from "lucide-react";
 
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
@@ -21,6 +21,7 @@ interface GeenRegelingenProps {
 // daarom niet naar StapResultaat verhuizen.
 export const GeenRegelingen = ({ input }: GeenRegelingenProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
 
   // Heeft de bezoeker zelf gefilterd? Subsidiecheck.tsx zet `maatregelen` op alle
   // acht zodra er niets gekozen is, dus een kortere lijst betekent: hij koos.
@@ -43,10 +44,12 @@ export const GeenRegelingen = ({ input }: GeenRegelingenProps) => {
     // dat meet hoe vaak dit doodlopende eind wordt geraakt én gered.
     //
     // Geen m-parameter = alle maatregelen; de rest van de check-state (adres,
-    // situatie) blijft staan, dus dit is één klik en geen nieuwe invulronde.
+    // situatie) blijft staan, dus dit is één klik en geen nieuwe invulronde. Het
+    // adres staat in de history-state (zie checkStaat.ts), dus die gaat mee naar
+    // de nieuwe entry; zonder `state` zou de check terugvallen op stap 1.
     const volgende = new URLSearchParams(searchParams);
     volgende.delete("m");
-    setSearchParams(volgende);
+    setSearchParams(volgende, { state: location.state });
   };
 
   return (

@@ -104,7 +104,8 @@ Wilt u niet dat uw gesprek wordt opgenomen, dan kunt u daartegen bezwaar maken (
 • Het onderhouden van contact en het verbeteren van onze dienstverlening. Grondslag: gerechtvaardigd belang.
 • Het opnemen van telefoongesprekken voor kwaliteitsbewaking en opleiding, het vastleggen van gemaakte afspraken en de afhandeling van klachten. Grondslag: gerechtvaardigd belang (zie paragraaf 6).
 • Het benaderen van uitvoerders en relaties met informatie over onze dienstverlening. Grondslag: gerechtvaardigd belang; waar wettelijk vereist vragen wij uw toestemming.
-• Het beheren en beveiligen van onze website. Grondslag: gerechtvaardigd belang.`,
+• Het beheren en beveiligen van onze website. Grondslag: gerechtvaardigd belang.
+• Het meten welke advertenties tot een aanvraag leiden (Meta-pixel, zie paragraaf 8). Grondslag: toestemming.`,
   },
   {
     title: "8. Met wie delen wij uw gegevens?",
@@ -118,13 +119,15 @@ WhatsApp. Wij kunnen u via WhatsApp berichten sturen over uw aanvraag en uw offe
 
 Om onze formulieren te beschermen tegen spam en bots gebruiken wij Cloudflare Turnstile. In de [Turnstile Privacy Addendum](https://www.cloudflare.com/turnstile-privacy-policy/) leest u hoe Cloudflare daarbij met uw gegevens omgaat.
 
-Wij verstrekken uw persoonsgegevens niet aan derden voor hun eigen commerciële doeleinden.`,
+Meta-pixel. Om te meten welke advertenties op Facebook en Instagram tot een aanvraag leiden, gebruiken wij de Meta-pixel van Meta Platforms Ireland Ltd. De pixel laadt alleen na toestemming via het cookievenster. Meta ontvangt dan welke pagina's bezocht worden, of er een aanvraag is gedaan en technische gegevens zoals het IP-adres. Naam, e-mailadres, telefoonnummer en adres sturen wij niet naar Meta. Voor het verzamelen en doorgeven van deze gegevens zijn wij samen met Meta verantwoordelijk (artikel 26 AVG); wat Meta er daarna mee doet, valt onder het privacybeleid van Meta. Zie ook de cookieverklaring.
+
+Wij verstrekken uw persoonsgegevens niet aan derden voor hun eigen commerciële doeleinden, behalve via de Meta-pixel hierboven, en alleen na toestemming.`,
   },
   {
     title: "9. Doorgifte buiten de Europese Economische Ruimte (EER)",
     content: `Wij verwerken uw gegevens bij voorkeur binnen de EER. Onze database en een deel van onze systemen zijn in de EER ondergebracht.
 
-Voor websiteanalyse, e-mail en de beveiliging van onze formulieren maken wij gebruik van diensten van Amerikaanse partijen (waaronder Google, Microsoft en Cloudflare). Hierbij kunnen persoonsgegevens naar de Verenigde Staten worden doorgegeven. Deze doorgifte vindt plaats op basis van het EU-VS Data Privacy Framework en/of de standaardcontractbepalingen van de Europese Commissie, met inachtneming van hoofdstuk V AVG en passende waarborgen.`,
+Voor websiteanalyse, e-mail en de beveiliging van onze formulieren maken wij gebruik van diensten van Amerikaanse partijen (waaronder Google, Microsoft en Cloudflare). Hierbij kunnen persoonsgegevens naar de Verenigde Staten worden doorgegeven. Dat geldt ook voor de gegevens die Meta via de Meta-pixel ontvangt. Deze doorgifte vindt plaats op basis van het EU-VS Data Privacy Framework en/of de standaardcontractbepalingen van de Europese Commissie, met inachtneming van hoofdstuk V AVG en passende waarborgen.`,
   },
   {
     title: "10. Hoe lang bewaren wij uw gegevens?",

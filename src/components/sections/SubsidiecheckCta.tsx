@@ -1,8 +1,10 @@
 import { FormEvent, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowRight, Check, ChevronDown } from "lucide-react";
 
+import { metAdres } from "@/components/subsidiecheck/checkStaat";
 import { SUBSIDIECHECK_BELOFTES } from "@/config/beloftes";
+import { herkomstUitParams } from "@/lib/herkomst";
 import { normalizePostcode, POSTCODE_RE } from "@/lib/pdok";
 // Rechtstreeks uit types, niet uit "@/lib/subsidies": die index trekt de
 // subsidie-provider en daarmee de hele Supabase-client mee in de hoofdbundel.
@@ -18,6 +20,22 @@ const formatPostcode = (v: string) => v.toUpperCase().replace(/[^0-9A-Z ]/g, "")
 // Staat ook op /verduurzamen en op de maatregelpagina's (MaatregelPagina).
 export const SubsidiecheckCta = () => {
   const navigate = useNavigate();
+  const { search } = useLocation();
+
+  // Naar de check. Het adres gaat mee in de history-state, niet in de URL: die
+  // URL stuurt de Meta-pixel bij elk event mee (zie checkStaat.ts). utm-tags en
+  // fbclid van deze pagina gaan wél mee in de URL, zodat de pixel de fbclid nog
+  // vindt als de bezoeker pas op de check toestemming geeft.
+  const naarCheck = (
+    adres: { pc: string; hn: string; tv: string },
+    keuzes: Record<string, string>,
+  ) => {
+    const params = new URLSearchParams({ ...herkomstUitParams(new URLSearchParams(search)), ...keuzes });
+    const query = params.toString();
+    navigate(`/subsidiecheck${query ? `?${query}` : ""}`, {
+      state: metAdres(adres.pc || adres.hn || adres.tv ? { ...adres, str: "", pl: "" } : null),
+    });
+  };
   const [postcode, setPostcode] = useState("");
   const [huisnummer, setHuisnummer] = useState("");
   const [toevoeging, setToevoeging] = useState("");
@@ -46,11 +64,7 @@ export const SubsidiecheckCta = () => {
     //
     // Afwijken kan verderop gewoon: stap 1 blijft aanklikbaar in de
     // voortgangsbalk, en op het resultaat staat "situatie aanpassen".
-    navigate(
-      `/subsidiecheck?pc=${encodeURIComponent(normalizePostcode(pc))}&hn=${encodeURIComponent(hn)}` +
-        (tv ? `&tv=${encodeURIComponent(tv)}` : "") +
-        "&type=woningeigenaar",
-    );
+    naarCheck({ pc: normalizePostcode(pc), hn, tv }, { type: "woningeigenaar" });
   };
 
   // "Aanpassen": naar stap 1 met de keuzes al uitgeklapt. Op de homepage zelf
@@ -66,15 +80,11 @@ export const SubsidiecheckCta = () => {
   // stap 1 voorgevuld in plaats van leeg. Geen validatie dus, want dit is geen
   // verzendknop; wie hier klikt is nog aan het kiezen.
   const naarKeuzes = () => {
-    const params = new URLSearchParams();
     const pc = postcode.trim();
-    const hn = huisnummer.trim();
-    const tv = toevoeging.trim();
-    if (pc) params.set("pc", POSTCODE_RE.test(pc) ? normalizePostcode(pc) : pc);
-    if (hn) params.set("hn", hn);
-    if (tv) params.set("tv", tv);
-    params.set("sit", "1");
-    navigate(`/subsidiecheck?${params.toString()}`);
+    naarCheck(
+      { pc: POSTCODE_RE.test(pc) ? normalizePostcode(pc) : pc, hn: huisnummer.trim(), tv: toevoeging.trim() },
+      { sit: "1" },
+    );
   };
 
   // Velden: wit en zacht verzonken, zoals op stap 1 van de tool (.instap-invoer

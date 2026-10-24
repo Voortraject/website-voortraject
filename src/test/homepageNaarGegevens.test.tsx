@@ -45,12 +45,22 @@ vi.mock("@/hooks/usePand3d", () => ({ usePand3d: () => ({ data: undefined }) }))
 vi.mock("@/hooks/useWoningInfo", () => ({ useWoningInfo: () => ({ data: undefined }) }));
 
 import { SubsidiecheckCta } from "@/components/sections/SubsidiecheckCta";
+import { adresUitState } from "@/components/subsidiecheck/checkStaat";
 import Subsidiecheck from "@/pages/Subsidiecheck";
 
+// Het adres gaat sinds oktober 2026 mee in de history-state, niet in de URL
+// (zie checkStaat.ts). Daarom tonen we die state hier apart.
 const Locatie = () => {
-  const { pathname, search } = useLocation();
-  return <output data-testid="locatie">{pathname + search}</output>;
+  const { pathname, search, state } = useLocation();
+  return (
+    <>
+      <output data-testid="locatie">{pathname + search}</output>
+      <output data-testid="adres">{JSON.stringify(adresUitState(state))}</output>
+    </>
+  );
 };
+
+const adresInState = () => JSON.parse(screen.getByTestId("adres").textContent ?? "null");
 
 /** Vult de drie velden en klikt de knop; geeft de URL waar we belanden. */
 const vulInEnVerstuur = (postcode: string, huisnummer: string, toevoeging = "") => {
@@ -80,8 +90,9 @@ describe("de subsidiecheck-CTA op de homepage", () => {
     const url = vulInEnVerstuur("9711AB", "5");
 
     expect(url).toContain("/subsidiecheck");
-    expect(url).toContain("pc=9711AB");
-    expect(url).toContain("hn=5");
+    // Het adres in de state, nooit in de URL: die stuurt de Meta-pixel mee.
+    expect(url).not.toMatch(/[?&](pc|hn|tv|str|pl)=/);
+    expect(adresInState()).toMatchObject({ pc: "9711AB", hn: "5" });
     // `type` is wat stap 1 afrondt; zonder deze parameter komt de bezoeker daar
     // alsnog uit. Woningeigenaar is dezelfde standaard als op stap 1 zelf.
     expect(url).toContain("type=woningeigenaar");
@@ -91,7 +102,8 @@ describe("de subsidiecheck-CTA op de homepage", () => {
   });
 
   it("neemt een toevoeging mee", () => {
-    expect(vulInEnVerstuur("9711 ab", "5", "b")).toContain("tv=b");
+    expect(vulInEnVerstuur("9711 ab", "5", "b")).not.toContain("tv=");
+    expect(adresInState()).toMatchObject({ pc: "9711AB", hn: "5", tv: "b" });
   });
 
   it("navigeert niet bij een onvolledig adres", () => {
@@ -153,8 +165,8 @@ describe("de regel over waarop we zoeken", () => {
     fireEvent.click(screen.getByRole("button", { name: /Aanpassen/i }));
 
     const url = screen.getByTestId("locatie").textContent ?? "";
-    expect(url).toContain("pc=9711AB");
-    expect(url).toContain("hn=5");
+    expect(url).not.toMatch(/[?&](pc|hn)=/);
+    expect(adresInState()).toMatchObject({ pc: "9711AB", hn: "5" });
     expect(url).toContain("sit=1");
   });
 

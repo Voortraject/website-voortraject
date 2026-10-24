@@ -129,6 +129,57 @@ export function schoonOverzichtUrl(ruw: unknown): string | undefined {
   return `https://voortraject.nl/subsidiecheck${url.search}`;
 }
 
+// ---- Herkomst: utm-tags, fbclid en event-id ----
+//
+// Waar een lead vandaan kwam, voor de CRM-kolommen utm_source t/m utm_content,
+// fbclid en meta_event_id op `leads_bewoners`. Dit komt uit de request en is dus
+// door iedereen te verzinnen. Daarom twee harde regels:
+//
+//  1. alleen waarden van tekens die in een campagnenaam of Meta-macro voorkomen
+//     (HERKOMST_RE), binnen de grens; al het andere valt weg, zonder melding;
+//  2. deze velden gaan alleen naar de database, nooit in een mail. Ook niet in de
+//     teammail: daar staat al een link naar het overzicht, en het CRM toont de
+//     herkomst bij de lead.
+//
+// Kopie van HERKOMST_VELDEN, HERKOMST_RE, HERKOMST_MAX en FBCLID_MAX in
+// src/lib/herkomst.ts; src/test/herkomst.test.ts bewaakt dat ze gelijk blijven.
+
+export const HERKOMST_VELDEN = [
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_term",
+  "utm_content",
+  "fbclid",
+] as const;
+
+export const HERKOMST_RE = /^[A-Za-z0-9_.\-{}:|]+$/;
+export const HERKOMST_MAX = 150;
+export const FBCLID_MAX = 500;
+
+/** De geldige herkomstvelden uit de request, met de kolomnaam als sleutel. Onbruikbaar → weg. */
+export function schoonHerkomst(ruw: unknown): Record<string, string> {
+  const schoon: Record<string, string> = {};
+  if (typeof ruw !== "object" || ruw === null || Array.isArray(ruw)) return schoon;
+  for (const veld of HERKOMST_VELDEN) {
+    // Eigen sleutels alleen, net als bij bouwEswFilterQuery: geen prototype-waarden.
+    if (!Object.prototype.hasOwnProperty.call(ruw, veld)) continue;
+    const waarde = (ruw as Record<string, unknown>)[veld];
+    if (typeof waarde !== "string") continue;
+    const getrimd = waarde.trim();
+    const max = veld === "fbclid" ? FBCLID_MAX : HERKOMST_MAX;
+    if (getrimd && getrimd.length <= max && HERKOMST_RE.test(getrimd)) schoon[veld] = getrimd;
+  }
+  return schoon;
+}
+
+const EVENT_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Het event-id van de lead (een uuid uit de browser), of undefined. */
+export function schoonEventId(ruw: unknown): string | undefined {
+  return typeof ruw === "string" && EVENT_ID_RE.test(ruw) ? ruw.toLowerCase() : undefined;
+}
+
 // ---- De regelingen zelf ----
 
 // Kopie van BEWONERTYPE_RESIDENT en MAATREGEL_FILTER_ID in src/lib/subsidies/types.ts.

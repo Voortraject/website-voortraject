@@ -12,8 +12,8 @@ stilzwijgend een tag in de container. Werk dit bestand dus bij in dezelfde PR al
 
 1. **Nooit persoonsgegevens in de dataLayer.** Geen naam, e-mail, telefoonnummer of volledig
    adres. Wel toegestaan: grove context (gemeente, provincie) en aantallen. Deze regel staat ook
-   bovenaan `gtm.ts` en is de reden dat `virtual_page_view` alleen het pad meestuurt: op
-   `/subsidiecheck` staat het adres van de bezoeker in de querystring.
+   bovenaan `gtm.ts`. `virtual_page_view` stuurt daarom alleen het pad mee; het adres van de
+   subsidiecheck staat sinds oktober 2026 ook niet meer in de URL (zie hieronder).
 2. **Alleen tekst en getallen.** `pushGtmEvent` accepteert `string | number`. Voor ja/nee gebruiken
    we `1` en `0`, niet `true`/`false`.
 3. **Pushen is niet meten.** De site pusht altijd; of er een tag vuurt beslist GTM op basis van de
@@ -41,8 +41,8 @@ stilzwijgend een tag in de container. Werk dit bestand dus bij in dezelfde PR al
 | Event | Wanneer | Parameters | Bron |
 |---|---|---|---|
 | `subsidiecheck_stap` | Elke stap die de bezoeker te zien krijgt, ook stap 1 en ook bij binnenkomst halverwege | `stap` (1-3), `stap_naam` | [`Subsidiecheck.tsx`](../src/pages/Subsidiecheck.tsx) |
-| `subsidiecheck_start` | Adres bevestigd, stap 1 afgerond | `gemeente`, `provincie` | [`StapAdres.tsx`](../src/components/subsidiecheck/StapAdres.tsx) |
-| `subsidiecheck_lead` | Gegevens ingevuld bij de poort | `bewonertype`, `aantal_regelingen`, `hulpvraag`, `bron_fout` (1/0, alleen bij een bronstoring) | [`StapGegevens.tsx`](../src/components/subsidiecheck/StapGegevens.tsx) |
+| `subsidiecheck_start` | Adres bevestigd, stap 1 afgerond | `gemeente`, `provincie`, `event_id` (uuid, voor Meta) | [`StapAdres.tsx`](../src/components/subsidiecheck/StapAdres.tsx) |
+| `subsidiecheck_lead` | Gegevens ingevuld bij de poort | `bewonertype`, `aantal_regelingen`, `hulpvraag`, `bron_fout` (1/0, alleen bij een bronstoring), `event_id` (uuid, ook op de lead als `meta_event_id`) | [`StapGegevens.tsx`](../src/components/subsidiecheck/StapGegevens.tsx) |
 | `subsidiecheck_voltooid` | Resultaat succesvol geladen | `aantal_regelingen`, `bewonertype`, `gemeente`, `provincie` | [`StapResultaat.tsx`](../src/components/subsidiecheck/StapResultaat.tsx) |
 | `subsidiecheck_vraag_cta` | Klik op een knop op het resultaat die een verzoek indient of naar het vraagblok springt | `bewonertype`, `plek` (`uitzoeken` = de oker knop "Laat gratis uitzoeken wat ik krijg", in de hoofdtegel of de mobiele actiebalk; `isolatieplan` = "Ik wil een isolatieplan aanvragen", alleen in het Nij Begun-gebied; `energielabel` = "Label aanvragen"). `woningpaneel` en `eerste_stap` komen sinds oktober 2026 niet meer voor. | [`StapResultaat.tsx`](../src/components/subsidiecheck/StapResultaat.tsx), [`useUitzoek.ts`](../src/components/subsidiecheck/useUitzoek.ts) |
 | `subsidiecheck_vraag` | Vraag daadwerkelijk verstuurd | `bewonertype`, `bekend_contact` (1/0) | [`DirectContact.tsx`](../src/components/subsidiecheck/DirectContact.tsx) |
@@ -73,8 +73,60 @@ navigatie: de subsidiecheck-CTA op de homepage (`SubsidiecheckCta` doet `navigat
 `<Navigate>`-redirects in `App.tsx`. Klein in aantal, maar de eerste is wel het belangrijkste
 instappunt van de tool.
 
-Stapwissels binnen de subsidiecheck veranderen alleen de querystring en tellen bewust niet als
-paginaweergave; daarvoor is `subsidiecheck_stap`.
+Stapwissels binnen de subsidiecheck veranderen alleen de querystring (en de history-state) en
+tellen bewust niet als paginaweergave; daarvoor is `subsidiecheck_stap`.
+
+## Het adres van de subsidiecheck staat nooit in de URL
+
+Tot oktober 2026 stond de hele check in de querystring (`?pc=…&hn=…&tv=…`, plus `str`/`pl` bij een
+handmatig adres). De Meta-pixel stuurt bij elk event de volledige URL mee, en dat is in GTM niet te
+schonen. Daarom staat het adres nu in de state van de history-entry (`history.state`), niet in de
+URL. Terug, vooruit en herladen werken gewoon: de browser bewaart die state per entry.
+
+- **Links mét adres blijven werken** (de "bekijk online"-link in de overzichtsmail, oude
+  bladwijzers). Het inline script `sc-adres-uit-url`, het eerste script in `<head>` van
+  [`index.html`](../index.html), haalt `pc`, `hn`, `tv`, `str` en `pl` uit de URL vóórdat GTM en
+  Axeptio laden (`history.replaceState`), alleen op `/subsidiecheck`, en zet ze klaar in
+  `window.__scAdresUitUrl`. Al het andere (utm-tags, `fbclid`, `type`, `m`, `test`) blijft staan.
+- [`AdresUitUrl.tsx`](../src/components/subsidiecheck/AdresUitUrl.tsx) (in `App.tsx`, vóór
+  `RouteTracker`) zet dat adres in de history-state. Komt er via een navigatie binnen de app tóch een
+  adres in de URL, dan haalt hij het er meteen uit (`replace`), vóór `virtual_page_view` en de
+  meetmomenten van de check: zijn effect draait vóór dat van RouteTracker en van de check.
+- **Binnen de site geeft elke link naar de check het adres mee als state** (`metAdres` in
+  [`checkStaat.ts`](../src/components/subsidiecheck/checkStaat.ts)), nooit in de URL. Alleen
+  `bouwOverzichtUrl` zet het adres in een URL, en die gaat alleen per mail naar de bezoeker en het
+  team. `src/test/adresUitUrl.test.tsx` bewaakt dit.
+- De GA4-tags sturen `page_location` nog steeds via de opschoon-variabele
+  `{{js - page_location zonder adres}}`. Dat is nu een tweede slot op de deur.
+
+## Herkomst en `event_id` bij een lead
+
+**Herkomst.** [`src/lib/herkomst.ts`](../src/lib/herkomst.ts) bewaart bij binnenkomst, op elke
+pagina, `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` en `fbclid` in
+`sessionStorage` (`sc_herkomst`). Eerste aanraking: een tweede campagne in hetzelfde tabblad
+overschrijft niets. Alleen waarden van de tekens `A-Z a-z 0-9 _ . - { } : |` komen erdoor, utm-tags
+tot 150 tekens en `fbclid` tot 500; de rest valt weg. Een naam met een spatie valt dus helemaal weg,
+vandaar de afspraak over namen zonder spaties in `tasks/meta-advertenties-structuur.md` (CRM-repo).
+De utm-tags en `fbclid` blijven tijdens de check in de URL staan, zodat de pixel de `fbclid` nog
+vindt als de bezoeker pas halverwege toestemming geeft.
+
+De lead neemt de herkomst mee naar de edge function `subsidiecheck-mail` (veld `herkomst`). Die
+controleert alles opnieuw met dezelfde regels (`schoonHerkomst` in `beveiliging.ts`; dat is de laag
+die telt) en schrijft het naar de gelijknamige kolommen op `leads_bewoners` in het CRM. **Nooit in
+een mail**, ook niet in de teammail. Bestaan de kolommen nog niet (PostgREST `PGRST204`, Postgres
+`42703`), dan schrijft de function de lead zonder herkomst en logt hij een waarschuwing
+(`leadInsert.ts`).
+
+**`event_id`.** `subsidiecheck_start` en `subsidiecheck_lead` pushen elk een `event_id` (een uuid,
+`maakEventId`). Container v9 geeft die als `eventID` door aan Meta (variabele
+`Meta - dlv - event_id`). Het `event_id` van de lead gaat ook mee naar de function (veld `eventId`;
+alleen een uuid komt erdoor) en landt in `leads_bewoners.meta_event_id`, zodat een Lead uit de
+browser later te ontdubbelen is tegen dezelfde Lead via de Conversions API.
+
+**Meta vuurt alleen na toestemming.** De site pusht `event_id` altijd mee, net als de rest van de
+dataLayer; of er iets naar Meta gaat beslist GTM, en elke Meta-trigger vraagt eerst
+Axeptio-toestemming voor de Meta-service. De cookies `_fbp` en `_fbc` (90 dagen) staan in de
+[cookieverklaring](../src/pages/Cookie.tsx).
 
 ## Wat bewust in GTM zit en niet in de code
 
