@@ -107,6 +107,18 @@ describe("GTM-container", () => {
     }
   });
 
+  it("zet geen {{variabele}} in een opmerking", () => {
+    // GTM weigert dan Voorbeeld en Publiceren ("Variabele in opmerking"); bij v9 gebeurde dat
+    // pas na de import, in de tag Meta - Pixel basis.
+    for (const item of [...container.tag, ...container.variable]) {
+      for (const p of item.parameter ?? []) {
+        for (const regel of (p.value ?? "").split("\n")) {
+          expect(regel, `${item.name}: {{…}} in een opmerking`).not.toMatch(/(\/\/|\/\*|<!--|^\s*\*).*\{\{/);
+        }
+      }
+    }
+  });
+
   it("heeft geen ongebruikte variabelen", () => {
     const gebruikt = new Set([...JSON.stringify(container).matchAll(/\{\{([^}]+)\}\}/g)].map((m) => m[1]));
     for (const variabele of container.variable) {
