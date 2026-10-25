@@ -43,4 +43,61 @@ describe("de request van de gegevensstap", () => {
     expect(body).toMatchObject({ duurMs: 5000, turnstileToken: "tok", email: "jan@example.nl" });
     expect(body.input).toMatchObject({ postcode: "9725BG", huisnummer: "3", bewonertype: "woningeigenaar" });
   });
+
+  it("stuurt de hulpvragen als lijst én, voor een oudere function, nog als tekstregel", async () => {
+    // Cloudflare zet de site live bij de merge en de function wordt los uitgerold.
+    // Tot die tijd draait er een function die alleen `notitie` kent; die mag de
+    // hulpvragen dan niet kwijtraken.
+    vi.stubEnv("VITE_SUBSIDIECHECK_MAIL_URL", "https://functions.test/subsidiecheck-mail");
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ ok: true }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    vi.resetModules();
+    const { verstuurSubsidiecheckLead } = await import("@/components/subsidiecheck/leadFormulier");
+
+    await verstuurSubsidiecheckLead({
+      waarden: { voornaam: "Jan", tussenvoegsel: "", achternaam: "Test", email: "jan@example.nl", telefoon: "0612345678" },
+      input: { postcode: "9725BG", huisnummer: "3", bewonertype: "woningeigenaar", maatregelen: [] },
+      adres: { straatnaam: "Viaductstraat", woonplaatsnaam: "Groningen" },
+      notitie: "Wil hulp met: Subsidies uitzoeken, De aanvraag regelen",
+      hulpvragen: ["Subsidies uitzoeken", "De aanvraag regelen"],
+      duurMs: 5000,
+    });
+
+    const [, opties] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(JSON.parse(opties.body as string)).toMatchObject({
+      hulpvragen: ["Subsidies uitzoeken", "De aanvraag regelen"],
+      notitie: "Wil hulp met: Subsidies uitzoeken, De aanvraag regelen",
+    });
+  });
+});
+
+describe("de request van een klik of vraag na de poort", () => {
+  it("stuurt soort en keuzes mee, plus de oude tekst", async () => {
+    vi.stubEnv("VITE_SUBSIDIECHECK_MAIL_URL", "https://functions.test/subsidiecheck-mail");
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ ok: true }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    vi.resetModules();
+    const { verstuurSubsidiecheckBericht } = await import("@/components/subsidiecheck/leadFormulier");
+
+    await verstuurSubsidiecheckBericht({
+      waarden: { voornaam: "Jan", tussenvoegsel: "", achternaam: "Test", email: "jan@example.nl", telefoon: "" },
+      bericht: "Lastigst: Het papierwerk",
+      soort: "lastigst",
+      keuzes: ["Het papierwerk"],
+      hulpvragen: ["Subsidies uitzoeken"],
+      leadId: "6f9619ff-8b86-4011-b42d-00c04fc964ff",
+      input: { postcode: "9725BG", huisnummer: "3", bewonertype: "woningeigenaar", maatregelen: [] },
+      adres: { straatnaam: "Viaductstraat", woonplaatsnaam: "Groningen" },
+      duurMs: 5000,
+    });
+
+    const [, opties] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(JSON.parse(opties.body as string)).toMatchObject({
+      actie: "bericht",
+      soort: "lastigst",
+      keuzes: ["Het papierwerk"],
+      hulpvragen: ["Subsidies uitzoeken"],
+      bericht: "Lastigst: Het papierwerk",
+    });
+  });
 });

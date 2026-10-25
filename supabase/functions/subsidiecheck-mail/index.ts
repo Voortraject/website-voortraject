@@ -5,29 +5,50 @@
 //      service_role — dezelfde tabel/kolommen als het contactformulier, alleen
 //      bron: "Voortraject"), en
 //   2. stuurt de bezoeker het gevonden subsidieoverzicht per e-mail via Resend
-//      (API-key blijft server-side geheim), met een kopie naar het team.
+//      (API-key blijft server-side geheim). Zonder kopie naar het team: sinds
+//      oktober 2026 staat alles wat het team moet weten bij de lead in het CRM,
+//      en de bcc gaf per lead een mail extra zonder nieuws.
 //
 // De lead-insert gaat eerst en is leidend: een hapering bij Resend mag nooit een
 // lead verliezen. Faalt de mail, dan staat de lead er nog en volgt het team op
-// (de UI belooft "we sturen het overzicht"; dat blijft waar).
+// (de UI belooft "we sturen het overzicht"; dat blijft waar). Wat de bezoeker in
+// de poort aanklikte ("Waar wil je hulp bij?") gaat naar `subsidiecheck_hulpvragen`,
+// niet meer als tekstregel in `notities`.
 //
-// Daarnaast is er de route `actie: "bericht"`: een vraag die de bezoeker op het
-// resultaat stelt. Die komt in `notities` bij de bestaande lead (via het `leadId`
-// dat deze function bij de eerste call teruggeeft) en gaat per mail naar het
-// team, met de bezoeker als antwoordadres. Is er nog geen lead, dan maakt de
-// function er alsnog een met de vraag erin.
+// Daarnaast is er de route `actie: "bericht"` voor wat de bezoeker na de poort
+// doet: de oker knop (uitzoeken), "Wat vind je het lastigst?" (lastigst) of een
+// getypte vraag (vraag). Een klik wordt een veld op de lead, alleen een getypte
+// vraag wordt een bericht in de communicatietab, en alleen dáárvoor gaat er een
+// mail naar het team, met de bezoeker als antwoordadres. `notities` raakt deze
+// route niet meer aan; dat veld is van het team. Zie bericht.ts.
 //
 // Benodigde secrets (Supabase → Edge Functions → Secrets):
 //   RESEND_API_KEY   — API-key van resend.com (verplicht voor automatische mail)
 //   MAIL_FROM        — afzender, bijv. "Voortraject <noreply@voortraject.nl>"
 //                      (moet een geverifieerd domein in Resend zijn)
-//   MAIL_BCC         — optioneel, teamkopie, bijv. "info@voortraject.nl"
 //   MAIL_TEAM        — optioneel, ontvanger van de vraag-mails; valt terug op
 //                      MAIL_BCC en daarna op info@voortraject.nl
+//   MAIL_BCC         — optioneel, alleen nog die terugval voor MAIL_TEAM. Gaat
+//                      niet meer als bcc onder het overzicht aan de bezoeker.
 //   MAIL_REPLY_TO    — optioneel, antwoordadres, standaard info@voortraject.nl
 // SUPABASE_URL en SUPABASE_SERVICE_ROLE_KEY worden automatisch geïnjecteerd.
 //
-// Benodigde databasefunctie (levert het CRM, niet deze repo):
+// Benodigde kolommen op `leads_bewoners` (levert het CRM, live sinds 25-10-2026):
+//   subsidiecheck_hulpvragen text[]      — tegels uit de poort, in tegelvolgorde
+//   subsidiecheck_lastigst   text[]      — keuzes uit LastigsteVraag; laatste wint
+//   uitzoeken_aangevraagd_op timestamptz — eerste klik op de oker knop
+//
+// Benodigde databasefunctie voor een getypte vraag (levert het CRM):
+//
+//   public.subsidietool_vraag_registreren(p_lead_id uuid, p_email text, p_tekst text) returns uuid
+//
+// Alleen voor service_role. Schrijft de vraag als inkomende formulierregel in
+// `communicatie_log` ("Vraag gesteld via de subsidietool"), ontdubbelt binnen een
+// uur en gooit P0002 als id en e-mailadres niet bij elkaar horen. De vorm van die
+// regel blijft zo van het CRM; deze function hoeft `communicatie_log` niet te
+// kennen. Faalt de aanroep, dan gaat de vraag nog wel per mail naar het team.
+//
+// Benodigde databasefunctie voor de volumerem (levert het CRM, niet deze repo):
 //
 //   public.rem_publieke_route(p_ip text, p_doel text) returns void
 //
@@ -73,6 +94,7 @@ import {
   VENSTER_PER_ADRES_MS,
   type MailRegeling,
 } from "./beveiliging.ts";
+import { bepaalBericht, bepaalHulpvragen, verwerkBericht, type BerichtClient } from "./bericht.ts";
 import { insertLead } from "./leadInsert.ts";
 import { escapeHtml, maakOverzichtMail, type BagAdres } from "./overzichtMail.ts";
 
@@ -88,12 +110,6 @@ const POSTCODE_RE = /^[1-9][0-9]{3}[A-Z]{2}$/;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 /** Zelfde limiet als het berichtveld op het contactformulier. */
 const MAX_BERICHT = 1000;
-
-// Bovengrens op het hele `notities`-veld van een lead. Ruim: er kunnen meerdere
-// vragen van de bezoeker in staan én notities van het team zelf. Wordt die grens
-// geraakt, dan laten we het veld met rust in plaats van andermans tekst af te
-// kappen; zie de update-route hieronder.
-const MAX_NOTITIES = 8000;
 
 // Grenzen op de adresvelden die ongewijzigd de CRM-database in gaan. Deno kan
 // niets uit src/ importeren, dus dit is een kopie van `ADRES_MAX` in
@@ -196,16 +212,33 @@ type Regeling = MailRegeling;
 
 type Payload = {
   /**
-   * "bericht" = een vraag die de bezoeker op het resultaat stelt. Die vult de
-   * notitie aan bij de bestaande lead (`leadId`) en gaat per mail naar het team.
-   * Zonder actie: de gewone route (lead + subsidieoverzicht naar de bezoeker).
+   * "bericht" = wat de bezoeker na de poort doet (zie `soort`), bij de bestaande
+   * lead (`leadId`) of anders bij een nieuwe. Zonder actie: de gewone route
+   * (lead + subsidieoverzicht naar de bezoeker).
    */
   actie?: string;
-  /** Alleen bij actie "bericht": de vraag zelf. */
+  /**
+   * Alleen bij actie "bericht": "uitzoeken" (oker knop), "lastigst" (met
+   * `keuzes`) of "vraag" (getypt). Oude bundels sturen hem niet; dan leidt
+   * bepaalBericht hem af uit `bericht`.
+   */
+  soort?: unknown;
+  /** Alleen bij soort "lastigst": de gekozen opties, in optievolgorde. */
+  keuzes?: unknown;
+  /**
+   * Alleen bij actie "bericht": de tekst. Bij een vraag de vraag zelf; bij een
+   * klik stuurt de site de oude vaste tekst nog mee, zodat een oudere versie van
+   * deze function hem ook nog begrijpt.
+   */
   bericht?: string;
   /** Alleen bij actie "bericht": lead uit deze sessie, voorkomt een dubbele lead. */
   leadId?: string;
-  /** Kopregel voor `notities`, bijv. de gekozen termijn uit de poort. */
+  /** Labels van de poort-tegels "Waar wil je hulp bij?", voor `subsidiecheck_hulpvragen`. */
+  hulpvragen?: unknown;
+  /**
+   * Oude vorm van de hulpvragen ("Wil hulp met: a, b"), nog meegestuurd voor een
+   * oudere function. Genegeerd als `hulpvragen` er is; zie bepaalHulpvragen.
+   */
   notitie?: string;
   /** Verrijking uit publieke bronnen (EP-Online, BAG): scheelt het team opzoekwerk. */
   energielabel?: string;
@@ -268,27 +301,6 @@ function json(body: unknown, status = 200): Response {
 
 function normalizePostcode(raw: string): string {
   return raw.replace(/\s+/g, "").toUpperCase();
-}
-
-// Kopje boven een vraag die de bezoeker zelf heeft getypt, met datum en tijd.
-//
-// Op verzoek van de CRM-kant (10-08-2026). `notities` is een gedeeld veld: het
-// team schrijft er zelf in en de subsidietool schrijft er onderaan bij. Zonder
-// kopje staat de tekst van een bezoeker kaal onder die van een collega en is in
-// het CRM niet meer te zien wie wat heeft geschreven. Leesbaarheid, geen
-// veiligheid.
-//
-// Tijd in Europe/Amsterdam, want dit leest een mens in Groningen, niet UTC.
-function vraagKopje(op: Date): string {
-  const wanneer = op.toLocaleString("nl-NL", {
-    timeZone: "Europe/Amsterdam",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  return `Vraag van de bezoeker via de subsidietool (${wanneer}):`;
 }
 
 /** Terugvalrem in het geheugen van deze isolate. Alleen als de database het niet doet. */
@@ -359,8 +371,17 @@ function bouwTeamMailHtml(opts: {
   interesses: string;
   overzichtUrl?: string;
   nieuweLead: boolean;
+  /** Staat de vraag in de communicatietab, of heeft alleen deze mail hem? */
+  opgeslagen: boolean;
 }): string {
-  const { naam, email, telefoon, adresregel, bericht, interesses, overzichtUrl, nieuweLead } = opts;
+  const { naam, email, telefoon, adresregel, bericht, interesses, overzichtUrl, nieuweLead, opgeslagen } = opts;
+  // Waar het team de vraag terugvindt. Niet meer "bij de notities": een vraag
+  // staat sinds oktober 2026 als inkomend bericht in de communicatietab.
+  const waar = !opgeslagen
+    ? "Let op: deze vraag kon niet in het CRM worden opgeslagen. Alleen deze mail heeft hem."
+    : nieuweLead
+      ? "Er is een nieuwe lead aangemaakt in het CRM; de vraag staat in de communicatietab van die lead."
+      : "De vraag staat in de communicatietab van de lead in het CRM.";
   // Kale opmaak, geen huisstijlkaart: dit is een werkmail voor het team zelf. Wel
   // vetgedrukte labels, zodat je in één blik ziet wie het is en wat de vraag is.
   const regel = (label: string, waarde: string) => `<p style="margin:0 0 4px;"><strong>${label}:</strong> ${waarde}</p>`;
@@ -386,7 +407,7 @@ function bouwTeamMailHtml(opts: {
   }
 
   <p style="margin:16px 0 0;font-size:13px;color:#666;">
-    ${nieuweLead ? "Er is een nieuwe lead aangemaakt in het CRM." : "De vraag staat ook bij de notities van de bestaande lead in het CRM."}
+    ${waar}
     Antwoorden op deze mail gaat rechtstreeks naar de bezoeker.
   </p>
 </body></html>`;
@@ -396,7 +417,6 @@ async function verstuurMail(opts: {
   apiKey: string;
   from: string;
   to: string;
-  bcc?: string;
   replyTo: string;
   subject: string;
   html: string;
@@ -408,7 +428,6 @@ async function verstuurMail(opts: {
     subject: opts.subject,
     html: opts.html,
   };
-  if (opts.bcc) body.bcc = [opts.bcc];
 
   const res = await fetch(RESEND_ENDPOINT, {
     method: "POST",
@@ -721,12 +740,16 @@ Deno.serve(async (req: Request) => {
     verrijking.toestemming_tekst = toestemmingTekst;
   }
 
-  // Kopregel voor `notities` (bijv. "Wil aan de slag: Binnen 3 maanden").
-  const notitie = (payload.notitie ?? "").trim().slice(0, MAX_BERICHT) || null;
+  // De tegels uit de poort gaan naar `subsidiecheck_hulpvragen`. `notitie` is de
+  // oude tekstvorm daarvan ("Wil hulp met: …"); die komt niet meer in `notities`.
+  // Alleen een notitie die géén hulpregel is, blijft tekst: onbekende tekst
+  // gooien we niet weg. Zie bepaalHulpvragen.
+  const notitieRuw = (payload.notitie ?? "").trim().slice(0, MAX_BERICHT) || null;
+  const { hulpvragen, notitie } = bepaalHulpvragen(payload.hulpvragen, notitieRuw);
 
   // Vaste kolommen van een subsidietool-lead. Gedeeld door de gewone route en de
   // berichtroute, zodat een lead er in beide gevallen identiek uitziet.
-  const leadVelden = {
+  const leadVelden: Record<string, unknown> = {
     tenant_id: TENANT_ID,
     ...naamVelden,
     email,
@@ -748,6 +771,9 @@ Deno.serve(async (req: Request) => {
     // bij `auth.role() = 'anon'`. Deze function schrijft met service_role en
     // valt daar dus buiten — reden te meer om ze hier niet te sturen.
   };
+  // Bij de basisvelden en niet bij de verrijking: die valt bij een fout weg, en
+  // dan zou het team niet meer zien waar de bewoner hulp bij wil.
+  if (hulpvragen) leadVelden.subsidiecheck_hulpvragen = hulpvragen;
 
   // Herkomst: utm-tags, fbclid en het event-id van de lead, elk streng gecontroleerd
   // (schoonHerkomst, schoonEventId). Alleen voor de database: deze waarden komen uit
@@ -762,112 +788,57 @@ Deno.serve(async (req: Request) => {
   // Alleen een link naar onze eigen subsidiecheck; zie schoonOverzichtUrl.
   const overzichtUrlSchoon = schoonOverzichtUrl(payload.overzichtUrl);
 
-  // ---- Route "bericht": een vraag die de bezoeker op het resultaat stelt ----
-  // De vraag komt in `notities` op de lead en gaat per mail naar het team. Kwam de
-  // bezoeker net door de gegevens-poort, dan hebben we zijn lead-id en vullen we
-  // die lead aan; anders maken we er alsnog een. Een dubbele lead is vervelend,
-  // een verloren vraag is erger.
+  // ---- Route "bericht": wat de bezoeker na de poort doet ----
+  // Een klik (uitzoeken, lastigst) wordt een veld op de lead, een getypte vraag
+  // een bericht in de communicatietab; alleen die laatste mailt het team. Kwam de
+  // bezoeker net door de gegevens-poort, dan hebben we zijn lead-id en werken we
+  // die lead bij; anders maken we er alsnog een. Een dubbele lead is vervelend,
+  // een verloren aanvraag is erger. Zie bericht.ts.
   if (payload.actie === "bericht") {
-    const bericht = (payload.bericht ?? "").trim();
-    if (!bericht) return json({ error: "Vul je vraag in." }, 400);
-    if (bericht.length > MAX_BERICHT) return json({ error: "Je vraag is te lang." }, 400);
+    const bepaald = bepaalBericht(payload);
+    if (bepaald.soort === "ongeldig") return json({ error: "Ongeldige aanvraag." }, 400);
+    if (bepaald.soort === "vraag") {
+      if (!bepaald.tekst) return json({ error: "Vul je vraag in." }, 400);
+      if (bepaald.tekst.length > MAX_BERICHT) return json({ error: "Je vraag is te lang." }, 400);
+    }
 
     const leadId = typeof payload.leadId === "string" && UUID_RE.test(payload.leadId) ? payload.leadId : null;
-    let nieuweLead = true;
-
-    // De vraag zoals hij in `notities` terechtkomt: kopje met datum, dan de tekst
-    // van de bezoeker ongewijzigd. Eén keer opgebouwd, want beide routes
-    // hieronder (aanvullen bij een bestaande lead, of een nieuwe lead maken)
-    // moeten er identiek uitzien in het CRM.
-    const vraagBlok = `${vraagKopje(new Date())}\n${bericht}`;
-
-    try {
-      if (leadId) {
-        // Bijwerken mag alleen als id én e-mailadres bij elkaar horen. Een uuid
-        // raden is al onbegonnen werk; het bijpassende e-mailadres raden maakt
-        // schrijven bij een vreemde lead praktisch onmogelijk.
-        const { data: bestaand, error: leesFout } = await supabase
-          .from("leads_bewoners")
-          .select("id, notities")
-          .eq("id", leadId)
-          .eq("tenant_id", TENANT_ID)
-          .eq("email", email)
-          .maybeSingle();
-        if (leesFout) console.error("Lead ophalen faalde", leesFout);
-        if (bestaand) {
-          // Aanvullen, nooit overschrijven: er kan al een eerdere vraag staan, en
-          // een medewerker kan er zelf notities bij hebben gezet. Dit veld komt in
-          // mails en in de CSV-export terecht, dus er zitten twee harde regels op:
-          //
-          //  1. nooit leegmaken. `bericht` is hierboven al op niet-leeg
-          //     gecontroleerd, maar de regel staat er expliciet zodat een latere
-          //     wijziging hem niet per ongeluk weghaalt.
-          //  2. nooit inkorten wat er al stond. Past de vraag er niet meer bij
-          //     binnen MAX_NOTITIES, dan laten we het veld met rust in plaats van
-          //     andermans tekst af te kappen. De vraag gaat sowieso voluit naar het
-          //     team per mail, dus er raakt niets zoek.
-          const bestaandeNotitie = (bestaand.notities ?? "").trim();
-          const nieuweNotitie = bestaandeNotitie ? `${bestaandeNotitie}\n\n${vraagBlok}` : vraagBlok;
-
-          if (!nieuweNotitie.trim()) {
-            console.error("Notitie-update overgeslagen: resultaat zou leeg zijn");
-          } else if (nieuweNotitie.length > MAX_NOTITIES) {
-            console.warn(
-              `Notitie-update overgeslagen: ${nieuweNotitie.length} tekens past niet binnen ${MAX_NOTITIES}. ` +
-                "De vraag staat wel in de teammail.",
-            );
-          } else {
-            const { error: updateFout } = await supabase
-              .from("leads_bewoners")
-              .update({ notities: nieuweNotitie })
-              .eq("id", bestaand.id);
-            if (updateFout) throw updateFout;
-          }
-          nieuweLead = false;
-        }
-      }
-
-      if (nieuweLead) {
-        // Geen bestaande lead: alles wat we van deze bezoeker weten in één keer,
-        // met de hulpvraag uit de poort (indien meegestuurd) boven de vraag. Ook
-        // hier het kopje boven de vraag, zodat een lead er in het CRM hetzelfde
-        // uitziet of hij nu via deze route of via de update hierboven is ontstaan.
-        const notities = [notitie, vraagBlok].filter(Boolean).join("\n\n");
-        const { error } = await insertLead(supabase, { ...leadVelden, notities }, verrijking, herkomst);
-        if (error) throw error;
-      }
-    } catch (err) {
-      console.error("Vraag opslaan faalde", err);
-      return json({ error: "Er ging iets mis. Probeer het later opnieuw." }, 500);
-    }
-
-    // Mail naar het team (de vraag staat al veilig in het CRM).
     const apiKeyTeam = Deno.env.get("RESEND_API_KEY");
-    let mailed = false;
-    if (apiKeyTeam) {
-      mailed = await verstuurMail({
-        apiKey: apiKeyTeam,
-        from: Deno.env.get("MAIL_FROM") ?? DEFAULT_FROM,
-        to: teamAdres,
-        // Antwoorden gaat rechtstreeks naar de bezoeker.
-        replyTo: email,
-        subject: `Vraag via subsidietool: ${adresregel || postcode}`,
-        html: bouwTeamMailHtml({
-          naam: volledigeNaam,
-          email,
-          telefoon,
-          adresregel,
-          bericht,
-          interesses,
-          overzichtUrl: overzichtUrlSchoon,
-          nieuweLead,
-        }),
-      });
-    } else {
-      console.warn("RESEND_API_KEY ontbreekt — vraag opgeslagen, geen teammail verstuurd.");
-    }
 
-    return json({ ok: true, mailed, nieuweLead });
+    const uitkomst = await verwerkBericht(
+      {
+        supabase: supabase as unknown as BerichtClient,
+        stuurTeamMail: async ({ tekst, nieuweLead, opgeslagen }) => {
+          if (!apiKeyTeam) {
+            console.warn("RESEND_API_KEY ontbreekt: geen teammail bij deze vraag.");
+            return false;
+          }
+          return verstuurMail({
+            apiKey: apiKeyTeam,
+            from: Deno.env.get("MAIL_FROM") ?? DEFAULT_FROM,
+            to: teamAdres,
+            // Antwoorden gaat rechtstreeks naar de bezoeker.
+            replyTo: email,
+            subject: `Vraag via subsidietool: ${adresregel || postcode}`,
+            html: bouwTeamMailHtml({
+              naam: volledigeNaam,
+              email,
+              telefoon,
+              adresregel,
+              bericht: tekst,
+              interesses,
+              overzichtUrl: overzichtUrlSchoon,
+              nieuweLead,
+              opgeslagen,
+            }),
+          });
+        },
+      },
+      { bericht: bepaald, leadId, email, tenantId: TENANT_ID, leadVelden, verrijking, herkomst },
+    );
+
+    if (!uitkomst.ok) return json({ error: "Er ging iets mis. Probeer het later opnieuw." }, 500);
+    return json({ ok: true, mailed: uitkomst.mailed, nieuweLead: uitkomst.nieuweLead });
   }
 
   // ---- Gewone route: lead + overzicht naar het adres dat de bezoeker typte ----
@@ -904,10 +875,10 @@ Deno.serve(async (req: Request) => {
 
   let leadId: string | null = null;
   try {
-    // `notities` bevat hooguit de kopregel uit de poort (bijv. de termijn waarop
-    // de bewoner aan de slag wil); een latere vraag komt er via route "bericht"
-    // onder. Het id gaat terug naar de site, zodat die vraag bij déze lead landt
-    // in plaats van een tweede aan te maken.
+    // `notities` blijft normaal leeg: de hulpvragen staan in hun eigen kolom, en
+    // alleen een notitie die geen hulpregel is komt hier nog in (bepaalHulpvragen).
+    // Het id gaat terug naar de site, zodat een klik of vraag op het resultaat bij
+    // déze lead landt in plaats van een tweede aan te maken.
     const { data: nieuweLead, error } = await insertLead(
       supabase,
       { ...leadVelden, notities: notitie },
@@ -947,7 +918,8 @@ Deno.serve(async (req: Request) => {
         apiKey,
         from: Deno.env.get("MAIL_FROM") ?? DEFAULT_FROM,
         to: email,
-        bcc: Deno.env.get("MAIL_BCC") || undefined,
+        // Bewust geen bcc naar het team (sinds oktober 2026): het overzicht staat
+        // in het CRM bij de lead, en die kopie gaf per lead een mail zonder nieuws.
         replyTo: Deno.env.get("MAIL_REPLY_TO") ?? DEFAULT_REPLY_TO,
         subject: mail.onderwerp,
         html: mail.html,

@@ -11,12 +11,12 @@ import { minderBeweging } from "./beweging";
 // ná de klik, dus hij kost de gegevens-poort geen aanmeldingen: wie hier komt,
 // heeft net zelf om hulp gevraagd. Meer antwoorden mag, overslaan ook.
 //
-// Eerst aanvinken, dan één keer bevestigen. De route "bericht" zet elk bericht
-// als eigen blok (met datumkopje) in `notities` en mailt het team. Automatisch
-// bewaren na een pauze gaf bij rustig aanklikken alsnog drie, vier mails en een
-// rij "Lastigst (bijgewerkt)"-blokken (oktober 2026). Na het bevestigen staat
-// de keuze vast. "Overslaan" stuurt niets. Testmodus regelt de verstuurfunctie
-// zelf.
+// Eerst aanvinken, dan één keer bevestigen. Automatisch bewaren na een pauze
+// gaf bij rustig aanklikken drie, vier mails en een rij "Lastigst
+// (bijgewerkt)"-blokken in `notities` (oktober 2026). Sinds eind oktober gaan de
+// keuzes als lijst naar `subsidiecheck_lastigst` op de lead, zonder mail aan het
+// team; het CRM toont ze als labels. Na het bevestigen staat de keuze vast.
+// "Overslaan" stuurt niets. Testmodus regelt de verstuurfunctie zelf.
 
 const OPTIES: { tekst: string; Icoon: LucideIcon }[] = [
   { tekst: "Door de bomen het bos niet meer zien", Icoon: Trees },
@@ -26,8 +26,8 @@ const OPTIES: { tekst: string; Icoon: LucideIcon }[] = [
 ];
 
 interface LastigsteVraagProps {
-  /** Bewaart de regel bij de lead (zie stuurSessieBericht). */
-  verstuur: (bericht: string) => Promise<void>;
+  /** Bewaart de keuzes bij de lead, in optievolgorde (zie bewaarLastigst). */
+  verstuur: (keuzes: string[]) => Promise<void>;
 }
 
 type Stand = "kiezen" | "bezig" | "bewaard" | "mislukt";
@@ -55,7 +55,7 @@ export const LastigsteVraag = ({ verstuur }: LastigsteVraagProps) => {
     onderweg.current = true;
     setStand("bezig");
     try {
-      await verstuur(`Lastigst: ${keuze.join(", ")}`);
+      await verstuur(keuze);
       setStand("bewaard");
     } catch (err) {
       onderweg.current = false;

@@ -122,11 +122,14 @@ describe("insertLead", () => {
 describe("de function gebruikt insertLead", () => {
   it("voor beide schrijfroutes, met de herkomst erbij", async () => {
     const { readFileSync } = await import("fs");
-    const index = readFileSync("supabase/functions/subsidiecheck-mail/index.ts", "utf8");
-    expect(index).toContain('import { insertLead } from "./leadInsert.ts"');
-    // Geen eigen insert op leads_bewoners meer naast insertLead.
-    expect(index).not.toMatch(/from\("leads_bewoners"\)\s*\.insert/);
-    expect([...index.matchAll(/insertLead\(/g)]).toHaveLength(2);
-    expect([...index.matchAll(/verrijking,\s*herkomst\s*,?\s*\)/g)]).toHaveLength(2);
+    // De gewone route staat in index.ts, de route "bericht" in bericht.ts.
+    for (const bestand of ["index.ts", "bericht.ts"]) {
+      const bron = readFileSync(`supabase/functions/subsidiecheck-mail/${bestand}`, "utf8");
+      expect(bron).toContain("import { insertLead");
+      // Geen eigen insert op leads_bewoners naast insertLead.
+      expect(bron).not.toMatch(/from\("leads_bewoners"\)\s*\.insert/);
+      expect([...bron.matchAll(/insertLead\(/g)]).toHaveLength(1);
+      expect([...bron.matchAll(/verrijking,\s*(?:args\.)?herkomst\s*,?\s*\)/g)]).toHaveLength(1);
+    }
   });
 });

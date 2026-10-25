@@ -4,9 +4,9 @@
 // hebben hun gegevens al gegeven en krijgen dan een leeg contactformulier.
 //
 // Bewust `sessionStorage` (weg zodra het tabblad sluit) en bewust alleen de
-// gegevens die de bezoeker zelf net heeft ingevuld. `leadId` komt terug van de
-// edge function en laat een later bericht bij dezelfde lead landen in plaats van
-// een tweede, dubbele lead in het CRM.
+// gegevens die de bezoeker zelf net heeft ingevuld (plus de gekozen tegels).
+// `leadId` komt terug van de edge function en laat een later bericht bij dezelfde
+// lead landen in plaats van een tweede, dubbele lead in het CRM.
 
 const SLEUTEL = "sc_contact";
 
@@ -18,6 +18,12 @@ export type BekendContact = {
   telefoon?: string;
   /** Id van de zojuist aangemaakte lead in het CRM, als de function die teruggaf. */
   leadId?: string;
+  /**
+   * De gekozen tegels uit de poort ("Waar wil je hulp bij?"). Alleen nodig als
+   * een latere klik of vraag zonder lead-id toch een nieuwe lead wordt: dan
+   * staan de hulpvragen er ook bij.
+   */
+  hulpvragen?: string[];
 };
 
 /** Bewaart het contact van deze sessie. Faalt stil: opslag is een gemak, geen eis. */
@@ -46,6 +52,10 @@ export function leesContact(): BekendContact | null {
       email: data.email,
       telefoon: typeof data.telefoon === "string" ? data.telefoon : undefined,
       leadId: typeof data.leadId === "string" ? data.leadId : undefined,
+      hulpvragen:
+        Array.isArray(data.hulpvragen) && data.hulpvragen.every((h) => typeof h === "string")
+          ? data.hulpvragen
+          : undefined,
     };
   } catch {
     return null;

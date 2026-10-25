@@ -246,8 +246,14 @@ export async function verstuurSubsidiecheckLead(args: {
   waarden: ContactSchoon;
   input: SubsidieCheckInput;
   adres: Pick<PdokAdres, "straatnaam" | "woonplaatsnaam">;
-  /** Kopregel voor `notities`, bijv. de gekozen termijn uit de poort. */
+  /**
+   * De hulpvragen uit de poort als tekstregel ("Wil hulp met: …"). De function
+   * gebruikt sinds oktober 2026 `hulpvragen`; deze regel gaat alleen nog mee voor
+   * een oudere versie van de function, en voor de directe insert hierboven.
+   */
   notitie?: string;
+  /** Labels van de gekozen tegels, voor `subsidiecheck_hulpvragen`. */
+  hulpvragen?: string[];
   verrijking?: LeadVerrijking;
   /** Bewijs van toestemming voor opvolging; zie toestemming.ts. */
   toestemming?: ToestemmingVelden;
@@ -260,11 +266,23 @@ export async function verstuurSubsidiecheckLead(args: {
   /** Hetzelfde id als `event_id` in de `subsidiecheck_lead`-push (deduplicatie bij Meta). */
   eventId?: string;
 }): Promise<{ leadId?: string }> {
-  const { waarden, input, adres, notitie, verrijking, toestemming, overzichtUrl, honeypot, duurMs, turnstileToken, eventId } =
-    args;
+  const {
+    waarden,
+    input,
+    adres,
+    notitie,
+    hulpvragen,
+    verrijking,
+    toestemming,
+    overzichtUrl,
+    honeypot,
+    duurMs,
+    turnstileToken,
+    eventId,
+  } = args;
 
   if (isTestmodus()) {
-    meldTestmodus("lead + overzichtmail overgeslagen", { waarden, input, notitie });
+    meldTestmodus("lead + overzichtmail overgeslagen", { waarden, input, hulpvragen, notitie });
     return {};
   }
 
@@ -291,6 +309,11 @@ export async function verstuurSubsidiecheckLead(args: {
       honeypot: honeypot ?? "",
       duurMs,
       turnstileToken,
+      // Tijdens de overgang allebei: `hulpvragen` voor de huidige function, de
+      // tekstregel voor een oudere die nog draait. Cloudflare zet de site live
+      // bij de merge, de function wordt los uitgerold. De nieuwe function negeert
+      // de regel zodra `hulpvragen` er is.
+      hulpvragen,
       notitie,
       energielabel: verrijking?.energielabel,
       bouwjaar: verrijking?.bouwjaar,
@@ -349,17 +372,35 @@ export function valideerBericht(bericht: string): string | null {
   return null;
 }
 
-// Stuurt een vraag die de bezoeker op het resultaat stelt. De vraag komt in
-// `notities` op de lead én per mail bij het team, met de bezoeker als
-// antwoordadres zodat "beantwoorden" meteen bij de juiste persoon uitkomt.
+/**
+ * Wat de bezoeker na de poort doet. Bepaalt in de function waar het landt:
+ *  - "uitzoeken": de oker knop → `uitzoeken_aangevraagd_op` op de lead;
+ *  - "lastigst":  de keuzes bij "Wat vind je het lastigst?" → `subsidiecheck_lastigst`;
+ *  - "vraag":     een getypte vraag → de communicatietab, plus een mail aan het team.
+ * Alleen een vraag geeft een teammail: een klik is een kenmerk van de lead.
+ */
+export type BerichtSoort = "uitzoeken" | "lastigst" | "vraag";
+
+// Stuurt wat de bezoeker na de poort doet naar de function (actie "bericht").
+// Met een bekend `leadId` (de bezoeker kwam net door de gegevens-poort) komt het
+// bij díe lead: geen tweede lead voor dezelfde persoon. Zonder id maakt de
+// function een nieuwe lead — een dubbele lead is vervelend, een verloren
+// aanvraag is erger.
 //
-// Met een bekend `leadId` (de bezoeker kwam net door de gegevens-poort) vult de
-// function de notitie aan bij díe lead: geen tweede lead voor dezelfde persoon.
-// Zonder id, of zonder edge function, wordt het een nieuwe lead met de vraag in
-// `notities` — een dubbele lead is vervelend, een verloren vraag is erger.
+// Zonder edge function valt het terug op een directe insert met de tekst in
+// `notities`, zoals voorheen; die terugval kent de nieuwe kolommen niet.
 export async function verstuurSubsidiecheckBericht(args: {
   waarden: ContactSchoon;
+  /**
+   * De tekst. Bij een vraag de vraag zelf; bij een klik de oude vaste tekst, die
+   * tijdens de overgang meegaat zodat een oudere function hem nog begrijpt.
+   */
   bericht: string;
+  soort: BerichtSoort;
+  /** Alleen bij soort "lastigst": de gekozen opties, in optievolgorde. */
+  keuzes?: string[];
+  /** De hulpvragen uit de poort, voor als de function hier een nieuwe lead van maakt. */
+  hulpvragen?: string[];
   input: SubsidieCheckInput;
   adres: Pick<PdokAdres, "straatnaam" | "woonplaatsnaam">;
   leadId?: string;
@@ -368,9 +409,9 @@ export async function verstuurSubsidiecheckBericht(args: {
   /** Hoe lang het formulier open stond; de function negeert te snelle inzendingen. */
   duurMs?: number;
 }): Promise<void> {
-  const { waarden, bericht, input, adres, leadId, overzichtUrl, honeypot, duurMs } = args;
+  const { waarden, bericht, soort, keuzes, hulpvragen, input, adres, leadId, overzichtUrl, honeypot, duurMs } = args;
 
-  if (isTestmodus()) return meldTestmodus("vraag niet verstuurd", { waarden, input, bericht });
+  if (isTestmodus()) return meldTestmodus("bericht niet verstuurd", { waarden, input, soort, keuzes, bericht });
 
   if (!MAIL_FUNCTIE_URL) {
     await schrijfSubsidiecheckLead({ waarden, input, adres, notitie: bericht });
@@ -387,6 +428,9 @@ export async function verstuurSubsidiecheckBericht(args: {
     body: JSON.stringify({
       actie: "bericht",
       leadId,
+      soort,
+      keuzes,
+      hulpvragen,
       bericht,
       voornaam: waarden.voornaam,
       tussenvoegsel: waarden.tussenvoegsel || undefined,

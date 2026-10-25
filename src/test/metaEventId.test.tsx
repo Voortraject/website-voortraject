@@ -138,6 +138,12 @@ describe("event_id en herkomst bij subsidiecheck_lead", () => {
     expect(body.herkomst).toEqual({ utm_source: "meta", utm_medium: "paid_social", utm_campaign: "sc_okt", fbclid: "IwAR1" });
     // De link voor de mail komt van de pagina (mét adres), niet uit window.location.
     expect(body.overzichtUrl).toBe("https://voortraject.nl/subsidiecheck?pc=9711AA&hn=1&type=woningeigenaar");
+    // De tegels als lijst voor `subsidiecheck_hulpvragen`, en tijdens de overgang
+    // ook nog als tekstregel voor een oudere function.
+    expect(body.hulpvragen).toEqual(["Subsidies uitzoeken"]);
+    expect(body.notitie).toBe("Wil hulp met: Subsidies uitzoeken");
+    // En onthouden in de sessie, voor een klik of vraag die toch een nieuwe lead wordt.
+    expect(JSON.parse(sessionStorage.getItem("sc_contact")!).hulpvragen).toEqual(["Subsidies uitzoeken"]);
 
     const lead = vi.mocked(pushGtmEvent).mock.calls.find(([event]) => event === "subsidiecheck_lead");
     expect(lead).toBeDefined();
@@ -159,12 +165,13 @@ describe("de vraag op het resultaat", () => {
     await verstuurSubsidiecheckBericht({
       waarden: { voornaam: "Jan", tussenvoegsel: "", achternaam: "Test", email: "jan@example.nl", telefoon: "0612345678" },
       bericht: "Hoe zit het met de ISDE?",
+      soort: "vraag",
       input,
       adres,
       duurMs: 5_000,
     });
 
     const [, opties] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
-    expect(JSON.parse(opties.body as string)).toMatchObject({ actie: "bericht", herkomst: { utm_source: "meta" } });
+    expect(JSON.parse(opties.body as string)).toMatchObject({ actie: "bericht", soort: "vraag", herkomst: { utm_source: "meta" } });
   });
 });
