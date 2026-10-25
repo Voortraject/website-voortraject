@@ -119,9 +119,14 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
 
     setBezig(true);
     try {
+      // De enige echte vraag van de drie routes na de poort (zie
+      // verstuurSubsidiecheckBericht): die komt in de communicatietab van de lead
+      // en gaat per mail naar het team. Ook als hij met een voorstel begon.
       await verstuurSubsidiecheckBericht({
         waarden: resultaat.waarden,
         bericht: bericht.trim(),
+        soort: "vraag",
+        hulpvragen: bekend?.hulpvragen,
         input,
         adres,
         leadId: bekend?.leadId,

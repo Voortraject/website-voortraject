@@ -34,7 +34,7 @@ import { Samenvatting } from "./Samenvatting";
 import { SubsidieCard } from "./SubsidieCard";
 import { LastigsteVraag } from "./LastigsteVraag";
 import { IsolatieplanRij, LabelRegel, MiniTellers, Tellers } from "./Tellers";
-import { stuurSessieBericht } from "./uitzoekAanvraag";
+import { bewaarLastigst } from "./uitzoekAanvraag";
 import { useBreed } from "./useBreed";
 import { useUitzoek } from "./useUitzoek";
 import { scrollNaarVraag } from "./vraagFocus";
@@ -150,8 +150,8 @@ export const StapResultaat = ({
   const breed = useBreed();
   const resultaatSinds = useRef(Date.now());
   const stuurLastigst = useCallback(
-    async (bericht: string) => {
-      await stuurSessieBericht({ input, adres, overzichtUrl, sindsMs: resultaatSinds.current, bericht });
+    async (keuzes: string[]) => {
+      await bewaarLastigst({ input, adres, overzichtUrl, sindsMs: resultaatSinds.current, keuzes });
     },
     [input, adres, overzichtUrl],
   );

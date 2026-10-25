@@ -62,15 +62,16 @@ const useOptellen = (doel: number) => {
 // écht doet, dus élk antwoord vertelt de adviseur waarmee hij het gesprek opent.
 // Geen "vage" uitweg, want alle vier zijn even legitiem, en meerdere aanvinken
 // mag: wie zowel de subsidies als de aanvraag uit handen wil geven, zegt dat.
-// De labels komen letterlijk in de notitie bij de lead te staan. Kort en gelijk
-// van vorm, zodat de vier tegels in één oogopslag te vergelijken zijn.
+// De labels komen letterlijk in `subsidiecheck_hulpvragen` bij de lead te staan,
+// en het CRM toont ze als labels. Kort en gelijk van vorm, zodat de vier tegels
+// in één oogopslag te vergelijken zijn.
 const HULPVRAGEN = [
   { id: "subsidies", label: "Subsidies uitzoeken", Icon: BadgeEuro },
   { id: "aanvraag", label: "De aanvraag regelen", Icon: FileCheck },
   // "Betrouwbare uitvoerder" sinds 2026-10-21: "betrouwbaar" is precies de
   // drempel, en zo past het label op een telefoon in twee regels. De id blijft
-  // "uitvoerder" (GTM en het CRM lezen die), alleen de tekst in de notitie
-  // ("Wil hulp met: …") verandert voor nieuwe leads.
+  // "uitvoerder" (GTM leest die), alleen het label bij de lead verandert voor
+  // nieuwe leads.
   { id: "uitvoerder", label: "Betrouwbare uitvoerder", Icon: HardHat },
   { id: "plan", label: "Een plan voor mijn huis", Icon: Home },
 ] as const;
@@ -260,18 +261,18 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
       return;
     }
 
-    // Zelfde opbouw als het contactformulier: een kopregel in `notities` die het
-    // team meteen ziet. Een latere vraag van de bezoeker komt eronder. Volgorde
-    // van de tegels, niet van het aanklikken, zodat het CRM leest zoals de
-    // bezoeker het zag.
+    // De gekozen tegels gaan als lijst naar `subsidiecheck_hulpvragen`, in de
+    // volgorde van de tegels en niet van het aanklikken, zodat het CRM leest zoals
+    // de bezoeker het zag. `notities` blijft van het team.
     const gekozenLabels = HULPVRAGEN.filter((h) => hulpvragen.includes(h.id)).map((h) => h.label);
-    // `notities` bevat alleen de hulpvraag: dat is het veld waar het team zelf in
-    // werkt. Het toestemmingsbewijs dat de ACM per persoon verlangt stond hier
-    // ook als leesbare regel onder, als terugval voor de tijd dat de kolommen nog
-    // niet bestonden. Die kolommen zijn er nu en vullen aantoonbaar, dus het
-    // bewijs staat nog op één plek: `toestemming_op` en `toestemming_tekst`.
-    // Zie toestemming.ts. Het reist mee langs beide schrijfpaden, de edge
-    // function én de directe insert bij een bronfout.
+    // Dezelfde keuze nog als tekstregel, voor twee paden die de lijst niet kennen:
+    // een oudere edge function tijdens de overgang (de nieuwe negeert de regel
+    // zodra `hulpvragen` er is), en de directe insert bij een bronfout hieronder,
+    // die hem zoals voorheen in `notities` zet.
+    //
+    // Het toestemmingsbewijs dat de ACM per persoon verlangt stond hier ooit ook
+    // als leesbare regel onder. Dat staat nu op één plek: `toestemming_op` en
+    // `toestemming_tekst` (zie toestemming.ts), langs beide schrijfpaden.
     const notitie = `Wil hulp met: ${gekozenLabels.join(", ")}`;
     const toestemming = toestemmingVelden();
 
@@ -313,7 +314,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
         });
         // Zonder lead-id: een vraag op het resultaat wordt dan een nieuwe lead.
         // Vervelend maar acceptabel; de vraag kwijtraken is erger.
-        bewaarContact({ ...resultaat.waarden });
+        bewaarContact({ ...resultaat.waarden, hulpvragen: gekozenLabels });
         pushGtmEvent("subsidiecheck_lead", {
           bewonertype: input.bewonertype,
           aantal_regelingen: 0,
@@ -331,6 +332,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
         input,
         adres,
         notitie,
+        hulpvragen: gekozenLabels,
         verrijking: await verrijkingBelofte,
         toestemming,
         // Link naar dit resultaat (voor de "bekijk online"-link in de mail).
@@ -342,7 +344,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
       });
       // Onthouden voor de rest van deze sessie: het resultaat vraagt deze gegevens
       // dan niet opnieuw, en een vraag daar landt bij dezelfde lead.
-      bewaarContact({ ...resultaat.waarden, leadId });
+      bewaarContact({ ...resultaat.waarden, leadId, hulpvragen: gekozenLabels });
       // Geen persoonsgegevens in het event (privacy) — alleen grove context.
       pushGtmEvent("subsidiecheck_lead", {
         bewonertype: input.bewonertype,

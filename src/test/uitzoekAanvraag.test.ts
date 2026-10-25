@@ -12,7 +12,12 @@ vi.mock("@/components/subsidiecheck/leadFormulier", async (importOriginal) => ({
 
 import { bewaarContact } from "@/components/subsidiecheck/contactOpslag";
 import { MIN_INVULTIJD_MS, verstuurSubsidiecheckBericht } from "@/components/subsidiecheck/leadFormulier";
-import { UITZOEK_BERICHT, vraagUitzoekenAan } from "@/components/subsidiecheck/uitzoekAanvraag";
+import {
+  bewaarLastigst,
+  lastigstTekst,
+  UITZOEK_BERICHT,
+  vraagUitzoekenAan,
+} from "@/components/subsidiecheck/uitzoekAanvraag";
 import type { SubsidieCheckInput } from "@/lib/subsidies";
 
 const input: SubsidieCheckInput = {
@@ -41,8 +46,37 @@ describe("laat gratis uitzoeken wat ik krijg", () => {
     expect(args.leadId).toBe("lead-1");
     expect(args.waarden.email).toBe("sanne@example.nl");
     expect(args.waarden.voornaam).toBe("Sanne");
+    // `soort` is wat de function gebruikt; de oude tekst gaat alleen mee voor een
+    // oudere function tijdens de overgang.
+    expect(args.soort).toBe("uitzoeken");
     expect(args.bericht).toBe(UITZOEK_BERICHT);
     expect(args.duurMs).toBe(60_000);
+  });
+
+  it("stuurt de keuzes bij 'lastigst' als lijst, met de oude tekst ernaast", async () => {
+    bewaarContact({ voornaam: "Sanne", achternaam: "de Vries", email: "sanne@example.nl", leadId: "lead-1" });
+    const keuzes = ["Door de bomen het bos niet meer zien", "Het papierwerk"];
+    await bewaarLastigst({ input, adres, sindsMs: 0, nuMs: 60_000, wacht: async () => {}, keuzes });
+
+    const args = vi.mocked(verstuurSubsidiecheckBericht).mock.calls[0][0];
+    expect(args.soort).toBe("lastigst");
+    expect(args.keuzes).toEqual(keuzes);
+    expect(args.bericht).toBe("Lastigst: Door de bomen het bos niet meer zien, Het papierwerk");
+    expect(lastigstTekst(keuzes)).toBe(args.bericht);
+  });
+
+  it("geeft de hulpvragen uit de poort mee, voor als het toch een nieuwe lead wordt", async () => {
+    bewaarContact({
+      voornaam: "Sanne",
+      achternaam: "de Vries",
+      email: "sanne@example.nl",
+      hulpvragen: ["Subsidies uitzoeken", "Een plan voor mijn huis"],
+    });
+    await vraagUitzoekenAan({ input, adres, sindsMs: 0, nuMs: 60_000, wacht: async () => {} });
+
+    const args = vi.mocked(verstuurSubsidiecheckBericht).mock.calls[0][0];
+    expect(args.leadId).toBeUndefined();
+    expect(args.hulpvragen).toEqual(["Subsidies uitzoeken", "Een plan voor mijn huis"]);
   });
 
   it("wacht bij een heel snelle klik tot de minimale tijd voorbij is, in plaats van stil te worden genegeerd", async () => {

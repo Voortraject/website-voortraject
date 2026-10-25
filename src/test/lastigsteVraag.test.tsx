@@ -5,8 +5,8 @@ import { LastigsteVraag } from "@/components/subsidiecheck/LastigsteVraag";
 
 // De vraag na "Je aanvraag is binnen": wat vindt de bewoner het lastigst? Het
 // antwoord geeft het team een opening voor het belgesprek. Eerst aanvinken, dan
-// één keer bevestigen: de route "bericht" zet elk bericht als eigen blok in de
-// notities en mailt het team, dus er mag precies één bericht uitgaan.
+// één keer bevestigen: er mag precies één bericht uitgaan, met de keuzes als
+// lijst (die gaan naar `subsidiecheck_lastigst`; laatste keuze wint).
 
 const OPTIES = [
   "Door de bomen het bos niet meer zien",
@@ -59,16 +59,18 @@ describe("wat vind je het lastigst?", () => {
     expect(screen.queryByRole("button", { name: "Bevestigen" })).toBeNull();
   });
 
-  it("bevestigen stuurt één regel, in de volgorde van de keuzes", async () => {
+  it("bevestigen stuurt de keuzes één keer, in de volgorde van de opties", async () => {
     render(<LastigsteVraag verstuur={verstuur} />);
     tik(OPTIES[3]);
     tik(OPTIES[0]);
     tik(OPTIES[2]);
     await bevestig();
     expect(verstuur).toHaveBeenCalledTimes(1);
-    expect(verstuur).toHaveBeenCalledWith(
-      "Lastigst: Door de bomen het bos niet meer zien, Een betrouwbare uitvoerder vinden, Het papierwerk",
-    );
+    expect(verstuur).toHaveBeenCalledWith([
+      "Door de bomen het bos niet meer zien",
+      "Een betrouwbare uitvoerder vinden",
+      "Het papierwerk",
+    ]);
     expect(screen.getByText("Dank je, dit staat bij je aanvraag.")).toBeInTheDocument();
   });
 
