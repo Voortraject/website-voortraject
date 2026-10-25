@@ -4,7 +4,7 @@ import { BRONNEN, PANEEL, SALDERING } from "@/data/zonnepanelen";
 import { Accent, NummerRondje, SectieKop } from "@/components/maatregel/primitieven";
 
 /**
- * Onafhankelijk advies bij het aanvragen van offertes, plus de doorverwijzing
+ * Advies bij het aanvragen van offertes, plus de doorverwijzing
  * naar de maatregelen die je zelfverbruik verhogen. Dat laatste is geen
  * verkooptruc maar het directe gevolg van het stoppen van de saldering: alleen
  * wat je zelf gebruikt is nog echt geld waard.
