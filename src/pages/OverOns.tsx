@@ -11,8 +11,8 @@ import { useStaffel } from "@/lib/beweging";
 const howWeWork = [
   {
     icon: UserCheck,
-    title: "Één vaste begeleider",
-    desc: "Je werkt altijd met dezelfde persoon. Die kent jouw dossier, jouw woning en jouw situatie.",
+    title: "Vaste gezichten",
+    desc: "Je spreekt Michael, Christian, Tim of Wouter. Zij kennen jouw dossier, jouw woning en jouw situatie.",
   },
   {
     icon: ShieldCheck,
