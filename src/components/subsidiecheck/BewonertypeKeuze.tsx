@@ -16,6 +16,10 @@ const TYPE_TOELICHTING: Record<Bewonertype, string> = {
   verhuurder: "Ik verhuur een of meer woningen",
 };
 
+// Volgorde in het raster (twee kolommen, rij voor rij): de lange labels links,
+// zodat "Woningeigenaar" op een telefoon in de bredere linkerkolom op één regel past.
+const TYPE_VOLGORDE: Bewonertype[] = ["woningeigenaar", "huurder", "verhuurder", "vve"];
+
 interface BewonertypeKeuzeProps {
   waarde: Bewonertype;
   onKies: (type: Bewonertype) => void;
@@ -26,8 +30,8 @@ interface BewonertypeKeuzeProps {
 // Huisstijl van oktober 2026: witte tegels met schaduw, de gekozen tegel krijgt
 // een blauw verloop en een vinkje dat inveert (.instap-keus in src/index.css).
 export const BewonertypeKeuze = ({ waarde, onKies }: BewonertypeKeuzeProps) => (
-  <div className="grid grid-cols-2 gap-2.5 sm:gap-3" role="radiogroup" aria-label="Type bewoner">
-    {(Object.keys(BEWONERTYPE_LABELS) as Bewonertype[]).map((type) => {
+  <div className="grid grid-cols-[1.4fr_1fr] gap-2.5 sm:grid-cols-2 sm:gap-3" role="radiogroup" aria-label="Type bewoner">
+    {TYPE_VOLGORDE.map((type) => {
       const Icon = TYPE_ICONS[type];
       const actief = waarde === type;
       return (
