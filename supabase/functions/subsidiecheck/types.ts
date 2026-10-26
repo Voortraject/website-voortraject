@@ -45,6 +45,7 @@ export type SubsidieRegeling = {
   letOp?: string;
   looptAfOp?: string;
   beperktTot?: string;
+  alleenAls?: string;
   voorWie?: string;
   belangrijksteVoorwaarde?: string;
   bronUrl: string;

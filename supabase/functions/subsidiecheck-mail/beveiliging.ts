@@ -234,6 +234,8 @@ export type MailRegeling = {
   bedragIndicatie?: string;
   omschrijving?: string;
   letOp?: string;
+  /** Voorwaarde die niet uit het adres te halen is, uit de gebiedscorrecties. */
+  alleenAls?: string;
   looptAfOp?: string;
   bronUrl?: string;
 };
@@ -265,6 +267,7 @@ export function naarMailRegeling(r: Record<string, unknown>, nu = new Date()): M
     bedragIndicatie: tekst(r.bedragIndicatie, 300),
     omschrijving: tekst(r.omschrijving, 2000),
     letOp: tekst(r.letOp, 2000),
+    alleenAls: tekst(r.alleenAls, 300),
     looptAfOp,
     bronUrl: typeof r.bronUrl === "string" && /^https?:\/\//i.test(r.bronUrl) ? r.bronUrl : undefined,
   };

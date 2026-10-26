@@ -599,3 +599,50 @@ lfelnfukbrxznkevnevr`. De functie valt dan meteen terug op de oude route, zonder
       een bezoeker een storing bij Milieu Centraal als eerlijke foutmelding in plaats van dat de
       oude route het stil opvangt. Dat is bewust zo ontworpen, maar het is een keuze om te maken.
       Het CRM weet ervan; voor hen verandert er niets, alleen zegt `via` daarna altijd `"api"`.
+
+---
+
+# Subsidiecheck: regelingen die breder getoond worden dan ze gelden (2026-10-26)
+
+**Aanleiding.** VVG € 10.000 stond bij 9367 (De Wilp) terwijl die postcode niet op de lijst van
+SNN staat. Milieu Centraal koppelt die regeling aan negen hele gemeenten in plaats van aan de 170
+postcodes. Gemeten over alle 988 postcodegebieden in Groningen, Drenthe en Friesland (vier
+bewonertypes, live API): vijf regelingen worden te breed getoond.
+
+| regeling | getoond in | klopt in |
+|---|---|---|
+| VVG € 10.000 | 286 PC4 | 170 (0 gemist) |
+| VVG € 10.000 (Zakelijk) | 253 PC4 | ~167 (zelfde lijst) |
+| Volkshuisvesting Drenthe | 116 PC4 | 6 PC4 + straten in 7741 en 7848 |
+| Energiemaatregelen Groningen (Ten Post) | 48 PC4 | 1 (9792) |
+| Isolatieaanpak Nij Begun | ook 19 PC4 in Hoogeveen | 0 daarvan |
+
+Plus: VVG € 17.000 hangt af van het NCG-programma. Dat zit niet in een postcode.
+
+**Aanpak (akkoord opdrachtgever).** Geen import die iets kan overschrijven: de feed is live per
+request. Dus een correctielaag in de function die alleen weghaalt of een voorwaarde toevoegt.
+
+- [x] `src/lib/subsidies/postcodegebieden.ts`: de lijsten als data, met bron, versie, datum, sha256
+- [x] `src/lib/subsidies/gebiedscorrecties.ts`: `alleenIn` / `nietIn` / `alleenAls`, per id (slug)
+- [x] `alleenAls` op `SubsidieRegeling`, op de kaart als "Alleen als …", niet in de bedrag-teaser
+- [x] Toepassen in de edge function (API- en scraperoute) en in de dev-proxy
+- [x] Deno-kopieën plus een test dat ze gelijk zijn aan de bron
+- [x] Mail: `alleenAls` doorgeven en tonen
+- [x] Tests: 9367 geen € 10.000, 9901 wel; zakelijk; Coevorden PC6; Ten Post; Hoogeveen; lijstintegriteit
+- [x] Wekelijkse bewaking: PDF-link en hash bij SNN, slugs nog in de feed, live proef wel/niet, onbekende VVG-variant
+- [ ] Uitrol: PR, daarna beide functions deployen (CRM-project), CRM-team melden (veld erbij, kaarten eraf)
+
+Later: melden bij Milieu Centraal; bouwjaar vóór 2016 voor VVG € 10.000 meenemen.
+
+## Review (2026-10-26)
+
+- Na de correctie, over de volledige meting van 988 gebieden: VVG € 10.000 staat in precies de
+  170 gebieden van de lijst (was 286), zakelijk 163 (was 253), Volkshuisvesting Drenthe 7 (was
+  116), Ten Post 1 (was 48), Isolatieaanpak 329 (was 348, Hoogeveen eraf).
+- Beide postcodelijsten in de code zijn automatisch vergeleken met de PDF's: identiek.
+- Headless in de echte app: 9901HT toont VVG € 10.000 en € 17.000, elk met de juiste
+  "Alleen als"-regel; 9367VC toont alleen nog de € 17.000 met de NCG-voorwaarde.
+- `bun run test` 811/811, lint schoon, `deno check` op beide functions schoon voor wat hier is
+  gewijzigd (de mail-`index.ts` had al drie typefouten in de Supabase-client, niet aangeraakt).
+- De bewaking draaide al: de bronnen kloppen, en de live proeven tonen nu nog de fouten van
+  productie. Na de deploy moeten die op ok springen.

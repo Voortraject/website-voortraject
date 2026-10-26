@@ -178,6 +178,12 @@ export type SubsidieRegeling = {
    * voegt niets toe aan de omschrijving.
    */
   beperktTot?: string;
+  /**
+   * Een voorwaarde die we niet uit het adres kunnen halen, bijv. "je woning in
+   * het versterkingsprogramma van de NCG zit". Komt niet van de bron maar uit
+   * onze eigen correcties (postcodegebieden.ts). Op de kaart als "Alleen als …".
+   */
+  alleenAls?: string;
   /** Uitklap-verdieping (drielagenmodel): voor wie de regeling bedoeld is. */
   voorWie?: string;
   /** Uitklap-verdieping: de belangrijkste voorwaarde in één zin. */
@@ -270,9 +276,13 @@ function hoogste(regelingen: SubsidieRegeling[], uit: (s?: string) => number | u
   return waarden.length ? Math.max(...waarden) : undefined;
 }
 
+// Een regeling met `alleenAls` telt hier niet mee: het grote getal bovenaan moet
+// gelden voor iedereen op dit adres, niet alleen voor wie toevallig in het
+// NCG-programma zit.
 export function topBedragen(regelingen: SubsidieRegeling[]): { subsidie?: TopBedrag; lening?: TopBedrag } {
-  const subs = regelingen.filter((r) => r.type === "subsidie");
-  const len = regelingen.filter((r) => r.type === "lening");
+  const zeker = regelingen.filter((r) => !r.alleenAls);
+  const subs = zeker.filter((r) => r.type === "subsidie");
+  const len = zeker.filter((r) => r.type === "lening");
   const subPct = hoogste(subs, pctUit);
   const subEuro = hoogste(subs, euroUit);
   const lenEuro = hoogste(len, euroUit);

@@ -32,6 +32,11 @@
 // plaats van standaard alle acht. Er is niets stukgegaan, maar dat was geluk. Bij
 // een volgende wijziging: eerst even bij het CRM navragen.
 //
+// Sinds 2026-10-26 haalt de function ook regelingen weg die Milieu Centraal te
+// breed koppelt (VVG € 10.000 alleen op de postcodelijst van SNN, en meer; zie
+// postcodegebieden.ts), en zet hij er soms een veld `alleenAls` bij. Dat veld
+// is nieuw; de CRM-app toont het nog niet.
+//
 // Secret: ESW_API_KEY (Milieu Centraal). Deze function raakt de database niet.
 // verify_jwt = false (zie config.toml) omdat de checker publiek en anoniem te
 // gebruiken is.
@@ -42,6 +47,7 @@ import {
   naarRegeling,
   type EswApiRegeling,
 } from "./energiesubsidiewijzerApi.ts";
+import { pasGebiedscorrectiesToe } from "./gebiedscorrecties.ts";
 import type { SubsidieRegeling } from "./types.ts";
 
 const BRON = "https://www.verbeterjehuis.nl";
@@ -243,7 +249,7 @@ Deno.serve(async (req: Request) => {
   if (API_KEY) {
     try {
       const ruw = await haalViaApi(postcode, resident ?? "");
-      const regelingen = filterOpFilterIds(ruw, filters).map(naarRegeling);
+      const regelingen = pasGebiedscorrectiesToe(filterOpFilterIds(ruw, filters).map(naarRegeling), postcode);
       return json({ postcode, regelingen, bron: "Energiesubsidiewijzer", via: "api" });
     } catch (err) {
       console.error("Energiesubsidiewijzer-API mislukt, terug naar de oude route:", err);
@@ -252,7 +258,7 @@ Deno.serve(async (req: Request) => {
 
   // Route 2 (vangnet).
   try {
-    const regelingen = await haalRegelingen(cacheKey, bron.toString());
+    const regelingen = pasGebiedscorrectiesToe(await haalRegelingen(cacheKey, bron.toString()), postcode);
     return json({ postcode, regelingen, bron: "Energiesubsidiewijzer", via: "scrape" });
   } catch (err) {
     // Beide routes plat. De frontend toont dan de eerlijke foutstaat met
