@@ -9,8 +9,8 @@
 //
 // Bij twijfel niet tonen. Een bedrag beloven dat niet klopt is erger dan een
 // regeling missen: de bezoeker neemt beslissingen op dit overzicht en krijgt het
-// ook per mail. Daarom valt een regeling met `alleenIn` weg zodra de postcode
-// niet te lezen is.
+// ook per mail. Daarom valt een gecorrigeerde regeling weg zodra de postcode
+// niet te lezen is, of het nu om `alleenIn` of `nietIn` gaat.
 
 import { GEBIEDSCORRECTIES, type Gebiedscorrectie, type Postcodegebied } from "./postcodegebieden.ts";
 import type { SubsidieRegeling } from "./types.ts";
@@ -42,9 +42,11 @@ export function normaliseerPostcode(postcode: string): string {
   return postcode.replace(/\s+/g, "").toUpperCase();
 }
 
+const leesbaar = (postcode: string) => /^\d{4}([A-Z]{2})?$/.test(normaliseerPostcode(postcode));
+
 export function inPostcodegebied(postcode: string, gebied: Postcodegebied): boolean {
   const pc = normaliseerPostcode(postcode);
-  if (!/^\d{4}([A-Z]{2})?$/.test(pc)) return false;
+  if (!leesbaar(pc)) return false;
   return gebied.postcodes.some((regel) => valtOnder(pc, regel) === true);
 }
 
@@ -65,6 +67,7 @@ export function pasGebiedscorrectiesToe(
       uit.push(regeling);
       continue;
     }
+    if ((correctie.alleenIn || correctie.nietIn) && !leesbaar(postcode)) continue;
     if (correctie.alleenIn && !inPostcodegebied(postcode, correctie.alleenIn)) continue;
     if (correctie.nietIn && inPostcodegebied(postcode, correctie.nietIn)) continue;
     uit.push(correctie.alleenAls ? { ...regeling, alleenAls: correctie.alleenAls } : regeling);

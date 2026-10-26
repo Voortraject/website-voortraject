@@ -81,8 +81,13 @@ export const energiesubsidiewijzerProvider: SubsidieProvider = {
     // een fout resultaat bleef zo 5 minuten in de query-cache hangen.
     // Een lege-maar-geldige lijst (0 regelingen voor deze situatie) komt gewoon
     // door en toont de nette "geen regelingen"-staat.
-    return FUNCTIE_URL
-      ? await haalViaFunctie(input.postcode, bouwEswFilterQuery(input.bewonertype, input.maatregelen))
-      : await haalViaDevProxy(input);
+    //
+    // De function past de gebiedscorrecties al toe; hier doen we het nog een
+    // keer. Dat kan veilig (twee keer toepassen geeft hetzelfde) en zo klopt de
+    // site ook als de function nog een oudere versie draait: de site gaat
+    // automatisch live met main, de function wordt met de hand gedeployed.
+    if (!FUNCTIE_URL) return await haalViaDevProxy(input);
+    const regelingen = await haalViaFunctie(input.postcode, bouwEswFilterQuery(input.bewonertype, input.maatregelen));
+    return pasGebiedscorrectiesToe(regelingen, input.postcode);
   },
 };

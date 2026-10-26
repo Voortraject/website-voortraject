@@ -25,11 +25,13 @@
 //     "7741 AA t/m AE").
 //  3. Zet `bron`, `versie`, `vastgesteld` en `sha256` (`sha256sum <pdf>`) op de
 //     nieuwe waarden.
-//  4. Pas het verwachte aantal aan in src/test/gebiedscorrecties.test.ts en
-//     draai `bun run test`.
-//  5. Kopieer dit bestand naar supabase/functions/subsidiecheck/ (de test
-//     "Deno-kopieën" zegt het als je dat vergeet) en deploy de function:
+//  4. Pas het verwachte aantal aan in src/test/gebiedscorrecties.test.tsx.
+//  5. Maak de kopie voor de edge function, test, en deploy:
+//     `node scripts/kopieer-gebiedscorrecties.mjs` (niet met de hand kopiëren:
+//     de kopie heeft een eigen kop en `.ts`-imports), dan `bun run test`, dan
 //     `bunx supabase functions deploy subsidiecheck --project-ref lfelnfukbrxznkevnevr`.
+//     De site past de correcties ook zelf toe, maar de mail en het CRM lezen
+//     alleen de function, dus die deploy is nodig.
 
 export type Postcodegebied = {
   /** Voor wie dit leest: welk gebied dit is. */
