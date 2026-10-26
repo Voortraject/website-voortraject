@@ -189,9 +189,13 @@ export const GEBIEDSCORRECTIES: Gebiedscorrectie[] = [
   },
   {
     regelingen: ["subsidie-verduurzaming-en-verbetering-groningen-17-000"],
-    alleenAls: `je woning in ${NCG} zit`,
+    // Niet "alleen als je in het programma zit": wie volgens een oud advies
+    // (NPR 9998 2018 of eerder) versterkt wordt, krijgt de € 7.000 en niet deze.
+    // Kiest hij voor herbeoordeling, dan krijgt hij een nieuw advies en valt hij
+    // hier weer onder. De € 7.000 zelf staat niet in de feed van Milieu Centraal.
+    alleenAls: `je woning in ${NCG} zit en niet volgens een oud advies wordt versterkt`,
     waarom:
-      "SNN: alleen voor woningen in het NCG-programma. Dat staat niet in een postcode, dat weet alleen de bewoner.",
+      "SNN: alleen voor woningen in het NCG-programma met een beoordeling met nieuwe inzichten, of een oude beoordeling waaruit blijkt dat versterking niet nodig is. Dat staat niet in een postcode, dat weet alleen de bewoner.",
   },
   {
     regelingen: ["subsidie-verduurzaming-volkshuisvesting-drenthe"],

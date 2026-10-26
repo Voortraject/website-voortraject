@@ -88,7 +88,7 @@ describe("VVG € 10.000: alleen op de postcodelijst van SNN", () => {
 describe("VVG € 17.000: alleen in het NCG-programma", () => {
   it("blijft staan, maar met de voorwaarde erbij", () => {
     const [r] = pasGebiedscorrectiesToe([regeling(VVG17)], "9367VC");
-    expect(r.alleenAls).toBe("je woning in het versterkingsprogramma van de NCG zit");
+    expect(r.alleenAls).toBe("je woning in het versterkingsprogramma van de NCG zit en niet volgens een oud advies wordt versterkt");
   });
 });
 
@@ -214,7 +214,7 @@ describe("op de kaart en in de teaser", () => {
     const [r] = pasGebiedscorrectiesToe([regeling(VVG17, { bedragIndicatie: "€ 17.000" })], "9901HT");
     render(<SubsidieCard regeling={r} />);
     expect(
-      screen.getByText("Alleen als je woning in het versterkingsprogramma van de NCG zit"),
+      screen.getByText("Alleen als je woning in het versterkingsprogramma van de NCG zit en niet volgens een oud advies wordt versterkt"),
     ).toBeInTheDocument();
   });
 
