@@ -1,0 +1,36 @@
+# Wekelijkse controle op onze gebiedscorrecties (src/lib/subsidies/postcodegebieden.ts).
+#
+# Milieu Centraal koppelt sommige regelingen te breed (VVG € 10.000 aan hele
+# gemeenten in plaats van aan de postcodelijst van SNN). Wij corrigeren dat in
+# de function. Die correctie veroudert als SNN een nieuwe lijst publiceert, of
+# werkt stilletjes niet meer als Milieu Centraal een regeling hernoemt. Deze
+# run vangt beide.
+#
+# Faalt hij, dan krijg je daar een mail van GitHub over. De log zegt per punt
+# wat er moet gebeuren; het stappenplan staat bovenin postcodegebieden.ts.
+# Geen secrets nodig: de live proef gaat via onze eigen function.
+
+name: Gebiedscorrecties subsidiecheck
+
+on:
+  schedule:
+    # Maandagochtend 06:15 UTC, vlak na de filtercontrole.
+    - cron: "15 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  controleer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 24 leest postcodegebieden.ts rechtstreeks (type stripping).
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Postcodelijsten en live function controleren
+        run: node scripts/controleer-gebiedscorrecties.mjs

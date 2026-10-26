@@ -179,6 +179,11 @@ function regelingKaart(r: Regeling): string {
   const omschrijving = r.omschrijving
     ? `<div style="margin-top:6px;font-size:14px;line-height:1.6;color:${K.zacht};">${escapeHtml(eersteZin(r.omschrijving))}</div>`
     : "";
+  // Zelfde regel als op de kaart: zonder deze voorwaarde leest het bedrag als
+  // een belofte (VVG € 17.000 geldt alleen in het NCG-programma).
+  const alleenAls = r.alleenAls
+    ? `<div style="margin-top:6px;font-size:14px;line-height:1.5;font-weight:700;color:${K.ink};">Alleen als ${escapeHtml(r.alleenAls)}</div>`
+    : "";
   // De mail bewaart de bewoner, dus een deadline hoort er juist in, met de
   // datum voluit: een mail heeft geen uitklap.
   const einddatum = einddatumTekst(r.looptAfOp);
@@ -207,6 +212,7 @@ function regelingKaart(r: Regeling): string {
         <td valign="top" width="48" style="width:48px;padding-left:12px;">${badge(s)}</td>
       </tr></table>
       <div style="margin-top:12px;font-size:17px;font-weight:800;line-height:1.35;color:${K.ink};">${escapeHtml(r.titel ?? "Regeling")}</div>
+      ${alleenAls}
       ${omschrijving}
       ${deadline}
       ${letOp}

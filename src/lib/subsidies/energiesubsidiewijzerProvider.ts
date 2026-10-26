@@ -6,6 +6,7 @@ import {
   naarRegeling,
   type EswApiRegeling,
 } from "./energiesubsidiewijzerApi";
+import { pasGebiedscorrectiesToe } from "./gebiedscorrecties";
 import type { SubsidieProvider } from "./provider";
 import {
   BEWONERTYPE_RESIDENT,
@@ -65,7 +66,8 @@ async function haalViaDevProxy(input: SubsidieCheckInput): Promise<SubsidieRegel
   if (!res.ok) throw new Error(`Energiesubsidiewijzer-API gaf status ${res.status}`);
   const data = await res.json();
   if (!Array.isArray(data)) throw new Error("Energiesubsidiewijzer-API gaf geen lijst terug");
-  return filterOpMaatregelen(data as EswApiRegeling[], input.maatregelen).map(naarRegeling);
+  const regelingen = filterOpMaatregelen(data as EswApiRegeling[], input.maatregelen).map(naarRegeling);
+  return pasGebiedscorrectiesToe(regelingen, input.postcode);
 }
 
 export const energiesubsidiewijzerProvider: SubsidieProvider = {

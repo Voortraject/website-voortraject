@@ -103,6 +103,12 @@ export const SubsidieCard = ({ regeling }: { regeling: SubsidieRegeling }) => {
       {regeling.beperktTot && (
         <p className="mt-1.5 text-[14px] font-bold text-primary">Alleen {regeling.beperktTot}</p>
       )}
+      {/* Een voorwaarde die we niet uit het adres halen ("Alleen als je woning
+          in het versterkingsprogramma van de NCG zit"). Staat vóór de uitklap:
+          zonder deze regel leest het bedrag erboven als een belofte. */}
+      {regeling.alleenAls && (
+        <p className="mt-1.5 text-[14px] font-bold text-primary">Alleen als {regeling.alleenAls}</p>
+      )}
 
       <p className="mt-1.5 text-[14.5px] leading-relaxed text-[hsl(var(--rs-tekst-zacht))] lg:mt-2 lg:text-[15px]">{kort}</p>
 
