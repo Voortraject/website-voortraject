@@ -53,12 +53,18 @@ const PROEVEN = [
   { id: "isolatieaanpak-groningen-en-noord-drenthe", bewoner: "Woningeigenaar", wel: "9481BM", niet: "7901JA" },
 ];
 
-// Waar we naar nieuwe varianten van de VVG-familie zoeken.
+// Waar we naar nieuwe varianten van de VVG-familie zoeken: Eemsdelta (op de
+// lijst), Westerkwartier (niet op de lijst, wel bij Milieu Centraal gekoppeld)
+// en Drenthe (Tynaarlo), zodat een variant die maar aan één gebied hangt ook
+// opvalt. Voor alle vier de bewonertypes: de zakelijke variant kwam alleen bij
+// verhuurders voorbij.
 const FAMILIE_RE = /verduurzaming en verbetering groningen/i;
-const FAMILIE_PROEF = [
-  { postcode: "9901HT", bewoner: "Woningeigenaar" },
-  { postcode: "9901HT", bewoner: "Particuliere woningverhuurder" },
-];
+const FAMILIE_PROEF = ["9901HT", "9367VC", "9481BM"].flatMap((postcode) =>
+  ["Woningeigenaar", "Particuliere woningverhuurder", "Vereniging van Eigenaren", "Huurder"].map((bewoner) => ({
+    postcode,
+    bewoner,
+  })),
+);
 
 const fouten = [];
 const fout = (tekst) => {
@@ -78,8 +84,18 @@ async function controleerBron(gebied) {
   if (gebied.bronPagina) {
     try {
       const html = await (await haal(gebied.bronPagina, { headers: { "User-Agent": UA } })).text();
-      const pad = new URL(gebied.bron).pathname;
-      if (html.includes(pad)) ok(`${gebied.naam}: de pagina linkt nog naar versie "${gebied.versie}"`);
+      // Gedecodeerd vergelijken: "%20" en een spatie, of "%28" en "(", zijn
+      // dezelfde link. Anders geeft een andere schrijfwijze vals alarm.
+      const ontcijfer = (s) => {
+        try {
+          return decodeURIComponent(s.replace(/&amp;/g, "&"));
+        } catch {
+          return s;
+        }
+      };
+      const pad = ontcijfer(new URL(gebied.bron).pathname);
+      const links = [...html.matchAll(/href="([^"]+)"/gi)].map((m) => ontcijfer(m[1]));
+      if (links.some((l) => l.endsWith(pad))) ok(`${gebied.naam}: de pagina linkt nog naar versie "${gebied.versie}"`);
       else {
         const pdfs = [...new Set([...html.matchAll(/href="([^"]*ostcode[^"]*\.pdf)"/gi)].map((m) => m[1]))];
         fout(

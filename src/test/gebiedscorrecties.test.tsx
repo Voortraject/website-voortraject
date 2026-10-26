@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Milieu Centraal koppelt sommige regelingen aan hele gemeenten terwijl ze maar
 // in een deel daarvan gelden. VVG € 10.000 stond zo bij 9367 (De Wilp), dat niet
@@ -141,6 +141,18 @@ describe("de correctielaag zelf", () => {
     expect(metId("onzin", VVG10)).toEqual([]);
   });
 
+  it("ook een regeling met een uitsluiting valt weg als de postcode onleesbaar is", () => {
+    // Bij twijfel niet tonen: zonder postcode weten we niet of het Hoogeveen is.
+    expect(metId("", ISOLATIEAANPAK)).toEqual([]);
+    // Een regeling zonder gebiedsregel (VVG € 17.000) hoeft geen postcode.
+    expect(metId("", VVG17)).toEqual([VVG17]);
+  });
+
+  it("twee keer toepassen geeft hetzelfde als één keer", () => {
+    const een = pasGebiedscorrectiesToe(echt, "9901HT");
+    expect(pasGebiedscorrectiesToe(een, "9901HT")).toEqual(een);
+  });
+
   it("verdraagt spaties en kleine letters", () => {
     expect(inPostcodegebied("9901 ht", VVG_10000)).toBe(true);
     expect(inPostcodegebied(" 7741 ac ", VOLKSHUISVESTING_DRENTHE)).toBe(true);
@@ -248,6 +260,35 @@ describe("in de mail", () => {
       haalBagAdres: async () => null,
     });
     expect(mail!.html).toContain("Alleen als je woning in het versterkingsprogramma van de NCG zit");
+  });
+});
+
+describe("de site corrigeert zelf ook", () => {
+  // De site gaat automatisch live met main, de function wordt met de hand
+  // gedeployed. Draait de function nog een oude versie, dan mag de site toch
+  // geen VVG € 10.000 in De Wilp tonen.
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+    vi.resetModules();
+  });
+
+  it("haalt VVG € 10.000 weg, ook als de function hem ongecorrigeerd teruggeeft", async () => {
+    vi.stubEnv("VITE_SUBSIDIECHECK_URL", "https://functie.test/subsidiecheck");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response(JSON.stringify({ regelingen: echt }), { status: 200 })),
+    );
+    vi.resetModules();
+    const { energiesubsidiewijzerProvider } = await import("@/lib/subsidies/energiesubsidiewijzerProvider");
+    const uit = await energiesubsidiewijzerProvider.check({
+      postcode: "9367VC",
+      huisnummer: "1",
+      bewonertype: "woningeigenaar",
+      maatregelen: [],
+    });
+    expect(ids(uit)).not.toContain(VVG10);
+    expect(ids(uit)).toContain("isde-subsidie-rijksoverheid");
   });
 });
 
