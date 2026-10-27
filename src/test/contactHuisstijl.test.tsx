@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 
 // Contactpagina in de huisstijl van oktober 2026. Lighthouse meldde een
 // kopsprong h1 → h3; de groepen van het formulier en de rechterkolom zijn nu
@@ -13,14 +14,11 @@ vi.mock("@/lib/gtm", () => ({ pushGtmEvent: vi.fn() }));
 vi.mock("@/components/Header", () => ({ Header: () => null }));
 vi.mock("@/components/Footer", () => ({ Footer: () => null }));
 vi.mock("@/components/Seo", () => ({ Seo: () => null }));
-// ReviewsCompact heeft eigen tests en eigen kleuren (de letter-avatars); hier
-// alleen zijn kop, op het niveau waarop hij die nu rendert.
-vi.mock("@/components/ReviewsCompact", () => ({ ReviewsCompact: () => <h3>Wat bewoners zeggen</h3> }));
 import Contact from "@/pages/Contact";
 
 describe("Contactpagina: huisstijl", () => {
   it("heeft één h1 en slaat daarna geen kopniveau over", () => {
-    const { container } = render(<Contact />);
+    const { container } = render(<Contact />, { wrapper: MemoryRouter });
     const niveaus = [...container.querySelectorAll("h1,h2,h3,h4,h5,h6")].map((h) => Number(h.tagName[1]));
     expect(niveaus[0]).toBe(1);
     expect(niveaus.filter((n) => n === 1)).toHaveLength(1);
@@ -30,14 +28,24 @@ describe("Contactpagina: huisstijl", () => {
   });
 
   it("maakt de groepskoppen en 'Wat kun je verwachten?' tot h2", () => {
-    render(<Contact />);
+    render(<Contact />, { wrapper: MemoryRouter });
     for (const naam of ["Jouw gegevens", "Jouw vraag", "Wat kun je verwachten?"]) {
       expect(screen.getByRole("heading", { level: 2, name: naam })).toBeTruthy();
     }
   });
 
+  // Oktober 2026: de reviews maakten de pagina druk en zijn eraf. Wat overblijft
+  // naast het formulier is één tegel met verwachtingen en contactgegevens.
+  it("toont geen reviews meer, wel één tegel met verwachtingen en direct contact", () => {
+    render(<Contact />, { wrapper: MemoryRouter });
+    expect(screen.queryByText("Wat bewoners zeggen")).toBeNull();
+    const tegel = screen.getByRole("heading", { name: "Wat kun je verwachten?" }).parentElement!;
+    expect(tegel).toHaveTextContent("Liever direct contact?");
+    expect(tegel.querySelector('a[href="tel:+31502112689"]')).not.toBeNull();
+  });
+
   it("toont 'Verstuur bericht' als de oker pil", () => {
-    render(<Contact />);
+    render(<Contact />, { wrapper: MemoryRouter });
     const knop = screen.getByRole("button", { name: /Verstuur bericht/ });
     expect(knop.className).toMatch(/\bhs-knop\b/);
     expect(knop.className).toMatch(/\bhs-knop-oker\b/);
@@ -46,7 +54,7 @@ describe("Contactpagina: huisstijl", () => {
   });
 
   it("gebruikt geen hardgecodeerde kleuren in de opmaak", () => {
-    const { container } = render(<Contact />);
+    const { container } = render(<Contact />, { wrapper: MemoryRouter });
     const metStijl = [...container.querySelectorAll("[style]")]
       .map((el) => el.getAttribute("style") ?? "")
       .filter((s) => /#[0-9a-f]{3,6}\b|rgba?\(/i.test(s));

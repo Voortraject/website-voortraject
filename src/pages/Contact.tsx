@@ -1,12 +1,14 @@
-import { useState, useRef, FormEvent, ChangeEvent } from "react";
+import { useState, useRef, useEffect, FormEvent, ChangeEvent } from "react";
+import { useLocation } from "react-router-dom";
 import { ArrowRight, Check, Loader2, Mail, MapPin, MessageSquare, Phone, User } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
+import { adresUitState } from "@/components/subsidiecheck/checkStaat";
 import { formulierFoutMelding } from "@/lib/formulierFout";
+import { herkomstUitParams, leesHerkomst, maakEventId } from "@/lib/herkomst";
 import { MIN_INVULTIJD_MS } from "@/lib/invultijd";
 import { pushGtmEvent } from "@/lib/gtm";
 import { Footer } from "@/components/Footer";
-import { ReviewsCompact } from "@/components/ReviewsCompact";
 import { supabaseExternal as supabase } from "@/integrations/supabase/external-client";
 import {
   ADRES_MAX,
@@ -15,7 +17,7 @@ import {
   straatGeldig,
   toevoegingGeldig,
 } from "@/lib/adresVelden";
-import { normalizePostcode, POSTCODE_RE, zoekAdres } from "@/lib/pdok";
+import { displayPostcode, normalizePostcode, POSTCODE_RE, zoekAdres } from "@/lib/pdok";
 import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
 import "@/styles/contact.css";
 
@@ -58,18 +60,20 @@ const GroepKop = ({ icon: Icon, children, className }: { icon: typeof User; chil
   </h2>
 );
 
+// Kort genoeg voor één regel in de smalle kolom. Bewust geen termijn ("binnen 1
+// werkdag"): dat is een belofte die we niet altijd kunnen waarmaken.
 const expectations = [
-  "We nemen binnen 1 werkdag contact op",
-  "We kijken samen wat er voor jouw woning logisch is",
+  "We nemen zelf contact met je op",
+  "We kijken samen wat bij jouw woning past",
   "Je hoeft niets voor te bereiden",
 ];
 
 // Dezelfde gegevens als in de footer: één plek om ons te bereiken zonder eerst
-// het formulier in te vullen.
+// het formulier in te vullen. Telefoon eerst: dat is de snelste route.
 const contactBlokken = [
-  { icon: MapPin, label: "Vestiging", waarde: "Viaductstraat 3-15, Groningen" },
-  { icon: Mail, label: "E-mailadres", waarde: "info@voortraject.nl", href: "mailto:info@voortraject.nl" },
   { icon: Phone, label: "Telefoonnummer", waarde: "050 211 2689", href: "tel:+31502112689" },
+  { icon: Mail, label: "E-mailadres", waarde: "info@voortraject.nl", href: "mailto:info@voortraject.nl" },
+  { icon: MapPin, label: "Vestiging", waarde: "Viaductstraat 3-15, Groningen" },
 ];
 
 // Exact de drie waarden die het CRM zelf in zijn lead-formulieren aanbiedt
@@ -82,6 +86,15 @@ const belVoorkeurOpties = [
   "Telefonisch: Ochtend",
   "Telefonisch: Middag",
   "Telefonisch: Avond",
+];
+
+// Op de belroute alleen de dagdelen, met een korter label. De waarde blijft
+// "Telefonisch: …": n8n herkent een websitelead onder meer aan notities die met
+// "Voorkeur voor contact" beginnen, en het team leest dezelfde tekst als altijd.
+const beltijdOpties = [
+  { waarde: "Telefonisch: Ochtend", label: "Ochtend" },
+  { waarde: "Telefonisch: Middag", label: "Middag" },
+  { waarde: "Telefonisch: Avond", label: "Avond" },
 ];
 
 const initialBewoner = {
@@ -102,6 +115,14 @@ const initialBewoner = {
 
 const MAX_NOTES = 1000;
 
+// Mag e-mail leeg blijven op de belroute? Voor de database wel (kolom nullable),
+// maar n8n "Website formulier (bewoners)" stuurt bij formulier = contactformulier
+// altijd de bevestigingsmail. Zonder adres weigert Resend die, de workflow stopt
+// en de Slack-ping van de lead gaat niet uit (de mailtak draait vóór de Slack-tak).
+// Pas op `true` als de node "Bevestigingsmail sturen?" ook controleert dat
+// `record.email` gevuld is. Dat wordt in het CRM-repo/n8n gedaan, niet hier.
+const EMAIL_OPTIONEEL_BIJ_BELLEN = false;
+
 // ---------- Validators ----------
 const NAME_RE = /^[\p{L}\s'\-]+$/u;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -114,15 +135,42 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 // ---------- Component ----------
 const Contact = () => {
+  const location = useLocation();
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const [bewoner, setBewoner] = useState(initialBewoner);
+  // Adres dat de subsidiecheck meegaf (knop "Bel mij"). Het komt via de
+  // history-state en nooit via de URL: de Meta-pixel stuurt de volledige URL mee
+  // (zie checkStaat.ts). Straat en plaats staan er alleen in als de check het
+  // huis al herkend had; dan tonen we meteen de bevestiging.
+  const [meegegeven] = useState(() => adresUitState(location.state));
+  // Binnengekomen via de knop "Bel mij" op stap 1 van de check: een korter
+  // formulier, waarin achternaam en bericht optioneel zijn (e-mail alleen als
+  // EMAIL_OPTIONEEL_BIJ_BELLEN aan staat). Ook dit staat in de history-state,
+  // zodat een herlaad de route vasthoudt.
+  const [viaBellen] = useState(
+    () => (location.state as { bellen?: unknown } | null)?.bellen === true,
+  );
+  // Voor het bedankscherm: het formulier is dan al leeggemaakt.
+  const [bedankt, setBedankt] = useState<{ voornaam: string; telefoon: string } | null>(null);
+  const meegegevenMetStraat = !!(meegegeven?.str && meegegeven?.pl);
+  const [bewoner, setBewoner] = useState(() =>
+    meegegeven
+      ? {
+          ...initialBewoner,
+          postcode: displayPostcode(meegegeven.pc),
+          huisnummer: meegegeven.hn,
+          toevoeging: meegegeven.tv,
+          straatnaam: meegegeven.str,
+          plaatsnaam: meegegeven.pl,
+        }
+      : initialBewoner,
+  );
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const [adresLocked, setAdresLocked] = useState(false);
-  const [adresChecked, setAdresChecked] = useState(false);
+  const [adresLocked, setAdresLocked] = useState(meegegevenMetStraat);
+  const [adresChecked, setAdresChecked] = useState(meegegevenMetStraat);
   const [adresLoading, setAdresLoading] = useState(false);
   const [adresEditOverride, setAdresEditOverride] = useState(false);
 
@@ -161,6 +209,14 @@ const Contact = () => {
     setAdresLoading(false);
   };
 
+  // Meegegeven adres zonder straat en plaats: één keer zelf opzoeken, zoals na
+  // het invullen van postcode en huisnummer.
+  useEffect(() => {
+    if (meegegeven && !meegegevenMetStraat) void lookupAdres();
+    // Alleen bij binnenkomst.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handlePostcodeChange = (v: string) => {
     setBewoner((b) => ({ ...b, postcode: v, straatnaam: "", plaatsnaam: "" }));
     setAdresLocked(false);
@@ -190,13 +246,15 @@ const Contact = () => {
       e.tussenvoegsel = "Het tussenvoegsel bevat ongeldige tekens.";
 
     const achternaam = bewoner.achternaam.trim();
-    if (!achternaam) e.achternaam = "Vul je achternaam in.";
-    else if (achternaam.length < 2) e.achternaam = "Je achternaam moet minimaal 2 karakters bevatten.";
+    if (!achternaam) {
+      if (!viaBellen) e.achternaam = "Vul je achternaam in.";
+    } else if (achternaam.length < 2) e.achternaam = "Je achternaam moet minimaal 2 karakters bevatten.";
     else if (achternaam.length > 100 || !NAME_RE.test(achternaam)) e.achternaam = "Je achternaam bevat ongeldige tekens.";
 
     const email = bewoner.email.trim();
-    if (!email) e.email = "Vul je e-mailadres in.";
-    else if (!EMAIL_RE.test(email) || email.length > 255) e.email = "Dit lijkt geen geldig e-mailadres.";
+    if (!email) {
+      if (!viaBellen || !EMAIL_OPTIONEEL_BIJ_BELLEN) e.email = "Vul je e-mailadres in.";
+    } else if (!EMAIL_RE.test(email) || email.length > 255) e.email = "Dit lijkt geen geldig e-mailadres.";
 
     const tel = bewoner.telefoonnummer.trim();
     if (!tel) e.telefoonnummer = "Vul je telefoonnummer in.";
@@ -225,8 +283,9 @@ const Contact = () => {
     if (plaats && !stadGeldig(plaats))
       e.plaatsnaam = `Plaatsnaam mag maximaal ${ADRES_MAX.stad} karakters zijn, zonder < of >.`;
 
-    if (!bewoner.vragen.trim()) e.vragen = "Vul je bericht in.";
-    else if (bewoner.vragen.length > MAX_NOTES)
+    if (!bewoner.vragen.trim()) {
+      if (!viaBellen) e.vragen = "Vul je bericht in.";
+    } else if (bewoner.vragen.length > MAX_NOTES)
       e.vragen = `Je bericht is te lang (maximaal ${MAX_NOTES} karakters).`;
 
     return e;
@@ -281,6 +340,15 @@ const Contact = () => {
     }
 
     setSubmitting(true);
+    // Eén id voor dit lead-moment: in de dataLayer-push (GTM geeft hem als
+    // eventID aan de Meta-pixel) én in `meta_event_id` op de lead. Zo is de Lead
+    // uit de browser later te ontdubbelen tegen dezelfde Lead via de Conversions
+    // API. Zelfde opzet als de subsidiecheck (StapGegevens.tsx).
+    const eventId = maakEventId();
+    // Herkomst: de first touch uit sessionStorage (main.tsx), met als terugval
+    // wat er in de URL van deze pagina staat. Die komt via de link "Liever even
+    // bellen?" in de subsidiecheck, en blijft na de navigatie binnen de app staan.
+    const herkomst = { ...herkomstUitParams(new URLSearchParams(location.search)), ...leesHerkomst() };
     try {
       const beltijd = bewoner.bel_voorkeur.trim();
       const opmerkingen = bewoner.vragen.trim();
@@ -289,15 +357,17 @@ const Contact = () => {
       else if (beltijd) notities = `Voorkeur voor contact: ${beltijd}`;
       else if (opmerkingen) notities = opmerkingen;
 
-      // De kolom `naam` bewust niet meesturen: een BEFORE INSERT-trigger in het
-      // CRM stelt die zelf samen uit voornaam/tussenvoegsel/achternaam.
+      // De kolom `naam` bewust niet meesturen: het CRM stelt die zelf samen uit
+      // voornaam/tussenvoegsel/achternaam (gegenereerde kolom).
       const { error } = await supabase.from("leads_bewoners").insert({
         tenant_id: "00000000-0000-0000-0000-000000000001",
         aanhef: bewoner.aanhef || null,
         voornaam: bewoner.voornaam.trim(),
         tussenvoegsel: bewoner.tussenvoegsel.trim() || null,
-        achternaam: bewoner.achternaam.trim(),
-        email: bewoner.email.trim(),
+        // Op de belroute mogen achternaam en e-mail leeg blijven. De CHECK op de
+        // tabel eist dan NULL, geen lege tekst (leads_bewoners_achternaam_niet_leeg).
+        achternaam: bewoner.achternaam.trim() || null,
+        email: bewoner.email.trim() || null,
         telefoon: bewoner.telefoonnummer.trim(),
         postcode: bewoner.postcode ? normalizePostcode(bewoner.postcode) : null,
         huisnummer: bewoner.huisnummer.trim() || null,
@@ -311,9 +381,14 @@ const Contact = () => {
         // werd code `website`, en die bron is in het CRM niet meer in gebruik.
         bron: "Voortraject",
         // Welk formulier de lead opleverde. n8n bepaalt hiermee de taaktitel én
-        // of de bevestigingsmail ("binnen 1 werkdag contact") uitgaat. Er staat een
+        // of de bevestigingsmail (die in n8n zelf) uitgaat. Er staat een
         // CHECK op: alleen 'contactformulier', 'subsidietool' of NULL.
         formulier: "contactformulier",
+        // utm_source, utm_medium, utm_campaign, utm_term, utm_content en fbclid,
+        // alleen de geldige (zie src/lib/herkomst.ts). Zelfde kolommen als de lead
+        // uit de subsidiecheck; anon mag erin schrijven.
+        ...herkomst,
+        meta_event_id: eventId,
         // `status`, `prioriteit` en `toegewezen_aan` sturen we bewust NIET mee.
         // De kolom heeft DEFAULT 'nieuw', en het CRM zet die drie velden bij een
         // anonieme insert sowieso terug (trigger `publieke_lead_velden_vastzetten`).
@@ -324,10 +399,16 @@ const Contact = () => {
       // persoonsgegevens mee, alleen of de optionele blokken zijn ingevuld:
       // daarmee valt te zien of het adresblok en het vragenveld de inzending
       // helpen of juist afremmen.
+      //
+      // Container v10 maakt van deze push ook een Meta Lead met
+      // content_name "contact" (alleen met toestemming in Axeptio). event_id gaat
+      // daar als eventID mee; GA4 gebruikt hem niet.
       pushGtmEvent("bewoner_lead", {
         heeft_adres: bewoner.postcode.trim() ? 1 : 0,
         heeft_vraag: opmerkingen ? 1 : 0,
+        event_id: eventId,
       });
+      setBedankt({ voornaam: bewoner.voornaam.trim(), telefoon: bewoner.telefoonnummer.trim() });
       setBewoner(initialBewoner);
       setAdresLocked(false);
       setAdresChecked(false);
@@ -384,7 +465,7 @@ const Contact = () => {
     <div className="min-h-screen bg-background">
       <Seo
         title="Contact | Voortraject"
-        description="Plan een vrijblijvende kennismaking met Voortraject. We reageren binnen 1 werkdag en helpen je verder met je verduurzamingsvraag."
+        description="Stel je vraag of laat je nummer achter. We helpen je verder met verduurzamen, gratis en vrijblijvend."
         path="/contact"
       />
       <Header />
@@ -393,17 +474,28 @@ const Contact = () => {
       <section className="bg-background pt-6 md:pt-10 pb-14 md:pb-[88px]">
         <div className="mx-auto px-6 md:px-12" style={{ maxWidth: 1200 }}>
           <div className="mx-auto text-center" style={{ maxWidth: 900 }}>
-            <h1 className="ct-h1">
-              Waar kunnen we je mee <span className="hs-accent">helpen</span>?
-            </h1>
+            {viaBellen ? (
+              <>
+                <h1 className="ct-h1">
+                  Liever even <span className="hs-accent">bellen</span>?
+                </h1>
+                <p className="hs-tekst font-sans mt-3 text-[16px] leading-relaxed">
+                  Laat je naam en nummer achter. We bellen je terug.
+                </p>
+              </>
+            ) : (
+              <h1 className="ct-h1">
+                Waar kunnen we je mee <span className="hs-accent">helpen</span>?
+              </h1>
+            )}
           </div>
         </div>
 
         <div className="mx-auto px-6 md:px-12 mt-6 md:mt-9" style={{ maxWidth: 1200 }}>
           {/* Twee kolommen pas vanaf lg: op een tablet (768) werd het formulier
               zo smal dat "Telefoonnummer" niet meer in zijn vak paste.
-              items-stretch: beide kolommen even hoog, zodat het reviewblok
-              onderaan gelijk eindigt met de formulierkaart. */}
+              items-stretch: de rechterkolom is even hoog als het formulier,
+              zodat de tegel erin ruimte heeft om sticky mee te lopen. */}
           <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-7 lg:gap-10 items-stretch">
             <div className="hs-tegel hs-blauw-zacht min-w-0 p-5 md:p-9">
               {submitted ? (
@@ -415,10 +507,21 @@ const Contact = () => {
                   <span className="hs-rondje hs-rondje-groen h-12 w-12" aria-hidden="true">
                     <Check size={22} strokeWidth={3} />
                   </span>
-                  <h2 className="hs-h3 mt-4">Bedankt!</h2>
-                  <p className="hs-tekst font-sans mt-2 text-[15px] leading-relaxed">
-                    We hebben je bericht ontvangen en nemen binnen 1 werkdag contact met je op.
-                  </p>
+                  {viaBellen && bedankt ? (
+                    <>
+                      <h2 className="hs-h3 mt-4">Bedankt, {bedankt.voornaam}!</h2>
+                      <p className="hs-tekst font-sans mt-2 text-[15px] leading-relaxed">
+                        We bellen je op <span className="whitespace-nowrap font-bold text-primary">{bedankt.telefoon}</span>.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <h2 className="hs-h3 mt-4">Bedankt!</h2>
+                      <p className="hs-tekst font-sans mt-2 text-[15px] leading-relaxed">
+                        We hebben je bericht ontvangen. Iemand van ons team neemt contact met je op.
+                      </p>
+                    </>
+                  )}
                 </div>
               ) : (
                 <>
@@ -459,6 +562,89 @@ const Contact = () => {
                         justify-end houdt de inputs op één lijn als een label over twee
                         regels breekt. */}
                     <GroepKop icon={User}>Jouw gegevens</GroepKop>
+                    {viaBellen ? (
+                      <>
+                        {/* Belroute: alleen voornaam en telefoon verplicht. Telefoon
+                            staat vóór e-mail, want daar kwam de bezoeker voor. */}
+                        <div className="mt-3.5 grid grid-cols-2 sm:grid-cols-12 gap-3">
+                          <div className="sm:col-span-6 min-w-0 flex flex-col justify-end">
+                            <label htmlFor="f-voornaam" className={labelClass}>Voornaam</label>
+                            <input
+                              id="f-voornaam"
+                              name="voornaam"
+                              type="text"
+                              autoComplete="given-name"
+                              aria-required="true"
+                              aria-invalid={!!errors.voornaam}
+                              aria-describedby={errors.voornaam ? errId("voornaam") : undefined}
+                              className={inputCls("voornaam")}
+                              value={bewoner.voornaam}
+                              onChange={onChangeBew("voornaam")}
+                              maxLength={100}
+                            />
+                          </div>
+                          <div className="sm:col-span-6 min-w-0 flex flex-col justify-end">
+                            <label htmlFor="f-achternaam" className={labelClass}>Achternaam{optional}</label>
+                            <input
+                              id="f-achternaam"
+                              name="achternaam"
+                              type="text"
+                              autoComplete="family-name"
+                              aria-invalid={!!errors.achternaam}
+                              aria-describedby={errors.achternaam ? errId("achternaam") : undefined}
+                              className={inputCls("achternaam")}
+                              value={bewoner.achternaam}
+                              onChange={onChangeBew("achternaam")}
+                              maxLength={100}
+                            />
+                          </div>
+                          {(errors.voornaam || errors.achternaam) && (
+                            <div className="col-span-full -mt-2">
+                              <FieldError name="voornaam" />
+                              <FieldError name="achternaam" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-12 gap-3">
+                          <div className="sm:col-span-6 min-w-0">
+                            <label htmlFor="f-tel-b" className={labelClass}>Telefoonnummer</label>
+                            <input
+                              id="f-tel-b"
+                              name="telefoonnummer"
+                              type="tel"
+                              autoComplete="tel"
+                              aria-required="true"
+                              aria-invalid={!!errors.telefoonnummer}
+                              aria-describedby={errors.telefoonnummer ? errId("telefoonnummer") : undefined}
+                              className={inputCls("telefoonnummer")}
+                              value={bewoner.telefoonnummer}
+                              onChange={onChangeBew("telefoonnummer")}
+                            />
+                            <FieldError name="telefoonnummer" />
+                          </div>
+                          <div className="sm:col-span-6 min-w-0">
+                            <label htmlFor="f-email-b" className={labelClass}>
+                              E-mailadres{EMAIL_OPTIONEEL_BIJ_BELLEN && optional}
+                            </label>
+                            <input
+                              id="f-email-b"
+                              name="email"
+                              type="email"
+                              autoComplete="email"
+                              aria-required={!EMAIL_OPTIONEEL_BIJ_BELLEN}
+                              aria-invalid={!!errors.email}
+                              aria-describedby={errors.email ? errId("email") : undefined}
+                              className={inputCls("email")}
+                              value={bewoner.email}
+                              onChange={onChangeBew("email")}
+                              maxLength={255}
+                            />
+                            <FieldError name="email" />
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                    <>
                     <div className="mt-3.5 grid grid-cols-2 sm:grid-cols-12 gap-3">
                       <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
                         <label htmlFor="f-aanhef" className={labelClass}>Aanhef</label>
@@ -564,6 +750,8 @@ const Contact = () => {
                         <FieldError name="telefoonnummer" />
                       </div>
                     </div>
+                    </>
+                    )}
 
                     {/* Adres hoort bij dezelfde groep als naam en contactgegevens, maar
                         is als enige niet verplicht: de drie velden dragen dat zelf.
@@ -708,10 +896,15 @@ const Contact = () => {
                       </div>
                     </div>
 
-                    <GroepKop icon={MessageSquare} className="mt-7">Jouw vraag</GroepKop>
+                    <GroepKop icon={viaBellen ? Phone : MessageSquare} className="mt-7">
+                      {viaBellen ? "Wanneer bellen we je?" : "Jouw vraag"}
+                    </GroepKop>
 
                     <div className="mt-3.5">
-                      <label htmlFor="f-bel" className={labelClass}>Voorkeur voor contact{optional}</label>
+                      <label htmlFor="f-bel" className={labelClass}>
+                        {viaBellen ? "Wanneer bellen we je het liefst?" : "Voorkeur voor contact"}
+                        {optional}
+                      </label>
                       <select
                         id="f-bel"
                         name="bel_voorkeur"
@@ -719,12 +912,18 @@ const Contact = () => {
                         value={bewoner.bel_voorkeur}
                         onChange={onChangeBew("bel_voorkeur")}
                       >
-                        <option value="">Maak een keuze</option>
-                        {belVoorkeurOpties.map((o) => (
-                          <option key={o} value={o}>
-                            {o}
-                          </option>
-                        ))}
+                        <option value="">{viaBellen ? "Maakt niet uit" : "Maak een keuze"}</option>
+                        {viaBellen
+                          ? beltijdOpties.map((o) => (
+                              <option key={o.waarde} value={o.waarde}>
+                                {o.label}
+                              </option>
+                            ))
+                          : belVoorkeurOpties.map((o) => (
+                              <option key={o} value={o}>
+                                {o}
+                              </option>
+                            ))}
                       </select>
                     </div>
 
@@ -732,15 +931,19 @@ const Contact = () => {
                       {/* Zelfde opbouw als het berichtblok op /zakelijk. De
                           tekenlimiet staat alleen in de teller eronder; twee
                           keer hetzelfde getal is ruis. */}
-                      <label htmlFor="f-vragen-b" className={labelClass}>Bericht</label>
+                      <label htmlFor="f-vragen-b" className={labelClass}>Bericht{viaBellen && optional}</label>
                       <textarea
                         id="f-vragen-b"
                         name="vragen"
-                        aria-required="true"
+                        aria-required={!viaBellen}
                         aria-invalid={!!errors.vragen}
                         aria-describedby={errors.vragen ? errId("vragen") : "count-vragen-b"}
                         className={inputCls("vragen")}
-                        placeholder="Vertel kort waar je tegenaan loopt of wat je wil weten."
+                        placeholder={
+                          viaBellen
+                            ? "Waar wil je het over hebben?"
+                            : "Vertel kort waar je tegenaan loopt of wat je wil weten."
+                        }
                         value={bewoner.vragen}
                         onChange={onChangeBew("vragen")}
                         maxLength={MAX_NOTES}
@@ -765,6 +968,8 @@ const Contact = () => {
                           <Loader2 size={16} className="animate-spin" />
                           Bezig met versturen...
                         </>
+                      ) : viaBellen ? (
+                        "Bel mij terug"
                       ) : (
                         "Verstuur bericht"
                       )}
@@ -774,60 +979,54 @@ const Contact = () => {
               )}
             </div>
 
-            {/* min-w-0: grid-items krijgen standaard min-width:auto, waardoor de
-                flexrij van de reviewcarrousel deze kolom breder duwde dan haar
-                2fr en het formulier samendrukte. */}
-            <div className="min-w-0 flex flex-col">
-              <div className="hs-tegel p-5 md:p-6">
+            {/* Eén rustige tegel naast het formulier: wat je kunt verwachten en,
+                onder een dunne lijn, hoe je ons direct bereikt. Kleine vinkjes en
+                iconen naast de tekst in plaats van gevulde rondjes, zoals de
+                beloftes op stap 1 van de check. Op desktop blijft hij staan terwijl
+                het formulier scrolt; op de telefoon komt hij rustig na het
+                formulier. Hier stonden eerder ook de reviews; die maakten de
+                pagina druk en zijn er bewust af. */}
+            <div className="min-w-0">
+              <div className="hs-tegel p-5 md:p-7 lg:sticky lg:top-28">
                 <h2 className="hs-h3">Wat kun je verwachten?</h2>
-                <ul className="mt-3.5 grid gap-3">
+                <ul className="mt-4 grid gap-3">
                   {expectations.map((item) => (
-                    <li key={item} className="flex items-center gap-3">
-                      <span className="hs-rondje hs-rondje-groen h-7 w-7" aria-hidden="true">
-                        <Check size={14} strokeWidth={3} />
-                      </span>
+                    <li key={item} className="flex items-start gap-2.5">
+                      <Check size={17} strokeWidth={2.5} className="mt-[2px] shrink-0 text-instap-subsidie" aria-hidden="true" />
                       <span className="font-sans text-[15px] leading-[1.45] text-foreground">{item}</span>
                     </li>
                   ))}
                 </ul>
-              </div>
 
-              {/* De drie manieren om ons te bereiken als rijen in één zandtegel;
-                  e-mail en telefoon zijn als hele rij aanklikbaar. */}
-              <div className="hs-tegel hs-zand mt-[18px] px-5 py-2">
-                {contactBlokken.map(({ icon: Icon, label, waarde, href }) => {
-                  const inhoud = (
-                    <>
-                      <span className="hs-rondje hs-rondje-ink" aria-hidden="true">
-                        <Icon size={18} strokeWidth={2} />
-                      </span>
-                      <span className="min-w-0">
-                        <span className="hs-tekst block text-[13.5px] font-bold">{label}</span>
-                        <span className="block break-words text-[15.5px] font-bold text-primary">{waarde}</span>
-                      </span>
-                    </>
-                  );
-                  return href ? (
-                    <a
-                      key={label}
-                      href={href}
-                      className="ct-bereik-rij group flex items-center gap-3.5 py-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                    >
-                      {inhoud}
-                      <ArrowRight size={17} strokeWidth={2.2} className="hs-pijl ml-auto shrink-0 text-primary/60 group-hover:translate-x-1" aria-hidden="true" />
-                    </a>
-                  ) : (
-                    <div key={label} className="ct-bereik-rij flex items-center gap-3.5 py-3">
-                      {inhoud}
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Vult de ruimte onder de contactgegevens, zodat de reviews op
-                  desktop naast het formulier staan in plaats van eronder. */}
-              <div className="mt-[18px] flex-1">
-                <ReviewsCompact />
+                <div className="ct-tegel-scheiding mt-6 pt-5">
+                  <h3 className="hs-tekst text-[13.5px] font-bold">Liever direct contact?</h3>
+                  <ul className="mt-1.5">
+                    {contactBlokken.map(({ icon: Icon, label, waarde, href }) => {
+                      const inhoud = (
+                        <>
+                          <Icon size={17} strokeWidth={2} className="shrink-0 text-primary/70" aria-hidden="true" />
+                          <span className="sr-only">{label}: </span>
+                          <span className="min-w-0 break-words text-[15px] font-bold text-primary">{waarde}</span>
+                        </>
+                      );
+                      return (
+                        <li key={label}>
+                          {href ? (
+                            <a
+                              href={href}
+                              className="group flex min-h-[44px] items-center gap-3 rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                            >
+                              {inhoud}
+                              <ArrowRight size={16} strokeWidth={2.2} className="hs-pijl ml-auto shrink-0 text-primary/50 group-hover:translate-x-1" aria-hidden="true" />
+                            </a>
+                          ) : (
+                            <div className="flex min-h-[44px] items-center gap-3">{inhoud}</div>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>

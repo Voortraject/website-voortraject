@@ -16,4 +16,9 @@ describe("de subsidietool belooft geen termijn", () => {
       expect(zonderCommentaar(readFileSync(`${MAP}/${f}`, "utf8")), f).not.toMatch(/werkdag/i);
     }
   });
+
+  // Het contactformulier ligt op de route van de Meta-advertentie (knop "Bel mij").
+  it("ook het contactformulier belooft geen termijn", () => {
+    expect(zonderCommentaar(readFileSync("src/pages/Contact.tsx", "utf8"))).not.toMatch(/werkdag|binnen \d+ uur/i);
+  });
 });

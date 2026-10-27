@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, Home, Loader2, MapPin } from "lucide-react";
 
@@ -18,6 +18,7 @@ import {
 
 import { Bewijsregel } from "./Bewijsregel";
 import { BewonertypeKeuze } from "./BewonertypeKeuze";
+import { adresVoorContact, type CheckAdres } from "./checkStaat";
 import { MaatregelKeuze } from "./MaatregelKeuze";
 
 // Wit en zacht verzonken, geen harde rand (.instap-invoer in src/index.css).
@@ -69,6 +70,12 @@ interface StapAdresProps {
   onAdresHerkend?: (herkend: boolean) => void;
   /** Label van de doorknop. Met de gegevens-poort "Verder" (er volgt nog een stap). */
   knopLabel?: string;
+  /**
+   * Een rustige uitweg naast de verzendknop (knop "Bel mij"), met het adres
+   * dat tot nu toe getypt is (null als dat nog niet bruikbaar is). Een render-prop
+   * zodat de link, die de router nodig heeft, in de pagina woont en niet hier.
+   */
+  uitweg?: (adres: CheckAdres | null) => ReactNode;
 }
 
 // Gecombineerde eerste stap: adres + interesses + (optioneel) situatie op één
@@ -90,6 +97,7 @@ export const StapAdres = ({
   situatieOpen = false,
   onAdresHerkend,
   knopLabel = "Bekijk mijn subsidies",
+  uitweg,
 }: StapAdresProps) => {
   const [postcode, setPostcode] = useState(displayPostcode(initPostcode));
   const [huisnummer, setHuisnummer] = useState(initHuisnummer);
@@ -184,6 +192,21 @@ export const StapAdres = ({
   useEffect(() => {
     onAdresHerkend?.(adresHerkend);
   }, [adresHerkend, onAdresHerkend]);
+
+  // Het adres voor de uitweg: wat er nu staat, met straat en plaats als we het
+  // huis al herkend hebben (of de bewoner ze zelf invulde in het handmatige blok).
+  const herkend = bevestigdAdres ?? gevonden;
+  const uitwegAdres = adresVoorContact(
+    !bevestigdAdres && nietGevonden
+      ? { pc: mPostcode, hn: mHuisnr, tv: mToevoeging, str: straat, pl: stad }
+      : {
+          pc: postcode,
+          hn: huisnummer,
+          tv: toevoeging,
+          str: herkend?.straatnaam ?? "",
+          pl: herkend?.woonplaatsnaam ?? "",
+        },
+  );
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -489,20 +512,26 @@ export const StapAdres = ({
           </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={bezig}
-          className="instap-knop mt-6 inline-flex min-h-[58px] w-full items-center justify-center gap-2.5 rounded-full px-7 text-[16.5px] font-extrabold disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          {bezig ? (
-            <>
-              <Loader2 size={18} className="animate-spin" aria-hidden="true" />
-              Adres zoeken…
-            </>
-          ) : (
-            knopLabel
-          )}
-        </button>
+        {/* De uitweg ("Liever gebeld worden?") staat op dezelfde regel, als
+            omlijnde knop naast de gevulde oker knop. De oker knop krijgt alle
+            overgebleven breedte en blijft zo de hoofdroute. */}
+        <div className="mt-6 flex items-stretch gap-2.5">
+          <button
+            type="submit"
+            disabled={bezig}
+            className="instap-knop inline-flex min-h-[58px] min-w-0 flex-1 items-center justify-center gap-2.5 rounded-full px-4 text-[16.5px] font-extrabold disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:px-7"
+          >
+            {bezig ? (
+              <>
+                <Loader2 size={18} className="animate-spin" aria-hidden="true" />
+                Adres zoeken…
+              </>
+            ) : (
+              knopLabel
+            )}
+          </button>
+          {uitweg?.(uitwegAdres)}
+        </div>
 
         {/* Handmatig adres invullen als PDOK het niet herkent (bv. nieuwbouw). */}
         {!bevestigdAdres && nietGevonden && (

@@ -16,6 +16,7 @@ import {
   metAdres,
 } from "@/components/subsidiecheck/checkStaat";
 import { leesContact } from "@/components/subsidiecheck/contactOpslag";
+import { LieverBellen } from "@/components/subsidiecheck/LieverBellen";
 import { StapAdres } from "@/components/subsidiecheck/StapAdres";
 import { StapGegevens } from "@/components/subsidiecheck/StapGegevens";
 import { StapResultaat } from "@/components/subsidiecheck/StapResultaat";
@@ -457,6 +458,9 @@ const SubsidiecheckLive = () => {
                     // subsidies" beloven; wél zeggen wat er gebeurt in plaats van
                     // het nietszeggende "Verder".
                     knopLabel="Zoek mijn subsidies"
+                    // Voor wie de check niet wil invullen (vooral bezoekers uit een
+                    // Meta-advertentie): via het contactformulier je nummer achterlaten.
+                    uitweg={(uitwegAdres) => <LieverBellen adres={uitwegAdres} />}
                   />
                 ) : stap === 2 ? (
                   checkInput &&

@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 
 // Regressie: de lead-formulieren mogen de invoer NIET HTML-escapen voordat die
 // naar `leads_bewoners` gaat. Het CRM toont die kolommen
@@ -55,7 +56,7 @@ const geenEntiteiten = (waarde: unknown) => {
 
 describe("lead-opslag bewaart de invoer onbewerkt", () => {
   it("bewonerformulier: bericht, naam en plaatsnaam gaan rauw naar de database", async () => {
-    render(<Contact />);
+    render(<Contact />, { wrapper: MemoryRouter });
     // NAME_RE staat letters, spaties, apostrof en streepje toe.
     vul(screen.getByLabelText(/^Voornaam/), "Jan-Peter");
     vul(screen.getByLabelText(/^Achternaam/), "O'Brien");
@@ -72,7 +73,7 @@ describe("lead-opslag bewaart de invoer onbewerkt", () => {
   });
 
   it("bewonerformulier: belvoorkeur plus bericht blijft onbewerkt", async () => {
-    render(<Contact />);
+    render(<Contact />, { wrapper: MemoryRouter });
     vul(screen.getByLabelText(/^Voornaam/), "Jan");
     vul(screen.getByLabelText(/^Achternaam/), "de Vries");
     vul(screen.getByLabelText(/^E-mailadres/), "jan@example.nl");

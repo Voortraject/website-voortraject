@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 
 // Het berichtveld is verplicht: zonder bericht mag er geen lead ontstaan, want
 // een lead zonder context kost de adviseur een extra belronde.
@@ -52,7 +53,7 @@ const verstuur = () => {
 
 describe("contactformulier: bericht is verplicht", () => {
   it("weigert een lege inzending en toont een foutmelding", async () => {
-    render(<Contact />);
+    render(<Contact />, { wrapper: MemoryRouter });
     vulNaamEnContact();
     verstuur();
 
@@ -61,7 +62,7 @@ describe("contactformulier: bericht is verplicht", () => {
   });
 
   it("weigert een bericht van alleen spaties", async () => {
-    render(<Contact />);
+    render(<Contact />, { wrapper: MemoryRouter });
     vulNaamEnContact();
     vul(screen.getByLabelText(/^Bericht/), "   ");
     verstuur();
@@ -71,7 +72,7 @@ describe("contactformulier: bericht is verplicht", () => {
   });
 
   it("verstuurt wél zodra er een bericht staat", async () => {
-    render(<Contact />);
+    render(<Contact />, { wrapper: MemoryRouter });
     vulNaamEnContact();
     vul(screen.getByLabelText(/^Bericht/), "Graag advies over isolatie.");
     verstuur();

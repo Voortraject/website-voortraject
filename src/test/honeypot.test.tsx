@@ -2,6 +2,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 
 import type { PdokAdres } from "@/lib/pdok";
 import type { SubsidieCheckInput } from "@/lib/subsidies";
@@ -160,12 +161,12 @@ describe("contactformulier bewoners", () => {
   };
 
   it("heeft een correct opgezet honeypot-veld", () => {
-    const { container } = render(<Contact />);
+    const { container } = render(<Contact />, { wrapper: MemoryRouter });
     controleerHoneypotOpzet(container);
   });
 
   it("schrijft een lead weg bij een normale inzending", async () => {
-    render(<Contact />);
+    render(<Contact />, { wrapper: MemoryRouter });
     vulIn();
     wachtEvenAf();
     fireEvent.click(screen.getByRole("button", { name: /Verstuur bericht/ }));
@@ -179,7 +180,7 @@ describe("contactformulier bewoners", () => {
   });
 
   it("slaat de insert over bij een gevuld honeypot-veld, maar toont wel het bedankscherm", async () => {
-    const { container } = render(<Contact />);
+    const { container } = render(<Contact />, { wrapper: MemoryRouter });
     vulIn();
     // Zoals een bot doet: het verborgen veld tóch invullen.
     vul(honeypotVan(container), "https://spam.example");

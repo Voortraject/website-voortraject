@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 
 import type { PdokAdres } from "@/lib/pdok";
 import type { SubsidieCheckInput } from "@/lib/subsidies";
@@ -83,7 +84,7 @@ const contact = () => {
 
 describe("formulier-kolom", () => {
   it("contactformulier bewoners → 'contactformulier'", async () => {
-    render(<Contact />);
+    render(<Contact />, { wrapper: MemoryRouter });
     vul(screen.getByLabelText(/^Voornaam/), "Jan");
     vul(screen.getByLabelText(/^Achternaam/), "de Vries");
     vul(screen.getByLabelText(/^E-mailadres/), "jan@example.nl");

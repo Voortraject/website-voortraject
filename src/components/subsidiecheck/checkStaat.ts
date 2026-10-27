@@ -1,3 +1,5 @@
+import { huisnummerGeldig, stadGeldig, straatGeldig, toevoegingGeldig } from "@/lib/adresVelden";
+import { normalizePostcode, POSTCODE_RE } from "@/lib/pdok";
 import { SITE_URL } from "@/lib/site";
 
 // Het adres van de subsidiecheck staat niet meer in de URL.
@@ -63,6 +65,24 @@ export function adresUitState(state: unknown): CheckAdres | null {
   const adres = (state as { scAdres?: unknown }).scAdres;
   if (typeof adres !== "object" || adres === null) return null;
   return uitRecord(adres as Record<string, unknown>);
+}
+
+/**
+ * Het adres zoals het contactformulier het kan voorinvullen ("Liever even
+ * bellen?" op stap 1), of null als er (nog) geen bruikbare postcode en
+ * huisnummer staan. Een half adres gaat niet mee: het contactformulier zou er
+ * meteen een foutmelding op geven, terwijl het adres daar optioneel is. Straat en
+ * plaats alleen samen en binnen de grenzen van adresVelden.ts.
+ */
+export function adresVoorContact(ruw: CheckAdres): CheckAdres | null {
+  const pc = ruw.pc.trim();
+  const hn = ruw.hn.trim();
+  const tv = ruw.tv.trim();
+  if (!POSTCODE_RE.test(pc) || !huisnummerGeldig(hn) || !toevoegingGeldig(tv)) return null;
+  const str = ruw.str.trim();
+  const pl = ruw.pl.trim();
+  const metStraat = !!str && !!pl && straatGeldig(str) && stadGeldig(pl);
+  return { pc: normalizePostcode(pc), hn, tv, str: metStraat ? str : "", pl: metStraat ? pl : "" };
 }
 
 /** De state voor een navigatie binnen de check. */

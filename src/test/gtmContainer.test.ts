@@ -13,10 +13,13 @@ import { describe, expect, it } from "vitest";
 // Deze test faalt zodra iemand een pushGtmEvent toevoegt zonder de container bij
 // te werken, of andersom. Werk bij een wijziging ook docs/tracking.md bij.
 
-const CONTAINER = "docs/gtm/GTM-P6W5MNN4_v9.json";
-// De vorige export, zoals hij uit GTM kwam. v9 voegt alleen Meta-items toe; de
-// tests onderaan bewaken dat er aan de bestaande items niets veranderd is.
+const CONTAINER = "docs/gtm/GTM-P6W5MNN4_v10.json";
+// De laatste export zoals hij uit GTM kwam. v9 en v10 voegen alleen Meta-items
+// toe; de tests onderaan bewaken dat er aan de bestaande items niets veranderd is.
 const VORIGE = "docs/gtm/GTM-P6W5MNN4_v8.json";
+// De versie vóór deze, met de Meta-pixel. v10 voegt alleen de Lead van het
+// contactformulier toe; zie de test "v10 ten opzichte van v9".
+const V9 = "docs/gtm/GTM-P6W5MNN4_v9.json";
 
 interface Parameter {
   key: string;
@@ -46,6 +49,7 @@ interface Container {
 const lees = (pad: string) => JSON.parse(readFileSync(pad, "utf8")).containerVersion as Container;
 const container = lees(CONTAINER);
 const vorige = lees(VORIGE);
+const v9 = lees(V9);
 
 const bronbestanden = (map: string): string[] =>
   readdirSync(map, { withFileTypes: true }).flatMap((item) => {
@@ -154,7 +158,7 @@ describe("GTM-container", () => {
   });
 });
 
-describe("GTM-container: v9 laat v8 ongemoeid", () => {
+describe("GTM-container: v10 laat v8 ongemoeid", () => {
   const soorten = [
     ["tag", "tagId"],
     ["trigger", "triggerId"],
@@ -165,7 +169,7 @@ describe("GTM-container: v9 laat v8 ongemoeid", () => {
     it(`bevat elke ${soort} uit v8 ongewijzigd`, () => {
       for (const oud of vorige[soort]) {
         const nieuw = container[soort].find((x) => x[idVeld] === oud[idVeld]);
-        expect(nieuw, `${soort} ${oud[idVeld]} "${oud.name}" ontbreekt in v9`).toBeDefined();
+        expect(nieuw, `${soort} ${oud[idVeld]} "${oud.name}" ontbreekt in v10`).toBeDefined();
         expect(nieuw, `${soort} "${oud.name}" is veranderd ten opzichte van v8`).toEqual(oud);
       }
     });
@@ -190,6 +194,42 @@ describe("GTM-container: v9 laat v8 ongemoeid", () => {
       ...container.variable.map((x) => x.variableId),
     ];
     expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
+describe("GTM-container: v10 ten opzichte van v9", () => {
+  // v10 is met Samenvoegen te importeren over een live v9. Daarom precies dit en
+  // niets meer: één nieuwe trigger, en twee bestaande Meta-items die hem kennen.
+  const GEWIJZIGD = ["Meta - Lead", "Meta - content_name"];
+  const zonderVingerafdruk = (x: Entity & { fingerprint?: string }) => {
+    const { fingerprint: _fp, ...rest } = x;
+    return rest;
+  };
+
+  it("voegt alleen de trigger Meta - Event | bewoner_lead toe", () => {
+    const oudeIds = new Set(v9.trigger.map((t) => t.triggerId));
+    expect(container.trigger.filter((t) => !oudeIds.has(t.triggerId)).map((t) => t.name)).toEqual([
+      "Meta - Event | bewoner_lead",
+    ]);
+    expect(container.tag.length).toBe(v9.tag.length);
+    expect(container.variable.length).toBe(v9.variable.length);
+  });
+
+  for (const soort of ["tag", "trigger", "variable"] as const) {
+    it(`laat elke ${soort} uit v9 ongewijzigd, op Meta - Lead en Meta - content_name na`, () => {
+      for (const oud of v9[soort]) {
+        const nieuw = container[soort].find((x) => x.name === oud.name);
+        expect(nieuw, `${soort} "${oud.name}" ontbreekt in v10`).toBeDefined();
+        if (GEWIJZIGD.includes(oud.name)) continue;
+        expect(nieuw, `${soort} "${oud.name}" is veranderd ten opzichte van v9`).toEqual(oud);
+      }
+    });
+  }
+
+  it("verandert aan Meta - Lead alleen de triggers", () => {
+    const oud = v9.tag.find((t) => t.name === "Meta - Lead")!;
+    const nieuw = container.tag.find((t) => t.name === "Meta - Lead")!;
+    expect({ ...zonderVingerafdruk(nieuw), firingTriggerId: oud.firingTriggerId }).toEqual(zonderVingerafdruk(oud));
   });
 });
 
@@ -257,10 +297,10 @@ describe("GTM-container: Meta-pixel", () => {
     }
   });
 
-  it("koppelt ViewContent aan subsidiecheck_start en Lead aan subsidiecheck_lead, als content_name subsidiecheck", () => {
+  it("koppelt ViewContent aan subsidiecheck_start en Lead aan subsidiecheck_lead en bewoner_lead, met de juiste content_name", () => {
     expect(eventsVan(tagNaam("Meta - ViewContent"))).toEqual(["subsidiecheck_start"]);
-    expect(eventsVan(tagNaam("Meta - Lead"))).toEqual(["subsidiecheck_lead"]);
-    for (const event of ["subsidiecheck_start", "subsidiecheck_lead"]) {
+    expect(eventsVan(tagNaam("Meta - Lead"))).toEqual(["subsidiecheck_lead", "bewoner_lead"]);
+    for (const event of ["subsidiecheck_start", "subsidiecheck_lead", "bewoner_lead"]) {
       expect(codeEvents.has(event), `de code pusht "${event}" niet meer`).toBe(true);
     }
 
@@ -270,6 +310,9 @@ describe("GTM-container: Meta-pixel", () => {
     expect(rijen).toEqual([
       ["subsidiecheck_start", "subsidiecheck"],
       ["subsidiecheck_lead", "subsidiecheck"],
+      // Het contactformulier op /contact, ook als de bezoeker er via "Liever even
+      // bellen?" in de check kwam.
+      ["bewoner_lead", "contact"],
     ]);
     // Een funnel-event in de opzoektabel zonder trigger (of andersom) meet niets.
     const metaEvents = [...eventsVan(tagNaam("Meta - ViewContent")), ...eventsVan(tagNaam("Meta - Lead"))].sort();
