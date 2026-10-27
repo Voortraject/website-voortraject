@@ -1,11 +1,13 @@
 // Pure omzetting van Google-reviews naar rijen voor `google_reviews`. Staat los van
 // index.ts zodat vitest hem rechtstreeks kan importeren.
 //
-// Twee bronnen leveren dezelfde review in een andere vorm aan: de oudere Place
-// Details-API (die op "nieuwste" kan sorteren) en de Places API (New) (alleen op
-// relevantie). Beide moeten dezelfde `google_review_id` opleveren, anders staat één
-// review na een terugval twee keer in de tabel. Google staat één review per account
-// per plek toe, dus het contributor-nummer uit de profiel-URL is de gedeelde sleutel.
+// De hoofdbron is de Business Profile API (v4): die geeft álle reviews met exacte
+// datums, en zijn sleutel is de review-naam van Google. De twee terugvalbronnen zijn
+// de oudere Place Details-API (die op "nieuwste" kan sorteren) en de Places API (New)
+// (alleen op relevantie). Die twee moeten onderling dezelfde `google_review_id`
+// opleveren; Google staat één review per account per plek toe, dus het
+// contributor-nummer uit de profiel-URL is hun gedeelde sleutel. Die sleutel kent v4
+// niet, daarom voegt de terugval alleen reviews van nieuwe namen toe (zie index.ts).
 
 export type ReviewRij = {
   google_review_id: string;
@@ -73,5 +75,43 @@ export function rijUitNieuw(placeId: string, r: NieuweReview): ReviewRij {
     relative_time: r.relativePublishTimeDescription ?? null,
     publish_time: r.publishTime ?? null,
     language: r.text?.languageCode ?? null,
+  };
+}
+
+// Business Profile API v4 (mybusiness.googleapis.com/v4/accounts/*/locations/*/reviews).
+export type V4Review = {
+  name?: string;
+  reviewId?: string;
+  reviewer?: { displayName?: string; profilePhotoUrl?: string; isAnonymous?: boolean };
+  starRating?: "STAR_RATING_UNSPECIFIED" | "ONE" | "TWO" | "THREE" | "FOUR" | "FIVE";
+  comment?: string;
+  createTime?: string;
+  updateTime?: string;
+};
+
+const STERREN: Record<string, number> = { ONE: 1, TWO: 2, THREE: 3, FOUR: 4, FIVE: 5 };
+
+/**
+ * Google plakt een automatische vertaling aan de reviewtekst, in een van twee vormen:
+ * "<origineel>\n\n(Translated by Google)\n<vertaling>" of
+ * "(Translated by Google) <vertaling>\n\n(Original)\n<origineel>".
+ * We houden alleen wat de schrijver zelf typte.
+ */
+export function eigenTekst(comment: string | undefined): string | null {
+  if (!comment) return null;
+  const origineel = comment.split("(Original)")[1] ?? comment.split("(Translated by Google)")[0];
+  return origineel.trim() || null;
+}
+
+export function rijUitV4(r: V4Review): ReviewRij {
+  return {
+    google_review_id: r.name ?? `v4:${r.reviewId}`,
+    author_name: r.reviewer?.displayName ?? "Google-gebruiker",
+    profile_photo_url: r.reviewer?.profilePhotoUrl ?? null,
+    rating: STERREN[r.starRating ?? ""] ?? 0,
+    text: eigenTekst(r.comment),
+    relative_time: null,
+    publish_time: r.createTime ?? r.updateTime ?? null,
+    language: null,
   };
 }
