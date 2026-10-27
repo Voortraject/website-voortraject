@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, Home, Loader2, MapPin } from "lucide-react";
 
@@ -18,6 +18,7 @@ import {
 
 import { Bewijsregel } from "./Bewijsregel";
 import { BewonertypeKeuze } from "./BewonertypeKeuze";
+import { adresVoorContact, type CheckAdres } from "./checkStaat";
 import { MaatregelKeuze } from "./MaatregelKeuze";
 
 // Wit en zacht verzonken, geen harde rand (.instap-invoer in src/index.css).
@@ -69,6 +70,12 @@ interface StapAdresProps {
   onAdresHerkend?: (herkend: boolean) => void;
   /** Label van de doorknop. Met de gegevens-poort "Verder" (er volgt nog een stap). */
   knopLabel?: string;
+  /**
+   * Een rustige uitweg onder de beloftes ("Liever even bellen?"), met het adres
+   * dat tot nu toe getypt is (null als dat nog niet bruikbaar is). Een render-prop
+   * zodat de link, die de router nodig heeft, in de pagina woont en niet hier.
+   */
+  uitweg?: (adres: CheckAdres | null) => ReactNode;
 }
 
 // Gecombineerde eerste stap: adres + interesses + (optioneel) situatie op één
@@ -90,6 +97,7 @@ export const StapAdres = ({
   situatieOpen = false,
   onAdresHerkend,
   knopLabel = "Bekijk mijn subsidies",
+  uitweg,
 }: StapAdresProps) => {
   const [postcode, setPostcode] = useState(displayPostcode(initPostcode));
   const [huisnummer, setHuisnummer] = useState(initHuisnummer);
@@ -184,6 +192,21 @@ export const StapAdres = ({
   useEffect(() => {
     onAdresHerkend?.(adresHerkend);
   }, [adresHerkend, onAdresHerkend]);
+
+  // Het adres voor de uitweg: wat er nu staat, met straat en plaats als we het
+  // huis al herkend hebben (of de bewoner ze zelf invulde in het handmatige blok).
+  const herkend = bevestigdAdres ?? gevonden;
+  const uitwegAdres = adresVoorContact(
+    !bevestigdAdres && nietGevonden
+      ? { pc: mPostcode, hn: mHuisnr, tv: mToevoeging, str: straat, pl: stad }
+      : {
+          pc: postcode,
+          hn: huisnummer,
+          tv: toevoeging,
+          str: herkend?.straatnaam ?? "",
+          pl: herkend?.woonplaatsnaam ?? "",
+        },
+  );
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -616,6 +639,10 @@ export const StapAdres = ({
           ))}
         </ul>
         <Bewijsregel alsLink={false} zonderAantal />
+        {/* De enige uitgang op deze stap, bewust onder de beloftes en niet pal
+            onder de knop: wie de check wil doen, ziet hem pas als hij verder
+            kijkt. */}
+        {uitweg && <div className="mt-2">{uitweg(uitwegAdres)}</div>}
       </div>
     </form>
   );

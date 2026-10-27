@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 
 // Bewijst dat de bezoeker de rem-melding ook echt te zien krijgt, niet alleen dat
 // de helper hem kan samenstellen (dat doet src/test/rateLimitMelding.test.ts).
@@ -58,7 +59,7 @@ const vul = (veld: HTMLElement, waarde: string) => {
 describe("volumerem in het formulier", () => {
   it("toont op het contactformulier de rem-melding met telefoonnummer", async () => {
     insertMock.mockResolvedValue({ error: PT429 });
-    render(<Contact />);
+    render(<Contact />, { wrapper: MemoryRouter });
 
     vul(screen.getByLabelText(/^Voornaam/), "Jan");
     vul(screen.getByLabelText(/^Achternaam/), "de Vries");
@@ -96,7 +97,7 @@ describe("volumerem in het formulier", () => {
     // De tegenhanger: zonder deze test bewijst de bovenste alleen dat er ooit een
     // melding verschijnt, niet dat er onderscheid wordt gemaakt.
     insertMock.mockResolvedValue({ error: { code: "23505", message: "duplicate key" } });
-    render(<Contact />);
+    render(<Contact />, { wrapper: MemoryRouter });
 
     vul(screen.getByLabelText(/^Voornaam/), "Jan");
     vul(screen.getByLabelText(/^Achternaam/), "de Vries");

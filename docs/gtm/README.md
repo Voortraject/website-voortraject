@@ -1,8 +1,43 @@
 # GTM-container
 
-`GTM-P6W5MNN4_v9.json` is de volledige containerconfiguratie voor **GTM-P6W5MNN4**
-(Voortraject.nl), gekoppeld aan GA4-property **G-VQL43876VN** en, zodra het ID is ingevuld, aan de
-Meta-pixel (dataset *Voortraject website*).
+`GTM-P6W5MNN4_v10.json` is de volledige containerconfiguratie voor **GTM-P6W5MNN4**
+(Voortraject.nl), gekoppeld aan GA4-property **G-VQL43876VN** en aan de Meta-pixel (dataset
+*Voortraject website*).
+
+## Bijwerken van v9 naar v10 (Meta Lead op het contactformulier)
+
+v10 is v9 plus de Meta Lead van het contactformulier: `bewoner_lead` wordt ook een `Lead` met
+`content_name: contact`. Drie kleine wijzigingen, verder niets (`gtmContainer.test.ts` bewaakt dat):
+
+| Item | Wat |
+|---|---|
+| Trigger `Meta - Event \| bewoner_lead` (nieuw) | Aangepast event `bewoner_lead`, met de voorwaarde `{{Meta - Toestemming}}` is gelijk aan `true`. Zelfde opbouw als `Meta - Event \| subsidiecheck_lead` |
+| Tag `Meta - Lead` | Vuurt nu op `Meta - Event \| subsidiecheck_lead` **en** `Meta - Event \| bewoner_lead` |
+| Variabele `Meta - content_name` | Extra rij: `bewoner_lead` → `contact` |
+
+Doe dit **pas nadat de code live staat** (de push van `bewoner_lead` met `event_id`). Twee routes:
+
+**A. Met de hand (aanbevolen, een paar minuten).** Bovenstaande drie wijzigingen in een nieuwe
+werkruimte, bijvoorbeeld "v10 - Lead contactformulier". Snelste weg voor de trigger: open
+`Meta - Event | subsidiecheck_lead`, ⋮ → **Kopiëren**, noem de kopie `Meta - Event | bewoner_lead`
+en zet de eventnaam op `bewoner_lead`.
+
+**B. Importeren.** GTM → Beheer → Container importeren → `GTM-P6W5MNN4_v10.json`, werkruimte
+**Nieuw**, **Samenvoegen** → **Conflicterende tags, triggers en variabelen overschrijven**. Kijk in
+het voorbeeldscherm vóór je bevestigt: er hoort precies **1 toegevoegd** (de trigger) en
+**2 gewijzigd** (`Meta - Lead`, `Meta - content_name`) te staan, en niets verwijderd. Staat er iets
+anders, dan wijkt de live container af van v9: annuleer en kies route A. (Hier niet
+"Hernoemen": dan komen er kopieën van `Meta - Lead` en `Meta - content_name` naast de bestaande.)
+
+Daarna in beide gevallen:
+
+1. Controleer dat er **21 tags, 22 triggers en 20 variabelen** staan
+2. **Preview**, Meta geaccepteerd in de cookiebanner: `/contact` invullen en versturen →
+   `Event - Bewoner lead` (GA4) én `Meta - Lead` vuren. In de Meta Pixel Helper: `Lead` met
+   `content_name: contact` en een eventID
+3. Zelfde test met Meta geweigerd: `Meta - Lead` vuurt niet, de GA4-tag wel
+4. Subsidiecheck: `Meta - Lead` vuurt nog steeds met `content_name: subsidiecheck`
+5. Publiceren
 
 v9 is met de hand gebouwd uit `GTM-P6W5MNN4_v8.json` (de laatste export die rechtstreeks uit GTM
 kwam) en voegt daar alleen de Meta-pixel aan toe. v8 blijft hier staan als referentie:

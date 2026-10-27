@@ -1,8 +1,11 @@
-import { useState, useRef, FormEvent, ChangeEvent } from "react";
+import { useState, useRef, useEffect, FormEvent, ChangeEvent } from "react";
+import { useLocation } from "react-router-dom";
 import { ArrowRight, Check, Loader2, Mail, MapPin, MessageSquare, Phone, User } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Seo } from "@/components/Seo";
+import { adresUitState } from "@/components/subsidiecheck/checkStaat";
 import { formulierFoutMelding } from "@/lib/formulierFout";
+import { herkomstUitParams, leesHerkomst, maakEventId } from "@/lib/herkomst";
 import { MIN_INVULTIJD_MS } from "@/lib/invultijd";
 import { pushGtmEvent } from "@/lib/gtm";
 import { Footer } from "@/components/Footer";
@@ -15,7 +18,7 @@ import {
   straatGeldig,
   toevoegingGeldig,
 } from "@/lib/adresVelden";
-import { normalizePostcode, POSTCODE_RE, zoekAdres } from "@/lib/pdok";
+import { displayPostcode, normalizePostcode, POSTCODE_RE, zoekAdres } from "@/lib/pdok";
 import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
 import "@/styles/contact.css";
 
@@ -114,15 +117,33 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 // ---------- Component ----------
 const Contact = () => {
+  const location = useLocation();
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const [bewoner, setBewoner] = useState(initialBewoner);
+  // Adres dat de subsidiecheck meegaf ("Liever even bellen?"). Het komt via de
+  // history-state en nooit via de URL: de Meta-pixel stuurt de volledige URL mee
+  // (zie checkStaat.ts). Straat en plaats staan er alleen in als de check het
+  // huis al herkend had; dan tonen we meteen de bevestiging.
+  const [meegegeven] = useState(() => adresUitState(location.state));
+  const meegegevenMetStraat = !!(meegegeven?.str && meegegeven?.pl);
+  const [bewoner, setBewoner] = useState(() =>
+    meegegeven
+      ? {
+          ...initialBewoner,
+          postcode: displayPostcode(meegegeven.pc),
+          huisnummer: meegegeven.hn,
+          toevoeging: meegegeven.tv,
+          straatnaam: meegegeven.str,
+          plaatsnaam: meegegeven.pl,
+        }
+      : initialBewoner,
+  );
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const [adresLocked, setAdresLocked] = useState(false);
-  const [adresChecked, setAdresChecked] = useState(false);
+  const [adresLocked, setAdresLocked] = useState(meegegevenMetStraat);
+  const [adresChecked, setAdresChecked] = useState(meegegevenMetStraat);
   const [adresLoading, setAdresLoading] = useState(false);
   const [adresEditOverride, setAdresEditOverride] = useState(false);
 
@@ -160,6 +181,14 @@ const Contact = () => {
     }
     setAdresLoading(false);
   };
+
+  // Meegegeven adres zonder straat en plaats: één keer zelf opzoeken, zoals na
+  // het invullen van postcode en huisnummer.
+  useEffect(() => {
+    if (meegegeven && !meegegevenMetStraat) void lookupAdres();
+    // Alleen bij binnenkomst.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handlePostcodeChange = (v: string) => {
     setBewoner((b) => ({ ...b, postcode: v, straatnaam: "", plaatsnaam: "" }));
@@ -281,6 +310,15 @@ const Contact = () => {
     }
 
     setSubmitting(true);
+    // Eén id voor dit lead-moment: in de dataLayer-push (GTM geeft hem als
+    // eventID aan de Meta-pixel) én in `meta_event_id` op de lead. Zo is de Lead
+    // uit de browser later te ontdubbelen tegen dezelfde Lead via de Conversions
+    // API. Zelfde opzet als de subsidiecheck (StapGegevens.tsx).
+    const eventId = maakEventId();
+    // Herkomst: de first touch uit sessionStorage (main.tsx), met als terugval
+    // wat er in de URL van deze pagina staat. Die komt via de link "Liever even
+    // bellen?" in de subsidiecheck, en blijft na de navigatie binnen de app staan.
+    const herkomst = { ...herkomstUitParams(new URLSearchParams(location.search)), ...leesHerkomst() };
     try {
       const beltijd = bewoner.bel_voorkeur.trim();
       const opmerkingen = bewoner.vragen.trim();
@@ -314,6 +352,11 @@ const Contact = () => {
         // of de bevestigingsmail ("binnen 1 werkdag contact") uitgaat. Er staat een
         // CHECK op: alleen 'contactformulier', 'subsidietool' of NULL.
         formulier: "contactformulier",
+        // utm_source, utm_medium, utm_campaign, utm_term, utm_content en fbclid,
+        // alleen de geldige (zie src/lib/herkomst.ts). Zelfde kolommen als de lead
+        // uit de subsidiecheck; anon mag erin schrijven.
+        ...herkomst,
+        meta_event_id: eventId,
         // `status`, `prioriteit` en `toegewezen_aan` sturen we bewust NIET mee.
         // De kolom heeft DEFAULT 'nieuw', en het CRM zet die drie velden bij een
         // anonieme insert sowieso terug (trigger `publieke_lead_velden_vastzetten`).
@@ -324,9 +367,14 @@ const Contact = () => {
       // persoonsgegevens mee, alleen of de optionele blokken zijn ingevuld:
       // daarmee valt te zien of het adresblok en het vragenveld de inzending
       // helpen of juist afremmen.
+      //
+      // Container v10 maakt van deze push ook een Meta Lead met
+      // content_name "contact" (alleen met toestemming in Axeptio). event_id gaat
+      // daar als eventID mee; GA4 gebruikt hem niet.
       pushGtmEvent("bewoner_lead", {
         heeft_adres: bewoner.postcode.trim() ? 1 : 0,
         heeft_vraag: opmerkingen ? 1 : 0,
+        event_id: eventId,
       });
       setBewoner(initialBewoner);
       setAdresLocked(false);

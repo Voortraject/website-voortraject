@@ -96,6 +96,18 @@ export function leesHerkomst(): Herkomst {
 }
 
 /**
+ * De herkomst als querystring voor een link naar een andere pagina ("?utm_…" of
+ * ""): eerst wat er in `huidigeZoekstring` staat, daarover heen de first touch
+ * uit sessionStorage (zelfde voorrang als bij de lead uit de check). Alleen
+ * geldige waarden. Gebruikt door "Liever even bellen?" in de subsidiecheck.
+ */
+export function herkomstZoekstring(huidigeZoekstring: string): string {
+  const herkomst = { ...herkomstUitParams(new URLSearchParams(huidigeZoekstring)), ...leesHerkomst() };
+  const params = new URLSearchParams(herkomst as Record<string, string>).toString();
+  return params ? `?${params}` : "";
+}
+
+/**
  * Een willekeurig id voor één meetmoment (`event_id` in de dataLayer). Meta
  * gebruikt het om een browser-event en een later server-event (Conversions API)
  * als één te tellen. Geen persoonsgegevens: puur toeval.

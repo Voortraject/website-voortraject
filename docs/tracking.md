@@ -34,7 +34,7 @@ stilzwijgend een tag in de container. Werk dit bestand dus bij in dezelfde PR al
 
 | Event | Wanneer | Parameters | Bron |
 |---|---|---|---|
-| `bewoner_lead` | Geslaagde inzending contactformulier | `heeft_adres` (1/0), `heeft_vraag` (1/0) | [`Contact.tsx`](../src/pages/Contact.tsx) |
+| `bewoner_lead` | Geslaagde inzending contactformulier | `heeft_adres` (1/0), `heeft_vraag` (1/0), `event_id` (uuid, ook op de lead als `meta_event_id`) | [`Contact.tsx`](../src/pages/Contact.tsx) |
 | `zakelijk_lead` | Geslaagde inzending zakelijk formulier | geen | [`ZakelijkContactFormulier.tsx`](../src/components/ZakelijkContactFormulier.tsx) |
 
 ### Subsidiecheck
@@ -124,6 +124,14 @@ een mail**, ook niet in de teammail. Bestaan de kolommen nog niet (PostgREST `PG
 alleen een uuid komt erdoor) en landt in `leads_bewoners.meta_event_id`, zodat een Lead uit de
 browser later te ontdubbelen is tegen dezelfde Lead via de Conversions API.
 
+**Contactformulier.** Sinds oktober 2026 schrijft ook `/contact` de herkomst weg: dezelfde kolommen
+(`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`, `fbclid`) plus
+`meta_event_id`, rechtstreeks in de anonieme insert. De herkomst komt uit sessionStorage (first
+touch), met als terugval de querystring van `/contact`. Die querystring vult de link
+"Liever even bellen? Laat je nummer achter" op stap 1 van de check (`LieverBellen.tsx`); het adres
+dat daar al getypt was gaat mee in de history-state, nooit in de URL. `bewoner_lead` pusht hetzelfde
+`event_id` als `meta_event_id`.
+
 **Meta vuurt alleen na toestemming.** De site pusht `event_id` altijd mee, net als de rest van de
 dataLayer; of er iets naar Meta gaat beslist GTM, en elke Meta-trigger vraagt eerst
 Axeptio-toestemming voor de Meta-service. De cookies `_fbp` en `_fbc` (90 dagen) staan in de
@@ -169,12 +177,13 @@ extra's voor. Eén pixel voor de hele site, en per funnel dezelfde drie standaar
 | `PageView` | de Axeptio-toestemming (eerste weergave) en `virtual_page_view` | — |
 | `ViewContent` | `subsidiecheck_start` | `subsidiecheck` |
 | `Lead` | `subsidiecheck_lead` | `subsidiecheck` |
+| `Lead` | `bewoner_lead` (contactformulier, sinds v10) | `contact` |
 
 - **Toestemming:** niets van Meta vuurt zonder Axeptio-toestemming voor de Meta-service
   (`facebook_pixel`, GTM-variabele `Meta - Axeptio service`). Meta kent Google Consent Mode niet;
   de voorwaarde zit daarom op elke Meta-trigger via `{{Meta - Toestemming}}`.
 - **`event_id`:** stuurt een push een `event_id` mee, dan gaat die als `eventID` naar Meta, voor
-  latere deduplicatie met de Conversions API. `subsidiecheck_start` en `subsidiecheck_lead` doen dat
+  latere deduplicatie met de Conversions API. `subsidiecheck_start`, `subsidiecheck_lead` en `bewoner_lead` doen dat
   (zie *Herkomst en `event_id` bij een lead* hierboven); een push zonder `event_id` gaat zonder.
 - **Adres in de URL:** de pixel stuurt de volledige URL mee. Postcode en huisnummer staan daarom
   nooit in de URL van `/subsidiecheck`: het script bovenaan `index.html` en `AdresUitUrl` halen ze

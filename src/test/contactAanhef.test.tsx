@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 
 // Het contactformulier schrijft de aanhef naar `leads_bewoners.aanhef` (CRM).
 // Die kolom is vrije tekst, maar het CRM zelf biedt exact drie waarden aan; een
@@ -55,14 +56,14 @@ const verstuur = async () => {
 
 describe("contactformulier aanhef", () => {
   it("biedt exact de drie CRM-waarden aan", () => {
-    render(<Contact />);
+    render(<Contact />, { wrapper: MemoryRouter });
     const select = screen.getByLabelText(/^Aanhef/) as HTMLSelectElement;
     const waarden = Array.from(select.options).map((o) => o.value);
     expect(waarden).toEqual(["", "Dhr.", "Mevr.", "Fam."]);
   });
 
   it("stuurt de gekozen aanhef mee naar leads_bewoners", async () => {
-    render(<Contact />);
+    render(<Contact />, { wrapper: MemoryRouter });
     vul(screen.getByLabelText(/^Aanhef/), "Mevr.");
     vulVerplichteVelden();
     await verstuur();
@@ -73,7 +74,7 @@ describe("contactformulier aanhef", () => {
   });
 
   it("stuurt NULL als er geen aanhef is gekozen", async () => {
-    render(<Contact />);
+    render(<Contact />, { wrapper: MemoryRouter });
     vulVerplichteVelden();
     await verstuur();
 
