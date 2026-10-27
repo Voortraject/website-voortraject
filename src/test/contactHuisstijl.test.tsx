@@ -14,9 +14,6 @@ vi.mock("@/lib/gtm", () => ({ pushGtmEvent: vi.fn() }));
 vi.mock("@/components/Header", () => ({ Header: () => null }));
 vi.mock("@/components/Footer", () => ({ Footer: () => null }));
 vi.mock("@/components/Seo", () => ({ Seo: () => null }));
-// ReviewsCompact heeft eigen tests en eigen kleuren (de letter-avatars); hier
-// alleen zijn kop, op het niveau waarop hij die nu rendert.
-vi.mock("@/components/ReviewsCompact", () => ({ ReviewsCompact: () => <h3>Wat bewoners zeggen</h3> }));
 import Contact from "@/pages/Contact";
 
 describe("Contactpagina: huisstijl", () => {
@@ -35,6 +32,16 @@ describe("Contactpagina: huisstijl", () => {
     for (const naam of ["Jouw gegevens", "Jouw vraag", "Wat kun je verwachten?"]) {
       expect(screen.getByRole("heading", { level: 2, name: naam })).toBeTruthy();
     }
+  });
+
+  // Oktober 2026: de reviews maakten de pagina druk en zijn eraf. Wat overblijft
+  // naast het formulier is één tegel met verwachtingen en contactgegevens.
+  it("toont geen reviews meer, wel één tegel met verwachtingen en direct contact", () => {
+    render(<Contact />, { wrapper: MemoryRouter });
+    expect(screen.queryByText("Wat bewoners zeggen")).toBeNull();
+    const tegel = screen.getByRole("heading", { name: "Wat kun je verwachten?" }).parentElement!;
+    expect(tegel).toHaveTextContent("Liever direct contact?");
+    expect(tegel.querySelector('a[href="tel:+31502112689"]')).not.toBeNull();
   });
 
   it("toont 'Verstuur bericht' als de oker pil", () => {

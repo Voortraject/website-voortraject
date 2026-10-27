@@ -71,7 +71,7 @@ interface StapAdresProps {
   /** Label van de doorknop. Met de gegevens-poort "Verder" (er volgt nog een stap). */
   knopLabel?: string;
   /**
-   * Een rustige uitweg onder de beloftes ("Liever even bellen?"), met het adres
+   * Een rustige uitweg naast de verzendknop (knop "Bel mij"), met het adres
    * dat tot nu toe getypt is (null als dat nog niet bruikbaar is). Een render-prop
    * zodat de link, die de router nodig heeft, in de pagina woont en niet hier.
    */
@@ -512,20 +512,26 @@ export const StapAdres = ({
           </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={bezig}
-          className="instap-knop mt-6 inline-flex min-h-[58px] w-full items-center justify-center gap-2.5 rounded-full px-7 text-[16.5px] font-extrabold disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          {bezig ? (
-            <>
-              <Loader2 size={18} className="animate-spin" aria-hidden="true" />
-              Adres zoeken…
-            </>
-          ) : (
-            knopLabel
-          )}
-        </button>
+        {/* De uitweg ("Liever gebeld worden?") staat op dezelfde regel, als
+            omlijnde knop naast de gevulde oker knop. De oker knop krijgt alle
+            overgebleven breedte en blijft zo de hoofdroute. */}
+        <div className="mt-6 flex items-stretch gap-2.5">
+          <button
+            type="submit"
+            disabled={bezig}
+            className="instap-knop inline-flex min-h-[58px] min-w-0 flex-1 items-center justify-center gap-2.5 rounded-full px-4 text-[16.5px] font-extrabold disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:px-7"
+          >
+            {bezig ? (
+              <>
+                <Loader2 size={18} className="animate-spin" aria-hidden="true" />
+                Adres zoeken…
+              </>
+            ) : (
+              knopLabel
+            )}
+          </button>
+          {uitweg?.(uitwegAdres)}
+        </div>
 
         {/* Handmatig adres invullen als PDOK het niet herkent (bv. nieuwbouw). */}
         {!bevestigdAdres && nietGevonden && (
@@ -639,10 +645,6 @@ export const StapAdres = ({
           ))}
         </ul>
         <Bewijsregel alsLink={false} zonderAantal />
-        {/* De enige uitgang op deze stap, bewust onder de beloftes en niet pal
-            onder de knop: wie de check wil doen, ziet hem pas als hij verder
-            kijkt. */}
-        {uitweg && <div className="mt-2">{uitweg(uitwegAdres)}</div>}
       </div>
     </form>
   );

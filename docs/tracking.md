@@ -127,10 +127,11 @@ browser later te ontdubbelen is tegen dezelfde Lead via de Conversions API.
 **Contactformulier.** Sinds oktober 2026 schrijft ook `/contact` de herkomst weg: dezelfde kolommen
 (`utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`, `fbclid`) plus
 `meta_event_id`, rechtstreeks in de anonieme insert. De herkomst komt uit sessionStorage (first
-touch), met als terugval de querystring van `/contact`. Die querystring vult de link
-"Liever even bellen? Laat je nummer achter" op stap 1 van de check (`LieverBellen.tsx`); het adres
-dat daar al getypt was gaat mee in de history-state, nooit in de URL. `bewoner_lead` pusht hetzelfde
-`event_id` als `meta_event_id`.
+touch), met als terugval de querystring van `/contact`. Die querystring vult de knop
+"Bel mij" naast "Zoek mijn subsidies" op stap 1 van de check (`LieverBellen.tsx`); het adres
+dat daar al getypt was gaat mee in de history-state, nooit in de URL, net als `bellen: true` (het
+korte formulier). `bewoner_lead` pusht hetzelfde `event_id` als `meta_event_id`; via die knop is
+`heeft_vraag` vaak 0, omdat het bericht daar optioneel is.
 
 **Meta vuurt alleen na toestemming.** De site pusht `event_id` altijd mee, net als de rest van de
 dataLayer; of er iets naar Meta gaat beslist GTM, en elke Meta-trigger vraagt eerst

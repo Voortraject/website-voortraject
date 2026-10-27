@@ -80,6 +80,6 @@ textarea.ct-invoer {
   box-shadow: inset 0 0 0 2px hsl(var(--destructive) / 0.85);
 }
 
-/* De drie contactgegevens: rijen in één zandtegel, gescheiden door een heel
-   zachte lijn van schaduw in plaats van een rand. */
-.ct-bereik-rij + .ct-bereik-rij { box-shadow: inset 0 1px 0 hsl(var(--primary) / 0.06); }
+/* Scheiding tussen "Wat kun je verwachten?" en de contactgegevens in dezelfde
+   tegel: een heel zachte lijn van schaduw in plaats van een rand. */
+.ct-tegel-scheiding { box-shadow: inset 0 1px 0 hsl(var(--primary) / 0.08); }

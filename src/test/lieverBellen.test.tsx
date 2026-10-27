@@ -3,9 +3,9 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 
-// "Liever even bellen? Laat je nummer achter" op stap 1 van de subsidiecheck.
-// Bedoeld voor bezoekers uit een Meta-advertentie die de check niet willen doen:
-// de link brengt ze naar /contact, met de herkomst (utm, fbclid) in de URL en het
+// De knop "Bel mij" naast "Zoek mijn subsidies" op stap 1 van de subsidiecheck.
+// Bedoeld voor bezoekers uit een Meta-advertentie die de check niet willen doen
+// ("Liever gebeld worden?"): de link brengt ze naar een kort /contact, met de herkomst (utm, fbclid) in de URL en het
 // adres in de history-state. Het contactformulier schrijft de herkomst en een
 // meta_event_id weg, en pusht bewoner_lead met hetzelfde event_id (GTM v10 maakt
 // daar een Meta Lead met content_name "contact" van).
@@ -146,14 +146,20 @@ describe("herkomstZoekstring", () => {
   });
 });
 
-describe("Liever even bellen? op stap 1 van de check", () => {
-  it("staat er als rustige link onder de knop, met de zin uit de advertentie", () => {
+const BEL_MIJ = { name: "Liever gebeld worden? Laat je nummer achter" };
+
+describe("Bel mij op stap 1 van de check", () => {
+  it("staat als omlijnde knop naast de oker verzendknop, op dezelfde regel", () => {
     check("/subsidiecheck");
-    expect(screen.getByText(/Liever even bellen\?/)).toBeInTheDocument();
-    const link = screen.getByRole("link", { name: "Laat je nummer achter" });
+    const link = screen.getByRole("link", BEL_MIJ);
     expect(link).toHaveAttribute("href", "/contact");
-    // Geen knop: de check blijft de hoofdroute.
-    expect(screen.queryByRole("button", { name: /nummer achter/ })).toBeNull();
+    expect(link).toHaveTextContent("Bel mij");
+    const verzend = screen.getByRole("button", { name: "Zoek mijn subsidies" });
+    // Zelfde rij; de oker knop neemt de rest van de breedte en blijft de hoofdroute.
+    expect(link.parentElement).toBe(verzend.parentElement);
+    expect(verzend.className).toMatch(/\bflex-1\b/);
+    expect(link.className).toMatch(/\bshrink-0\b/);
+    expect(link.className).not.toMatch(/instap-knop|hs-knop-oker/);
   });
 
   it("geeft herkomst in de URL en het adres als state mee, en het contactformulier schrijft alles weg", async () => {
@@ -166,7 +172,7 @@ describe("Liever even bellen? op stap 1 van de check", () => {
     // De live adrescheck herkent het huis (na een halve seconde wachten).
     await screen.findByText(/Grote Markt 1, Groningen/, {}, { timeout: 2_000 });
 
-    const link = screen.getByRole("link", { name: "Laat je nummer achter" });
+    const link = screen.getByRole("link", BEL_MIJ);
     // Het adres staat nooit in de URL.
     expect(link.getAttribute("href")).not.toMatch(/[?&](pc|hn|tv|str|pl)=/);
     fireEvent.click(link);
@@ -186,19 +192,23 @@ describe("Liever even bellen? op stap 1 van de check", () => {
     expect(screen.getByLabelText(/^Huisnummer/)).toHaveValue("1");
     expect(screen.getByText(/Grote Markt 1, Groningen/)).toBeInTheDocument();
 
+    // Het korte formulier: geen achternaam en geen bericht nodig.
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Liever even bellen?");
     vul(screen.getByLabelText(/^Voornaam/), "Jan");
-    vul(screen.getByLabelText(/^Achternaam/), "de Vries");
     vul(screen.getByLabelText(/^E-mailadres/), "jan@example.nl");
     vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
-    vul(screen.getByLabelText(/^Bericht/), "Bel me liever.");
     nu += 5_000;
-    fireEvent.click(screen.getByRole("button", { name: /Verstuur bericht/ }));
-    await screen.findByText(/Bedankt!/);
+    fireEvent.click(screen.getByRole("button", { name: "Bel mij terug" }));
+    await screen.findByText("Bedankt, Jan!");
+    expect(screen.getByText("0612345678")).toBeInTheDocument();
 
     const [tabel, rij] = insertMock.mock.calls[0];
     expect(tabel).toBe("leads_bewoners");
     expect(rij).toMatchObject({
       formulier: "contactformulier",
+      voornaam: "Jan",
+      achternaam: null,
+      notities: null,
       postcode: "9711AA",
       huisnummer: "1",
       straat: "Grote Markt",
@@ -214,17 +224,62 @@ describe("Liever even bellen? op stap 1 van de check", () => {
 
     const lead = vi.mocked(pushGtmEvent).mock.calls.find(([event]) => event === "bewoner_lead");
     expect(lead).toBeDefined();
-    expect(lead![1]).toEqual({ heeft_adres: 1, heeft_vraag: 1, event_id: rij.meta_event_id });
+    expect(lead![1]).toEqual({ heeft_adres: 1, heeft_vraag: 0, event_id: rij.meta_event_id });
     // Geen persoonsgegevens in de dataLayer.
-    expect(JSON.stringify(lead)).not.toMatch(/Jan|Vries|example|0612|9711|Grote Markt/);
+    expect(JSON.stringify(lead)).not.toMatch(/Jan|example|0612|9711|Grote Markt/);
   });
 
   it("zonder adres en herkomst gaat er een kale link naar /contact", async () => {
     check("/subsidiecheck");
-    fireEvent.click(screen.getByRole("link", { name: "Laat je nummer achter" }));
+    fireEvent.click(screen.getByRole("link", BEL_MIJ));
     expect(screen.getByTestId("waar").textContent).toBe("/contact");
     expect(screen.getByLabelText(/^Postcode/)).toHaveValue("");
     expect(zoekAdresMock).not.toHaveBeenCalled();
+  });
+});
+
+// De belroute op /contact zelf: wie via "Bel mij" binnenkomt, heeft state.bellen.
+const belroute = () =>
+  render(
+    <MemoryRouter initialEntries={[{ pathname: "/contact", state: { bellen: true } }]}>
+      <Contact />
+    </MemoryRouter>,
+  );
+
+describe("contactformulier via Bel mij", () => {
+  it("laat aanhef en tussenvoegsel weg en maakt achternaam en bericht optioneel", () => {
+    belroute();
+    expect(screen.queryByLabelText(/^Aanhef/)).toBeNull();
+    expect(screen.queryByLabelText(/^Tussenvoegsel/)).toBeNull();
+    expect(screen.getByText("Achternaam").closest("label")).toHaveTextContent("(optioneel)");
+    expect(screen.getByText("Bericht").closest("label")).toHaveTextContent("(optioneel)");
+    // Alleen dagdelen; "Per e-mail" hoort niet bij terugbellen.
+    expect(screen.queryByRole("option", { name: "Per e-mail" })).toBeNull();
+    expect(screen.getByRole("option", { name: "Ochtend" })).toHaveValue("Telefonisch: Ochtend");
+  });
+
+  // Zolang n8n een lead zonder e-mail niet goed afhandelt (geen Slack-ping), zie
+  // EMAIL_OPTIONEEL_BIJ_BELLEN in Contact.tsx.
+  it("vraagt nog wel om een e-mailadres", async () => {
+    belroute();
+    vul(screen.getByLabelText(/^Voornaam/), "Jan");
+    vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
+    nu += 5_000;
+    fireEvent.click(screen.getByRole("button", { name: "Bel mij terug" }));
+    expect(await screen.findByText("Vul je e-mailadres in.")).toBeInTheDocument();
+    expect(insertMock).not.toHaveBeenCalled();
+  });
+
+  it("schrijft de beltijd weg zoals het team hem kent", async () => {
+    belroute();
+    vul(screen.getByLabelText(/^Voornaam/), "Jan");
+    vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
+    vul(screen.getByLabelText(/^E-mailadres/), "jan@example.nl");
+    vul(screen.getByLabelText(/^Wanneer bellen we je het liefst/), "Telefonisch: Avond");
+    nu += 5_000;
+    fireEvent.click(screen.getByRole("button", { name: "Bel mij terug" }));
+    await screen.findByText("Bedankt, Jan!");
+    expect(insertMock.mock.calls[0][1]).toMatchObject({ notities: "Voorkeur voor contact: Telefonisch: Avond" });
   });
 });
 
