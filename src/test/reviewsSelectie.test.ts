@@ -2,7 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import { aantalWoorden, fallbackKaarten, MAX_KAARTEN, naarKaarten } from "@/lib/reviews";
 // De omzetting leeft in de edge function (Deno), maar is puur → hier testbaar.
-import { contributorVan, rijUitLegacy, rijUitNieuw } from "../../supabase/functions/sync-google-reviews/reviewrij";
+import {
+  contributorVan,
+  eigenTekst,
+  rijUitLegacy,
+  rijUitNieuw,
+  rijUitV4,
+} from "../../supabase/functions/sync-google-reviews/reviewrij";
 
 const TIEN = "een twee drie vier vijf zes zeven acht negen tien";
 const review = (id: string, rating: number, text: string | null, author_name = `Persoon ${id}`) => ({
@@ -82,5 +88,54 @@ describe("sync-google-reviews: omzetting naar rijen", () => {
     const rij = rijUitLegacy(PLACE, { author_name: "Jan", rating: 5, time: 1760000000, text: "  hoi  " });
     expect(rij.publish_time).toBe("2025-10-09T08:53:20.000Z");
     expect(rij.text).toBe("hoi");
+  });
+});
+
+describe("sync-google-reviews: Business Profile API (v4)", () => {
+  it("houdt alleen de eigen tekst als het origineel vooraan staat", () => {
+    expect(
+      eigenTekst("Snelle reactie, goed geholpen!\n\n(Translated by Google)\nQuick response, received great help!"),
+    ).toBe("Snelle reactie, goed geholpen!");
+  });
+
+  it("houdt alleen de eigen tekst als de vertaling vooraan staat", () => {
+    expect(
+      eigenTekst("(Translated by Google) Very good help\n\n(Original)\nZeer goed geholpen"),
+    ).toBe("Zeer goed geholpen");
+  });
+
+  it("laat tekst zonder vertaling heel en maakt van leeg null", () => {
+    expect(eigenTekst("  Prima geholpen  ")).toBe("Prima geholpen");
+    expect(eigenTekst(undefined)).toBeNull();
+    expect(eigenTekst("")).toBeNull();
+  });
+
+  it("zet een v4-review om naar een rij met de review-naam als sleutel", () => {
+    const rij = rijUitV4({
+      name: "accounts/1/locations/2/reviews/abc",
+      reviewId: "abc",
+      starRating: "FOUR",
+      reviewer: { displayName: "Jan", profilePhotoUrl: "https://foto" },
+      comment: "Goed\n\n(Translated by Google)\nGood",
+      createTime: "2026-10-15T18:32:26.276185Z",
+      updateTime: "2026-10-16T09:32:03.470224Z",
+    });
+    expect(rij).toEqual({
+      google_review_id: "accounts/1/locations/2/reviews/abc",
+      author_name: "Jan",
+      profile_photo_url: "https://foto",
+      rating: 4,
+      text: "Goed",
+      relative_time: null,
+      publish_time: "2026-10-15T18:32:26.276185Z",
+      language: null,
+    });
+  });
+
+  it("geeft een review met alleen sterren geen tekst en een onbekende waardering 0", () => {
+    const rij = rijUitV4({ name: "r", starRating: "STAR_RATING_UNSPECIFIED" });
+    expect(rij.text).toBeNull();
+    expect(rij.rating).toBe(0);
+    expect(rij.author_name).toBe("Google-gebruiker");
   });
 });

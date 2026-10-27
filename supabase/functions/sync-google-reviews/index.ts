@@ -1,17 +1,22 @@
 // Supabase Edge Function: sync-google-reviews
 //
-// Haalt de nieuwste reviews van ons Google-profiel op (Place Details met
-// `reviews_sort=newest`, terugval: Places API (New)), filtert op >= 4 sterren,
-// en schrijft ze naar de tabellen `google_reviews` en `google_place_stats`.
-// Bedoeld om dagelijks via een cron te draaien. De site kiest daaruit zelf wat
-// hij toont (src/lib/reviews.ts: nieuwste eerst, minstens 10 woorden).
+// Haalt de reviews van ons Google-profiel op, filtert op >= 4 sterren, en schrijft ze
+// naar de tabellen `google_reviews` en `google_place_stats`. Bedoeld om dagelijks via
+// een cron te draaien. De site kiest daaruit zelf wat hij toont (src/lib/reviews.ts:
+// nieuwste eerst, minstens 10 woorden).
 //
-// De API-key blijft server-side (secret) — hij komt nooit in de browserbundle.
+// Hoofdbron: de Business Profile API (v4). Die geeft álle reviews met exacte datums,
+// dus de tabel wordt elke run een exacte kopie van het profiel. Terugval, als die API
+// niet bruikbaar is: Place Details met `reviews_sort=newest`, daarna Places API (New).
+// Die geven hooguit 5 reviews, dus dan wordt er alleen aangevuld, nooit opgeruimd.
 //
 // Benodigde secrets (Supabase → Project Settings → Edge Functions → Secrets):
-//   GOOGLE_MAPS_API_KEY  — key met Places API (New) ingeschakeld, en liefst ook
+//   GOOGLE_OAUTH_CLIENT_ID      — OAuth-client "reviews-sync" in Google Cloud-project
+//   GOOGLE_OAUTH_CLIENT_SECRET    My First Project (type Internal, scope business.manage)
+//   GOOGLE_OAUTH_REFRESH_TOKEN  — van het account dat het bedrijfsprofiel beheert
+//   GOOGLE_MAPS_API_KEY  — voor de terugval: key met Places API (New), en liefst ook
 //                          Places API (de oudere), want alleen die sorteert op nieuwste
-//   GOOGLE_PLACE_ID      — Place ID van Voortraject
+//   GOOGLE_PLACE_ID      — Place ID van Voortraject (terugval)
 //   REVIEWS_SYNC_SECRET  — gedeeld geheim; de cron stuurt het mee in `x-poller-secret`
 // Voor de waarschuwingsmail gebruikt hij dezelfde secrets als subsidiecheck-mail:
 //   RESEND_API_KEY, MAIL_FROM en MAIL_TEAM (valt terug op MAIL_BCC, dan info@).
@@ -29,10 +34,16 @@ import {
   type LegacyReview,
   type NieuweReview,
   type ReviewRij,
+  type V4Review,
   rijUitLegacy,
   rijUitNieuw,
+  rijUitV4,
 } from "./reviewrij.ts";
 
+// Niet geheim: het Business Profile-account en de vestiging van Voortraject.
+const BP_LOCATIE = "accounts/101593773793580087245/locations/17905714585642957796";
+const BP_REVIEWS_ENDPOINT = `https://mybusiness.googleapis.com/v4/${BP_LOCATIE}/reviews`;
+const TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token";
 const PLACES_ENDPOINT = "https://places.googleapis.com/v1/places";
 const DETAILS_ENDPOINT = "https://maps.googleapis.com/maps/api/place/details/json";
 const MIN_RATING = 4;
@@ -76,7 +87,68 @@ async function waarschuw(onderwerp: string, tekst: string): Promise<void> {
   }
 }
 
-// De 5 nieuwste reviews, of de reden waarom deze API (nu) niet bruikbaar is.
+// Alle reviews via de Business Profile API, of de reden waarom dat (nu) niet lukt.
+// `compleet` is alleen waar als we evenveel reviews kregen als Google er telt: pas
+// dan mag de sync wat ontbreekt als "verdwenen" opruimen.
+async function haalAlles(): Promise<
+  (Opgehaald & { compleet: boolean }) | { onbruikbaar: string }
+> {
+  const clientId = Deno.env.get("GOOGLE_OAUTH_CLIENT_ID");
+  const clientSecret = Deno.env.get("GOOGLE_OAUTH_CLIENT_SECRET");
+  const refreshToken = Deno.env.get("GOOGLE_OAUTH_REFRESH_TOKEN");
+  if (!clientId || !clientSecret || !refreshToken) {
+    return { onbruikbaar: "secret GOOGLE_OAUTH_CLIENT_ID, _CLIENT_SECRET of _REFRESH_TOKEN ontbreekt" };
+  }
+  try {
+    const tokenRes = await fetch(TOKEN_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        refresh_token: refreshToken,
+        grant_type: "refresh_token",
+      }),
+    });
+    const token = await tokenRes.json();
+    if (!tokenRes.ok || !token.access_token) {
+      return { onbruikbaar: `inloggen bij Google mislukt: HTTP ${tokenRes.status}, ${token.error ?? ""} ${token.error_description ?? ""}` };
+    }
+
+    const reviews: V4Review[] = [];
+    let rating: number | null = null;
+    let totaal: number | null = null;
+    let pageToken: string | undefined;
+    // Google geeft hooguit 50 per pagina; de grens van 20 pagina's vangt een lus af.
+    for (let pagina = 0; pagina < 20; pagina++) {
+      const url = new URL(BP_REVIEWS_ENDPOINT);
+      url.searchParams.set("pageSize", "50");
+      if (pageToken) url.searchParams.set("pageToken", pageToken);
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${token.access_token}` } });
+      const body = await res.json();
+      if (!res.ok) {
+        return { onbruikbaar: `HTTP ${res.status}: ${body.error?.message ?? JSON.stringify(body)}` };
+      }
+      reviews.push(...((body.reviews ?? []) as V4Review[]));
+      rating = body.averageRating ?? rating;
+      totaal = body.totalReviewCount ?? totaal;
+      pageToken = body.nextPageToken;
+      if (!pageToken) break;
+    }
+
+    return {
+      reviews: reviews.map(rijUitV4),
+      // Google geeft 4.900000095367432; de kop toont één decimaal.
+      rating: rating === null ? null : Math.round(rating * 10) / 10,
+      totaal,
+      compleet: !pageToken && totaal !== null && reviews.length >= totaal,
+    };
+  } catch (err) {
+    return { onbruikbaar: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+// Terugval 1: de 5 nieuwste reviews, of de reden waarom deze API (nu) niet bruikbaar is.
 async function haalNieuwste(
   apiKey: string,
   placeId: string,
@@ -104,7 +176,7 @@ async function haalNieuwste(
   }
 }
 
-// Terugval: Places API (New), 5 reviews op relevantie. De FieldMask beperkt payload
+// Terugval 2: Places API (New), 5 reviews op relevantie. De FieldMask beperkt payload
 // én kosten: we vragen alleen wat we tonen. languageCode=nl → Nederlandse reviewtekst
 // waar beschikbaar.
 async function haalRelevantste(apiKey: string, placeId: string): Promise<Opgehaald> {
@@ -125,6 +197,20 @@ async function haalRelevantste(apiKey: string, placeId: string): Promise<Opgehaa
   };
 }
 
+// De terugvalroute, zoals de sync vóór de Business Profile API werkte: eerst de 5
+// nieuwste, anders de 5 "relevantste".
+async function haalViaPlaces(): Promise<Opgehaald & { bron?: string }> {
+  const apiKey = Deno.env.get("GOOGLE_MAPS_API_KEY");
+  const placeId = Deno.env.get("GOOGLE_PLACE_ID");
+  if (!apiKey || !placeId) {
+    return { fout: { error: "Ontbrekende secret GOOGLE_MAPS_API_KEY of GOOGLE_PLACE_ID" } };
+  }
+  const nieuwste = await haalNieuwste(apiKey, placeId);
+  if (!("onbruikbaar" in nieuwste)) return { ...nieuwste, bron: "nieuwste" };
+  console.warn("Place Details (nieuwste) niet bruikbaar:", nieuwste.onbruikbaar);
+  return { ...(await haalRelevantste(apiKey, placeId)), bron: "relevantie" };
+}
+
 Deno.serve(async (req: Request) => {
   // Vóór alles anders: zonder geldig geheim geen aanroep bij Google.
   const verwacht = Deno.env.get("REVIEWS_SYNC_SECRET");
@@ -134,38 +220,33 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const apiKey = Deno.env.get("GOOGLE_MAPS_API_KEY");
-    const placeId = Deno.env.get("GOOGLE_PLACE_ID");
-    if (!apiKey || !placeId) {
-      return json(
-        { error: "Ontbrekende secret GOOGLE_MAPS_API_KEY of GOOGLE_PLACE_ID" },
-        500,
-      );
-    }
-
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    // Google geeft per aanroep hooguit 5 reviews. De Places API (New) kiest die op
-    // "relevantie" en kent geen sortering, waardoor een verse review dagen of
-    // nooit binnenkwam. De oudere Place Details-API kan wél `reviews_sort=newest`,
-    // dus die proberen we eerst. Weigert hij (staat niet aan op de key, of Google
-    // zet hem uit), dan valt de sync terug op de Places API (New), zoals voorheen.
-    let opgehaald = await haalNieuwste(apiKey, placeId);
-    const nieuwsteEerst = !("onbruikbaar" in opgehaald);
-    if ("onbruikbaar" in opgehaald) {
-      console.warn("Place Details (nieuwste) niet bruikbaar:", opgehaald.onbruikbaar);
+    let bron = "business-profile";
+    let compleet = false;
+    let opgehaald: Opgehaald;
+    const alles = await haalAlles();
+    if ("onbruikbaar" in alles) {
+      console.warn("Business Profile API niet bruikbaar:", alles.onbruikbaar);
       await waarschuw(
         "nieuwe reviews kunnen gemist worden",
-        "De sync kon de nieuwste Google-reviews niet ophalen en viel terug op de 5 die " +
-          "Google 'relevant' vindt. Zolang dat zo is, kan een nieuwe review de site missen.\n\n" +
-          `Reden van Google: ${opgehaald.onbruikbaar}\n\n` +
-          "Meestal staat de oudere 'Places API' niet (meer) aan voor de key in Google Cloud " +
-          "(project My First Project), of heeft Google hem uitgezet.",
+        "De sync kon de reviews niet via de Business Profile API van Google ophalen en " +
+          "viel terug op de oude route, die hooguit 5 reviews geeft. Zolang dat zo is, kan " +
+          "een nieuwe review de site missen.\n\n" +
+          `Reden van Google: ${alles.onbruikbaar}\n\n` +
+          "Bij 'invalid_grant' is de koppeling met het Google-account ingetrokken of verlopen: " +
+          "haal een nieuwe refresh token op (OAuth Playground, client reviews-sync in project " +
+          "My First Project) en zet hem in secret GOOGLE_OAUTH_REFRESH_TOKEN.",
       );
-      opgehaald = await haalRelevantste(apiKey, placeId);
+      const places = await haalViaPlaces();
+      opgehaald = places;
+      bron = places.bron ?? bron;
+    } else {
+      opgehaald = alles;
+      compleet = alles.compleet;
     }
     if ("fout" in opgehaald) {
       await waarschuw(
@@ -178,9 +259,21 @@ Deno.serve(async (req: Request) => {
     const runAt = new Date().toISOString();
 
     // Filter op >= 4 sterren: lage reviews bereiken de site nooit.
-    const rows = opgehaald.reviews
+    let rows = opgehaald.reviews
       .filter((r) => r.rating >= MIN_RATING)
       .map((r) => ({ ...r, synced_at: runAt }));
+
+    // De terugval heeft een andere sleutel dan de Business Profile API. Een review die
+    // er al staat, zou zo een tweede rij krijgen; daarom vult de terugval alleen
+    // reviews aan van namen die nog niet in de tabel staan.
+    if (bron !== "business-profile" && rows.length > 0) {
+      const { data: bestaand, error: leesError } = await supabase
+        .from("google_reviews")
+        .select("author_name");
+      if (leesError) throw leesError;
+      const namen = new Set((bestaand ?? []).map((r) => r.author_name.trim().toLowerCase()));
+      rows = rows.filter((r) => !namen.has(r.author_name.trim().toLowerCase()));
+    }
 
     if (rows.length > 0) {
       const { error: upsertError } = await supabase
@@ -189,24 +282,18 @@ Deno.serve(async (req: Request) => {
       if (upsertError) throw upsertError;
     }
 
-    // Opruimen. Reviews stapelen zich op: de 5 van vandaag duwen die van gisteren
-    // niet meer van de site. Alleen binnen het venster dat Google ons net liet zien
-    // (alles vanaf de oudste van deze 5) betekent "ontbreekt" ook echt "verdwenen bij
-    // Google, of onder de 4 sterren gezakt". Daarbuiten weten we het niet, dus laten
-    // we het staan. Bij de terugval (relevantie) is er geen venster: dan niets weg.
-    if (nieuwsteEerst && opgehaald.reviews.length > 0) {
-      const oudste = opgehaald.reviews
-        .map((r) => r.publish_time)
-        .filter((t): t is string => t !== null)
-        .sort()[0];
-      if (oudste) {
-        const { error: pruneError } = await supabase
-          .from("google_reviews")
-          .delete()
-          .lt("synced_at", runAt)
-          .gte("publish_time", oudste);
-        if (pruneError) throw pruneError;
-      }
+    // Opruimen. Alleen als de Business Profile API ons het hele profiel liet zien,
+    // betekent "ontbreekt" ook echt "verdwenen bij Google, of onder de 4 sterren
+    // gezakt". De terugval ziet er maar 5 en ruimt dus nooit op; de eerste geslaagde
+    // run via de Business Profile API trekt de tabel weer recht.
+    if (compleet) {
+      const { error: pruneError } = await supabase
+        .from("google_reviews")
+        .delete()
+        .lt("synced_at", runAt);
+      if (pruneError) throw pruneError;
+    } else if (bron === "business-profile") {
+      console.warn("Business Profile API gaf minder reviews dan het totaal; niets opgeruimd.");
     }
 
     // Aggregatie voor de kop.
@@ -222,7 +309,8 @@ Deno.serve(async (req: Request) => {
 
     return json({
       synced: rows.length,
-      bron: nieuwsteEerst ? "nieuwste" : "relevantie",
+      bron,
+      opgeruimd: compleet,
       rating: opgehaald.rating,
       total: opgehaald.totaal,
     });
