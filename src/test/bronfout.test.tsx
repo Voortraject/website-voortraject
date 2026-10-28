@@ -169,9 +169,23 @@ describe("gegevens-poort bij een bronfout", () => {
     nu += 5_000;
     fireEvent.click(screen.getByRole("button", { name: /^Bekijk mijn/ }));
 
-    await screen.findByRole("alert");
+    expect((await screen.findByRole("alert")).textContent).toMatch(/^Nog even je telefoonnummer, dan zie je meteen je /);
     expect(insertMock).not.toHaveBeenCalled();
     expect(onOntgrendeld).not.toHaveBeenCalled();
+  });
+
+  it("noemt alle lege velden in één melding, met de reden erbij", async () => {
+    metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={() => {}} />);
+    await screen.findByPlaceholderText(/Je voornaam/, {}, { timeout: 5000 });
+    vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
+    nu += 5_000;
+    fireEvent.click(screen.getByRole("button", { name: /^Bekijk mijn/ }));
+
+    // Niet eerst "Vul je voornaam in." en na de volgende klik pas de achternaam.
+    expect((await screen.findByRole("alert")).textContent).toMatch(
+      /^Nog even je voornaam, achternaam en telefoonnummer, dan zie je meteen je /,
+    );
+    expect(insertMock).not.toHaveBeenCalled();
   });
 
   it("zet meerdere hulpvragen achter elkaar in de notitie", async () => {

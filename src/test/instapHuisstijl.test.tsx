@@ -161,11 +161,11 @@ describe("de gegevenspagina", () => {
     expect(screen.queryByText(/reviews/)).toBeNull();
   });
 
-  it("vraagt 'Wil je ook hulp bij…?' met drie tegels van één woord", async () => {
+  it("vraagt 'Wat mogen we ook voor je regelen?' met drie tegels van één woord", async () => {
     vi.mocked(subsidieProvider.check).mockResolvedValue([regeling(1)]);
     toon(<StapGegevens input={input} adres={adres} onOntgrendeld={() => {}} />);
 
-    expect(await screen.findByText("Wil je ook hulp bij…?")).toBeInTheDocument();
+    expect(await screen.findByText("Wat mogen we ook voor je regelen?")).toBeInTheDocument();
     const tegels = screen.getAllByRole("checkbox").map((t) => t.textContent);
     expect(tegels).toEqual(["Papierwerk", "Vakbedrijf", "Stappenplan"]);
     // "Subsidies uitzoeken" zegt niets wat de check zelf niet al zegt.

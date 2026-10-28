@@ -56,7 +56,20 @@ const useOptellen = (doel: number) => {
   return waarde;
 };
 
-// "Wil je ook hulp bij…?" Sinds 2026-10-28 niet verplicht, en zonder de tegel
+// Eén melding voor alles wat nog leeg is, met de reden erbij. Eerst stond hier
+// per veld "Vul je voornaam in.": de bezoeker vulde die in, klikte opnieuw en
+// kreeg dan pas "Vul je achternaam in.". Ongeldige invoer (een e-mailadres
+// zonder @) houdt de eigen melding uit valideerContact.
+const ontbrekendMelding = (velden: readonly string[], aantal: number) => {
+  const lijst =
+    velden.length === 1 ? velden[0] : `${velden.slice(0, -1).join(", ")} en ${velden[velden.length - 1]}`;
+  const beloning = aantal > 0 ? `je ${aantal} ${aantal === 1 ? "regeling" : "regelingen"}` : "je overzicht";
+  return `Nog even je ${lijst}, dan zie je meteen ${beloning}.`;
+};
+
+// "Wat mogen we ook voor je regelen?" Eerst "Wil je ook hulp bij…?", maar daar
+// lopen de losse woorden niet achter ("hulp bij vakbedrijf"); achter "regelen"
+// klopt elk van de drie. Sinds 2026-10-28 niet verplicht, en zonder de tegel
 // "Subsidies uitzoeken": die koos 94% van de bezoekers, en dat zegt niets wat de
 // subsidiecheck zelf niet al zegt. Wat overblijft is extra signaal: wie naast het
 // overzicht nog iets wil, wordt ongeveer twee keer zo vaak bewoner. Bewust géén
@@ -245,6 +258,21 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
     const duurMs = Date.now() - geladenOp.current;
     if (duurMs < MIN_INVULTIJD_MS) {
       setFout("Even geduld. Wacht een moment voordat je verstuurt.");
+      return;
+    }
+
+    const ontbreekt = (
+      [
+        [voornaam, "voornaam"],
+        [achternaam, "achternaam"],
+        [email, "e-mailadres"],
+        [telefoon, "telefoonnummer"],
+      ] as const
+    )
+      .filter(([waarde]) => !waarde.trim())
+      .map(([, veld]) => veld);
+    if (ontbreekt.length) {
+      setFout(ontbrekendMelding(ontbreekt, bevrorenAantal.current ?? 0));
       return;
     }
 
@@ -574,13 +602,14 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
 
         {/* Geen, één of meer antwoorden: zie de toelichting bij HULPVRAGEN hierboven.
             Drie tegels: vanaf sm op één rij, op een telefoon twee naast elkaar en de
-            derde over de volle breedte, zodat er geen los blokje achterblijft. */}
+            derde over de volle breedte, zodat er geen los blokje achterblijft. De
+            inhoud staat in het midden, zodat die derde niet scheef oogt. */}
         <fieldset className={`mt-[30px] ${naarAchtergrond}`}>
-          <legend className="mb-3 block text-[15px] font-extrabold text-primary">Wil je ook hulp bij…?</legend>
+          <legend className="mb-3 block text-balance text-[15px] font-extrabold text-primary">Wat mogen we ook voor je regelen?</legend>
           <div
             className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3"
             role="group"
-            aria-label="Wil je ook hulp bij…? Niet verplicht, meerdere antwoorden mogelijk."
+            aria-label="Wat mogen we ook voor je regelen? Niet verplicht, meerdere antwoorden mogelijk."
           >
             {HULPVRAGEN.map(({ id, label, Icon }) => {
               const actief = hulpvragen.includes(id);
@@ -594,7 +623,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
                     setHulpvragen((huidig) => (huidig.includes(id) ? huidig.filter((h) => h !== id) : [...huidig, id]));
                     setFout(null);
                   }}
-                  className="instap-keus relative flex min-h-[64px] items-center gap-2.5 rounded-[18px] px-3 py-[13px] text-left last:col-span-2 sm:last:col-span-1 text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-3 sm:px-4 sm:py-[15px]"
+                  className="instap-keus relative flex min-h-[64px] items-center justify-center gap-2.5 rounded-[18px] px-3 py-[13px] text-left last:col-span-2 sm:last:col-span-1 text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-3 sm:px-4 sm:py-[15px]"
                 >
                   <Icon size={21} strokeWidth={1.8} className="shrink-0" aria-hidden="true" />
                   <span className="text-[14px] font-bold leading-snug sm:pr-5 sm:text-[15.5px]">{label}</span>
