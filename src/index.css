@@ -478,6 +478,13 @@
     transition: box-shadow 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   .instap-invoer::placeholder { color: hsl(var(--instap-placeholder)); }
+  /* Leeg gelaten na een klik op versturen: de melding zegt "de rode velden". Vóór
+     :focus, zodat het veld waar je in typt gewoon de focusrand krijgt. */
+  .instap-invoer[aria-invalid="true"] {
+    /* Zacht: een dunne, lichte rand en een vleugje rood erin. Volle 2px rood was te fel. */
+    box-shadow: inset 0 0 0 1px hsl(var(--destructive) / 0.45), 0 2px 6px hsl(var(--primary) / 0.05);
+    background: color-mix(in srgb, hsl(var(--destructive)) 3%, hsl(var(--card)));
+  }
   .instap-invoer:focus {
     outline: none;
     box-shadow: inset 0 0 0 2px hsl(var(--primary)), 0 0 0 5px hsl(var(--primary) / 0.1);

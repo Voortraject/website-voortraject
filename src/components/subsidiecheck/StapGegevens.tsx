@@ -56,7 +56,17 @@ const useOptellen = (doel: number) => {
   return waarde;
 };
 
-// "Wil je ook hulp bij…?" Sinds 2026-10-28 niet verplicht, en zonder de tegel
+// Eén melding voor alles wat nog leeg is, met de reden erbij, en de lege velden
+// rood. Eerst stond hier per veld "Vul je voornaam in.": de bezoeker vulde die
+// in, klikte opnieuw en kreeg dan pas "Vul je achternaam in.". De velden opnoemen
+// past niet op één regel; de rode rand wijst ze aan. Kort genoeg voor één regel
+// op 320 px (gemeten: 223 px van de 232 bij 13 px). Ongeldige invoer (een
+// e-mailadres zonder @) houdt de eigen melding uit valideerContact.
+const LEGE_VELDEN_MELDING = "Vul de rode velden in voor je overzicht.";
+
+// "Wat mogen we ook voor je regelen?" Eerst "Wil je ook hulp bij…?", maar daar
+// lopen de losse woorden niet achter ("hulp bij vakbedrijf"); achter "regelen"
+// klopt elk van de drie. Sinds 2026-10-28 niet verplicht, en zonder de tegel
 // "Subsidies uitzoeken": die koos 94% van de bezoekers, en dat zegt niets wat de
 // subsidiecheck zelf niet al zegt. Wat overblijft is extra signaal: wie naast het
 // overzicht nog iets wil, wordt ongeveer twee keer zo vaak bewoner. Bewust géén
@@ -146,6 +156,10 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
   const [achternaam, setAchternaam] = useState("");
   const [email, setEmail] = useState("");
   const [telefoon, setTelefoon] = useState("");
+  // Pas na een klik op versturen: een veld dat dan nog leeg is, wordt rood
+  // tot het gevuld is.
+  const [legeTonen, setLegeTonen] = useState(false);
+  const leeg = (waarde: string) => legeTonen && !waarde.trim();
   const [hulpvragen, setHulpvragen] = useState<HulpvraagId[]>([]);
   const [fout, setFout] = useState<string | null>(null);
   const [bezig, setBezig] = useState(false);
@@ -245,6 +259,12 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
     const duurMs = Date.now() - geladenOp.current;
     if (duurMs < MIN_INVULTIJD_MS) {
       setFout("Even geduld. Wacht een moment voordat je verstuurt.");
+      return;
+    }
+
+    if ([voornaam, achternaam, email, telefoon].some((waarde) => !waarde.trim())) {
+      setLegeTonen(true);
+      setFout(LEGE_VELDEN_MELDING);
       return;
     }
 
@@ -482,6 +502,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
               autoComplete="given-name"
               aria-required="true"
               placeholder="Je voornaam"
+              aria-invalid={leeg(voornaam)}
               className={inputClass}
               value={voornaam}
               onChange={(e) => {
@@ -499,6 +520,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
               autoComplete="family-name"
               aria-required="true"
               placeholder="Je achternaam"
+              aria-invalid={leeg(achternaam)}
               className={inputClass}
               value={achternaam}
               onChange={(e) => {
@@ -516,6 +538,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
               autoComplete="email"
               aria-required="true"
               placeholder="Je e-mailadres"
+              aria-invalid={leeg(email)}
               className={`${inputClass} col-span-2`}
               value={email}
               onChange={(e) => {
@@ -538,6 +561,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
               inputMode="tel"
               aria-required="true"
               placeholder="Je telefoonnummer"
+              aria-invalid={leeg(telefoon)}
               className={`${inputClass} col-span-2`}
               value={telefoon}
               onChange={(e) => {
@@ -574,13 +598,14 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
 
         {/* Geen, één of meer antwoorden: zie de toelichting bij HULPVRAGEN hierboven.
             Drie tegels: vanaf sm op één rij, op een telefoon twee naast elkaar en de
-            derde over de volle breedte, zodat er geen los blokje achterblijft. */}
+            derde over de volle breedte, zodat er geen los blokje achterblijft. De
+            inhoud staat in het midden, zodat die derde niet scheef oogt. */}
         <fieldset className={`mt-[30px] ${naarAchtergrond}`}>
-          <legend className="mb-3 block text-[15px] font-extrabold text-primary">Wil je ook hulp bij…?</legend>
+          <legend className="mb-3 block text-balance text-[15px] font-extrabold text-primary">Wat mogen we ook voor je regelen?</legend>
           <div
             className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3"
             role="group"
-            aria-label="Wil je ook hulp bij…? Niet verplicht, meerdere antwoorden mogelijk."
+            aria-label="Wat mogen we ook voor je regelen? Niet verplicht, meerdere antwoorden mogelijk."
           >
             {HULPVRAGEN.map(({ id, label, Icon }) => {
               const actief = hulpvragen.includes(id);
@@ -594,7 +619,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
                     setHulpvragen((huidig) => (huidig.includes(id) ? huidig.filter((h) => h !== id) : [...huidig, id]));
                     setFout(null);
                   }}
-                  className="instap-keus relative flex min-h-[64px] items-center gap-2.5 rounded-[18px] px-3 py-[13px] text-left last:col-span-2 sm:last:col-span-1 text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-3 sm:px-4 sm:py-[15px]"
+                  className="instap-keus relative flex min-h-[64px] items-center justify-center gap-2.5 rounded-[18px] px-3 py-[13px] text-left last:col-span-2 sm:last:col-span-1 text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-3 sm:px-4 sm:py-[15px]"
                 >
                   <Icon size={21} strokeWidth={1.8} className="shrink-0" aria-hidden="true" />
                   <span className="text-[14px] font-bold leading-snug sm:pr-5 sm:text-[15.5px]">{label}</span>
@@ -615,7 +640,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
         </fieldset>
 
         {fout && (
-          <p role="alert" className="mt-3 text-[14px] text-destructive">
+          <p role="alert" className="mt-3 text-[13px] text-destructive min-[360px]:text-[14px]">
             {fout}
           </p>
         )}
