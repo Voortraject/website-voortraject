@@ -91,8 +91,8 @@ describe("energiesubsidiewijzerProvider", () => {
 
 describe("gegevens-poort bij een bronfout", () => {
   const vulIn = () => {
-    // Minstens één hulpvraag is verplicht, naast de velden.
-    fireEvent.click(screen.getByRole("checkbox", { name: /De aanvraag regelen/ }));
+    // De hulpvraag is niet verplicht; hier kiezen we er een, zodat hij meegaat.
+    fireEvent.click(screen.getByRole("checkbox", { name: /Papierwerk/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
@@ -121,7 +121,7 @@ describe("gegevens-poort bij een bronfout", () => {
     // `notities` bevat alléén de hulpvraag: dat veld is voor het team zelf. Het
     // toestemmingsbewijs stond hier ook als tweede regel, als terugval voor de
     // tijd dat de kolommen nog niet bestonden. Die dubbeling is eruit.
-    expect(rij.notities).toBe("Wil hulp met: De aanvraag regelen");
+    expect(rij.notities).toBe("Wil hulp met: Papierwerk");
 
     // Het bewijs dat de ACM per persoon verlangt (art. 11.7 lid 2 Tw) staat nu
     // uitsluitend in de eigen kolommen, en moet er ook langs dit noodpad in
@@ -134,7 +134,8 @@ describe("gegevens-poort bij een bronfout", () => {
     expect(Number.isFinite(Date.parse(rij.toestemming_op as string))).toBe(true);
   });
 
-  it("verstuurt niets zolang de hulpvraag niet gekozen is", async () => {
+  it("verstuurt ook zonder hulpvraag, en dan zonder notitie", async () => {
+    vi.mocked(subsidieProvider.check).mockRejectedValue(new Error("bron plat"));
     const onOntgrendeld = vi.fn();
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={onOntgrendeld} />);
     // De poort zoekt nu eerst (en toont dat); het formulier volgt daarna. Bij een
@@ -144,12 +145,14 @@ describe("gegevens-poort bij een bronfout", () => {
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
+    vul(screen.getByPlaceholderText(/Je telefoonnummer/), "0612345678");
     nu += 5_000;
     fireEvent.click(screen.getByRole("button", { name: /^Bekijk mijn/ }));
 
-    await screen.findByRole("alert");
-    expect(insertMock).not.toHaveBeenCalled();
-    expect(onOntgrendeld).not.toHaveBeenCalled();
+    await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled(), { timeout: 5_000 });
+    const [, rij] = insertMock.mock.calls[0];
+    // Geen lege "Wil hulp met:" in `notities`: die kolom is van het team.
+    expect(rij.notities).toBeNull();
   });
 
   it("verstuurt niets zonder telefoonnummer", async () => {
@@ -159,7 +162,7 @@ describe("gegevens-poort bij een bronfout", () => {
     // bronfout gaat daar de retry van react-query (retry: 1) overheen, vandaar de
     // ruimere wachttijd dan de standaard van één seconde.
     await screen.findByPlaceholderText(/Je voornaam/, {}, { timeout: 5000 });
-    fireEvent.click(screen.getByRole("checkbox", { name: /Subsidies uitzoeken/ }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /Papierwerk/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
@@ -181,8 +184,8 @@ describe("gegevens-poort bij een bronfout", () => {
     await screen.findByPlaceholderText(/Je voornaam/, {}, { timeout: 5000 });
     // Bewust in omgekeerde volgorde aanklikken: de notitie moet de volgorde van
     // de tegels aanhouden, niet die van het klikken.
-    fireEvent.click(screen.getByRole("checkbox", { name: /Betrouwbare uitvoerder/ }));
-    fireEvent.click(screen.getByRole("checkbox", { name: /Subsidies uitzoeken/ }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /Stappenplan/ }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /Papierwerk/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
@@ -193,7 +196,7 @@ describe("gegevens-poort bij een bronfout", () => {
     await waitFor(() => expect(onOntgrendeld).toHaveBeenCalled(), { timeout: 5_000 });
     const [, rij] = insertMock.mock.calls[0];
     expect((rij.notities as string).split("\n")[0]).toBe(
-      "Wil hulp met: Subsidies uitzoeken, Betrouwbare uitvoerder",
+      "Wil hulp met: Papierwerk, Stappenplan",
     );
   });
 });

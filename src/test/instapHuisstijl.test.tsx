@@ -161,12 +161,15 @@ describe("de gegevenspagina", () => {
     expect(screen.queryByText(/reviews/)).toBeNull();
   });
 
-  it("heeft de hulptegel 'Betrouwbare uitvoerder'", async () => {
+  it("vraagt 'Wil je ook hulp bij…?' met drie tegels van één woord", async () => {
     vi.mocked(subsidieProvider.check).mockResolvedValue([regeling(1)]);
     toon(<StapGegevens input={input} adres={adres} onOntgrendeld={() => {}} />);
 
-    expect(await screen.findByRole("checkbox", { name: /Betrouwbare uitvoerder/ })).toBeInTheDocument();
-    expect(screen.queryByText("Een uitvoerder vinden")).toBeNull();
+    expect(await screen.findByText("Wil je ook hulp bij…?")).toBeInTheDocument();
+    const tegels = screen.getAllByRole("checkbox").map((t) => t.textContent);
+    expect(tegels).toEqual(["Papierwerk", "Vakbedrijf", "Stappenplan"]);
+    // "Subsidies uitzoeken" zegt niets wat de check zelf niet al zegt.
+    expect(screen.queryByText("Subsidies uitzoeken")).toBeNull();
   });
 
   it("zet onder de knop alleen de toestemmingstekst", async () => {

@@ -96,7 +96,7 @@ afterEach(() => {
 });
 
 const vulInEnVerstuur = () => {
-  fireEvent.click(screen.getByRole("checkbox", { name: /Subsidies uitzoeken/ }));
+  fireEvent.click(screen.getByRole("checkbox", { name: /Papierwerk/ }));
   fireEvent.change(screen.getByPlaceholderText(/Je voornaam/), { target: { value: "Jan" } });
   fireEvent.change(screen.getByPlaceholderText(/Je achternaam/), { target: { value: "de Vries" } });
   fireEvent.change(screen.getByPlaceholderText(/Je e-mailadres/), { target: { value: "jan@example.nl" } });

@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { BadgeEuro, Check, FileCheck, HardHat, Home, Loader2 } from "lucide-react";
+import { Check, FileCheck, HardHat, ListChecks, Loader2 } from "lucide-react";
 
 import adviseurFoto from "@/assets/adviseur-tim.webp";
 import { useLaadsequentie } from "@/hooks/useLaadsequentie";
@@ -56,24 +56,21 @@ const useOptellen = (doel: number) => {
   return waarde;
 };
 
-// Waar kunnen we je mee helpen? Bewust géén vraag naar een termijn ("wanneer wil
-// je aan de slag?"): daar kiest bijna iedereen de vrijblijvendste optie, en dan
-// weet het team nog niets. Deze vier zijn stuk voor stuk dingen die Voortraject
-// écht doet, dus élk antwoord vertelt de adviseur waarmee hij het gesprek opent.
-// Geen "vage" uitweg, want alle vier zijn even legitiem, en meerdere aanvinken
-// mag: wie zowel de subsidies als de aanvraag uit handen wil geven, zegt dat.
-// De labels komen letterlijk in `subsidiecheck_hulpvragen` bij de lead te staan,
-// en het CRM toont ze als labels. Kort en gelijk van vorm, zodat de vier tegels
-// in één oogopslag te vergelijken zijn.
+// "Wil je ook hulp bij…?" Sinds 2026-10-28 niet verplicht, en zonder de tegel
+// "Subsidies uitzoeken": die koos 94% van de bezoekers, en dat zegt niets wat de
+// subsidiecheck zelf niet al zegt. Wat overblijft is extra signaal: wie naast het
+// overzicht nog iets wil, wordt ongeveer twee keer zo vaak bewoner. Bewust géén
+// vraag naar een termijn: daar kiest bijna iedereen de vrijblijvendste optie.
+// Eén woord per tegel, zodat elk label ook op een telefoon op één regel past;
+// de woorden en de volgorde koos de opdrachtgever. "Vakbedrijf" en niet
+// "vakman": de uitvoerders zijn bedrijven, en "erkend" klinkt erin mee.
+// De labels komen letterlijk in `subsidiecheck_hulpvragen` bij de lead te staan;
+// het CRM en n8n tonen ze alleen. De ids blijven gelijk (GTM leest die), dus oude
+// leads houden hun oude labels en de metingen lopen door.
 const HULPVRAGEN = [
-  { id: "subsidies", label: "Subsidies uitzoeken", Icon: BadgeEuro },
-  { id: "aanvraag", label: "De aanvraag regelen", Icon: FileCheck },
-  // "Betrouwbare uitvoerder" sinds 2026-10-21: "betrouwbaar" is precies de
-  // drempel, en zo past het label op een telefoon in twee regels. De id blijft
-  // "uitvoerder" (GTM leest die), alleen het label bij de lead verandert voor
-  // nieuwe leads.
-  { id: "uitvoerder", label: "Betrouwbare uitvoerder", Icon: HardHat },
-  { id: "plan", label: "Een plan voor mijn huis", Icon: Home },
+  { id: "aanvraag", label: "Papierwerk", Icon: FileCheck },
+  { id: "uitvoerder", label: "Vakbedrijf", Icon: HardHat },
+  { id: "plan", label: "Stappenplan", Icon: ListChecks },
 ] as const;
 
 type HulpvraagId = (typeof HULPVRAGEN)[number]["id"];
@@ -256,11 +253,6 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
       setFout(resultaat.fout);
       return;
     }
-    if (hulpvragen.length === 0) {
-      setFout("Kies even waar we je mee kunnen helpen.");
-      return;
-    }
-
     // De gekozen tegels gaan als lijst naar `subsidiecheck_hulpvragen`, in de
     // volgorde van de tegels en niet van het aanklikken, zodat het CRM leest zoals
     // de bezoeker het zag. `notities` blijft van het team.
@@ -273,7 +265,8 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
     // Het toestemmingsbewijs dat de ACM per persoon verlangt stond hier ooit ook
     // als leesbare regel onder. Dat staat nu op één plek: `toestemming_op` en
     // `toestemming_tekst` (zie toestemming.ts), langs beide schrijfpaden.
-    const notitie = `Wil hulp met: ${gekozenLabels.join(", ")}`;
+    // Niets gekozen mag: dan geen regel, en geen lege "Wil hulp met:".
+    const notitie = gekozenLabels.length ? `Wil hulp met: ${gekozenLabels.join(", ")}` : undefined;
     const toestemming = toestemmingVelden();
 
     setBezig(true);
@@ -579,13 +572,15 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
           </div>
         </div>
 
-        {/* Meerdere antwoorden mogen: zie de toelichting bij HULPVRAGEN hierboven. */}
+        {/* Geen, één of meer antwoorden: zie de toelichting bij HULPVRAGEN hierboven.
+            Drie tegels: vanaf sm op één rij, op een telefoon twee naast elkaar en de
+            derde over de volle breedte, zodat er geen los blokje achterblijft. */}
         <fieldset className={`mt-[30px] ${naarAchtergrond}`}>
-          <legend className="mb-3 block text-[15px] font-extrabold text-primary">Waar kunnen we je mee helpen?</legend>
+          <legend className="mb-3 block text-[15px] font-extrabold text-primary">Wil je ook hulp bij…?</legend>
           <div
-            className="grid grid-cols-2 gap-2.5 sm:gap-3"
+            className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3"
             role="group"
-            aria-label="Waar kunnen we je mee helpen? Meerdere antwoorden mogelijk."
+            aria-label="Wil je ook hulp bij…? Niet verplicht, meerdere antwoorden mogelijk."
           >
             {HULPVRAGEN.map(({ id, label, Icon }) => {
               const actief = hulpvragen.includes(id);
@@ -599,7 +594,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
                     setHulpvragen((huidig) => (huidig.includes(id) ? huidig.filter((h) => h !== id) : [...huidig, id]));
                     setFout(null);
                   }}
-                  className="instap-keus relative flex min-h-[64px] items-center gap-2.5 rounded-[18px] px-3 py-[13px] text-left text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-3 sm:px-4 sm:py-[15px]"
+                  className="instap-keus relative flex min-h-[64px] items-center gap-2.5 rounded-[18px] px-3 py-[13px] text-left last:col-span-2 sm:last:col-span-1 text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:gap-3 sm:px-4 sm:py-[15px]"
                 >
                   <Icon size={21} strokeWidth={1.8} className="shrink-0" aria-hidden="true" />
                   <span className="text-[14px] font-bold leading-snug sm:pr-5 sm:text-[15.5px]">{label}</span>
