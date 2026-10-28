@@ -78,7 +78,7 @@ Wanneer wij gegevens van uitvoerders of hun contactpersonen uit openbare bronnen
 
 Wij verwerken het BSN uitsluitend om de subsidieaanvraag, op basis van de door u verstrekte machtiging, samen met u of namens u bij het Samenwerkingsverband Noord-Nederland (SNN) in te dienen. Wij gebruiken het BSN voor geen enkel ander doel.
 
-Wij bewaren het BSN niet langer dan nodig. Het document met daarop uw BSN verwijderen wij automatisch zodra het SNN over de subsidieaanvraag heeft beslist. Tot dat besluit kan het SNN nog vragen stellen over de aanvraag; daarom moet het document tot dat moment beschikbaar blijven. Daarna kunnen wij in uw dossier nog wel vastleggen of u op basis van de inkomenstoets in aanmerking komt voor een bepaalde (hogere) subsidie, maar uitsluitend de uitkomst, dus zonder uw BSN en zonder de onderliggende inkomensverklaring.`,
+Wij bewaren het BSN niet langer dan nodig. Het document met daarop uw BSN verwijderen wij automatisch binnen een week nadat het SNN over de subsidieaanvraag heeft beslist. Tot dat besluit kan het SNN nog vragen stellen over de aanvraag; daarom moet het document tot dat moment beschikbaar blijven. Wijst het SNN de aanvraag af, dan bewaren wij het document totdat een eventueel bezwaar tegen dat besluit is afgerond, maar nooit langer dan zes maanden na het besluit. Daarna kunnen wij in uw dossier nog wel vastleggen of u op basis van de inkomenstoets in aanmerking komt voor een bepaalde (hogere) subsidie, maar uitsluitend de uitkomst, dus zonder uw BSN en zonder de onderliggende inkomensverklaring.`,
   },
   {
     title: "6. Opnemen van telefoongesprekken",
@@ -111,7 +111,7 @@ Wilt u niet dat uw gesprek wordt opgenomen, dan kunt u daartegen bezwaar maken (
     title: "8. Met wie delen wij uw gegevens?",
     content: `Uitvoerders en samenwerkingspartners. Om uw verduurzamingstraject uit te voeren, delen wij de daarvoor noodzakelijke gegevens met de door u gekozen of aan u gekoppelde uitvoerder.
 
-Samenwerkingsverband Noord-Nederland (SNN). Voor het indienen van een subsidieaanvraag verstrekken wij de daarvoor benodigde gegevens aan het SNN. Bij een inkomensafhankelijke subsidie hoort daar de inkomensverklaring met uw BSN bij; wij dienen deze namens of samen met u in en verwijderen het document zodra het SNN over de aanvraag heeft beslist (zie paragraaf 5).
+Samenwerkingsverband Noord-Nederland (SNN). Voor het indienen van een subsidieaanvraag verstrekken wij de daarvoor benodigde gegevens aan het SNN. Bij een inkomensafhankelijke subsidie hoort daar de inkomensverklaring met uw BSN bij; wij dienen deze namens of samen met u in en verwijderen het document binnen een week nadat het SNN over de aanvraag heeft beslist (zie paragraaf 5).
 
 Verwerkers. Voor onze dienstverlening maken wij gebruik van ICT-leveranciers die in onze opdracht persoonsgegevens verwerken, waaronder leveranciers van onze database, hosting, e-mail, automatisering, telefonie, boekhouding, digitaal ondertekenen, websiteanalyse en cookiebeheer. Met deze partijen sluiten wij verwerkersovereenkomsten conform artikel 28 AVG.
 
@@ -136,13 +136,13 @@ Voor websiteanalyse, e-mail en de beveiliging van onze formulieren maken wij geb
 • Projectdossiers (waaronder contact-, woning- en dossiergegevens): tot 10 jaar na afronding van het traject, mede met het oog op mogelijke aansprakelijkheid en de daarvoor geldende verjaringstermijnen. Voor subsidiestukken geldt een eigen, kortere termijn (zie hieronder). Beeldmateriaal van de woningopname bewaren wij niet langer dan nodig voor de uitvoering en eventuele garantie- of aansprakelijkheidsvragen;
 • Subsidiestukken (zoals het machtigingsformulier, offertes, facturen en betaalbewijzen): 5 jaar na het einde van de subsidie, omdat het SNN tot die tijd om de stukken kan vragen;
 • Administratieve en financiële gegevens: 7 jaar, op grond van de fiscale bewaarplicht;
-• Inkomensverklaring met BSN: uitsluitend totdat het SNN over de subsidieaanvraag heeft beslist; daarna verwijderen wij het document met het BSN automatisch (zie paragraaf 5);
+• Inkomensverklaring met BSN: wij verwijderen het document met het BSN automatisch binnen een week nadat het SNN over de subsidieaanvraag heeft beslist. Bij een afwijzing bewaren wij het document totdat een eventueel bezwaar is afgerond, maar nooit langer dan zes maanden na het besluit (zie paragraaf 5);
 • Gespreksopnames van telefoongesprekken: zolang uw dossier loopt; daarna verwijderen wij de opname en de uitwerking daarvan. Afspraken die voor uw traject van belang zijn, leggen wij als aantekening in uw dossier vast; die aantekening valt onder de bewaartermijn voor projectdossiers;
 • Websitegegevens: maximaal 2 jaar.`,
   },
   {
     title: "11. Beveiliging",
-    content: `Wij nemen passende technische en organisatorische maatregelen om uw persoonsgegevens te beschermen tegen verlies of onrechtmatige verwerking. Denk aan toegangsbeperking tot onze systemen, versleuteling van gegevens, dataminimalisatie en het onderbrengen van onze database binnen de EER. Documenten met een BSN verwerken wij alleen tijdelijk en met extra terughoudendheid, en wij verwijderen deze automatisch zodra het SNN over de subsidieaanvraag heeft beslist.`,
+    content: `Wij nemen passende technische en organisatorische maatregelen om uw persoonsgegevens te beschermen tegen verlies of onrechtmatige verwerking. Denk aan toegangsbeperking tot onze systemen, versleuteling van gegevens, dataminimalisatie en het onderbrengen van onze database binnen de EER. Documenten met een BSN verwerken wij alleen tijdelijk en met extra terughoudendheid, en wij verwijderen deze automatisch binnen een week nadat het SNN over de subsidieaanvraag heeft beslist, of bij een afwijzing uiterlijk zes maanden na het besluit (zie paragraaf 5).`,
   },
   {
     title: "12. Geautomatiseerde besluitvorming",
