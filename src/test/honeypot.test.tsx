@@ -253,8 +253,8 @@ describe("zakelijk contactformulier", () => {
 
 describe("subsidiecheck gegevenspoort", () => {
   const vulIn = () => {
-    // De hulpvraag is verplicht voordat het formulier verstuurt.
-    fireEvent.click(screen.getByRole("checkbox", { name: /De aanvraag regelen/ }));
+    // De hulpvraag is niet verplicht; hier kiezen we er een, zodat hij meegaat.
+    fireEvent.click(screen.getByRole("checkbox", { name: /Papierwerk/ }));
     vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
     vul(screen.getByPlaceholderText(/Je achternaam/), "de Vries");
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");

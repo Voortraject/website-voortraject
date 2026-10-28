@@ -119,7 +119,7 @@ describe("event_id en herkomst bij subsidiecheck_lead", () => {
       />,
     );
     await screen.findByPlaceholderText(/Je voornaam/, {}, { timeout: 5_000 });
-    fireEvent.click(screen.getByRole("checkbox", { name: /Subsidies uitzoeken/ }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /Papierwerk/ }));
     fireEvent.change(screen.getByPlaceholderText(/Je voornaam/), { target: { value: "Jan" } });
     fireEvent.change(screen.getByPlaceholderText(/Je achternaam/), { target: { value: "de Vries" } });
     fireEvent.change(screen.getByPlaceholderText(/Je e-mailadres/), { target: { value: "jan@example.nl" } });
@@ -140,10 +140,10 @@ describe("event_id en herkomst bij subsidiecheck_lead", () => {
     expect(body.overzichtUrl).toBe("https://voortraject.nl/subsidiecheck?pc=9711AA&hn=1&type=woningeigenaar");
     // De tegels als lijst voor `subsidiecheck_hulpvragen`, en tijdens de overgang
     // ook nog als tekstregel voor een oudere function.
-    expect(body.hulpvragen).toEqual(["Subsidies uitzoeken"]);
-    expect(body.notitie).toBe("Wil hulp met: Subsidies uitzoeken");
+    expect(body.hulpvragen).toEqual(["Papierwerk"]);
+    expect(body.notitie).toBe("Wil hulp met: Papierwerk");
     // En onthouden in de sessie, voor een klik of vraag die toch een nieuwe lead wordt.
-    expect(JSON.parse(sessionStorage.getItem("sc_contact")!).hulpvragen).toEqual(["Subsidies uitzoeken"]);
+    expect(JSON.parse(sessionStorage.getItem("sc_contact")!).hulpvragen).toEqual(["Papierwerk"]);
 
     const lead = vi.mocked(pushGtmEvent).mock.calls.find(([event]) => event === "subsidiecheck_lead");
     expect(lead).toBeDefined();
