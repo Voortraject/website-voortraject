@@ -169,12 +169,12 @@ describe("gegevens-poort bij een bronfout", () => {
     nu += 5_000;
     fireEvent.click(screen.getByRole("button", { name: /^Bekijk mijn/ }));
 
-    expect((await screen.findByRole("alert")).textContent).toMatch(/^Nog even je telefoonnummer, dan zie je meteen je /);
+    expect((await screen.findByRole("alert")).textContent).toBe("Vul de rode velden in voor je overzicht.");
     expect(insertMock).not.toHaveBeenCalled();
     expect(onOntgrendeld).not.toHaveBeenCalled();
   });
 
-  it("noemt alle lege velden in één melding, met de reden erbij", async () => {
+  it("maakt alle lege velden in één keer rood, en een gevuld veld weer gewoon", async () => {
     metQuery(<StapGegevens input={input} adres={adres} onOntgrendeld={() => {}} />);
     await screen.findByPlaceholderText(/Je voornaam/, {}, { timeout: 5000 });
     vul(screen.getByPlaceholderText(/Je e-mailadres/), "jan@example.nl");
@@ -182,9 +182,17 @@ describe("gegevens-poort bij een bronfout", () => {
     fireEvent.click(screen.getByRole("button", { name: /^Bekijk mijn/ }));
 
     // Niet eerst "Vul je voornaam in." en na de volgende klik pas de achternaam.
-    expect((await screen.findByRole("alert")).textContent).toMatch(
-      /^Nog even je voornaam, achternaam en telefoonnummer, dan zie je meteen je /,
-    );
+    await screen.findByRole("alert");
+    const rood = (placeholder: RegExp) => screen.getByPlaceholderText(placeholder).getAttribute("aria-invalid");
+    expect([rood(/Je voornaam/), rood(/Je achternaam/), rood(/Je e-mailadres/), rood(/Je telefoonnummer/)]).toEqual([
+      "true",
+      "true",
+      "false",
+      "true",
+    ]);
+    vul(screen.getByPlaceholderText(/Je voornaam/), "Jan");
+    expect(rood(/Je voornaam/)).toBe("false");
+    expect(rood(/Je achternaam/)).toBe("true");
     expect(insertMock).not.toHaveBeenCalled();
   });
 

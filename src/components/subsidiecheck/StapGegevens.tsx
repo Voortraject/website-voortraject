@@ -56,16 +56,13 @@ const useOptellen = (doel: number) => {
   return waarde;
 };
 
-// Eén melding voor alles wat nog leeg is, met de reden erbij. Eerst stond hier
-// per veld "Vul je voornaam in.": de bezoeker vulde die in, klikte opnieuw en
-// kreeg dan pas "Vul je achternaam in.". Ongeldige invoer (een e-mailadres
-// zonder @) houdt de eigen melding uit valideerContact.
-const ontbrekendMelding = (velden: readonly string[], aantal: number) => {
-  const lijst =
-    velden.length === 1 ? velden[0] : `${velden.slice(0, -1).join(", ")} en ${velden[velden.length - 1]}`;
-  const beloning = aantal > 0 ? `je ${aantal} ${aantal === 1 ? "regeling" : "regelingen"}` : "je overzicht";
-  return `Nog even je ${lijst}, dan zie je meteen ${beloning}.`;
-};
+// Eén melding voor alles wat nog leeg is, met de reden erbij, en de lege velden
+// rood. Eerst stond hier per veld "Vul je voornaam in.": de bezoeker vulde die
+// in, klikte opnieuw en kreeg dan pas "Vul je achternaam in.". De velden opnoemen
+// past niet op één regel; de rode rand wijst ze aan. Kort genoeg voor één regel
+// op 320 px (gemeten: 223 px van de 232 bij 13 px). Ongeldige invoer (een
+// e-mailadres zonder @) houdt de eigen melding uit valideerContact.
+const LEGE_VELDEN_MELDING = "Vul de rode velden in voor je overzicht.";
 
 // "Wat mogen we ook voor je regelen?" Eerst "Wil je ook hulp bij…?", maar daar
 // lopen de losse woorden niet achter ("hulp bij vakbedrijf"); achter "regelen"
@@ -159,6 +156,10 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
   const [achternaam, setAchternaam] = useState("");
   const [email, setEmail] = useState("");
   const [telefoon, setTelefoon] = useState("");
+  // Pas na een klik op versturen: een veld dat dan nog leeg is, wordt rood
+  // tot het gevuld is.
+  const [legeTonen, setLegeTonen] = useState(false);
+  const leeg = (waarde: string) => legeTonen && !waarde.trim();
   const [hulpvragen, setHulpvragen] = useState<HulpvraagId[]>([]);
   const [fout, setFout] = useState<string | null>(null);
   const [bezig, setBezig] = useState(false);
@@ -261,18 +262,9 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
       return;
     }
 
-    const ontbreekt = (
-      [
-        [voornaam, "voornaam"],
-        [achternaam, "achternaam"],
-        [email, "e-mailadres"],
-        [telefoon, "telefoonnummer"],
-      ] as const
-    )
-      .filter(([waarde]) => !waarde.trim())
-      .map(([, veld]) => veld);
-    if (ontbreekt.length) {
-      setFout(ontbrekendMelding(ontbreekt, bevrorenAantal.current ?? 0));
+    if ([voornaam, achternaam, email, telefoon].some((waarde) => !waarde.trim())) {
+      setLegeTonen(true);
+      setFout(LEGE_VELDEN_MELDING);
       return;
     }
 
@@ -510,6 +502,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
               autoComplete="given-name"
               aria-required="true"
               placeholder="Je voornaam"
+              aria-invalid={leeg(voornaam)}
               className={inputClass}
               value={voornaam}
               onChange={(e) => {
@@ -527,6 +520,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
               autoComplete="family-name"
               aria-required="true"
               placeholder="Je achternaam"
+              aria-invalid={leeg(achternaam)}
               className={inputClass}
               value={achternaam}
               onChange={(e) => {
@@ -544,6 +538,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
               autoComplete="email"
               aria-required="true"
               placeholder="Je e-mailadres"
+              aria-invalid={leeg(email)}
               className={`${inputClass} col-span-2`}
               value={email}
               onChange={(e) => {
@@ -566,6 +561,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
               inputMode="tel"
               aria-required="true"
               placeholder="Je telefoonnummer"
+              aria-invalid={leeg(telefoon)}
               className={`${inputClass} col-span-2`}
               value={telefoon}
               onChange={(e) => {
@@ -644,7 +640,7 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
         </fieldset>
 
         {fout && (
-          <p role="alert" className="mt-3 text-[14px] text-destructive">
+          <p role="alert" className="mt-3 text-[13px] text-destructive min-[360px]:text-[14px]">
             {fout}
           </p>
         )}
