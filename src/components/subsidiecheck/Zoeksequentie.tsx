@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Check } from "lucide-react";
 
 import { Blaadje } from "@/components/Blaadje";
-import { doelVulling, useVloeiend } from "@/hooks/useLaadsequentie";
+import { laatsteBron, useZoekVulling } from "@/hooks/useLaadsequentie";
 
 // Presentatie van de zoekstap. De timing zit in useLaadsequentie
 // (src/hooks/useLaadsequentie.ts); dit bestand exporteert alleen een component,
@@ -13,27 +13,11 @@ interface ZoekKaartProps {
   adresRegel: string;
   gemeente?: string;
   provincie?: string;
-  /** Huidige fase uit useLaadsequentie. */
+  /** Huidige fase uit useLaadsequentie; bepaalt welke bron er staat. */
   fase: number;
   /** De bron heeft geantwoord; pas dan vult het blaadje tot 100%. */
   klaar: boolean;
 }
-
-/**
- * Welke bron er als laatste klaar is, als tekst voor de laadregel. Leeg zolang
- * er nog niets doorzocht is.
- *
- * Elke regel meldt een bron die AF is, met een vinkje ervoor. Fase 1 en 2
- * betekenen dat de landelijke en provinciale stap voorbij zijn; de gemeente
- * staat pas als afgerond als de bron ook echt geantwoord heeft, want de laatste
- * stap wacht op de echte fetch (zie useLaadsequentie).
- */
-const laatsteBron = (fase: number, klaar: boolean, provincie?: string, gemeente?: string): string => {
-  if (fase >= 2 && klaar) return gemeente ? `Gemeente ${gemeente}` : "Gemeentelijke regelingen";
-  if (fase >= 2) return provincie ? `Provincie ${provincie}` : "Provinciale regelingen";
-  if (fase >= 1) return "Landelijke regelingen";
-  return "";
-};
 
 // Hoe lang de regel uit beeld is bij een wissel. Gelijk aan de transitie in
 // .instap-laadregel (src/index.css).
@@ -46,8 +30,7 @@ const WISSEL_MS = 420;
 // vinkje nooit los knippert. Eerdere versies (een lijst van drie, een
 // wisselende pil, drie woorden die inkleurden) vond de opdrachtgever te druk.
 export const ZoekKaart = ({ adresRegel, gemeente, provincie, fase, klaar }: ZoekKaartProps) => {
-  const { doel, duurMs } = doelVulling(fase, klaar);
-  const vulling = useVloeiend(doel, duurMs);
+  const vulling = useZoekVulling(klaar);
   const procent = Math.round(vulling * 100);
 
   const reduced = useMemo(

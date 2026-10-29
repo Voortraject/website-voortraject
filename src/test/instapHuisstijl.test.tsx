@@ -22,7 +22,7 @@ vi.mock("@/hooks/useGoogleReviews", () => ({
 import { StapAdres } from "@/components/subsidiecheck/StapAdres";
 import { StapGegevens } from "@/components/subsidiecheck/StapGegevens";
 import { TOESTEMMING_TEKST } from "@/components/subsidiecheck/toestemming";
-import { ZoekKaart } from "@/components/subsidiecheck/Zoeksequentie";
+import { laatsteBron } from "@/hooks/useLaadsequentie";
 import { GEMIDDELDE_REGELINGEN_ZIN } from "@/config/cijfers";
 import type { PdokAdres } from "@/lib/pdok";
 import { subsidieProvider, type SubsidieCheckInput, type SubsidieRegeling } from "@/lib/subsidies";
@@ -112,22 +112,14 @@ describe("het beginscherm", () => {
 });
 
 describe("het zoekscherm", () => {
-  const kaart = (fase: number, klaar = false) =>
-    render(<ZoekKaart adresRegel="Verlengde Hereweg 12, Groningen" gemeente="Groningen" provincie="Groningen" fase={fase} klaar={klaar} />);
-
-  it("meldt pas iets als er een bron doorzocht is", () => {
-    kaart(0);
-    expect(screen.getByRole("status")).toHaveTextContent("");
+  it("toont landelijk meteen en dan per stap de echte provincie en gemeente", () => {
+    expect(laatsteBron(0, false, "Drenthe", "Tynaarlo")).toBe("Landelijke regelingen");
+    expect(laatsteBron(1, false, "Drenthe", "Tynaarlo")).toBe("Provincie Drenthe");
+    expect(laatsteBron(2, true, "Drenthe", "Tynaarlo")).toBe("Gemeente Tynaarlo");
   });
 
-  it("noemt per afgeronde bron de echte provincie en gemeente", () => {
-    const { rerender } = kaart(1);
-    expect(screen.getByRole("status")).toHaveTextContent("Landelijke regelingen");
-    rerender(<ZoekKaart adresRegel="x" gemeente="Groningen" provincie="Groningen" fase={2} klaar={false} />);
-    expect(screen.getByRole("status")).toHaveTextContent("Provincie Groningen");
-    // De gemeente staat pas als afgerond als de bron echt geantwoord heeft.
-    rerender(<ZoekKaart adresRegel="x" gemeente="Groningen" provincie="Groningen" fase={2} klaar />);
-    expect(screen.getByRole("status")).toHaveTextContent("Gemeente Groningen");
+  it("noemt de gemeente pas als de bron echt geantwoord heeft", () => {
+    expect(laatsteBron(2, false, "Drenthe", "Tynaarlo")).toBe("Provincie Drenthe");
   });
 });
 
