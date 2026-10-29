@@ -651,24 +651,25 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
           )}
         </button>
 
-        {/* Onze Google-score direct onder de knop, net als in stap 1. Hier stond
-            eerder een blok met Tims foto en "Tim of een collega denkt graag met
-            je mee" boven de hulpvragen; dat is weg (opdrachtgever, 2026-10-29).
-            Bewust zonder link: zie Bewijsregel. */}
-        <div className="mt-3 flex justify-center">
-          <Bewijsregel alsLink={false} zonderAantal />
-        </div>
-
         {/* De toestemmingstekst, en verder niets: één regel onder de knop. Zie
             toestemming.ts voor waarom hij er zo staat en waarom hij letterlijk
             mee de lead in gaat. Hier stond eerder ook "Je gegevens blijven bij
             ons."; die viel weg om de regel op een telefoon op één regel te
             houden (akkoord opdrachtgever, 2026-10-21). Bewust geen ontkenning
             van wat de bezoeker vreest ("geen nieuwsbrief"): een privacygarantie
-            wekt juist de zorg die ze wil wegnemen. */}
-        <p className="mt-4 text-center text-[13px] leading-normal text-primary/70 min-[380px]:whitespace-nowrap sm:text-[13.5px]">
+            wekt juist de zorg die ze wil wegnemen. Altijd op één regel: onder
+            360px iets kleiner, zodat hij ook op de smalste telefoon past. */}
+        <p className="mt-4 whitespace-nowrap text-center text-[12px] leading-normal text-primary/70 min-[360px]:text-[13px] sm:text-[13.5px]">
           {TOESTEMMING_TEKST}
         </p>
+      </div>
+
+      {/* Onze Google-score onder de tegel, net als in stap 1. Hier stond eerder
+          een blok met Tims foto en "Tim of een collega denkt graag met je mee"
+          boven de hulpvragen; dat is weg (opdrachtgever, 2026-10-29). Bewust
+          zonder link: zie Bewijsregel. */}
+      <div className="instap-in mt-[26px] flex justify-center sm:mt-[18px]" style={{ ["--i" as string]: 4 }}>
+        <Bewijsregel alsLink={false} zonderAantal />
       </div>
     </form>
   );

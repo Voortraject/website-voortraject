@@ -179,7 +179,7 @@ describe("de gegevenspagina", () => {
     vi.mocked(subsidieProvider.check).mockResolvedValue([regeling(1)]);
     toon(<StapGegevens input={input} adres={adres} onOntgrendeld={() => {}} />);
 
-    expect(TOESTEMMING_TEKST).toBe("We mailen of bellen je alleen over je verduurzaming.");
+    expect(TOESTEMMING_TEKST).toBe("We mailen of bellen je alleen over de subsidies.");
     expect(await screen.findByText(TOESTEMMING_TEKST)).toBeInTheDocument();
     expect(screen.queryByText(/Je gegevens blijven bij ons/)).toBeNull();
   });
