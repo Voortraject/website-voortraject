@@ -2,7 +2,6 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, FileCheck, HardHat, ListChecks, Loader2 } from "lucide-react";
 
-import adviseurFoto from "@/assets/adviseur-tim.webp";
 import { useLaadsequentie } from "@/hooks/useLaadsequentie";
 import { pandContourOpties, usePandContour } from "@/hooks/usePandContour";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
@@ -573,29 +572,6 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
           </div>
         </fieldset>
 
-        {/* Geruststelling hoort bij de velden die de twijfel veroorzaken, niet
-            onderaan de pagina (Baymard). Een gezicht en een korte, lichte zin:
-            "denkt graag met je mee". Eerder stond hier "belt je om je overzicht
-            samen door te nemen"; de opdrachtgever vond dat terecht benauwend
-            voor wie nog twijfelt. Dat we mogen bellen staat al in de regel onder
-            de knop. De score staat er bewust zonder link: zie Bewijsregel. */}
-        <div className={`mt-7 flex items-center gap-3.5 ${naarAchtergrond}`}>
-          <img
-            src={adviseurFoto}
-            alt=""
-            width={64}
-            height={64}
-            loading="lazy"
-            className="h-16 w-16 shrink-0 rounded-full object-cover shadow-instap-klein"
-          />
-          <div className="min-w-0">
-            <p className="text-[15px] leading-snug text-foreground">
-              <span className="font-bold">Tim</span> of een collega denkt graag met je mee.
-            </p>
-            <Bewijsregel className="mt-1" alsLink={false} zonderAantal />
-          </div>
-        </div>
-
         {/* Geen, één of meer antwoorden: zie de toelichting bij HULPVRAGEN hierboven.
             Drie tegels: vanaf sm op één rij, op een telefoon twee naast elkaar en de
             derde over de volle breedte, zodat er geen los blokje achterblijft. De
@@ -674,6 +650,14 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
             "Bekijk mijn subsidieoverzicht"
           )}
         </button>
+
+        {/* Onze Google-score direct onder de knop, net als in stap 1. Hier stond
+            eerder een blok met Tims foto en "Tim of een collega denkt graag met
+            je mee" boven de hulpvragen; dat is weg (opdrachtgever, 2026-10-29).
+            Bewust zonder link: zie Bewijsregel. */}
+        <div className="mt-3 flex justify-center">
+          <Bewijsregel alsLink={false} zonderAantal />
+        </div>
 
         {/* De toestemmingstekst, en verder niets: één regel onder de knop. Zie
             toestemming.ts voor waarom hij er zo staat en waarom hij letterlijk
