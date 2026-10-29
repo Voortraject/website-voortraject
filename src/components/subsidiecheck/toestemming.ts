@@ -43,7 +43,11 @@
 // nog steeds: het kanaal (mailen of bellen) en het onderwerp (je
 // verduurzaming), pal bij de knop. "Alleen" maakt de afspraak eerder smaller
 // dan breder. Oude leads houden hun eigen tekst in `toestemming_tekst`.
-export const TOESTEMMING_TEKST = "We mailen of bellen je alleen over je verduurzaming.";
+//
+// Op 2026-10-29 "je verduurzaming" vervangen door "de subsidies" (verzoek
+// opdrachtgever). Het onderwerp is daarmee smaller: de toestemming dekt nu het
+// bellen over de subsidies, niet over het verduurzamen in het algemeen.
+export const TOESTEMMING_TEKST = "We mailen of bellen je alleen over de subsidies.";
 
 /**
  * De kolomwaarden voor `leads_bewoners` (zie de migratie van 2026-08-10): het

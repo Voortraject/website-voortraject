@@ -153,11 +153,14 @@ describe("de gegevenspagina", () => {
     expect(await screen.findByRole("button", { name: "Bekijk mijn subsidieoverzicht" })).toBeInTheDocument();
   });
 
-  it("laat Tim meedenken zonder aan te kondigen dat we bellen", async () => {
+  it("toont de Google-score onder de knop, zonder Tim en zonder aantal reviews", async () => {
     vi.mocked(subsidieProvider.check).mockResolvedValue([regeling(1)]);
     toon(<StapGegevens input={input} adres={adres} onOntgrendeld={() => {}} />);
 
-    expect(await screen.findByText(/of een collega denkt graag met je mee\./)).toBeInTheDocument();
+    const knop = await screen.findByRole("button", { name: /^Bekijk mijn/ });
+    const score = screen.getByRole("img", { name: "4,9 van 5 op Google" });
+    expect(knop.compareDocumentPosition(score) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.queryByText(/denkt graag met je mee/)).toBeNull();
     expect(screen.queryByText(/reviews/)).toBeNull();
   });
 
@@ -176,7 +179,7 @@ describe("de gegevenspagina", () => {
     vi.mocked(subsidieProvider.check).mockResolvedValue([regeling(1)]);
     toon(<StapGegevens input={input} adres={adres} onOntgrendeld={() => {}} />);
 
-    expect(TOESTEMMING_TEKST).toBe("We mailen of bellen je alleen over je verduurzaming.");
+    expect(TOESTEMMING_TEKST).toBe("We mailen of bellen je alleen over de subsidies.");
     expect(await screen.findByText(TOESTEMMING_TEKST)).toBeInTheDocument();
     expect(screen.queryByText(/Je gegevens blijven bij ons/)).toBeNull();
   });
