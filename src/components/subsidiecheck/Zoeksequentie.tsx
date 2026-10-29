@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Check } from "lucide-react";
 
 import { Blaadje } from "@/components/Blaadje";
-import { doelVulling, useVloeiend } from "@/hooks/useLaadsequentie";
+import { useZoekVulling } from "@/hooks/useLaadsequentie";
 
 // Presentatie van de zoekstap. De timing zit in useLaadsequentie
 // (src/hooks/useLaadsequentie.ts); dit bestand exporteert alleen een component,
@@ -46,8 +46,7 @@ const WISSEL_MS = 420;
 // vinkje nooit los knippert. Eerdere versies (een lijst van drie, een
 // wisselende pil, drie woorden die inkleurden) vond de opdrachtgever te druk.
 export const ZoekKaart = ({ adresRegel, gemeente, provincie, fase, klaar }: ZoekKaartProps) => {
-  const { doel, duurMs } = doelVulling(fase, klaar);
-  const vulling = useVloeiend(doel, duurMs);
+  const vulling = useZoekVulling(klaar);
   const procent = Math.round(vulling * 100);
 
   const reduced = useMemo(

@@ -3,33 +3,44 @@ import { describe, expect, it } from "vitest";
 
 // Het blaadje op het wachtscherm van de subsidiecheck vult zich met de
 // voortgang. De afspraak is dat die vulling eerlijk is: pas 100% als de bron
-// echt geantwoord heeft. Deze test bewaakt die regel.
+// echt geantwoord heeft, en nergens stilstand. Deze test bewaakt die regels.
 
 import { Blaadje } from "@/components/Blaadje";
 import { ZoekKaart } from "@/components/subsidiecheck/Zoeksequentie";
-import { WACHT_PLAFOND, doelVulling } from "@/hooks/useLaadsequentie";
+import { PLAN_MS, SPRINT_MS, WACHT_PLAFOND, vullingOp } from "@/hooks/useLaadsequentie";
 
-describe("doelVulling", () => {
-  it("volgt de eerste twee zoekstappen", () => {
-    expect(doelVulling(0, false).doel).toBeCloseTo(1 / 3);
-    expect(doelVulling(1, false).doel).toBeCloseTo(2 / 3);
+// Samples van de curve, voor de checks op "nergens stil" en "versnelt".
+const reeks = (klaarOp: number | null, totMs: number) =>
+  Array.from({ length: Math.floor(totMs / 50) + 1 }, (_, i) => vullingOp(i * 50, klaarOp));
+
+describe("vullingOp", () => {
+  it("loopt op tijd in één versnellende curve naar 100%", () => {
+    expect(vullingOp(0, 0)).toBe(0);
+    expect(vullingOp(PLAN_MS, 0)).toBe(1);
+    // Naar het eind toe sneller dan aan het begin (Harrison e.a. 2007).
+    const begin = vullingOp(300, 0) - vullingOp(0, 0);
+    const eind = vullingOp(PLAN_MS, 0) - vullingOp(PLAN_MS - 300, 0);
+    expect(eind).toBeGreaterThan(begin * 2);
+  });
+
+  it("staat nergens stil zolang hij onderweg is", () => {
+    const v = reeks(null, 20_000);
+    for (let i = 1; i < v.length; i++) expect(v[i]).toBeGreaterThan(v[i - 1]);
   });
 
   it("wordt niet vol zolang de bron niet geantwoord heeft", () => {
-    expect(doelVulling(2, false).doel).toBe(WACHT_PLAFOND);
-    // Ook als de sequentie is overgeslagen (fase 3) en er toch nog gewacht wordt.
-    expect(doelVulling(3, false).doel).toBe(WACHT_PLAFOND);
+    expect(vullingOp(60_000, null)).toBeLessThan(WACHT_PLAFOND);
     expect(WACHT_PLAFOND).toBeLessThan(1);
   });
 
-  it("loopt pas naar 100% als het antwoord er is", () => {
-    expect(doelVulling(2, true).doel).toBe(1);
-    expect(doelVulling(3, true).doel).toBe(1);
+  it("springt niet vooruit op een vroeg antwoord", () => {
+    expect(vullingOp(500, 0)).toBe(vullingOp(500, null));
   });
 
-  it("springt niet vooruit op een vroeg antwoord: de stappen blijven zichtbaar", () => {
-    expect(doelVulling(0, true).doel).toBeCloseTo(1 / 3);
-    expect(doelVulling(1, true).doel).toBeCloseTo(2 / 3);
+  it("sprint na een laat antwoord binnen SPRINT_MS naar 100%", () => {
+    const klaarOp = 6000;
+    expect(vullingOp(klaarOp, klaarOp)).toBeCloseTo(vullingOp(klaarOp, null));
+    expect(vullingOp(klaarOp + SPRINT_MS, klaarOp)).toBe(1);
   });
 });
 
