@@ -10,9 +10,18 @@ import { useEffect, useMemo, useRef, useState } from "react";
 // vraag bouwt zichtbaar werk geen waarde meer op; het laat iemand wachten die
 // al betaald heeft, op een antwoord dat dan al in de cache staat.
 
-// Duur per zoekstap: 1s x 3 = 3s totaal. De laatste stap wacht bovendien op de
-// echte fetch, dus bij een tragere bron duurt het vanzelf iets langer.
-export const STAP_MS = 1000;
+// Duur per zoekstap: drie stappen, samen 4 s, elke regel ~1,3 s in beeld. Het
+// blaadje is na 3 s vol (PLAN_MS); de laatste seconde staat het vol met
+// "Gemeente … ✓" eronder, zodat het afronden gezien wordt in plaats van
+// weggeknipt. De laatste stap wacht
+// bovendien op de echte fetch, dus bij een tragere bron duurt het vanzelf langer.
+//
+// Waarom 4 s: onder ~1 s merkt niemand werk (Nielsen, response-time limits),
+// boven ~10 s haakt de aandacht af. Daartussen werkt zichtbaar werk in ons
+// voordeel (Buell & Norton). Er is geen onderzoek dat een exact optimum geeft;
+// 4 s is genoeg om drie stappen te kunnen lezen en kort genoeg voor iemand die
+// via een advertentie op een telefoon binnenkomt.
+export const STAP_MS = 4000 / 3;
 
 /**
  * Fase 0..3 van de zoeksequentie. 3 = klaar. Bij prefers-reduced-motion begint
@@ -55,26 +64,29 @@ export const useLaadsequentie = (klaar: boolean, overslaan = false) => {
 //
 // Daarom:
 //  - vanaf 0 met een rustige maar zichtbare snelheid, die gelijkmatig oploopt
-//    tot drie keer zo snel aan het eind (PLAN_MS, net vóór fase 3);
+//    tot zeven keer zo snel aan het eind (PLAN_MS). Een verhouding van drie
+//    voelde in de praktijk nog als een rechte lijn;
 //  - is de bron er niet op tijd, dan gaat het blad vanaf 80% kruipen richting
 //    92%, zonder ooit stil te staan, maar ook nooit vol: een volle balk terwijl
 //    er nog niets binnen is kost vertrouwen;
 //  - zodra de bron antwoordt, een korte versnellende sprint naar 100%.
 // Een vroeg antwoord laat de curve niet vooruitspringen: de zoekstappen
 // blijven zichtbaar (zie useLaadsequentie).
-export const PLAN_MS = STAP_MS * 2.8;
+export const PLAN_MS = 3000;
 export const WACHT_PLAFOND = 0.92;
 const KRUIP_VANAF = 0.8;
-export const SPRINT_MS = 600;
+export const SPRINT_MS = 450;
 
-// Versnellend van 0 naar 1: snelheid loopt op van 0,5 naar 1,5.
-const versnel = (s: number) => 0.5 * s + 0.5 * s * s;
+// Versnellend van 0 naar 1: snelheid loopt op van START naar 2 - START.
+const START = 0.25;
+const versnel = (s: number) => START * s + (1 - START) * s * s;
 const binnen = (x: number) => Math.min(1, Math.max(0, x));
 
 // Moment (ms) waarop het plan 80% haalt; vanaf daar kruipt hij als de bron er nog niet is.
-const KRUIP_MS = PLAN_MS * (-0.5 + Math.sqrt(0.25 + 2 * KRUIP_VANAF));
+const KRUIP_MS =
+  (PLAN_MS * (-START + Math.sqrt(START * START + 4 * (1 - START) * KRUIP_VANAF))) / (2 * (1 - START));
 // Snelheid van het plan op dat moment, zodat het kruipen zonder knik aansluit.
-const KRUIP_SNELHEID = (0.5 + KRUIP_MS / PLAN_MS) / PLAN_MS;
+const KRUIP_SNELHEID = (START + 2 * (1 - START) * (KRUIP_MS / PLAN_MS)) / PLAN_MS;
 
 const onderweg = (ms: number) => {
   if (ms <= KRUIP_MS) return versnel(binnen(ms / PLAN_MS));
@@ -97,6 +109,21 @@ export const vullingOp = (ms: number, klaarOp: number | null): number => {
   // Te laat: vanaf waar hij kroop een korte sprint naar 100%.
   const van = onderweg(klaarOp);
   return van + (1 - van) * versnel(binnen((ms - klaarOp) / SPRINT_MS));
+};
+
+/**
+ * Welke bron er als laatste klaar is, als tekst voor de laadregel.
+ *
+ * De regels volgen de tijd (de fase), niet de vulling: het blad versnelt naar
+ * het eind, dus drempels op de vulling lieten de laatste twee regels vlak na
+ * elkaar knipperen. Nu staat elke regel even lang (STAP_MS). "Landelijke
+ * regelingen" staat er meteen, zodat er vanaf de eerste seconde iets te lezen
+ * is. De gemeente staat pas als afgerond als de bron ook echt geantwoord heeft.
+ */
+export const laatsteBron = (fase: number, klaar: boolean, provincie?: string, gemeente?: string): string => {
+  if (fase >= 2 && klaar) return gemeente ? `Gemeente ${gemeente}` : "Gemeentelijke regelingen";
+  if (fase >= 1) return provincie ? `Provincie ${provincie}` : "Provinciale regelingen";
+  return "Landelijke regelingen";
 };
 
 /**

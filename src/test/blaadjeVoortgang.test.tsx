@@ -20,7 +20,7 @@ describe("vullingOp", () => {
     // Naar het eind toe sneller dan aan het begin (Harrison e.a. 2007).
     const begin = vullingOp(300, 0) - vullingOp(0, 0);
     const eind = vullingOp(PLAN_MS, 0) - vullingOp(PLAN_MS - 300, 0);
-    expect(eind).toBeGreaterThan(begin * 2);
+    expect(eind).toBeGreaterThan(begin * 4);
   });
 
   it("staat nergens stil zolang hij onderweg is", () => {
