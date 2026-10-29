@@ -258,15 +258,34 @@ describe("contactformulier via Bel mij", () => {
     expect(screen.getByRole("option", { name: "Ochtend" })).toHaveValue("Telefonisch: Ochtend");
   });
 
-  // Zolang n8n een lead zonder e-mail niet goed afhandelt (geen Slack-ping), zie
-  // EMAIL_OPTIONEEL_BIJ_BELLEN in Contact.tsx.
-  it("vraagt nog wel om een e-mailadres", async () => {
+  // Kan sinds n8n (27-10-2026) alleen nog een bevestigingsmail stuurt als er een
+  // e-mailadres is; zie de toelichting bij de e-mailcontrole in Contact.tsx.
+  it("verstuurt met alleen voornaam en telefoon, e-mail als NULL", async () => {
     belroute();
+    expect(screen.getByText("E-mailadres").closest("label")).toHaveTextContent("(optioneel)");
     vul(screen.getByLabelText(/^Voornaam/), "Jan");
     vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
     nu += 5_000;
     fireEvent.click(screen.getByRole("button", { name: "Bel mij terug" }));
-    expect(await screen.findByText("Vul je e-mailadres in.")).toBeInTheDocument();
+    await screen.findByText("Bedankt, Jan!");
+    expect(insertMock.mock.calls[0][1]).toMatchObject({
+      voornaam: "Jan",
+      achternaam: null,
+      email: null,
+      telefoon: "0612345678",
+      notities: null,
+      formulier: "contactformulier",
+    });
+  });
+
+  it("weigert wel een ongeldig e-mailadres", async () => {
+    belroute();
+    vul(screen.getByLabelText(/^Voornaam/), "Jan");
+    vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
+    vul(screen.getByLabelText(/^E-mailadres/), "jan@");
+    nu += 5_000;
+    fireEvent.click(screen.getByRole("button", { name: "Bel mij terug" }));
+    expect(await screen.findByText("Dit lijkt geen geldig e-mailadres.")).toBeInTheDocument();
     expect(insertMock).not.toHaveBeenCalled();
   });
 
@@ -280,6 +299,21 @@ describe("contactformulier via Bel mij", () => {
     fireEvent.click(screen.getByRole("button", { name: "Bel mij terug" }));
     await screen.findByText("Bedankt, Jan!");
     expect(insertMock.mock.calls[0][1]).toMatchObject({ notities: "Voorkeur voor contact: Telefonisch: Avond" });
+  });
+});
+
+describe("contactformulier zonder Bel mij", () => {
+  it("houdt e-mail verplicht", async () => {
+    render(<Contact />, { wrapper: MemoryRouter });
+    expect(screen.getByText("E-mailadres").closest("label")).not.toHaveTextContent("(optioneel)");
+    vul(screen.getByLabelText(/^Voornaam/), "Jan");
+    vul(screen.getByLabelText(/^Achternaam/), "de Vries");
+    vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
+    vul(screen.getByLabelText(/^Bericht/), "Vraag.");
+    nu += 5_000;
+    fireEvent.click(screen.getByRole("button", { name: /Verstuur bericht/ }));
+    expect(await screen.findByText("Vul je e-mailadres in.")).toBeInTheDocument();
+    expect(insertMock).not.toHaveBeenCalled();
   });
 });
 

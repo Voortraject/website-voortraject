@@ -115,14 +115,6 @@ const initialBewoner = {
 
 const MAX_NOTES = 1000;
 
-// Mag e-mail leeg blijven op de belroute? Voor de database wel (kolom nullable),
-// maar n8n "Website formulier (bewoners)" stuurt bij formulier = contactformulier
-// altijd de bevestigingsmail. Zonder adres weigert Resend die, de workflow stopt
-// en de Slack-ping van de lead gaat niet uit (de mailtak draait vóór de Slack-tak).
-// Pas op `true` als de node "Bevestigingsmail sturen?" ook controleert dat
-// `record.email` gevuld is. Dat wordt in het CRM-repo/n8n gedaan, niet hier.
-const EMAIL_OPTIONEEL_BIJ_BELLEN = false;
-
 // ---------- Validators ----------
 const NAME_RE = /^[\p{L}\s'\-]+$/u;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -146,9 +138,8 @@ const Contact = () => {
   // huis al herkend had; dan tonen we meteen de bevestiging.
   const [meegegeven] = useState(() => adresUitState(location.state));
   // Binnengekomen via de knop "Bel mij" op stap 1 van de check: een korter
-  // formulier, waarin achternaam en bericht optioneel zijn (e-mail alleen als
-  // EMAIL_OPTIONEEL_BIJ_BELLEN aan staat). Ook dit staat in de history-state,
-  // zodat een herlaad de route vasthoudt.
+  // formulier, waarin achternaam, e-mail en bericht optioneel zijn. Ook dit
+  // staat in de history-state, zodat een herlaad de route vasthoudt.
   const [viaBellen] = useState(
     () => (location.state as { bellen?: unknown } | null)?.bellen === true,
   );
@@ -252,8 +243,13 @@ const Contact = () => {
     else if (achternaam.length > 100 || !NAME_RE.test(achternaam)) e.achternaam = "Je achternaam bevat ongeldige tekens.";
 
     const email = bewoner.email.trim();
+    // Op de belroute mag e-mail leeg blijven: de kolom is nullable, en n8n
+    // "Website formulier (bewoners)" stuurt sinds 27-10-2026 alleen een
+    // bevestigingsmail als `record.email` gevuld is ("Bevestigingsmail
+    // sturen?"). Daarvóór stopte de workflow zonder adres vóór de Slack-ping.
+    // Haal die voorwaarde in n8n dus niet weg zolang dit zo is.
     if (!email) {
-      if (!viaBellen || !EMAIL_OPTIONEEL_BIJ_BELLEN) e.email = "Vul je e-mailadres in.";
+      if (!viaBellen) e.email = "Vul je e-mailadres in.";
     } else if (!EMAIL_RE.test(email) || email.length > 255) e.email = "Dit lijkt geen geldig e-mailadres.";
 
     const tel = bewoner.telefoonnummer.trim();
@@ -623,15 +619,12 @@ const Contact = () => {
                             <FieldError name="telefoonnummer" />
                           </div>
                           <div className="sm:col-span-6 min-w-0">
-                            <label htmlFor="f-email-b" className={labelClass}>
-                              E-mailadres{EMAIL_OPTIONEEL_BIJ_BELLEN && optional}
-                            </label>
+                            <label htmlFor="f-email-b" className={labelClass}>E-mailadres{optional}</label>
                             <input
                               id="f-email-b"
                               name="email"
                               type="email"
                               autoComplete="email"
-                              aria-required={!EMAIL_OPTIONEEL_BIJ_BELLEN}
                               aria-invalid={!!errors.email}
                               aria-describedby={errors.email ? errId("email") : undefined}
                               className={inputCls("email")}
