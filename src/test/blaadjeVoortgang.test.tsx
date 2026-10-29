@@ -14,13 +14,13 @@ const reeks = (klaarOp: number | null, totMs: number) =>
   Array.from({ length: Math.floor(totMs / 50) + 1 }, (_, i) => vullingOp(i * 50, klaarOp));
 
 describe("vullingOp", () => {
-  it("loopt op tijd in één versnellende curve naar 100%", () => {
+  it("loopt op tijd met een ease-out naar 100%: snel naar 80%, dan rustiger", () => {
     expect(vullingOp(0, 0)).toBe(0);
+    expect(vullingOp(PLAN_MS * 0.55, 0)).toBeGreaterThan(0.79);
     expect(vullingOp(PLAN_MS, 0)).toBe(1);
-    // Naar het eind toe sneller dan aan het begin (Harrison e.a. 2007).
     const begin = vullingOp(300, 0) - vullingOp(0, 0);
     const eind = vullingOp(PLAN_MS, 0) - vullingOp(PLAN_MS - 300, 0);
-    expect(eind).toBeGreaterThan(begin * 4);
+    expect(begin).toBeGreaterThan(eind * 4);
   });
 
   it("staat nergens stil zolang hij onderweg is", () => {
