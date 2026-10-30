@@ -24,6 +24,8 @@ const TINTEN = {
 // Telefoon en tablet: een swiperij met snap, een stukje van de volgende tegel in
 // beeld, en puntjes die je ook kunt aantikken. Desktop (lg): `cards` = drie
 // naast elkaar, `list` = onder elkaar naast een foto.
+// Op de telefoon (393 px) past de titel op één regel en de uitleg op drie; de
+// teksten zijn daarop ingekort (oktober 2026). Houd nieuwe teksten even kort.
 // De ouder moet `min-w-0` hebben als hij een gridkolom is, anders duwt de rij
 // van 3 × 88% de kolom open.
 export const TrustCardList = ({
