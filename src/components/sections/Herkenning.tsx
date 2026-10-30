@@ -9,18 +9,18 @@ import { TrustCardList } from "./TrustCardList";
 const twijfels = [
   {
     icon: MessagesSquare,
-    title: "Ik weet niet wie ik moet geloven",
-    body: "De installateur zegt warmtepomp, de buurman eerst isoleren, online lees je: nog even wachten. Wie heeft er nou gelijk?",
+    title: "Iedereen zegt iets anders",
+    body: "De installateur zegt warmtepomp, de buurman eerst isoleren, online lees je: wachten. Wie heeft er nou gelijk?",
   },
   {
     icon: Scale,
     title: "Ik wil geen verkooppraatje",
-    body: "Elk “gratis advies” eindigt bij een offerte voor wat ze zelf verkopen. Waar vind je nog iemand zonder eigen belang?",
+    body: "Elk “gratis advies” eindigt bij een offerte voor wat ze zelf verkopen. Wie adviseert zonder eigen belang?",
   },
   {
     icon: Coins,
-    title: "Ik wil geen geld laten liggen",
-    body: "Er zijn meer regelingen dan je denkt, en sommige kun je stapelen. Maar hoe weet je zeker dat je niets misloopt?",
+    title: "Ik wil geen geld mislopen",
+    body: "Er zijn meer regelingen dan je denkt, en sommige kun je stapelen. Maar hoe weet je zeker dat je alles benut?",
   },
 ];
 

@@ -12,17 +12,17 @@ const redenen = [
   {
     icon: Compass,
     title: "Je zit nergens aan vast",
-    body: "Advies zonder verplichting. Jij bepaalt wat je doet en in welk tempo. Wil je niet verder, dan stopt het, zonder gedoe.",
+    body: "Advies zonder verplichting. Jij bepaalt wat je doet en in welk tempo. Wil je stoppen, dan kan dat, zonder gedoe.",
   },
   {
     icon: HandCoins,
-    title: "Je weet precies hoe wij verdienen",
+    title: "Helder hoe wij verdienen",
     body: "De uitvoerder betaalt ons voor het voorwerk dat we overnemen. Voor jou is het advies gratis.",
   },
   {
     icon: BadgeCheck,
-    title: "We koppelen je aan getoetste uitvoerders",
-    body: "Niet elke aannemer komt op onze lijst. We toetsen uitvoerders uit de regio op vakwerk, eerlijke prijzen en afspraken nakomen.",
+    title: "Getoetste uitvoerders",
+    body: "Niet elke aannemer komt op onze lijst. We toetsen op vakwerk, eerlijke prijzen en afspraken nakomen.",
   },
 ];
 
