@@ -8,8 +8,14 @@ export const Ster = () => (
   </span>
 );
 
+// Staat op de regel van de groepskop, rechts tegen het rondje aan: ml-auto duwt
+// hem weg van de koptekst. Een eigen regel kostte alleen maar hoogte. De
+// fontklasse is nodig omdat een kop de koppenletter doorgeeft.
 export const VerplichtUitleg = () => (
-  <p aria-hidden="true" className="mt-1 text-[13px] font-medium text-[hsl(var(--rs-tekst-zacht))]">
+  <span
+    aria-hidden="true"
+    className="ml-auto whitespace-nowrap font-sans text-[13px] font-medium text-[hsl(var(--rs-tekst-zacht))]"
+  >
     * verplicht
-  </p>
+  </span>
 );
