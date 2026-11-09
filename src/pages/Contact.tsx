@@ -34,9 +34,10 @@ const cx = (...c: (string | false | undefined)[]) => c.filter(Boolean).join(" ")
 const labelClass = "ct-label";
 
 // Groepskop in het formulier met een rond inktblauw icoon rechts.
-const GroepKop = ({ icon: Icon, children, className }: { icon: typeof User; children: string; className?: string }) => (
+const GroepKop = ({ icon: Icon, children, className, metUitleg }: { icon: typeof User; children: string; className?: string; metUitleg?: boolean }) => (
   <h2 className={cx("ct-groep-kop", className)}>
     {children}
+    {metUitleg && <VerplichtUitleg />}
     <span className="hs-rondje hs-rondje-ink h-[34px] w-[34px]" aria-hidden="true">
       <Icon size={17} strokeWidth={2} />
     </span>
@@ -540,8 +541,7 @@ const Contact = () => {
                         "Tussenvoegsel" niet en liep het label buiten zijn vak.
                         justify-end houdt de inputs op één lijn als een label over twee
                         regels breekt. */}
-                    <GroepKop icon={User}>Jouw gegevens</GroepKop>
-                    <VerplichtUitleg />
+                    <GroepKop icon={User} metUitleg>Jouw gegevens</GroepKop>
                     {viaBellen ? (
                       <>
                         {/* Belroute: alleen voornaam en telefoon verplicht. Telefoon

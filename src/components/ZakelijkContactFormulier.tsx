@@ -293,11 +293,11 @@ export const ZakelijkContactFormulier = () => {
 
         <p className={groepKopClass}>
           Jullie gegevens
+          <VerplichtUitleg />
           <span className={groepRondje} aria-hidden="true">
             <Building2 size={17} strokeWidth={2} />
           </span>
         </p>
-        <VerplichtUitleg />
 
         <div className="mt-3.5">
           <label htmlFor="zak-bedrijfsnaam" className={labelClass}>Bedrijfsnaam<Ster /></label>
