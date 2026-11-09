@@ -19,6 +19,7 @@ import {
 } from "@/lib/adresVelden";
 import { displayPostcode, normalizePostcode, POSTCODE_RE, zoekAdres } from "@/lib/pdok";
 import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
+import { Ster, VerplichtUitleg } from "@/components/VerplichtVeld";
 import "@/styles/contact.css";
 
 // Velden zoals de instap van de subsidietool: wit, radius 14, zachte inset-ring
@@ -31,24 +32,6 @@ const cx = (...c: (string | false | undefined)[]) => c.filter(Boolean).join(" ")
 // elf labels niet lezen als elf kopjes. Een te lang label breekt af in plaats
 // van over zijn buurman te lopen; justify-end houdt de velden dan op één lijn.
 const labelClass = "ct-label";
-// Verplicht is de regel, niet de uitzondering: we markeren alleen wat optioneel
-// is. Dat scheelt zes accentkleurige sterretjes die met de CTA concurreerden.
-// De spatie ervoor is een breekpunt: zonder liep "Tussenvoegsel (optioneel)" op
-// de telefoon over het label ernaast.
-const optional = (
-  <>
-    {" "}
-    <span className="ct-label-licht">(optioneel)</span>
-  </>
-);
-// Zelfde markering, maar pas vanaf sm: in de adresrij staan drie velden naast
-// elkaar en op mobiel duwt "(optioneel)" die labels over twee regels.
-const optionalSm = (
-  <>
-    {" "}
-    <span className="ct-label-licht hidden sm:inline">(optioneel)</span>
-  </>
-);
 
 // Groepskop in het formulier met een rond inktblauw icoon rechts.
 const GroepKop = ({ icon: Icon, children, className }: { icon: typeof User; children: string; className?: string }) => (
@@ -558,13 +541,14 @@ const Contact = () => {
                         justify-end houdt de inputs op één lijn als een label over twee
                         regels breekt. */}
                     <GroepKop icon={User}>Jouw gegevens</GroepKop>
+                    <VerplichtUitleg />
                     {viaBellen ? (
                       <>
                         {/* Belroute: alleen voornaam en telefoon verplicht. Telefoon
                             staat vóór e-mail, want daar kwam de bezoeker voor. */}
                         <div className="mt-3.5 grid grid-cols-2 sm:grid-cols-12 gap-3">
                           <div className="sm:col-span-6 min-w-0 flex flex-col justify-end">
-                            <label htmlFor="f-voornaam" className={labelClass}>Voornaam</label>
+                            <label htmlFor="f-voornaam" className={labelClass}>Voornaam<Ster /></label>
                             <input
                               id="f-voornaam"
                               name="voornaam"
@@ -580,7 +564,7 @@ const Contact = () => {
                             />
                           </div>
                           <div className="sm:col-span-6 min-w-0 flex flex-col justify-end">
-                            <label htmlFor="f-achternaam" className={labelClass}>Achternaam{optional}</label>
+                            <label htmlFor="f-achternaam" className={labelClass}>Achternaam</label>
                             <input
                               id="f-achternaam"
                               name="achternaam"
@@ -603,7 +587,7 @@ const Contact = () => {
                         </div>
                         <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-12 gap-3">
                           <div className="sm:col-span-6 min-w-0">
-                            <label htmlFor="f-tel-b" className={labelClass}>Telefoonnummer</label>
+                            <label htmlFor="f-tel-b" className={labelClass}>Telefoonnummer<Ster /></label>
                             <input
                               id="f-tel-b"
                               name="telefoonnummer"
@@ -619,7 +603,7 @@ const Contact = () => {
                             <FieldError name="telefoonnummer" />
                           </div>
                           <div className="sm:col-span-6 min-w-0">
-                            <label htmlFor="f-email-b" className={labelClass}>E-mailadres{optional}</label>
+                            <label htmlFor="f-email-b" className={labelClass}>E-mailadres</label>
                             <input
                               id="f-email-b"
                               name="email"
@@ -657,7 +641,7 @@ const Contact = () => {
                         </select>
                       </div>
                       <div className="sm:col-span-8 min-w-0 flex flex-col justify-end">
-                        <label htmlFor="f-voornaam" className={labelClass}>Voornaam</label>
+                        <label htmlFor="f-voornaam" className={labelClass}>Voornaam<Ster /></label>
                         <input
                           id="f-voornaam"
                           name="voornaam"
@@ -673,7 +657,7 @@ const Contact = () => {
                         />
                       </div>
                       <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
-                        <label htmlFor="f-tussenvoegsel" className={labelClass}>Tussenvoegsel{optional}</label>
+                        <label htmlFor="f-tussenvoegsel" className={labelClass}>Tussenvoegsel</label>
                         <input
                           id="f-tussenvoegsel"
                           name="tussenvoegsel"
@@ -687,7 +671,7 @@ const Contact = () => {
                         />
                       </div>
                       <div className="sm:col-span-8 min-w-0 flex flex-col justify-end">
-                        <label htmlFor="f-achternaam" className={labelClass}>Achternaam</label>
+                        <label htmlFor="f-achternaam" className={labelClass}>Achternaam<Ster /></label>
                         <input
                           id="f-achternaam"
                           name="achternaam"
@@ -712,7 +696,7 @@ const Contact = () => {
                     </div>
                     <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-12 gap-3">
                       <div className="sm:col-span-8 min-w-0">
-                        <label htmlFor="f-email-b" className={labelClass}>E-mailadres</label>
+                        <label htmlFor="f-email-b" className={labelClass}>E-mailadres<Ster /></label>
                         <input
                           id="f-email-b"
                           name="email"
@@ -728,7 +712,7 @@ const Contact = () => {
                         <FieldError name="email" />
                       </div>
                       <div className="sm:col-span-4 min-w-0">
-                        <label htmlFor="f-tel-b" className={labelClass}>Telefoonnummer</label>
+                        <label htmlFor="f-tel-b" className={labelClass}>Telefoonnummer<Ster /></label>
                         <input
                           id="f-tel-b"
                           name="telefoonnummer"
@@ -747,7 +731,7 @@ const Contact = () => {
                     )}
 
                     {/* Adres hoort bij dezelfde groep als naam en contactgegevens, maar
-                        is als enige niet verplicht: de drie velden dragen dat zelf.
+                        is als enige niet verplicht.
                         Op mobiel één rij: huisnummer en toevoeging minstens zo breed als
                         hun label (de vette labels pasten niet meer in 1.2fr en 1fr),
                         de postcode krijgt de rest. Vanaf sm drie gelijke blokken van 4 kolommen,
@@ -756,7 +740,7 @@ const Contact = () => {
                       <div className="grid grid-cols-[minmax(0,1.3fr)_minmax(min-content,1fr)_minmax(min-content,0.9fr)] sm:grid-cols-12 gap-3">
                         <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
                           <label htmlFor="f-postcode" className={labelClass}>
-                            Postcode{optionalSm}
+                            Postcode
                           </label>
                           <input
                             id="f-postcode"
@@ -774,7 +758,7 @@ const Contact = () => {
                         </div>
                         <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
                           <label htmlFor="f-huisnummer" className={labelClass}>
-                            Huisnummer{optionalSm}
+                            Huisnummer
                           </label>
                           <input
                             id="f-huisnummer"
@@ -793,7 +777,7 @@ const Contact = () => {
                         </div>
                         <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
                           <label htmlFor="f-toevoeging" className={labelClass}>
-                            Toevoeging{optionalSm}
+                            Toevoeging
                           </label>
                           <input
                             id="f-toevoeging"
@@ -896,7 +880,6 @@ const Contact = () => {
                     <div className="mt-3.5">
                       <label htmlFor="f-bel" className={labelClass}>
                         {viaBellen ? "Wanneer bellen we je het liefst?" : "Voorkeur voor contact"}
-                        {optional}
                       </label>
                       <select
                         id="f-bel"
@@ -924,7 +907,7 @@ const Contact = () => {
                       {/* Zelfde opbouw als het berichtblok op /zakelijk. De
                           tekenlimiet staat alleen in de teller eronder; twee
                           keer hetzelfde getal is ruis. */}
-                      <label htmlFor="f-vragen-b" className={labelClass}>Bericht{viaBellen && optional}</label>
+                      <label htmlFor="f-vragen-b" className={labelClass}>Bericht{!viaBellen && <Ster />}</label>
                       <textarea
                         id="f-vragen-b"
                         name="vragen"

@@ -5,6 +5,7 @@ import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
 import { formulierFoutMelding } from "@/lib/formulierFout";
 import { MIN_INVULTIJD_MS } from "@/lib/invultijd";
 import { pushGtmEvent } from "@/lib/gtm";
+import { Ster, VerplichtUitleg } from "@/components/VerplichtVeld";
 
 // Zakelijk contactformulier, hoort bij /zakelijk. Dit is sinds de bewoner-only
 // ombouw van /contact de enige route naar `leads_uitvoerders`.
@@ -28,9 +29,6 @@ const labelClass = "block mb-1.5 text-[13.5px] font-bold text-[hsl(var(--rs-teks
 const groepKopClass =
   "flex items-center justify-between gap-3 font-['Inter_Tight',_'Inter',_sans-serif] text-[18px] font-bold text-primary";
 const groepRondje = "hs-rondje hs-rondje-ink h-[34px] w-[34px]";
-// Verplicht is de regel, niet de uitzondering: we markeren alleen wat optioneel
-// is. Dat scheelt vier accentkleurige sterretjes die met de CTA concurreerden.
-const optional = <span className="inline-block font-medium text-[13px] ml-1">(optioneel)</span>;
 
 const initieel = {
   bedrijfsnaam: "",
@@ -299,9 +297,10 @@ export const ZakelijkContactFormulier = () => {
             <Building2 size={17} strokeWidth={2} />
           </span>
         </p>
+        <VerplichtUitleg />
 
         <div className="mt-3.5">
-          <label htmlFor="zak-bedrijfsnaam" className={labelClass}>Bedrijfsnaam</label>
+          <label htmlFor="zak-bedrijfsnaam" className={labelClass}>Bedrijfsnaam<Ster /></label>
           <input
             id="zak-bedrijfsnaam"
             name="bedrijfsnaam"
@@ -326,7 +325,7 @@ export const ZakelijkContactFormulier = () => {
             op één lijn als een label over twee regels breekt. */}
         <div className="mt-3 grid grid-cols-2 sm:grid-cols-12 gap-3">
           <div className="col-span-2 sm:col-span-4 min-w-0 flex flex-col justify-end">
-            <label htmlFor="zak-cp-voornaam" className={labelClass}>Voornaam</label>
+            <label htmlFor="zak-cp-voornaam" className={labelClass}>Voornaam<Ster /></label>
             <input
               id="zak-cp-voornaam"
               name="contactpersoon_voornaam"
@@ -343,7 +342,7 @@ export const ZakelijkContactFormulier = () => {
             />
           </div>
           <div className="col-span-1 sm:col-span-4 min-w-0 flex flex-col justify-end">
-            <label htmlFor="zak-cp-tussenvoegsel" className={labelClass}>Tussenvoegsel{optional}</label>
+            <label htmlFor="zak-cp-tussenvoegsel" className={labelClass}>Tussenvoegsel</label>
             <input
               id="zak-cp-tussenvoegsel"
               name="contactpersoon_tussenvoegsel"
@@ -358,7 +357,7 @@ export const ZakelijkContactFormulier = () => {
             />
           </div>
           <div className="col-span-1 sm:col-span-4 min-w-0 flex flex-col justify-end">
-            <label htmlFor="zak-cp-achternaam" className={labelClass}>Achternaam</label>
+            <label htmlFor="zak-cp-achternaam" className={labelClass}>Achternaam<Ster /></label>
             <input
               id="zak-cp-achternaam"
               name="contactpersoon_achternaam"
@@ -385,7 +384,7 @@ export const ZakelijkContactFormulier = () => {
 
         <div className="mt-3 grid grid-cols-1 sm:grid-cols-12 gap-3">
           <div className="sm:col-span-8 min-w-0 flex flex-col justify-end">
-            <label htmlFor="zak-email" className={labelClass}>E-mailadres</label>
+            <label htmlFor="zak-email" className={labelClass}>E-mailadres<Ster /></label>
             <input
               id="zak-email"
               name="email"
@@ -407,7 +406,7 @@ export const ZakelijkContactFormulier = () => {
             )}
           </div>
           <div className="sm:col-span-4 min-w-0 flex flex-col justify-end">
-            <label htmlFor="zak-tel" className={labelClass}>Telefoonnummer</label>
+            <label htmlFor="zak-tel" className={labelClass}>Telefoonnummer<Ster /></label>
             <input
               id="zak-tel"
               name="telefoonnummer"
@@ -433,7 +432,7 @@ export const ZakelijkContactFormulier = () => {
 
         <div className="mt-3.5">
           {/* Tekenlimiet staat alleen in de teller onder het veld. */}
-          <label htmlFor="zak-vragen" className={labelClass}>Bericht</label>
+          <label htmlFor="zak-vragen" className={labelClass}>Bericht<Ster /></label>
           <textarea
             id="zak-vragen"
             name="vragen"

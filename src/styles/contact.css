@@ -42,7 +42,6 @@
   line-height: 1.3;
   color: hsl(var(--rs-tekst-zacht));
 }
-.ct-label-licht { font-weight: 500; }
 
 /* Veld: wit, radius 14, zachte inset-ring (instap-invoer levert de basis). */
 .ct-invoer {
