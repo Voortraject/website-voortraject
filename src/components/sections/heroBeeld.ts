@@ -12,9 +12,15 @@
  * in 188 KB) en zag er op desktop korrelig uit. Alles is opnieuw gemaakt uit de
  * originele telefoonfoto (5712 x 4284 JPG, 1 juli 2026, niet in de repo): verkleind
  * met ImageMagick Lanczos, "-define webp:method=6 -define webp:sns-strength=0",
- * breed op -quality 86, mobiel op 82 (3x pixeldichtheid verbergt de compressie).
+ * breed 1280 en 1920 op -quality 86, breed 2560 en mobiel op 82.
  * Maak varianten altijd uit het origineel, nooit uit een webp. Nieuwe versie =
  * nieuwe bestandsnaam (-v2, -v3): /hero/* staat 30 dagen in de cache.
+ *
+ * breedSizes is bewust ruimer dan de echte breedte (100vw). Op een 1920-scherm met
+ * schuifbalk is de hero 1905 px; het 1920-bestand wordt dan net iets verkleind en
+ * dat maakt het waziger dan een flinke verkleinstap (gemeten in Chrome op het gezicht:
+ * Laplace-scherpte 11,2 met 1920, 13,8 met 2560, ideaal 16,1). Met 134vw kiest zo'n
+ * scherm het 2560-bestand. De getoonde maat komt uit de CSS en verandert niet.
  */
 export const HERO_BEELD = {
   mobielSrcSet:
@@ -22,6 +28,6 @@ export const HERO_BEELD = {
   mobielSizes: "430px",
   breedSrcSet:
     "/hero/adviesgesprek-breed-1280-v3.webp 1280w, /hero/adviesgesprek-breed-1920-v3.webp 1920w, /hero/adviesgesprek-breed-2560-v3.webp 2560w",
-  breedSizes: "100vw",
+  breedSizes: "134vw",
   terugval: "/hero/adviesgesprek-breed-1920-v3.webp",
 } as const;
