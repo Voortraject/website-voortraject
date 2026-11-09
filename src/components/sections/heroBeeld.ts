@@ -14,7 +14,8 @@
  * met ImageMagick Lanczos, "-define webp:method=6 -define webp:sns-strength=0",
  * breed 1280 en 1920 op -quality 86, breed 2560 en mobiel op 82.
  * Maak varianten altijd uit het origineel, nooit uit een webp. Nieuwe versie =
- * nieuwe bestandsnaam (-v2, -v3): /hero/* staat 30 dagen in de cache.
+ * nieuwe bestandsnaam (-v2, -v3): /hero/* staat 30 dagen in de cache. Vraag een nieuwe
+ * URL pas op na de deploy, anders blijft Cloudflare de foutpagina bewaren (november 2026).
  *
  * breedSizes is bewust ruimer dan de echte breedte (100vw). Op een 1920-scherm met
  * schuifbalk is de hero 1905 px; het 1920-bestand wordt dan net iets verkleind en
@@ -27,7 +28,7 @@ export const HERO_BEELD = {
     "/hero/adviesgesprek-mobiel-645-v2.webp 645w, /hero/adviesgesprek-mobiel-860-v2.webp 860w, /hero/adviesgesprek-mobiel-1290-v2.webp 1290w",
   mobielSizes: "430px",
   breedSrcSet:
-    "/hero/adviesgesprek-breed-1280-v3.webp 1280w, /hero/adviesgesprek-breed-1920-v3.webp 1920w, /hero/adviesgesprek-breed-2560-v3.webp 2560w",
+    "/hero/adviesgesprek-breed-1280-v4.webp 1280w, /hero/adviesgesprek-breed-1920-v4.webp 1920w, /hero/adviesgesprek-breed-2560-v4.webp 2560w",
   breedSizes: "134vw",
-  terugval: "/hero/adviesgesprek-breed-1920-v3.webp",
+  terugval: "/hero/adviesgesprek-breed-1920-v4.webp",
 } as const;

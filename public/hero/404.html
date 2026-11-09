@@ -1,0 +1,35 @@
+<!doctype html>
+<!--
+  Echte 404 voor ontbrekende bestanden onder /assets/.
+
+  Cloudflare Pages zoekt bij een onbekend pad de dichtstbijzijnde 404.html
+  omhoog in de mappenstructuur en geeft die met status 404. Zonder dit bestand
+  viel /assets/index-OUDEHASH.css terug op de SPA (200 text/html), en dan
+  denkt bijvoorbeeld Clarity dat het oude CSS-bestand gewoon bestaat.
+
+  Bewust NIET in de root van public/: een /404.html zet de SPA-fallback van
+  Pages uit en breekt alle routes zoals /over-ons. De React-404 van de site
+  blijft zo gewoon werken voor gewone pagina's.
+
+  Geen eigen kleuren (huisstijl: alleen tokens) en geen trackers; dit is een
+  kale pagina in de standaardkleuren van de browser.
+-->
+<html lang="nl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Bestand niet gevonden | Voortraject</title>
+    <style>
+      body { margin: 0; padding: 48px 24px; font-family: system-ui, sans-serif; line-height: 1.6; }
+      main { max-width: 32rem; margin: 0 auto; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Dit bestand bestaat niet (meer)</h1>
+      <p>Het bestand dat je zocht staat niet op deze plek. Op de website zelf vind je alles terug.</p>
+      <p><a href="https://voortraject.nl/">Naar voortraject.nl</a></p>
+    </main>
+  </body>
+</html>
