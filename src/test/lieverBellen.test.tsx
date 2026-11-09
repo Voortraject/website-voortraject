@@ -251,8 +251,13 @@ describe("contactformulier via Bel mij", () => {
     belroute();
     expect(screen.queryByLabelText(/^Aanhef/)).toBeNull();
     expect(screen.queryByLabelText(/^Tussenvoegsel/)).toBeNull();
-    expect(screen.getByText("Achternaam").closest("label")).toHaveTextContent("(optioneel)");
-    expect(screen.getByText("Bericht").closest("label")).toHaveTextContent("(optioneel)");
+    expect(screen.getByText("Voornaam").closest("label")).toHaveTextContent("*");
+    expect(screen.getByText("Telefoonnummer").closest("label")).toHaveTextContent("*");
+    expect(screen.getByText("Achternaam").closest("label")).not.toHaveTextContent("*");
+    expect(screen.getByText("Bericht").closest("label")).not.toHaveTextContent("*");
+    expect(screen.queryByText("(optioneel)")).toBeNull();
+    // Het sterretje hoort niet in de naam die een schermlezer voorleest.
+    expect(screen.getByRole("textbox", { name: "Voornaam" })).toHaveAttribute("aria-required", "true");
     // Alleen dagdelen; "Per e-mail" hoort niet bij terugbellen.
     expect(screen.queryByRole("option", { name: "Per e-mail" })).toBeNull();
     expect(screen.getByRole("option", { name: "Ochtend" })).toHaveValue("Telefonisch: Ochtend");
@@ -262,7 +267,7 @@ describe("contactformulier via Bel mij", () => {
   // e-mailadres is; zie de toelichting bij de e-mailcontrole in Contact.tsx.
   it("verstuurt met alleen voornaam en telefoon, e-mail als NULL", async () => {
     belroute();
-    expect(screen.getByText("E-mailadres").closest("label")).toHaveTextContent("(optioneel)");
+    expect(screen.getByText("E-mailadres").closest("label")).not.toHaveTextContent("*");
     vul(screen.getByLabelText(/^Voornaam/), "Jan");
     vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
     nu += 5_000;
@@ -305,7 +310,7 @@ describe("contactformulier via Bel mij", () => {
 describe("contactformulier zonder Bel mij", () => {
   it("houdt e-mail verplicht", async () => {
     render(<Contact />, { wrapper: MemoryRouter });
-    expect(screen.getByText("E-mailadres").closest("label")).not.toHaveTextContent("(optioneel)");
+    expect(screen.getByText("E-mailadres").closest("label")).toHaveTextContent("*");
     vul(screen.getByLabelText(/^Voornaam/), "Jan");
     vul(screen.getByLabelText(/^Achternaam/), "de Vries");
     vul(screen.getByLabelText(/^Telefoonnummer/), "0612345678");
