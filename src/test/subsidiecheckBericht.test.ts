@@ -18,7 +18,7 @@ import {
   VRAAG_RPC,
   type BerichtClient,
 } from "../../supabase/functions/subsidiecheck-mail/bericht";
-import { lastigstTekst, UITZOEK_BERICHT } from "@/components/subsidiecheck/uitzoekAanvraag";
+import { beginTekst, UITZOEK_BERICHT } from "@/components/subsidiecheck/uitzoekAanvraag";
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -27,9 +27,17 @@ describe("de kopieën in de function", () => {
     expect(FUNCTIE_UITZOEK_BERICHT).toBe(UITZOEK_BERICHT);
   });
 
-  it("de lastigst-tekst van de site is terug te lezen als dezelfde keuzes", () => {
-    const keuzes = ["Door de bomen het bos niet meer zien", "De subsidies maximaal benutten", "Het papierwerk"];
-    expect(bepaalBericht({ bericht: lastigstTekst(keuzes) })).toEqual({ soort: "lastigst", keuzes });
+  it("beginnen gaat op soort en keuze, niet op de tekst", () => {
+    expect(bepaalBericht({ soort: "beginnen", keuzes: ["Dak"], bericht: beginTekst("Dak") })).toEqual({
+      soort: "beginnen",
+      maatregel: "Dak",
+    });
+  });
+
+  it("beginnen zonder precies één bruikbare keuze is ongeldig", () => {
+    expect(bepaalBericht({ soort: "beginnen", keuzes: [], bericht: "x" })).toEqual({ soort: "ongeldig" });
+    expect(bepaalBericht({ soort: "beginnen", keuzes: ["Dak", "Vloer"], bericht: "x" })).toEqual({ soort: "ongeldig" });
+    expect(bepaalBericht({ soort: "beginnen", bericht: "x" })).toEqual({ soort: "ongeldig" });
   });
 
   it("de hulpregel heeft dezelfde kop als in StapGegevens", () => {
@@ -277,6 +285,15 @@ describe("verwerkBericht", () => {
       expect(await uitkomst).toEqual({ ok: true, mailed: false, nieuweLead: false });
       expect(stuurTeamMail).not.toHaveBeenCalled();
       expect(nep.updates).toEqual([{ rij: { subsidiecheck_lastigst: ["Het papierwerk"] }, filters: [["eq", "id", "lead-1"]] }]);
+    });
+
+    it("beginnen: zet de maatregel op de lead en mailt het team niet", async () => {
+      const nep = nepClient({ bestaand: true });
+      const { uitkomst, stuurTeamMail } = voerUit(nep, { soort: "beginnen", maatregel: "Dak" });
+
+      expect(await uitkomst).toEqual({ ok: true, mailed: false, nieuweLead: false });
+      expect(stuurTeamMail).not.toHaveBeenCalled();
+      expect(nep.updates).toEqual([{ rij: { gewenste_maatregelen: "Dak" }, filters: [["eq", "id", "lead-1"]] }]);
     });
 
     it("vraag: registreert via de RPC en mailt het team", async () => {

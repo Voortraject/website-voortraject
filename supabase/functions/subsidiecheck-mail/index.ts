@@ -16,8 +16,8 @@
 // niet meer als tekstregel in `notities`.
 //
 // Daarnaast is er de route `actie: "bericht"` voor wat de bezoeker na de poort
-// doet: de oker knop (uitzoeken), "Wat vind je het lastigst?" (lastigst) of een
-// getypte vraag (vraag). Een klik wordt een veld op de lead, alleen een getypte
+// doet: de oker knop (uitzoeken), "Waar wil je mee beginnen?" (beginnen) of een
+// getypte vraag (vraag). Oude gecachte bundels sturen nog "lastigst". Een klik wordt een veld op de lead, alleen een getypte
 // vraag wordt een bericht in de communicatietab, en alleen dáárvoor gaat er een
 // mail naar het team, met de bezoeker als antwoordadres. `notities` raakt deze
 // route niet meer aan; dat veld is van het team. Zie bericht.ts.
@@ -35,7 +35,8 @@
 //
 // Benodigde kolommen op `leads_bewoners` (levert het CRM, live sinds 25-10-2026):
 //   subsidiecheck_hulpvragen text[]      — tegels uit de poort, in tegelvolgorde
-//   subsidiecheck_lastigst   text[]      — keuzes uit LastigsteVraag; laatste wint
+//   subsidiecheck_lastigst   text[]      — keuzes uit de vorige vraag, alleen nog oude bundels
+//   gewenste_maatregelen     text        — keuze uit BeginVraag; laatste wint
 //   uitzoeken_aangevraagd_op timestamptz — eerste klik op de oker knop
 //
 // Benodigde databasefunctie voor een getypte vraag (levert het CRM):
@@ -218,12 +219,12 @@ type Payload = {
    */
   actie?: string;
   /**
-   * Alleen bij actie "bericht": "uitzoeken" (oker knop), "lastigst" (met
-   * `keuzes`) of "vraag" (getypt). Oude bundels sturen hem niet; dan leidt
+   * Alleen bij actie "bericht": "uitzoeken" (oker knop), "beginnen" of
+   * "lastigst" (met `keuzes`) of "vraag" (getypt). Oude bundels sturen hem niet; dan leidt
    * bepaalBericht hem af uit `bericht`.
    */
   soort?: unknown;
-  /** Alleen bij soort "lastigst": de gekozen opties, in optievolgorde. */
+  /** Alleen bij soort "beginnen" (één waarde) en "lastigst" (in optievolgorde). */
   keuzes?: unknown;
   /**
    * Alleen bij actie "bericht": de tekst. Bij een vraag de vraag zelf; bij een
@@ -789,7 +790,7 @@ Deno.serve(async (req: Request) => {
   const overzichtUrlSchoon = schoonOverzichtUrl(payload.overzichtUrl);
 
   // ---- Route "bericht": wat de bezoeker na de poort doet ----
-  // Een klik (uitzoeken, lastigst) wordt een veld op de lead, een getypte vraag
+  // Een klik (uitzoeken, beginnen, lastigst) wordt een veld op de lead, een getypte vraag
   // een bericht in de communicatietab; alleen die laatste mailt het team. Kwam de
   // bezoeker net door de gegevens-poort, dan hebben we zijn lead-id en werken we
   // die lead bij; anders maken we er alsnog een. Een dubbele lead is vervelend,

@@ -49,12 +49,11 @@ type SessieBerichtArgs = {
 };
 
 /**
- * De oude tekstvorm van de keuzes bij "Wat vind je het lastigst?", om dezelfde
- * reden als UITZOEK_BERICHT nog meegestuurd. De function herkent "Lastigst: "
- * aan het begin en splitst de rest op ", ".
+ * De keuze bij "Waar wil je mee beginnen?" als tekst. De function gebruikt
+ * `soort` en `keuzes`; de route vraagt altijd om een `bericht`.
  */
-export function lastigstTekst(keuzes: string[]): string {
-  return `Lastigst: ${keuzes.join(", ")}`;
+export function beginTekst(maatregel: string): string {
+  return `Wil beginnen met: ${maatregel}`;
 }
 
 /** De oker knop: het verzoek om uit te zoeken wat er voor dit huis in zit. */
@@ -62,14 +61,15 @@ export function vraagUitzoekenAan(args: SessieBerichtArgs): Promise<UitzoekUitko
   return stuurSessieBericht({ ...args, soort: "uitzoeken", bericht: UITZOEK_BERICHT });
 }
 
-/** De keuzes bij "Wat vind je het lastigst?", in optievolgorde. */
-export function bewaarLastigst(args: SessieBerichtArgs & { keuzes: string[] }): Promise<UitzoekUitkomst> {
-  return stuurSessieBericht({ ...args, soort: "lastigst", bericht: lastigstTekst(args.keuzes) });
+/** De keuze bij "Waar wil je mee beginnen?". */
+export function bewaarBeginnen(args: SessieBerichtArgs & { maatregel: string }): Promise<UitzoekUitkomst> {
+  const { maatregel, ...rest } = args;
+  return stuurSessieBericht({ ...rest, soort: "beginnen", bericht: beginTekst(maatregel), keuzes: [maatregel] });
 }
 
 /**
  * Een klik bij de lead uit deze sessie, met de gegevens uit de poort. Gedeeld
- * door de oker knop en LastigsteVraag: dezelfde route, dezelfde lead, zodat het
+ * door de oker knop en BeginVraag: dezelfde route, dezelfde lead, zodat het
  * team alles op één plek ziet.
  */
 export async function stuurSessieBericht(

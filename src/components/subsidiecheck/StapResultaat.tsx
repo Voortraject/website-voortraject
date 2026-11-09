@@ -32,9 +32,9 @@ import { kanOverzichtMailen } from "./leadFormulier";
 import { MobieleActiebalk } from "./MobieleActiebalk";
 import { Samenvatting } from "./Samenvatting";
 import { SubsidieCard } from "./SubsidieCard";
-import { LastigsteVraag } from "./LastigsteVraag";
+import { BeginVraag } from "./BeginVraag";
 import { IsolatieplanRij, LabelRegel, MiniTellers, Tellers } from "./Tellers";
-import { bewaarLastigst } from "./uitzoekAanvraag";
+import { bewaarBeginnen } from "./uitzoekAanvraag";
 import { useBreed } from "./useBreed";
 import { useUitzoek } from "./useUitzoek";
 import { scrollNaarVraag } from "./vraagFocus";
@@ -149,9 +149,9 @@ export const StapResultaat = ({
   const pagina = useRef<HTMLDivElement>(null);
   const breed = useBreed();
   const resultaatSinds = useRef(Date.now());
-  const stuurLastigst = useCallback(
-    async (keuzes: string[]) => {
-      await bewaarLastigst({ input, adres, overzichtUrl, sindsMs: resultaatSinds.current, keuzes });
+  const stuurBeginnen = useCallback(
+    async (maatregel: string) => {
+      await bewaarBeginnen({ input, adres, overzichtUrl, sindsMs: resultaatSinds.current, maatregel });
     },
     [input, adres, overzichtUrl],
   );
@@ -303,7 +303,7 @@ export const StapResultaat = ({
             aanvraag={aanvraag}
             // Na de klik: één vraag die het belgesprek helpt. Bewaard bij
             // dezelfde lead, via dezelfde route als de knop zelf.
-            naAanvraag={<LastigsteVraag verstuur={stuurLastigst} />}
+            naAanvraag={<BeginVraag verstuur={stuurBeginnen} />}
           />
         </div>
         {breed && woningpaneel}

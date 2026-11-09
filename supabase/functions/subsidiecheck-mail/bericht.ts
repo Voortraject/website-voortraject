@@ -9,7 +9,8 @@
 // bericht, het zijn klikken:
 //
 //   uitzoeken → de oker knop "Laat gratis uitzoeken wat ik krijg";
-//   lastigst  → de keuzes bij "Wat vind je het lastigst?";
+//   lastigst  → de keuzes bij "Wat vind je het lastigst?" (alleen nog oude bundels);
+//   beginnen  → de keuze bij "Waar wil je mee beginnen?" (BeginVraag);
 //   vraag     → wat de bezoeker zelf typt (DirectContact).
 //
 // Een klik is een kenmerk van de lead en hoort in een kolom: het CRM toont hem als
@@ -34,7 +35,7 @@ export const UITZOEK_BERICHT =
 /** Kopregel van een hulpvraag uit de poort zoals oude bundels hem als `notitie` sturen. */
 export const HULPREGEL_PREFIX = "Wil hulp met: ";
 
-export const BERICHT_SOORTEN = ["uitzoeken", "lastigst", "vraag"] as const;
+export const BERICHT_SOORTEN = ["uitzoeken", "lastigst", "beginnen", "vraag"] as const;
 export type BerichtSoort = (typeof BERICHT_SOORTEN)[number];
 
 /** Grenzen op een lijst labels. Ruim: de poort heeft vier tegels, LastigsteVraag vier opties. */
@@ -74,8 +75,9 @@ const LASTIGST_RE = /^Lastigst(?:\s*\(bijgewerkt\))?:\s*([\s\S]*)$/;
 export type BepaaldBericht =
   | { soort: "uitzoeken" }
   | { soort: "lastigst"; keuzes: string[] }
+  | { soort: "beginnen"; maatregel: string }
   | { soort: "vraag"; tekst: string }
-  /** Soort "lastigst" zonder bruikbare keuzes: de aanroeper antwoordt 400. */
+  /** Soort "lastigst" of "beginnen" zonder bruikbare keuzes: de aanroeper antwoordt 400. */
   | { soort: "ongeldig" };
 
 /**
@@ -100,6 +102,11 @@ export function bepaalBericht(payload: { soort?: unknown; bericht?: unknown; keu
   if (soort === "lastigst") {
     const keuzes = schoonLabels(payload.keuzes) ?? (lastigst ? labelsUitTekst(lastigst[1]) : null);
     return keuzes ? { soort, keuzes } : { soort: "ongeldig" };
+  }
+  if (soort === "beginnen") {
+    // Eén tik, dus precies één keuze. Meer is geen bezoeker maar een fout.
+    const keuzes = schoonLabels(payload.keuzes);
+    return keuzes?.length === 1 ? { soort, maatregel: keuzes[0] } : { soort: "ongeldig" };
   }
   return { soort, tekst };
 }
@@ -193,7 +200,10 @@ export async function verwerkBericht(
       ? { uitzoeken_aangevraagd_op: nu.toISOString() }
       : bericht.soort === "lastigst"
         ? { subsidiecheck_lastigst: bericht.keuzes }
-        : {};
+        : bericht.soort === "beginnen"
+          ? // Bestaande kolom: het CRM neemt hem over bij het omzetten naar een opdracht.
+            { gewenste_maatregelen: bericht.maatregel }
+          : {};
 
   let id: string | null = null;
   let nieuweLead = true;
@@ -223,8 +233,8 @@ export async function verwerkBericht(
             .eq("id", id)
             .is("uitzoeken_aangevraagd_op", null);
           if (error) throw error;
-        } else if (bericht.soort === "lastigst") {
-          // Laatste keuze wint: de bewoner bevestigt zijn hele lijst in één keer.
+        } else if (bericht.soort === "lastigst" || bericht.soort === "beginnen") {
+          // Laatste keuze wint.
           const { error } = await supabase.from("leads_bewoners").update(klikVelden).eq("id", id);
           if (error) throw error;
         }
