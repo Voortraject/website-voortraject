@@ -375,11 +375,11 @@ export function valideerBericht(bericht: string): string | null {
 /**
  * Wat de bezoeker na de poort doet. Bepaalt in de function waar het landt:
  *  - "uitzoeken": de oker knop → `uitzoeken_aangevraagd_op` op de lead;
- *  - "lastigst":  de keuzes bij "Wat vind je het lastigst?" → `subsidiecheck_lastigst`;
+ *  - "beginnen":  de keuze bij "Waar wil je mee beginnen?" → `gewenste_maatregelen`;
  *  - "vraag":     een getypte vraag → de communicatietab, plus een mail aan het team.
  * Alleen een vraag geeft een teammail: een klik is een kenmerk van de lead.
  */
-export type BerichtSoort = "uitzoeken" | "lastigst" | "vraag";
+export type BerichtSoort = "uitzoeken" | "beginnen" | "vraag";
 
 // Stuurt wat de bezoeker na de poort doet naar de function (actie "bericht").
 // Met een bekend `leadId` (de bezoeker kwam net door de gegevens-poort) komt het
@@ -397,7 +397,7 @@ export async function verstuurSubsidiecheckBericht(args: {
    */
   bericht: string;
   soort: BerichtSoort;
-  /** Alleen bij soort "lastigst": de gekozen opties, in optievolgorde. */
+  /** Alleen bij soort "beginnen": de gekozen maatregel. */
   keuzes?: string[];
   /** De hulpvragen uit de poort, voor als de function hier een nieuwe lead van maakt. */
   hulpvragen?: string[];

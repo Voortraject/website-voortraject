@@ -13,8 +13,7 @@ vi.mock("@/components/subsidiecheck/leadFormulier", async (importOriginal) => ({
 import { bewaarContact } from "@/components/subsidiecheck/contactOpslag";
 import { MIN_INVULTIJD_MS, verstuurSubsidiecheckBericht } from "@/components/subsidiecheck/leadFormulier";
 import {
-  bewaarLastigst,
-  lastigstTekst,
+  bewaarBeginnen,
   UITZOEK_BERICHT,
   vraagUitzoekenAan,
 } from "@/components/subsidiecheck/uitzoekAanvraag";
@@ -53,16 +52,14 @@ describe("laat gratis uitzoeken wat ik krijg", () => {
     expect(args.duurMs).toBe(60_000);
   });
 
-  it("stuurt de keuzes bij 'lastigst' als lijst, met de oude tekst ernaast", async () => {
+  it("stuurt de keuze bij 'beginnen' als één waarde", async () => {
     bewaarContact({ voornaam: "Sanne", achternaam: "de Vries", email: "sanne@example.nl", leadId: "lead-1" });
-    const keuzes = ["Door de bomen het bos niet meer zien", "Het papierwerk"];
-    await bewaarLastigst({ input, adres, sindsMs: 0, nuMs: 60_000, wacht: async () => {}, keuzes });
+    await bewaarBeginnen({ input, adres, sindsMs: 0, nuMs: 60_000, wacht: async () => {}, maatregel: "Vloer" });
 
     const args = vi.mocked(verstuurSubsidiecheckBericht).mock.calls[0][0];
-    expect(args.soort).toBe("lastigst");
-    expect(args.keuzes).toEqual(keuzes);
-    expect(args.bericht).toBe("Lastigst: Door de bomen het bos niet meer zien, Het papierwerk");
-    expect(lastigstTekst(keuzes)).toBe(args.bericht);
+    expect(args.soort).toBe("beginnen");
+    expect(args.keuzes).toEqual(["Vloer"]);
+    expect(args.bericht).toBe("Wil beginnen met: Vloer");
   });
 
   it("geeft de hulpvragen uit de poort mee, voor als het toch een nieuwe lead wordt", async () => {

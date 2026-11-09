@@ -81,9 +81,9 @@ describe("de request van een klik of vraag na de poort", () => {
 
     await verstuurSubsidiecheckBericht({
       waarden: { voornaam: "Jan", tussenvoegsel: "", achternaam: "Test", email: "jan@example.nl", telefoon: "" },
-      bericht: "Lastigst: Het papierwerk",
-      soort: "lastigst",
-      keuzes: ["Het papierwerk"],
+      bericht: "Wil beginnen met: Dak",
+      soort: "beginnen",
+      keuzes: ["Dak"],
       hulpvragen: ["Subsidies uitzoeken"],
       leadId: "6f9619ff-8b86-4011-b42d-00c04fc964ff",
       input: { postcode: "9725BG", huisnummer: "3", bewonertype: "woningeigenaar", maatregelen: [] },
@@ -94,10 +94,10 @@ describe("de request van een klik of vraag na de poort", () => {
     const [, opties] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
     expect(JSON.parse(opties.body as string)).toMatchObject({
       actie: "bericht",
-      soort: "lastigst",
-      keuzes: ["Het papierwerk"],
+      soort: "beginnen",
+      keuzes: ["Dak"],
       hulpvragen: ["Subsidies uitzoeken"],
-      bericht: "Lastigst: Het papierwerk",
+      bericht: "Wil beginnen met: Dak",
     });
   });
 });
