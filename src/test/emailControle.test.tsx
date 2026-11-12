@@ -111,7 +111,8 @@ describe("e-mailcontrole op /contact", () => {
 
   it("houdt de eerste klik tegen bij een suggestie, de tweede gaat door met het getypte adres", async () => {
     dns();
-    vulContactIn("jan@hotmail.be");
+    // hotmial.nl bestaat echt (heeft MX), dus alleen de suggestie vangt hem.
+    vulContactIn("jan@hotmial.nl");
 
     verstuurContact();
     await screen.findByText(/Klopt je adres toch\? Verstuur dan nog een keer\./);
@@ -121,7 +122,7 @@ describe("e-mailcontrole op /contact", () => {
 
     verstuurContact();
     await screen.findByText(/Bedankt!/);
-    expect(insertMock.mock.calls[0][1].email).toBe("jan@hotmail.be");
+    expect(insertMock.mock.calls[0][1].email).toBe("jan@hotmial.nl");
   });
 
   it("blokkeert versturen als het domein niet bestaat, tot het adres klopt", async () => {

@@ -11,7 +11,16 @@ import type { EmailControle } from "@/hooks/useEmailControle";
  * `donker` is voor het vraagblok op het resultaat van de subsidiecheck (inktblauw vlak): daar
  * zijn foutmeldingen oker, net als de andere meldingen in dat blok.
  */
-export function EmailHint({ controle, donker = false }: { controle: EmailControle; donker?: boolean }) {
+export function EmailHint({
+  controle,
+  donker = false,
+  optioneel = false,
+}: {
+  controle: EmailControle;
+  donker?: boolean;
+  /** Mag het veld leeg blijven (Bel mij)? Dan zegt de foutmelding dat ook. */
+  optioneel?: boolean;
+}) {
   const { hintId, ongeldig, suggestie, alGevraagd, accepteer } = controle;
 
   const fout = donker ? "text-accent" : "text-destructive";
@@ -24,7 +33,8 @@ export function EmailHint({ controle, donker = false }: { controle: EmailControl
     <div id={hintId} aria-live="polite">
       {ongeldig && (
         <p className={`font-sans mt-1.5 text-[13.5px] font-semibold ${fout}`}>
-          Op dit adres kan geen mail aankomen. Controleer wat er na de @ staat.
+          Op dit adres kan geen mail aankomen. Controleer wat er na de @ staat
+          {optioneel ? ", of laat het veld leeg." : "."}
         </p>
       )}
       {suggestie && (

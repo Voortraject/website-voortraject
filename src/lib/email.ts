@@ -99,6 +99,25 @@ function afstand(a: string, b: string, max: number): number {
 }
 
 /**
+ * Echte domeinen die te dicht bij een bekend domein liggen en anders een valse suggestie krijgen
+ * (gevonden in de review van 12-11-2026: hccnet.nl → hetnet.nl, mail.com → gmail.com). Ze zijn
+ * geen kandidaat voor suggesties; ze krijgen er alleen zelf geen.
+ */
+export const ECHT_ZONDER_SUGGESTIE: readonly string[] = [
+  "hccnet.nl",
+  "caiway.net",
+  "hotmail.be",
+  "outlook.be",
+  "live.be",
+  "telenet.be",
+  "skynet.be",
+  "mail.com",
+  "email.com",
+  "gmx.com",
+  "gmx.net",
+];
+
+/**
  * Stelt een correctie voor bij een waarschijnlijke vertyping in het domein:
  * "jan@gmial.com" → "jan@gmail.com". Retourneert het volledige adres, of null.
  *
@@ -117,7 +136,7 @@ export function domeinSuggestie(email: string): string | null {
   if (!isGeldigEmail(email)) return null;
 
   const domein = domeinVan(email);
-  if (!domein || BEKENDE_DOMEINEN.includes(domein)) return null;
+  if (!domein || BEKENDE_DOMEINEN.includes(domein) || ECHT_ZONDER_SUGGESTIE.includes(domein)) return null;
 
   const drempel = domein.length <= 8 ? 1 : 2;
   let beste: string | null = null;

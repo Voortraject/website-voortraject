@@ -4,6 +4,7 @@ import {
   BEKENDE_DOMEINEN,
   DOH_URL,
   DOH_WACHT_MS,
+  ECHT_ZONDER_SUGGESTIE,
   _leegDomeinCache,
   controleerDomein,
   domeinSuggestie,
@@ -228,5 +229,17 @@ describe("controleerDomein", () => {
     vi.stubGlobal("fetch", fetchMock);
     expect(await controleerDomein("gmail.com")).toBe("onbekend");
     expect(await controleerDomein("gmail.com")).toBe("bestaat");
+  });
+});
+
+describe("echte domeinen zonder valse suggestie (review 12-11-2026)", () => {
+  it.each(["hccnet.nl", "caiway.net", "hotmail.be", "mail.com"])("%s krijgt geen suggestie", (domein) => {
+    expect(ECHT_ZONDER_SUGGESTIE).toContain(domein);
+    expect(domeinSuggestie(`jan@${domein}`)).toBeNull();
+  });
+
+  it("een echte vertyping blijft een suggestie krijgen", () => {
+    expect(domeinSuggestie("jan@gmial.com")).toBe("jan@gmail.com");
+    expect(domeinSuggestie("jan@hotmial.nl")).toBe("jan@hotmail.nl");
   });
 });

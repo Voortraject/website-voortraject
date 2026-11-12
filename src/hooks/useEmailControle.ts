@@ -115,7 +115,7 @@ export function useEmailControle(email: string, onWijzig: (nieuw: string) => voi
     void start(adres);
   }, [adres, setStaat, start]);
 
-  const magVersturen = useCallback(async () => {
+  const beoordeel = useCallback(async () => {
     if (!isGeldigEmail(adres)) return true;
 
     const vorige = staatRef.current?.adres === adres ? staatRef.current : null;
@@ -140,6 +140,15 @@ export function useEmailControle(email: string, onWijzig: (nieuw: string) => voi
     }
     return true;
   }, [adres, setStaat, start]);
+
+  // Fail-open: deze controle mag een aanvraag nooit tegenhouden door een eigen fout.
+  const magVersturen = useCallback(async () => {
+    try {
+      return await beoordeel();
+    } catch {
+      return true;
+    }
+  }, [beoordeel]);
 
   const accepteer = useCallback(() => {
     if (!suggestie) return;

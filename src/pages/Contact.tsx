@@ -635,7 +635,7 @@ const Contact = () => {
                               maxLength={255}
                             />
                             <FieldError name="email" />
-                            <EmailHint controle={emailControle} />
+                            <EmailHint controle={emailControle} optioneel />
                           </div>
                         </div>
                       </>
