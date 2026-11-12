@@ -74,7 +74,8 @@ async function waarschuw(onderwerp: string, tekst: string): Promise<void> {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: Deno.env.get("MAIL_FROM") ?? "Voortraject <noreply@voortraject.nl>",
+        // Terugval op het Resend-subdomein: het hoofddomein staat niet meer in Resend (zie subsidiecheck-mail).
+        from: Deno.env.get("MAIL_FROM") ?? "Voortraject <noreply@mail.voortraject.nl>",
         to: [Deno.env.get("MAIL_TEAM") || Deno.env.get("MAIL_BCC") || "info@voortraject.nl"],
         subject: `Reviews-sync: ${onderwerp}`,
         text: `${tekst}\n\nDeze mail komt van de edge function sync-google-reviews (CRM-project). ` +

@@ -24,8 +24,9 @@
 //
 // Benodigde secrets (Supabase → Edge Functions → Secrets):
 //   RESEND_API_KEY   — API-key van resend.com (verplicht voor automatische mail)
-//   MAIL_FROM        — afzender, bijv. "Voortraject <noreply@voortraject.nl>"
-//                      (moet een geverifieerd domein in Resend zijn)
+//   MAIL_FROM        — afzender, live "Voortraject <noreply@mail.voortraject.nl>"
+//                      (moet een geverifieerd domein in Resend zijn; alleen
+//                      mail.voortraject.nl is dat, het hoofddomein niet meer)
 //   MAIL_TEAM        — optioneel, ontvanger van de vraag-mails; valt terug op
 //                      MAIL_BCC en daarna op info@voortraject.nl
 //   MAIL_BCC         — optioneel, alleen nog die terugval voor MAIL_TEAM. Gaat
@@ -102,7 +103,9 @@ import { escapeHtml, maakOverzichtMail, type BagAdres } from "./overzichtMail.ts
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 const TENANT_ID = "00000000-0000-0000-0000-000000000001";
 
-const DEFAULT_FROM = "Voortraject <noreply@voortraject.nl>";
+// Terugval als MAIL_FROM ontbreekt. Gelijk aan de live MAIL_FROM: automatische mail gaat altijd van het
+// Resend-subdomein. Het hoofddomein staat sinds 28-10-2026 niet meer in Resend, daar zou Resend elke mail weigeren.
+const DEFAULT_FROM = "Voortraject <noreply@mail.voortraject.nl>";
 const DEFAULT_REPLY_TO = "info@voortraject.nl";
 
 
