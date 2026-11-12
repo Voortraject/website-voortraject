@@ -6,6 +6,9 @@ import { formulierFoutMelding } from "@/lib/formulierFout";
 import { MIN_INVULTIJD_MS } from "@/lib/invultijd";
 import { pushGtmEvent } from "@/lib/gtm";
 import { Ster, VerplichtUitleg } from "@/components/VerplichtVeld";
+import { EmailHint } from "@/components/EmailHint";
+import { useEmailControle } from "@/hooks/useEmailControle";
+import { isGeldigEmail } from "@/lib/email";
 
 // Zakelijk contactformulier, hoort bij /zakelijk. Dit is sinds de bewoner-only
 // ombouw van /contact de enige route naar `leads_uitvoerders`.
@@ -51,7 +54,7 @@ const FREE_EMAIL_DOMAINS = ["gmail.com", "hotmail.com", "outlook.com", "live.nl"
 // het niet ge-escaped te worden.
 const NAME_RE = /^[\p{L}\s'-]+$/u;
 const COMPANY_RE = /^[\p{L}\p{N}\s.,&\-'()/]+$/u;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+// De e-mailregel (gelijk aan het CRM) en de typefout- en domeincheck staan in src/lib/email.ts.
 
 const VELD_VOLGORDE = [
   "bedrijfsnaam",
@@ -86,6 +89,12 @@ export const ZakelijkContactFormulier = () => {
       return next;
     });
 
+  // Typefout-suggestie en domeincheck op het e-mailveld (zie src/hooks/useEmailControle.ts).
+  const emailControle = useEmailControle(velden.email, (nieuw) => {
+    setVelden((v) => ({ ...v, email: nieuw }));
+    clearError("email");
+  });
+
   // ---------- Validatie ----------
   const validate = (): Record<string, string> => {
     const e: Record<string, string> = {};
@@ -112,7 +121,7 @@ export const ZakelijkContactFormulier = () => {
 
     const email = velden.email.trim();
     if (!email) e.email = "Vul je e-mailadres in.";
-    else if (!EMAIL_RE.test(email) || email.length > 255) e.email = "Dit lijkt geen geldig e-mailadres.";
+    else if (!isGeldigEmail(email) || email.length > 255) e.email = "Dit lijkt geen geldig e-mailadres.";
 
     const tel = velden.telefoonnummer.trim();
     if (!tel) e.telefoonnummer = "Vul je telefoonnummer in.";
@@ -170,6 +179,11 @@ export const ZakelijkContactFormulier = () => {
     }
 
     setSubmitting(true);
+    // Zie Contact.tsx: geen mail mogelijk, of een vertyping (eerste klik), dan nu niet versturen.
+    if (!(await emailControle.magVersturen())) {
+      setSubmitting(false);
+      return;
+    }
     try {
       // De kolom `contactpersoon` bewust niet meesturen: een BEFORE INSERT-trigger
       // in het CRM stelt die zelf samen uit de drie contactpersoon-delen.
@@ -387,18 +401,26 @@ export const ZakelijkContactFormulier = () => {
             <label htmlFor="zak-email" className={labelClass}>E-mailadres<Ster /></label>
             <input
               id="zak-email"
+              ref={emailControle.ref}
               name="email"
               type="email"
               autoComplete="email"
               aria-required="true"
-              aria-invalid={!!errors.email}
-              aria-describedby={errors.email ? errId("email") : emailWarning ? "zak-email-tip" : undefined}
-              className={inputCls("email")}
+              aria-invalid={!!errors.email || emailControle.ongeldig}
+              aria-describedby={
+                errors.email
+                  ? errId("email")
+                  : [emailControle.describedBy, emailWarning ? "zak-email-tip" : undefined].filter(Boolean).join(" ") ||
+                    undefined
+              }
+              className={cx(inputCls("email"), emailControle.ongeldig && inputErr)}
               value={velden.email}
               onChange={onChange("email")}
+              onBlur={emailControle.controleer}
               maxLength={255}
             />
             <FieldError name="email" />
+            <EmailHint controle={emailControle} />
             {!errors.email && emailWarning && (
               <p id="zak-email-tip" className="font-sans mt-1.5 text-[13.5px] font-semibold text-[hsl(var(--niveau-gemeente))]">
                 {emailWarning}

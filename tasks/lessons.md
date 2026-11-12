@@ -661,3 +661,14 @@ toevallig kreeg.
   Noem het totaal van Google (`google_place_stats.user_rating_count`) erbij als dat afwijkt.
 - **Een simulatie op een onvolledige bron is geen antwoord.** Zeg dat de bron onvolledig is
   voordat je een lijst geeft.
+
+## 2026-11-12 — Een vertypt domein bestaat vaak gewoon
+**Context:** Bij het bouwen van de e-mailcontrole (src/lib/email.ts) live nagemeten bij
+Cloudflare DNS: `hotmial.nl` en `zigo.nl` hebben een MX, `gmial.com` geeft SERVFAIL. Typosquatters
+registreren juist de vertypingen van grote providers. En `example.nl`, het adres in bijna alle
+formuliertests, heeft een null MX (`0 .`): met echte DNS in de tests zou elke inzending stranden.
+**Lesson:**
+- **Een DNS-check vangt alleen domeinen die niet bestaan (`gmail.con`), geen vertypingen.** Daar is
+  de suggestie ("Bedoelde je …?") voor, en daarom houdt die de eerste klik op versturen tegen.
+- **Tests mogen nooit echte DNS doen.** `src/test/setup.ts` laat elk verzoek naar `DOH_URL`
+  falen, dus elke test krijgt het fail-open-pad. Wie de check wil zien, zet zijn eigen fetch neer.
