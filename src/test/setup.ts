@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom";
+import { DOH_URL } from "@/lib/email";
 
 // jsdom kent deze observers niet; de carrousel (embla) valt er hard over zodra
 // een test een pagina rendert waar er één op staat.
@@ -41,3 +42,15 @@ Object.defineProperty(window, "matchMedia", {
     dispatchEvent: () => {},
   }),
 });
+
+// Geen echte DNS-verzoeken in tests. De e-mailvelden vragen bij Cloudflare na of er op het
+// domein mail kan aankomen (src/lib/email.ts). Zonder deze regel hangen formuliertests af van
+// het netwerk, en "example.nl" uit de fixtures heeft echt een null MX: elke inzending zou dan
+// stranden. Zo krijgt elke test het fail-open-pad (geen oordeel, gewoon door). Een test die de
+// check zelf wil zien, zet zijn eigen fetch neer.
+const echteFetch = globalThis.fetch;
+globalThis.fetch = ((invoer: RequestInfo | URL, opties?: RequestInit) => {
+  const url = invoer instanceof Request ? invoer.url : String(invoer);
+  if (url.startsWith(DOH_URL)) return Promise.reject(new TypeError("Geen DNS in tests"));
+  return echteFetch(invoer, opties);
+}) as typeof fetch;

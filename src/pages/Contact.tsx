@@ -20,6 +20,9 @@ import {
 import { displayPostcode, normalizePostcode, POSTCODE_RE, zoekAdres } from "@/lib/pdok";
 import { TELEFOON_FOUT, validatePhoneNL } from "@/lib/telefoon";
 import { Ster, VerplichtUitleg } from "@/components/VerplichtVeld";
+import { EmailHint } from "@/components/EmailHint";
+import { useEmailControle } from "@/hooks/useEmailControle";
+import { isGeldigEmail } from "@/lib/email";
 import "@/styles/contact.css";
 
 // Velden zoals de instap van de subsidietool: wit, radius 14, zachte inset-ring
@@ -101,7 +104,7 @@ const MAX_NOTES = 1000;
 
 // ---------- Validators ----------
 const NAME_RE = /^[\p{L}\s'\-]+$/u;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+// De e-mailregel (gelijk aan het CRM) en de typefout- en domeincheck staan in src/lib/email.ts.
 
 // Bewust géén HTML-escaping op de invoer: wat we opslaan moet exact zijn wat de
 // bezoeker typte. Escapen hoort bij het renderen (React doet dat zelf, en het
@@ -163,6 +166,12 @@ const Contact = () => {
       delete next[key];
       return next;
     });
+
+  // Typefout-suggestie en domeincheck op het e-mailveld (zie src/hooks/useEmailControle.ts).
+  const emailControle = useEmailControle(bewoner.email, (nieuw) => {
+    setBewoner((b) => ({ ...b, email: nieuw }));
+    clearError("email");
+  });
 
   // ---------- PDOK lookup (gedeeld met de subsidiecheck, zie src/lib/pdok.ts) ----------
   const lookupAdres = async () => {
@@ -234,7 +243,7 @@ const Contact = () => {
     // Haal die voorwaarde in n8n dus niet weg zolang dit zo is.
     if (!email) {
       if (!viaBellen) e.email = "Vul je e-mailadres in.";
-    } else if (!EMAIL_RE.test(email) || email.length > 255) e.email = "Dit lijkt geen geldig e-mailadres.";
+    } else if (!isGeldigEmail(email) || email.length > 255) e.email = "Dit lijkt geen geldig e-mailadres.";
 
     const tel = bewoner.telefoonnummer.trim();
     if (!tel) e.telefoonnummer = "Vul je telefoonnummer in.";
@@ -320,6 +329,13 @@ const Contact = () => {
     }
 
     setSubmitting(true);
+    // Pas na de gewone validatie, met de knop al op "bezig": kan er aantoonbaar geen mail
+    // aankomen, of lijkt het domein een vertyping (alleen de eerste klik), dan nu niet
+    // versturen. Een storing van de domeincheck laat de lead door (fail-open, hooguit 2 s).
+    if (!(await emailControle.magVersturen())) {
+      setSubmitting(false);
+      return;
+    }
     // Eén id voor dit lead-moment: in de dataLayer-push (GTM geeft hem als
     // eventID aan de Meta-pixel) én in `meta_event_id` op de lead. Zo is de Lead
     // uit de browser later te ontdubbelen tegen dezelfde Lead via de Conversions
@@ -606,17 +622,20 @@ const Contact = () => {
                             <label htmlFor="f-email-b" className={labelClass}>E-mailadres</label>
                             <input
                               id="f-email-b"
+                              ref={emailControle.ref}
                               name="email"
                               type="email"
                               autoComplete="email"
-                              aria-invalid={!!errors.email}
-                              aria-describedby={errors.email ? errId("email") : undefined}
-                              className={inputCls("email")}
+                              aria-invalid={!!errors.email || emailControle.ongeldig}
+                              aria-describedby={errors.email ? errId("email") : emailControle.describedBy}
+                              className={cx(inputCls("email"), emailControle.ongeldig && "ct-fout")}
                               value={bewoner.email}
                               onChange={onChangeBew("email")}
+                              onBlur={emailControle.controleer}
                               maxLength={255}
                             />
                             <FieldError name="email" />
+                            <EmailHint controle={emailControle} />
                           </div>
                         </div>
                       </>
@@ -699,17 +718,21 @@ const Contact = () => {
                         <label htmlFor="f-email-b" className={labelClass}>E-mailadres<Ster /></label>
                         <input
                           id="f-email-b"
+                          ref={emailControle.ref}
                           name="email"
                           type="email"
+                          autoComplete="email"
                           aria-required="true"
-                          aria-invalid={!!errors.email}
-                          aria-describedby={errors.email ? errId("email") : undefined}
-                          className={inputCls("email")}
+                          aria-invalid={!!errors.email || emailControle.ongeldig}
+                          aria-describedby={errors.email ? errId("email") : emailControle.describedBy}
+                          className={cx(inputCls("email"), emailControle.ongeldig && "ct-fout")}
                           value={bewoner.email}
                           onChange={onChangeBew("email")}
+                          onBlur={emailControle.controleer}
                           maxLength={255}
                         />
                         <FieldError name="email" />
+                        <EmailHint controle={emailControle} />
                       </div>
                       <div className="sm:col-span-4 min-w-0">
                         <label htmlFor="f-tel-b" className={labelClass}>Telefoonnummer<Ster /></label>

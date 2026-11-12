@@ -1,7 +1,9 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Check, Loader2, Send } from "lucide-react";
 
+import { EmailHint } from "@/components/EmailHint";
 import { WhatsAppLogo } from "@/components/WhatsAppLogo";
+import { useEmailControle } from "@/hooks/useEmailControle";
 import { formulierFoutMelding } from "@/lib/formulierFout";
 import { pushGtmEvent } from "@/lib/gtm";
 import type { PdokAdres } from "@/lib/pdok";
@@ -57,6 +59,12 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
   const [voornaam, setVoornaam] = useState("");
   const [achternaam, setAchternaam] = useState("");
   const [email, setEmail] = useState("");
+  // Typefout-suggestie en domeincheck (zie src/hooks/useEmailControle.ts). Alleen in gebruik
+  // als het e-mailveld er staat; wie door de poort kwam, is daar al gecontroleerd.
+  const emailControle = useEmailControle(email, (nieuw) => {
+    setEmail(nieuw);
+    setFout(null);
+  });
   // Hier stond de keuze "Ik word het liefst gemaild of gebeld", met een
   // telefoonveld dat verscheen zodra je "Gebeld" koos. Eruit: dit blok gaat over
   // één ding, je vraag stellen, en elke extra keuze leidt daarvan af. Wie door
@@ -118,6 +126,12 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
     }
 
     setBezig(true);
+    // Zie StapGegevens: geen mail mogelijk, of een vertyping (eerste klik), dan nu niet verder.
+    // Zonder e-mailveld (bekend contact) is het veld leeg en valt hier niets te controleren.
+    if (!(await emailControle.magVersturen())) {
+      setBezig(false);
+      return;
+    }
     try {
       // De enige echte vraag van de drie routes na de poort (zie
       // verstuurSubsidiecheckBericht): die komt in de communicatietab van de lead
@@ -292,20 +306,28 @@ export const DirectContact = ({ input, adres, overzichtUrl, voorstel }: DirectCo
             <label className="sr-only" htmlFor="sc-vraag-email">
               Je e-mailadres (verplicht)
             </label>
-            <input
-              id="sc-vraag-email"
-              type="email"
-              autoComplete="email"
-              aria-required="true"
-              placeholder="Je e-mailadres"
-              className={`${inputClass} sm:col-span-2`}
-              value={email}
-              maxLength={255}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setFout(null);
-              }}
-            />
+            {/* Veld en hint in één cel, anders zet een lege hint een extra gap in het raster. */}
+            <div className="sm:col-span-2">
+              <input
+                id="sc-vraag-email"
+                ref={emailControle.ref}
+                type="email"
+                autoComplete="email"
+                aria-required="true"
+                aria-invalid={emailControle.ongeldig}
+                aria-describedby={emailControle.describedBy}
+                placeholder="Je e-mailadres"
+                className={inputClass}
+                value={email}
+                maxLength={255}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setFout(null);
+                }}
+                onBlur={emailControle.controleer}
+              />
+              <EmailHint controle={emailControle} donker />
+            </div>
           </div>
         )}
 

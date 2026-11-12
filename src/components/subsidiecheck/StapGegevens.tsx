@@ -2,6 +2,8 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, FileCheck, HardHat, ListChecks, Loader2 } from "lucide-react";
 
+import { EmailHint } from "@/components/EmailHint";
+import { useEmailControle } from "@/hooks/useEmailControle";
 import { useLaadsequentie } from "@/hooks/useLaadsequentie";
 import { pandContourOpties, usePandContour } from "@/hooks/usePandContour";
 import { useSubsidieCheck } from "@/hooks/useSubsidieCheck";
@@ -154,6 +156,12 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
   const [voornaam, setVoornaam] = useState("");
   const [achternaam, setAchternaam] = useState("");
   const [email, setEmail] = useState("");
+  // Typefout-suggestie en domeincheck (zie src/hooks/useEmailControle.ts). Het overzicht gaat
+  // per mail naar dit adres: een vertypt domein betekent een bewoner die niets ontvangt.
+  const emailControle = useEmailControle(email, (nieuw) => {
+    setEmail(nieuw);
+    setFout(null);
+  });
   const [telefoon, setTelefoon] = useState("");
   // Pas na een klik op versturen: een veld dat dan nog leeg is, wordt rood
   // tot het gevuld is.
@@ -289,6 +297,13 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
     const toestemming = toestemmingVelden();
 
     setBezig(true);
+    // Na de gewone validatie: kan er aantoonbaar geen mail aankomen, of lijkt het domein een
+    // vertyping (alleen de eerste klik), dan nu niet verder. De hint staat dan onder het veld
+    // en de focus staat erin. Een storing van de domeincheck laat de lead door (fail-open).
+    if (!(await emailControle.magVersturen())) {
+      setBezig(false);
+      return;
+    }
     const verzondenOp = Date.now();
     // Eén id voor dit lead-moment: in de dataLayer-push (Meta krijgt hem als
     // eventID) én bij de lead in het CRM. Zo is een browser-event later te
@@ -531,21 +546,29 @@ export const StapGegevens = ({ input, adres, onOntgrendeld, overzichtUrl }: Stap
             <label className="sr-only" htmlFor="sc-gg-email">
               Je e-mailadres (verplicht)
             </label>
-            <input
-              id="sc-gg-email"
-              type="email"
-              autoComplete="email"
-              aria-required="true"
-              placeholder="Je e-mailadres"
-              aria-invalid={leeg(email)}
-              className={`${inputClass} col-span-2`}
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setFout(null);
-              }}
-              maxLength={255}
-            />
+            {/* Veld en hint samen in één cel: een losse (lege) hint als eigen cel zou
+                een extra rij met gap tussen e-mail en telefoon zetten. */}
+            <div className="col-span-2">
+              <input
+                id="sc-gg-email"
+                ref={emailControle.ref}
+                type="email"
+                autoComplete="email"
+                aria-required="true"
+                placeholder="Je e-mailadres"
+                aria-invalid={leeg(email) || emailControle.ongeldig}
+                aria-describedby={emailControle.describedBy}
+                className={inputClass}
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setFout(null);
+                }}
+                onBlur={emailControle.controleer}
+                maxLength={255}
+              />
+              <EmailHint controle={emailControle} />
+            </div>
             {/* Telefoon is op verzoek van de opdrachtgever weer verplicht. Let op:
                 een verplicht nummer is aantoonbaar de duurste veldkeuze in een
                 formulier; als de leadaantallen teruglopen is dit de eerste knop om
