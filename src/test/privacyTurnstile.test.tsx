@@ -28,6 +28,13 @@ describe("privacyverklaring", () => {
     expect(container.textContent).toContain("(waaronder Google, Microsoft en Cloudflare)");
   });
 
+  it("zegt dat de e-mailcontrole alleen het domein naar Cloudflare stuurt (src/lib/email.ts, DOH_URL)", () => {
+    const { container } = render(<Privacy />);
+    expect(container.textContent).toContain(
+      'daarvoor gaat alleen het deel na de @ (bijvoorbeeld "gmail.com"), niet uw volledige e-mailadres, naar de DNS-dienst van Cloudflare.',
+    );
+  });
+
   it("laat geen ruwe link-opmaak op de pagina staan", () => {
     const { container } = render(<Privacy />);
     expect(container.textContent).not.toMatch(/\]\(https?:/);
