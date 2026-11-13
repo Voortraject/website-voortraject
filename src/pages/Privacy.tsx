@@ -119,6 +119,8 @@ WhatsApp. Wij kunnen u via WhatsApp berichten sturen over uw aanvraag en uw offe
 
 Om onze formulieren te beschermen tegen spam en bots gebruiken wij Cloudflare Turnstile. In de [Turnstile Privacy Addendum](https://www.cloudflare.com/turnstile-privacy-policy/) leest u hoe Cloudflare daarbij met uw gegevens omgaat.
 
+Om typefouten in uw e-mailadres te voorkomen, controleren onze formulieren of er op het domein van uw e-mailadres mail kan aankomen; daarvoor gaat alleen het deel na de @ (bijvoorbeeld "gmail.com"), niet uw volledige e-mailadres, naar de DNS-dienst van Cloudflare.
+
 Meta-pixel. Om te meten welke advertenties op Facebook en Instagram tot een aanvraag leiden, gebruiken wij de Meta-pixel van Meta Platforms Ireland Ltd. De pixel laadt alleen na toestemming via het cookievenster. Meta ontvangt dan welke pagina's bezocht worden, of er een aanvraag is gedaan en technische gegevens zoals het IP-adres. Naam, e-mailadres, telefoonnummer en adres sturen wij niet naar Meta. Voor het verzamelen en doorgeven van deze gegevens zijn wij samen met Meta verantwoordelijk (artikel 26 AVG); wat Meta er daarna mee doet, valt onder het privacybeleid van Meta. Zie ook de cookieverklaring.
 
 Wij verstrekken uw persoonsgegevens niet aan derden voor hun eigen commerciële doeleinden, behalve via de Meta-pixel hierboven, en alleen na toestemming.`,
