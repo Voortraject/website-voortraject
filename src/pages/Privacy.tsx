@@ -57,7 +57,7 @@ Heeft u vragen of wilt u een verzoek indienen? Neem contact met ons op via info@
 • Gegevens over de woning: adres, bouwjaar, energielabel en andere energiegegevens, gewenste en uitgevoerde isolatie- en verduurzamingsmaatregelen, en foto's die tijdens de woningopname (schouw) worden gemaakt;
 • Subsidie- en dossiergegevens: gegevens over uw aanvraag, het advies, de offerte en de voortgang van uw traject;
 • Financiële gegevens: bankrekeningnummer (IBAN) en administratieve gegevens die nodig zijn voor de afhandeling van de dienstverlening;
-• Burgerservicenummer (BSN): uitsluitend tijdelijk en alleen wanneer dit voor een inkomensafhankelijke subsidie nodig is, om de aanvraag bij het SNN in te dienen (zie paragraaf 5);
+• Burgerservicenummer (BSN): uitsluitend tijdelijk en alleen wanneer dit voor de subsidieaanvraag nodig is: bij een inkomensafhankelijke subsidie van het SNN (op de inkomensverklaring) en bij een ISDE-aanvraag bij de RVO (zie paragraaf 5);
 • Zakelijke gegevens van uitvoerders: bedrijfsnaam, contactpersoon, zakelijke contactgegevens en KvK-gegevens;
 • Gespreksopnames: opnames van telefoongesprekken die u met ons voert en de uitwerking (transcriptie) en samenvatting daarvan (zie paragraaf 6);
 • Technische gegevens: IP-adres, apparaatgegevens en gegevens over uw gebruik van onze website.`,
@@ -78,6 +78,8 @@ Wanneer wij gegevens van uitvoerders of hun contactpersonen uit openbare bronnen
 
 Wij verwerken het BSN uitsluitend om de subsidieaanvraag, op basis van de door u verstrekte machtiging, samen met u of namens u bij het Samenwerkingsverband Noord-Nederland (SNN) in te dienen. Wij gebruiken het BSN voor geen enkel ander doel.
 
+Vraagt u via ons de ISDE-subsidie aan bij de Rijksdienst voor Ondernemend Nederland (RVO), dan vraagt de RVO bij de aanvraag uw burgerservicenummer. Dat vult u zelf in op uw persoonlijke pagina op mijn.voortraject.nl. Wij gebruiken het uitsluitend om uw ISDE-aanvraag bij de RVO in te dienen, bewaren het versleuteld en verwijderen het automatisch zodra de aanvraag is ingediend, en in elk geval uiterlijk 90 dagen nadat u het heeft ingevuld. Wie van ons het nummer inziet, leggen wij vast.
+
 Wij bewaren het BSN niet langer dan nodig. Het document met daarop uw BSN verwijderen wij automatisch binnen een week nadat wij het besluit van het SNN over de subsidieaanvraag hebben ontvangen. Tot dat besluit kan het SNN nog vragen stellen over de aanvraag; daarom moet het document tot dat moment beschikbaar blijven. Wijst het SNN de aanvraag af, dan bewaren wij het document totdat een eventueel bezwaar tegen dat besluit is afgerond, maar nooit langer dan zes maanden na het besluit. Daarna kunnen wij in uw dossier nog wel vastleggen of u op basis van de inkomenstoets in aanmerking komt voor een bepaalde (hogere) subsidie, maar uitsluitend de uitkomst, dus zonder uw BSN en zonder de onderliggende inkomensverklaring.`,
   },
   {
@@ -97,7 +99,7 @@ Wilt u niet dat uw gesprek wordt opgenomen, dan kunt u daartegen bezwaar maken (
     content: `Wij verwerken uw persoonsgegevens voor de volgende doeleinden, telkens op basis van een van de grondslagen uit artikel 6 AVG:
 
 • Het uitvoeren van onze overeenkomst met u of met een uitvoerder, waaronder advisering, woningopname, het opstellen van offertes en het begeleiden van uw traject. Grondslag: uitvoering van de overeenkomst of precontractuele maatregelen.
-• Het samen met u indienen van subsidieaanvragen bij het SNN. Grondslag: uitvoering van de overeenkomst. U verstrekt ons hiervoor een machtiging. Die machtiging geeft ons de bevoegdheid om de aanvraag samen met u of namens u in te dienen; zij betreft uw vertegenwoordiging en is geen afzonderlijke grondslag voor gegevensverwerking.
+• Het samen met u indienen van subsidieaanvragen bij het SNN of de RVO. Grondslag: uitvoering van de overeenkomst. U verstrekt ons hiervoor een machtiging. Die machtiging geeft ons de bevoegdheid om de aanvraag samen met u of namens u in te dienen; zij betreft uw vertegenwoordiging en is geen afzonderlijke grondslag voor gegevensverwerking.
 • Het koppelen van bewoners aan een geschikte uitvoerder en het delen van de daarvoor benodigde gegevens. Grondslag: uitvoering van de overeenkomst.
 • De administratieve en financiële afhandeling van onze dienstverlening. Grondslag: uitvoering van de overeenkomst en wettelijke verplichting.
 • Het voldoen aan wettelijke verplichtingen, waaronder de fiscale bewaarplicht. Grondslag: wettelijke verplichting.
@@ -112,6 +114,8 @@ Wilt u niet dat uw gesprek wordt opgenomen, dan kunt u daartegen bezwaar maken (
     content: `Uitvoerders en samenwerkingspartners. Om uw verduurzamingstraject uit te voeren, delen wij de daarvoor noodzakelijke gegevens met de door u gekozen of aan u gekoppelde uitvoerder.
 
 Samenwerkingsverband Noord-Nederland (SNN). Voor het indienen van een subsidieaanvraag verstrekken wij de daarvoor benodigde gegevens aan het SNN. Bij een inkomensafhankelijke subsidie hoort daar de inkomensverklaring met uw BSN bij; wij dienen deze namens of samen met u in en verwijderen het document binnen een week nadat wij het besluit van het SNN over de subsidieaanvraag hebben ontvangen (zie paragraaf 5).
+
+Rijksdienst voor Ondernemend Nederland (RVO). Voor het indienen van een ISDE-aanvraag verstrekken wij de daarvoor benodigde gegevens aan de RVO, waaronder uw BSN (zie paragraaf 5).
 
 Verwerkers. Voor onze dienstverlening maken wij gebruik van ICT-leveranciers die in onze opdracht persoonsgegevens verwerken, waaronder leveranciers van onze database, hosting, e-mail, automatisering, telefonie, boekhouding, digitaal ondertekenen, websiteanalyse en cookiebeheer. Met deze partijen sluiten wij verwerkersovereenkomsten conform artikel 28 AVG.
 
@@ -136,15 +140,16 @@ Voor websiteanalyse, e-mail en de beveiliging van onze formulieren maken wij geb
     content: `Wij bewaren uw persoonsgegevens niet langer dan noodzakelijk. Wij hanteren de volgende bewaartermijnen:
 
 • Projectdossiers (waaronder contact-, woning- en dossiergegevens): tot 10 jaar na afronding van het traject, mede met het oog op mogelijke aansprakelijkheid en de daarvoor geldende verjaringstermijnen. Voor subsidiestukken geldt een eigen, kortere termijn (zie hieronder). Beeldmateriaal van de woningopname bewaren wij niet langer dan nodig voor de uitvoering en eventuele garantie- of aansprakelijkheidsvragen;
-• Subsidiestukken (zoals het machtigingsformulier, offertes, facturen en betaalbewijzen): 5 jaar na het einde van de subsidie, omdat het SNN tot die tijd om de stukken kan vragen;
+• Subsidiestukken (zoals het machtigingsformulier, offertes, facturen en betaalbewijzen): 5 jaar na het einde van de subsidie, omdat het SNN of de RVO tot die tijd om de stukken kan vragen;
 • Administratieve en financiële gegevens: 7 jaar, op grond van de fiscale bewaarplicht;
 • Inkomensverklaring met BSN: wij verwijderen het document met het BSN automatisch binnen een week nadat wij het besluit van het SNN over de subsidieaanvraag hebben ontvangen. Bij een afwijzing bewaren wij het document totdat een eventueel bezwaar is afgerond, maar nooit langer dan zes maanden na het besluit (zie paragraaf 5);
+• BSN voor een ISDE-aanvraag: tot de aanvraag bij de RVO is ingediend, en nooit langer dan 90 dagen na ontvangst (zie paragraaf 5);
 • Gespreksopnames van telefoongesprekken: zolang uw dossier loopt; daarna verwijderen wij de opname en de uitwerking daarvan. Afspraken die voor uw traject van belang zijn, leggen wij als aantekening in uw dossier vast; die aantekening valt onder de bewaartermijn voor projectdossiers;
 • Websitegegevens: maximaal 2 jaar.`,
   },
   {
     title: "11. Beveiliging",
-    content: `Wij nemen passende technische en organisatorische maatregelen om uw persoonsgegevens te beschermen tegen verlies of onrechtmatige verwerking. Denk aan toegangsbeperking tot onze systemen, versleuteling van gegevens, dataminimalisatie en het onderbrengen van onze database binnen de EER. Documenten met een BSN verwerken wij alleen tijdelijk en met extra terughoudendheid, en wij verwijderen deze automatisch binnen een week nadat wij het besluit van het SNN over de subsidieaanvraag hebben ontvangen, of bij een afwijzing uiterlijk zes maanden na het besluit (zie paragraaf 5).`,
+    content: `Wij nemen passende technische en organisatorische maatregelen om uw persoonsgegevens te beschermen tegen verlies of onrechtmatige verwerking. Denk aan toegangsbeperking tot onze systemen, versleuteling van gegevens, dataminimalisatie en het onderbrengen van onze database binnen de EER. Documenten met een BSN verwerken wij alleen tijdelijk en met extra terughoudendheid, en wij verwijderen deze automatisch binnen een week nadat wij het besluit van het SNN over de subsidieaanvraag hebben ontvangen, of bij een afwijzing uiterlijk zes maanden na het besluit. Een BSN voor een ISDE-aanvraag bewaren wij versleuteld en verwijderen wij zodra de aanvraag is ingediend, uiterlijk na 90 dagen (zie paragraaf 5).`,
   },
   {
     title: "12. Geautomatiseerde besluitvorming",
@@ -196,7 +201,7 @@ const Privacy = () => {
               Privacyverklaring Voortraject
             </h1>
             <p className="hs-tekst mt-2 mb-8 text-[15px] italic md:mb-10">
-              Versie 28 oktober 2026
+              Versie 13 november 2026
             </p>
 
             {sections.map((section) => (
