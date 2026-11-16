@@ -58,6 +58,7 @@ Heeft u vragen of wilt u een verzoek indienen? Neem contact met ons op via info@
 • Subsidie- en dossiergegevens: gegevens over uw aanvraag, het advies, de offerte en de voortgang van uw traject;
 • Financiële gegevens: bankrekeningnummer (IBAN) en administratieve gegevens die nodig zijn voor de afhandeling van de dienstverlening;
 • Burgerservicenummer (BSN): uitsluitend tijdelijk en alleen wanneer dit voor de subsidieaanvraag nodig is: bij een inkomensafhankelijke subsidie van het SNN (op de inkomensverklaring) en bij een ISDE-aanvraag bij de RVO (zie paragraaf 5);
+• Gegevens voor een ISDE-aanvraag bij de RVO: naast uw BSN ook uw bankrekeningnummer (IBAN) en uw geboortedatum, uitsluitend tijdelijk (zie paragraaf 5);
 • Zakelijke gegevens van uitvoerders: bedrijfsnaam, contactpersoon, zakelijke contactgegevens en KvK-gegevens;
 • Gespreksopnames: opnames van telefoongesprekken die u met ons voert en de uitwerking (transcriptie) en samenvatting daarvan (zie paragraaf 6);
 • Technische gegevens: IP-adres, apparaatgegevens en gegevens over uw gebruik van onze website.`,
@@ -73,12 +74,12 @@ Heeft u vragen of wilt u een verzoek indienen? Neem contact met ons op via info@
 Wanneer wij gegevens van uitvoerders of hun contactpersonen uit openbare bronnen verkrijgen, informeren wij de betrokkene daarover overeenkomstig artikel 14 AVG.`,
   },
   {
-    title: "5. Verwerking van het burgerservicenummer (BSN)",
+    title: "5. Verwerking van het burgerservicenummer (BSN) en de gegevens voor een ISDE-aanvraag",
     content: `Voor bepaalde inkomensafhankelijke subsidies moet bij de aanvraag een inkomensverklaring van de Belastingdienst worden meegestuurd. Op deze inkomensverklaring staat het burgerservicenummer (BSN) van de aanvrager vermeld. In die gevallen verwerken wij dus tijdelijk een BSN.
 
 Wij verwerken het BSN uitsluitend om de subsidieaanvraag, op basis van de door u verstrekte machtiging, samen met u of namens u bij het Samenwerkingsverband Noord-Nederland (SNN) in te dienen. Wij gebruiken het BSN voor geen enkel ander doel.
 
-Vraagt u via ons de ISDE-subsidie aan bij de Rijksdienst voor Ondernemend Nederland (RVO), dan vraagt de RVO bij de aanvraag uw burgerservicenummer. Dat vult u zelf in op uw persoonlijke pagina op mijn.voortraject.nl. Wij gebruiken het uitsluitend om uw ISDE-aanvraag bij de RVO in te dienen, bewaren het versleuteld en verwijderen het automatisch zodra de aanvraag is ingediend, en in elk geval uiterlijk 90 dagen nadat u het heeft ingevuld. Wie van ons het nummer inziet, leggen wij vast.
+Vraagt u via ons de ISDE-subsidie aan bij de Rijksdienst voor Ondernemend Nederland (RVO), dan vraagt de RVO bij de aanvraag uw burgerservicenummer, uw bankrekeningnummer (IBAN), waarop de RVO de subsidie uitbetaalt, en uw geboortedatum. Die vult u zelf in op uw persoonlijke pagina op mijn.voortraject.nl. Wij gebruiken deze gegevens uitsluitend om uw ISDE-aanvraag bij de RVO in te dienen, bewaren ze versleuteld en verwijderen ze automatisch zodra de aanvraag is ingediend, en in elk geval uiterlijk 90 dagen nadat u ze heeft ingevuld. Wie van ons deze gegevens inziet, leggen wij vast.
 
 Wij bewaren het BSN niet langer dan nodig. Het document met daarop uw BSN verwijderen wij automatisch binnen een week nadat wij het besluit van het SNN over de subsidieaanvraag hebben ontvangen. Tot dat besluit kan het SNN nog vragen stellen over de aanvraag; daarom moet het document tot dat moment beschikbaar blijven. Wijst het SNN de aanvraag af, dan bewaren wij het document totdat een eventueel bezwaar tegen dat besluit is afgerond, maar nooit langer dan zes maanden na het besluit. Daarna kunnen wij in uw dossier nog wel vastleggen of u op basis van de inkomenstoets in aanmerking komt voor een bepaalde (hogere) subsidie, maar uitsluitend de uitkomst, dus zonder uw BSN en zonder de onderliggende inkomensverklaring.`,
   },
@@ -115,7 +116,7 @@ Wilt u niet dat uw gesprek wordt opgenomen, dan kunt u daartegen bezwaar maken (
 
 Samenwerkingsverband Noord-Nederland (SNN). Voor het indienen van een subsidieaanvraag verstrekken wij de daarvoor benodigde gegevens aan het SNN. Bij een inkomensafhankelijke subsidie hoort daar de inkomensverklaring met uw BSN bij; wij dienen deze namens of samen met u in en verwijderen het document binnen een week nadat wij het besluit van het SNN over de subsidieaanvraag hebben ontvangen (zie paragraaf 5).
 
-Rijksdienst voor Ondernemend Nederland (RVO). Voor het indienen van een ISDE-aanvraag verstrekken wij de daarvoor benodigde gegevens aan de RVO, waaronder uw BSN (zie paragraaf 5).
+Rijksdienst voor Ondernemend Nederland (RVO). Voor het indienen van een ISDE-aanvraag verstrekken wij de daarvoor benodigde gegevens aan de RVO, waaronder uw BSN, uw bankrekeningnummer (IBAN) en uw geboortedatum (zie paragraaf 5).
 
 Verwerkers. Voor onze dienstverlening maken wij gebruik van ICT-leveranciers die in onze opdracht persoonsgegevens verwerken, waaronder leveranciers van onze database, hosting, e-mail, automatisering, telefonie, boekhouding, digitaal ondertekenen, websiteanalyse en cookiebeheer. Met deze partijen sluiten wij verwerkersovereenkomsten conform artikel 28 AVG.
 
@@ -143,13 +144,13 @@ Voor websiteanalyse, e-mail en de beveiliging van onze formulieren maken wij geb
 • Subsidiestukken (zoals het machtigingsformulier, offertes, facturen en betaalbewijzen): 5 jaar na het einde van de subsidie, omdat het SNN of de RVO tot die tijd om de stukken kan vragen;
 • Administratieve en financiële gegevens: 7 jaar, op grond van de fiscale bewaarplicht;
 • Inkomensverklaring met BSN: wij verwijderen het document met het BSN automatisch binnen een week nadat wij het besluit van het SNN over de subsidieaanvraag hebben ontvangen. Bij een afwijzing bewaren wij het document totdat een eventueel bezwaar is afgerond, maar nooit langer dan zes maanden na het besluit (zie paragraaf 5);
-• BSN voor een ISDE-aanvraag: tot de aanvraag bij de RVO is ingediend, en nooit langer dan 90 dagen na ontvangst (zie paragraaf 5);
+• BSN, bankrekeningnummer (IBAN) en geboortedatum voor een ISDE-aanvraag: tot de aanvraag bij de RVO is ingediend, en nooit langer dan 90 dagen na ontvangst (zie paragraaf 5);
 • Gespreksopnames van telefoongesprekken: zolang uw dossier loopt; daarna verwijderen wij de opname en de uitwerking daarvan. Afspraken die voor uw traject van belang zijn, leggen wij als aantekening in uw dossier vast; die aantekening valt onder de bewaartermijn voor projectdossiers;
 • Websitegegevens: maximaal 2 jaar.`,
   },
   {
     title: "11. Beveiliging",
-    content: `Wij nemen passende technische en organisatorische maatregelen om uw persoonsgegevens te beschermen tegen verlies of onrechtmatige verwerking. Denk aan toegangsbeperking tot onze systemen, versleuteling van gegevens, dataminimalisatie en het onderbrengen van onze database binnen de EER. Documenten met een BSN verwerken wij alleen tijdelijk en met extra terughoudendheid, en wij verwijderen deze automatisch binnen een week nadat wij het besluit van het SNN over de subsidieaanvraag hebben ontvangen, of bij een afwijzing uiterlijk zes maanden na het besluit. Een BSN voor een ISDE-aanvraag bewaren wij versleuteld en verwijderen wij zodra de aanvraag is ingediend, uiterlijk na 90 dagen (zie paragraaf 5).`,
+    content: `Wij nemen passende technische en organisatorische maatregelen om uw persoonsgegevens te beschermen tegen verlies of onrechtmatige verwerking. Denk aan toegangsbeperking tot onze systemen, versleuteling van gegevens, dataminimalisatie en het onderbrengen van onze database binnen de EER. Documenten met een BSN verwerken wij alleen tijdelijk en met extra terughoudendheid, en wij verwijderen deze automatisch binnen een week nadat wij het besluit van het SNN over de subsidieaanvraag hebben ontvangen, of bij een afwijzing uiterlijk zes maanden na het besluit. Het BSN, het bankrekeningnummer en de geboortedatum voor een ISDE-aanvraag bewaren wij versleuteld en verwijderen wij zodra de aanvraag is ingediend, uiterlijk na 90 dagen (zie paragraaf 5).`,
   },
   {
     title: "12. Geautomatiseerde besluitvorming",
@@ -201,7 +202,7 @@ const Privacy = () => {
               Privacyverklaring Voortraject
             </h1>
             <p className="hs-tekst mt-2 mb-8 text-[15px] italic md:mb-10">
-              Versie 13 november 2026
+              Versie 16 november 2026
             </p>
 
             {sections.map((section) => (
