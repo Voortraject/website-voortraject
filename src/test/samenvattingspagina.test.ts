@@ -84,7 +84,9 @@ describe("kopie van de mail uit WF3 (n8n kf351AN7RUXX4kzf, node 'E-mail opmaken 
   it("heeft de omslag van WF3: logo, kaart van 640, inhoudscel en voettekst", () => {
     const pagina = samenvattingHtml(samenvatting(), `/adviesgesprek/${TOKEN}`);
     expect(LOGO_URL).toBe("https://voortraject.nl/mail/voortraject-logo-mail.png?v=1");
-    expect(pagina).toContain(`<img src="${LOGO_URL}" alt="voortraject" width="216" height="60"`);
+    // Logobalk variant C (besluit 17-11-2026), zoals WF3: logo 158x44, cel 20px 24px.
+    expect(pagina).toContain(`<img src="${LOGO_URL}" alt="voortraject" width="158" height="44"`);
+    expect(pagina).toContain("background-image: linear-gradient(#152C4E,#152C4E); padding: 20px 24px; text-align: center;");
     expect(pagina).toContain("max-width: 640px; background-color: #FFFFFF; border-radius: 12px; overflow: hidden;");
     expect(pagina).toContain("padding: 40px 32px; color: #152C4E; line-height: 1.6; font-size: 16px;");
     expect(pagina).toContain('<strong style="color: #152C4E;">Voortraject</strong><br> info@voortraject.nl<br>');
