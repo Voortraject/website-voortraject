@@ -59,6 +59,7 @@ Heeft u vragen of wilt u een verzoek indienen? Neem contact met ons op via info@
 • Financiële gegevens: bankrekeningnummer (IBAN) en administratieve gegevens die nodig zijn voor de afhandeling van de dienstverlening;
 • Burgerservicenummer (BSN): uitsluitend tijdelijk en alleen wanneer dit voor de subsidieaanvraag nodig is: bij een inkomensafhankelijke subsidie van het SNN (op de inkomensverklaring) en bij een ISDE-aanvraag bij de RVO (zie paragraaf 5);
 • Gegevens voor een ISDE-aanvraag bij de RVO: naast uw BSN ook uw bankrekeningnummer (IBAN) en uw geboortedatum, uitsluitend tijdelijk (zie paragraaf 5);
+• Gegevens van een digitale ondertekening: tekent u het machtigingsformulier voor een ISDE-aanvraag op uw persoonlijke pagina op mijn.voortraject.nl, dan leggen wij uw handtekening (of de naam die u typt), het tijdstip, uw IP-adres en de gegevens van uw browser vast, als bewijs van de machtiging;
 • Zakelijke gegevens van uitvoerders: bedrijfsnaam, contactpersoon, zakelijke contactgegevens en KvK-gegevens;
 • Gespreksopnames: opnames van telefoongesprekken die u met ons voert en de uitwerking (transcriptie) en samenvatting daarvan (zie paragraaf 6);
 • Technische gegevens: IP-adres, apparaatgegevens en gegevens over uw gebruik van onze website.`,
@@ -142,6 +143,7 @@ Voor websiteanalyse, e-mail en de beveiliging van onze formulieren maken wij geb
 
 • Projectdossiers (waaronder contact-, woning- en dossiergegevens): tot 10 jaar na afronding van het traject, mede met het oog op mogelijke aansprakelijkheid en de daarvoor geldende verjaringstermijnen. Voor subsidiestukken geldt een eigen, kortere termijn (zie hieronder). Beeldmateriaal van de woningopname bewaren wij niet langer dan nodig voor de uitvoering en eventuele garantie- of aansprakelijkheidsvragen;
 • Subsidiestukken (zoals het machtigingsformulier, offertes, facturen en betaalbewijzen): 5 jaar na het einde van de subsidie, omdat het SNN of de RVO tot die tijd om de stukken kan vragen;
+• Een digitaal ondertekend machtigingsformulier en de gegevens van die ondertekening (handtekening, tijdstip, IP-adres en browser): even lang als de subsidiestukken, omdat de RVO om de machtiging kan vragen;
 • Administratieve en financiële gegevens: 7 jaar, op grond van de fiscale bewaarplicht;
 • Inkomensverklaring met BSN: wij verwijderen het document met het BSN automatisch binnen een week nadat wij het besluit van het SNN over de subsidieaanvraag hebben ontvangen. Bij een afwijzing bewaren wij het document totdat een eventueel bezwaar is afgerond, maar nooit langer dan zes maanden na het besluit (zie paragraaf 5);
 • BSN, bankrekeningnummer (IBAN) en geboortedatum voor een ISDE-aanvraag: tot de aanvraag bij de RVO is ingediend, en nooit langer dan 90 dagen na ontvangst (zie paragraaf 5);
@@ -202,7 +204,7 @@ const Privacy = () => {
               Privacyverklaring Voortraject
             </h1>
             <p className="hs-tekst mt-2 mb-8 text-[15px] italic md:mb-10">
-              Versie 16 november 2026
+              Versie 17 november 2026
             </p>
 
             {sections.map((section) => (
