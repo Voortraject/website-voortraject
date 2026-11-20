@@ -34,14 +34,27 @@
     text-shadow: 0 1px 2px hsl(var(--hero-waas) / 0.45), 0 2px 14px hsl(var(--hero-waas) / 0.55);
   }
 }
+/* Desktop: donker links voor de tekst, het lichtst rond de gezichten (rond
+   75%), en rechts weer wat donkerder, zodat het felle raam niet meer de
+   aandacht trekt dan de mensen. Gemeten (november 2026): het raam was 3,2x zo
+   licht als het gezicht van de adviseur, nu 2,6x; de gezichten zijn lichter
+   dan voorheen. Links stond nog op de stand van het inktblauwe verloop (0.78),
+   en zwart maakt bij dezelfde stand donkerder. Contrast van het gele
+   "subsidies" op de foto: mediaan 4,0:1 (grote tekst vraagt 3:1).
+   Daarbovenop een zacht vignet rechtsboven: daar zit het felle groen van de
+   tuin, dat het verloop van links naar rechts niet apart kan dempen (hoek van
+   2,8x naar 2,2x zo licht als het gezicht; de gezichten blijven gelijk). */
 @media (min-width: 768px) {
   .home-hero-waas {
-    background: linear-gradient(
-      90deg,
-      hsl(var(--hero-waas) / 0.78) 0%,
-      hsl(var(--hero-waas) / 0.42) 52%,
-      hsl(var(--hero-waas) / 0.12) 100%
-    );
+    background:
+      radial-gradient(45% 70% at 100% 0%, hsl(var(--hero-waas) / 0.35), hsl(var(--hero-waas) / 0)),
+      linear-gradient(
+        90deg,
+        hsl(var(--hero-waas) / 0.66) 0%,
+        hsl(var(--hero-waas) / 0.36) 52%,
+        hsl(var(--hero-waas) / 0.2) 75%,
+        hsl(var(--hero-waas) / 0.3) 100%
+      );
   }
 }
 
