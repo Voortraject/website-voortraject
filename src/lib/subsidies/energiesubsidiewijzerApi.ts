@@ -113,7 +113,9 @@ const ALLE_BEWONERTYPES: Bewonertype[] = ["woningeigenaar", "huurder", "vve", "v
 const FILTER_ID_NAAR_MAATREGEL = new Map<string, Maatregel>(
   (Object.entries(MAATREGEL_FILTER_ID) as [Maatregel, string][]).map(([m, id]) => [id, m]),
 );
-const RESIDENT_NAAR_BEWONERTYPE = new Map<string, Bewonertype>(
+// Ook gebruikt door lokaleAanvullingen.ts, voor het bewonertype dat de edge
+// function in de waarden van de bron binnenkrijgt. Sleutels in kleine letters.
+export const RESIDENT_NAAR_BEWONERTYPE = new Map<string, Bewonertype>(
   (Object.entries(BEWONERTYPE_RESIDENT) as [Bewonertype, string][]).map(([b, label]) => [
     label.toLowerCase(),
     b,

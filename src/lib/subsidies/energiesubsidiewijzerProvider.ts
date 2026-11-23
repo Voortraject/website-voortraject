@@ -7,6 +7,7 @@ import {
   type EswApiRegeling,
 } from "./energiesubsidiewijzerApi";
 import { pasGebiedscorrectiesToe } from "./gebiedscorrecties";
+import { pasLokaleAanvullingenToe } from "./lokaleAanvullingen";
 import type { SubsidieProvider } from "./provider";
 import {
   BEWONERTYPE_RESIDENT,
@@ -67,7 +68,7 @@ async function haalViaDevProxy(input: SubsidieCheckInput): Promise<SubsidieRegel
   const data = await res.json();
   if (!Array.isArray(data)) throw new Error("Energiesubsidiewijzer-API gaf geen lijst terug");
   const regelingen = filterOpMaatregelen(data as EswApiRegeling[], input.maatregelen).map(naarRegeling);
-  return pasGebiedscorrectiesToe(regelingen, input.postcode);
+  return pasLokaleAanvullingenToe(pasGebiedscorrectiesToe(regelingen, input.postcode), input);
 }
 
 export const energiesubsidiewijzerProvider: SubsidieProvider = {
@@ -82,12 +83,13 @@ export const energiesubsidiewijzerProvider: SubsidieProvider = {
     // Een lege-maar-geldige lijst (0 regelingen voor deze situatie) komt gewoon
     // door en toont de nette "geen regelingen"-staat.
     //
-    // De function past de gebiedscorrecties al toe; hier doen we het nog een
-    // keer. Dat kan veilig (twee keer toepassen geeft hetzelfde) en zo klopt de
-    // site ook als de function nog een oudere versie draait: de site gaat
-    // automatisch live met main, de function wordt met de hand gedeployed.
+    // De function past de gebiedscorrecties en de lokale aanvullingen al toe;
+    // hier doen we het nog een keer. Dat kan veilig (twee keer toepassen geeft
+    // hetzelfde) en zo klopt de site ook als de function nog een oudere versie
+    // draait: de site gaat automatisch live met main, de function wordt met de
+    // hand gedeployed.
     if (!FUNCTIE_URL) return await haalViaDevProxy(input);
     const regelingen = await haalViaFunctie(input.postcode, bouwEswFilterQuery(input.bewonertype, input.maatregelen));
-    return pasGebiedscorrectiesToe(regelingen, input.postcode);
+    return pasLokaleAanvullingenToe(pasGebiedscorrectiesToe(regelingen, input.postcode), input);
   },
 };

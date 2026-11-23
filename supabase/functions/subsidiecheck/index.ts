@@ -37,6 +37,10 @@
 // postcodegebieden.ts), en zet hij er soms een veld `alleenAls` bij. Dat veld
 // is nieuw; de CRM-app toont het nog niet.
 //
+// Sinds 2026-11-23 zet de function ook regelingen bij die Milieu Centraal niet
+// kent (de Oldambtse regeling naast Nij Begun; zie lokaleAanvullingen.ts). Zelfde
+// vorm als een regeling uit de bron, dus geen nieuw veld in het contract.
+//
 // Secret: ESW_API_KEY (Milieu Centraal). Deze function raakt de database niet.
 // verify_jwt = false (zie config.toml) omdat de checker publiek en anoniem te
 // gebruiken is.
@@ -48,6 +52,7 @@ import {
   type EswApiRegeling,
 } from "./energiesubsidiewijzerApi.ts";
 import { pasGebiedscorrectiesToe } from "./gebiedscorrecties.ts";
+import { invoerUitFunctieQuery, pasLokaleAanvullingenToe } from "./lokaleAanvullingen.ts";
 import type { SubsidieRegeling } from "./types.ts";
 
 const BRON = "https://www.verbeterjehuis.nl";
@@ -243,13 +248,19 @@ Deno.serve(async (req: Request) => {
   const filters = url.searchParams.getAll("filter").sort(); // sorteren → stabiele cachesleutel
   for (const f of filters) bron.append("filter", f);
   const cacheKey = `${postcode}|${resident ?? ""}|${filters.join(",")}`;
+  // Na de caches toegepast, zodat een wijziging in lokaleAanvullingen.ts meteen
+  // na de deploy geldt en niet pas als de cache verloopt.
+  const aanvulling = invoerUitFunctieQuery(postcode, resident, filters);
 
   // Route 1. Faalt de API, dan gaan we door naar de oude route in plaats van de
   // bezoeker een foutmelding te geven: een storing bij hen mag ons niet stilzetten.
   if (API_KEY) {
     try {
       const ruw = await haalViaApi(postcode, resident ?? "");
-      const regelingen = pasGebiedscorrectiesToe(filterOpFilterIds(ruw, filters).map(naarRegeling), postcode);
+      const regelingen = pasLokaleAanvullingenToe(
+        pasGebiedscorrectiesToe(filterOpFilterIds(ruw, filters).map(naarRegeling), postcode),
+        aanvulling,
+      );
       return json({ postcode, regelingen, bron: "Energiesubsidiewijzer", via: "api" });
     } catch (err) {
       console.error("Energiesubsidiewijzer-API mislukt, terug naar de oude route:", err);
@@ -258,7 +269,10 @@ Deno.serve(async (req: Request) => {
 
   // Route 2 (vangnet).
   try {
-    const regelingen = pasGebiedscorrectiesToe(await haalRegelingen(cacheKey, bron.toString()), postcode);
+    const regelingen = pasLokaleAanvullingenToe(
+      pasGebiedscorrectiesToe(await haalRegelingen(cacheKey, bron.toString()), postcode),
+      aanvulling,
+    );
     return json({ postcode, regelingen, bron: "Energiesubsidiewijzer", via: "scrape" });
   } catch (err) {
     // Beide routes plat. De frontend toont dan de eerlijke foutstaat met
