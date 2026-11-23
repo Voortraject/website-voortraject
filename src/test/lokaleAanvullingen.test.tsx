@@ -5,15 +5,17 @@ import { render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Milieu Centraal kent de Oldambtse regeling niet (live gecontroleerd op
-// 2026-11-23 met 9671 CD). Deze tests houden de lokale aanvulling daarop vast.
-// Zie src/lib/subsidies/lokaleAanvullingen.ts.
+// 2026-11-23 met 9671 CD). Deze tests houden de lokale aanvulling daarop vast:
+// twee kaarten, zoals de verordening zelf twee onderdelen noemt. Zie
+// src/lib/subsidies/lokaleAanvullingen.ts.
 
 import { SubsidieCard } from "@/components/subsidiecheck/SubsidieCard";
 import { naarRegeling, type EswApiRegeling } from "@/lib/subsidies/energiesubsidiewijzerApi";
 import {
   LOKALE_AANVULLINGEN,
   OLDAMBT,
-  OLDAMBT_VERWARMT,
+  OLDAMBT_ISOLATIE,
+  OLDAMBT_ONDERHOUD,
   invoerUitFunctieQuery,
   pasLokaleAanvullingenToe,
   type AanvullingInvoer,
@@ -25,7 +27,14 @@ const fixture = JSON.parse(
 ) as EswApiRegeling[];
 const echt = fixture.map(naarRegeling);
 
-const ID = OLDAMBT_VERWARMT.id;
+const ISOLATIE = OLDAMBT_ISOLATIE.id;
+const ONDERHOUD = OLDAMBT_ONDERHOUD.id;
+const BEIDE = [ISOLATIE, ONDERHOUD];
+const KAARTEN = [OLDAMBT_ISOLATIE, OLDAMBT_ONDERHOUD];
+
+// Een vaste datum ruim vóór de einddatum, zodat de tests niet in 2029 omvallen.
+const NU = new Date("2026-11-23T12:00:00Z");
+
 const ids = (lijst: SubsidieRegeling[]) => lijst.map((r) => r.id);
 const invoer = (extra: Partial<AanvullingInvoer> = {}): AanvullingInvoer => ({
   postcode: "9671CD",
@@ -33,130 +42,183 @@ const invoer = (extra: Partial<AanvullingInvoer> = {}): AanvullingInvoer => ({
   maatregelen: [],
   ...extra,
 });
-const met = (extra: Partial<AanvullingInvoer> = {}, lijst: SubsidieRegeling[] = echt) =>
-  ids(pasLokaleAanvullingenToe(lijst, invoer(extra)));
+const toepassen = (lijst: SubsidieRegeling[], extra: Partial<AanvullingInvoer> = {}, nu = NU) =>
+  pasLokaleAanvullingenToe(lijst, invoer(extra), LOKALE_AANVULLINGEN, nu);
+const erbij = (extra: Partial<AanvullingInvoer> = {}, lijst: SubsidieRegeling[] = echt) =>
+  ids(toepassen(lijst, extra)).filter((id) => BEIDE.includes(id));
 
 describe("Oldambt Verwarmt: alleen in Oldambt", () => {
-  it("een Oldambtse postcode krijgt hem", () => {
-    expect(met()).toContain(ID);
-    expect(met({ postcode: "9944AA" })).toContain(ID); // Nieuwolda
+  it("een Oldambtse postcode krijgt beide kaarten", () => {
+    expect(erbij()).toEqual(BEIDE);
+    expect(erbij({ postcode: "9944AA" })).toEqual(BEIDE); // Nieuwolda
   });
 
   it("9945 (Eemsdelta) en 9641 (Veendam) niet", () => {
-    expect(met({ postcode: "9945AA" })).not.toContain(ID);
-    expect(met({ postcode: "9641AA" })).not.toContain(ID);
+    expect(erbij({ postcode: "9945AA" })).toEqual([]);
+    expect(erbij({ postcode: "9641AA" })).toEqual([]);
   });
 
   it("een onleesbare postcode niet", () => {
-    expect(met({ postcode: "" })).not.toContain(ID);
-    expect(met({ postcode: "onzin" })).not.toContain(ID);
+    expect(erbij({ postcode: "" })).toEqual([]);
+    expect(erbij({ postcode: "onzin" })).toEqual([]);
   });
 
   it("verdraagt spaties en kleine letters", () => {
-    expect(met({ postcode: " 9671 cd " })).toContain(ID);
+    expect(erbij({ postcode: " 9671 cd " })).toEqual(BEIDE);
   });
 
   it("de bestaande regelingen blijven staan, in dezelfde volgorde", () => {
-    const uit = pasLokaleAanvullingenToe(echt, invoer());
+    const uit = toepassen(echt);
     expect(uit.slice(0, echt.length)).toEqual(echt);
-    expect(uit).toHaveLength(echt.length + 1);
+    expect(uit).toHaveLength(echt.length + 2);
   });
 });
 
 describe("Oldambt Verwarmt: alleen voor wie hem kan krijgen", () => {
   it("een huurder niet", () => {
-    expect(met({ bewonertype: "huurder" })).not.toContain(ID);
+    expect(erbij({ bewonertype: "huurder" })).toEqual([]);
   });
 
   it("zonder bewonertype niet", () => {
-    expect(met({ bewonertype: undefined })).not.toContain(ID);
+    expect(erbij({ bewonertype: undefined })).toEqual([]);
   });
 
   it("alleen zonnepanelen gekozen: niet", () => {
-    expect(met({ maatregelen: ["zonnepanelen"] })).not.toContain(ID);
+    expect(erbij({ maatregelen: ["zonnepanelen"] })).toEqual([]);
   });
 
   it("isolatie of ventilatie gekozen, of niets (= alles): wel", () => {
-    expect(met({ maatregelen: ["isolatie"] })).toContain(ID);
-    expect(met({ maatregelen: ["ventilatie", "zonnepanelen"] })).toContain(ID);
-    expect(met({ maatregelen: [] })).toContain(ID);
+    expect(erbij({ maatregelen: ["isolatie"] })).toEqual(BEIDE);
+    expect(erbij({ maatregelen: ["ventilatie", "zonnepanelen"] })).toEqual(BEIDE);
+    expect(erbij({ maatregelen: [] })).toEqual(BEIDE);
   });
 
   it("maatregelen die we niet kunnen lezen: niet", () => {
-    expect(met({ maatregelen: undefined })).not.toContain(ID);
+    expect(erbij({ maatregelen: undefined })).toEqual([]);
+  });
+});
+
+describe("Oldambt Verwarmt: na de einddatum niet meer", () => {
+  // "tot en met 31 december 2028" (art. 11 lid 1), in Nederlandse tijd.
+  it("op de laatste dag nog wel, tot middernacht in Amsterdam", () => {
+    expect(ids(toepassen([], {}, new Date("2028-12-31T22:59:59Z")))).toEqual(BEIDE);
+  });
+
+  it("vanaf 1 januari 2029 00:00 in Amsterdam niet meer", () => {
+    expect(ids(toepassen([], {}, new Date("2028-12-31T23:00:00Z")))).toEqual([]);
+    expect(ids(toepassen([], {}, new Date("2029-03-01T12:00:00Z")))).toEqual([]);
+  });
+
+  it("de einddatum is 1 januari 2029 00:00 Amsterdam (UTC+1)", () => {
+    for (const r of KAARTEN) expect(r.looptAfOp, r.id).toBe("2028-12-31T23:00:00Z");
   });
 });
 
 describe("Oldambt Verwarmt: nooit dubbel", () => {
-  it("levert Milieu Centraal hem zelf, dan zetten we hem er niet bij", () => {
+  it("levert Milieu Centraal hem zelf, dan zetten we geen van beide erbij", () => {
     const vanMc: SubsidieRegeling = {
-      ...OLDAMBT_VERWARMT,
+      ...OLDAMBT_ISOLATIE,
       id: "subsidieregeling-oldambt-verwarmt",
-      titel: "Subsidieregeling Oldambt Verwarmt",
+      titel: "Subsidieregeling isolatie en ventilatie Oldambt Verwarmt 2026 – 2028",
     };
-    const uit = pasLokaleAanvullingenToe([...echt, vanMc], invoer());
-    expect(ids(uit)).not.toContain(ID);
+    const uit = toepassen([...echt, vanMc]);
+    expect(ids(uit).filter((id) => BEIDE.includes(id))).toEqual([]);
     expect(ids(uit)).toContain("subsidieregeling-oldambt-verwarmt");
   });
 
   it("herkent de titel ook in andere hoofdletters", () => {
-    const vanMc = { ...OLDAMBT_VERWARMT, id: "x", titel: "Subsidie isolatie OLDAMBT VERWARMT" };
-    expect(met({}, [vanMc])).toEqual(["x"]);
+    const vanMc = { ...OLDAMBT_ISOLATIE, id: "x", titel: "Subsidie isolatie OLDAMBT VERWARMT" };
+    expect(ids(toepassen([vanMc]))).toEqual(["x"]);
   });
 
   it("twee keer toepassen geeft hetzelfde als één keer", () => {
-    const een = pasLokaleAanvullingenToe(echt, invoer());
-    const twee = pasLokaleAanvullingenToe(een, invoer());
+    const een = toepassen(echt);
+    const twee = toepassen(een);
     expect(twee).toEqual(een);
-    expect(ids(twee).filter((id) => id === ID)).toHaveLength(1);
+    for (const id of BEIDE) expect(ids(twee).filter((x) => x === id)).toHaveLength(1);
+  });
+
+  it("elke kaart heeft een eigen id", () => {
+    expect(new Set(LOKALE_AANVULLINGEN.map((a) => a.regeling.id)).size).toBe(LOKALE_AANVULLINGEN.length);
   });
 });
 
-describe("de kaart", () => {
+describe("kaart 1: extra isolatievergoeding", () => {
   it("is een gemeentelijke subsidie tot € 5.000, met de gemeentepagina als bron", () => {
-    expect(OLDAMBT_VERWARMT).toMatchObject({
-      titel: "Subsidieregeling isolatie en ventilatie Oldambt Verwarmt 2026 – 2028",
+    expect(OLDAMBT_ISOLATIE).toMatchObject({
+      titel: "Oldambt Verwarmt 2026 – 2028: extra isolatievergoeding",
+      niveau: "gemeente",
+      type: "subsidie",
+      aanbieder: "Gemeente Oldambt",
+      bedragIndicatie: "tot € 5.000",
+      bedragToelichting:
+        "Maximaal een verdubbeling van het bedrag dat op grond van de Subsidie isolatieaanpak Nij Begun wordt verstrekt, met een maximum van € 5.000 per woning.",
+      bronUrl: "https://www.gemeente-oldambt.nl/subsidies-en-leningen-voor-verduurzaming",
+      doelgroepen: ["woningeigenaar"],
+      maatregelen: ["isolatie", "ventilatie"],
+    });
+  });
+
+  it("noemt geen onderhoud en geen inkomensgrens", () => {
+    // Voortraject 2026-11-23: voor isolatie en ventilatie geldt geen
+    // inkomensgrens. Die geldt alleen voor het onderhoud (art. 7 lid 4).
+    const tekst = Object.values(OLDAMBT_ISOLATIE).join(" ");
+    expect(tekst).not.toMatch(/onderhoud/i);
+    expect(tekst).not.toMatch(/140%|inkomen/i);
+  });
+});
+
+describe("kaart 2: noodzakelijk onderhoud", () => {
+  it("is een gemeentelijke subsidie tot € 5.000, met de gemeentepagina als bron", () => {
+    expect(OLDAMBT_ONDERHOUD).toMatchObject({
+      titel: "Oldambt Verwarmt 2026 – 2028: noodzakelijk onderhoud",
       niveau: "gemeente",
       type: "subsidie",
       aanbieder: "Gemeente Oldambt",
       bedragIndicatie: "tot € 5.000",
       bronUrl: "https://www.gemeente-oldambt.nl/subsidies-en-leningen-voor-verduurzaming",
-      looptAfOp: "2028-12-31T00:00:00Z",
       doelgroepen: ["woningeigenaar"],
+      maatregelen: ["isolatie", "ventilatie"],
     });
-    expect(OLDAMBT_VERWARMT.maatregelen).toEqual(["isolatie", "ventilatie"]);
+    expect(OLDAMBT_ONDERHOUD.beperktTot).toBeUndefined();
   });
 
-  it("noemt geen inkomensgrens voor het isolatiedeel", () => {
-    // Voortraject 2026-11-23: voor isolatie en ventilatie geldt geen
-    // inkomensgrens. Alleen het onderhoud is beperkt tot 140% van het sociaal
-    // minimum (art. 7 lid 4), en dat staat er dan ook zo bij.
-    const tekst = [
-      OLDAMBT_VERWARMT.omschrijving,
-      OLDAMBT_VERWARMT.alleenAls,
-      OLDAMBT_VERWARMT.voorWie,
-      OLDAMBT_VERWARMT.belangrijksteVoorwaarde,
-    ].join(" ");
-    expect(tekst).not.toMatch(/140%|inkomen/);
-    expect(OLDAMBT_VERWARMT.bedragToelichting).toMatch(/onderhoud.*140% van het sociaal minimum/);
+  it("de inkomensgrens en het rapport staan in de voorwaarde onder de titel", () => {
+    expect(OLDAMBT_ONDERHOUD.alleenAls).toMatch(/^je verzamelinkomen tot 140% van het sociaal minimum is/);
+    expect(OLDAMBT_ONDERHOUD.alleenAls).toMatch(/bouwkundig rapport of isolatieplan/);
+    expect(OLDAMBT_ONDERHOUD.bedragToelichting).toMatch(/bouwkundig rapport of isolatieplan/);
   });
 
-  it("zet de voorwaarde die we niet uit het adres halen onder de titel", () => {
-    const [r] = pasLokaleAanvullingenToe([], invoer());
-    render(<SubsidieCard regeling={r} />);
-    expect(screen.getByText(`Alleen als ${OLDAMBT_VERWARMT.alleenAls}`)).toBeInTheDocument();
-    expect(screen.getByText("tot € 5.000")).toBeInTheDocument();
+  it("de inkomensgrens staat alleen op deze kaart", () => {
+    const metGrens = KAARTEN.filter((r) => /140%/.test(Object.values(r).join(" ")));
+    expect(metGrens).toEqual([OLDAMBT_ONDERHOUD]);
+  });
+});
+
+describe("beide kaarten", () => {
+  it("zetten de voorwaarde die we niet uit het adres halen onder de titel", () => {
+    for (const r of toepassen([])) {
+      const { unmount } = render(<SubsidieCard regeling={r} />);
+      expect(screen.getByText(`Alleen als ${r.alleenAls}`)).toBeInTheDocument();
+      expect(screen.getByText("tot € 5.000")).toBeInTheDocument();
+      unmount();
+    }
   });
 
-  it("wordt nooit het grote getal bovenaan (voorwaardelijk)", () => {
-    const lijst = pasLokaleAanvullingenToe([], invoer());
-    expect(topBedragen(lijst).subsidie).toBeUndefined();
+  it("worden nooit het grote getal bovenaan (voorwaardelijk)", () => {
+    expect(topBedragen(toepassen([])).subsidie).toBeUndefined();
   });
 
   it("geen gedachtestreepje in de zinnen voor bewoners", () => {
-    for (const veld of ["omschrijving", "alleenAls", "voorWie", "belangrijksteVoorwaarde", "bedragToelichting"] as const) {
-      expect(OLDAMBT_VERWARMT[veld], veld).not.toMatch(/[—–]/);
+    for (const r of KAARTEN) {
+      for (const veld of ["omschrijving", "alleenAls", "voorWie", "belangrijksteVoorwaarde", "bedragToelichting"] as const) {
+        expect(r[veld], `${r.id}.${veld}`).not.toMatch(/[—–]/);
+      }
     }
+  });
+
+  it("de voorwaarde past in de mail (300 tekens)", () => {
+    for (const r of KAARTEN) expect(r.alleenAls!.length, r.id).toBeLessThanOrEqual(300);
   });
 });
 
@@ -196,9 +258,11 @@ describe("in de edge function: de queryparameters van de bron", () => {
     expect(invoerUitFunctieQuery("9671CD", "Woningeigenaar", ["9999"]).maatregelen).toBeUndefined();
   });
 
-  it("een huurder via de function krijgt hem niet, een eigenaar wel", () => {
-    expect(ids(pasLokaleAanvullingenToe([], invoerUitFunctieQuery("9671CD", "Huurder", [])))).toEqual([]);
-    expect(ids(pasLokaleAanvullingenToe([], invoerUitFunctieQuery("9671CD", "Woningeigenaar", ["1581"])))).toEqual([ID]);
+  it("een huurder via de function krijgt ze niet, een eigenaar wel", () => {
+    const via = (resident: string, filters: string[]) =>
+      ids(pasLokaleAanvullingenToe([], invoerUitFunctieQuery("9671CD", resident, filters), LOKALE_AANVULLINGEN, NU));
+    expect(via("Huurder", [])).toEqual([]);
+    expect(via("Woningeigenaar", ["1581"])).toEqual(BEIDE);
   });
 });
 
@@ -206,12 +270,14 @@ describe("de site vult zelf ook aan", () => {
   // De site gaat automatisch live met main, de function wordt met de hand
   // gedeployed. Tot die deploy moet de site de regeling toch tonen.
   afterEach(() => {
+    vi.useRealTimers();
     vi.unstubAllEnvs();
     vi.unstubAllGlobals();
     vi.resetModules();
   });
 
   const check = async (antwoord: SubsidieRegeling[]) => {
+    vi.useFakeTimers({ now: NU, toFake: ["Date"] });
     vi.stubEnv("VITE_SUBSIDIECHECK_URL", "https://functie.test/subsidiecheck");
     vi.stubGlobal(
       "fetch",
@@ -227,27 +293,31 @@ describe("de site vult zelf ook aan", () => {
     });
   };
 
-  it("zet hem erbij als de function hem (nog) niet geeft", async () => {
-    expect(ids(await check(echt))).toContain(ID);
+  it("zet ze erbij als de function ze (nog) niet geeft", async () => {
+    expect(ids(await check(echt)).filter((id) => BEIDE.includes(id))).toEqual(BEIDE);
   });
 
-  it("niet dubbel als de function hem al geeft", async () => {
-    const uit = await check([...echt, OLDAMBT_VERWARMT]);
-    expect(ids(uit).filter((id) => id === ID)).toHaveLength(1);
+  it("niet dubbel als de function ze al geeft", async () => {
+    const uit = await check([...echt, ...KAARTEN]);
+    for (const id of BEIDE) expect(ids(uit).filter((x) => x === id)).toHaveLength(1);
   });
 });
 
-describe("Deno-kopie", () => {
-  it("lokaleAanvullingen.ts is gelijk aan de bron", () => {
-    const lees = (pad: string) => readFileSync(resolve(__dirname, pad), "utf8").replace(/\r\n/g, "\n");
-    const bron = lees("../lib/subsidies/lokaleAanvullingen.ts");
-    const kopie = lees("../../supabase/functions/subsidiecheck/lokaleAanvullingen.ts")
-      .split("\n")
-      .slice(3)
-      .join("\n")
-      .replace(/(from "\.\/[A-Za-z]+)\.ts";/g, '$1";');
-    expect(kopie).toBe(bron);
-  });
+describe("Deno-kopieën", () => {
+  // lokaleAanvullingen importeert energiesubsidiewijzerApi, dus die kopie moet
+  // ook bij zijn. Beide maakt scripts/kopieer-gebiedscorrecties.mjs.
+  for (const naam of ["lokaleAanvullingen", "energiesubsidiewijzerApi"]) {
+    it(`${naam}.ts is gelijk aan de bron`, () => {
+      const lees = (pad: string) => readFileSync(resolve(__dirname, pad), "utf8").replace(/\r\n/g, "\n");
+      const bron = lees(`../lib/subsidies/${naam}.ts`);
+      const kopie = lees(`../../supabase/functions/subsidiecheck/${naam}.ts`)
+        .split("\n")
+        .slice(3)
+        .join("\n")
+        .replace(/(from "\.\/[A-Za-z]+)\.ts";/g, '$1";');
+      expect(kopie).toBe(bron);
+    });
+  }
 
   it("de function past de aanvulling op beide routes toe", () => {
     const index = readFileSync(resolve(__dirname, "../../supabase/functions/subsidiecheck/index.ts"), "utf8");

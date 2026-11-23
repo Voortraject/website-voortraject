@@ -13,7 +13,9 @@ import { fileURLToPath } from "node:url";
 
 const HIER = dirname(fileURLToPath(import.meta.url));
 
-for (const naam of ["postcodegebieden", "gebiedscorrecties", "lokaleAanvullingen"]) {
+// energiesubsidiewijzerApi staat erbij omdat lokaleAanvullingen hem importeert;
+// de kopie had al precies deze vorm (kop + `.ts`-imports).
+for (const naam of ["postcodegebieden", "gebiedscorrecties", "lokaleAanvullingen", "energiesubsidiewijzerApi"]) {
   const bron = readFileSync(resolve(HIER, `../src/lib/subsidies/${naam}.ts`), "utf8").replace(/\r\n/g, "\n");
   const kop =
     `// ⚠️ KOPIE — bron van waarheid is src/lib/subsidies/${naam}.ts.\n` +
