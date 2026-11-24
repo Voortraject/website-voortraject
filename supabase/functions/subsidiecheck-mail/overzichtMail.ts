@@ -161,7 +161,7 @@ const badge = (s: Soort, maat = 36) =>
 const okerKnop = (tekst: string, href: string) => `
   <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
     <td class="knop-cel" bgcolor="${K.oker}" style="border-radius:999px;background-color:${K.oker};background-image:linear-gradient(180deg,${K.okerLicht} 0%,${K.oker} 100%);box-shadow:0 8px 20px rgba(232,181,71,0.35);">
-      <a href="${escapeHtml(href)}" class="knop" style="display:inline-block;padding:15px 26px;color:${K.ink};font-size:15px;font-weight:700;text-decoration:none;border-radius:999px;">${tekst}</a>
+      <a href="${escapeHtml(href)}" class="knop" style="display:inline-block;padding:15px 22px;color:${K.ink};font-size:15px;font-weight:700;text-decoration:none;border-radius:999px;">${tekst}</a>
     </td>
   </tr></table>`;
 
@@ -408,11 +408,11 @@ function bouwEmailHtml(opts: {
 </style></head>
 <body class="body" style="margin:0;padding:0;background-color:${K.offwhite};">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">${escapeHtml(voorbeeldregel)}&#8199;&#65279;&#847;&#8199;&#65279;&#847;&#8199;&#65279;&#847;&#8199;&#65279;&#847;</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${K.offwhite}" style="background-color:${K.offwhite};font-family:${FONT};"><tr><td align="center" style="padding:24px 12px 8px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${K.offwhite}" style="background-color:${K.offwhite};font-family:${FONT};"><tr><td align="center" style="padding:24px 6px 8px;">
   <!--[if mso]><table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"><tr><td><![endif]-->
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
 
-    <tr><td ${NAVY}border-radius:24px;box-shadow:0 18px 40px rgba(21,44,78,0.28);padding:32px 30px 34px;">
+    <tr><td ${NAVY}border-radius:24px;box-shadow:0 18px 40px rgba(21,44,78,0.28);padding:28px 22px 30px;">
       <img src="${BEELD.logoWit}" alt="voortraject" width="144" height="40" style="display:block;width:144px;height:40px;border:0;color:#FFFFFF;font-size:22px;font-weight:700;">
       ${RUIMTE(28)}
       ${kop}
@@ -427,7 +427,7 @@ function bouwEmailHtml(opts: {
          met nowrap: in de mail-app op een telefoon is de kolom smal, en langere
          labels braken eerder over twee of drie regels. -->
     <tr><td style="padding:24px 0 0;">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td ${NAVY}border-radius:24px;box-shadow:0 18px 40px rgba(21,44,78,0.24);padding:30px 28px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td ${NAVY}border-radius:24px;box-shadow:0 18px 40px rgba(21,44,78,0.24);padding:28px 22px;">
         ${opDonker(`<div style="font-size:17px;font-weight:700;color:#FFFFFF;line-height:1.35;">Liever zelf contact?</div>
         <div style="margin-top:8px;font-size:16px;line-height:1.65;color:#E6EBF2;">Stuur ons een WhatsApp, bel ons of antwoord op deze mail. Een adviseur kijkt gratis met je mee welke regelingen je voor jouw woning kunt combineren.</div>`)}
         ${RUIMTE(20)}
