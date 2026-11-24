@@ -107,7 +107,6 @@ const BEELD = {
 // Hij staat bewust zonder eigen vlak: crème op off-white verschilt maar een paar
 // tinten, en per scherm (of met een nachtfilter) leest dan de ene keer het vlak
 // als wit en de andere keer de achtergrond.
-const HANDTEKENING_ALGEMEEN_HTML = "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;color:#152C4E;\"><tr><td width=\"170\" align=\"center\" style=\"width:170px;vertical-align:middle;padding:0 22px 0 0;\"><a href=\"https://voortraject.nl\" style=\"display:block;text-decoration:none;\"><img src=\"https://voortraject.nl/mail/voortraject-logo-blauw.png\" width=\"170\" height=\"45\" alt=\"Voortraject\" style=\"display:block;width:170px;height:45px;border:0;margin:0 auto;\"></a></td><td style=\"vertical-align:middle;padding:4px 0 4px 22px;border-left:2px solid #E8B547;\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;\"><tr><td colspan=\"2\" style=\"font-size:17px;line-height:22px;font-weight:bold;color:#152C4E;padding:0;\">Team Voortraject</td></tr><tr><td colspan=\"2\" style=\"font-size:13px;line-height:18px;color:#5C6B80;padding:0 0 12px 0;\">Gratis advies over verduurzamen en subsidies</td></tr><tr><td width=\"62\" style=\"width:62px;font-size:12px;line-height:20px;color:#8A94A3;padding:0;\">Telefoon</td><td style=\"font-size:13px;line-height:20px;padding:0;\"><a href=\"tel:+31502112689\" style=\"color:#152C4E;text-decoration:none;\">050 211 26 89</a></td></tr><tr><td width=\"62\" style=\"width:62px;font-size:12px;line-height:20px;color:#8A94A3;padding:0;\">E-mail</td><td style=\"font-size:13px;line-height:20px;padding:0;\"><a href=\"mailto:info@voortraject.nl\" style=\"color:#152C4E;text-decoration:none;\">info@voortraject.nl</a></td></tr><tr><td width=\"62\" style=\"width:62px;font-size:12px;line-height:20px;color:#8A94A3;padding:0;\">Website</td><td style=\"font-size:13px;line-height:20px;padding:0;\"><a href=\"https://voortraject.nl\" style=\"color:#152C4E;text-decoration:none;\">voortraject.nl</a></td></tr></table></td></tr></table>";
 
 // De check zonder adres, om door te sturen naar buren of familie. De utm-tags
 // zijn dezelfde als op de site (zie src/components/subsidiecheck/delen.ts), zodat
@@ -156,65 +155,65 @@ const RUIMTE = (px: number) =>
 
 // Het ronde icoon rechtsboven, zoals in het CRM-dashboard.
 const badge = (s: Soort, maat = 36) =>
-  `<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="${maat}" height="${maat}" align="center" valign="middle" bgcolor="${s.kleur}" style="width:${maat}px;height:${maat}px;border-radius:50%;background-color:${s.kleur};background-image:linear-gradient(145deg,${s.licht} 0%,${s.kleur} 100%);box-shadow:0 4px 10px rgba(21,44,78,0.18);color:#FFFFFF;font-family:Arial,Helvetica,sans-serif;font-size:${Math.round(maat * 0.44)}px;font-weight:800;line-height:${maat}px;mso-line-height-rule:exactly;">${s.teken}</td></tr></table>`;
+  `<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="${maat}" height="${maat}" align="center" valign="middle" bgcolor="${s.kleur}" style="width:${maat}px;height:${maat}px;border-radius:50%;background-color:${s.kleur};background-image:linear-gradient(145deg,${s.licht} 0%,${s.kleur} 100%);box-shadow:0 4px 10px rgba(21,44,78,0.18);color:#FFFFFF;font-family:Arial,Helvetica,sans-serif;font-size:${Math.round(maat * 0.44)}px;font-weight:700;line-height:${maat}px;mso-line-height-rule:exactly;">${s.teken}</td></tr></table>`;
 
 // Knoppen als tabelcel: Outlook geeft een <a> geen padding, een cel wel.
 const okerKnop = (tekst: string, href: string) => `
   <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
     <td class="knop-cel" bgcolor="${K.oker}" style="border-radius:999px;background-color:${K.oker};background-image:linear-gradient(180deg,${K.okerLicht} 0%,${K.oker} 100%);box-shadow:0 8px 20px rgba(232,181,71,0.35);">
-      <a href="${escapeHtml(href)}" class="knop" style="display:inline-block;padding:15px 26px;color:${K.ink};font-size:15px;font-weight:800;text-decoration:none;border-radius:999px;">${tekst}</a>
+      <a href="${escapeHtml(href)}" class="knop" style="display:inline-block;padding:15px 26px;color:${K.ink};font-size:15px;font-weight:700;text-decoration:none;border-radius:999px;">${tekst}</a>
     </td>
   </tr></table>`;
 
 const glasKnop = (href: string, icoon: string, tekst: string) => `
   <td class="knop-cel" bgcolor="#2A4569" style="border-radius:999px;background-color:#2A4569;background-image:linear-gradient(180deg,#2E4A70 0%,#263F62 100%);">
-    <a href="${escapeHtml(href)}" class="knop" style="display:inline-block;padding:12px 18px;color:#FFFFFF;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;border-radius:999px;"><img src="${icoon}" alt="" width="16" height="16" style="width:16px;height:16px;vertical-align:-3px;border:0;">&nbsp; ${opDonkerInline(tekst)}</a>
+    <a href="${escapeHtml(href)}" class="knop" style="display:inline-block;padding:12px 18px;color:#FFFFFF;font-size:15px;font-weight:700;text-decoration:none;white-space:nowrap;border-radius:999px;"><img src="${icoon}" alt="" width="16" height="16" style="width:16px;height:16px;vertical-align:-3px;border:0;">&nbsp; ${opDonkerInline(tekst)}</a>
   </td>`;
 
 function regelingKaart(r: Regeling): string {
   const s = soortVan(r);
   const bedrag = r.bedragIndicatie
-    ? `<div style="margin-top:6px;font-size:24px;line-height:1.15;font-weight:800;color:${s.kleur};letter-spacing:-.01em;">${escapeHtml(r.bedragIndicatie)}</div>`
+    ? `<div style="margin-top:8px;font-size:24px;line-height:1.15;font-weight:700;color:${s.kleur};letter-spacing:-.01em;">${escapeHtml(r.bedragIndicatie)}</div>`
     : "";
   const omschrijving = r.omschrijving
-    ? `<div style="margin-top:6px;font-size:14px;line-height:1.6;color:${K.zacht};">${escapeHtml(eersteZin(r.omschrijving))}</div>`
+    ? `<div style="margin-top:8px;font-size:14px;line-height:1.6;color:${K.zacht};">${escapeHtml(eersteZin(r.omschrijving))}</div>`
     : "";
   // Zelfde regel als op de kaart: zonder deze voorwaarde leest het bedrag als
   // een belofte (VVG € 17.000 geldt alleen in het NCG-programma).
   const alleenAls = r.alleenAls
-    ? `<div style="margin-top:6px;font-size:14px;line-height:1.5;font-weight:700;color:${K.ink};">Alleen als ${escapeHtml(r.alleenAls)}</div>`
+    ? `<div style="margin-top:8px;font-size:14px;line-height:1.5;font-weight:700;color:${K.ink};">Alleen als ${escapeHtml(r.alleenAls)}</div>`
     : "";
   // De mail bewaart de bewoner, dus een deadline hoort er juist in, met de
   // datum voluit: een mail heeft geen uitklap.
   const einddatum = einddatumTekst(r.looptAfOp);
   const deadline = einddatum
-    ? `<div style="margin-top:10px;font-size:13px;line-height:1.5;color:${K.ink};"><strong>Let op:</strong> aanvragen kan tot ${escapeHtml(einddatum)}.</div>`
+    ? `<div style="margin-top:8px;font-size:14px;line-height:1.6;color:${K.ink};"><strong>Let op:</strong> aanvragen kan tot ${escapeHtml(einddatum)}.</div>`
     : "";
   // "Let op" komt letterlijk van de bron en staat op ongeveer één op de dertig
   // regelingen. Bij ISDE zegt hij dat je in Groningen en Noord-Drenthe beter de
   // Isolatieaanpak kunt nemen: precies ons werkgebied. Een wit vlak in de
   // getinte kaart, geen rood: het is een aanwijzing, geen fout.
   const letOp = r.letOp
-    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:14px;"><tr><td bgcolor="#FFFFFF" style="padding:13px 15px;background-color:#FFFFFF;border-radius:12px;font-size:13px;line-height:1.55;color:${K.tekst};"><strong style="color:${K.ink};">Let op:</strong> ${escapeHtml(r.letOp)}</td></tr></table>`
+    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:12px;"><tr><td bgcolor="#FFFFFF" style="padding:13px 15px;background-color:#FFFFFF;border-radius:12px;font-size:14px;line-height:1.6;color:${K.tekst};"><strong style="color:${K.ink};">Let op:</strong> ${escapeHtml(r.letOp)}</td></tr></table>`
     : "";
   const meerInfo =
     r.bronUrl && /^https?:\/\//i.test(r.bronUrl)
-      ? `<div style="margin-top:14px;"><a href="${escapeHtml(r.bronUrl)}" style="color:${K.ink};font-weight:700;font-size:13px;text-decoration:none;">Meer info &rarr;</a></div>`
+      ? `<div style="margin-top:8px;"><a href="${escapeHtml(r.bronUrl)}" style="color:${K.ink};font-weight:700;font-size:14px;text-decoration:none;">Meer info &rarr;</a></div>`
       : "";
 
   return `<tr><td style="padding:0 0 16px;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="${s.klasse}" bgcolor="${s.vlak}" style="background-color:${s.vlak};border-radius:20px;${SCHADUW}"><tr><td style="padding:22px 24px 20px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="${s.klasse}" bgcolor="${s.vlak}" style="background-color:${s.vlak};border-radius:20px;${SCHADUW}"><tr><td style="padding:20px 24px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
         <td valign="top">
-          <div style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:${s.kleur};">${s.label}</div>
+          <div style="font-size:12px;line-height:1.4;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:${s.kleur};">${s.label}</div>
           ${bedrag}
+          <div style="margin-top:8px;font-size:17px;font-weight:700;line-height:1.35;color:${K.ink};">${escapeHtml(r.titel ?? "Regeling")}</div>
+          ${alleenAls}
+          ${omschrijving}
+          ${deadline}
         </td>
         <td valign="top" width="48" style="width:48px;padding-left:12px;">${badge(s)}</td>
       </tr></table>
-      <div style="margin-top:12px;font-size:17px;font-weight:800;line-height:1.35;color:${K.ink};">${escapeHtml(r.titel ?? "Regeling")}</div>
-      ${alleenAls}
-      ${omschrijving}
-      ${deadline}
       ${letOp}
       ${meerInfo}
     </td></tr></table>
@@ -231,11 +230,11 @@ function teller(s: Soort, aantal: number, woord: string, uitleg: string, plek: "
   <td width="${breedte}" valign="top" style="width:${breedte};${ruimte}">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td valign="top" class="${s.klasse}" bgcolor="${s.vlak}" style="background-color:${s.vlak};border-radius:20px;${SCHADUW}padding:18px 18px 20px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-        <td valign="top" style="font-size:14px;font-weight:800;color:${K.ink};">${woord}</td>
+        <td valign="top" style="font-size:14px;font-weight:700;color:${K.ink};">${woord}</td>
         <td valign="top" width="32" style="width:32px;">${badge(s, 30)}</td>
       </tr></table>
-      <div style="margin-top:6px;font-size:40px;line-height:1;font-weight:800;color:${s.kleur};letter-spacing:-.02em;">${aantal}</div>
-      <div style="margin-top:8px;font-size:13px;line-height:1.45;color:${K.zacht};">${uitleg}</div>
+      <div style="margin-top:6px;font-size:40px;line-height:1;font-weight:700;color:${s.kleur};letter-spacing:-.02em;">${aantal}</div>
+      ${uitleg ? `<div style="margin-top:8px;font-size:13px;line-height:1.45;color:${K.zacht};">${uitleg}</div>` : ""}
     </td></tr></table>
   </td>`;
 }
@@ -246,10 +245,10 @@ function tellers(subsidies: number, leningen: number): string {
   const beide = subsidies > 0 && leningen > 0;
   const rij =
     (subsidies > 0
-      ? teller(SOORT.subsidie, subsidies, "Subsidies", "Geld dat je niet terugbetaalt", beide ? "links" : "alleen")
+      ? teller(SOORT.subsidie, subsidies, "Subsidies", "", beide ? "links" : "alleen")
       : "") +
     (leningen > 0
-      ? teller(SOORT.lening, leningen, "Leningen", "Geld dat je leent en terugbetaalt", beide ? "rechts" : "alleen")
+      ? teller(SOORT.lening, leningen, "Leningen", "", beide ? "rechts" : "alleen")
       : "");
   return `<tr><td style="padding:16px 0 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>${rij}</tr></table></td></tr>`;
 }
@@ -343,16 +342,15 @@ function bouwEmailHtml(opts: {
   const onlineLink = overzichtUrl ?? CHECK_URL;
 
   const kop = metLijst
-    ? `${opDonker(`<div style="font-size:14px;font-weight:600;color:#C9D2E0;">Jouw subsidieoverzicht voor ${escapeHtml(adresregel)}</div>
-      <div style="margin-top:8px;font-size:44px;line-height:1.05;font-weight:800;color:#FFFFFF;letter-spacing:-.02em;">${meervoud(regelingen.length, "regeling", "regelingen")}</div>
-      <div style="margin-top:6px;font-size:17px;line-height:1.5;color:#E6EBF2;">voor de verduurzaming van je woning.</div>`)}
-      ${RUIMTE(26)}
-      ${okerKnop("Laat gratis uitzoeken wat ik krijg", aanvraagLink)}
-      ${opDonker(`<div style="margin-top:12px;font-size:13px;line-height:1.5;color:#C9D2E0;">Dit overzicht is een indicatie. We zoeken voor je uit wat er voor jouw huis echt in zit. Je zit nergens aan vast.</div>`)}`
+    ? // Rustig (eigenaar 24-11): logo, het getal met één regel eronder, de knop. "Subsidieoverzicht" staat al in het onderwerp.
+      `${opDonker(`<div style="font-size:44px;line-height:1.05;font-weight:700;color:#FFFFFF;letter-spacing:-.02em;">${meervoud(regelingen.length, "regeling", "regelingen")}</div>
+      <div style="margin-top:8px;font-size:16px;line-height:1.5;color:#E6EBF2;">voor het verduurzamen van ${escapeHtml(adresregel)}.</div>`)}
+      ${RUIMTE(28)}
+      ${okerKnop("Laat gratis uitzoeken wat ik krijg", aanvraagLink)}`
     : // Zonder lijst is het overzicht online de inhoud van de mail, en dus de
       // oker knop. Geen geldige overzichtUrl? Dan de check zelf.
-      `${opDonker(`<div style="font-size:14px;font-weight:600;color:#C9D2E0;">Jouw subsidieoverzicht voor ${escapeHtml(adresregel)}</div>
-      <div style="margin-top:8px;font-size:34px;line-height:1.1;font-weight:800;color:#FFFFFF;letter-spacing:-.02em;">Je overzicht staat online voor je klaar</div>
+      `${opDonker(`<div style="font-size:16px;line-height:1.5;font-weight:400;color:#E6EBF2;">Jouw subsidieoverzicht voor ${escapeHtml(adresregel)}</div>
+      <div style="margin-top:8px;font-size:34px;line-height:1.1;font-weight:700;color:#FFFFFF;letter-spacing:-.02em;">Je overzicht staat online voor je klaar</div>
       <div style="margin-top:8px;font-size:16px;line-height:1.5;color:#E6EBF2;">Daar zie je per regeling wat je kunt krijgen en hoe je het aanvraagt.</div>`)}
       ${RUIMTE(26)}
       ${okerKnop("Bekijk je overzicht online", onlineLink)}`;
@@ -361,7 +359,7 @@ function bouwEmailHtml(opts: {
     ? `<tr><td style="padding:32px 4px 0;font-size:16px;line-height:1.65;color:${K.tekst};">
       <p style="margin:0 0 14px;">${escapeHtml(aanhef)},</p>
       <p style="margin:0;">${bouwjaarZin ? escapeHtml(bouwjaarZin) : "Hieronder staan alle regelingen die we voor je woning vonden."}</p>
-      ${groepen.length > 1 ? `<p style="margin:16px 0 0;font-size:14px;line-height:1.6;color:${K.zacht};">${WAAROM_GROEPEN}</p>` : ""}
+      ${groepen.length > 1 ? `<p style="margin:14px 0 0;">${WAAROM_GROEPEN}</p>` : ""}
     </td></tr>`
     : `<tr><td style="padding:32px 4px 0;font-size:16px;line-height:1.65;color:${K.tekst};">
       <p style="margin:0 0 14px;">${escapeHtml(aanhef)},</p>
@@ -370,8 +368,9 @@ function bouwEmailHtml(opts: {
 
   const lijst = groepen
     .map(
-      (g) =>
-        `<tr><td style="padding:30px 4px 14px;font-size:17px;font-weight:800;color:${K.ink};">${NIVEAU_LABELS[g.niveau]} <span style="font-weight:600;color:${K.zacht};">&nbsp;${g.items.length}</span></td></tr>` +
+      // Na een kaart staat er al 16 px (de onderrand van de kaart): dan 16 erbij, zodat elk kopje 32 px boven zich heeft.
+      (g, i) =>
+        `<tr><td style="padding:${i === 0 ? 32 : 16}px 4px 12px;font-size:17px;font-weight:700;color:${K.ink};">${NIVEAU_LABELS[g.niveau]} <span style="font-weight:600;color:${K.zacht};">&nbsp;${g.items.length}</span></td></tr>` +
         g.items.map(regelingKaart).join(""),
     )
     .join("");
@@ -387,7 +386,7 @@ function bouwEmailHtml(opts: {
     ? // "op Google" wordt het Google-logo zelf. Blokkeert de mail-app
       // afbeeldingen (Outlook doet dat standaard), dan valt de alt-tekst
       // "Google" op precies dezelfde plek in. Bewust zonder aantal reviews.
-      `<div style="margin-top:18px;font-size:13px;color:#C9D2E0;"><span style="color:${K.oker};">&#9733;&#9733;&#9733;&#9733;&#9733;</span> ${opDonkerInline(`<strong style="color:#FFFFFF;">${escapeHtml(beoordeling.score)}</strong> op`)} <img src="${BEELD.google}" alt="Google" width="14" height="14" style="width:14px;height:14px;vertical-align:-2px;border:0;"></div>`
+      `<div style="margin-top:18px;font-size:14px;color:#C9D2E0;"><span style="color:${K.oker};">&#9733;&#9733;&#9733;&#9733;&#9733;</span> ${opDonkerInline(`<strong style="color:#FFFFFF;">${escapeHtml(beoordeling.score)}</strong> op`)} <img src="${BEELD.google}" alt="Google" width="14" height="14" style="width:14px;height:14px;vertical-align:-2px;border:0;"></div>`
     : "";
 
   return `<!doctype html>
@@ -415,7 +414,7 @@ function bouwEmailHtml(opts: {
 
     <tr><td ${NAVY}border-radius:24px;box-shadow:0 18px 40px rgba(21,44,78,0.28);padding:32px 30px 34px;">
       <img src="${BEELD.logoWit}" alt="voortraject" width="144" height="40" style="display:block;width:144px;height:40px;border:0;color:#FFFFFF;font-size:22px;font-weight:700;">
-      ${RUIMTE(36)}
+      ${RUIMTE(28)}
       ${kop}
     </td></tr>
 
@@ -427,10 +426,10 @@ function bouwEmailHtml(opts: {
     <!-- Voor wie liever zelf contact opneemt. Eén woord per knop plus een icoon,
          met nowrap: in de mail-app op een telefoon is de kolom smal, en langere
          labels braken eerder over twee of drie regels. -->
-    <tr><td style="padding:18px 0 0;">
+    <tr><td style="padding:24px 0 0;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td ${NAVY}border-radius:24px;box-shadow:0 18px 40px rgba(21,44,78,0.24);padding:30px 28px;">
-        ${opDonker(`<div style="font-size:20px;font-weight:800;color:#FFFFFF;line-height:1.3;">Liever zelf contact?</div>
-        <div style="margin-top:8px;font-size:15px;line-height:1.6;color:#E6EBF2;">Stuur ons een WhatsApp, bel ons of antwoord op deze mail. Een adviseur kijkt gratis met je mee welke regelingen je voor jouw woning kunt combineren.</div>`)}
+        ${opDonker(`<div style="font-size:17px;font-weight:700;color:#FFFFFF;line-height:1.35;">Liever zelf contact?</div>
+        <div style="margin-top:8px;font-size:16px;line-height:1.65;color:#E6EBF2;">Stuur ons een WhatsApp, bel ons of antwoord op deze mail. Een adviseur kijkt gratis met je mee welke regelingen je voor jouw woning kunt combineren.</div>`)}
         ${RUIMTE(20)}
         <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
           ${glasKnop(waLink, BEELD.whatsapp, "WhatsApp")}<td width="10" style="width:10px;font-size:0;">&nbsp;</td>${glasKnop(TELEFOON_LINK, BEELD.telefoon, "Bel ons")}
@@ -442,18 +441,19 @@ function bouwEmailHtml(opts: {
     <!-- Doorgeven aan de buren. De mail is het enige stuk van de check dat
          buiten het scherm van de bezoeker voortleeft: hij wordt bewaard en
          doorgestuurd. Het extra verzoek staat onderaan, onder een kort kopje. -->
-    <tr><td style="padding:36px 4px 0;">
-      <div style="font-size:15px;font-weight:800;color:${K.ink};">Ken je iemand die ook wil verduurzamen?</div>
-      <div style="margin-top:4px;font-size:14px;line-height:1.6;color:${K.zacht};">Huizen uit dezelfde tijd komen vaak voor dezelfde subsidie in aanmerking. Stuur ze <a href="${DEEL_URL}" style="color:${K.ink};font-weight:700;">de check voor hun eigen adres</a>.</div>
+    <tr><td style="padding:32px 4px 0;">
+      <div style="font-size:17px;font-weight:700;color:${K.ink};">Ken je iemand die ook wil verduurzamen?</div>
+      <div style="margin-top:8px;font-size:16px;line-height:1.65;color:${K.tekst};">Huizen uit dezelfde tijd komen vaak voor dezelfde subsidie in aanmerking. Stuur ze <a href="${DEEL_URL}" style="color:${K.ink};font-weight:700;">de check voor hun eigen adres</a>.</div>
     </td></tr>
 
-    <tr><td style="padding:40px 4px 0;">
-      <div style="font-size:15px;color:${K.tekst};margin:0 0 22px;">Met vriendelijke groet,</div>
-      ${HANDTEKENING_ALGEMEEN_HTML}
+    <tr><td style="padding:32px 4px 0;">
+      <div style="font-size:16px;line-height:1.5;color:${K.tekst};">Met vriendelijke groet,</div>
+      <div style="font-size:16px;line-height:1.5;font-weight:700;color:${K.ink};margin:0 0 4px;">Team Voortraject</div>
+      <div style="font-size:13px;line-height:20px;color:${K.zacht};"><a href="tel:+31502112689" style="color:${K.zacht};text-decoration:none;">050 211 26 89</a> &middot; <a href="mailto:info@voortraject.nl" style="color:${K.zacht};text-decoration:none;">info@voortraject.nl</a></div>
     </td></tr>
 
     <tr><td style="padding:24px 4px 32px;">
-      <div style="font-size:12px;line-height:1.6;color:${K.zacht};">Dit overzicht is een indicatie op basis van de Energiesubsidiewijzer van Milieu Centraal en jouw postcode. Aan bedragen en voorwaarden kun je geen rechten ontlenen.</div>
+      <div style="font-size:13px;line-height:1.6;color:${K.zacht};">Dit overzicht is een indicatie op basis van de Energiesubsidiewijzer van Milieu Centraal en jouw postcode. Aan bedragen en voorwaarden kun je geen rechten ontlenen. We zoeken graag voor je uit wat er voor jouw huis echt in zit; je zit nergens aan vast.</div>
     </td></tr>
 
   </table>
