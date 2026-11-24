@@ -283,9 +283,11 @@ describe("de overzichtsmail aan de bezoeker", () => {
     expect(mail).not.toBeNull();
     for (const vreemd of VREEMD) {
       expect(mail!.html, vreemd).not.toContain(vreemd);
+      expect(mail!.tekst, vreemd).not.toContain(vreemd);
       expect(mail!.onderwerp, vreemd).not.toContain(vreemd);
     }
     expect(mail!.html).not.toContain("evil");
+    expect(mail!.tekst).not.toContain("evil");
     // Zonder geldig bewonertype vragen we de bron niet eens: dan geen lijst.
     expect(bron).not.toHaveBeenCalled();
     expect(mail!.metLijst).toBe(false);
@@ -300,7 +302,7 @@ describe("de overzichtsmail aan de bezoeker", () => {
       await maak(aanval({ bewonertype: "huurder" }), vi.fn(async () => null)),
     ]) {
       expect(mail!.metLijst).toBe(false);
-      for (const vreemd of VREEMD) expect(mail!.html, vreemd).not.toContain(vreemd);
+      for (const vreemd of VREEMD) for (const deel of [mail!.html, mail!.tekst]) expect(deel, vreemd).not.toContain(vreemd);
     }
   });
 
@@ -312,7 +314,7 @@ describe("de overzichtsmail aan de bezoeker", () => {
     expect(mail!.onderwerp).toBe("Je subsidieoverzicht: 1 regeling voor je woning");
     expect(mail!.html).toContain("ISDE");
     expect(mail!.html).toContain("https://www.rvo.nl/isde");
-    for (const vreemd of VREEMD) expect(mail!.html, vreemd).not.toContain(vreemd);
+    for (const vreemd of VREEMD) for (const deel of [mail!.html, mail!.tekst]) expect(deel, vreemd).not.toContain(vreemd);
   });
 
   it("neemt een geldige link naar ons eigen overzicht wel over", async () => {
@@ -329,9 +331,9 @@ describe("de overzichtsmail aan de bezoeker", () => {
   });
 });
 
-// De opbouw van variant D (oktober 2026). Geen test op de opmaak zelf, wel op de
-// afspraken die bij elke redactieronde ongemerkt kunnen wegvallen.
-describe("de overzichtsmail in de huisstijl van oktober 2026", () => {
+// De afspraken die bij elke redactieronde ongemerkt kunnen wegvallen. De opmaak
+// zelf (de vaste mailopmaak van 24-11-2026) toetst subsidiecheckMailVasteOpmaak.test.ts.
+describe("de afspraken in de overzichtsmail", () => {
   const lijst = [
     { titel: "ISDE", niveau: "rijk", type: "subsidie", omschrijving: "Voor isolatie. Tweede zin die weg moet.", bronUrl: "https://www.rvo.nl/isde" },
     { titel: "Isolatieaanpak", niveau: "provincie", type: "subsidie", bedragIndicatie: "tot € 2.000" },
@@ -351,8 +353,9 @@ describe("de overzichtsmail in de huisstijl van oktober 2026", () => {
 
   it("blijft altijd licht, ook met een donker scherm", async () => {
     const { html } = (await maak(lijst))!;
-    expect(html).toContain('<meta name="color-scheme" content="light only">');
-    expect(html).not.toMatch(/prefers-color-scheme:\s*dark/);
+    expect(html).toContain('<meta name="color-scheme" content="light">');
+    expect(html).toContain('<meta name="supported-color-schemes" content="light">');
+    expect(html).not.toMatch(/prefers-color-scheme/);
   });
 
   it("heeft een verborgen voorbeeldregel met de tellers, het adres en de overheden", async () => {
@@ -360,19 +363,20 @@ describe("de overzichtsmail in de huisstijl van oktober 2026", () => {
     expect(html).toContain("2 subsidies en 1 lening voor Verlengde Hereweg 12, Groningen, van Rijk en provincie.");
   });
 
-  it("heeft één oker knop die zonder formulier bij het team aankomt", async () => {
+  it("heeft één knop die zonder formulier bij het team aankomt", async () => {
     const { html } = (await maak(lijst))!;
     expect(html.match(/Laat gratis uitzoeken wat ik krijg<\/a>/g)).toHaveLength(1);
     expect(html).toContain('href="mailto:info@voortraject.nl?subject=Laat%20gratis%20uitzoeken%20wat%20ik%20krijg%3A%20Verlengde%20Hereweg%2012%2C%20Groningen');
     expect(html).toContain("Dit overzicht is een indicatie. We zoeken voor je uit wat er voor jouw huis echt in zit. Je zit nergens aan vast.");
   });
 
-  it("telt subsidies en leningen apart, en laat een lege teller weg", async () => {
+  it("telt subsidies en leningen apart, en noemt een soort die er niet is niet", async () => {
     const { html } = (await maak(lijst))!;
-    expect(html).toMatch(/Subsidies<\/td>[\s\S]*?>2<\/div>/);
-    expect(html).toMatch(/Leningen<\/td>[\s\S]*?>1<\/div>/);
+    expect(html).toContain("We vonden <strong>2 subsidies en 1 lening</strong> voor de verduurzaming van Verlengde Hereweg 12, Groningen.");
+    expect(html).toContain("Een subsidie hoef je niet terug te betalen, een lening wel.");
     const alleenSubsidies = (await maak(lijst.filter((r) => r.type === "subsidie")))!.html;
-    expect(alleenSubsidies).not.toContain("Leningen</td>");
+    expect(alleenSubsidies).toContain("We vonden <strong>2 subsidies</strong> voor");
+    expect(alleenSubsidies).not.toMatch(/lening/i);
   });
 
   it("toont van elke omschrijving alleen de eerste zin, en de Let op uit onze eigen bron", async () => {
@@ -383,29 +387,28 @@ describe("de overzichtsmail in de huisstijl van oktober 2026", () => {
   });
 
   it("belooft geen termijn, noemt geen aantal reviews en gebruikt geen gedachtestreepjes", async () => {
-    const met = (await maak(lijst, { beoordeling: { score: "4,9", aantal: 87 } }))!.html;
-    const zonder = (await maak(null))!.html;
-    expect(met).toContain("4,9");
-    for (const html of [met, zonder]) {
-      const tekst = zichtbaar(html);
-      expect(tekst).not.toMatch(/werkdag|reviews|onafhankelijk/i);
-      expect(tekst).not.toMatch(/[—–]/);
+    const met = (await maak(lijst, { beoordeling: { score: "4,9", aantal: 87 } }))!;
+    const zonder = (await maak(null))!;
+    expect(met.html).toContain("4,9");
+    for (const mail of [met, zonder]) {
+      for (const tekst of [zichtbaar(mail.html), mail.tekst]) {
+        expect(tekst).not.toMatch(/werkdag|reviews|onafhankelijk/i);
+        expect(tekst).not.toMatch(/[—–]/);
+      }
     }
   });
 
-  it("gebruikt de nieuwe iconen, en die staan op de site", async () => {
+  it("gebruikt het logo van de vaste opmaak, en dat staat op de site", async () => {
     const { html } = (await maak(lijst))!;
-    for (const naam of ["wa-groen.png", "tel-wit.png"]) {
-      expect(html).toContain(`https://voortraject.nl/mail/${naam}`);
-      expect(() => readFileSync(`public/mail/${naam}`)).not.toThrow();
-    }
+    expect(html).toContain("https://voortraject.nl/mail/voortraject-logo-mail.png?v=1");
+    expect(() => readFileSync("public/mail/voortraject-logo-mail.png")).not.toThrow();
   });
 
-  it("zonder lijst is de oker knop de link naar het overzicht online", async () => {
+  it("zonder lijst is de knop de link naar het overzicht online", async () => {
     const { html } = (await maak(null))!;
     expect(html).toContain("Bekijk je overzicht online</a>");
     expect(html).not.toContain("Laat gratis uitzoeken wat ik krijg</a>");
-    expect(html).not.toContain("Subsidies</td>");
+    expect(html).not.toContain("Van de Rijksoverheid");
   });
 });
 

@@ -424,6 +424,8 @@ async function verstuurMail(opts: {
   replyTo: string;
   subject: string;
   html: string;
+  /** De tekstversie; de vaste mailopmaak vraagt hem bij elke mail aan een klant. */
+  text?: string;
 }): Promise<boolean> {
   const body: Record<string, unknown> = {
     from: opts.from,
@@ -432,6 +434,7 @@ async function verstuurMail(opts: {
     subject: opts.subject,
     html: opts.html,
   };
+  if (opts.text) body.text = opts.text;
 
   const res = await fetch(RESEND_ENDPOINT, {
     method: "POST",
@@ -927,6 +930,7 @@ Deno.serve(async (req: Request) => {
         replyTo: Deno.env.get("MAIL_REPLY_TO") ?? DEFAULT_REPLY_TO,
         subject: mail.onderwerp,
         html: mail.html,
+        text: mail.tekst,
       });
     }
   } else if (!apiKey) {
