@@ -364,7 +364,8 @@ describe("de overzichtsmail in de huisstijl van oktober 2026", () => {
     const { html } = (await maak(lijst))!;
     expect(html.match(/Laat gratis uitzoeken wat ik krijg<\/a>/g)).toHaveLength(1);
     expect(html).toContain('href="mailto:info@voortraject.nl?subject=Laat%20gratis%20uitzoeken%20wat%20ik%20krijg%3A%20Verlengde%20Hereweg%2012%2C%20Groningen');
-    expect(html).toContain("Dit overzicht is een indicatie. We zoeken voor je uit wat er voor jouw huis echt in zit. Je zit nergens aan vast.");
+    // De geruststelling staat sinds 24-11 onderaan bij de disclaimer, niet meer onder de knop (rustiger bovenblok).
+    expect(html).toContain("We zoeken graag voor je uit wat er voor jouw huis echt in zit; je zit nergens aan vast.");
   });
 
   it("telt subsidies en leningen apart, en laat een lege teller weg", async () => {
