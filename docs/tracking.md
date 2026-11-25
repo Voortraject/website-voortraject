@@ -141,6 +141,9 @@ Axeptio-toestemming voor de Meta-service. De cookies `_fbp` en `_fbc` (90 dagen)
 ## Wat bewust in GTM zit en niet in de code
 
 Klikken op `tel:` en `mailto:` links worden in de container afgevangen met een trigger op Click URL.
+Dat geldt ook voor de links naar het aanmelden voor de subsidiedienst
+(`https://mijn.voortraject.nl/aanmelden`, soms met `?regeling=`), op `/subsidies/aanvragen`. Die
+trigger staat nog niet in de container (stand november 2026).
 Die links staan verspreid over Footer, Contact, OfBelOnsCta en Binnenkort; een trigger op één plek
 is minder onderhoud dan vijf losse `onClick`-handlers, en er is geen extra context nodig die de
 code wel kent en GTM niet.

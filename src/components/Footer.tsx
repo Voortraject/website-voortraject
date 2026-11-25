@@ -30,6 +30,7 @@ const navCols = [
       { href: "/subsidies/landelijk", label: "Landelijke subsidies" },
       { href: "/subsidies/regionaal", label: "Regionale subsidies" },
       { href: "/subsidies/stapelen", label: "Subsidies stapelen" },
+      { href: "/subsidies/aanvragen", label: "Subsidie laten aanvragen" },
     ],
   },
   {

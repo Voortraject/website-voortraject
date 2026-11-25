@@ -25,6 +25,7 @@ import { CtaButton } from "@/components/CtaButton";
 import {
   Accent,
   HeroLijst,
+  KleineCta,
   KruisRegel,
   Kop2,
   LogoPaar,
@@ -85,7 +86,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Wat kost jullie hulp?",
-    a: "Niets. Ons huisbezoek en de begeleiding zijn gratis voor bewoners. Wij worden betaald door de installatiebedrijven die met ons samenwerken.",
+    a: "Niets. Ons huisbezoek en de begeleiding zijn gratis voor bewoners. Wij worden betaald door de installatiebedrijven die met ons samenwerken. Is het werk al gedaan en wil je alleen dat wij je ISDE aanvragen? Dat kan ook, tegen een vergoeding.",
   },
 ];
 
@@ -435,6 +436,11 @@ const SubsidiesLandelijk = () => {
           <p className="hs-tekst mt-4 text-[13.5px] leading-[1.5] md:mt-5">
             Verhuurders en VvE's hebben een aparte regeling (SVOH). Voor hen geldt ISDE niet.
           </p>
+          <KleineCta
+            kop="Is het werk al klaar?"
+            tekst="Dan vragen wij je ISDE achteraf voor je aan bij RVO, waar je ook woont in Nederland."
+            link={<PijlLink href="/subsidies/aanvragen">Subsidie laten aanvragen</PijlLink>}
+          />
         </Sectie>
 
         {/* SECTIE 5: WELKE MAATREGELEN */}

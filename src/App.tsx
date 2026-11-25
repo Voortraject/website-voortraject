@@ -31,6 +31,7 @@ const SubsidiesNijBegun = lazy(() => import("./pages/SubsidiesNijBegun.tsx"));
 const SubsidiesLandelijk = lazy(() => import("./pages/SubsidiesLandelijk.tsx"));
 const SubsidiesRegionaal = lazy(() => import("./pages/SubsidiesRegionaal.tsx"));
 const SubsidiesStapelen = lazy(() => import("./pages/SubsidiesStapelen.tsx"));
+const SubsidieAanvragen = lazy(() => import("./pages/SubsidieAanvragen.tsx"));
 const Privacy = lazy(() => import("./pages/Privacy.tsx"));
 const Cookie = lazy(() => import("./pages/Cookie.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
@@ -83,6 +84,8 @@ const App = () => (
               <Route path="/subsidies/landelijk" element={<SubsidiesLandelijk />} />
               <Route path="/subsidies/regionaal" element={<SubsidiesRegionaal />} />
               <Route path="/subsidies/stapelen" element={<SubsidiesStapelen />} />
+              {/* De subsidiedienst: wij doen de aanvraag, aanmelden op mijn.voortraject.nl. */}
+              <Route path="/subsidies/aanvragen" element={<SubsidieAanvragen />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/cookieverklaring" element={<Cookie />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

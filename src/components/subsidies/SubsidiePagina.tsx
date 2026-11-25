@@ -333,6 +333,18 @@ export const TussenCta = ({ kop, tekst, knop }: { kop: ReactNode; tekst?: ReactN
   </div>
 );
 
+/**
+ * Een korte vraag met een tekstlink eronder, zonder tegel: voor een zijpad dat
+ * geen tweede oker knop verdient (zoals de link naar Subsidie laten aanvragen).
+ */
+export const KleineCta = ({ kop, tekst, link }: { kop: ReactNode; tekst?: ReactNode; link: ReactNode }) => (
+  <div className="mt-9 text-center md:mt-12" data-veer>
+    <p className="font-display text-[18px] font-bold text-primary">{kop}</p>
+    {tekst && <p className="hs-tekst mx-auto mt-1.5 max-w-[560px] text-[15px] leading-[1.55]">{tekst}</p>}
+    <div className="mt-2">{link}</div>
+  </div>
+);
+
 export interface Reden {
   Icon: Icoon;
   t: string;
@@ -353,19 +365,27 @@ export const WaaromTegels = ({ redenen }: { redenen: Reden[] }) => (
 );
 
 /**
- * De slot-CTA, gelijk op alle vier de pagina's. Hoort via de `cta`-prop in het
- * donkere paneel van de Footer, zodat er geen naad ontstaat.
+ * De slot-CTA, gelijk op de vier informatiepagina's. Hoort via de `cta`-prop in
+ * het donkere paneel van de Footer, zodat er geen naad ontstaat. De pagina
+ * Subsidie aanvragen geeft een eigen kop, tekst en knop mee; zonder die props
+ * staat er het gesprek, zoals altijd.
  */
-export const SlotCta = ({ laatstBijgewerkt }: { laatstBijgewerkt: string }) => (
+export const SlotCta = ({
+  laatstBijgewerkt,
+  kop = "Ontdek welke subsidies voor jouw woning gelden",
+  tekst = "Wij zoeken het voor jouw adres uit en stapelen alles wat kan. Eén gesprek, geen loketten. Vrijblijvend en gratis.",
+  knop = <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>,
+}: {
+  laatstBijgewerkt: string;
+  kop?: ReactNode;
+  tekst?: ReactNode;
+  knop?: ReactNode;
+}) => (
   <section className="hs-op-donker py-16 md:py-20">
     <div className="container-content max-w-[640px] text-center">
-      <h2 className="hs-h2 text-primary-foreground">Ontdek welke subsidies voor jouw woning gelden</h2>
-      <p className="mt-4 text-[16px] leading-[1.6] text-primary-foreground/85">
-        Wij zoeken het voor jouw adres uit en stapelen alles wat kan. Eén gesprek, geen loketten. Vrijblijvend en gratis.
-      </p>
-      <div className="mt-7">
-        <CtaButton href="/contact">Plan een gratis gesprek</CtaButton>
-      </div>
+      <h2 className="hs-h2 text-primary-foreground">{kop}</h2>
+      <p className="mt-4 text-[16px] leading-[1.6] text-primary-foreground/85">{tekst}</p>
+      <div className="mt-7">{knop}</div>
       <p className="mt-7 text-[13.5px] text-primary-foreground/70">Laatst bijgewerkt: {laatstBijgewerkt}</p>
     </div>
   </section>

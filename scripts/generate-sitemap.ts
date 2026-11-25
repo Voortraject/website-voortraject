@@ -41,10 +41,13 @@ const entries: SitemapEntry[] = [
   { path: "/verduurzamen/airco", lastmod: "2026-07-02" },
   { path: "/verduurzamen/laadpaal", lastmod: "2026-06-11" },
   { path: "/verduurzamen/onderhoud", lastmod: "2026-07-03" },
-  { path: "/subsidies/nij-begun", lastmod: "2026-07-03" },
-  { path: "/subsidies/landelijk", lastmod: "2026-07-03" },
+  // 2026-11-25: Nij Begun en landelijk wijzen naar /subsidies/aanvragen (FAQ en een zijpad).
+  { path: "/subsidies/nij-begun", lastmod: "2026-11-25" },
+  { path: "/subsidies/landelijk", lastmod: "2026-11-25" },
   { path: "/subsidies/regionaal", lastmod: "2026-07-03" },
   { path: "/subsidies/stapelen", lastmod: "2026-07-07" },
+  // 2026-11-25: nieuw, de subsidiedienst (wij doen de aanvraag).
+  { path: "/subsidies/aanvragen", lastmod: "2026-11-25" },
   { path: "/over-ons", lastmod: "2026-07-16" },
   { path: "/contact", lastmod: "2026-08-07" },
   { path: "/privacy", lastmod: "2026-07-14" },
