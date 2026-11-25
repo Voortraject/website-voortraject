@@ -11,7 +11,7 @@ const faqs = [
   },
   {
     q: "Hoe verdienen jullie dan geld?",
-    a: "Heel simpel: uitvoerders geven ons een vergoeding voor de bewonersbegeleiding en het papierwerk dat we van ze overnemen, van het eerste gesprek tot en met de nazorg. Zo kunnen zij doen waar ze goed in zijn. Jij betaalt niets, en we vertellen je gewoon hoe dat zit. We verkopen zelf geen producten, dus in ons advies zit geen belang om je een bepaald merk of systeem aan te praten. We koppelen je alleen aan uitvoerders waarvan we weten dat ze goed werk leveren in jouw regio.",
+    a: "Heel simpel: uitvoerders geven ons een vergoeding voor de bewonersbegeleiding en het papierwerk dat we van ze overnemen, van het eerste gesprek tot en met de nazorg. Zo kunnen zij doen waar ze goed in zijn. Via onze uitvoerders is onze hulp dus gratis, en we vertellen je gewoon hoe dat zit. Wil je alleen hulp bij je subsidieaanvraag, zonder uitvoerder via ons? Dan doen we die tegen een vergoeding. We verkopen zelf geen producten, dus in ons advies zit geen belang om je een bepaald merk of systeem aan te praten. We koppelen je alleen aan uitvoerders waarvan we weten dat ze goed werk leveren in jouw regio.",
   },
   {
     q: "Wat doet Voortraject precies?",

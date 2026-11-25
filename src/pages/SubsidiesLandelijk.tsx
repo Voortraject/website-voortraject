@@ -86,7 +86,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Wat kost jullie hulp?",
-    a: "Niets. Ons huisbezoek en de begeleiding zijn gratis voor bewoners. Wij worden betaald door de installatiebedrijven die met ons samenwerken. Is het werk al gedaan en wil je alleen dat wij je ISDE aanvragen? Dat kan ook, tegen een vergoeding.",
+    a: "Via onze uitvoerders zijn ons huisbezoek en de begeleiding gratis: dan worden wij betaald door de installatiebedrijven die met ons samenwerken. Anders doen we je ISDE-aanvraag tegen een vergoeding, bijvoorbeeld als het werk al gedaan is.",
   },
 ];
 
@@ -438,7 +438,7 @@ const SubsidiesLandelijk = () => {
           </p>
           <KleineCta
             kop="Is het werk al klaar?"
-            tekst="Dan vragen wij je ISDE achteraf voor je aan bij RVO, waar je ook woont in Nederland."
+            tekst="Dan vragen wij je ISDE achteraf voor je aan bij RVO, overal in Nederland, tegen een vergoeding."
             link={<PijlLink href="/subsidies/aanvragen">Subsidie laten aanvragen</PijlLink>}
           />
         </Sectie>

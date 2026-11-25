@@ -71,7 +71,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Wat kost jullie hulp?",
-    a: "Niets. Ons huisbezoek en de begeleiding zijn gratis voor bewoners. Wil je alleen dat wij je aanvraag doen, bijvoorbeeld omdat je zelf al een aannemer hebt gekozen of het isoleren al klaar is? Dat kan ook, tegen een vergoeding.",
+    a: "Via onze uitvoerders zijn ons huisbezoek en de begeleiding gratis. Anders doen we je aanvraag tegen een vergoeding, bijvoorbeeld als je zelf al een aannemer hebt gekozen of het isoleren al klaar is.",
   },
 ];
 
@@ -461,7 +461,7 @@ const SubsidiesNijBegun = () => {
         />
         <KleineCta
           kop="Heb je zelf al een aannemer, of is het isoleren al klaar?"
-          tekst="Dan kunnen we ook alleen je aanvraag bij SNN voor je doen."
+          tekst="Dan doen we alleen je aanvraag bij SNN, tegen een vergoeding."
           link={<PijlLink href="/subsidies/aanvragen">Subsidie laten aanvragen</PijlLink>}
         />
       </Sectie>

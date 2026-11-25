@@ -24,7 +24,8 @@ interface SitemapEntry {
 }
 
 const entries: SitemapEntry[] = [
-  { path: "/", lastmod: "2026-07-13" },
+  // 2026-11-25: FAQ "Hoe verdienen jullie dan geld?" noemt de vergoeding voor alleen de aanvraag.
+  { path: "/", lastmod: "2026-11-25" },
   // De subsidiecheck valt uit de sitemap zolang hij nog niet live is (de pagina
   // staat dan op noindex) — zie src/config/features.ts.
   ...(SUBSIDIECHECK_LIVE ? [{ path: "/subsidiecheck", lastmod: "2026-08-07" } as SitemapEntry] : []),
@@ -44,8 +45,9 @@ const entries: SitemapEntry[] = [
   // 2026-11-25: Nij Begun en landelijk wijzen naar /subsidies/aanvragen (FAQ en een zijpad).
   { path: "/subsidies/nij-begun", lastmod: "2026-11-25" },
   { path: "/subsidies/landelijk", lastmod: "2026-11-25" },
-  { path: "/subsidies/regionaal", lastmod: "2026-07-03" },
-  { path: "/subsidies/stapelen", lastmod: "2026-07-07" },
+  // 2026-11-25: FAQ "gratis via onze uitvoerders, anders tegen een vergoeding".
+  { path: "/subsidies/regionaal", lastmod: "2026-11-25" },
+  { path: "/subsidies/stapelen", lastmod: "2026-11-25" },
   // 2026-11-25: nieuw, de subsidiedienst (wij doen de aanvraag).
   { path: "/subsidies/aanvragen", lastmod: "2026-11-25" },
   { path: "/over-ons", lastmod: "2026-07-16" },

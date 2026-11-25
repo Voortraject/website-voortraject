@@ -46,7 +46,9 @@ import { AANMELDEN_URL, aanmeldUrl, type AanmeldRegeling } from "@/lib/aanmelden
 // pas dan deze pagina mee aan.
 //
 // Schrijfregels van de eigenaar voor de dienst: je-vorm, luchtig, geen bezwaar
-// voorzeggen, en geen "gratis" of "kost" (hier betaal je wel iets).
+// voorzeggen, en geen "gratis" of "kost" (hier betaal je wel iets). Eén
+// uitzondering (eigenaar 25-11-2026): de uitleg "gratis via onze uitvoerders,
+// anders tegen een vergoeding", die op alle subsidiepagina's gelijk luidt.
 
 const LAATST_BIJGEWERKT = "november 2026";
 const VASTE_VERGOEDING = "€275";
@@ -75,7 +77,7 @@ const faqs: Vraag[] = [
   },
   {
     q: "Ik las dat ik jullie niets betaal. Hoe zit dat?",
-    a: "Laat je het werk doen door een uitvoerder via ons, dan betaalt die uitvoerder ons en regelen we je aanvraag erbij. Deze dienst is voor als je alleen hulp wilt bij je aanvraag, bijvoorbeeld omdat het werk al klaar is of je zelf een aannemer hebt gekozen.",
+    a: "Via onze uitvoerders is onze hulp gratis: dan betaalt de uitvoerder ons en regelen we je aanvraag erbij. Anders doen we je aanvraag tegen een vergoeding, bijvoorbeeld als het werk al klaar is of je zelf een aannemer hebt gekozen.",
   },
 ];
 

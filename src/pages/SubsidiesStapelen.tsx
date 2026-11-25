@@ -37,7 +37,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Wat kost jullie hulp hierbij?",
-    a: "Voor bewoners is ons advies gratis. Wij worden betaald door de uitvoerders, voor het voorwerk dat we voor hen uit handen nemen.",
+    a: "Via onze uitvoerders is ons advies gratis: dan worden wij betaald door de uitvoerders, voor het voorwerk dat we voor hen uit handen nemen. Anders doen we je aanvraag bij SNN of RVO tegen een vergoeding.",
   },
   {
     q: "Welke subsidies gelden in mijn gebied?",

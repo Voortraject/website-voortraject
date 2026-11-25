@@ -60,7 +60,8 @@ describe("/subsidies/aanvragen", () => {
   it("houdt zich aan de schrijfregels: geen em-dash, geen gratis of kost, geen u-vorm, geen hexkleuren", () => {
     const tekst = lees("src/pages/SubsidieAanvragen.tsx");
     // Alleen de tekst buiten het commentaar bovenaan telt.
-    const code = tekst.replace(/^\s*\/\/.*$/gm, "");
+    // De afgesproken uitleg "Via onze uitvoerders is ... gratis" (eigenaar 25-11) mag wel.
+    const code = tekst.replace(/^\s*\/\/.*$/gm, "").replace(/Via onze uitvoerders is onze hulp gratis/g, "");
     expect(code).not.toMatch(/—/);
     expect(code).not.toMatch(/\bgratis\b|\bkost\b|\bkosten\b/i);
     expect(code).not.toMatch(/\b(u|uw)\b/);
