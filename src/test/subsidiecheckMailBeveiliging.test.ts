@@ -22,6 +22,7 @@ import {
 } from "../../supabase/functions/subsidiecheck-mail/beveiliging";
 import {
   mailAdresregel,
+  mailOnderwerp,
   maakOverzichtMail,
   schoonHuisnummer,
 } from "../../supabase/functions/subsidiecheck-mail/overzichtMail";
@@ -289,7 +290,7 @@ describe("de overzichtsmail aan de bezoeker", () => {
     // Zonder geldig bewonertype vragen we de bron niet eens: dan geen lijst.
     expect(bron).not.toHaveBeenCalled();
     expect(mail!.metLijst).toBe(false);
-    expect(mail!.onderwerp).toBe("Je subsidieoverzicht voor je woning");
+    expect(mail!.onderwerp).toBe("Subsidieoverzicht voor 9711 AA 12");
     expect(mail!.html).toContain("staat online voor je klaar");
     expect(mail!.html).toContain('href="https://voortraject.nl/subsidiecheck"');
   });
@@ -309,7 +310,7 @@ describe("de overzichtsmail aan de bezoeker", () => {
     const mail = await maak(aanval({ bewonertype: "woningeigenaar", maatregelen: ["isolatie"] }), bron);
     expect(bron).toHaveBeenCalledWith("9711AA", "type-of-resident=Woningeigenaar&filter=1503");
     expect(mail!.metLijst).toBe(true);
-    expect(mail!.onderwerp).toBe("Je subsidieoverzicht: 1 regeling voor je woning");
+    expect(mail!.onderwerp).toBe("Subsidieoverzicht voor 9711 AA 12");
     expect(mail!.html).toContain("ISDE");
     expect(mail!.html).toContain("https://www.rvo.nl/isde");
     for (const vreemd of VREEMD) expect(mail!.html, vreemd).not.toContain(vreemd);
@@ -417,6 +418,9 @@ describe("adresregel in de mail aan de bezoeker", () => {
       "Burg. J. Grommersstraat 12 A, Groningen",
     );
     expect(mailAdresregel("9711AA", huis, null)).toBe("postcode 9711 AA, huisnummer 12 A");
+    expect(mailOnderwerp("9711AA", huis, { straat: "Planetenlaan", plaats: "Groningen" })).toBe("Subsidieoverzicht voor Planetenlaan 12 A");
+    expect(mailOnderwerp("9711AA", huis, null)).toBe("Subsidieoverzicht voor 9711 AA 12 A");
+    expect(mailOnderwerp("9711AA", huis, { straat: "<a href=x>", plaats: "Groningen" })).toBe("Subsidieoverzicht voor 9711 AA 12 A");
     expect(schoonHuisnummer("12", "evil.example")).toEqual({ nummer: "12", toevoeging: "" });
     expect(schoonHuisnummer("0", "")).toBeNull();
     expect(schoonHuisnummer("123456", "")).toBeNull();
