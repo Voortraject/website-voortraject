@@ -146,9 +146,79 @@ export const OLDAMBT_ONDERHOUD: SubsidieRegeling = {
 const OLDAMBT_WAAROM =
   "Gemeente Oldambt: aanvullend op Nij Begun voor eigenaren in de gemeente. Milieu Centraal had hem op 2026-11-23 niet (getest met 9671 CD).";
 
+// Volkshuisvestingsfonds Eemsdelta, voor koopwoningen. Geen hele gemeente maar
+// zeven wijken en dorpen, die de gemeentepagina én art. 4 van de regeling
+// allebei met hun postcode noemen: Appingedam Centrum (9901), Appingedam
+// Opwierde (9902), 't Zandt (9915), Delfzijl Noord (9933), Delfzijl West en
+// Centrum (9934), Farmsum (9936) en Zijldijk (9987).
+//
+// Bronnen, gelezen op 2026-11-25:
+//  - de gemeentepagina (EEMSDELTA_VHF_PAGINA): voor wie, de wijken, 70% tot
+//    € 14.500, niet voor warmtepompen of zonnepanelen;
+//  - de regeling, https://lokaleregelgeving.overheid.nl/CVDR709773: eigenaar en
+//    bewoner, grondgebonden en geen appartement (art. 1 sub c, art. 4 lid 1),
+//    bouwjaar vóór 1991 (art. 4 lid 1), de maatregelen (art. 5 lid 1), 70% tot
+//    € 14.500 inclusief btw (art. 6 lid 1), het energieadvies van een door de
+//    gemeente aangewezen adviseur (art. 7 lid 1), minimaal € 1.000 (art. 8 sub
+//    b), plafond € 10.350.000 en volgorde van binnenkomst (art. 12).
+// Besluiten van Voortraject op 2026-11-25, waar pagina en regeling verschillen:
+//  - geen labeleis ("3 stappen of minstens label B" staat alleen nog op de
+//    pagina; de geldende regeling vraagt een aantoonbare energetische
+//    verbetering);
+//  - de maatregelen van de regeling (ook vloer, kozijnen en ventilatie), niet
+//    de vier van de pagina;
+//  - over combineren met Nij Begun een neutrale zin bij het bedrag (niet in
+//    `letOp`: dat is voor letterlijke uitzonderingen van de bron en zet
+//    "er geldt een uitzondering" op de kaart). De regeling zegt dat
+//    subsidies van derden niet van de kosten afgaan (art. 6 lid 1), SNN
+//    verrekent eerder ontvangen subsidie voor dezelfde maatregelen, maar noemt
+//    dit fonds niet. Het team vraagt het na; pas daarna een stelliger zin.
+// Geen einddatum: de regeling noemt er geen. Het budget kan wel eerder op zijn.
+export const EEMSDELTA_VHF_GEBIED: Postcodegebied = {
+  naam: "Volkshuisvestingsfonds Eemsdelta, koopwoningen",
+  bron: "https://lokaleregelgeving.overheid.nl/CVDR709773 (art. 4)",
+  bronPagina: "https://www.eemsdelta.nl/subsidie-volkshuisvestingsfonds-voor-koopwoningen",
+  versie: "CVDR709773, geldend vanaf 09-02-2026",
+  vastgesteld: "2026-11-25",
+  postcodes: ["9901", "9902", "9915", "9933", "9934", "9936", "9987"],
+};
+
+const EEMSDELTA_VHF_PAGINA = "https://www.eemsdelta.nl/subsidie-volkshuisvestingsfonds-voor-koopwoningen";
+
+export const EEMSDELTA_VHF: SubsidieRegeling = {
+  id: "eemsdelta-volkshuisvestingsfonds-koopwoningen",
+  titel: "Volkshuisvestingsfonds Eemsdelta: verduurzamen koopwoning",
+  niveau: "gemeente",
+  type: "subsidie",
+  aanbieder: "Gemeente Eemsdelta",
+  omschrijving:
+    "Subsidie voor isolatie van dak, gevel, spouw en vloer, HR++-glas en kozijnen en ventilatie, met de renovatie die daarvoor nodig is. Niet voor warmtepompen of zonnepanelen.",
+  bedragIndicatie: "tot € 14.500",
+  bedragToelichting:
+    "70% van de kosten, tot maximaal € 14.500 per woning inclusief btw. De kosten zijn minimaal € 1.000. Vraag je ook Nij Begun aan? Welke maatregel onder welke regeling valt en in welke volgorde je aanvraagt, bepaalt wat je krijgt. Wij zoeken het voor je uit.",
+  beperktTot: "isolatie en glas, ventilatie",
+  alleenAls: "je woning vóór 1991 is gebouwd, geen appartement is en je er zelf woont",
+  voorWie:
+    "Eigenaren die zelf wonen in een koopwoning in Appingedam Centrum of Opwierde, 't Zandt, Delfzijl Noord, West of Centrum, Farmsum of Zijldijk.",
+  belangrijksteVoorwaarde:
+    "Je vraagt aan vóór de werkzaamheden starten, met een energieadvies van een energieadviseur die de gemeente aanwijst. Het budget is beperkt: aanvragen gaan op volgorde van binnenkomst.",
+  bronUrl: EEMSDELTA_VHF_PAGINA,
+  maatregelen: ["isolatie", "ventilatie"],
+  doelgroepen: ["woningeigenaar"],
+};
+
+const EEMSDELTA_VHF_WAAROM =
+  "Gemeente Eemsdelta: Volkshuisvestingsfonds voor koopwoningen in zeven wijken en dorpen. Milieu Centraal had hem op 2026-11-25 niet (getest met 9934 GD en 9901 AA).";
+
 export const LOKALE_AANVULLINGEN: LokaleAanvulling[] = [
   { regeling: OLDAMBT_ISOLATIE, alleenIn: OLDAMBT, bronTitelBevat: "Oldambt Verwarmt", waarom: OLDAMBT_WAAROM },
   { regeling: OLDAMBT_ONDERHOUD, alleenIn: OLDAMBT, bronTitelBevat: "Oldambt Verwarmt", waarom: OLDAMBT_WAAROM },
+  {
+    regeling: EEMSDELTA_VHF,
+    alleenIn: EEMSDELTA_VHF_GEBIED,
+    bronTitelBevat: "Volkshuisvestingsfonds",
+    waarom: EEMSDELTA_VHF_WAAROM,
+  },
 ];
 
 function hoortErBij(regeling: SubsidieRegeling, invoer: AanvullingInvoer, nu: Date): boolean {
