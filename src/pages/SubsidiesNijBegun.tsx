@@ -19,6 +19,7 @@ import { CtaButton } from "@/components/CtaButton";
 import {
   Accent,
   HeroLijst,
+  KleineCta,
   KruisRegel,
   Kop2,
   LogoPaar,
@@ -70,7 +71,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Wat kost jullie hulp?",
-    a: "Niets. Ons huisbezoek en de begeleiding zijn gratis voor bewoners.",
+    a: "Via onze uitvoerders zijn ons huisbezoek en de begeleiding gratis. Anders doen we je aanvraag tegen een vergoeding, bijvoorbeeld als je zelf al een aannemer hebt gekozen of het isoleren al klaar is.",
   },
 ];
 
@@ -457,6 +458,11 @@ const SubsidiesNijBegun = () => {
           kop="Wil je sneller door zonder gedoe?"
           tekst="Neem contact op. Een lokale adviseur uit jouw regio belt of komt langs binnen een week."
           knop={<CtaButton href="/contact">Ik wil gebeld worden</CtaButton>}
+        />
+        <KleineCta
+          kop="Heb je zelf al een aannemer, of is het isoleren al klaar?"
+          tekst="Dan doen we alleen je aanvraag bij SNN, tegen een vergoeding."
+          link={<PijlLink href="/subsidies/aanvragen">Subsidie laten aanvragen</PijlLink>}
         />
       </Sectie>
 

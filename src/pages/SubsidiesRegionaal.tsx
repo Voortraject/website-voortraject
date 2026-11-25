@@ -117,7 +117,7 @@ const faqs: { q: string; a: string }[] = [
   },
   {
     q: "Wat kost jullie hulp?",
-    a: "Niets. Ons huisbezoek en de begeleiding zijn gratis voor bewoners. Wij worden betaald door installatiebedrijven die met ons samenwerken.",
+    a: "Via onze uitvoerders zijn ons huisbezoek en de begeleiding gratis: dan worden wij betaald door de installatiebedrijven die met ons samenwerken. Anders doen we je aanvraag bij SNN of RVO tegen een vergoeding.",
   },
 ];
 

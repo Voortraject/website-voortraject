@@ -141,6 +141,31 @@ Axeptio-toestemming voor de Meta-service. De cookies `_fbp` en `_fbc` (90 dagen)
 ## Wat bewust in GTM zit en niet in de code
 
 Klikken op `tel:` en `mailto:` links worden in de container afgevangen met een trigger op Click URL.
+Dat geldt ook voor de links naar het aanmelden voor de subsidiedienst; zie het stuk hieronder.
+
+### Aanmelden subsidiedienst (nog aan te maken in GTM)
+
+Op `/subsidies/aanvragen` gaan zes links naar het aanmelden op een ander domein: drie oker knoppen
+"Meld je aan" naar `https://mijn.voortraject.nl/aanmelden` en drie tekstlinks
+"Meld je aan voor Nij Begun/VVG/ISDE" met `?regeling=nij-begun`, `vvg` of `isde`. De code pusht hier
+bewust geen event (dan moet de container mee, zie `src/test/gtmContainer.test.ts`); GTM meet de klik.
+Stand 25-11-2026: dit staat nog **niet** in de container. Aanmaken in GTM-P6W5MNN4:
+
+1. **Variabele** `Klik URL - regeling`: type *URL*, componenttype *Query*, querysleutel `regeling`,
+   URL-bron `{{Click URL}}`. Leeg bij de oker knoppen, anders `nij-begun`, `vvg` of `isde`.
+2. **Trigger** `Klik aanmelden subsidiedienst`: type *Klik - Alleen links*, *Bepaalde klikken op
+   links*, voorwaarde `{{Click URL}}` *begint met* `https://mijn.voortraject.nl/aanmelden`.
+   "Wachten op tags" en "Validatie controleren" uit laten, zoals bij `Klik telefoonlink`
+   (GA4 verstuurt met sendBeacon, dus de navigatie naar het andere domein breekt de meting niet).
+3. **Tag** `Event - Aanmelden subsidiedienst klik`: type *Google Analytics: GA4-gebeurtenis*,
+   metings-ID `G-VQL43876VN` (zoals de andere eventtags), gebeurtenisnaam
+   `subsidiedienst_aanmelden_klik`, parameters `regeling` = `{{Klik URL - regeling}}` en
+   `link_text` = `{{Click Text}}`, trigger `Klik aanmelden subsidiedienst`.
+4. Publiceren, en in GA4 `subsidiedienst_aanmelden_klik` als **belangrijke gebeurtenis** markeren
+   als hij als conversie moet tellen. Exporteer daarna de container als `docs/gtm/GTM-P6W5MNN4_v11.json`.
+
+Let op: de trigger `Klik navigatielink` (CSS `header a`) vuurt niet op deze links, want ze staan niet
+in de header. Het aanmelden zelf (op mijn.voortraject.nl) meet deze site niet.
 Die links staan verspreid over Footer, Contact, OfBelOnsCta en Binnenkort; een trigger op één plek
 is minder onderhoud dan vijf losse `onClick`-handlers, en er is geen extra context nodig die de
 code wel kent en GTM niet.

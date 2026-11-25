@@ -39,6 +39,8 @@ const subsidiesItems: DropdownItem[] = [
   { href: "/subsidies/landelijk", label: "Landelijke subsidies" },
   { href: "/subsidies/regionaal", label: "Regionale subsidies" },
   { href: "/subsidies/stapelen", label: "Subsidies stapelen" },
+  // De subsidiedienst: wij doen de aanvraag voor je.
+  { href: "/subsidies/aanvragen", label: "Subsidie laten aanvragen" },
 ];
 
 const links: { href: string; label: string; dropdown?: typeof subsidiesItems }[] = [
