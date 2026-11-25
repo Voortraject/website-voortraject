@@ -487,6 +487,17 @@ export function schoonHuisnummer(huisnummer: unknown, toevoeging: unknown): { nu
 }
 
 /**
+ * Het onderwerp (eigenaar 25-11-2026): "Subsidieoverzicht voor Planetenlaan 263". Straat uit de BAG, net als de
+ * adresregel; zonder geldig BAG-antwoord de postcode met het huisnummer. Nooit iets uit de request behalve de streng
+ * gecontroleerde postcode, het huisnummer en de toevoeging.
+ */
+export function mailOnderwerp(postcode: string, huis: { nummer: string; toevoeging: string }, bag: BagAdres | null): string {
+  const nummer = `${huis.nummer}${huis.toevoeging ? ` ${huis.toevoeging}` : ""}`;
+  if (bag && BAG_NAAM_RE.test(bag.straat)) return `Subsidieoverzicht voor ${bag.straat} ${nummer}`;
+  return `Subsidieoverzicht voor ${postcode.slice(0, 4)} ${postcode.slice(4)} ${nummer}`;
+}
+
+/**
  * De adresregel in de mail aan de bezoeker. Nooit de straat en plaats uit de
  * request: die komen uit de BAG, of anders staat er "postcode …, huisnummer …".
  */
@@ -546,8 +557,6 @@ export async function maakOverzichtMail(args: {
     bouwjaar: args.bouwjaar,
     beoordeling: args.beoordeling,
   });
-  const onderwerp = regelingen
-    ? `Je subsidieoverzicht: ${regelingen.length} ${regelingen.length === 1 ? "regeling" : "regelingen"} voor je woning`
-    : "Je subsidieoverzicht voor je woning";
+  const onderwerp = mailOnderwerp(postcode, huis, bag);
   return { onderwerp, html, metLijst: regelingen !== null };
 }
