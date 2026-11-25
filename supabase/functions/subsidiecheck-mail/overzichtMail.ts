@@ -278,7 +278,7 @@ const meervoud = (n: number, een: string, meer: string) => `${n} ${n === 1 ? een
 const opsomming = (delen: string[]) =>
   delen.length <= 1 ? (delen[0] ?? "") : `${delen.slice(0, -1).join(", ")} en ${delen[delen.length - 1]}`;
 
-function bouwEmailHtml(opts: {
+type MailOpties = {
   /** Volledige aanhefregel zonder komma, bijv. "Hallo Jan" of "Beste heer/mevrouw De Vries". */
   aanhef: string;
   adresregel: string;
@@ -292,8 +292,32 @@ function bouwEmailHtml(opts: {
   bouwjaar?: number | null;
   /** Onze echte Google-score; weglaten = geen score in de mail. */
   beoordeling?: { score: string; aantal: number | null };
-}): string {
-  const { aanhef, adresregel, overzichtUrl, bouwjaar, beoordeling } = opts;
+  /**
+   * De afmeldpagina voor herinneringen (zie afmelden.ts). Weglaten = geen
+   * afmeldregel, bijvoorbeeld als de database de link niet kon geven.
+   */
+  afmeldPagina?: string;
+};
+
+// Vaste teksten die de HTML en het tekstdeel allebei gebruiken, zodat ze niet uit elkaar lopen.
+const TEKST = {
+  geenBouwjaarMetLijst: "Hieronder staan alle regelingen die we voor je woning vonden.",
+  geenBouwjaarZonderLijst: "Fijn dat je de subsidiecheck hebt gedaan.",
+  zelfContactKop: "Liever zelf contact?",
+  zelfContact:
+    "Stuur ons een WhatsApp, bel ons of antwoord op deze mail. Een adviseur kijkt gratis met je mee welke regelingen je voor jouw woning kunt combineren.",
+  delenKop: "Ken je iemand die ook wil verduurzamen?",
+  delen: "Huizen uit dezelfde tijd komen vaak voor dezelfde subsidie in aanmerking. Stuur ze",
+  delenLink: "de check voor hun eigen adres",
+  disclaimer:
+    "Dit overzicht is een indicatie op basis van de Energiesubsidiewijzer van Milieu Centraal en jouw postcode. Aan bedragen en voorwaarden kun je geen rechten ontlenen. We zoeken graag voor je uit wat er voor jouw huis echt in zit; je zit nergens aan vast.",
+  afmelden: "Liever geen herinneringen meer van ons? Je kunt je",
+  afmeldenLink: "hier afmelden",
+};
+
+/** Wat de HTML en het tekstdeel uit dezelfde gegevens afleiden. */
+function mailInhoud(opts: MailOpties) {
+  const { adresregel, overzichtUrl, bouwjaar } = opts;
   const metLijst = opts.regelingen !== null;
   const regelingen = opts.regelingen ?? [];
   const leningen = regelingen.filter((r) => r.type === "lening").length;
@@ -309,18 +333,6 @@ function bouwEmailHtml(opts: {
       .filter((r) => (r.niveau ?? "overig") === niveau)
       .sort((a, b) => typeRang(a.type) - typeRang(b.type)),
   })).filter((g) => g.items.length > 0);
-
-  // De verborgen voorbeeldregel die de inbox onder het onderwerp toont. Zonder
-  // deze regel pakt de inbox de eerste tekst uit de mail, en dat is de alt-tekst
-  // van het logo. Bij geen lijst valt hij terug op een gewone zin.
-  const voorbeeldregel = metLijst
-    ? `${opsomming(
-        [
-          subsidies > 0 ? meervoud(subsidies, "subsidie", "subsidies") : "",
-          leningen > 0 ? meervoud(leningen, "lening", "leningen") : "",
-        ].filter(Boolean),
-      )} voor ${adresregel}, van ${opsomming(groepen.map((g) => NIVEAU_KORT[g.niveau]))}.`
-    : `Je subsidieoverzicht voor ${adresregel} staat online voor je klaar.`;
 
   // De ene oker knop. Wie hem aanklikt, vraagt ons uit te zoeken wat er voor
   // dit huis echt in zit. Tot de ondertekende link naar een bevestigingspagina
@@ -341,6 +353,88 @@ function bouwEmailHtml(opts: {
   )}`;
   const onlineLink = overzichtUrl ?? CHECK_URL;
 
+  return { metLijst, regelingen, leningen, subsidies, bouwjaarZin, groepen, aanvraagLink, waLink, onlineLink };
+}
+
+/**
+ * Het tekstdeel naast de HTML (multipart/alternative): dezelfde inhoud uit
+ * dezelfde gegevens, met de links voluit. Geen gestripte HTML: dan zouden
+ * plaatjes, verborgen voorbeeldregels en knoppen als losse rommel meekomen.
+ */
+function bouwEmailTekst(opts: MailOpties): string {
+  const { aanhef, adresregel, overzichtUrl, beoordeling, afmeldPagina } = opts;
+  const { metLijst, regelingen, bouwjaarZin, groepen, aanvraagLink, waLink, onlineLink } = mailInhoud(opts);
+
+  const kaart = (r: Regeling): string => {
+    const s = soortVan(r);
+    const einddatum = einddatumTekst(r.looptAfOp);
+    return [
+      `- ${s.label}: ${r.titel ?? "Regeling"}`,
+      r.bedragIndicatie ? `  ${r.bedragIndicatie}` : "",
+      r.alleenAls ? `  Alleen als ${r.alleenAls}` : "",
+      r.omschrijving ? `  ${eersteZin(r.omschrijving)}` : "",
+      einddatum ? `  Let op: aanvragen kan tot ${einddatum}.` : "",
+      r.letOp ? `  Let op: ${r.letOp}` : "",
+      r.bronUrl && /^https?:\/\//i.test(r.bronUrl) ? `  Meer info: ${r.bronUrl}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+  };
+
+  const blokken: string[] = [`${aanhef},`];
+  if (metLijst) {
+    blokken.push(
+      `${meervoud(regelingen.length, "regeling", "regelingen")} voor het verduurzamen van ${adresregel}.`,
+      bouwjaarZin ?? TEKST.geenBouwjaarMetLijst,
+    );
+    if (groepen.length > 1) blokken.push(WAAROM_GROEPEN);
+    blokken.push(`Laat gratis uitzoeken wat ik krijg:\n${aanvraagLink}`);
+    for (const g of groepen) {
+      blokken.push(`${NIVEAU_LABELS[g.niveau]} (${g.items.length})\n\n${g.items.map(kaart).join("\n\n")}`);
+    }
+    if (overzichtUrl) blokken.push(`Bekijk of deel je overzicht online:\n${overzichtUrl}`);
+  } else {
+    blokken.push(
+      bouwjaarZin ?? TEKST.geenBouwjaarZonderLijst,
+      `Je subsidieoverzicht voor ${adresregel} staat online voor je klaar. Daar zie je per regeling wat je kunt krijgen en hoe je het aanvraagt.`,
+      `Bekijk je overzicht online:\n${onlineLink}`,
+    );
+  }
+  blokken.push(
+    [
+      TEKST.zelfContactKop,
+      TEKST.zelfContact,
+      `WhatsApp: ${waLink}`,
+      "Bel ons: 050 211 26 89",
+      beoordeling ? `${beoordeling.score} op Google` : "",
+    ]
+      .filter(Boolean)
+      .join("\n"),
+    `${TEKST.delenKop}\n${TEKST.delen} ${TEKST.delenLink}:\n${DEEL_URL}`,
+    "Met vriendelijke groet,\nTeam Voortraject\n050 211 26 89 · info@voortraject.nl",
+    TEKST.disclaimer,
+  );
+  if (afmeldPagina) blokken.push(`${TEKST.afmelden} ${TEKST.afmeldenLink}:\n${afmeldPagina}`);
+  return `${blokken.join("\n\n")}\n`;
+}
+
+function bouwEmailHtml(opts: MailOpties): string {
+  const { aanhef, adresregel, overzichtUrl, beoordeling, afmeldPagina } = opts;
+  const { metLijst, regelingen, leningen, subsidies, bouwjaarZin, groepen, aanvraagLink, waLink, onlineLink } =
+    mailInhoud(opts);
+
+  // De verborgen voorbeeldregel die de inbox onder het onderwerp toont. Zonder
+  // deze regel pakt de inbox de eerste tekst uit de mail, en dat is de alt-tekst
+  // van het logo. Bij geen lijst valt hij terug op een gewone zin.
+  const voorbeeldregel = metLijst
+    ? `${opsomming(
+        [
+          subsidies > 0 ? meervoud(subsidies, "subsidie", "subsidies") : "",
+          leningen > 0 ? meervoud(leningen, "lening", "leningen") : "",
+        ].filter(Boolean),
+      )} voor ${adresregel}, van ${opsomming(groepen.map((g) => NIVEAU_KORT[g.niveau]))}.`
+    : `Je subsidieoverzicht voor ${adresregel} staat online voor je klaar.`;
+
   const kop = metLijst
     ? // Rustig (eigenaar 24-11): logo, het getal met één regel eronder, de knop. "Subsidieoverzicht" staat al in het onderwerp.
       `${opDonker(`<div style="font-size:44px;line-height:1.05;font-weight:700;color:#FFFFFF;letter-spacing:-.02em;">${meervoud(regelingen.length, "regeling", "regelingen")}</div>
@@ -358,12 +452,12 @@ function bouwEmailHtml(opts: {
   const intro = metLijst
     ? `<tr><td style="padding:32px 4px 0;font-size:16px;line-height:1.65;color:${K.tekst};">
       <p style="margin:0 0 14px;">${escapeHtml(aanhef)},</p>
-      <p style="margin:0;">${bouwjaarZin ? escapeHtml(bouwjaarZin) : "Hieronder staan alle regelingen die we voor je woning vonden."}</p>
+      <p style="margin:0;">${escapeHtml(bouwjaarZin ?? TEKST.geenBouwjaarMetLijst)}</p>
       ${groepen.length > 1 ? `<p style="margin:14px 0 0;">${WAAROM_GROEPEN}</p>` : ""}
     </td></tr>`
     : `<tr><td style="padding:32px 4px 0;font-size:16px;line-height:1.65;color:${K.tekst};">
       <p style="margin:0 0 14px;">${escapeHtml(aanhef)},</p>
-      <p style="margin:0;">${bouwjaarZin ? escapeHtml(bouwjaarZin) : "Fijn dat je de subsidiecheck hebt gedaan."}</p>
+      <p style="margin:0;">${escapeHtml(bouwjaarZin ?? TEKST.geenBouwjaarZonderLijst)}</p>
     </td></tr>`;
 
   const lijst = groepen
@@ -387,6 +481,12 @@ function bouwEmailHtml(opts: {
       // afbeeldingen (Outlook doet dat standaard), dan valt de alt-tekst
       // "Google" op precies dezelfde plek in. Bewust zonder aantal reviews.
       `<div style="margin-top:18px;font-size:14px;color:#C9D2E0;"><span style="color:${K.oker};">&#9733;&#9733;&#9733;&#9733;&#9733;</span> ${opDonkerInline(`<strong style="color:#FFFFFF;">${escapeHtml(beoordeling.score)}</strong> op`)} <img src="${BEELD.google}" alt="Google" width="14" height="14" style="width:14px;height:14px;vertical-align:-2px;border:0;"></div>`
+    : "";
+
+  // Voetregel voor de herinneringen die het CRM hierna stuurt (CRM-plan afmelden, 3.2). Gewone tekst in de stijl van
+  // de disclaimer erboven, de link zoals de deellink: zichtbaar, maar geen knop die met de oker knop concurreert.
+  const afmeldRegel = afmeldPagina
+    ? `<div style="margin-top:12px;font-size:13px;line-height:1.6;color:${K.zacht};">${TEKST.afmelden} <a href="${escapeHtml(afmeldPagina)}" style="color:${K.ink};font-weight:700;">${TEKST.afmeldenLink}</a>.</div>`
     : "";
 
   return `<!doctype html>
@@ -428,8 +528,8 @@ function bouwEmailHtml(opts: {
          labels braken eerder over twee of drie regels. -->
     <tr><td style="padding:24px 0 0;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td ${NAVY}border-radius:24px;box-shadow:0 18px 40px rgba(21,44,78,0.24);padding:28px 22px;">
-        ${opDonker(`<div style="font-size:17px;font-weight:700;color:#FFFFFF;line-height:1.35;">Liever zelf contact?</div>
-        <div style="margin-top:8px;font-size:16px;line-height:1.65;color:#E6EBF2;">Stuur ons een WhatsApp, bel ons of antwoord op deze mail. Een adviseur kijkt gratis met je mee welke regelingen je voor jouw woning kunt combineren.</div>`)}
+        ${opDonker(`<div style="font-size:17px;font-weight:700;color:#FFFFFF;line-height:1.35;">${TEKST.zelfContactKop}</div>
+        <div style="margin-top:8px;font-size:16px;line-height:1.65;color:#E6EBF2;">${TEKST.zelfContact}</div>`)}
         ${RUIMTE(20)}
         <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
           ${glasKnop(waLink, BEELD.whatsapp, "WhatsApp")}<td width="10" style="width:10px;font-size:0;">&nbsp;</td>${glasKnop(TELEFOON_LINK, BEELD.telefoon, "Bel ons")}
@@ -442,8 +542,8 @@ function bouwEmailHtml(opts: {
          buiten het scherm van de bezoeker voortleeft: hij wordt bewaard en
          doorgestuurd. Het extra verzoek staat onderaan, onder een kort kopje. -->
     <tr><td style="padding:32px 4px 0;">
-      <div style="font-size:17px;font-weight:700;color:${K.ink};">Ken je iemand die ook wil verduurzamen?</div>
-      <div style="margin-top:8px;font-size:16px;line-height:1.65;color:${K.tekst};">Huizen uit dezelfde tijd komen vaak voor dezelfde subsidie in aanmerking. Stuur ze <a href="${DEEL_URL}" style="color:${K.ink};font-weight:700;">de check voor hun eigen adres</a>.</div>
+      <div style="font-size:17px;font-weight:700;color:${K.ink};">${TEKST.delenKop}</div>
+      <div style="margin-top:8px;font-size:16px;line-height:1.65;color:${K.tekst};">${TEKST.delen} <a href="${DEEL_URL}" style="color:${K.ink};font-weight:700;">${TEKST.delenLink}</a>.</div>
     </td></tr>
 
     <tr><td style="padding:32px 4px 0;">
@@ -453,7 +553,7 @@ function bouwEmailHtml(opts: {
     </td></tr>
 
     <tr><td style="padding:24px 4px 32px;">
-      <div style="font-size:13px;line-height:1.6;color:${K.zacht};">Dit overzicht is een indicatie op basis van de Energiesubsidiewijzer van Milieu Centraal en jouw postcode. Aan bedragen en voorwaarden kun je geen rechten ontlenen. We zoeken graag voor je uit wat er voor jouw huis echt in zit; je zit nergens aan vast.</div>
+      <div style="font-size:13px;line-height:1.6;color:${K.zacht};">${TEKST.disclaimer}</div>${afmeldRegel}
     </td></tr>
 
   </table>
@@ -532,7 +632,9 @@ export async function maakOverzichtMail(args: {
   beoordeling?: { score: string; aantal: number | null };
   haalRegelingen: (postcode: string, filterQuery: string) => Promise<Regeling[] | null>;
   haalBagAdres: (postcode: string, huisnummer: string) => Promise<BagAdres | null>;
-}): Promise<{ onderwerp: string; html: string; metLijst: boolean } | null> {
+  /** Uit de database (afmelden.ts), nooit uit de request. Weglaten = geen afmeldregel. */
+  afmeldPagina?: string;
+}): Promise<{ onderwerp: string; html: string; text: string; metLijst: boolean } | null> {
   const input = args.payload.input ?? {};
   const postcode = typeof input.postcode === "string" ? input.postcode.replace(/\s+/g, "").toUpperCase() : "";
   const huis = schoonHuisnummer(input.huisnummer, input.toevoeging);
@@ -549,14 +651,15 @@ export async function maakOverzichtMail(args: {
     args.haalBagAdres(postcode, huis.nummer),
   ]);
 
-  const html = bouwEmailHtml({
+  const opties: MailOpties = {
     aanhef: args.aanhef,
     adresregel: mailAdresregel(postcode, huis, bag),
     regelingen,
     overzichtUrl: schoonOverzichtUrl(args.payload.overzichtUrl),
     bouwjaar: args.bouwjaar,
     beoordeling: args.beoordeling,
-  });
+    afmeldPagina: args.afmeldPagina,
+  };
   const onderwerp = mailOnderwerp(postcode, huis, bag);
-  return { onderwerp, html, metLijst: regelingen !== null };
+  return { onderwerp, html: bouwEmailHtml(opties), text: bouwEmailTekst(opties), metLijst: regelingen !== null };
 }

@@ -80,6 +80,11 @@
 //
 // Optionele secret: TURNSTILE_SECRET_KEY. Ontbreekt hij, dan staat die controle
 // uit en logt de function dat bij elke inzending.
+//
+// Afmelden voor herinneringen (november 2026, zie afmelden.ts): het overzicht
+// krijgt de koppen List-Unsubscribe en List-Unsubscribe-Post en onderaan een
+// afmeldregel, uit `public.mail_uitschrijflinks` in het CRM. Faalt die aanroep,
+// dan gaat het overzicht zonder kop en regel; de bezoeker vroeg er net om.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import {
@@ -96,11 +101,12 @@ import {
   VENSTER_PER_ADRES_MS,
   type MailRegeling,
 } from "./beveiliging.ts";
+import { afmeldKoppen, haalAfmeldlinks, type AfmeldClient } from "./afmelden.ts";
 import { bepaalBericht, bepaalHulpvragen, verwerkBericht, type BerichtClient } from "./bericht.ts";
 import { insertLead } from "./leadInsert.ts";
+import { verstuurMail } from "./resend.ts";
 import { escapeHtml, maakOverzichtMail, type BagAdres } from "./overzichtMail.ts";
 
-const RESEND_ENDPOINT = "https://api.resend.com/emails";
 const TENANT_ID = "00000000-0000-0000-0000-000000000001";
 
 // Terugval als MAIL_FROM ontbreekt. Gelijk aan de live MAIL_FROM: automatische mail gaat altijd van het
@@ -415,34 +421,6 @@ function bouwTeamMailHtml(opts: {
     Antwoorden op deze mail gaat rechtstreeks naar de bezoeker.
   </p>
 </body></html>`;
-}
-
-async function verstuurMail(opts: {
-  apiKey: string;
-  from: string;
-  to: string;
-  replyTo: string;
-  subject: string;
-  html: string;
-}): Promise<boolean> {
-  const body: Record<string, unknown> = {
-    from: opts.from,
-    to: [opts.to],
-    reply_to: opts.replyTo,
-    subject: opts.subject,
-    html: opts.html,
-  };
-
-  const res = await fetch(RESEND_ENDPOINT, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${opts.apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    console.error("Resend-fout", res.status, await res.text());
-    return false;
-  }
-  return true;
 }
 
 // Onze echte Google-beoordeling uit de tabel die `sync-google-reviews` bijhoudt,
@@ -904,15 +882,22 @@ Deno.serve(async (req: Request) => {
     // alleen de streng gevalideerde velden. Regelingen uit onze eigen bron,
     // straat en plaats uit de BAG. Geen bewonertype of geen antwoord van de
     // bron → een mail zonder lijst, met de link naar het overzicht online.
+    // De afmeldlinks komen uit de database, tegelijk met de beoordeling. Geen
+    // links (fout, te traag, ongeldig adres) → het overzicht gaat zonder.
+    const [beoordeling, afmeldlinks] = await Promise.all([
+      haalBeoordeling(supabase),
+      haalAfmeldlinks(supabase as unknown as AfmeldClient, TENANT_ID, email),
+    ]);
     const mail = await maakOverzichtMail({
       payload,
       aanhef,
       // Zelfde bouwjaar dat als verrijking bij de lead gaat: een gevalideerd
       // getal, en de zin erover is onze eigen tekst.
       bouwjaar,
-      beoordeling: await haalBeoordeling(supabase),
+      beoordeling,
       haalRegelingen: haalEigenRegelingen,
       haalBagAdres,
+      afmeldPagina: afmeldlinks?.pagina,
     });
     if (!mail) {
       console.error("Overzichtsmail niet op te bouwen (postcode of huisnummer ongeldig); lead staat er wel");
@@ -927,6 +912,8 @@ Deno.serve(async (req: Request) => {
         replyTo: Deno.env.get("MAIL_REPLY_TO") ?? DEFAULT_REPLY_TO,
         subject: mail.onderwerp,
         html: mail.html,
+        text: mail.text,
+        headers: afmeldKoppen(afmeldlinks),
       });
     }
   } else if (!apiKey) {
