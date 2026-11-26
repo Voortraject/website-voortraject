@@ -4,6 +4,13 @@
 
 export const RESEND_ENDPOINT = "https://api.resend.com/emails";
 
+// De afzender van alle mail uit deze function: hetzelfde teamadres als de rest van de teammail (CRM en n8n, TEAM_AFZENDER
+// in supabase/functions/_gedeeld/mail/adressen.ts van de CRM-repo). Was noreply@, terwijl de mail zegt "antwoord op deze
+// mail": een tweede teamadres voor dezelfde soort mail (besluit eigenaar 26-11-2026, afzender-plan.md in de CRM-repo).
+// Bewust een vaste waarde en niet meer het geheim MAIL_FROM: dan kan een oude waarde daar niet stil blijven winnen.
+// Altijd het Resend-subdomein: het hoofddomein staat sinds 28-10-2026 niet meer in Resend.
+export const AFZENDER = "Voortraject <team@mail.voortraject.nl>";
+
 export async function verstuurMail(opts: {
   apiKey: string;
   from: string;

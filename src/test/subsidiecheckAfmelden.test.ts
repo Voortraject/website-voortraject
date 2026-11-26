@@ -12,7 +12,8 @@ import {
   type AfmeldClient,
 } from "../../supabase/functions/subsidiecheck-mail/afmelden";
 import { maakOverzichtMail } from "../../supabase/functions/subsidiecheck-mail/overzichtMail";
-import { RESEND_ENDPOINT, verstuurMail } from "../../supabase/functions/subsidiecheck-mail/resend";
+import { AFZENDER, RESEND_ENDPOINT, verstuurMail } from "../../supabase/functions/subsidiecheck-mail/resend";
+import { readFileSync } from "node:fs";
 
 const TENANT = "00000000-0000-0000-0000-000000000001";
 const EMAIL = "sanne@example.nl";
@@ -211,7 +212,7 @@ describe("de afmeldregel en het tekstdeel van het overzicht", () => {
 describe("wat er naar Resend gaat", () => {
   const basis = {
     apiKey: "re_test",
-    from: "Voortraject <noreply@mail.voortraject.nl>",
+    from: AFZENDER,
     to: EMAIL,
     replyTo: "info@voortraject.nl",
     subject: "Subsidieoverzicht voor Verlengde Hereweg 12",
@@ -242,6 +243,18 @@ describe("wat er naar Resend gaat", () => {
     await verstuurMail({ ...basis, headers: afmeldKoppen(null) });
     const { body } = verzonden(fetchMock);
     expect(Object.keys(body).sort()).toEqual(["from", "html", "reply_to", "subject", "to"]);
+  });
+
+  // Besluit eigenaar 26-11-2026 (afzender-plan.md in de CRM-repo): een teamadres voor alle teammail, zoals het CRM en n8n.
+  it("komt van team@, niet van noreply@, en niet meer uit het geheim MAIL_FROM", async () => {
+    expect(AFZENDER).toBe("Voortraject <team@mail.voortraject.nl>");
+    const fetchMock = resendNagebootst();
+    await verstuurMail(basis);
+    expect(verzonden(fetchMock).body).toMatchObject({ from: "Voortraject <team@mail.voortraject.nl>", reply_to: "info@voortraject.nl" });
+    const bron = readFileSync("supabase/functions/subsidiecheck-mail/index.ts", "utf8");
+    expect(bron).not.toContain("noreply@");
+    expect(bron).not.toContain('Deno.env.get("MAIL_FROM")');
+    expect(bron.match(/from: AFZENDER,/g)).toHaveLength(2);
   });
 
   it("meldt een weigering van Resend als niet verstuurd", async () => {
